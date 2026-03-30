@@ -1,0 +1,16 @@
+.magnetic-btn {
+  position: relative;
+}
+
+.magnetic-btn::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magnetic-btn {
+    transition: none !important;
+  }
+}

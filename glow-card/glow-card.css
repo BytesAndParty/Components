@@ -1,0 +1,51 @@
+.cursor-glow-card {
+  position: relative;
+  border: 1px solid rgb(var(--theme-primary) / 0.15) !important;
+  transition: border-color 0.3s ease;
+}
+
+.cursor-glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    var(--glow-size, 250px) circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgb(var(--theme-primary)) 0%,
+    rgb(var(--theme-accent) / 0.6) 40%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box exclude,
+    linear-gradient(#fff 0 0);
+  pointer-events: none;
+  opacity: var(--glow-opacity, 0);
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+
+.cursor-glow-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .cursor-glow-card::before {
+  background: radial-gradient(
+    var(--glow-size, 250px) circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgb(var(--theme-primary)) 0%,
+    rgb(var(--theme-accent) / 0.8) 40%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box exclude,
+    linear-gradient(#fff 0 0);
+}
