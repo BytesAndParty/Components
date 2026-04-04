@@ -1,0 +1,17 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      // Let components outside showcase/ resolve deps from showcase/node_modules
+      'framer-motion': path.resolve(__dirname, 'node_modules/framer-motion'),
+      'lucide-react': path.resolve(__dirname, 'node_modules/lucide-react'),
+      '@radix-ui/react-dropdown-menu': path.resolve(__dirname, 'node_modules/@radix-ui/react-dropdown-menu'),
+      '@number-flow/react': path.resolve(__dirname, 'node_modules/@number-flow/react'),
+    },
+  },
+})
