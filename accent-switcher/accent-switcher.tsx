@@ -113,12 +113,22 @@ export function AccentSwitcher({
 
 	const animRef = useRef(0);
 	const currentOklchRef = useRef<Oklch | null>(null);
+	const styleRef = useRef<HTMLStyleElement | null>(null);
 
-	// Seed the ref with the initial palette color
+	// Persistent <style> element for transition overrides + seed initial oklch
 	useEffect(() => {
+		const style = document.createElement('style');
+		document.head.appendChild(style);
+		styleRef.current = style;
+
 		if (!currentOklchRef.current) {
 			currentOklchRef.current = parseOklch(palettes[currentAccent]?.oklch ?? '');
 		}
+
+		return () => {
+			if (animRef.current) cancelAnimationFrame(animRef.current);
+			style.remove();
+		};
 	}, []);
 
 	const selectAccent = useCallback(
@@ -129,33 +139,42 @@ export function AccentSwitcher({
 			const toOklch = parseOklch(target.oklch);
 			const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
 
-			// Update state & attribute immediately
 			setAccent(key);
-			document.documentElement.setAttribute(accentAttribute, key);
 			onAccentChange?.(key);
 
 			// Instant switch if no interpolation possible or granularity is 0
 			if (!toOklch || !fromOklch || granularity <= 0) {
+				if (styleRef.current) styleRef.current.textContent = '';
+				document.documentElement.setAttribute(accentAttribute, key);
 				if (toOklch) currentOklchRef.current = toOklch;
-				document.documentElement.style.removeProperty('--accent');
 				return;
 			}
 
-			// Cancel any running animation
 			if (animRef.current) cancelAnimationFrame(animRef.current);
+
+			// Write the FROM value into our <style> tag BEFORE switching the attribute.
+			// This uses the same CSS mechanism the browser already applies successfully.
+			const writeAccent = (value: string) => {
+				if (styleRef.current) {
+					styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
+				}
+			};
+
+			// Pin to start color, then switch attribute (CSS rule changes but !important wins)
+			writeAccent(lerpOklch(fromOklch, toOklch, 0));
+			document.documentElement.setAttribute(accentAttribute, key);
 
 			const start = performance.now();
 
 			const step = (now: number) => {
 				const t = Math.min((now - start) / granularity, 1);
-				const value = lerpOklch(fromOklch, toOklch, easeInOutCubic(t));
-				document.documentElement.style.setProperty('--accent', value);
+				writeAccent(lerpOklch(fromOklch, toOklch, easeInOutCubic(t)));
 
 				if (t < 1) {
 					animRef.current = requestAnimationFrame(step);
 				} else {
-					// Let CSS rule take over
-					document.documentElement.style.removeProperty('--accent');
+					// Clear override, CSS [data-accent] rule takes over
+					if (styleRef.current) styleRef.current.textContent = '';
 					currentOklchRef.current = toOklch;
 					animRef.current = 0;
 				}
@@ -165,13 +184,6 @@ export function AccentSwitcher({
 		},
 		[palettes, currentAccent, accentAttribute, granularity, onAccentChange]
 	);
-
-	// Cleanup on unmount
-	useEffect(() => {
-		return () => {
-			if (animRef.current) cancelAnimationFrame(animRef.current);
-		};
-	}, []);
 
 	return (
 		<div className={cn('flex items-center gap-1', className)}>
