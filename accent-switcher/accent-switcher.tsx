@@ -1,9 +1,9 @@
 /**
- * AccentSwitcher - Reusable Theme Mode & Accent Color Picker
+ * AccentSwitcher - Accent Color Picker
  *
- * A shadcn-style component providing:
- *   1. Light/Dark mode toggle (Sun/Moon icon)
- *   2. Accent color picker dropdown (configurable palettes)
+ * A shadcn-style component providing an accent color picker dropdown
+ * with smooth oklch color interpolation between accents.
+ * Theme mode toggling is handled separately by AnimatedThemeToggler.
  *
  * Dependencies: lucide-react, @radix-ui/react-dropdown-menu,
  *               shadcn Button + DropdownMenu, cn() utility
@@ -15,14 +15,13 @@
  *       emerald:   { label: 'Emerald',   oklch: 'oklch(0.511 0.086 186.4)' },
  *     }}
  *     defaultPalette="amber"
- *     themeStorageKey="my_theme_pref"
- *     onThemeChange={(mode) => { ... }}
+ *     granularity={400}
  *     onAccentChange={(key) => { ... }}
  *   />
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Sun, Moon, Palette } from 'lucide-react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -35,6 +34,33 @@ import {
 import { cn } from '@/lib/utils';
 
 /* -------------------------------------------------------------------------- */
+/*  oklch interpolation helpers                                               */
+/* -------------------------------------------------------------------------- */
+
+type Oklch = [l: number, c: number, h: number];
+
+function parseOklch(str: string): Oklch | null {
+	const m = str.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/);
+	if (!m) return null;
+	return [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
+}
+
+function lerpOklch(from: Oklch, to: Oklch, t: number): string {
+	const l = from[0] + (to[0] - from[0]) * t;
+	const c = from[1] + (to[1] - from[1]) * t;
+	// Shortest path around the hue circle
+	let dh = to[2] - from[2];
+	if (dh > 180) dh -= 360;
+	if (dh < -180) dh += 360;
+	const h = from[2] + dh * t;
+	return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)})`;
+}
+
+function easeInOutCubic(t: number): number {
+	return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -43,8 +69,6 @@ export interface PaletteConfig {
 	oklch: string;
 }
 
-export type ThemeMode = 'light' | 'dark';
-
 export interface AccentSwitcherProps {
 	/** Map of palette key -> config. Keys are used as `data-accent` attribute values. */
 	palettes: Record<string, PaletteConfig>;
@@ -52,33 +76,19 @@ export interface AccentSwitcherProps {
 	defaultPalette?: string;
 	/** Currently active palette key (controlled mode). Falls back to defaultPalette. */
 	activePalette?: string;
-	/** localStorage key for persisting theme mode. */
-	themeStorageKey?: string;
 	/** HTML attribute name set on <html> for the accent. Default: "data-accent". */
 	accentAttribute?: string;
-	/** HTML attribute name set on <html> for theme mode. Default: "data-theme". */
-	themeAttribute?: string;
-	/** Whether to also toggle the "dark" CSS class on <html>. Default: true. */
-	toggleDarkClass?: boolean;
 	/** Label for the dropdown header. */
 	dropdownLabel?: string;
-	/** Callback when theme mode changes. */
-	onThemeChange?: (mode: ThemeMode) => void;
+	/**
+	 * Transition duration in ms for the color fade between accents.
+	 * Higher = longer & smoother, lower = faster & coarser. 0 = instant.
+	 * Default: 400
+	 */
+	granularity?: number;
 	/** Callback when accent palette changes. */
 	onAccentChange?: (key: string) => void;
 	className?: string;
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Helpers                                                                   */
-/* -------------------------------------------------------------------------- */
-
-function readTheme(key: string): ThemeMode {
-	try {
-		const stored = localStorage.getItem(key);
-		if (stored === 'dark' || stored === 'light') return stored;
-	} catch {}
-	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,90 +99,82 @@ export function AccentSwitcher({
 	palettes,
 	defaultPalette,
 	activePalette,
-	themeStorageKey = 'theme_pref',
 	accentAttribute = 'data-accent',
-	themeAttribute = 'data-theme',
-	toggleDarkClass = true,
 	dropdownLabel = 'Accent color',
-	onThemeChange,
+	granularity = 400,
 	onAccentChange,
 	className,
 }: AccentSwitcherProps) {
 	const paletteKeys = Object.keys(palettes);
 	const fallback = defaultPalette && palettes[defaultPalette] ? defaultPalette : paletteKeys[0];
-	const currentAccent = activePalette && palettes[activePalette] ? activePalette : fallback;
 
-	const [theme, setTheme] = useState<ThemeMode>(() => readTheme(themeStorageKey));
+	const [accent, setAccent] = useState(fallback);
+	const currentAccent = activePalette && palettes[activePalette] ? activePalette : accent;
 
-	// Apply theme to DOM
-	const applyTheme = useCallback(
-		(mode: ThemeMode) => {
-			document.documentElement.setAttribute(themeAttribute, mode);
-			if (toggleDarkClass) document.documentElement.classList.toggle('dark', mode === 'dark');
-			try {
-				localStorage.setItem(themeStorageKey, mode);
-			} catch {}
-		},
-		[themeAttribute, themeStorageKey, toggleDarkClass]
-	);
+	const animRef = useRef(0);
+	const currentOklchRef = useRef<Oklch | null>(null);
 
-	// Init
+	// Seed the ref with the initial palette color
 	useEffect(() => {
-		const initial = readTheme(themeStorageKey);
-		setTheme(initial);
-		applyTheme(initial);
-	}, [themeStorageKey, applyTheme]);
-
-	// System preference listener
-	useEffect(() => {
-		const mq = window.matchMedia('(prefers-color-scheme: dark)');
-		const onChange = (e: MediaQueryListEvent) => {
-			try {
-				if (localStorage.getItem(themeStorageKey)) return;
-			} catch {}
-			const next: ThemeMode = e.matches ? 'dark' : 'light';
-			setTheme(next);
-			applyTheme(next);
-			onThemeChange?.(next);
-		};
-		mq.addEventListener('change', onChange);
-		return () => mq.removeEventListener('change', onChange);
-	}, [themeStorageKey, applyTheme, onThemeChange]);
-
-	const toggleTheme = useCallback(() => {
-		setTheme((prev) => {
-			const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
-			applyTheme(next);
-			onThemeChange?.(next);
-			return next;
-		});
-	}, [applyTheme, onThemeChange]);
+		if (!currentOklchRef.current) {
+			currentOklchRef.current = parseOklch(palettes[currentAccent]?.oklch ?? '');
+		}
+	}, []);
 
 	const selectAccent = useCallback(
 		(key: string) => {
+			const target = palettes[key];
+			if (!target) return;
+
+			const toOklch = parseOklch(target.oklch);
+			const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
+
+			// Update state & attribute immediately
+			setAccent(key);
 			document.documentElement.setAttribute(accentAttribute, key);
 			onAccentChange?.(key);
+
+			// Instant switch if no interpolation possible or granularity is 0
+			if (!toOklch || !fromOklch || granularity <= 0) {
+				if (toOklch) currentOklchRef.current = toOklch;
+				document.documentElement.style.removeProperty('--accent');
+				return;
+			}
+
+			// Cancel any running animation
+			if (animRef.current) cancelAnimationFrame(animRef.current);
+
+			const start = performance.now();
+
+			const step = (now: number) => {
+				const t = Math.min((now - start) / granularity, 1);
+				const value = lerpOklch(fromOklch, toOklch, easeInOutCubic(t));
+				document.documentElement.style.setProperty('--accent', value);
+
+				if (t < 1) {
+					animRef.current = requestAnimationFrame(step);
+				} else {
+					// Let CSS rule take over
+					document.documentElement.style.removeProperty('--accent');
+					currentOklchRef.current = toOklch;
+					animRef.current = 0;
+				}
+			};
+
+			animRef.current = requestAnimationFrame(step);
 		},
-		[accentAttribute, onAccentChange]
+		[palettes, currentAccent, accentAttribute, granularity, onAccentChange]
 	);
 
-	const isDark = theme === 'dark';
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (animRef.current) cancelAnimationFrame(animRef.current);
+		};
+	}, []);
 
 	return (
 		<div className={cn('flex items-center gap-1', className)}>
-			{/* Theme mode toggle */}
-			<Button variant="ghost" size="icon" onClick={toggleTheme} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'} className="relative overflow-hidden">
-				<Sun
-					className={cn('h-[1.125rem] w-[1.125rem] transition-transform duration-200', isDark ? 'rotate-0 scale-100' : 'rotate-90 scale-0')}
-					style={{ position: isDark ? 'relative' : 'absolute' }}
-				/>
-				<Moon
-					className={cn('h-[1.125rem] w-[1.125rem] transition-transform duration-200', isDark ? '-rotate-90 scale-0' : 'rotate-0 scale-100')}
-					style={{ position: isDark ? 'absolute' : 'relative' }}
-				/>
-			</Button>
-
-			{/* Accent palette picker */}
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" size="icon" aria-label={dropdownLabel}>

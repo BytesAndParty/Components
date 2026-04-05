@@ -19,12 +19,20 @@ export function AnimatedThemeToggler({
   style,
   ...props
 }: AnimatedThemeTogglerProps) {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof document === 'undefined') return true;
+    const stored = localStorage.getItem('theme_pref');
+    if (stored) return stored === 'dark';
+    return true; // :root CSS defaults to dark
+  });
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    // Sync DOM with resolved initial state
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
     const update = () => setIsDark(document.documentElement.classList.contains('dark'));
-    update();
     const observer = new MutationObserver(update);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
@@ -84,9 +92,11 @@ export function AnimatedThemeToggler({
       onClick={toggleTheme}
       className={className}
       style={{
+        position: 'relative',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         width: '2.25rem',
         height: '2.25rem',
         borderRadius: '0.375rem',
@@ -105,11 +115,24 @@ export function AnimatedThemeToggler({
       }}
       {...props}
     >
-      {isDark ? (
-        <Sun style={{ width: iconSize, height: iconSize }} />
-      ) : (
-        <Moon style={{ width: iconSize, height: iconSize }} />
-      )}
+      <Sun
+        style={{
+          width: iconSize,
+          height: iconSize,
+          position: isDark ? 'relative' : 'absolute',
+          transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0)',
+          transition: 'transform 0.3s ease',
+        }}
+      />
+      <Moon
+        style={{
+          width: iconSize,
+          height: iconSize,
+          position: isDark ? 'absolute' : 'relative',
+          transform: isDark ? 'rotate(-90deg) scale(0)' : 'rotate(0deg) scale(1)',
+          transition: 'transform 0.3s ease',
+        }}
+      />
     </button>
   );
 }

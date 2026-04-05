@@ -209,6 +209,11 @@ body {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
+/* Remove focus outline from accent switcher trigger & dropdown items */
+.showcase-btn:focus-visible {
+  outline: none;
+}
+
 /* lucide icons inside buttons */
 .showcase-btn svg {
   width: 1.125rem;

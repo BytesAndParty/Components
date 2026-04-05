@@ -144,10 +144,26 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
           ...mainStyle,
         }}
       >
-        {/* Invisible spacer: renders all texts, only the widest is visible layout-wise */}
-        <span style={{ display: 'inline-flex', flexDirection: 'column', visibility: 'hidden', height: 0, overflow: 'hidden' }} aria-hidden="true">
+        {/* Invisible spacer: all texts overlap in one grid cell → width = widest, height = 1 line */}
+        <span
+          style={{
+            display: 'inline-grid',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+          }}
+          aria-hidden="true"
+        >
           {texts.map((t) => (
-            <span key={t} style={{ whiteSpace: 'pre', ...elementLevelStyle }}>{t}</span>
+            <span
+              key={t}
+              style={{
+                gridArea: '1 / 1',
+                whiteSpace: 'pre',
+                ...elementLevelStyle,
+              }}
+            >
+              {t}
+            </span>
           ))}
         </span>
 
@@ -155,6 +171,9 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
           <motion.div
             key={currentIndex}
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               display: 'inline-flex',
               flexWrap: 'wrap',
               ...splitLevelStyle,

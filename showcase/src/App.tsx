@@ -29,6 +29,7 @@ import {
 } from '../../animated-weather-icons/animated-weather-icons'
 import { AuroraText } from '../../aurora-text/aurora-text'
 import { AnimatedThemeToggler } from '../../animated-theme-toggler/animated-theme-toggler'
+import { AnimatedSearch } from '../../animated-search/animated-search'
 
 const palettes = {
   indigo: { label: 'Indigo', oklch: 'oklch(0.585 0.233 277)' },
@@ -88,7 +89,7 @@ const descriptions: Record<string, string> = {
   MagneticButton: 'Button that magnetically follows the cursor on hover.',
   TextScramble: 'Text reveal with randomized character scramble animation.',
   ScrollRotate: 'Element that rotates based on scroll position.',
-  AccentSwitcher: 'Theme mode toggle & accent color picker.',
+  AccentSwitcher: 'Accent color picker dropdown.',
   AutocompleteCell: 'Input field with filtered autocomplete suggestions.',
   HeartFavorite: 'Animated heart toggle with bounce effect.',
   useImageUpload: 'Hook for image upload with preview and cleanup.',
@@ -101,6 +102,7 @@ const descriptions: Record<string, string> = {
   AnimatedWeatherIcons: '12 animated SVG weather icons with framer-motion.',
   AuroraText: 'Gradient text with animated color shifting and subtle rotation.',
   AnimatedThemeToggler: 'Theme toggle with View Transitions API circle-clip animation.',
+  AnimatedSearch: 'Search icon that morphs into an expanding search input field.',
   Footer: 'Animated footer with link sections and social icons.',
 }
 
@@ -389,7 +391,7 @@ export function App() {
 
       <Section title="AccentSwitcher">
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-          The switcher in the top-right corner controls the global theme and accent color for the entire page.
+          The accent color picker in the top-right corner controls the global accent color for the entire page. Theme mode is handled by the AnimatedThemeToggler.
         </p>
       </Section>
 
@@ -714,6 +716,56 @@ export function App() {
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
           The theme toggle in the top-right uses the View Transitions API for a smooth circle-clip animation expanding from the button.
         </p>
+      </Section>
+
+      <Section title="AnimatedSearch">
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderRadius: '0.75rem',
+            overflow: 'hidden',
+            background: 'var(--card)',
+          }}
+        >
+          <div
+            style={{
+              padding: '3rem 2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Click the icon:</span>
+              <AnimatedSearch
+                placeholder="Search components..."
+                onSearch={(v) => console.log('Search:', v)}
+              />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Wider variant:</span>
+              <AnimatedSearch
+                placeholder="What are you looking for?"
+                expandedWidth={360}
+                onSearch={(v) => console.log('Search:', v)}
+              />
+            </div>
+          </div>
+          <div
+            style={{
+              borderTop: '1px solid var(--border)',
+              padding: '0.75rem 2rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.7rem',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <span>AnimatedSearch · spring physics · icon morph</span>
+            <span>Esc to close · Enter to submit</span>
+          </div>
+        </div>
       </Section>
 
       <Section title="Footer">
