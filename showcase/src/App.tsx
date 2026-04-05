@@ -30,6 +30,7 @@ import {
 import { AuroraText } from '../../aurora-text/aurora-text'
 import { AnimatedThemeToggler } from '../../animated-theme-toggler/animated-theme-toggler'
 import { AnimatedSearch } from '../../animated-search/animated-search'
+import { VelocityScroll, TestimonialCard, type Testimonial } from '../../velocity-scroll/velocity-scroll'
 
 const palettes = {
   indigo: { label: 'Indigo', oklch: 'oklch(0.585 0.233 277)' },
@@ -37,6 +38,17 @@ const palettes = {
   emerald: { label: 'Emerald', oklch: 'oklch(0.511 0.086 186.4)' },
   rose: { label: 'Rose', oklch: 'oklch(0.585 0.22 5)' },
 }
+
+const testimonials: Testimonial[] = [
+  { name: 'Anna Müller', role: 'Frontend Lead, Acme Corp', content: 'Die Komponenten sind extrem gut durchdacht. Die Animationen fühlen sich nativ an und die API ist intuitiv.' },
+  { name: 'Marco Rossi', role: 'Design Engineer, Stripe', content: 'Endlich eine Component Library die Framer Motion richtig nutzt. Die Velocity Scroll Testimonials sind ein Highlight.' },
+  { name: 'Sarah Chen', role: 'CTO, StartupXYZ', content: 'Wir haben unsere gesamte Landing Page damit gebaut. Die Performance ist hervorragend, auch auf Mobile.' },
+  { name: 'Lukas Weber', role: 'Fullstack Dev', content: 'Der TextRotate allein hat uns Stunden gespart. Kein Layout-Shift mehr, einfach plug & play.' },
+  { name: 'Elena Petrova', role: 'UX Designer, Figma', content: 'Als Designerin liebe ich die Detailverliebtheit. Jede Micro-Interaction ist perfekt getimed.' },
+  { name: 'James O\'Brien', role: 'Indie Hacker', content: 'Die AccentSwitcher Farbübergänge in oklch sind butterweich. Sowas findet man sonst nirgends.' },
+  { name: 'Yuki Tanaka', role: 'Senior Engineer, Vercel', content: 'Sehr clean, kein Overhead. Jede Komponente ist eigenständig und hat keine unnötigen Dependencies.' },
+  { name: 'Nina Hoffmann', role: 'Product Manager', content: 'Unsere Conversion Rate ist um 12% gestiegen seit wir die animierten Komponenten einsetzen.' },
+]
 
 const suggestions = [
   { id: 1, key: 'react', label: 'React Framework' },
@@ -103,6 +115,7 @@ const descriptions: Record<string, string> = {
   AuroraText: 'Gradient text with animated color shifting and subtle rotation.',
   AnimatedThemeToggler: 'Theme toggle with View Transitions API circle-clip animation.',
   AnimatedSearch: 'Search icon that morphs into an expanding search input field.',
+  VelocityScroll: 'Scroll-reactive testimonial rows that accelerate with page scroll velocity.',
   Footer: 'Animated footer with link sections and social icons.',
 }
 
@@ -764,6 +777,38 @@ export function App() {
           >
             <span>AnimatedSearch · spring physics · icon morph</span>
             <span>Esc to close · Enter to submit</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="VelocityScroll">
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderRadius: '0.75rem',
+            overflow: 'hidden',
+            background: 'var(--card)',
+          }}
+        >
+          <div style={{ padding: '2rem 0' }}>
+            <VelocityScroll baseVelocity={-30} rows={2} gap="1rem">
+              {testimonials.map((t) => (
+                <TestimonialCard key={t.name} testimonial={t} />
+              ))}
+            </VelocityScroll>
+          </div>
+          <div
+            style={{
+              borderTop: '1px solid var(--border)',
+              padding: '0.75rem 2rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.7rem',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
+            <span>Scroll the page to accelerate</span>
           </div>
         </div>
       </Section>
