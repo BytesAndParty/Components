@@ -8,6 +8,7 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion';
+import { cn } from '../showcase/src/lib/utils';
 
 /* -------------------------------------------------------------------------- */
 /*  VelocityRow – single scrolling row                                        */
@@ -17,10 +18,10 @@ interface VelocityRowProps {
   children: ReactNode;
   baseVelocity: number;
   className?: string;
-  style?: React.CSSProperties;
+  gap?: string;
 }
 
-function VelocityRow({ children, baseVelocity, className, style }: VelocityRowProps) {
+function VelocityRow({ children, baseVelocity, className, gap = '1rem' }: VelocityRowProps) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -34,7 +35,6 @@ function VelocityRow({ children, baseVelocity, className, style }: VelocityRowPr
   const innerRef = useRef<HTMLDivElement>(null);
   const directionRef = useRef(1);
 
-  // Calculate how many repetitions we need to fill the viewport seamlessly
   useEffect(() => {
     const measure = () => {
       if (!containerRef.current || !innerRef.current) return;
@@ -61,7 +61,6 @@ function VelocityRow({ children, baseVelocity, className, style }: VelocityRowPr
     moveBy += directionRef.current * moveBy * vf;
     baseX.set(baseX.get() + moveBy);
 
-    // Seamless wrap
     const innerW = innerRef.current.offsetWidth;
     if (baseX.get() < -innerW) baseX.set(baseX.get() + innerW);
     else if (baseX.get() > 0) baseX.set(baseX.get() - innerW);
@@ -70,22 +69,18 @@ function VelocityRow({ children, baseVelocity, className, style }: VelocityRowPr
   return (
     <div
       ref={containerRef}
-      className={className}
-      style={{ width: '100%', overflow: 'hidden', ...style }}
+      className={cn('w-full overflow-hidden', className)}
     >
       <motion.div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          whiteSpace: 'nowrap',
-          x: baseX,
-        }}
+        className="flex whitespace-nowrap"
+        style={{ gap, x: baseX }}
       >
         {Array.from({ length: reps }, (_, i) => (
           <div
             key={i}
             ref={i === 0 ? innerRef : undefined}
-            style={{ display: 'flex', gap: '1rem', flexShrink: 0 }}
+            className="flex flex-shrink-0"
+            style={{ gap }}
           >
             {children}
           </div>
@@ -105,7 +100,6 @@ interface VelocityScrollProps {
   rows?: 1 | 2 | 3;
   gap?: string;
   className?: string;
-  style?: React.CSSProperties;
 }
 
 export function VelocityScroll({
@@ -114,24 +108,13 @@ export function VelocityScroll({
   rows = 2,
   gap = '1rem',
   className,
-  style,
 }: VelocityScrollProps) {
   const velocities = [baseVelocity, -baseVelocity, baseVelocity];
 
   return (
-    <div
-      className={className}
-      style={{
-        position: 'relative',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        gap,
-        ...style,
-      }}
-    >
+    <div className={cn('relative w-full flex flex-col', className)} style={{ gap }}>
       {velocities.slice(0, rows).map((v, i) => (
-        <VelocityRow key={i} baseVelocity={v}>
+        <VelocityRow key={i} baseVelocity={v} gap={gap}>
           {children}
         </VelocityRow>
       ))}
@@ -152,88 +135,38 @@ export interface Testimonial {
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
-  style?: React.CSSProperties;
+  className?: string;
 }
 
-export function TestimonialCard({ testimonial, style }: TestimonialCardProps) {
+export function TestimonialCard({ testimonial, className }: TestimonialCardProps) {
   const { name, role, content, avatar } = testimonial;
 
   return (
-    <div
-      style={{
-        flexShrink: 0,
-        width: 320,
-        padding: '1.25rem',
-        borderRadius: '0.75rem',
-        border: '1px solid var(--border)',
-        background: 'var(--card)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.75rem',
-        whiteSpace: 'normal',
-        ...style,
-      }}
-    >
-      <p
-        style={{
-          fontSize: '0.875rem',
-          lineHeight: 1.6,
-          color: 'var(--text-muted)',
-          margin: 0,
-        }}
-      >
+    <div className={cn(
+      'flex-shrink-0 w-80 p-5 rounded-xl border border-border bg-card flex flex-col gap-3 whitespace-normal shadow-sm',
+      className
+    )}>
+      <p className="text-sm leading-relaxed text-muted-foreground m-0 italic">
         &ldquo;{content}&rdquo;
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+      <div className="flex items-center gap-2.5 mt-auto">
         {avatar ? (
           <img
             src={avatar}
             alt={name}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              objectFit: 'cover',
-            }}
+            className="w-8 h-8 rounded-full object-cover border border-border"
           />
         ) : (
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: 'var(--accent)',
-              opacity: 0.7,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: '#fff',
-            }}
-          >
+          <div className="w-8 h-8 rounded-full bg-accent/70 flex items-center justify-center text-[0.75rem] font-semibold text-white">
             {name.charAt(0).toUpperCase()}
           </div>
         )}
-        <div>
-          <p
-            style={{
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              color: 'var(--text)',
-              margin: 0,
-            }}
-          >
+        <div className="leading-tight">
+          <p className="text-[0.8125rem] font-semibold text-foreground m-0">
             {name}
           </p>
           {role && (
-            <p
-              style={{
-                fontSize: '0.7rem',
-                color: 'var(--text-muted)',
-                margin: 0,
-              }}
-            >
+            <p className="text-[0.7rem] text-muted-foreground m-0">
               {role}
             </p>
           )}

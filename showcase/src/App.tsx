@@ -83,11 +83,11 @@ const suggestions = [
   { id: 30, key: 'remix', label: 'Remix Framework' },
 ]
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: keyof typeof descriptions; children: React.ReactNode }) {
   return (
-    <section style={{ marginBottom: '4rem' }}>
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{title}</h2>
-      <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+    <section className="mb-16">
+      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <p className="text-muted-foreground text-sm mb-6">
         {descriptions[title] ?? ''}
       </p>
       {children}
@@ -95,7 +95,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-const descriptions: Record<string, string> = {
+const descriptions = {
   GlowCard: 'Card with a cursor-following glow border effect.',
   RotatingGlowCard: 'Card with an animated rotating glow border.',
   MagneticButton: 'Button that magnetically follows the cursor on hover.',
@@ -117,13 +117,13 @@ const descriptions: Record<string, string> = {
   AnimatedSearch: 'Search icon that morphs into an expanding search input field.',
   VelocityScroll: 'Scroll-reactive testimonial rows that accelerate with page scroll velocity.',
   Footer: 'Animated footer with link sections and social icons.',
-}
+} as const
 
 
 function ToastDemoButtons() {
   const { add } = useToast()
   return (
-    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+    <div className="flex flex-wrap gap-2">
       {([
         { label: 'Default', variant: 'default' as const, title: 'Action completed', description: 'Your changes have been saved.' },
         { label: 'Success', variant: 'success' as const, title: 'Upload successful', description: 'File has been uploaded.' },
@@ -133,18 +133,7 @@ function ToastDemoButtons() {
         <button
           key={t.variant}
           onClick={() => add({ title: t.title, description: t.description, variant: t.variant })}
-          style={{
-            padding: '0.4rem 0.85rem',
-            borderRadius: '0.375rem',
-            border: '1px solid var(--border)',
-            background: 'var(--card)',
-            color: 'var(--text)',
-            fontSize: '0.8125rem',
-            cursor: 'pointer',
-            transition: 'background 0.15s',
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)' }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--card)' }}
+          className="px-3.5 py-1.5 rounded-md border border-border bg-card text-foreground text-[0.8125rem] cursor-pointer transition-colors hover:bg-white/5 active:scale-95"
         >
           {t.label}
         </button>
@@ -164,47 +153,22 @@ function ImageUploadDemo() {
   } = useImageUpload()
 
   return (
-    <div
-      style={{
-        border: '1px solid var(--border)',
-        borderRadius: '0.75rem',
-        background: 'var(--card)',
-        overflow: 'hidden',
-        maxWidth: '24rem',
-      }}
-    >
+    <div className="border border-border rounded-xl bg-card overflow-hidden max-w-96 shadow-sm">
       {/* Upload area / Preview */}
       <div
         onClick={!previewUrl ? handleThumbnailClick : undefined}
-        style={{
-          height: '12rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: previewUrl ? 'default' : 'pointer',
-          position: 'relative',
-          background: previewUrl ? 'transparent' : 'rgba(255,255,255,0.02)',
-          transition: 'background 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          if (!previewUrl) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'
-        }}
-        onMouseLeave={(e) => {
-          if (!previewUrl) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.02)'
-        }}
+        className={`h-48 flex items-center justify-center relative transition-colors ${
+          previewUrl ? 'cursor-default' : 'cursor-pointer bg-white/[0.02] hover:bg-white/[0.04]'
+        }`}
       >
         {previewUrl ? (
           <img
             src={previewUrl}
             alt={fileName ?? 'Preview'}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+          <div className="text-center text-muted-foreground">
             <svg
               width="40"
               height="40"
@@ -214,14 +178,14 @@ function ImageUploadDemo() {
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              style={{ margin: '0 auto 0.75rem', opacity: 0.5 }}
+              className="mx-auto mb-3 opacity-50"
             >
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
               <circle cx="9" cy="9" r="2" />
               <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
             </svg>
-            <p style={{ fontSize: '0.8125rem' }}>Click to upload an image</p>
-            <p style={{ fontSize: '0.7rem', opacity: 0.5, marginTop: '0.25rem' }}>
+            <p className="text-[0.8125rem]">Click to upload an image</p>
+            <p className="text-[0.7rem] opacity-50 mt-1">
               JPG, PNG, GIF, WebP
             </p>
           </div>
@@ -232,68 +196,29 @@ function ImageUploadDemo() {
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          style={{ display: 'none' }}
+          className="hidden"
         />
       </div>
 
       {/* Info bar */}
-      <div
-        style={{
-          borderTop: '1px solid var(--border)',
-          padding: '0.75rem 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontSize: '0.8125rem',
-        }}
-      >
-        <span
-          style={{
-            color: fileName ? 'var(--text)' : 'var(--text-muted)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '70%',
-          }}
-        >
+      <div className="border-t border-border p-3 px-4 flex items-center justify-between text-[0.8125rem]">
+        <span className={`truncate max-w-[70%] ${fileName ? 'text-foreground' : 'text-muted-foreground'}`}>
           {fileName ?? 'No file selected'}
         </span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="flex gap-2">
           {previewUrl && (
             <button
               onClick={handleRemove}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border)',
-                borderRadius: '0.375rem',
-                color: '#ef4444',
-                padding: '0.25rem 0.6rem',
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.1)'
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'transparent'
-              }}
+              className="bg-transparent border border-border rounded-md text-red-500 px-2.5 py-1 text-xs cursor-pointer transition-colors hover:bg-red-500/10"
             >
               Remove
             </button>
           )}
           <button
             onClick={handleThumbnailClick}
-            style={{
-              background: previewUrl ? 'transparent' : 'var(--accent)',
-              border: previewUrl ? '1px solid var(--border)' : 'none',
-              borderRadius: '0.375rem',
-              color: previewUrl ? 'var(--text)' : '#fff',
-              padding: '0.25rem 0.6rem',
-              fontSize: '0.75rem',
-              cursor: 'pointer',
-              transition: 'opacity 0.15s',
-            }}
+            className={`rounded-md px-2.5 py-1 text-xs cursor-pointer transition-opacity active:scale-95 ${
+              previewUrl ? 'bg-transparent border border-border text-foreground' : 'bg-accent text-white'
+            }`}
           >
             {previewUrl ? 'Replace' : 'Browse'}
           </button>
@@ -305,20 +230,21 @@ function ImageUploadDemo() {
 
 export function App() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
+  const { add } = useToast()
 
   return (
     <ToastProvider placement="bottom-right">
-    <div style={{ maxWidth: '48rem', margin: '0 auto', padding: '3rem 1.5rem' }}>
-      <header style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <div className="max-w-3xl mx-auto py-12 px-6">
+      <header className="mb-16 flex justify-between items-start">
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.025em' }}>
+          <h1 className="text-3xl font-bold tracking-tight">
             Components
           </h1>
-          <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+          <p className="text-muted-foreground mt-2">
             Interactive showcase of the component collection.
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <div className="flex items-center gap-1">
           <AnimatedThemeToggler />
           <AccentSwitcher
             palettes={palettes}
@@ -328,9 +254,9 @@ export function App() {
       </header>
 
       <Section title="GlowCard">
-        <GlowCard style={{ padding: '2rem' }}>
-          <p style={{ fontWeight: 500 }}>Hover over this card</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+        <GlowCard className="p-8">
+          <p className="font-medium text-foreground">Hover over this card</p>
+          <p className="text-muted-foreground text-sm mt-2">
             The border glows and follows your cursor.
           </p>
         </GlowCard>
@@ -338,23 +264,23 @@ export function App() {
 
       <Section title="RotatingGlowCard">
         <RotatingGlowCard>
-          <p style={{ fontWeight: 500 }}>Rotating glow border</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+          <p className="font-medium text-foreground">Rotating glow border</p>
+          <p className="text-muted-foreground text-sm mt-2">
             A rectangle with a conic-gradient rotates behind the card. The content layer sits on top, so only the border glow is visible.
           </p>
         </RotatingGlowCard>
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <RotatingGlowCard duration={1.5} style={{ flex: 1 }}>
-            <p style={{ fontSize: '0.8125rem', fontWeight: 500 }}>Fast (1.5s)</p>
+        <div className="flex gap-4 mt-4">
+          <RotatingGlowCard duration={1.5} className="flex-1">
+            <p className="text-[0.8125rem] font-medium text-foreground">Fast (1.5s)</p>
           </RotatingGlowCard>
-          <RotatingGlowCard duration={6} style={{ flex: 1 }}>
-            <p style={{ fontSize: '0.8125rem', fontWeight: 500 }}>Slow (6s)</p>
+          <RotatingGlowCard duration={6} className="flex-1">
+            <p className="text-[0.8125rem] font-medium text-foreground">Slow (6s)</p>
           </RotatingGlowCard>
         </div>
       </Section>
 
       <Section title="MagneticButton">
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap gap-4">
           <MagneticButton>Default strength</MagneticButton>
           <MagneticButton strength={0.5} variant="outline">
             Stronger (0.5)
@@ -366,7 +292,7 @@ export function App() {
       </Section>
 
       <Section title="PricingInteraction">
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', marginBottom: '1rem' }}>
+        <p className="text-muted-foreground text-[0.8125rem] mb-4">
           Adapted as a shipping method selector for an online shop:
         </p>
         <PricingInteraction
@@ -388,31 +314,31 @@ export function App() {
       </Section>
 
       <Section title="TextScramble">
-        <div style={{ fontSize: '1.5rem', fontWeight: 600, fontFamily: 'monospace' }}>
+        <div className="text-2xl font-semibold font-mono text-foreground">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />
         </div>
       </Section>
 
       <Section title="ScrollRotate">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        <div className="flex items-center gap-8">
           <RotatingDecoration />
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+          <p className="text-muted-foreground text-sm">
             Scroll the page to see the decoration rotate.
           </p>
         </div>
       </Section>
 
       <Section title="AccentSwitcher">
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+        <p className="text-muted-foreground text-sm">
           The accent color picker in the top-right corner controls the global accent color for the entire page. Theme mode is handled by the AnimatedThemeToggler.
         </p>
       </Section>
 
       <Section title="Checkbox">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="flex flex-col gap-4">
           <Checkbox label="Accept terms and conditions" size="md" />
           <Checkbox label="Subscribe to newsletter" size="md" defaultChecked />
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div className="flex gap-6">
             <Checkbox label="Small" size="sm" />
             <Checkbox label="Medium" size="md" />
             <Checkbox label="Large" size="lg" />
@@ -422,10 +348,10 @@ export function App() {
       </Section>
 
       <Section title="Switch">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="flex flex-col gap-4">
           <Switch label="Dark mode" size="md" />
           <Switch label="Notifications" size="md" defaultChecked />
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div className="flex gap-6">
             <Switch label="Small" size="sm" />
             <Switch label="Medium" size="md" />
             <Switch label="Large" size="lg" />
@@ -439,51 +365,25 @@ export function App() {
       </Section>
 
       <Section title="HeartFavorite">
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="flex gap-4">
           {/* Card with heart */}
-          <div
-            style={{
-              flex: 1,
-              border: '1px solid var(--border)',
-              borderRadius: '0.75rem',
-              background: 'var(--card)',
-              overflow: 'hidden',
-            }}
-          >
+          <div className="flex-1 border border-border rounded-xl bg-card overflow-hidden shadow-sm">
             {/* Image placeholder */}
-            <div
-              style={{
-                height: '10rem',
-                background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1))',
-                position: 'relative',
-              }}
-            >
-              <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
+            <div className="h-40 bg-gradient-to-br from-indigo-500/15 to-violet-500/10 relative">
+              <div className="absolute top-3 right-3">
                 <HeartFavorite size={24} />
               </div>
             </div>
-            <div style={{ padding: '1rem' }}>
-              <p style={{ fontWeight: 600, fontSize: '0.9375rem' }}>Project Alpha</p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>
+            <div className="p-4">
+              <p className="font-semibold text-[0.9375rem] text-foreground">Project Alpha</p>
+              <p className="text-muted-foreground text-[0.8125rem] mt-1">
                 A sample card with the animated heart favorite button.
               </p>
             </div>
           </div>
 
           {/* Standalone sizes */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              border: '1px solid var(--border)',
-              borderRadius: '0.75rem',
-              background: 'var(--card)',
-              padding: '1.5rem',
-            }}
-          >
+          <div className="flex flex-col items-center justify-center gap-2 border border-border rounded-xl bg-card p-6 shadow-sm">
             <HeartFavorite size={20} />
             <HeartFavorite size={32} />
             <HeartFavorite size={44} defaultLiked />
@@ -492,15 +392,7 @@ export function App() {
       </Section>
 
       <Section title="AutocompleteCell">
-        <div
-          className="autocomplete-wrapper"
-          style={{
-            border: '1px solid var(--border)',
-            borderRadius: '0.5rem',
-            maxWidth: '24rem',
-            background: 'var(--card)',
-          }}
-        >
+        <div className="border border-border rounded-lg max-w-96 bg-card overflow-hidden shadow-sm">
           <AutocompleteCell
             value={autocompleteValue}
             onChange={setAutocompleteValue}
@@ -508,45 +400,22 @@ export function App() {
             placeholder="Search tools & frameworks..."
           />
         </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+        <p className="text-muted-foreground text-xs mt-2">
           Try: "re", "type", "vi", "dr", "node"
         </p>
       </Section>
 
       <Section title="TextRotate">
         {/* Wine-themed hero demo */}
-        <div
-          style={{
-            border: '1px solid var(--border)',
-            borderRadius: '0.75rem',
-            overflow: 'hidden',
-            background: 'var(--card)',
-          }}
-        >
+        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
           {/* Hero area */}
-          <div
-            style={{
-              padding: '3rem 2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: '1rem',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '0.7rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.2em',
-                color: 'var(--text-muted)',
-              }}
-            >
+          <div className="p-12 px-8 flex flex-col items-center text-center gap-4">
+            <p className="text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">
               Curated Selection
             </p>
 
-            <div style={{ fontSize: '2.25rem', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.025em' }}>
-              <span style={{ color: 'var(--text)' }}>Discover </span>
+            <div className="text-4xl font-bold leading-tight tracking-tight">
+              <span className="text-foreground">Discover </span>
               <TextRotate
                 texts={[
                   'Barolo',
@@ -564,29 +433,13 @@ export function App() {
               />
             </div>
 
-            <p
-              style={{
-                maxWidth: '28rem',
-                fontSize: '0.875rem',
-                color: 'var(--text-muted)',
-                lineHeight: 1.6,
-                marginTop: '0.5rem',
-              }}
-            >
+            <p className="max-w-md text-sm text-muted-foreground leading-relaxed mt-2">
               Handverlesene Weine aus den besten Lagen Italiens.
               Jeder Jahrgang erzählt eine Geschichte.
             </p>
 
             {/* Wine cards row */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '1rem',
-                marginTop: '1.5rem',
-                width: '100%',
-                justifyContent: 'center',
-              }}
-            >
+            <div className="flex gap-4 mt-6 w-full justify-center">
               {[
                 { name: 'Barolo Riserva', year: '2018', region: 'Piemonte' },
                 { name: 'Amarone Classico', year: '2019', region: 'Veneto' },
@@ -594,30 +447,13 @@ export function App() {
               ].map((wine) => (
                 <div
                   key={wine.name}
-                  style={{
-                    flex: 1,
-                    maxWidth: '10rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    border: '1px solid var(--border)',
-                    background: 'var(--bg)',
-                    textAlign: 'left',
-                  }}
+                  className="flex-1 max-w-40 p-4 rounded-lg border border-border bg-background text-left shadow-sm"
                 >
-                  <div
-                    style={{
-                      width: '2rem',
-                      height: '2rem',
-                      borderRadius: '50%',
-                      background: 'var(--accent)',
-                      marginBottom: '0.75rem',
-                      opacity: 0.7,
-                    }}
-                  />
-                  <p style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>
+                  <div className="w-8 h-8 rounded-full bg-accent mb-3 opacity-70" />
+                  <p className="text-[0.8125rem] font-semibold text-foreground">
                     {wine.name}
                   </p>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                  <p className="text-xs text-muted-foreground mt-1">
                     {wine.region} · {wine.year}
                   </p>
                 </div>
@@ -626,16 +462,7 @@ export function App() {
           </div>
 
           {/* Bottom bar */}
-          <div
-            style={{
-              borderTop: '1px solid var(--border)',
-              padding: '0.75rem 2rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.7rem',
-              color: 'var(--text-muted)',
-            }}
-          >
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
             <span>TextRotate · splitBy: characters · staggerFrom: first</span>
             <span>rotationInterval: 2500ms</span>
           </div>
@@ -643,7 +470,7 @@ export function App() {
       </Section>
 
       <Section title="Breadcrumb">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="flex flex-col gap-6">
           {/* Basic */}
           <Breadcrumb>
             <BreadcrumbList>
@@ -689,10 +516,10 @@ export function App() {
       </Section>
 
       <Section title="AuroraText">
-        <div style={{ fontSize: '2.5rem', fontWeight: 700, letterSpacing: '-0.025em' }}>
+        <div className="text-4xl font-bold tracking-tight text-foreground">
           <AuroraText speed={1.5}>Premium Quality</AuroraText>
         </div>
-        <div style={{ fontSize: '1.25rem', fontWeight: 600, marginTop: '0.75rem' }}>
+        <div className="text-xl font-semibold mt-3">
           <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.8}>
             Uses your accent color
           </AuroraText>
@@ -700,81 +527,47 @@ export function App() {
       </Section>
 
       <Section title="AnimatedWeatherIcons">
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(6, 1fr)',
-            gap: '1rem',
-            border: '1px solid var(--border)',
-            borderRadius: '0.75rem',
-            background: 'var(--card)',
-            padding: '1.5rem',
-          }}
-        >
+        <div className="grid grid-cols-6 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
           {([
             ['Sun', SunIcon], ['Moon', MoonIcon], ['Cloud', CloudIcon],
             ['Rain', RainIcon], ['Heavy Rain', HeavyRainIcon], ['Snow', SnowIcon],
             ['Thunder', ThunderIcon], ['Wind', WindIcon], ['Fog', FogIcon],
             ['Partly Cloudy', PartlyCloudyIcon], ['Sunrise', SunriseIcon], ['Rainbow', RainbowIcon],
           ] as const).map(([label, Icon]) => (
-            <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+            <div key={label} className="flex flex-col items-center gap-1.5">
               <Icon size={40} />
-              <span style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textAlign: 'center' }}>{label}</span>
+              <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="AnimatedThemeToggler">
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+        <p className="text-muted-foreground text-sm">
           The theme toggle in the top-right uses the View Transitions API for a smooth circle-clip animation expanding from the button.
         </p>
       </Section>
 
       <Section title="AnimatedSearch">
-        <div
-          style={{
-            border: '1px solid var(--border)',
-            borderRadius: '0.75rem',
-            overflow: 'hidden',
-            background: 'var(--card)',
-          }}
-        >
-          <div
-            style={{
-              padding: '3rem 2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Click the icon:</span>
+        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+          <div className="p-12 px-8 flex flex-col items-center gap-8">
+            <div className="flex items-center gap-6">
+              <span className="text-muted-foreground text-sm">Click the icon:</span>
               <AnimatedSearch
                 placeholder="Search components..."
-                onSearch={(v) => console.log('Search:', v)}
+                onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
               />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Wider variant:</span>
+            <div className="flex items-center gap-6">
+              <span className="text-muted-foreground text-sm">Wider variant:</span>
               <AnimatedSearch
                 placeholder="What are you looking for?"
                 expandedWidth={360}
-                onSearch={(v) => console.log('Search:', v)}
+                onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
               />
             </div>
           </div>
-          <div
-            style={{
-              borderTop: '1px solid var(--border)',
-              padding: '0.75rem 2rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.7rem',
-              color: 'var(--text-muted)',
-            }}
-          >
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
             <span>AnimatedSearch · spring physics · icon morph</span>
             <span>Esc to close · Enter to submit</span>
           </div>
@@ -782,31 +575,15 @@ export function App() {
       </Section>
 
       <Section title="VelocityScroll">
-        <div
-          style={{
-            border: '1px solid var(--border)',
-            borderRadius: '0.75rem',
-            overflow: 'hidden',
-            background: 'var(--card)',
-          }}
-        >
-          <div style={{ padding: '2rem 0' }}>
+        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+          <div className="py-8">
             <VelocityScroll baseVelocity={-30} rows={2} gap="1rem">
               {testimonials.map((t) => (
                 <TestimonialCard key={t.name} testimonial={t} />
               ))}
             </VelocityScroll>
           </div>
-          <div
-            style={{
-              borderTop: '1px solid var(--border)',
-              padding: '0.75rem 2rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.7rem',
-              color: 'var(--text-muted)',
-            }}
-          >
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
             <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
             <span>Scroll the page to accelerate</span>
           </div>
@@ -818,7 +595,7 @@ export function App() {
       </Section>
 
       {/* extra height so ScrollRotate has room to work */}
-      <div style={{ height: '50vh' }} />
+      <div className="h-[50vh]" />
     </div>
     </ToastProvider>
   )
