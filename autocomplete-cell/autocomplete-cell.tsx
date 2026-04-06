@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 export interface AutocompleteSuggestion {
   id: number | string
@@ -15,8 +16,12 @@ interface AutocompleteCellProps {
   onFocus?: () => void
   onBlur?: () => void
   placeholder?: string
+  className?: string
 }
 
+/**
+ * An input field with filtered autocomplete suggestions.
+ */
 export function AutocompleteCell({
   value,
   suggestions,
@@ -26,6 +31,7 @@ export function AutocompleteCell({
   onFocus,
   onBlur,
   placeholder = '–',
+  className,
 }: AutocompleteCellProps) {
   const [open, setOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(0)
@@ -109,7 +115,7 @@ export function AutocompleteCell({
   }
 
   return (
-    <div className="relative">
+    <div className={cn('relative w-full', className)}>
       <input
         ref={inputRef}
         type="text"
@@ -126,29 +132,30 @@ export function AutocompleteCell({
         }}
         onBlur={handleBlur}
         placeholder={placeholder}
-        className="w-full bg-transparent px-2 py-2 text-sm font-mono outline-none placeholder:text-slate-300 dark:placeholder:text-slate-600"
+        className="w-full bg-transparent px-3 py-2 text-sm font-mono outline-none placeholder:text-muted-foreground/50 focus:ring-1 focus:ring-accent rounded-md transition-shadow"
       />
       {open && filtered.length > 0 && (
-        <div className="absolute left-0 top-full mt-0.5 w-52 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+        <div className="absolute left-0 top-full mt-1.5 w-64 bg-card border border-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-border animate-in fade-in zoom-in-95 duration-100">
           {filtered.map((item, i) => (
             <button
               key={item.id}
               type="button"
-              className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 transition-colors ${
+              className={cn(
+                'w-full text-left px-3 py-2 text-sm flex items-center gap-3 transition-colors',
                 i === highlightIndex
-                  ? 'bg-slate-100 dark:bg-slate-700'
-                  : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
-              }`}
+                  ? 'bg-accent/10 text-accent'
+                  : 'hover:bg-white/5 text-foreground'
+              )}
               onMouseDown={(e) => {
                 e.preventDefault()
                 selectItem(item)
               }}
               onMouseEnter={() => setHighlightIndex(i)}
             >
-              <span className="font-mono text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
+              <span className="font-mono text-[10px] bg-white/5 text-muted-foreground px-1.5 py-0.5 rounded border border-border/50 shrink-0">
                 {item.key}
               </span>
-              <span className="text-slate-500 dark:text-slate-400 truncate">{item.label}</span>
+              <span className="truncate opacity-80">{item.label}</span>
             </button>
           ))}
         </div>
