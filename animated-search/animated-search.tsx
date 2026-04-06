@@ -67,7 +67,7 @@ export function AnimatedSearch({
         ...style,
       }}
       animate={{ width: isOpen ? expandedWidth : iconSize }}
-      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+      transition={{ type: 'spring', damping: 22, stiffness: 170 }}
     >
       {/* Background pill */}
       <motion.div
@@ -82,7 +82,7 @@ export function AnimatedSearch({
         animate={{
           borderColor: isOpen ? 'var(--accent)' : 'var(--border)',
         }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.3 }}
         onClick={!isOpen ? open : undefined}
       />
 
@@ -131,7 +131,7 @@ export function AnimatedSearch({
             initial={{ opacity: 0, width: 0 }}
             animate={{ opacity: 1, width: expandedWidth - iconSize - iconSize }}
             exit={{ opacity: 0, width: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            transition={{ type: 'spring', damping: 22, stiffness: 170 }}
             style={{
               position: 'relative',
               zIndex: 1,
@@ -171,7 +171,7 @@ export function AnimatedSearch({
             initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+            transition={{ type: 'spring', damping: 18, stiffness: 170 }}
             onClick={close}
             style={{
               position: 'relative',
