@@ -4,9 +4,9 @@ interface RotatingGlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   duration?: number;
   /** Border width in px. Default: 2 */
   borderWidth?: number;
-  /** Primary gradient color. Default: rgb(var(--theme-primary)) */
+  /** Primary gradient color. Default: var(--accent) */
   primaryColor?: string;
-  /** Secondary gradient color. Default: rgb(var(--theme-accent)) */
+  /** Secondary gradient color. Default: lighter variant of --accent via color-mix */
   accentColor?: string;
 }
 
@@ -27,8 +27,8 @@ export function RotatingGlowCard({
   className,
   duration = 3,
   borderWidth = 2,
-  primaryColor = 'rgb(var(--theme-primary))',
-  accentColor = 'rgb(var(--theme-accent))',
+  primaryColor = 'var(--accent)',
+  accentColor = 'color-mix(in oklch, var(--accent) 60%, white)',
   style,
   ...props
 }: RotatingGlowCardProps) {
