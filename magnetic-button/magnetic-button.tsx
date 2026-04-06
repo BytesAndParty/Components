@@ -6,6 +6,9 @@ interface MagneticButtonProps extends React.ComponentProps<typeof Button> {
   strength?: number;
 }
 
+/**
+ * A button component that magnetically follows the cursor on hover.
+ */
 export function MagneticButton({
   className,
   strength = 0.3,
@@ -39,13 +42,17 @@ export function MagneticButton({
   return (
     <Button
       ref={buttonRef}
-      className={cn('magnetic-btn', className)}
+      className={cn(
+        'relative before:absolute before:-inset-3 before:-z-10', // Expand hover area
+        'motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out',
+        'motion-reduce:transition-none',
+        className
+      )}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        ...(style as React.CSSProperties),
+        ...style,
         transform: `translate(${position.x}px, ${position.y}px)`,
-        transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         willChange: 'transform',
       }}
       {...props}
