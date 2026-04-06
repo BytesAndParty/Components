@@ -230,7 +230,6 @@ function ImageUploadDemo() {
 
 export function App() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
-  const { add } = useToast()
 
   return (
     <ToastProvider placement="bottom-right">
