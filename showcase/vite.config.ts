@@ -13,6 +13,7 @@ export default defineConfig({
       'lucide-react': path.resolve(__dirname, 'node_modules/lucide-react'),
       '@radix-ui/react-dropdown-menu': path.resolve(__dirname, 'node_modules/@radix-ui/react-dropdown-menu'),
       '@number-flow/react': path.resolve(__dirname, 'node_modules/@number-flow/react'),
+      'lottie-react': path.resolve(__dirname, 'node_modules/lottie-react'),
     },
   },
 })

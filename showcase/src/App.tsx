@@ -31,6 +31,10 @@ import { AuroraText } from '../../aurora-text/aurora-text'
 import { AnimatedThemeToggler } from '../../animated-theme-toggler/animated-theme-toggler'
 import { AnimatedSearch } from '../../animated-search/animated-search'
 import { VelocityScroll, TestimonialCard, type Testimonial } from '../../velocity-scroll/velocity-scroll'
+import {
+  HomeIcon, SearchToXIcon, MenuIcon, MenuAltIcon,
+  FilterIcon, NotificationIcon, VisibilityIcon,
+} from '../../animated-icons/animated-icons'
 
 const palettes = {
   indigo: { label: 'Indigo', oklch: 'oklch(0.585 0.233 277)' },
@@ -535,6 +539,25 @@ export function App() {
           ] as const).map(([label, Icon]) => (
             <div key={label} className="flex flex-col items-center gap-1.5">
               <Icon size={40} />
+              <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="AnimatedIcons">
+        <div className="grid grid-cols-7 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
+          {([
+            ['Home', HomeIcon],
+            ['Search/X', SearchToXIcon],
+            ['Menu', MenuIcon],
+            ['Menu Alt', MenuAltIcon],
+            ['Filter', FilterIcon],
+            ['Notification', NotificationIcon],
+            ['Visibility', VisibilityIcon],
+          ] as const).map(([label, Icon]) => (
+            <div key={label} className="flex flex-col items-center gap-2">
+              <Icon size={32} />
               <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
             </div>
           ))}
