@@ -1,29 +1,22 @@
 # AccentSwitcher
 
-An accent color picker dropdown built on shadcn DropdownMenu. Theme mode toggling is handled separately by [AnimatedThemeToggler](../animated-theme-toggler/).
+A dependency-free accent color picker dropdown with smooth oklch color interpolation. Theme mode toggling is handled separately by [AnimatedThemeToggler](../animated-theme-toggler/).
 
 ## Dependencies
 
 - `react`
 - `lucide-react` (Palette icon)
-- `@radix-ui/react-dropdown-menu`
-- shadcn `Button` + `DropdownMenu` components
-- `cn()` utility (clsx + tailwind-merge)
+
+No Tailwind, shadcn, or Radix UI required. The component uses inline styles only.
 
 ## Installation
 
-Copy `accent-switcher.tsx` into your `src/components/ui/` directory.
-
-Ensure you have the shadcn `Button` and `DropdownMenu` components installed:
-
-```bash
-npx shadcn@latest add button dropdown-menu
-```
+Copy `accent-switcher.tsx` into your project.
 
 ## Usage
 
 ```tsx
-import { AccentSwitcher } from '@/components/ui/accent-switcher';
+import { AccentSwitcher } from './accent-switcher';
 
 <AccentSwitcher
   palettes={{
@@ -50,6 +43,7 @@ import { AccentSwitcher } from '@/components/ui/accent-switcher';
 | `granularity` | `number` | `400` | Transition duration in ms for the color fade. 0 = instant |
 | `onAccentChange` | `(key) => void` | - | Callback on accent change |
 | `className` | `string` | - | Additional wrapper classes |
+| `style` | `CSSProperties` | - | Additional wrapper styles |
 
 ## CSS Requirements
 
@@ -57,16 +51,16 @@ Define accent color tokens per palette using `data-accent` attribute selectors:
 
 ```css
 :root {
-  --accent-primary: oklch(0.555 0.146 49); /* amber default */
+  --accent: oklch(0.555 0.146 49); /* amber default */
 }
-html[data-accent='emerald'] {
-  --accent-primary: oklch(0.511 0.086 186.4);
+[data-accent='emerald'] {
+  --accent: oklch(0.511 0.086 186.4);
 }
 ```
 
 ## Color Transition
 
-Accent changes are smoothly interpolated in oklch color space via `requestAnimationFrame`. The component parses the oklch values from each palette, lerps L/C/H (using shortest hue path), and sets `--accent` via inline `style.setProperty` each frame. At the end of the transition the inline override is removed so the CSS `[data-accent]` rule takes over.
+Accent changes are smoothly interpolated in oklch color space via `requestAnimationFrame`. A persistent `<style>` element is injected into `<head>` and updated each frame with `:root { --accent: oklch(...) !important; }`. This overrides the `[data-accent]` CSS rules during the transition. At the end, the override is cleared and the CSS rule takes over.
 
 The `granularity` prop controls the transition duration. Set to `0` for instant switching.
 
@@ -77,5 +71,6 @@ CSS-only approaches were tried and none produced a visible transition:
 1. **`@property` + CSS `transition`** — `@property` registered `--accent` as `<color>`, but attribute-selector value switches can't be interpolated by CSS.
 2. **`@property` + inline `style.setProperty`** — Same registration, inline value change. Still no transition.
 3. **Web Animations API + `@property`** — `element.animate({ '--accent': [from, to] })`. Also didn't work.
+4. **Inline `style.setProperty` on `<html>`** — Set `--accent` via `document.documentElement.style.setProperty()` each frame. The value was set but had no visible effect on elements using `var(--accent)`.
 
-All three failed due to browser limitations with oklch values in custom property animations. The current rAF-based JS approach bypasses this entirely.
+The current approach (dynamic `<style>` element with `!important`) uses the same CSS cascade mechanism that the `[data-accent]` attribute selectors already prove works.

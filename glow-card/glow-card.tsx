@@ -1,8 +1,6 @@
 import { useRef, useState, useCallback, useMemo } from 'react';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
-interface GlowCardProps extends React.ComponentProps<typeof Card> {
+interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   glowRadius?: number;
   glowColor?: string;
@@ -12,14 +10,14 @@ interface GlowCardProps extends React.ComponentProps<typeof Card> {
 /**
  * A card component with a cursor-following glow border effect.
  */
-export function GlowCard({ 
-  children, 
-  className, 
-  glowRadius = 250, 
-  glowColor = 'var(--accent)', 
+export function GlowCard({
+  children,
+  className,
+  glowRadius = 250,
+  glowColor = 'var(--accent)',
   accentColor = 'var(--accent)',
-  style, 
-  ...props 
+  style,
+  ...props
 }: GlowCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -27,16 +25,9 @@ export function GlowCard({
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setMousePosition({ x, y });
+    setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }, []);
-
-  const handleMouseEnter = useCallback(() => setIsHovering(true), []);
-  const handleMouseLeave = useCallback(() => setIsHovering(false), []);
 
   const glowStyles = useMemo(() => ({
     '--glow-x': `${mousePosition.x}px`,
@@ -48,36 +39,45 @@ export function GlowCard({
   } as React.CSSProperties), [mousePosition.x, mousePosition.y, isHovering, glowRadius, glowColor, accentColor]);
 
   return (
-    <Card
+    <div
       ref={cardRef}
-      className={cn(
-        'relative border border-white/10 transition-colors duration-300',
-        className
-      )}
+      className={className}
       onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
       style={{
+        position: 'relative',
+        borderRadius: '0.75rem',
+        border: '1px solid var(--border)',
+        background: 'var(--card)',
+        transition: 'border-color 0.3s',
         ...style,
         ...glowStyles,
       } as React.CSSProperties}
       {...props}
     >
-      {/* Glow Layer (The border glow) */}
-      <div 
-        className="pointer-events-none absolute -inset-px rounded-[inherit] p-[1px] z-10 opacity-[var(--glow-opacity,0)] transition-opacity duration-500"
+      {/* Glow layer */}
+      <div
         style={{
+          pointerEvents: 'none',
+          position: 'absolute',
+          inset: '-1px',
+          borderRadius: 'inherit',
+          padding: '1px',
+          zIndex: 10,
+          opacity: 'var(--glow-opacity, 0)' as unknown as number,
+          transition: 'opacity 0.5s',
           background: `radial-gradient(var(--glow-size, 250px) circle at var(--glow-x, 50%) var(--glow-y, 50%), var(--glow-color, #fff) 0%, var(--accent-color, #fff) 40%, transparent 70%)`,
           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           WebkitMaskComposite: 'xor',
           mask: 'linear-gradient(#fff 0 0) content-box exclude, linear-gradient(#fff 0 0)',
         }}
       />
-      
-      {/* Content Layer */}
-      <div className="relative z-[1]">
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
         {children}
       </div>
-    </Card>
+    </div>
   );
 }

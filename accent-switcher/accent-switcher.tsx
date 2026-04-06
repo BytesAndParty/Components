@@ -1,12 +1,10 @@
 /**
  * AccentSwitcher - Accent Color Picker
  *
- * A shadcn-style component providing an accent color picker dropdown
- * with smooth oklch color interpolation between accents.
+ * A dependency-free accent color picker dropdown with smooth oklch interpolation.
  * Theme mode toggling is handled separately by AnimatedThemeToggler.
  *
- * Dependencies: lucide-react, @radix-ui/react-dropdown-menu,
- *               shadcn Button + DropdownMenu, cn() utility
+ * Dependencies: lucide-react (Palette icon only)
  *
  * Usage:
  *   <AccentSwitcher
@@ -22,16 +20,6 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Palette } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
 
 /* -------------------------------------------------------------------------- */
 /*  oklch interpolation helpers                                               */
@@ -89,6 +77,7 @@ export interface AccentSwitcherProps {
 	/** Callback when accent palette changes. */
 	onAccentChange?: (key: string) => void;
 	className?: string;
+	style?: React.CSSProperties;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -104,16 +93,20 @@ export function AccentSwitcher({
 	granularity = 400,
 	onAccentChange,
 	className,
+	style,
 }: AccentSwitcherProps) {
 	const paletteKeys = Object.keys(palettes);
 	const fallback = defaultPalette && palettes[defaultPalette] ? defaultPalette : paletteKeys[0];
 
 	const [accent, setAccent] = useState(fallback);
+	const [open, setOpen] = useState(false);
 	const currentAccent = activePalette && palettes[activePalette] ? activePalette : accent;
 
 	const animRef = useRef(0);
 	const currentOklchRef = useRef<Oklch | null>(null);
 	const styleRef = useRef<HTMLStyleElement | null>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
+	const menuRef = useRef<HTMLDivElement>(null);
 
 	// Persistent <style> element for transition overrides + seed initial oklch
 	useEffect(() => {
@@ -131,6 +124,19 @@ export function AccentSwitcher({
 		};
 	}, []);
 
+	// Close on outside click
+	useEffect(() => {
+		if (!open) return;
+		const handleClick = (e: MouseEvent) => {
+			const target = e.target as Node;
+			if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) {
+				setOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClick);
+		return () => document.removeEventListener('mousedown', handleClick);
+	}, [open]);
+
 	const selectAccent = useCallback(
 		(key: string) => {
 			const target = palettes[key];
@@ -140,6 +146,7 @@ export function AccentSwitcher({
 			const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
 
 			setAccent(key);
+			setOpen(false);
 			onAccentChange?.(key);
 
 			// Instant switch if no interpolation possible or granularity is 0
@@ -152,8 +159,6 @@ export function AccentSwitcher({
 
 			if (animRef.current) cancelAnimationFrame(animRef.current);
 
-			// Write the FROM value into our <style> tag BEFORE switching the attribute.
-			// This uses the same CSS mechanism the browser already applies successfully.
 			const writeAccent = (value: string) => {
 				if (styleRef.current) {
 					styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
@@ -173,7 +178,6 @@ export function AccentSwitcher({
 				if (t < 1) {
 					animRef.current = requestAnimationFrame(step);
 				} else {
-					// Clear override, CSS [data-accent] rule takes over
 					if (styleRef.current) styleRef.current.textContent = '';
 					currentOklchRef.current = toOklch;
 					animRef.current = 0;
@@ -186,28 +190,134 @@ export function AccentSwitcher({
 	);
 
 	return (
-		<div className={cn('flex items-center gap-1', className)}>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" size="icon" aria-label={dropdownLabel}>
-						<Palette className="h-[1.125rem] w-[1.125rem]" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="w-44">
-					<DropdownMenuLabel>{dropdownLabel}</DropdownMenuLabel>
-					<DropdownMenuSeparator />
+		<div
+			className={className}
+			style={{
+				position: 'relative',
+				display: 'inline-flex',
+				alignItems: 'center',
+				...style,
+			}}
+		>
+			{/* Trigger */}
+			<button
+				ref={triggerRef}
+				type="button"
+				onClick={() => setOpen((v) => !v)}
+				aria-label={dropdownLabel}
+				aria-expanded={open}
+				style={{
+					display: 'inline-flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					width: '2.25rem',
+					height: '2.25rem',
+					borderRadius: '0.375rem',
+					border: 'none',
+					background: 'transparent',
+					color: 'inherit',
+					cursor: 'pointer',
+					transition: 'background 0.15s',
+				}}
+				onMouseEnter={(e) => {
+					(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+				}}
+				onMouseLeave={(e) => {
+					(e.currentTarget as HTMLElement).style.background = 'transparent';
+				}}
+			>
+				<Palette style={{ width: '1.125rem', height: '1.125rem' }} />
+			</button>
+
+			{/* Dropdown */}
+			{open && (
+				<div
+					ref={menuRef}
+					style={{
+						position: 'absolute',
+						top: '100%',
+						right: 0,
+						marginTop: '0.25rem',
+						zIndex: 50,
+						minWidth: '11rem',
+						borderRadius: '0.5rem',
+						border: '1px solid var(--border)',
+						background: 'var(--card)',
+						padding: '0.25rem',
+						boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+					}}
+				>
+					{/* Header */}
+					<div
+						style={{
+							padding: '0.375rem 0.5rem',
+							fontSize: '0.8125rem',
+							fontWeight: 600,
+							opacity: 0.6,
+						}}
+					>
+						{dropdownLabel}
+					</div>
+
+					{/* Separator */}
+					<div
+						style={{
+							height: '1px',
+							margin: '0.25rem -0.25rem',
+							background: 'rgba(255,255,255,0.08)',
+						}}
+					/>
+
+					{/* Items */}
 					{paletteKeys.map((key) => {
 						const { label, oklch } = palettes[key];
 						return (
-							<DropdownMenuItem key={key} onClick={() => selectAccent(key)} className="flex cursor-pointer items-center gap-3">
-								<span className="h-3.5 w-3.5 shrink-0 rounded-full ring-1 ring-border" style={{ backgroundColor: oklch }} />
+							<button
+								key={key}
+								type="button"
+								onClick={() => selectAccent(key)}
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: '0.75rem',
+									width: '100%',
+									padding: '0.375rem 0.5rem',
+									borderRadius: '0.25rem',
+									border: 'none',
+									background: 'transparent',
+									color: 'inherit',
+									fontSize: '0.875rem',
+									cursor: 'pointer',
+									transition: 'background 0.1s',
+								}}
+								onMouseEnter={(e) => {
+									(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+								}}
+								onMouseLeave={(e) => {
+									(e.currentTarget as HTMLElement).style.background = 'transparent';
+								}}
+							>
+								<span
+									style={{
+										width: '0.875rem',
+										height: '0.875rem',
+										flexShrink: 0,
+										borderRadius: '9999px',
+										boxShadow: '0 0 0 1px var(--border)',
+										backgroundColor: oklch,
+									}}
+								/>
 								<span>{label}</span>
-								{currentAccent === key && <span className="ml-auto text-xs opacity-70">&#10003;</span>}
-							</DropdownMenuItem>
+								{currentAccent === key && (
+									<span style={{ marginLeft: 'auto', fontSize: '0.75rem', opacity: 0.7 }}>
+										&#10003;
+									</span>
+								)}
+							</button>
 						);
 					})}
-				</DropdownMenuContent>
-			</DropdownMenu>
+				</div>
+			)}
 		</div>
 	);
 }

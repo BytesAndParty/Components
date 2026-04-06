@@ -252,6 +252,18 @@ export function App() {
         </div>
       </header>
 
+      <Section title="MagneticButton">
+        <div className="flex flex-wrap gap-4">
+          <MagneticButton>Default strength</MagneticButton>
+          <MagneticButton strength={0.5} variant="outline">
+            Stronger (0.5)
+          </MagneticButton>
+          <MagneticButton strength={0.8} variant="ghost">
+            Very strong (0.8)
+          </MagneticButton>
+        </div>
+      </Section>
+
       <Section title="GlowCard">
         <GlowCard className="p-8">
           <p className="font-medium text-foreground">Hover over this card</p>
@@ -275,18 +287,6 @@ export function App() {
           <RotatingGlowCard duration={6} className="flex-1">
             <p className="text-[0.8125rem] font-medium text-foreground">Slow (6s)</p>
           </RotatingGlowCard>
-        </div>
-      </Section>
-
-      <Section title="MagneticButton">
-        <div className="flex flex-wrap gap-4">
-          <MagneticButton>Default strength</MagneticButton>
-          <MagneticButton strength={0.5} variant="outline">
-            Stronger (0.5)
-          </MagneticButton>
-          <MagneticButton strength={0.8} variant="ghost">
-            Very strong (0.8)
-          </MagneticButton>
         </div>
       </Section>
 

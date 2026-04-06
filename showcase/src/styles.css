@@ -18,13 +18,7 @@
     100% { background-position: 0% 50%;   transform: rotate(-5deg) scale(0.9); }
   }
 
-  @keyframes glow-spin {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-
   --animate-aurora: aurora 10s ease infinite;
-  --animate-glow-spin: glow-spin var(--glow-duration, 3s) linear infinite;
 }
 
 /* Base Styles */
@@ -59,6 +53,19 @@
 @layer base {
   body {
     @apply bg-bg text-foreground font-sans antialiased leading-relaxed;
+  }
+}
+
+/* Rotating glow card animation (used via inline animation property) */
+@keyframes glow-spin {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotating-glow-spinner,
+  .rotating-glow-blur {
+    animation: none;
   }
 }
 

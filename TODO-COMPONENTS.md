@@ -1,15 +1,3 @@
-# Component Backlog
-
-## Velocity Scroll (Testimonials)
-
-- **Status**: Built (`velocity-scroll/velocity-scroll.tsx`), in Showcase
-- **Reference**: MagicUI `scroll-based-velocity`
-- **Install**: `bunx --bun shadcn@latest add @magicui/scroll-based-velocity`
-  (not used, built standalone)
-- **Notes**: Uses `useScroll` + `useVelocity` + `useSpring` from framer-motion.
-  Two rows of testimonial cards scrolling in opposite directions, speed reacts
-  to page scroll velocity.
-
 ## Assisted Password Confirmation
 
 - **Status**: Pending
