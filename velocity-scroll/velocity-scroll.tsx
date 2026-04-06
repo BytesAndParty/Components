@@ -143,7 +143,7 @@ export function TestimonialCard({ testimonial, className }: TestimonialCardProps
 
   return (
     <div className={cn(
-      'flex-shrink-0 w-80 p-5 rounded-xl border border-border bg-card flex flex-col gap-3 whitespace-normal shadow-sm',
+      'flex-shrink-0 w-52 p-4 rounded-xl border border-border bg-card flex flex-col gap-2.5 whitespace-normal shadow-sm',
       className
     )}>
       <p className="text-sm leading-relaxed text-muted-foreground m-0 italic">

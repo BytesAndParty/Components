@@ -40,14 +40,14 @@ const palettes = {
 }
 
 const testimonials: Testimonial[] = [
-  { name: 'Anna Müller', role: 'Frontend Lead, Acme Corp', content: 'Die Komponenten sind extrem gut durchdacht. Die Animationen fühlen sich nativ an und die API ist intuitiv.' },
-  { name: 'Marco Rossi', role: 'Design Engineer, Stripe', content: 'Endlich eine Component Library die Framer Motion richtig nutzt. Die Velocity Scroll Testimonials sind ein Highlight.' },
-  { name: 'Sarah Chen', role: 'CTO, StartupXYZ', content: 'Wir haben unsere gesamte Landing Page damit gebaut. Die Performance ist hervorragend, auch auf Mobile.' },
-  { name: 'Lukas Weber', role: 'Fullstack Dev', content: 'Der TextRotate allein hat uns Stunden gespart. Kein Layout-Shift mehr, einfach plug & play.' },
-  { name: 'Elena Petrova', role: 'UX Designer, Figma', content: 'Als Designerin liebe ich die Detailverliebtheit. Jede Micro-Interaction ist perfekt getimed.' },
-  { name: 'James O\'Brien', role: 'Indie Hacker', content: 'Die AccentSwitcher Farbübergänge in oklch sind butterweich. Sowas findet man sonst nirgends.' },
-  { name: 'Yuki Tanaka', role: 'Senior Engineer, Vercel', content: 'Sehr clean, kein Overhead. Jede Komponente ist eigenständig und hat keine unnötigen Dependencies.' },
-  { name: 'Nina Hoffmann', role: 'Product Manager', content: 'Unsere Conversion Rate ist um 12% gestiegen seit wir die animierten Komponenten einsetzen.' },
+  { name: 'Anna Müller', role: 'Frontend Lead', content: 'Butterweich' },
+  { name: 'Marco Rossi', role: 'Design Engineer', content: 'Game-Changer' },
+  { name: 'Sarah Chen', role: 'CTO', content: 'Performant' },
+  { name: 'Lukas Weber', role: 'Fullstack Dev', content: 'Plug & Play' },
+  { name: 'Elena Petrova', role: 'UX Designer', content: 'Detailverliebt' },
+  { name: 'James O\'Brien', role: 'Indie Hacker', content: 'Einzigartig' },
+  { name: 'Yuki Tanaka', role: 'Senior Engineer', content: 'Zero Overhead' },
+  { name: 'Nina Hoffmann', role: 'Product Manager', content: '+12% Conversion' },
 ]
 
 const suggestions = [
