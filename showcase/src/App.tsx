@@ -1,16 +1,17 @@
 import { useState } from 'react'
-import { GlowCard } from '../../glow-card/glow-card'
-import { RotatingGlowCard } from '../../glow-card/rotating-glow-card'
-import { MagneticButton } from '../../magnetic-button/magnetic-button'
-import { TextScramble } from '../../text-scramble/text-scramble'
-import { ScrollRotate, RotatingDecoration } from '../../scroll-rotate/scroll-rotate'
-import { AccentSwitcher } from '../../accent-switcher/accent-switcher'
-import { AutocompleteCell } from '../../autocomplete-cell/autocomplete-cell'
-import { HeartFavorite } from '../../heart-favorite/heart-favorite'
-import { Footer } from '../../footer-section/footer-section'
-import { TextRotate } from '../../text-rotate/text-rotate'
-import { useImageUpload } from '../../use-image-upload/use-image-upload'
-import { PricingInteraction } from '../../pricing-interaction/pricing-interaction'
+import { GlowCard } from '../../components/glow-card/glow-card'
+import { RotatingGlowCard } from '../../components/glow-card/rotating-glow-card'
+import { MagneticButton } from '../../components/magnetic-button/magnetic-button'
+import { TextScramble } from '../../components/text-scramble/text-scramble'
+import { ScrollRotate, RotatingDecoration } from '../../components/scroll-rotate/scroll-rotate'
+import { AccentSwitcher } from '../../components/accent-switcher/accent-switcher'
+import { AccentSwitcherBefore } from '../../components/accent-switcher/_accent-switcher-BEFORE'
+import { AutocompleteCell } from '../../components/autocomplete-cell/autocomplete-cell'
+import { HeartFavorite } from '../../components/heart-favorite/heart-favorite'
+import { Footer } from '../../components/footer-section/footer-section'
+import { TextRotate } from '../../components/text-rotate/text-rotate'
+import { useImageUpload } from '../../components/use-image-upload/use-image-upload'
+import { PricingInteraction } from '../../components/pricing-interaction/pricing-interaction'
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -19,24 +20,25 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
-} from '../../breadcrumb/breadcrumb'
-import { Checkbox } from '../../checkbox/checkbox'
-import { Switch } from '../../switch/switch'
-import { ToastProvider, useToast } from '../../toast/toast'
+} from '../../components/breadcrumb/breadcrumb'
+import { Checkbox } from '../../components/checkbox/checkbox'
+import { Switch } from '../../components/switch/switch'
+import { ToastProvider, useToast } from '../../components/toast/toast'
 import {
   SunIcon, MoonIcon, CloudIcon, RainIcon, HeavyRainIcon, SnowIcon,
   ThunderIcon, WindIcon, FogIcon, PartlyCloudyIcon, SunriseIcon, RainbowIcon,
-} from '../../animated-weather-icons/animated-weather-icons'
-import { AuroraText } from '../../aurora-text/aurora-text'
-import { AnimatedThemeToggler } from '../../animated-theme-toggler/animated-theme-toggler'
-import { AnimatedSearch } from '../../animated-search/animated-search'
-import { VelocityScroll, TestimonialCard, type Testimonial } from '../../velocity-scroll/velocity-scroll'
+} from '../../components/animated-weather-icons/animated-weather-icons'
+import { AuroraText } from '../../components/aurora-text/aurora-text'
+import { AnimatedThemeToggler } from '../../components/animated-theme-toggler/animated-theme-toggler'
+import { AnimatedSearch } from '../../components/animated-search/animated-search'
+import { VelocityScroll, TestimonialCard, type Testimonial } from '../../components/velocity-scroll/velocity-scroll'
 import {
   HomeIcon, SearchToXIcon, MenuIcon, MenuAltIcon,
   FilterIcon, NotificationIcon, VisibilityIcon,
   CheckmarkIcon, CopyIcon, LoadingIcon, MaximizeMinimizeIcon,
   ShareIcon, TrashIcon,
-} from '../../animated-icons/animated-icons'
+  SunIconCss, MoonIconCss, StarIconCss, WineIconCss,
+} from '../../components/animated-icons/animated-icons'
 
 const palettes = {
   indigo: { label: 'Indigo', oklch: 'oklch(0.585 0.233 277)' },
@@ -334,13 +336,27 @@ export function App() {
       </Section>
 
       <Section title="AccentSwitcher">
-        <div className="flex items-center gap-4">
-          <AccentSwitcher
-            palettes={palettes}
-            defaultPalette="indigo"
-          />
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[0.625rem] uppercase tracking-wider text-muted-foreground">Before</span>
+            <div className="border border-border rounded-lg p-4 bg-card">
+              <AccentSwitcherBefore
+                palettes={palettes}
+                defaultPalette="indigo"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[0.625rem] uppercase tracking-wider text-muted-foreground">After</span>
+            <div className="border border-border rounded-lg p-4 bg-card">
+              <AccentSwitcher
+                palettes={palettes}
+                defaultPalette="indigo"
+              />
+            </div>
+          </div>
           <p className="text-muted-foreground text-sm">
-            The accent color picker in the top-right corner controls the global accent color for the entire page. Theme mode is handled by the AnimatedThemeToggler.
+            Hover over the icons to see the difference. The new icon shows the 4 accent colors on hover.
           </p>
         </div>
       </Section>
@@ -601,6 +617,23 @@ export function App() {
               ] as const).map(([label, Icon]) => (
                 <div key={label} className="flex flex-col items-center gap-2">
                   <Icon size={32} trigger="click" />
+                  <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[0.7rem] uppercase tracking-wider text-muted-foreground mb-4">CSS-Animated SVG Icons</p>
+            <div className="grid grid-cols-7 gap-y-8 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
+              {([
+                ['Sun', SunIconCss],
+                ['Moon', MoonIconCss],
+                ['Star', StarIconCss],
+                ['Wine', WineIconCss],
+              ] as [string, typeof SunIconCss][]).map(([label, Icon]) => (
+                <div key={label} className="flex flex-col items-center gap-2">
+                  <Icon size={32} />
                   <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
                 </div>
               ))}

@@ -19,7 +19,6 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Palette } from 'lucide-react';
 
 /* -------------------------------------------------------------------------- */
 /*  oklch interpolation helpers                                               */
@@ -229,6 +228,7 @@ export function AccentSwitcher({
 			<button
 				ref={triggerRef}
 				type="button"
+				className="accent-trigger"
 				onClick={() => setOpen((v) => !v)}
 				aria-label={dropdownLabel}
 				aria-expanded={open}
@@ -252,7 +252,30 @@ export function AccentSwitcher({
 					(e.currentTarget as HTMLElement).style.background = 'transparent';
 				}}
 			>
-				<Palette style={{ width: '1.125rem', height: '1.125rem' }} />
+				<svg
+					className="accent-palette-icon"
+					width="18" height="18"
+					viewBox="0 0 24 24" fill="none" stroke="currentColor"
+					strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+				>
+					<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+					<circle className="accent-dot-1" cx="8.5" cy="7.5" r="1" fill="currentColor" />
+					<circle className="accent-dot-2" cx="13.5" cy="6.5" r="1" fill="currentColor" />
+					<circle className="accent-dot-3" cx="17.5" cy="10.5" r="1" fill="currentColor" />
+					<circle className="accent-dot-4" cx="6.5" cy="12.5" r="1" fill="currentColor" />
+				</svg>
+				<style>{`
+					.accent-palette-icon .accent-dot-1,
+					.accent-palette-icon .accent-dot-2,
+					.accent-palette-icon .accent-dot-3,
+					.accent-palette-icon .accent-dot-4 {
+						transition: fill 0.3s ease;
+					}
+					.accent-trigger:hover .accent-dot-1 { fill: oklch(0.585 0.233 277) !important; }
+					.accent-trigger:hover .accent-dot-2 { fill: oklch(0.555 0.146 49) !important; }
+					.accent-trigger:hover .accent-dot-3 { fill: oklch(0.511 0.086 186.4) !important; }
+					.accent-trigger:hover .accent-dot-4 { fill: oklch(0.585 0.22 5) !important; }
+				`}</style>
 			</button>
 
 			{/* Dropdown */}

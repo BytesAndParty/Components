@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
+
+const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
 
 export interface AutocompleteSuggestion {
   id: number | string

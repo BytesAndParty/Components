@@ -1,19 +1,3 @@
-## Animated Icons (Lottie)
-
-- **Status**: Completed [x]
-- **Source**: Lottie / useAnimations
-- **Implemented**: Home, SearchToX, Menu, Filter, Notification, Visibility,
-  Checkmark, Copy, Loading, Maximize/Minimize, Share, Trash.
-- **Features**:
-    - Support for `hover` and `click` triggers via prop.
-    - Click trigger plays forward then auto-reverses after 1s.
-    - `LoadingIcon` supports looping and autoplay.
-- **Usage**:
-    ```tsx
-    <CopyIcon trigger="click" size={24} />
-    <LoadingIcon size={32} />
-    ```
-
 ## Assisted Password Confirmation
 
 - **Status**: Pending
@@ -117,11 +101,6 @@
 - **Notes**: Zwei Varianten recherchieren:
     1. Fullscreen confetti on click (ganzer Screen)
     2. Kleiner/subtiler Confetti-Effekt nur am Button selbst (bevorzugt)
-
-ich möcchte außerdem ggf folgende library verwenden: https://useanimations.com/
-
-machen wir mal mit einer übersicht über alle animirten icons, die wir von hier
-verwenden könnten so wie bei den regen symbolen
 
 das hier könnten wir unterhalb von einer bilder gallery verwenden, wleche ein
 produkt zeigt import BounceCards from './BounceCards'
@@ -1292,3 +1271,81 @@ https://getuikit.com/assets/uikit/tests/navbar.html ich hab leider keinen code
 odgl gefundne vl findest du was entsprechendes bitte gib beschied, wenn ich dir
 weitere infos geben soll bedenke, dass ich immer auch den inhalt oder bilder von
 der seite speichern kann
+
+das möchte ich einfach für mic speihcern, weil ich es so cool finde
+https://raw.githubusercontent.com/saadeghi/daisyui/refs/heads/master/packages/daisyui/src/components/hover3d.css
+
+<div className="hover-3d">
+  {/* content */}
+  <figure className="w-60 rounded-2xl">
+    <img src="https://img.daisyui.com/images/stock/card-1.webp?x" alt="Tailwind CSS 3D card" />
+  </figure>
+  {/* 8 empty divs needed for the 3D effect */}
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<div className="hover-3d">
+  {/* content */}
+  <figure className="w-60 rounded-2xl">
+    <img src="https://img.daisyui.com/images/stock/card-2.webp?x" alt="Tailwind CSS 3D hover" />
+  </figure>
+  {/* 8 empty divs needed for the 3D effect */}
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<div className="hover-3d">
+  {/* content */}
+  <figure className="w-60 rounded-2xl">
+    <img src="https://img.daisyui.com/images/stock/card-3.webp?x" alt="Tailwind CSS 3D hover" />
+  </figure>
+  {/* 8 empty divs needed for the 3D effect */}
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+das brauchen wir noch bei den einzelnen items im shop:
+https://raw.githubusercontent.com/saadeghi/daisyui/refs/heads/master/packages/daisyui/src/components/rating.css
+
+<div className="rating">
+  <input type="radio" name="rating-1" className="mask mask-star" aria-label="1 star" />
+  <input type="radio" name="rating-1" className="mask mask-star" aria-label="2 star" defaultChecked />
+  <input type="radio" name="rating-1" className="mask mask-star" aria-label="3 star" />
+  <input type="radio" name="rating-1" className="mask mask-star" aria-label="4 star" />
+  <input type="radio" name="rating-1" className="mask mask-star" aria-label="5 star" />
+</div>
+
+ich könnte mir vorstellen, dass wir auch coole verspielte wege finden, um masks
+kreativ zu verwenden für einen premium looking wein shop:
+https://daisyui.com/components/mask/
+
+https://raw.githubusercontent.com/saadeghi/daisyui/refs/heads/master/packages/daisyui/src/components/mask.css
+
+so ein banner brauchen wir im onlineshop, sollte es aktuelel aktionen geben:
+export default () => { return ( <div className="bg-indigo-600">
+<div className="max-w-screen-xl mx-auto px-4 py-3 text-white sm:text-center md:px-8">
+<p className="font-medium"> We just launched a new version of our library!
+<a href="javascript:(0)" className="font-semibold underline duration-150 hover:text-indigo-100 inline-flex items-center gap-x-1">
+Learn more
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+<path fillRule="evenodd" d="M5 10a.75.75 0 01.75-.75h6.638L10.23 7.29a.75.75 0 111.04-1.08l3.5 3.25a.75.75 0 010 1.08l-3.5 3.25a.75.75 0 11-1.04-1.08l2.158-1.96H5.75A.75.75 0 015 10z" clipRule="evenodd" />
+</svg> </a> </p> </div> </div> ) }

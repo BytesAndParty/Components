@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Sun Icon</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #fafafa;
+    }
+
+    .group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 1rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .group:hover {
+      border-color: rgba(120, 50, 80, 0.4);
+      background: rgba(120, 50, 80, 0.05);
+    }
+
+    .icon-sun {
+      width: 2rem;
+      height: 2rem;
+      color: #6b7280;
+      transition: color 0.2s;
+    }
+    .group:hover .icon-sun { color: #78324f; }
+
+    .group span {
+      font-size: 9px;
+      color: #6b7280;
+      font-family: system-ui, sans-serif;
+    }
+
+    /* Sun — rays rotate and pulse */
+    @keyframes sun-rays-rotate {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(30deg) scale(1.15); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .group:hover .icon-sun-rays { animation: sun-rays-rotate 0.8s ease; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .group:hover .icon-sun-rays {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="group">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <g class="icon-sun-rays" style="transform-origin: 12px 12px;">
+        <path d="M12 2v2"/><path d="M12 20v2"/>
+        <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+        <path d="M2 12h2"/><path d="M20 12h2"/>
+        <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+      </g>
+    </svg>
+    <span>Sonne</span>
+  </div>
+</body>
+</html>

@@ -8,7 +8,7 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion';
-import { cn } from '../showcase/src/lib/utils';
+const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
 /* -------------------------------------------------------------------------- */
 /*  VelocityRow – single scrolling row                                        */

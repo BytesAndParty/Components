@@ -1,8 +1,8 @@
 import { useRef, useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
-interface MagneticButtonProps extends React.ComponentProps<typeof Button> {
+const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
+
+interface MagneticButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   strength?: number;
 }
 
@@ -15,6 +15,7 @@ export function MagneticButton({
   onMouseMove,
   onMouseLeave,
   style,
+  children,
   ...props
 }: MagneticButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -40,7 +41,7 @@ export function MagneticButton({
   }, [onMouseLeave]);
 
   return (
-    <Button
+    <button
       ref={buttonRef}
       className={cn(
         'relative before:absolute before:-inset-3 before:-z-10', // Expand hover area
@@ -56,6 +57,8 @@ export function MagneticButton({
         willChange: 'transform',
       }}
       {...props}
-    />
+    >
+      {children}
+    </button>
   );
 }
