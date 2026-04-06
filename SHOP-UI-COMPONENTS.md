@@ -1,8 +1,9 @@
 # Shop & Homepage UI Components
 
 UI-Elemente mit Micro-Interactions fuer eine Homepage mit Online-Shop.
+Backend: **Medusa.js** | Payment: **Stripe**
 
-> Bereits vorhandene Komponenten sind mit [x] markiert.
+> [x] = vorhanden | [-] = von Medusa/Stripe abgedeckt | [ ] = offen
 
 ---
 
@@ -11,10 +12,9 @@ UI-Elemente mit Micro-Interactions fuer eine Homepage mit Online-Shop.
 - [x] **AnimatedSearch** -- Icon morpht zum Input
 - [x] **MagneticButton** -- Cursor-magnetisch
 - [x] **Breadcrumb** -- Animated trail
+- [x] **Animated Icons (Lottie)** -- Home, Search/X, Menu, Filter, Notification, Visibility, Checkmark, Copy, Loading, Maximize, Share, Trash
 - [ ] **Mega-Menu / Dropdown** -- Staggered reveal, blur-in
-- [ ] **Cart Icon + Badge** -- Badge bounce/scale bei Add-to-Cart
-- [x] **Animated Icons (Lottie)** -- Home, Search/X, Menu, Filter, Notification, Visibility (hover-to-play)
-- [ ] **Cart Icon** -- Noch kein passendes Lottie-Icon vorhanden
+- [ ] **Cart Icon + Badge** -- Lottie-Icon fehlt noch, Badge bounce bei Add-to-Cart
 
 ## Hero / Landing
 
@@ -27,27 +27,27 @@ UI-Elemente mit Micro-Interactions fuer eine Homepage mit Online-Shop.
 
 ## Produkte & Shop
 
+- [x] **Wishlist/Favorite** -- Heart burst (HeartFavorite)
 - [ ] **Product Card** -- Hover: tilt, glow, quick-view slide-up
 - [ ] **Add-to-Cart Button** -- Icon morpht zum Checkmark, confetti
-- [ ] **Quantity Stepper** -- +/- mit number-roll Animation
 - [ ] **Image Gallery / Carousel** -- Snap-scroll, zoom-on-hover, lightbox
 - [ ] **Color/Variant Swatch Picker** -- Tap-ripple, active-ring animiert
 - [ ] **Size Selector** -- Pill-toggle mit sliding indicator
 - [ ] **Price Display** -- Number-roll bei Variantenwechsel
 - [ ] **Rating Stars** -- Fill-animation, hover-preview
-- [x] **Wishlist/Favorite** -- Heart burst (HeartFavorite)
 - [ ] **Quick-View Modal** -- Spring-open vom Card-Origin
 - [ ] **Stock Badge** -- Pulse-dot "Nur noch 3 verfuegbar"
 
-## Warenkorb & Checkout
+## Warenkorb & Checkout (groesstteils Medusa + Stripe)
 
-- [ ] **Cart Drawer / Slide-Panel** -- Spring-slide von rechts, backdrop blur
-- [ ] **Cart Item Row** -- Swipe-to-delete, quantity-roll
-- [ ] **Stepper / Progress Bar** -- Step-zu-Step slide mit active-glow
+- [-] **Cart Logic** -- Medusa Cart API
+- [-] **Checkout Flow** -- Medusa Checkout + Stripe Payment Element
+- [-] **Payment Method Picker** -- Stripe Elements
+- [-] **Shipping Berechnung** -- Medusa Shipping API
+- [-] **Order Confirmation** -- Medusa Order API
+- [ ] **Cart Drawer / Slide-Panel** -- Spring-slide, backdrop blur (visuelles Layer ueber Medusa-Daten)
+- [ ] **Stepper / Progress Bar** -- Step-zu-Step slide mit active-glow (optional, Medusa hat eigenen Flow)
 - [x] **PricingInteraction** -- Period-Toggle mit Preis-Morph
-- [ ] **Shipping Selector** -- Radio-cards mit check-animation
-- [ ] **Payment Method Picker** -- Card-flip, icon-morph
-- [ ] **Order Summary Collapse** -- Accordion mit staggered items
 
 ## Trust & Social Proof
 
@@ -60,11 +60,10 @@ UI-Elemente mit Micro-Interactions fuer eine Homepage mit Online-Shop.
 
 - [x] **Toast / Notification** -- Slide-in + auto-dismiss
 - [x] **Switch / Checkbox** -- Spring-toggle
+- [x] **Footer** -- Staggered link reveal on scroll
 - [ ] **Skeleton Loader** -- Shimmer-pulse beim Laden
 - [ ] **Scroll-to-Top Button** -- Fade-in ab Threshold, magnetic hover
 - [ ] **Cookie Banner** -- Slide-up mit spring
 - [ ] **Tooltip** -- Fade + scale mit Pfeil-Tracking
 - [ ] **Tabs** -- Sliding underline / active-pill
 - [ ] **Accordion / Collapsible** -- Spring height-animation
-- [ ] **Image Lazy-Load** -- Blur-to-sharp reveal
-- [x] **Footer** -- Staggered link reveal on scroll

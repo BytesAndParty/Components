@@ -34,6 +34,8 @@ import { VelocityScroll, TestimonialCard, type Testimonial } from '../../velocit
 import {
   HomeIcon, SearchToXIcon, MenuIcon, MenuAltIcon,
   FilterIcon, NotificationIcon, VisibilityIcon,
+  CheckmarkIcon, CopyIcon, LoadingIcon, MaximizeMinimizeIcon,
+  ShareIcon, TrashIcon,
 } from '../../animated-icons/animated-icons'
 
 const palettes = {
@@ -332,9 +334,15 @@ export function App() {
       </Section>
 
       <Section title="AccentSwitcher">
-        <p className="text-muted-foreground text-sm">
-          The accent color picker in the top-right corner controls the global accent color for the entire page. Theme mode is handled by the AnimatedThemeToggler.
-        </p>
+        <div className="flex items-center gap-4">
+          <AccentSwitcher
+            palettes={palettes}
+            defaultPalette="indigo"
+          />
+          <p className="text-muted-foreground text-sm">
+            The accent color picker in the top-right corner controls the global accent color for the entire page. Theme mode is handled by the AnimatedThemeToggler.
+          </p>
+        </div>
       </Section>
 
       <Section title="Checkbox">
@@ -546,28 +554,68 @@ export function App() {
       </Section>
 
       <Section title="AnimatedIcons">
-        <div className="grid grid-cols-7 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
-          {([
-            ['Home', HomeIcon],
-            ['Search/X', SearchToXIcon],
-            ['Menu', MenuIcon],
-            ['Menu Alt', MenuAltIcon],
-            ['Filter', FilterIcon],
-            ['Notification', NotificationIcon],
-            ['Visibility', VisibilityIcon],
-          ] as const).map(([label, Icon]) => (
-            <div key={label} className="flex flex-col items-center gap-2">
-              <Icon size={32} />
-              <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
+        <div className="flex flex-col gap-8">
+          <div>
+            <p className="text-[0.7rem] uppercase tracking-wider text-muted-foreground mb-4">Trigger: Hover</p>
+            <div className="grid grid-cols-7 gap-y-8 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
+              {([
+                ['Home', HomeIcon],
+                ['Search/X', SearchToXIcon],
+                ['Menu', MenuIcon],
+                ['Menu Alt', MenuAltIcon],
+                ['Filter', FilterIcon],
+                ['Notification', NotificationIcon],
+                ['Visibility', VisibilityIcon],
+                ['Checkmark', CheckmarkIcon],
+                ['Copy', CopyIcon],
+                ['Loading', LoadingIcon],
+                ['Maximize', MaximizeMinimizeIcon],
+                ['Share', ShareIcon],
+                ['Trash', TrashIcon],
+              ] as const).map(([label, Icon]) => (
+                <div key={label} className="flex flex-col items-center gap-2">
+                  <Icon size={32} trigger="hover" />
+                  <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div>
+            <p className="text-[0.7rem] uppercase tracking-wider text-muted-foreground mb-4">Trigger: Click</p>
+            <div className="grid grid-cols-7 gap-y-8 gap-4 border border-border rounded-xl bg-card p-6 shadow-sm">
+              {([
+                ['Home', HomeIcon],
+                ['Search/X', SearchToXIcon],
+                ['Menu', MenuIcon],
+                ['Menu Alt', MenuAltIcon],
+                ['Filter', FilterIcon],
+                ['Notification', NotificationIcon],
+                ['Visibility', VisibilityIcon],
+                ['Checkmark', CheckmarkIcon],
+                ['Copy', CopyIcon],
+                ['Loading', LoadingIcon],
+                ['Maximize', MaximizeMinimizeIcon],
+                ['Share', ShareIcon],
+                ['Trash', TrashIcon],
+              ] as const).map(([label, Icon]) => (
+                <div key={label} className="flex flex-col items-center gap-2">
+                  <Icon size={32} trigger="click" />
+                  <span className="text-[0.625rem] text-muted-foreground text-center leading-tight">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </Section>
 
       <Section title="AnimatedThemeToggler">
-        <p className="text-muted-foreground text-sm">
-          The theme toggle in the top-right uses the View Transitions API for a smooth circle-clip animation expanding from the button.
-        </p>
+        <div className="flex items-center gap-4">
+          <AnimatedThemeToggler />
+          <p className="text-muted-foreground text-sm">
+            The theme toggle in the top-right uses the View Transitions API for a smooth circle-clip animation expanding from the button.
+          </p>
+        </div>
       </Section>
 
       <Section title="AnimatedSearch">

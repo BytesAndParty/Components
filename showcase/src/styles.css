@@ -31,6 +31,7 @@
   --accent: #6366f1;
   --theme-primary: 99 102 241;
   --theme-accent: 139 92 246;
+  --icon-invert: invert(1);
 }
 
 [data-theme="light"] {
@@ -42,6 +43,7 @@
   --accent: #6366f1;
   --theme-primary: 99 102 241;
   --theme-accent: 139 92 246;
+  --icon-invert: invert(0);
 }
 
 /* Accent color overrides via data-accent attribute */

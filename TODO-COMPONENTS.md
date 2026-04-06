@@ -1,3 +1,19 @@
+## Animated Icons (Lottie)
+
+- **Status**: Completed [x]
+- **Source**: Lottie / useAnimations
+- **Implemented**: Home, SearchToX, Menu, Filter, Notification, Visibility,
+  Checkmark, Copy, Loading, Maximize/Minimize, Share, Trash.
+- **Features**:
+    - Support for `hover` and `click` triggers via prop.
+    - Click trigger plays forward then auto-reverses after 1s.
+    - `LoadingIcon` supports looping and autoplay.
+- **Usage**:
+    ```tsx
+    <CopyIcon trigger="click" size={24} />
+    <LoadingIcon size={32} />
+    ```
+
 ## Assisted Password Confirmation
 
 - **Status**: Pending
@@ -1270,3 +1286,9 @@ return ( <div style={{
         }} /> </div> ); }
 
 export default SplashCursor;
+
+ich möchte diese nav bar verwenden
+https://getuikit.com/assets/uikit/tests/navbar.html ich hab leider keinen code
+odgl gefundne vl findest du was entsprechendes bitte gib beschied, wenn ich dir
+weitere infos geben soll bedenke, dass ich immer auch den inhalt oder bilder von
+der seite speichern kann

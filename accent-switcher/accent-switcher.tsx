@@ -96,10 +96,16 @@ export function AccentSwitcher({
 	style,
 }: AccentSwitcherProps) {
 	const paletteKeys = Object.keys(palettes);
-	const fallback = defaultPalette && palettes[defaultPalette] ? defaultPalette : paletteKeys[0];
-
-	const [accent, setAccent] = useState(fallback);
+	
+	// Internal state should be initialized from DOM if possible, otherwise fallback
+	const [accent, setAccent] = useState(() => {
+		if (typeof document === 'undefined') return defaultPalette ?? paletteKeys[0];
+		return document.documentElement.getAttribute(accentAttribute) ?? defaultPalette ?? paletteKeys[0];
+	});
+	
 	const [open, setOpen] = useState(false);
+	
+	// currentAccent respects controlled prop first, then internal synced state
 	const currentAccent = activePalette && palettes[activePalette] ? activePalette : accent;
 
 	const animRef = useRef(0);
@@ -110,19 +116,39 @@ export function AccentSwitcher({
 
 	// Persistent <style> element for transition overrides + seed initial oklch
 	useEffect(() => {
-		const style = document.createElement('style');
-		document.head.appendChild(style);
-		styleRef.current = style;
+		const styleEl = document.createElement('style');
+		document.head.appendChild(styleEl);
+		styleRef.current = styleEl;
 
 		if (!currentOklchRef.current) {
 			currentOklchRef.current = parseOklch(palettes[currentAccent]?.oklch ?? '');
 		}
 
+		// Initial sync
+		const attrValue = document.documentElement.getAttribute(accentAttribute);
+		if (attrValue && palettes[attrValue] && attrValue !== accent) {
+			setAccent(attrValue);
+		}
+
+		// MutationObserver to sync multiple instances via the DOM attribute
+		const observer = new MutationObserver(() => {
+			const val = document.documentElement.getAttribute(accentAttribute);
+			if (val && palettes[val]) {
+				setAccent(val);
+			}
+		});
+		
+		observer.observe(document.documentElement, { 
+			attributes: true, 
+			attributeFilter: [accentAttribute] 
+		});
+
 		return () => {
 			if (animRef.current) cancelAnimationFrame(animRef.current);
-			style.remove();
+			styleEl.remove();
+			observer.disconnect();
 		};
-	}, []);
+	}, [accentAttribute, palettes, currentAccent, accent]);
 
 	// Close on outside click
 	useEffect(() => {
