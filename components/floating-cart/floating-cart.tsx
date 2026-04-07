@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
-// ─── Keyframes ──────────────────────────────────────────────────────────────────
+// ─── Keyframes (matching Quickbeam.js originals) ────────────────────────────────
 
 const STYLE_ID = '__floating-cart-keyframes__'
 
@@ -19,15 +19,22 @@ function injectStyles() {
       0%   { transform: translateX(0); }
       100% { transform: translateX(200px); }
     }
-    @keyframes fc-item-in {
-      0%   { transform: scale(0) rotate(10deg); opacity: 0; }
-      60%  { transform: scale(1.15) rotate(-3deg); opacity: 1; }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    @keyframes fc-remove-product {
+      0%   { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(200px); opacity: 0; }
     }
-    @keyframes fc-item-out {
-      0%   { transform: scale(1); opacity: 1; }
-      40%  { transform: scale(1.1) rotate(5deg); opacity: 0.8; }
-      100% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    @keyframes fc-fade-down {
+      0%   { transform: rotate(0deg) translateY(0px); opacity: 1; }
+      100% { transform: rotate(5deg) translateY(5px); opacity: 0; }
+    }
+    @keyframes fc-fade-up {
+      0%   { transform: rotate(5deg) translateY(5px); opacity: 0; }
+      100% { transform: rotate(0deg) translateY(0px); opacity: 1; }
+    }
+    @keyframes fc-item-in {
+      0%   { opacity: 0; transform: scale(0.4) translateY(10px); }
+      50%  { opacity: 0.7; transform: scale(1.06) translateY(-2px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     @keyframes fc-badge-bump {
       0%   { transform: translateX(-50%) scale(1); }
@@ -96,6 +103,8 @@ export function FloatingCart({
   const [badgeBump, setBadgeBump] = useState(false)
   const prevCount = useRef(0)
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [countAnim, setCountAnim] = useState<Record<string, 'up' | 'down' | null>>({})
 
   // Show/hide FAB based on item count
   useEffect(() => {
@@ -108,7 +117,7 @@ export function FloatingCart({
 
   // Badge bump when count changes
   useEffect(() => {
-    if (totalCount > prevCount.current) {
+    if (totalCount !== prevCount.current && totalCount > 0) {
       setBadgeBump(true)
       const t = setTimeout(() => setBadgeBump(false), 350)
       prevCount.current = totalCount
@@ -117,12 +126,32 @@ export function FloatingCart({
     prevCount.current = totalCount
   }, [totalCount])
 
+  // Track count changes per item for fadeDown/fadeUp animations
+  const prevItemCounts = useRef<Record<string, number>>({})
+  useEffect(() => {
+    for (const item of items) {
+      const prev = prevItemCounts.current[item.id] ?? 0
+      const curr = item.count ?? 1
+      if (curr !== prev && prev > 0) {
+        // Count changed — animate: fadeDown then fadeUp
+        setCountAnim(a => ({ ...a, [item.id]: 'down' }))
+        setTimeout(() => {
+          setCountAnim(a => ({ ...a, [item.id]: 'up' }))
+        }, 400)
+        setTimeout(() => {
+          setCountAnim(a => ({ ...a, [item.id]: null }))
+        }, 800)
+      }
+      prevItemCounts.current[item.id] = curr
+    }
+  }, [items])
+
   const handleRemove = (id: string) => {
     setRemovingId(id)
     setTimeout(() => {
       setRemovingId(null)
       onItemRemove?.(id)
-    }, 300)
+    }, 200)
   }
 
   if (!visible && totalCount === 0) return null
@@ -145,33 +174,38 @@ export function FloatingCart({
         ...style,
       }}
     >
-      {/* Stacked item thumbnails */}
+      {/* Stacked product items (Quickbeam-style circles) */}
       {displayItems.map((item) => {
         const isRemoving = removingId === item.id
+        const isHovered = hoveredId === item.id
+        const itemCount = item.count ?? 1
+        const animState = countAnim[item.id]
+
         return (
           <div
             key={item.id}
             style={{
               position: 'relative',
+              marginBottom: '0px',
               animation: isRemoving
-                ? 'fc-item-out 300ms ease-in forwards'
-                : 'fc-item-in 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                ? 'fc-remove-product 200ms ease-in-out forwards'
+                : 'fc-item-in 1s cubic-bezier(0.22, 1, 0.36, 1) forwards',
             }}
+            onMouseEnter={() => setHoveredId(item.id)}
+            onMouseLeave={() => setHoveredId(null)}
           >
+            {/* Product circle (60×60, image fills) */}
             <div
               onClick={() => onItemClick?.(item.id)}
               style={{
-                width: '56px',
-                height: '56px',
+                width: '60px',
+                height: '60px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 boxShadow: 'rgba(0, 0, 0, 0.23) 0 6px 13px 0',
                 cursor: 'pointer',
-                border: '2px solid var(--card, #fff)',
-                background: 'var(--card, #141416)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                position: 'relative',
+                transition: 'all 1s ease-in-out',
               }}
             >
               {item.image ? (
@@ -181,68 +215,127 @@ export function FloatingCart({
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  background: 'var(--card, #141416)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: 'var(--text-muted, #71717a)',
+                    textAlign: 'center',
+                    lineHeight: 1.2,
+                    padding: '4px',
+                  }}>
+                    {item.label ?? '?'}
+                  </span>
+                </div>
+              )}
+
+              {/* Overlay .s1 – shows price (default visible) */}
+              <span style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                background: 'rgba(22, 22, 26, 0.5)',
+                color: '#fff',
+                display: isHovered ? 'none' : 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'default',
+                textAlign: 'center',
+                padding: '4px',
+              }}>
+                {item.label ?? ''}
+              </span>
+
+              {/* Overlay .s2 – shows variant info on hover */}
+              {isHovered && (
                 <span style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  color: 'var(--text-muted, #71717a)',
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  background: 'rgba(22, 22, 26, 0.5)',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  cursor: 'default',
                   textAlign: 'center',
-                  lineHeight: 1.2,
                   padding: '4px',
                 }}>
-                  {item.label ?? '?'}
+                  {item.count && item.count > 1 ? `×${item.count}` : item.label ?? ''}
                 </span>
               )}
             </div>
 
-            {/* Count badge per item */}
-            {(item.count ?? 1) > 1 && (
+            {/* Count badge (Quickbeam: fadeDown/fadeUp on change) */}
+            {itemCount > 1 && (
               <span style={{
                 position: 'absolute',
-                top: '-2px',
-                right: '-2px',
-                minWidth: '18px',
-                height: '18px',
-                borderRadius: '9px',
-                background: 'var(--bg, #0a0a0b)',
-                color: 'var(--text, #e4e4e7)',
-                fontSize: '10px',
+                top: 0,
+                right: 0,
+                minWidth: '20px',
+                height: '20px',
+                borderRadius: '10px',
+                background: 'var(--bg, #16161a)',
+                color: 'var(--text, #fff)',
+                fontSize: '11px',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '0 4px',
-                border: '2px solid var(--card, #141416)',
+                padding: '4px 4px 0',
+                textAlign: 'center',
+                overflow: 'hidden',
+                zIndex: 10,
+                opacity: animState === 'down' ? 0 : 1,
+                animation: animState === 'down'
+                  ? 'fc-fade-down 400ms ease-in-out'
+                  : animState === 'up'
+                    ? 'fc-fade-up 400ms ease-in-out'
+                    : 'none',
               }}>
-                {item.count}
+                {itemCount}
               </span>
             )}
 
-            {/* Remove button */}
+            {/* Remove button (×) – visible on hover, slides left like Quickbeam */}
             {onItemRemove && (
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleRemove(item.id) }}
-                aria-label={`Remove ${item.label ?? 'item'}`}
+                aria-label={`${item.label ?? 'Artikel'} entfernen`}
                 style={{
                   position: 'absolute',
-                  top: '-2px',
-                  left: '-2px',
-                  width: '18px',
-                  height: '18px',
+                  top: 0,
+                  left: 0,
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
-                  background: 'var(--bg, #0a0a0b)',
-                  border: '2px solid var(--card, #141416)',
-                  color: 'var(--text, #e4e4e7)',
+                  background: 'var(--bg, #16161a)',
+                  border: 'none',
+                  color: 'var(--text, #fff)',
                   cursor: 'pointer',
-                  display: 'none',
+                  display: isHovered ? 'flex' : 'none',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '10px',
+                  fontSize: '12px',
                   lineHeight: 1,
                   padding: 0,
+                  zIndex: 10,
+                  transition: 'background 300ms ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent, #6366f1)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg, #0a0a0b)')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = fabColor)}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg, #16161a)')}
               >
                 ×
               </button>
@@ -251,7 +344,7 @@ export function FloatingCart({
         )
       })}
 
-      {/* Main FAB */}
+      {/* Main FAB button (Quickbeam: swing-in from right with rotation) */}
       <button
         type="button"
         onClick={onClick}
@@ -267,9 +360,20 @@ export function FloatingCart({
           background: 'none',
           cursor: 'pointer',
           padding: 0,
+          boxShadow: 'rgba(0, 0, 0, 0.23) 0 6px 13px 0',
           animation: totalCount > 0
-            ? 'fc-show 800ms ease-in-out forwards'
+            ? 'fc-show 1s ease-in-out forwards'
             : 'fc-hide 200ms ease-in forwards',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--text, #303030)'
+          const inner = e.currentTarget.firstElementChild as HTMLElement
+          if (inner) inner.style.background = 'var(--text, #303030)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = fabColor
+          const inner = e.currentTarget.firstElementChild as HTMLElement
+          if (inner) inner.style.background = fabColor
         }}
       >
         <span

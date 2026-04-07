@@ -29,13 +29,27 @@ export function ShopPage() {
     <>
       <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
         <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
-          <div className="flex flex-col items-center gap-6">
-            <AddToCartButton onClick={() => cart.add({ id: 'demo-wine', label: 'Barolo' })}>
-              Add to cart
-            </AddToCartButton>
-            <p className="text-xs text-muted-foreground">
-              Click to trigger animation — the cart icon in the navbar updates too.
-            </p>
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {bottles.map((bottle) => (
+              <div
+                key={bottle.id}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '16px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <span className="text-sm font-medium text-foreground">{bottle.name}</span>
+                <span className="text-xs text-muted-foreground">{bottle.price}</span>
+                <AddToCartButton onClick={() => cart.add({ id: bottle.id, label: bottle.name })}>
+                  Add to cart
+                </AddToCartButton>
+              </div>
+            ))}
           </div>
           <div className="border-t border-border mt-6 pt-3 px-2 flex justify-between text-[0.7rem] text-muted-foreground">
             <span>AddToCartButton · CSS keyframes · ~3.7s cycle</span>

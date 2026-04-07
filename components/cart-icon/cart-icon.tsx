@@ -11,18 +11,18 @@ function injectStyles() {
   s.id = STYLE_ID
   s.textContent = `
     @keyframes ci-box-add {
-      0%   { top: 70%; left: -10%; opacity: 0; }
-      15%  { opacity: 1; }
-      45%  { top: -25%; left: 50%; }
-      75%  { top: 15%; left: 65%; }
-      100% { top: 30%; left: 45%; opacity: 0; }
+      0%   { top: 20%; left: -30%; opacity: 0; }
+      25%  { top: -20%; left: 50%; opacity: 1; }
+      50%  { top: 0%; left: 70%; }
+      75%  { top: 35%; left: 50%; }
+      100% { top: 35%; left: 50%; opacity: 0; }
     }
     @keyframes ci-box-remove {
-      0%   { top: 30%; left: 45%; opacity: 0; }
-      15%  { opacity: 1; }
-      45%  { top: 15%; left: 65%; }
-      75%  { top: -25%; left: 50%; }
-      100% { top: 70%; left: -10%; opacity: 0; }
+      0%   { top: 35%; left: 50%; opacity: 0; }
+      25%  { top: 35%; left: 50%; }
+      50%  { top: 0%; left: 70%; opacity: 1; }
+      75%  { top: -20%; left: 50%; opacity: 1; }
+      100% { top: 20%; left: -30%; opacity: 0; }
     }
     @keyframes ci-badge-pop {
       0%   { transform: scale(1); }
@@ -100,8 +100,8 @@ export function CartIcon({
     else if (count === 0) setBadgeAnim('out')
     else setBadgeAnim('pop')
 
-    const t1 = setTimeout(() => setDisplayCount(count), 400)
-    const t2 = setTimeout(() => setAnim(null), 900)
+    const t1 = setTimeout(() => setDisplayCount(count), 500)
+    const t2 = setTimeout(() => setAnim(null), 1000)
     const t3 = setTimeout(() => {
       setBadgeAnim(null)
       if (count === 0) setDisplayCount(0)
@@ -170,8 +170,8 @@ export function CartIcon({
             opacity: 0,
             pointerEvents: 'none',
             animation: anim === 'add'
-              ? 'ci-box-add 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards'
-              : 'ci-box-remove 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+              ? 'ci-box-add 1s ease-in-out'
+              : 'ci-box-remove 1s ease-in-out',
           }}
         >
           <svg
