@@ -3,7 +3,7 @@ export const groups = [
     path: '/cards',
     title: 'Cards & Buttons',
     description: 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
-    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'Backlight', 'PixelImage'],
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'Backlight', 'PixelImage', 'AmbientImage'],
   },
   {
     path: '/text',

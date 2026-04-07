@@ -7,6 +7,7 @@ import { ClickSpark } from '@components/click-spark/click-spark'
 import { LightRays } from '@components/light-rays/light-rays'
 import { PixelImage } from '@components/pixel-image/pixel-image'
 import { Backlight } from '@components/backlight/backlight'
+import { AmbientImage } from '@components/ambient-image/ambient-image'
 
 export function CardsPage() {
   return (
@@ -257,6 +258,37 @@ export function CardsPage() {
           />
         </div>
       </Section>
-    </>
+
+      <Section title="AmbientImage" description="Ambilight-style glow extracted from image edge colors – like LED TV backlighting.">
+        <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
+          <AmbientImage
+            src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80"
+            alt="Weinflaschen"
+            blur={45}
+            intensity={0.55}
+            spread={25}
+            borderRadius="14px"
+            style={{ width: '100%', aspectRatio: '3/4' }}
+          />
+          <AmbientImage
+            src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80"
+            alt="Rotwein Glas"
+            blur={50}
+            intensity={0.7}
+            spread={30}
+            borderRadius="14px"
+            style={{ width: '100%', aspectRatio: '3/4' }}
+          />
+          <AmbientImage
+            src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&q=80"
+            alt="Weinberg"
+            blur={40}
+            intensity={0.5}
+            spread={20}
+            borderRadius="14px"
+            style={{ width: '100%', aspectRatio: '3/4' }}
+          />
+        </div>
+      </Section>
   )
 }
