@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@components': path.resolve(__dirname, '../components'),
       // Let components outside showcase/ resolve deps from showcase/node_modules
       'framer-motion': path.resolve(__dirname, 'node_modules/framer-motion'),
       'lucide-react': path.resolve(__dirname, 'node_modules/lucide-react'),

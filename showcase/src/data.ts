@@ -1,0 +1,89 @@
+export const groups = [
+  {
+    path: '/cards',
+    title: 'Cards & Buttons',
+    description: 'Glow effects, magnetic interactions, and hover animations.',
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton'],
+  },
+  {
+    path: '/text',
+    title: 'Text & Motion',
+    description: 'Text animations, scramble effects, and scroll-reactive motion.',
+    components: ['TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
+  },
+  {
+    path: '/icons',
+    title: 'Icons',
+    description: 'Lottie-based animated icons and CSS-animated SVG icons.',
+    components: ['AnimatedIcons', 'AnimatedWeatherIcons'],
+  },
+  {
+    path: '/inputs',
+    title: 'Inputs & Forms',
+    description: 'Form controls, search interactions, and file uploads.',
+    components: ['Checkbox', 'Switch', 'AutocompleteCell', 'AnimatedSearch', 'ImageUpload'],
+  },
+  {
+    path: '/feedback',
+    title: 'Feedback',
+    description: 'Toasts, favorites, and pricing interactions.',
+    components: ['Toast', 'HeartFavorite', 'PricingInteraction'],
+  },
+  {
+    path: '/navigation',
+    title: 'Navigation & Layout',
+    description: 'Breadcrumbs, theme controls, and page structure.',
+    components: ['Breadcrumb', 'AccentSwitcher', 'AnimatedThemeToggler', 'Footer'],
+  },
+] as const
+
+export const palettes = {
+  indigo: { label: 'Indigo', oklch: 'oklch(0.585 0.233 277)' },
+  amber: { label: 'Amber', oklch: 'oklch(0.555 0.146 49)' },
+  emerald: { label: 'Emerald', oklch: 'oklch(0.511 0.086 186.4)' },
+  rose: { label: 'Rose', oklch: 'oklch(0.585 0.22 5)' },
+}
+
+export const suggestions = [
+  { id: 1, key: 'react', label: 'React Framework' },
+  { id: 2, key: 'vue', label: 'Vue.js' },
+  { id: 3, key: 'svelte', label: 'Svelte' },
+  { id: 4, key: 'angular', label: 'Angular' },
+  { id: 5, key: 'solid', label: 'SolidJS' },
+  { id: 6, key: 'next', label: 'Next.js' },
+  { id: 7, key: 'nuxt', label: 'Nuxt' },
+  { id: 8, key: 'typescript', label: 'TypeScript' },
+  { id: 9, key: 'javascript', label: 'JavaScript' },
+  { id: 10, key: 'tailwind', label: 'Tailwind CSS' },
+  { id: 11, key: 'vite', label: 'Vite Bundler' },
+  { id: 12, key: 'webpack', label: 'Webpack' },
+  { id: 13, key: 'node', label: 'Node.js Runtime' },
+  { id: 14, key: 'bun', label: 'Bun Runtime' },
+  { id: 15, key: 'deno', label: 'Deno Runtime' },
+  { id: 16, key: 'prisma', label: 'Prisma ORM' },
+  { id: 17, key: 'drizzle', label: 'Drizzle ORM' },
+  { id: 18, key: 'zod', label: 'Zod Validation' },
+  { id: 19, key: 'trpc', label: 'tRPC' },
+  { id: 20, key: 'graphql', label: 'GraphQL' },
+  { id: 21, key: 'docker', label: 'Docker' },
+  { id: 22, key: 'postgres', label: 'PostgreSQL' },
+  { id: 23, key: 'redis', label: 'Redis' },
+  { id: 24, key: 'eslint', label: 'ESLint' },
+  { id: 25, key: 'prettier', label: 'Prettier' },
+  { id: 26, key: 'vitest', label: 'Vitest Testing' },
+  { id: 27, key: 'playwright', label: 'Playwright E2E' },
+  { id: 28, key: 'storybook', label: 'Storybook' },
+  { id: 29, key: 'turborepo', label: 'Turborepo' },
+  { id: 30, key: 'remix', label: 'Remix Framework' },
+]
+
+export const testimonials = [
+  { name: 'Anna Müller', role: 'Frontend Lead', content: 'Butterweich' },
+  { name: 'Marco Rossi', role: 'Design Engineer', content: 'Game-Changer' },
+  { name: 'Sarah Chen', role: 'CTO', content: 'Performant' },
+  { name: 'Lukas Weber', role: 'Fullstack Dev', content: 'Plug & Play' },
+  { name: 'Elena Petrova', role: 'UX Designer', content: 'Detailverliebt' },
+  { name: 'James O\'Brien', role: 'Indie Hacker', content: 'Einzigartig' },
+  { name: 'Yuki Tanaka', role: 'Senior Engineer', content: 'Zero Overhead' },
+  { name: 'Nina Hoffmann', role: 'Product Manager', content: '+12% Conversion' },
+]

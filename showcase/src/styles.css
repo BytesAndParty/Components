@@ -78,6 +78,21 @@
   mix-blend-mode: normal;
 }
 
+/* Page navigation view transitions */
+::view-transition-old(page-content) {
+  animation: 150ms ease-out both vt-slide-out;
+}
+::view-transition-new(page-content) {
+  animation: 200ms ease-in both vt-slide-in;
+}
+
+@keyframes vt-slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+@keyframes vt-slide-out {
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
 /* Custom Component Utilities (that are hard to do in pure Tailwind classes) */
 .scrollbar-thin {
   scrollbar-width: thin;
