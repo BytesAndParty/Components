@@ -9,7 +9,7 @@ Backend: **Medusa.js** | Payment: **Stripe**
 
 - [x] **Navbar** -- UIkit-style, transparent, mega-dropdown, mobile menu → `components/navbar/`
 - [ ] **Mega-Menu / Dropdown** -- Staggered reveal, blur-in
-- [ ] **Cart Icon + Badge** -- Lottie-Icon fehlt noch, Badge bounce bei Add-to-Cart
+- [x] **Cart Icon + Badge** -- SVG cart, badge bounce, box-arc animation bei Add-to-Cart → `components/cart-icon/`
 - [x] **Scroll Progress** -- Progress bar below navbar ~~(MagicUI)~~ → `components/scroll-progress/`
 
 ## Hero / Landing
@@ -25,23 +25,23 @@ Backend: **Medusa.js** | Payment: **Stripe**
 ## Produkte & Shop
 
 - [x] **Product Card** -- Hover: tilt, glow, quick-view slide-up → `components/hover-3d-card/` (3D tilt + glare)
-- [ ] **Backlight** -- Glow hinter Produktbildern, Farbe aus Bild abgeleitet (MagicUI)
-- [ ] **Light Rays** -- Ambient glow auf Product Cards (MagicUI)
-- [ ] **Pixel Image** -- Pixelate-to-sharp reveal fuer Produktbilder (MagicUI)
+- [x] **Backlight** -- Glow hinter Produktbildern, Farbe aus Bild abgeleitet → `components/backlight/`
+- [x] **Light Rays** -- Ambient glow auf Product Cards → `components/light-rays/`
+- [x] **Pixel Image** -- Pixelate-to-sharp reveal fuer Produktbilder → `components/pixel-image/`
 - [ ] **BounceCards / Image Gallery** -- Produkt-Bildergalerie mit snap-scroll, zoom, lightbox (ReactBits + gsap)
-- [ ] **Add-to-Cart Button** -- Icon morpht zum Checkmark
+- [x] **Add-to-Cart Button** -- Cart roll-through, fill, checkmark morph → `components/add-to-cart-button/`
 - [x] **Confetti Button** -- Subtiler Confetti-Effekt am Button bei Add-to-Cart → `components/confetti/`
 - [x] **ClickSpark** -- Spark-Effekt bei Klick auf Card oder Section → `components/click-spark/`
 - [ ] **Color/Variant Swatch Picker** -- Tap-ripple, active-ring animiert
 - [ ] **Size Selector** -- Pill-toggle mit sliding indicator
-- [ ] **Price Display** -- Number-roll bei Variantenwechsel
+- [x] **Price Display** -- Number-roll bei Variantenwechsel → `components/pricing-interaction/`
 - [x] **Rating Stars** -- Fill-animation, hover-preview → `components/rating/`
 - [ ] **Quick-View Modal** -- Spring-open vom Card-Origin
 - [ ] **Stock Badge** -- Pulse-dot "Nur noch 3 verfuegbar"
 
 ## Warenkorb & Checkout (Medusa + Stripe)
 
-- [ ] **Cart Drawer / Slide-Panel** -- Spring-slide, backdrop blur (visuelles Layer ueber Medusa-Daten)
+- [x] **Cart Drawer / Slide-Panel** -- Quickbeam-style floating FAB mit gestackten Thumbnails → `components/floating-cart/`
 - [x] **Stepper** -- Wein-Etikett Bestellflow: Etikett waehlen, Flasche zuordnen → `components/stepper/`
 
 ## Trust & Social Proof
@@ -59,4 +59,4 @@ Backend: **Medusa.js** | Payment: **Stripe**
 - [ ] **Tooltip** -- Fade + scale mit Pfeil-Tracking
 - [ ] **Tabs** -- Sliding underline / active-pill
 - [ ] **Accordion / Collapsible** -- Spring height-animation
-- [ ] **Assisted Password Confirmation** -- Zeichen-genaues Feedback bei Passworteingabe (framer-motion)
+- [x] **Assisted Password Confirmation** -- Zeichen-genaues Feedback bei Passworteingabe → `components/password-confirmation/`

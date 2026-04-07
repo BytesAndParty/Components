@@ -1,225 +1,145 @@
-# Umsetzungsplan: TODO-COMPONENTS
+# Umsetzungsplan: Nächste Schritte
 
-Basierend auf der Analyse von `TODO-COMPONENTS.md` und `SHOP-UI-COMPONENTS.md`.  
-Gruppierung nach **Phasen** mit Abhängigkeiten, geschätztem Aufwand und neuen Dependencies.
+Stand: April 2026
 
 ---
 
-## Legende
+## Aktueller Stand
 
-| Symbol | Bedeutung |
+**38 Komponenten** fertig in `components/`. Showcase-App läuft mit 8 Seiten (Index, Cards, Text, Icons, Inputs, Feedback, Navigation, Shop).
+
+### Fertig (in SHOP-UI-COMPONENTS.md als ✅ markiert)
+
+| Komponente | Ordner |
 |---|---|
-| 🟢 | Einfach – Copy/Install + Anpassung |
-| 🟡 | Mittel – Eigenentwicklung mit bekanntem Pattern |
-| 🔴 | Komplex – Neue Architektur oder große Library |
-| 📦 | Neue Dependency |
+| Navbar | `navbar/` |
+| Scroll Progress | `scroll-progress/` |
+| SparklesText | `sparkles-text/` |
+| Highlighter | `highlighter/` |
+| Product Card (3D Tilt + Glare) | `hover-3d-card/` |
+| Backlight | `backlight/` |
+| Light Rays | `light-rays/` |
+| Pixel Image | `pixel-image/` |
+| Confetti Button | `confetti/` |
+| ClickSpark | `click-spark/` |
+| Price Display (Number-Roll) | `pricing-interaction/` |
+| Rating Stars | `rating/` |
+| Stepper | `stepper/` |
+| Banner / Announcement Bar | `banner/` |
+| Password Confirmation | `password-confirmation/` |
 
 ---
 
-## Phase 1: Quick Wins (shadcn/MagicUI Installationen)
+## Phase 1: Cart System (NÄCHSTER SCHRITT)
 
-Komponenten, die per `npx shadcn` oder `bunx shadcn` direkt installierbar sind und nur minimale Anpassung an das bestehende Theming brauchen.
+Basierend auf `cart.icon.md` – zwei zusammengehörige Komponenten:
 
-### 1.1 SparklesText ✅
-- **Status**: Fertig → `components/sparkles-text/` (Pure React, keine MagicUI-Dep)
-- **Showcase**: Text-Seite
+### 1.1 Cart Icon + Badge (Header)
+- **Ziel**: SVG-basiertes Cart-Icon im Header mit animiertem Badge-Counter
+- **Animation**: Box-fliegt-in-Cart bei Add-to-Cart, Badge bounce
+- **Referenz**: speckyboy.com Snippet (ion-icon Cart + Box-Arc-Animation)
+- **Umsetzung**: React-Komponente mit CSS-Keyframes, kein Lottie nötig
 
-### 1.2 Highlighter ✅
-- **Status**: Fertig → `components/highlighter/` (Pure React, IntersectionObserver)
-- **Showcase**: Text-Seite (Weinbeschreibung mit highlight + underline)
+### 1.2 Add-to-Cart Button (Produktseite)
+- **Ziel**: Button mit SVG-Checkmark-Morph nach Klick
+- **Referenz**: Dribbble Aaron Iker (Cart fährt durch, Checkmark erscheint)
+- **Alternative**: Quickbeam-Style floating Cart (Produkt-Thumbnail fliegt zum FAB)
+- **Entscheidung**: Beide Stile als Varianten bauen
 
-### 1.3 Scroll Progress ✅
-- **Status**: Fertig → `components/scroll-progress/` (Pure React, scaleX transform)
-- **Showcase**: Navigation-Seite
-
-### 1.4 Pixel Image 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/pixel-image`
-- **Aufwand**: Gering
-- **Neue Deps**: Keine
-- **Showcase**: Cards-Seite (Produktbild-Demo)
-
-### 1.5 Backlight (Image) 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/backlight`
-- **Aufwand**: Gering – Hinter Produktbilder legen
-- **Neue Deps**: Keine
-- **Showcase**: Cards-Seite
-
-### 1.6 Light Rays (MagicUI Version) 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/light-rays`
-- **Aufwand**: Gering – Auf Product Cards als Overlay
-- **Neue Deps**: Keine
-- **Showcase**: Cards-Seite
+### 1.3 Cart Drawer / Slide-Panel
+- **Ziel**: Side-Panel mit Warenkorb-Inhalt
+- **Animation**: Spring-slide von rechts, backdrop blur
+- **Hinweis**: Nur visuelles Layer – Daten kommen später von Medusa.js
 
 ---
 
-## Phase 2: ReactBits-Komponenten (Copy + Anpassung)
+## Phase 2: Fehlende Shop-Komponenten
 
-Erfordern manuelle Integration, da ReactBits kein offizielles shadcn-Registry hat. Code von der Webseite holen und in `components/` integrieren.
+### 2.1 BounceCards / Image Gallery 🟡
+- 📦 **Neue Dep**: `gsap`
+- Produkt-Bildergalerie: Klick auf Thumbnail → großes Bild wechselt
+- ReactBits-Style, manuell integrieren
 
-### 2.1 Light Rays (ReactBits WebGL Version) 🟡
-- **Quelle**: ReactBits (https://reactbits.dev)
-- **Install**: Manuell – Code kopieren
-- 📦 **Neue Dep**: `ogl` (WebGL-Library)
-- **Aufwand**: Mittel – WebGL-Code an Projekt anpassen, als React-Komponente wrappen
-- **Verwendung**: Hover-Effekt auf Wein-Reihe (3 Weinflaschen)
-- **Showcase**: Neue "Shop"-Demo-Seite oder Cards-Seite
-
-### 2.2 ClickSpark ✅
-- **Status**: Fertig → `components/click-spark/` (Pure React, contained overflow:hidden)
-- **Showcase**: Cards-Seite
+### 2.2 Particles 🟡
+- Canvas-basierte Partikel auf Card oder Section
+- ReactBits-Source kopieren und anpassen
 
 ### 2.3 SplashCursor 🔴
-- **Quelle**: ReactBits
-- **Install**: `bunx --bun shadcn@latest add @react-bits/SplashCursor-JS-CSS`
-- **Aufwand**: Hoch – WebGL Fluid-Simulation, Performance-Tuning nötig
-- **Hinweis**: Fullscreen-Overlay (`position: fixed`, `z-index: 50`, `pointer-events: none`)
-- **Showcase**: Global (Layout) – aber Performance auf mobilen Geräten testen!
-- **Risiko**: Kann auf schwachen Geräten GPU-intensiv sein
-
-### 2.4 Particles 🟡
-- **Quelle**: ReactBits (https://reactbits.dev/backgrounds/particles)
-- **Aufwand**: Mittel – Canvas-basiert, testweise auf eine Card
-- **Showcase**: Cards-Seite (eine spezielle Demo-Card)
-
-### 2.5 Stepper ✅
-- **Status**: Fertig → `components/stepper/` (Framer Motion, Composable API)
-- **Shop-Relevanz**: Kernkomponente für den Etikett-Bestellprozess
-- **Showcase**: Shop-Seite (Etikett → Flasche → Bestätigung)
-
-### 2.6 BounceCards / Image Gallery 🟡
-- **Quelle**: ReactBits
-- 📦 **Neue Dep**: `gsap`
-- **Aufwand**: Mittel – GSAP-Integration, Klick-to-Lightbox-Logik
-- **Erweiterung**: Klick auf Thumbnail → großes Bild oben wechselt
-- **Showcase**: Cards-Seite
+- WebGL Fluid-Simulation Cursor-Effekt
+- Performance-kritisch auf mobilen Geräten
+- Erst testen, dann entscheiden ob global oder nur auf Desktop
 
 ---
 
-## Phase 3: Eigenentwicklungen (Neue Komponenten)
+## Phase 3: Fehlende Allgemeine Komponenten
 
-### 3.1 Assisted Password Confirmation 🟡
-- **Quelle**: 21st.dev (https://21st.dev/r/ln-dev7/assisted-password-confirmation)
-- **Install**: `npx shadcn@latest add https://21st.dev/r/ln-dev7/assisted-password-confirmation`
-- 📦 **Neue Dep**: `framer-motion` (bereits vorhanden)
-- **Aufwand**: Mittel – Install, dann an Theming anpassen
-- **Features**: Zeichen-genaues Feedback (grün/rot), Shake bei Überlänge, Scale-Bounce bei Match
-- **Showcase**: Inputs-Seite
-
-### 3.2 Confetti Button ✅
-- **Status**: Fertig → `components/confetti/` (Pure React Canvas, keine canvas-confetti Dep)
-- **Beide Varianten**: `fireConfetti()` fullscreen (multi-burst) + `ConfettiButton` lokal
-- **Showcase**: Feedback-Seite
-
-### 3.3 Rating Stars ✅
-- **Status**: Fertig → `components/rating/` (Pure React, controlled/uncontrolled, pop animation)
-- **Showcase**: Feedback-Seite (interactive + readonly + sizes)
-
-### 3.4 Hover 3D Card ✅
-- **Status**: Fertig → `components/hover-3d-card/` (Pure React, cursor-tracking perspective tilt + glare)
-- **Showcase**: Cards-Seite (3 Varianten mit Patterns)
-
-### 3.5 Banner / Announcement Bar ✅
-- **Status**: Fertig → `components/banner/` (Pure React, dismissible, localStorage persist)
-- **Showcase**: Navigation-Seite (2 Varianten)
-
----
-
-## Phase 4: Komplexe Shop-Komponenten
-
-### 4.1 Navbar (UIkit-Style) ✅
-- **Status**: Fertig → `components/navbar/` (Framer Motion, Composable API)
-- **Features**: Transparent mode, mega-dropdown, icon buttons + badge, mobile menu
-- **Showcase**: Navigation-Seite (UIkit-style: transparent, uppercase, minimal)
-
-### 4.2 Cart Icon + Add-to-Cart Animation 🔴
-- **Quelle**: cart.icon.md (speckyboy.com Referenz)
-- **Aufwand**: Hoch – Zwei Teile:
-  1. **Header Cart Icon** mit Badge-Bounce (Box-fliegt-in-Cart Animation)
-  2. **Add-to-Cart Button** mit SVG-Checkmark-Morph
-- **Hinweis**: Lottie-Icon fehlt noch (siehe MISSING-ICONS.md Prio 1)
-- **Showcase**: Navigation-Seite + Feedback-Seite
-
-### 4.3 Product Card (Komplett) 🔴
-- **Aufwand**: Hoch – Vereint mehrere Effekte:
-  - Tilt-on-hover (wie Hover 3D)
-  - Glow-Effekt (existierendes GlowCard-Pattern)
-  - Quick-View Slide-up
-  - Backlight / Light Rays
-  - Rating Stars
-  - Price Display mit Number-Roll
-- **Abhängigkeiten**: Phase 1 (Backlight, Light Rays), Phase 3 (Rating Stars)
-- **Showcase**: Eigene "Products"-Demo-Seite
-
----
-
-## Phase 5: Infrastruktur & Fehlende Icons
-
-### 5.1 Fehlende Lottie Icons 🟡
-Laut `MISSING-ICONS.md`:
-- **Prio 1**: Cart/Shopping Bag, Arrow/Chevron
-- **Prio 2**: User/Account, Star, Plus/Minus, Truck, Tag/Discount
-- **Quelle**: useanimations.com
-- **Aufwand**: Pro Icon gering, aber Lottie-JSON muss gefunden/erstellt werden
-
-### 5.2 Showcase Erweiterung 🟡
-- Neue Seite(n) im Router für Shop-spezifische Demos
-- `data.ts` erweitern um neue Gruppen
-- Phase 4 Komponenten brauchen eine eigene "Shop" Demo-Seite
-
----
-
-## Dependency Übersicht (Neue Packages)
-
-| Package | Phase | Verwendet für |
+| Komponente | Schwierigkeit | Notizen |
 |---|---|---|
-| `gsap` | 2 | BounceCards / Image Gallery |
-| `ogl` | 2 | Light Rays (ReactBits WebGL) |
-| `canvas-confetti` | 3 | ~~Confetti Button~~ → Eigene Canvas-Lösung, keine Dep nötig |
-| MagicUI (copy-paste) | 1 | SparklesText, Highlighter, ScrollProgress, PixelImage, Backlight, LightRays |
-| ReactBits (copy-paste) | 2 | ClickSpark, SplashCursor, Particles, Stepper, BounceCards |
+| Mega-Menu / Dropdown | 🟡 | Staggered reveal, blur-in – Erweiterung der Navbar |
+| Parallax Hero Image | 🟡 | Scroll-gesteuerte Tiefe |
+| Animated CTA Button | 🟢 | Ripple, shimmer border, pulse |
+| Countdown / Launch Timer | 🟡 | Flip-Clock Digits |
+| Color/Variant Swatch Picker | 🟡 | Tap-ripple, active-ring |
+| Size Selector | 🟢 | Pill-toggle mit sliding indicator |
+| Quick-View Modal | 🟡 | Spring-open vom Card-Origin |
+| Stock Badge | 🟢 | Pulse-dot "Nur noch 3 verfügbar" |
+| Logo Ticker / Marquee | 🟢 | Infinite scroll, pause-on-hover (velocity-scroll Variante?) |
+| Animated Counter | 🟢 | Number-roll (pricing-interaction Pattern wiederverwenden) |
+| Review Card | 🟡 | Staggered fade-in on scroll |
+| Skeleton Loader | 🟢 | Shimmer-pulse |
+| Scroll-to-Top Button | 🟢 | Fade-in, magnetic hover |
+| Cookie Banner | 🟡 | Slide-up, spring, localStorage |
+| Tooltip | 🟡 | Fade + scale, Pfeil-Tracking |
+| Tabs | 🟡 | Sliding underline / active-pill |
+| Accordion / Collapsible | 🟡 | Spring height-animation |
+
+---
+
+## Phase 4: Fehlende Lottie Icons
+
+Aus `MISSING-ICONS.md`:
+
+**Prio 1**: Cart/Shopping Bag, Arrow/Chevron
+**Prio 2**: User/Account, Star, Plus/Minus, Truck, Tag/Discount
+
+→ Entweder von useanimations.com holen oder durch eigene SVG-Animationen ersetzen (wie beim Cart Icon in Phase 1).
+
+---
+
+## Phase 5: Showcase Polish
+
+- Alle neuen Komponenten in Showcase-Seiten integrieren
+- Shop-Seite erweitern mit Cart-Flow-Demo
+- `data.ts` erweitern für neue Gruppen
+- Mobile Responsiveness aller Showcase-Seiten prüfen
 
 ---
 
 ## Empfohlene Reihenfolge
 
 ```
-Phase 1 (MagicUI)        → Schnelle Ergebnisse, kein Risiko
+Phase 1 (Cart System)         → Shop-kritisch, Plan steht in cart.icon.md
   ↓
-Phase 3.5 (Banner)       → Einfach, sofort sichtbar im Shop
+Phase 2.1 (BounceCards)       → Bildergalerie für Produktseiten
   ↓
-Phase 3.1 (Password)     → Eigene Inputs-Seite füllen
+Phase 3 Quick Wins            → Stock Badge, Skeleton, Scroll-to-Top, CTA Button
   ↓
-Phase 2.5 (Stepper)      → Shop-kritisch (Etikett-Flow)
+Phase 3 Medium                → Mega-Menu, Tabs, Accordion, Tooltip
   ↓
-Phase 3.3 (Rating Stars) → Shop-kritisch (Produktseiten)
+Phase 2.2 (Particles)         → Deko-Feature
   ↓
-Phase 3.4 (Hover 3D)     → Cool-Faktor, pure CSS
+Phase 2.3 (SplashCursor)      → Letztes, Performance-Test nötig
   ↓
-Phase 2.6 (BounceCards)  → Bildergalerie + gsap installieren
+Phase 4 (Icons)               → Laufend parallel ergänzen
   ↓
-Phase 2.1 (Light Rays)   → WebGL-Effekt für Wein-Reihe
-  ↓
-Phase 2.2 (ClickSpark)   → Deko-Feature
-Phase 2.4 (Particles)    → Deko-Feature
-  ↓
-Phase 3.2 (Confetti)     → Add-to-Cart Celebration
-  ↓
-Phase 2.3 (SplashCursor) → Performance-kritisch, am Ende testen
-  ↓
-Phase 4 (Navbar, Cart, ProductCard) → Komplexe Shop-Bausteine
-  ↓
-Phase 5 (Icons + Showcase) → Abschluss & Polish
+Phase 5 (Showcase)            → Abschluss & Polish
 ```
 
 ---
 
-## Offene Fragen
+## Neue Dependencies (noch zu installieren)
 
-1. **UIkit Navbar**: Soll der UIkit-Style 1:1 nachgebaut werden oder reicht ein ähnliches Mega-Menu?
-2. **SplashCursor Performance**: Soll der Effekt global sein oder nur auf bestimmten Seiten?
-3. **MagicUI shadcn Registry**: Muss geprüft werden ob `bunx shadcn` mit dem bestehenden Projekt-Setup (kein offizielles shadcn init) kompatibel ist – ggf. manuelles Kopieren nötig.
-4. **Confetti**: Fullscreen oder lokal am Button? (TODO sagt "lokal bevorzugt")
-5. **BounceCards Lightbox**: Eigenes Overlay oder externe Library (z.B. `yet-another-react-lightbox`)?
+| Package | Phase | Verwendet für |
+|---|---|---|
+| `gsap` | 2 | BounceCards / Image Gallery |
+| `ogl` | 2 | Light Rays (ReactBits WebGL) – optional |

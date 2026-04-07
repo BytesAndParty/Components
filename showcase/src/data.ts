@@ -39,7 +39,7 @@ export const groups = [
     path: '/shop',
     title: 'Shop Components',
     description: 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
-    components: ['Stepper'],
+    components: ['CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
   },
 ] as const
 

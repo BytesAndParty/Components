@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
 import { Stepper, Step } from '@components/stepper/stepper'
+import { CartIcon } from '@components/cart-icon/cart-icon'
+import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { useToast } from '@components/toast/toast'
+import { useCart } from '../layout'
 
 export function ShopPage() {
   const [selectedLabel, setSelectedLabel] = useState('')
   const [selectedBottle, setSelectedBottle] = useState('')
+  const [demoCount, setDemoCount] = useState(0)
   const { add } = useToast()
+  const cart = useCart()
 
   const labels = [
     { id: 'classic', name: 'Klassisch', description: 'Elegantes Weinrot mit Goldschrift' },
@@ -22,6 +27,90 @@ export function ShopPage() {
 
   return (
     <>
+      <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
+        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+          <div className="flex flex-col items-center gap-6">
+            <AddToCartButton onClick={() => cart.add({ id: 'demo-wine', label: 'Barolo' })}>
+              Add to cart
+            </AddToCartButton>
+            <p className="text-xs text-muted-foreground">
+              Click to trigger animation — the cart icon in the navbar updates too.
+            </p>
+          </div>
+          <div className="border-t border-border mt-6 pt-3 px-2 flex justify-between text-[0.7rem] text-muted-foreground">
+            <span>AddToCartButton · CSS keyframes · ~3.7s cycle</span>
+            <span>No dependencies</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Cart Icon" description="Shopping cart icon with animated badge bounce and flying-box effect on count change.">
+        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+          <div className="flex flex-col items-center gap-6">
+            <div className="flex items-center gap-8">
+              <CartIcon count={demoCount} size={32} />
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setDemoCount(c => Math.max(0, c - 1))}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'none',
+                    color: 'var(--text)',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  −
+                </button>
+                <span className="text-sm text-foreground tabular-nums" style={{ minWidth: '24px', textAlign: 'center' }}>
+                  {demoCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setDemoCount(c => c + 1)}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'none',
+                    color: 'var(--text)',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setDemoCount(0); cart.reset() }}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Reset
+            </button>
+          </div>
+          <div className="border-t border-border mt-6 pt-3 px-2 flex justify-between text-[0.7rem] text-muted-foreground">
+            <span>CartIcon · Badge bounce + box arc animation</span>
+            <span>No dependencies</span>
+          </div>
+        </div>
+      </Section>
+
       <Section title="Stepper" description="Multi-step flow for the wine label personalization order process.">
         <div className="border border-border rounded-xl bg-card p-8 shadow-sm max-w-xl mx-auto">
           <Stepper
