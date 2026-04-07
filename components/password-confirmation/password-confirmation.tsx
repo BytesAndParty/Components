@@ -232,29 +232,17 @@ export function PasswordConfirmation({
           }}
         />
 
-        {/* Dots display */}
-        {value.length === 0 ? (
-          <span
-            style={{
-              color: 'var(--text-muted, #71717a)',
-              fontSize: '14px',
-              userSelect: 'none',
-            }}
-          >
-            {placeholder}
-          </span>
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              gap: `${Math.max(6, dotSize * 0.6)}px`,
-              alignItems: 'center',
-              minHeight: `${dotSize + 4}px`,
-            }}
-          >
-            {dots}
-          </div>
-        )}
+        {/* Dots display – always visible */}
+        <div
+          style={{
+            display: 'flex',
+            gap: `${Math.max(6, dotSize * 0.6)}px`,
+            alignItems: 'center',
+            minHeight: `${dotSize + 4}px`,
+          }}
+        >
+          {dots}
+        </div>
       </div>
 
       {/* Match indicator */}
