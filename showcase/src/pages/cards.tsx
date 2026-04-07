@@ -290,5 +290,6 @@ export function CardsPage() {
           />
         </div>
       </Section>
+    </>
   )
 }
