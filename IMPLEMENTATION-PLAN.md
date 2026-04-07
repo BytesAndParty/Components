@@ -20,27 +20,17 @@ Gruppierung nach **Phasen** mit Abhängigkeiten, geschätztem Aufwand und neuen 
 
 Komponenten, die per `npx shadcn` oder `bunx shadcn` direkt installierbar sind und nur minimale Anpassung an das bestehende Theming brauchen.
 
-### 1.1 SparklesText 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/sparkles-text`
-- **Aufwand**: Gering – Install, Import, Theming anpassen
-- **Neue Deps**: Keine (MagicUI Komponenten sind copy-paste)
+### 1.1 SparklesText ✅
+- **Status**: Fertig → `components/sparkles-text/` (Pure React, keine MagicUI-Dep)
 - **Showcase**: Text-Seite
 
-### 1.2 Highlighter 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/highlighter`
-- **Aufwand**: Gering – Install, Anwendung auf Weinbeschreibungen
-- **Neue Deps**: Keine
-- **Showcase**: Text-Seite
-- **Shop-Relevanz**: Weinbeschreibungen mit Highlight auf Schlüsselwörtern (Rebsorte, Region, Geschmacksnoten)
+### 1.2 Highlighter ✅
+- **Status**: Fertig → `components/highlighter/` (Pure React, IntersectionObserver)
+- **Showcase**: Text-Seite (Weinbeschreibung mit highlight + underline)
 
-### 1.3 Scroll Progress 🟢
-- **Quelle**: MagicUI
-- **Install**: `bunx --bun shadcn@latest add @magicui/scroll-progress`
-- **Aufwand**: Gering – In Layout einbinden, Position unter Navbar
-- **Neue Deps**: Keine
-- **Showcase**: Layout-Komponente (global)
+### 1.3 Scroll Progress ✅
+- **Status**: Fertig → `components/scroll-progress/` (Pure React, scaleX transform)
+- **Showcase**: Navigation-Seite
 
 ### 1.4 Pixel Image 🟢
 - **Quelle**: MagicUI
@@ -77,11 +67,9 @@ Erfordern manuelle Integration, da ReactBits kein offizielles shadcn-Registry ha
 - **Verwendung**: Hover-Effekt auf Wein-Reihe (3 Weinflaschen)
 - **Showcase**: Neue "Shop"-Demo-Seite oder Cards-Seite
 
-### 2.2 ClickSpark 🟡
-- **Quelle**: ReactBits
-- **Install**: `bunx --bun shadcn@latest add @react-bits/ClickSpark-JS-CSS`
-- **Aufwand**: Mittel – Wrapper für beliebige Sections/Cards
-- **Showcase**: Eigene Demo-Section
+### 2.2 ClickSpark ✅
+- **Status**: Fertig → `components/click-spark/` (Pure React, contained overflow:hidden)
+- **Showcase**: Cards-Seite
 
 ### 2.3 SplashCursor 🔴
 - **Quelle**: ReactBits
@@ -96,14 +84,10 @@ Erfordern manuelle Integration, da ReactBits kein offizielles shadcn-Registry ha
 - **Aufwand**: Mittel – Canvas-basiert, testweise auf eine Card
 - **Showcase**: Cards-Seite (eine spezielle Demo-Card)
 
-### 2.5 Stepper 🟡
-- **Quelle**: ReactBits (https://reactbits.dev/components/stepper)
-- **Aufwand**: Mittel – Code kopieren, an Wein-Etikett-Flow anpassen
+### 2.5 Stepper ✅
+- **Status**: Fertig → `components/stepper/` (Framer Motion, Composable API)
 - **Shop-Relevanz**: Kernkomponente für den Etikett-Bestellprozess
-  - Step 1: Etikett auswählen
-  - Step 2: Flasche(n) aus Warenkorb zuordnen
-  - Step 3: Bestätigung
-- **Showcase**: Inputs-Seite oder eigene "Checkout"-Demo
+- **Showcase**: Shop-Seite (Etikett → Flasche → Bestätigung)
 
 ### 2.6 BounceCards / Image Gallery 🟡
 - **Quelle**: ReactBits
@@ -124,42 +108,31 @@ Erfordern manuelle Integration, da ReactBits kein offizielles shadcn-Registry ha
 - **Features**: Zeichen-genaues Feedback (grün/rot), Shake bei Überlänge, Scale-Bounce bei Match
 - **Showcase**: Inputs-Seite
 
-### 3.2 Confetti Button 🟡
-- **Quelle**: Eigenbau, Referenz: bhq-ui-component-library
-- **Aufwand**: Mittel – Zwei Varianten evaluieren:
-  1. Fullscreen Confetti (z.B. via `canvas-confetti`)
-  2. **Lokaler subtiler Effekt am Button** (bevorzugt)
-- 📦 **Mögliche Dep**: `canvas-confetti` oder eigene Partikel-Logik
-- **Showcase**: Cards-/Feedback-Seite
-
-### 3.3 Rating Stars 🟡
-- **Quelle**: DaisyUI CSS Referenz (mask-star)
-- **Aufwand**: Mittel – CSS-Masken + Fill-Animation + Hover-Preview
-- **Shop-Relevanz**: Produktbewertungen
+### 3.2 Confetti Button ✅
+- **Status**: Fertig → `components/confetti/` (Pure React Canvas, keine canvas-confetti Dep)
+- **Beide Varianten**: `fireConfetti()` fullscreen (multi-burst) + `ConfettiButton` lokal
 - **Showcase**: Feedback-Seite
 
-### 3.4 Hover 3D Card (DaisyUI Style) 🟡
-- **Quelle**: DaisyUI hover3d.css
-- **Aufwand**: Mittel – Pure CSS 3D-Effekt, kein JS nötig
-- **Pattern**: 8 leere Divs + CSS Grid + `:hover` Selektoren
-- **Showcase**: Cards-Seite
+### 3.3 Rating Stars ✅
+- **Status**: Fertig → `components/rating/` (Pure React, controlled/uncontrolled, pop animation)
+- **Showcase**: Feedback-Seite (interactive + readonly + sizes)
 
-### 3.5 Banner / Announcement Bar 🟢
-- **Quelle**: Eigenbau nach Referenz (Indigo-Banner)
-- **Aufwand**: Gering – Statische Komponente, Tailwind-only
-- **Shop-Relevanz**: Aktionsanzeige ("20% auf alle Rotweine!")
-- **Showcase**: Navigation-Seite oder Layout
+### 3.4 Hover 3D Card ✅
+- **Status**: Fertig → `components/hover-3d-card/` (Pure React, cursor-tracking perspective tilt + glare)
+- **Showcase**: Cards-Seite (3 Varianten mit Patterns)
+
+### 3.5 Banner / Announcement Bar ✅
+- **Status**: Fertig → `components/banner/` (Pure React, dismissible, localStorage persist)
+- **Showcase**: Navigation-Seite (2 Varianten)
 
 ---
 
 ## Phase 4: Komplexe Shop-Komponenten
 
-### 4.1 Navbar (UIkit-Style) 🔴
-- **Quelle**: Referenz: https://getuikit.com/assets/uikit/tests/navbar.html
-- **Aufwand**: Hoch – Kein direkter Code verfügbar, muss reverse-engineered oder neu gebaut werden
-- **Features**: Mega-Menu, Dropdown, Staggered Reveal, Blur-in
-- **TODO**: Recherche ob UIkit React-Wrapper existiert oder ob Eigenentwicklung nötig
-- **Showcase**: Navigation-Seite
+### 4.1 Navbar (UIkit-Style) ✅
+- **Status**: Fertig → `components/navbar/` (Framer Motion, Composable API)
+- **Features**: Transparent mode, mega-dropdown, icon buttons + badge, mobile menu
+- **Showcase**: Navigation-Seite (UIkit-style: transparent, uppercase, minimal)
 
 ### 4.2 Cart Icon + Add-to-Cart Animation 🔴
 - **Quelle**: cart.icon.md (speckyboy.com Referenz)
@@ -204,7 +177,7 @@ Laut `MISSING-ICONS.md`:
 |---|---|---|
 | `gsap` | 2 | BounceCards / Image Gallery |
 | `ogl` | 2 | Light Rays (ReactBits WebGL) |
-| `canvas-confetti` | 3 | Confetti Button (optional) |
+| `canvas-confetti` | 3 | ~~Confetti Button~~ → Eigene Canvas-Lösung, keine Dep nötig |
 | MagicUI (copy-paste) | 1 | SparklesText, Highlighter, ScrollProgress, PixelImage, Backlight, LightRays |
 | ReactBits (copy-paste) | 2 | ClickSpark, SplashCursor, Particles, Stepper, BounceCards |
 

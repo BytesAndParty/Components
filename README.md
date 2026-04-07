@@ -1,64 +1,98 @@
 # Components Library
 
-Reusable UI components for personal projects.
+Persönliche Component Library für React 19 – wiederverwendbare, animierte UI-Komponenten mit Fokus auf Micro-Interactions. Shadcn-Style: Copy-Paste in beliebige Projekte.
 
-## Available Components
+**Tech Stack**: React 19 · TypeScript · Vite 6 · Tailwind CSS 4 · Framer Motion 12 · Bun
 
-| Component | Path | Notes |
+---
+
+## Available Components (32)
+
+### Text & Typography
+| Component | Path | Dependencies |
 |---|---|---|
-| `accent-switcher` | `accent-switcher/` | Theme mode + accent palette picker |
-| `glow-card` | `glow-card/` | Cursor-following border glow effect |
-| `magnetic-button` | `magnetic-button/` | Magnetic hover button motion |
-| `text-scramble` | `text-scramble/` | Scramble/reveal text animation |
-| `scroll-rotate` | `scroll-rotate/` | Scroll-based rotation wrapper + decorative SVG |
+| `aurora-text` | `aurora-text/` | – |
+| `highlighter` | `highlighter/` | – |
+| `sparkles-text` | `sparkles-text/` | – |
+| `text-rotate` | `text-rotate/` | `framer-motion` |
+| `text-scramble` | `text-scramble/` | `framer-motion` |
+| `velocity-scroll` | `velocity-scroll/` | `framer-motion` |
 
-Each component folder contains:
-- `*.tsx` component source
-- `README.md` with usage and props
-- optional `*.css` if extra styles are required
+### Cards & Effects
+| Component | Path | Dependencies |
+|---|---|---|
+| `click-spark` | `click-spark/` | – |
+| `confetti` | `confetti/` | – |
+| `glow-card` | `glow-card/` | – |
+| `rotating-glow-card` | `glow-card/` | – |
+| `hover-3d-card` | `hover-3d-card/` | – |
+| `scroll-rotate` | `scroll-rotate/` | `framer-motion` |
 
-## Quick Install
+### Inputs & Controls
+| Component | Path | Dependencies |
+|---|---|---|
+| `animated-search` | `animated-search/` | `framer-motion` |
+| `autocomplete-cell` | `autocomplete-cell/` | `framer-motion` |
+| `checkbox` | `checkbox/` | – |
+| `pricing-interaction` | `pricing-interaction/` | `@number-flow/react` |
+| `rating` | `rating/` | – |
+| `search-morph` | `search-morph/` | `framer-motion` |
+| `switch` | `switch/` | – |
+| `use-image-upload` | `use-image-upload/` | – |
 
-Copy component files into your project (typically `src/components/ui/`):
+### Navigation & Layout
+| Component | Path | Dependencies |
+|---|---|---|
+| `banner` | `banner/` | – |
+| `breadcrumb` | `breadcrumb/` | – |
+| `footer-section` | `footer-section/` | `framer-motion`, `lucide-react` |
+| `navbar` | `navbar/` | `framer-motion` |
+| `scroll-progress` | `scroll-progress/` | – |
+| `stepper` | `stepper/` | `framer-motion` |
+
+### Feedback & Interaction
+| Component | Path | Dependencies |
+|---|---|---|
+| `heart-favorite` | `heart-favorite/` | `framer-motion` |
+| `magnetic-button` | `magnetic-button/` | `framer-motion` |
+| `toast` | `toast/` | `framer-motion` |
+
+### Theming & Icons
+| Component | Path | Dependencies |
+|---|---|---|
+| `accent-switcher` | `accent-switcher/` | `lucide-react` |
+| `animated-icons` | `animated-icons/` | `lottie-react` |
+| `animated-theme-toggler` | `animated-theme-toggler/` | – |
+| `animated-weather-icons` | `animated-weather-icons/` | `framer-motion` |
+
+---
+
+## Quick Start
+
+Komponenten werden **nicht als npm-Package** verteilt, sondern per Copy-Paste:
 
 ```bash
-cp /Users/robert.stickler/Development/__Components__/glow-card/glow-card.tsx src/components/ui/
-cp /Users/robert.stickler/Development/__Components__/magnetic-button/magnetic-button.tsx src/components/ui/
-cp /Users/robert.stickler/Development/__Components__/text-scramble/text-scramble.tsx src/components/ui/
-cp /Users/robert.stickler/Development/__Components__/scroll-rotate/scroll-rotate.tsx src/components/ui/
-cp /Users/robert.stickler/Development/__Components__/accent-switcher/accent-switcher.tsx src/components/ui/
+cp components/glow-card/glow-card.tsx your-project/src/components/ui/
 ```
 
-If the component has a CSS file, copy and import it once in your app styles/entry:
+Alle Komponenten verwenden **Named Exports** – kein Default Export.
+
+## Showcase
+
+Demo-App unter `showcase/`:
 
 ```bash
-cp /Users/robert.stickler/Development/__Components__/glow-card/glow-card.css src/styles/
-cp /Users/robert.stickler/Development/__Components__/magnetic-button/magnetic-button.css src/styles/
+cd showcase
+bun install
+bun run dev
 ```
 
-```tsx
-import '@/styles/glow-card.css';
-import '@/styles/magnetic-button.css';
-```
+7 Seiten: Text, Cards, Icons, Inputs, Feedback, Navigation, Shop
 
-## Dependency Matrix
+## Conventions
 
-| Component | Extra dependencies |
-|---|---|
-| `accent-switcher` | `lucide-react`, `@radix-ui/react-dropdown-menu`, shadcn `Button`, shadcn `DropdownMenu`, `cn()` |
-| `glow-card` | shadcn `Card`, `cn()` |
-| `magnetic-button` | shadcn `Button`, `cn()` |
-| `text-scramble` | `framer-motion` (`useInView`) |
-| `scroll-rotate` | `framer-motion` (`motion`, `useScroll`, `useTransform`) |
-
-## Assumptions
-
-These components assume a shadcn-style setup with path aliases like:
-- `@/components/ui/*`
-- `@/lib/utils`
-
-If your project uses different paths, adjust imports after copying.
-
-## Recommended Next Step
-
-When this collection grows, add a small index per component category (theme, effects, motion) and semantic version tags in this folder.
+- **Named Exports only** – kein Default Export
+- **Inline Styles** für maximale Portabilität
+- **CSS Custom Properties** (`--accent`, `--bg`, `--card`, `--border`, `--text`) für Theming
+- **Controlled + Uncontrolled** Pattern bei checkbox, switch, rating
+- **prefers-reduced-motion** wird respektiert

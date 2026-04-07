@@ -11,7 +11,7 @@
 
 ## SparklesText
 
-- **Status**: Pending
+- **Status**: ✅ Done (components/sparkles-text/)
 - **Reference**: MagicUI
 - **Install**: `bunx --bun shadcn@latest add @magicui/sparkles-text`
 - **Usage**:
@@ -22,7 +22,7 @@
 
 ## Highlighter
 
-- **Status**: Pending
+- **Status**: ✅ Done (components/highlighter/)
 - **Reference**: MagicUI
 - **Install**: `bunx --bun shadcn@latest add @magicui/highlighter`
 - **Notes**: Verwenden fuer einen Text der eine Weinsorte beschreibt, mit
@@ -52,7 +52,7 @@
 
 ## Scroll Progress
 
-- **Status**: Pending
+- **Status**: ✅ Done (components/scroll-progress/)
 - **Reference**: MagicUI
 - **Install**: `bunx --bun shadcn@latest add @magicui/scroll-progress`
 - **Notes**: Progress bar below navbar showing page scroll position.
@@ -93,7 +93,7 @@
 
 ## Confetti Button
 
-- **Status**: Pending
+- **Status**: ✅ Done (components/confetti/) – Beide Varianten: fireConfetti() fullscreen + ConfettiButton lokal
 - **Reference**:
   https://bhq-ui-component-library-steel.vercel.app/buttons/confetti-button
 - **Install**: `npx shadcn-ui@latest add button` (base), dann Confetti-Logik
