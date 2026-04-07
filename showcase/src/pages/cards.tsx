@@ -5,11 +5,15 @@ import { MagneticButton } from '@components/magnetic-button/magnetic-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { ClickSpark } from '@components/click-spark/click-spark'
 import { LightRays } from '@components/light-rays/light-rays'
+import { SplashCursor } from '@components/splash-cursor/splash-cursor'
 import { PixelImage } from '@components/pixel-image/pixel-image'
 import { Backlight } from '@components/backlight/backlight'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
+import { useState } from 'react'
 
 export function CardsPage() {
+  const [splashOn, setSplashOn] = useState(false)
+
   return (
     <>
       <Section title="GlowCard" description="Card with a cursor-following glow border effect.">
@@ -154,42 +158,65 @@ export function CardsPage() {
         </ClickSpark>
       </Section>
 
-      <Section title="LightRays" description="Ambient animated light rays overlay for cards and sections.">
-        <div className="grid grid-cols-2 gap-4">
-          <LightRays
-            rays={5}
-            intensity={0.15}
-            style={{
-              background: 'var(--card)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              height: '200px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <p className="font-medium text-foreground">Default (5 rays, top)</p>
-          </LightRays>
-          <LightRays
-            rays={3}
-            color="#f43f5e"
-            intensity={0.2}
-            origin="top-left"
-            speed={0.6}
-            style={{
-              background: 'var(--card)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              height: '200px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <p className="font-medium text-foreground">Rose, top-left, slow</p>
-          </LightRays>
+      <Section title="LightRays" description="WebGL light rays (ogl). Hover a bottle to reveal the effect.">
+        <div className="grid grid-cols-3 gap-6">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-xl border border-border bg-card"
+              style={{ aspectRatio: '3/4' }}
+            >
+              {/* WebGL light rays — hidden until hover */}
+              <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <LightRays
+                  raysOrigin="top-center"
+                  raysColor="#ffffff"
+                  raysSpeed={1}
+                  lightSpread={0.5}
+                  rayLength={3}
+                  followMouse
+                  mouseInfluence={0.1}
+                />
+              </div>
+
+              {/* Wine bottle */}
+              <img
+                src="/wine-default.png"
+                alt="Wine bottle"
+                className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
+                style={{ padding: '20px' }}
+              />
+            </div>
+          ))}
         </div>
+      </Section>
+
+      <Section
+        title="SplashCursor"
+        description="Fullscreen WebGL fluid-simulation cursor effect. Toggle to test — performance-kritisch auf Mobile."
+      >
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSplashOn((v) => !v)}
+            className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition"
+          >
+            {splashOn ? 'Stop splash cursor' : 'Start splash cursor'}
+          </button>
+          <p className="text-xs text-muted-foreground">
+            {splashOn
+              ? 'Move the cursor anywhere on the page — the fluid reacts globally.'
+              : 'Click to activate the fullscreen fluid simulation overlay.'}
+          </p>
+        </div>
+        {splashOn && (
+          <SplashCursor
+            SIM_RESOLUTION={128}
+            DYE_RESOLUTION={1024}
+            SPLAT_RADIUS={0.2}
+            SPLAT_FORCE={6000}
+            CURL={3}
+          />
+        )}
       </Section>
 
       <Section title="Backlight" description="Animated gradient glow behind images or content.">

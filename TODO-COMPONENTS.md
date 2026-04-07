@@ -46,8 +46,8 @@ Offene Komponenten die noch gebaut werden muessen.
 
 ## Light Rays (ReactBits WebGL)
 
-- **Status**: Pending
-- **Dep**: `ogl`
+- **Status**: Done
+- **Dep**: none (raw WebGL)
 - **Notes**: Reihe mit 3 Weinen (`_public_/wine-default.png`), on hover Light Rays Effekt.
 - **Usage**:
     ```tsx
@@ -66,7 +66,7 @@ Offene Komponenten die noch gebaut werden muessen.
 
 ## SplashCursor
 
-- **Status**: Pending
+- **Status**: Done
 - **Reference**: https://reactbits.dev/animations/splash-cursor
 - **Notes**: Fullscreen WebGL fluid-simulation cursor effect. Performance-kritisch auf mobilen Geräten.
   `position: fixed`, `z-index: 50`, `pointer-events: none`.
