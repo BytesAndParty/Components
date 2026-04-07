@@ -80,6 +80,7 @@ export function PasswordConfirmation({
   const [value, setValue] = useState('')
   const [shake, setShake] = useState(false)
   const [matched, setMatched] = useState(false)
+  const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const injected = useRef(false)
   const matchedRef = useRef(false)
@@ -163,9 +164,21 @@ export function PasswordConfirmation({
 
   // Border color
   let borderColor = 'var(--border, #2a2a2e)'
-  if (value.length > 0) {
+  if (matched) {
+    borderColor = matchColor
+  } else if (value.length > 0) {
     const allMatch = value === password.slice(0, value.length)
-    borderColor = matched ? matchColor : allMatch ? 'var(--border, #2a2a2e)' : mismatchColor
+    borderColor = allMatch ? (focused ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)') : mismatchColor
+  } else if (focused) {
+    borderColor = 'var(--accent, #6366f1)'
+  }
+
+  // Focus ring glow
+  let boxShadow = 'none'
+  if (focused && !matched) {
+    boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.15)'
+  } else if (matched) {
+    boxShadow = `0 0 0 3px ${matchColor}26`
   }
 
   return (
@@ -188,7 +201,8 @@ export function PasswordConfirmation({
           padding: '14px 16px',
           cursor: 'text',
           background: 'var(--card, #141416)',
-          transition: 'border-color 300ms ease, transform 200ms ease',
+          transition: 'border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease',
+          boxShadow,
           animation: shake
             ? 'pw-shake 400ms ease'
             : matched
@@ -203,6 +217,8 @@ export function PasswordConfirmation({
           onChange={handleChange}
           placeholder={placeholder}
           autoComplete="off"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           style={{
             position: 'absolute',
             top: 0,
