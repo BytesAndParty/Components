@@ -6,7 +6,49 @@ import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cel
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
 import { useToast } from '@components/toast/toast'
+import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
 import { suggestions } from '../data'
+
+function PasswordConfirmationDemo() {
+  const [password] = useState('weinhaus2024')
+
+  return (
+    <div className="max-w-96 space-y-4">
+      <div>
+        <label className="text-xs text-muted-foreground uppercase tracking-widest mb-2 block">
+          Password (pre-filled)
+        </label>
+        <input
+          type="text"
+          readOnly
+          value="weinhaus2024"
+          style={{
+            width: '100%',
+            padding: '10px 14px',
+            background: 'var(--card)',
+            border: '1px solid var(--border)',
+            borderRadius: '10px',
+            color: 'var(--text)',
+            fontSize: '14px',
+            fontFamily: 'monospace',
+          }}
+        />
+      </div>
+      <div>
+        <label className="text-xs text-muted-foreground uppercase tracking-widest mb-2 block">
+          Confirm password
+        </label>
+        <PasswordConfirmation
+          password={password}
+          placeholder="Type to confirm..."
+        />
+      </div>
+      <p className="text-muted-foreground text-xs">
+        Each dot shows green (match) or red (mismatch). Shake on overflow, bounce on full match.
+      </p>
+    </div>
+  )
+}
 
 function ImageUploadDemo() {
   const {
@@ -156,6 +198,10 @@ export function InputsPage() {
 
       <Section title="useImageUpload" description="Hook for image upload with preview and cleanup.">
         <ImageUploadDemo />
+      </Section>
+
+      <Section title="PasswordConfirmation" description="Per-character visual feedback for password confirmation fields.">
+        <PasswordConfirmationDemo />
       </Section>
     </>
   )

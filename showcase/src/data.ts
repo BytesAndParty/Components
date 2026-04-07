@@ -3,7 +3,7 @@ export const groups = [
     path: '/cards',
     title: 'Cards & Buttons',
     description: 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
-    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'Hover3DCard', 'ClickSpark'],
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'Backlight', 'PixelImage'],
   },
   {
     path: '/text',
@@ -21,7 +21,7 @@ export const groups = [
     path: '/inputs',
     title: 'Inputs & Forms',
     description: 'Form controls, search interactions, and file uploads.',
-    components: ['Checkbox', 'Switch', 'AutocompleteCell', 'AnimatedSearch', 'ImageUpload'],
+    components: ['Checkbox', 'Switch', 'AutocompleteCell', 'AnimatedSearch', 'ImageUpload', 'PasswordConfirmation'],
   },
   {
     path: '/feedback',

@@ -4,6 +4,9 @@ import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { ClickSpark } from '@components/click-spark/click-spark'
+import { LightRays } from '@components/light-rays/light-rays'
+import { PixelImage } from '@components/pixel-image/pixel-image'
+import { Backlight } from '@components/backlight/backlight'
 
 export function CardsPage() {
   return (
@@ -148,6 +151,111 @@ export function CardsPage() {
             Click anywhere in this box
           </p>
         </ClickSpark>
+      </Section>
+
+      <Section title="LightRays" description="Ambient animated light rays overlay for cards and sections.">
+        <div className="grid grid-cols-2 gap-4">
+          <LightRays
+            rays={5}
+            intensity={0.15}
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              height: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <p className="font-medium text-foreground">Default (5 rays, top)</p>
+          </LightRays>
+          <LightRays
+            rays={3}
+            color="#f43f5e"
+            intensity={0.2}
+            origin="top-left"
+            speed={0.6}
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              height: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <p className="font-medium text-foreground">Rose, top-left, slow</p>
+          </LightRays>
+        </div>
+      </Section>
+
+      <Section title="Backlight" description="Animated gradient glow behind images or content.">
+        <div className="grid grid-cols-2 gap-12">
+          <Backlight intensity={0.35} blur={50}>
+            <div
+              style={{
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                height: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <p className="font-medium text-foreground">Accent glow (auto)</p>
+            </div>
+          </Backlight>
+          <Backlight color="#f43f5e" blobs={4} intensity={0.25} blur={40}>
+            <div
+              style={{
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                height: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <p className="font-medium text-foreground">Rose, 4 blobs</p>
+            </div>
+          </Backlight>
+        </div>
+      </Section>
+
+      <Section title="PixelImage" description="Pixelate-to-sharp cell-by-cell image reveal on scroll.">
+        <div className="grid grid-cols-2 gap-4">
+          <PixelImage
+            src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80"
+            alt="Wine bottles"
+            grid={{ rows: 5, cols: 7 }}
+            stagger={50}
+            duration={600}
+            style={{
+              borderRadius: '12px',
+              height: '220px',
+              border: '1px solid var(--border)',
+            }}
+          />
+          <PixelImage
+            src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80"
+            alt="Vineyard"
+            grid={{ rows: 3, cols: 4 }}
+            stagger={80}
+            duration={900}
+            grayscale
+            style={{
+              borderRadius: '12px',
+              height: '220px',
+              border: '1px solid var(--border)',
+            }}
+          />
+        </div>
       </Section>
     </>
   )
