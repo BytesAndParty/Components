@@ -8,6 +8,11 @@ interface RotatingGlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   primaryColor?: string;
   /** Secondary gradient color. Default: lighter variant of --accent via color-mix */
   accentColor?: string;
+  /**
+   * 'full' — full rotating gradient (default)
+   * 'stripe' — single narrow stripe orbiting the border
+   */
+  mode?: 'full' | 'stripe';
 }
 
 const spinnerBase: React.CSSProperties = {
@@ -29,10 +34,14 @@ export function RotatingGlowCard({
   borderWidth = 2,
   primaryColor = 'var(--accent)',
   accentColor = 'color-mix(in oklch, var(--accent) 60%, white)',
+  mode = 'full',
   style,
   ...props
 }: RotatingGlowCardProps) {
-  const conicBg = `conic-gradient(from 0deg, ${primaryColor}, ${accentColor}, transparent 25%, transparent 50%, ${accentColor}, ${primaryColor})`;
+  const conicBg =
+    mode === 'stripe'
+      ? `conic-gradient(from 0deg, transparent 0%, transparent 85%, ${accentColor} 90%, ${primaryColor} 95%, ${accentColor} 100%)`
+      : `conic-gradient(from 0deg, ${primaryColor}, ${accentColor}, transparent 25%, transparent 50%, ${accentColor}, ${primaryColor})`;
 
   return (
     <div
@@ -64,7 +73,7 @@ export function RotatingGlowCard({
           zIndex: 0,
           background: conicBg,
           filter: 'blur(12px)',
-          opacity: 0.4,
+          opacity: mode === 'stripe' ? 0.7 : 0.4,
           animation: `glow-spin ${duration}s linear infinite`,
         }}
         aria-hidden="true"
