@@ -2,6 +2,8 @@ import { Section } from '../components/section'
 import { ToastProvider, useToast } from '@components/toast/toast'
 import { HeartFavorite } from '@components/heart-favorite/heart-favorite'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
+import { Rating } from '@components/rating/rating'
+import { ConfettiButton, fireConfetti } from '@components/confetti/confetti'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -71,6 +73,105 @@ export function FeedbackPage() {
             { label: 'Same Day', description: 'Heute bis 18 Uhr', price: 14.99 },
           ]}
         />
+      </Section>
+
+      <Section title="Rating" description="Star rating component with hover preview, pop animation, and controlled/uncontrolled mode.">
+        <div className="flex flex-col gap-6">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Interactive</p>
+            <div className="flex items-center gap-6">
+              <Rating size={28} />
+              <Rating size={28} defaultValue={3} activeColor="#f59e0b" />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Read-only (Productbewertungen)</p>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Rating size={18} value={5} readOnly activeColor="#f59e0b" />
+                <span className="text-sm text-muted-foreground">(42)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Rating size={18} value={4} readOnly activeColor="#f59e0b" />
+                <span className="text-sm text-muted-foreground">(128)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Rating size={18} value={3} readOnly activeColor="#f59e0b" />
+                <span className="text-sm text-muted-foreground">(7)</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Sizes</p>
+            <div className="flex items-center gap-6">
+              <Rating size={16} defaultValue={4} />
+              <Rating size={24} defaultValue={4} />
+              <Rating size={32} defaultValue={4} />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Confetti" description="Particle confetti effect – fullscreen (imperative) and local (around button).">
+        <div className="flex flex-col gap-6">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Lokal (um den Button)</p>
+            <div className="flex gap-4">
+              <ConfettiButton
+                mode="local"
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'var(--accent)',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Add to Cart
+              </ConfettiButton>
+              <ConfettiButton
+                mode="local"
+                confettiOptions={{ colors: ['#f59e0b', '#f97316', '#ef4444'], particleCount: 30 }}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  color: 'var(--text)',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Warm colors
+              </ConfettiButton>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Fullscreen</p>
+            <button
+              onClick={() => fireConfetti({ particleCount: 120, spread: 90 })}
+              style={{
+                padding: '10px 24px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'var(--accent)',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Bestellung abgeschlossen!
+            </button>
+          </div>
+        </div>
       </Section>
     </>
   )

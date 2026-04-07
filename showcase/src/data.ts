@@ -2,14 +2,14 @@ export const groups = [
   {
     path: '/cards',
     title: 'Cards & Buttons',
-    description: 'Glow effects, magnetic interactions, and hover animations.',
-    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton'],
+    description: 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'Hover3DCard', 'ClickSpark'],
   },
   {
     path: '/text',
     title: 'Text & Motion',
-    description: 'Text animations, scramble effects, and scroll-reactive motion.',
-    components: ['TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
+    description: 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
+    components: ['SparklesText', 'Highlighter', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
   },
   {
     path: '/icons',
@@ -26,14 +26,20 @@ export const groups = [
   {
     path: '/feedback',
     title: 'Feedback',
-    description: 'Toasts, favorites, and pricing interactions.',
-    components: ['Toast', 'HeartFavorite', 'PricingInteraction'],
+    description: 'Toasts, favorites, pricing, ratings, and confetti effects.',
+    components: ['Toast', 'HeartFavorite', 'PricingInteraction', 'Rating', 'Confetti'],
   },
   {
     path: '/navigation',
     title: 'Navigation & Layout',
-    description: 'Breadcrumbs, theme controls, and page structure.',
-    components: ['Breadcrumb', 'AccentSwitcher', 'AnimatedThemeToggler', 'Footer'],
+    description: 'Navbar, banner, breadcrumbs, scroll progress, theme controls, and footer.',
+    components: ['Navbar', 'Banner', 'ScrollProgress', 'Breadcrumb', 'AccentSwitcher', 'AnimatedThemeToggler', 'Footer'],
+  },
+  {
+    path: '/shop',
+    title: 'Shop Components',
+    description: 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
+    components: ['Stepper'],
   },
 ] as const
 

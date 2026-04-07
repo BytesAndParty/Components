@@ -2,6 +2,8 @@ import { Section } from '../components/section'
 import { TextScramble } from '@components/text-scramble/text-scramble'
 import { TextRotate } from '@components/text-rotate/text-rotate'
 import { AuroraText } from '@components/aurora-text/aurora-text'
+import { SparklesText } from '@components/sparkles-text/sparkles-text'
+import { Highlighter } from '@components/highlighter/highlighter'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { ScrollRotate, RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { testimonials } from '../data'
@@ -9,6 +11,42 @@ import { testimonials } from '../data'
 export function TextPage() {
   return (
     <>
+      <Section title="SparklesText" description="Text with animated sparkle particles floating around it.">
+        <div className="flex flex-col gap-6">
+          <div className="text-4xl font-bold tracking-tight">
+            <SparklesText>Premium Weine</SparklesText>
+          </div>
+          <div className="text-2xl font-semibold">
+            <SparklesText sparkleColor="#f59e0b" sparkleCount={5} maxSize={22}>
+              Gold Collection
+            </SparklesText>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Highlighter" description="Text highlighting and underline effects that animate on scroll-into-view.">
+        <div className="border border-border rounded-xl bg-card p-8 shadow-sm space-y-6">
+          <p className="text-lg leading-relaxed text-foreground">
+            Unser
+            {' '}<Highlighter action="highlight" color="#6366f1">Barolo Riserva 2018</Highlighter>{' '}
+            stammt aus den besten Lagen des Piemonte. Er überzeugt durch
+            {' '}<Highlighter action="underline" color="#f43f5e" delay={300}>intensive Aromen von Kirschen und Veilchen</Highlighter>{' '}
+            und entfaltet am Gaumen eine
+            {' '}<Highlighter action="highlight" color="#10b981" delay={600}>bemerkenswerte Komplexität</Highlighter>.
+          </p>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="inline-block w-3 h-3 rounded" style={{ background: '#6366f133' }} />
+              Highlight
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="inline-block w-3 h-1 rounded" style={{ background: '#f43f5e' }} />
+              Underline
+            </div>
+          </div>
+        </div>
+      </Section>
+
       <Section title="TextScramble" description="Text reveal with randomized character scramble animation.">
         <div className="text-2xl font-semibold font-mono text-foreground">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />

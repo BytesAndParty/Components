@@ -7,6 +7,7 @@ import { IconsPage } from './pages/icons'
 import { InputsPage } from './pages/inputs'
 import { FeedbackPage } from './pages/feedback'
 import { NavigationPage } from './pages/navigation'
+import { ShopPage } from './pages/shop'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: 'inputs', element: <InputsPage /> },
       { path: 'feedback', element: <FeedbackPage /> },
       { path: 'navigation', element: <NavigationPage /> },
+      { path: 'shop', element: <ShopPage /> },
     ],
   },
 ])
