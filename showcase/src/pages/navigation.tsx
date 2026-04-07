@@ -4,7 +4,6 @@ import {
   BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis,
 } from '@components/breadcrumb/breadcrumb'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
-import { AccentSwitcherBefore } from '@components/accent-switcher/_accent-switcher-BEFORE'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { Footer } from '@components/footer-section/footer-section'
 import { palettes } from '../data'
@@ -56,22 +55,13 @@ export function NavigationPage() {
         </div>
       </Section>
 
-      <Section title="AccentSwitcher" description="Accent color picker dropdown.">
-        <div className="flex items-center gap-8">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[0.625rem] uppercase tracking-wider text-muted-foreground">Before</span>
-            <div className="border border-border rounded-lg p-4 bg-card">
-              <AccentSwitcherBefore palettes={palettes} defaultPalette="indigo" />
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[0.625rem] uppercase tracking-wider text-muted-foreground">After</span>
-            <div className="border border-border rounded-lg p-4 bg-card">
-              <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
-            </div>
+      <Section title="AccentSwitcher" description="Accent color picker dropdown with colored dots on hover.">
+        <div className="flex items-center gap-6">
+          <div className="border border-border rounded-lg p-4 bg-card">
+            <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
           </div>
           <p className="text-muted-foreground text-sm">
-            Hover over the icons to see the difference. The new icon shows the 4 accent colors on hover.
+            Hover over the icon to see the 4 palette colors on the dots.
           </p>
         </div>
       </Section>

@@ -4,7 +4,11 @@
  * A dependency-free accent color picker dropdown with smooth oklch interpolation.
  * Theme mode toggling is handled separately by AnimatedThemeToggler.
  *
- * Dependencies: lucide-react (Palette icon only)
+ * On hover, the palette icon dots show the configured accent colors using the
+ * currentColor trick: <g style={{ color: oklch(...) }}> + fill="currentColor".
+ * CSS `color` supports oklch, and `currentColor` resolves it for SVG `fill`.
+ *
+ * Dependencies: none (lucide-react removed)
  *
  * Usage:
  *   <AccentSwitcher
@@ -103,6 +107,7 @@ export function AccentSwitcher({
 	});
 	
 	const [open, setOpen] = useState(false);
+	const [hovered, setHovered] = useState(false);
 	
 	// currentAccent respects controlled prop first, then internal synced state
 	const currentAccent = activePalette && palettes[activePalette] ? activePalette : accent;
@@ -214,6 +219,9 @@ export function AccentSwitcher({
 		[palettes, currentAccent, accentAttribute, granularity, onAccentChange]
 	);
 
+	// First 4 palette colors for the icon dots
+	const dotColors = paletteKeys.slice(0, 4).map((key) => palettes[key]?.oklch ?? 'currentColor');
+
 	return (
 		<div
 			className={className}
@@ -228,8 +236,9 @@ export function AccentSwitcher({
 			<button
 				ref={triggerRef}
 				type="button"
-				className="accent-trigger"
 				onClick={() => setOpen((v) => !v)}
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
 				aria-label={dropdownLabel}
 				aria-expanded={open}
 				style={{
@@ -240,42 +249,32 @@ export function AccentSwitcher({
 					height: '2.25rem',
 					borderRadius: '0.375rem',
 					border: 'none',
-					background: 'transparent',
+					background: hovered ? 'rgba(255,255,255,0.08)' : 'transparent',
 					color: 'inherit',
 					cursor: 'pointer',
 					transition: 'background 0.15s',
 				}}
-				onMouseEnter={(e) => {
-					(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
-				}}
-				onMouseLeave={(e) => {
-					(e.currentTarget as HTMLElement).style.background = 'transparent';
-				}}
 			>
 				<svg
-					className="accent-palette-icon"
 					width="18" height="18"
 					viewBox="0 0 24 24" fill="none" stroke="currentColor"
 					strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
 				>
 					<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
-					<circle className="accent-dot-1" cx="8.5" cy="7.5" r="1" fill="currentColor" />
-					<circle className="accent-dot-2" cx="13.5" cy="6.5" r="1" fill="currentColor" />
-					<circle className="accent-dot-3" cx="17.5" cy="10.5" r="1" fill="currentColor" />
-					<circle className="accent-dot-4" cx="6.5" cy="12.5" r="1" fill="currentColor" />
+					{/* oklch trick: CSS `color` supports oklch, fill="currentColor" resolves it */}
+					<g style={{ color: hovered ? dotColors[0] : 'inherit', transition: 'color 0.3s ease' }}>
+						<circle cx="8.5" cy="7.5" r="1" fill="currentColor" />
+					</g>
+					<g style={{ color: hovered ? dotColors[1] : 'inherit', transition: 'color 0.3s ease' }}>
+						<circle cx="13.5" cy="6.5" r="1" fill="currentColor" />
+					</g>
+					<g style={{ color: hovered ? dotColors[2] : 'inherit', transition: 'color 0.3s ease' }}>
+						<circle cx="17.5" cy="10.5" r="1" fill="currentColor" />
+					</g>
+					<g style={{ color: hovered ? dotColors[3] : 'inherit', transition: 'color 0.3s ease' }}>
+						<circle cx="6.5" cy="12.5" r="1" fill="currentColor" />
+					</g>
 				</svg>
-				<style>{`
-					.accent-palette-icon .accent-dot-1,
-					.accent-palette-icon .accent-dot-2,
-					.accent-palette-icon .accent-dot-3,
-					.accent-palette-icon .accent-dot-4 {
-						transition: fill 0.3s ease;
-					}
-					.accent-trigger:hover .accent-dot-1 { fill: oklch(0.585 0.233 277) !important; }
-					.accent-trigger:hover .accent-dot-2 { fill: oklch(0.555 0.146 49) !important; }
-					.accent-trigger:hover .accent-dot-3 { fill: oklch(0.511 0.086 186.4) !important; }
-					.accent-trigger:hover .accent-dot-4 { fill: oklch(0.585 0.22 5) !important; }
-				`}</style>
 			</button>
 
 			{/* Dropdown */}
