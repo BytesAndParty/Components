@@ -7,6 +7,8 @@ import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
 import { useToast } from '@components/toast/toast'
 import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
+import { PasswordSetup } from '@components/password-setup/password-setup'
+import { VisibilityIcon } from '@components/animated-icons/animated-icons'
 import { suggestions } from '../data'
 
 function PasswordConfirmationDemo() {
@@ -202,6 +204,20 @@ export function InputsPage() {
 
       <Section title="PasswordConfirmation" description="Per-character visual feedback for password confirmation fields.">
         <PasswordConfirmationDemo />
+      </Section>
+
+      <Section title="PasswordSetup" description="Complete password creation with strength meter, generate, copy, and dot-based confirmation.">
+        <div className="max-w-96">
+          <PasswordSetup
+            passwordLabel="Passwort"
+            confirmLabel="Passwort bestätigen"
+            passwordPlaceholder="Dein Passwort eingeben..."
+            renderVisibilityIcon={(visible) => (
+              <VisibilityIcon size={20} color="currentColor" trigger="click" />
+            )}
+            onMatch={(pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
+          />
+        </div>
       </Section>
     </>
   )
