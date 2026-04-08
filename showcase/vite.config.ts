@@ -16,6 +16,7 @@ export default defineConfig({
       '@radix-ui/react-dropdown-menu': path.resolve(__dirname, 'node_modules/@radix-ui/react-dropdown-menu'),
       '@number-flow/react': path.resolve(__dirname, 'node_modules/@number-flow/react'),
       'lottie-react': path.resolve(__dirname, 'node_modules/lottie-react'),
+      'gsap': path.resolve(__dirname, 'node_modules/gsap'),
     },
   },
 })

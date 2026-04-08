@@ -9,6 +9,8 @@ import { SplashCursor } from '@components/splash-cursor/splash-cursor'
 import { PixelImage } from '@components/pixel-image/pixel-image'
 import { Backlight } from '@components/backlight/backlight'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
+import { BounceCards } from '@components/bounce-cards/bounce-cards'
+import { Particles } from '@components/particles/particles'
 import { useState } from 'react'
 
 export function CardsPage() {
@@ -315,6 +317,61 @@ export function CardsPage() {
             borderRadius="14px"
             style={{ width: '100%', aspectRatio: '3/4' }}
           />
+        </div>
+      </Section>
+
+      <Section title="BounceCards" description="Stacked image cards with elastic bounce entrance and hover push interaction (GSAP).">
+        <div className="flex items-center justify-center" style={{ minHeight: '400px' }}>
+          <BounceCards
+            images={[
+              'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80',
+              'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80',
+              'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&q=80',
+              'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=400&q=80',
+              'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80',
+            ]}
+            containerWidth={500}
+            containerHeight={350}
+            animationDelay={0.5}
+            animationStagger={0.08}
+            easeType="elastic.out(1, 0.5)"
+            enableHover
+          />
+        </div>
+      </Section>
+
+      <Section title="Particles" description="Canvas-based floating particle background with optional mouse repulsion.">
+        <div
+          style={{
+            position: 'relative',
+            height: '300px',
+            borderRadius: '12px',
+            border: '1px solid var(--border)',
+            background: 'var(--card)',
+            overflow: 'hidden',
+          }}
+        >
+          <Particles
+            particleColors={['var(--accent, #6366f1)', '#ffffff', '#a78bfa']}
+            particleCount={150}
+            particleSpread={10}
+            speed={0.3}
+            particleBaseSize={3}
+            moveParticlesOnHover
+            hoverRadius={100}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <p className="text-foreground font-medium text-lg">Move your cursor over the particles</p>
+          </div>
         </div>
       </Section>
     </>
