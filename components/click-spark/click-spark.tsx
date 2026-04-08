@@ -81,12 +81,20 @@ export function ClickSpark({
           animation: click-spark-fly ${duration}ms ease-out forwards;
         `
 
-        // SVG spark shape
-        spark.innerHTML = `
-          <svg viewBox="0 0 10 10" width="${sparkSize}" height="${sparkSize}" style="display:block;">
-            <circle cx="5" cy="5" r="3" fill="${sparkColor}" />
-          </svg>
-        `
+        // Create SVG spark shape via DOM API (avoids innerHTML XSS risk)
+        const svgNS = 'http://www.w3.org/2000/svg'
+        const svg = document.createElementNS(svgNS, 'svg')
+        svg.setAttribute('viewBox', '0 0 10 10')
+        svg.setAttribute('width', String(sparkSize))
+        svg.setAttribute('height', String(sparkSize))
+        svg.style.display = 'block'
+        const circle = document.createElementNS(svgNS, 'circle')
+        circle.setAttribute('cx', '5')
+        circle.setAttribute('cy', '5')
+        circle.setAttribute('r', '3')
+        circle.setAttribute('fill', sparkColor)
+        svg.appendChild(circle)
+        spark.appendChild(svg)
 
         containerRef.current.appendChild(spark)
         setTimeout(() => spark.remove(), duration)
