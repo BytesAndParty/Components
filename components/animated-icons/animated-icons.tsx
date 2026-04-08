@@ -162,6 +162,37 @@ const cssIconStyles = `
   50% { transform: rotate(-4deg) scaleY(0.8); }
   75% { transform: rotate(2deg) scaleY(1.1); }
 }
+@keyframes chevron-down-bounce {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(4px); }
+  65% { transform: translateY(1px); }
+}
+@keyframes chevron-right-bounce {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(4px); }
+  65% { transform: translateX(1px); }
+}
+@keyframes user-pop {
+  0%, 100% { transform: scale(1) translateY(0); }
+  35% { transform: scale(1.12) translateY(-2px); }
+  70% { transform: scale(0.97) translateY(0); }
+}
+@keyframes plus-rotate-pop {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(45deg) scale(1.2); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@keyframes minus-stretch {
+  0%, 100% { transform: scaleX(1); }
+  40% { transform: scaleX(1.35); }
+  70% { transform: scaleX(0.88); }
+}
+@keyframes truck-roll {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(5px); }
+  60% { transform: translateX(2px); }
+}
+
 .css-icon:hover .icon-sun-rays { animation: sun-rays-rotate 0.8s ease; }
 .css-icon:hover .icon-moon-body { animation: moon-rock 0.7s ease; }
 .css-icon:hover .icon-moon-star1 { animation: moon-star-twinkle1 0.7s ease forwards; }
@@ -170,6 +201,12 @@ const cssIconStyles = `
 .css-icon:hover .icon-star-shape { animation: star-spin-glow 0.7s ease; }
 .css-icon:hover .icon-wine-svg { animation: wine-tilt 0.7s ease; }
 .css-icon:hover .icon-wine-liquid { animation: wine-slosh 0.8s ease; }
+.css-icon:hover .icon-chevron-down { animation: chevron-down-bounce 0.45s ease; }
+.css-icon:hover .icon-chevron-right { animation: chevron-right-bounce 0.45s ease; }
+.css-icon:hover .icon-user { animation: user-pop 0.5s ease; }
+.css-icon:hover .icon-plus { animation: plus-rotate-pop 0.5s ease; }
+.css-icon:hover .icon-minus { animation: minus-stretch 0.4s ease; }
+.css-icon:hover .icon-truck { animation: truck-roll 0.55s ease; }
 @media (prefers-reduced-motion: reduce) {
   .css-icon:hover .icon-sun-rays,
   .css-icon:hover .icon-moon-body,
@@ -178,7 +215,13 @@ const cssIconStyles = `
   .css-icon:hover .icon-moon-star3,
   .css-icon:hover .icon-star-shape,
   .css-icon:hover .icon-wine-svg,
-  .css-icon:hover .icon-wine-liquid { animation: none !important; }
+  .css-icon:hover .icon-wine-liquid,
+  .css-icon:hover .icon-chevron-down,
+  .css-icon:hover .icon-chevron-right,
+  .css-icon:hover .icon-user,
+  .css-icon:hover .icon-plus,
+  .css-icon:hover .icon-minus,
+  .css-icon:hover .icon-truck { animation: none !important; }
 }
 `;
 
@@ -258,6 +301,85 @@ export function WineIconCss({ size = 32, className }: CssIconProps) {
 }
 WineIconCss.displayName = 'WineIconCss';
 
+export function ChevronDownIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <polyline className="icon-chevron-down" points="6 9 12 15 18 9" style={{ transformOrigin: '12px 12px' }} />
+      </svg>
+    </CssIconWrapper>
+  );
+}
+ChevronDownIconCss.displayName = 'ChevronDownIconCss';
+
+export function ChevronRightIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <polyline className="icon-chevron-right" points="9 6 15 12 9 18" style={{ transformOrigin: '12px 12px' }} />
+      </svg>
+    </CssIconWrapper>
+  );
+}
+ChevronRightIconCss.displayName = 'ChevronRightIconCss';
+
+export function UserIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <g className="icon-user" style={{ transformOrigin: '12px 11px' }}>
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </g>
+      </svg>
+    </CssIconWrapper>
+  );
+}
+UserIconCss.displayName = 'UserIconCss';
+
+export function PlusIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <g className="icon-plus" style={{ transformOrigin: '12px 12px' }}>
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </g>
+      </svg>
+    </CssIconWrapper>
+  );
+}
+PlusIconCss.displayName = 'PlusIconCss';
+
+export function MinusIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <line className="icon-minus" x1="5" y1="12" x2="19" y2="12" style={{ transformOrigin: '12px 12px' }} />
+      </svg>
+    </CssIconWrapper>
+  );
+}
+MinusIconCss.displayName = 'MinusIconCss';
+
+export function TruckIconCss({ size = 32, className }: CssIconProps) {
+  return (
+    <CssIconWrapper size={size} className={className}>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <g className="icon-truck" style={{ transformOrigin: '12px 12px' }}>
+          <rect x="1" y="3" width="15" height="13" rx="1" />
+          <path d="M16 8h4l3 4v5h-7V8z" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+          <line x1="8" y1="18.5" x2="3" y2="18.5" />
+          <line x1="16" y1="18.5" x2="14" y2="18.5" />
+        </g>
+      </svg>
+    </CssIconWrapper>
+  );
+}
+TruckIconCss.displayName = 'TruckIconCss';
+
 export const animatedIcons = {
   HomeIcon,
   SearchToXIcon,
@@ -276,4 +398,10 @@ export const animatedIcons = {
   MoonIconCss,
   StarIconCss,
   WineIconCss,
+  ChevronDownIconCss,
+  ChevronRightIconCss,
+  UserIconCss,
+  PlusIconCss,
+  MinusIconCss,
+  TruckIconCss,
 } as const;
