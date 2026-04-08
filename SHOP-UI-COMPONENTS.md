@@ -20,7 +20,7 @@ Backend: **Medusa.js** | Payment: **Stripe**
 - [x] **SparklesText** -- Glitzereffekt auf Headline → `components/sparkles-text/`
 - [x] **Highlighter** -- Text-Highlighting fuer Weinbeschreibungen → `components/highlighter/`
 - [ ] **SplashCursor** -- Fluid-Cursor-Effekt (ReactBits)
-- [ ] **Particles** -- Testweise auf Card oder Section (ReactBits)
+- [x] **Particles** -- Canvas-basiert, kein ogl → `components/particles/`
 
 ## Produkte & Shop
 
@@ -28,7 +28,7 @@ Backend: **Medusa.js** | Payment: **Stripe**
 - [x] **Backlight** -- Glow hinter Produktbildern, Farbe aus Bild abgeleitet → `components/backlight/`
 - [x] **Light Rays** -- Ambient glow auf Product Cards → `components/light-rays/`
 - [x] **Pixel Image** -- Pixelate-to-sharp reveal fuer Produktbilder → `components/pixel-image/`
-- [ ] **BounceCards / Image Gallery** -- Produkt-Bildergalerie mit snap-scroll, zoom, lightbox (ReactBits + gsap)
+- [x] **BounceCards / Image Gallery** -- Produkt-Bildergalerie (gsap) → `components/bounce-cards/`
 - [x] **Add-to-Cart Button** -- Cart roll-through, fill, checkmark morph → `components/add-to-cart-button/`
 - [x] **Confetti Button** -- Subtiler Confetti-Effekt am Button bei Add-to-Cart → `components/confetti/`
 - [x] **ClickSpark** -- Spark-Effekt bei Klick auf Card oder Section → `components/click-spark/`
