@@ -37,7 +37,7 @@ Backend: **Medusa.js** | Payment: **Stripe**
 - [x] **Price Display** -- Number-roll bei Variantenwechsel → `components/pricing-interaction/`
 - [x] **Rating Stars** -- Fill-animation, hover-preview → `components/rating/`
 - [ ] **Quick-View Modal** -- Spring-open vom Card-Origin
-- [ ] **Stock Badge** -- Pulse-dot "Nur noch 3 verfuegbar"
+- [x] **Stock Badge / Product Tags** -- Pulse-dot, shimmer, 8 Varianten (new, sale, low-stock, …) → `components/product-tag/`
 
 ## Warenkorb & Checkout (Medusa + Stripe)
 

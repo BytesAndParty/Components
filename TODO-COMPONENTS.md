@@ -41,33 +41,3 @@ Offene Komponenten die noch gebaut werden muessen.
       moveParticlesOnHover
     />
     ```
-
----
-
-## Light Rays (ReactBits WebGL)
-
-- **Status**: Done
-- **Dep**: none (raw WebGL)
-- **Notes**: Reihe mit 3 Weinen (`_public_/wine-default.png`), on hover Light Rays Effekt.
-- **Usage**:
-    ```tsx
-    <LightRays
-      raysOrigin="top-center"
-      raysColor="#ffffff"
-      raysSpeed={1}
-      lightSpread={0.5}
-      rayLength={3}
-      followMouse={true}
-      mouseInfluence={0.1}
-    />
-    ```
-
----
-
-## SplashCursor
-
-- **Status**: Done
-- **Reference**: https://reactbits.dev/animations/splash-cursor
-- **Notes**: Fullscreen WebGL fluid-simulation cursor effect. Performance-kritisch auf mobilen Geräten.
-  `position: fixed`, `z-index: 50`, `pointer-events: none`.
-  Konfigurierbar: SIM_RESOLUTION, DYE_RESOLUTION, SPLAT_RADIUS, SPLAT_FORCE, CURL, etc.
