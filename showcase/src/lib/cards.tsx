@@ -276,7 +276,6 @@ export function CardsPage() {
               <img
                 src="/wine-default.png"
                 alt="Wine bottle"
-                className="group-hover:opacity-0"
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -284,7 +283,6 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
                   transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               />
@@ -299,8 +297,8 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
                   transform: 'scale(1.15)',       /* ← Zoom-Faktor hier anpassen */
+                  transformOrigin: 'center 55%',   /* ← Verschiebung des Zoom-Zentrums (x y) */
                   transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               />
