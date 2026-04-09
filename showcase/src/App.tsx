@@ -1,26 +1,28 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { Layout } from './layout'
-import { IndexPage } from './pages/index'
-import { CardsPage } from './pages/cards'
-import { TextPage } from './pages/text'
-import { IconsPage } from './pages/icons'
-import { InputsPage } from './pages/inputs'
-import { FeedbackPage } from './pages/feedback'
-import { NavigationPage } from './pages/navigation'
-import { ShopPage } from './pages/shop'
+
+const IndexPage = lazy(() => import('./pages/index').then(m => ({ default: m.IndexPage })))
+const CardsPage = lazy(() => import('./pages/cards').then(m => ({ default: m.CardsPage })))
+const TextPage = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
+const IconsPage = lazy(() => import('./pages/icons').then(m => ({ default: m.IconsPage })))
+const InputsPage = lazy(() => import('./pages/inputs').then(m => ({ default: m.InputsPage })))
+const FeedbackPage = lazy(() => import('./pages/feedback').then(m => ({ default: m.FeedbackPage })))
+const NavigationPage = lazy(() => import('./pages/navigation').then(m => ({ default: m.NavigationPage })))
+const ShopPage = lazy(() => import('./pages/shop').then(m => ({ default: m.ShopPage })))
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { index: true, element: <IndexPage /> },
-      { path: 'cards', element: <CardsPage /> },
-      { path: 'text', element: <TextPage /> },
-      { path: 'icons', element: <IconsPage /> },
-      { path: 'inputs', element: <InputsPage /> },
-      { path: 'feedback', element: <FeedbackPage /> },
-      { path: 'navigation', element: <NavigationPage /> },
-      { path: 'shop', element: <ShopPage /> },
+      { index: true, element: <Suspense><IndexPage /></Suspense> },
+      { path: 'cards', element: <Suspense><CardsPage /></Suspense> },
+      { path: 'text', element: <Suspense><TextPage /></Suspense> },
+      { path: 'icons', element: <Suspense><IconsPage /></Suspense> },
+      { path: 'inputs', element: <Suspense><InputsPage /></Suspense> },
+      { path: 'feedback', element: <Suspense><FeedbackPage /></Suspense> },
+      { path: 'navigation', element: <Suspense><NavigationPage /></Suspense> },
+      { path: 'shop', element: <Suspense><ShopPage /></Suspense> },
     ],
   },
 ])
