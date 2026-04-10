@@ -193,6 +193,39 @@ export function CardsPage() {
         </div>
       </Section>
 
+      <Section title="LightRays (White Wine)" description="WebGL light rays with white wine bottles.">
+        <div className="grid grid-cols-3 gap-6">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-xl border border-border bg-card"
+              style={{ aspectRatio: '3/4' }}
+            >
+              {/* WebGL light rays — hidden until hover */}
+              <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <LightRays
+                  raysOrigin="top-center"
+                  raysColor="#ffffff"
+                  raysSpeed={1}
+                  lightSpread={0.5}
+                  rayLength={3}
+                  followMouse
+                  mouseInfluence={0.1}
+                />
+              </div>
+
+              {/* White wine bottle */}
+              <img
+                src="/white-wine-default.png"
+                alt="White wine bottle"
+                className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
+                style={{ padding: '20px', mixBlendMode: 'multiply' }}
+              />
+            </div>
+          ))}
+        </div>
+      </Section>
+
       <Section
         title="SplashCursor"
         description="Fullscreen WebGL fluid-simulation cursor effect. Toggle to test — performance-kritisch auf Mobile."
@@ -259,7 +292,7 @@ export function CardsPage() {
       </Section>
 
       <Section title="Hover Image Reveal" description="Product card with hover fade-in to reveal an alternate image. Backlit glow behind.">
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-8">
           <Backlight intensity={0.45} blur={45}>
             <div
               className="group"
@@ -301,6 +334,52 @@ export function CardsPage() {
                   padding: '20px',
                   mixBlendMode: 'multiply',
                   transform: 'scale(1.15)',       /* ← Zoom-Faktor hier anpassen */
+                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              />
+            </div>
+          </Backlight>
+          <Backlight intensity={0.45} blur={45}>
+            <div
+              className="group"
+              style={{
+                position: 'relative',
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                width: '280px',
+                height: '360px',
+              }}
+            >
+              <img
+                src="/white-wine-default.png"
+                alt="White wine bottle"
+                className="group-hover:opacity-0"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  padding: '20px',
+                  mixBlendMode: 'multiply',
+                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              />
+              <img
+                src="/white-wine-with-extra.png"
+                alt="White wine bottle with grapes and glass"
+                className="opacity-0 group-hover:opacity-100"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  padding: '20px',
+                  mixBlendMode: 'multiply',
+                  transform: 'scale(1.15)',
                   transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               />
