@@ -1,9 +1,10 @@
-import { useRef, useCallback, type ReactNode, type CSSProperties } from 'react'
+import { useCallback, useRef, useEffect, type ReactNode, type CSSProperties } from 'react'
+import confetti from 'canvas-confetti'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 export interface ConfettiOptions {
-  /** Number of particles (default: 80) */
+  /** Number of particles (default: 100) */
   particleCount?: number
   /** Spread angle in degrees (default: 70) */
   spread?: number
@@ -13,29 +14,26 @@ export interface ConfettiOptions {
   startVelocity?: number
   /** Gravity (default: 1) */
   gravity?: number
-  /** How quickly particles slow down (0-1, default: 0.92) */
+  /** How quickly particles slow down (0-1, default: 0.9) */
   decay?: number
-  /** Duration in ms (default: 3000) */
-  duration?: number
   /** Particle colors */
   colors?: string[]
-  /** Origin x (0-1), relative to container or viewport */
+  /** Origin x (0-1) */
   originX?: number
-  /** Origin y (0-1), relative to container or viewport */
+  /** Origin y (0-1) */
   originY?: number
-}
-
-export interface ConfettiCanvasProps {
-  /** Fullscreen overlay or contained within parent (default: 'fullscreen') */
-  mode?: 'fullscreen' | 'contained'
-  className?: string
-  style?: CSSProperties
+  /** Shapes: 'square' | 'circle' | 'star' */
+  shapes?: confetti.shape[]
+  /** Scale factor (default: 1) */
+  scalar?: number
+  /** Ticks / lifetime (default: 200) */
+  ticks?: number
+  /** Drift sideways (default: 0) */
+  drift?: number
 }
 
 export interface ConfettiButtonProps {
   children: ReactNode
-  /** Confetti mode: fullscreen or local (default: 'local') */
-  mode?: 'fullscreen' | 'local'
   /** Confetti options */
   confettiOptions?: ConfettiOptions
   /** Additional onClick handler */
@@ -45,161 +43,79 @@ export interface ConfettiButtonProps {
   disabled?: boolean
 }
 
-// ─── Particle System ────────────────────────────────────────────────────────────
+// ─── Helpers ────────────────────────────────────────────────────────────────────
 
-interface Particle {
-  x: number
-  y: number
-  vx: number
-  vy: number
-  color: string
-  size: number
-  rotation: number
-  rotationSpeed: number
-  shape: 'rect' | 'circle'
-  opacity: number
-  life: number
-  maxLife: number
+const ACCENT_PALETTES: Record<string, string[]> = {
+  indigo:  ['#6366f1', '#818cf8', '#a5b4fc', '#8b5cf6', '#c4b5fd', '#e0e7ff', '#4f46e5', '#7c3aed'],
+  amber:   ['#f59e0b', '#fbbf24', '#fcd34d', '#d97706', '#fde68a', '#b45309', '#f97316', '#fed7aa'],
+  emerald: ['#10b981', '#34d399', '#6ee7b7', '#059669', '#a7f3d0', '#047857', '#14b8a6', '#99f6e4'],
+  rose:    ['#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#fecdd3', '#be123c', '#ec4899', '#f9a8d4'],
 }
 
-const DEFAULT_COLORS = [
-  '#6366f1', '#f43f5e', '#10b981', '#f59e0b',
-  '#8b5cf6', '#ec4899', '#14b8a6', '#f97316',
-]
+function getAccentColors(): string[] {
+  const accent = document.documentElement.getAttribute('data-accent') ?? ''
+  return ACCENT_PALETTES[accent] ?? ACCENT_PALETTES.indigo
+}
 
-function createParticle(
-  originX: number,
-  originY: number,
-  options: Required<ConfettiOptions>
-): Particle {
-  const angleRad = (options.angle * Math.PI) / 180
-  const spreadRad = (options.spread * Math.PI) / 180
-  const randomAngle = angleRad + (Math.random() - 0.5) * spreadRad
-  // velocity in pixels per second
-  const velocity = options.startVelocity * 10 * (0.5 + Math.random() * 0.5)
-
+function toConfettiOpts(options?: ConfettiOptions): confetti.Options {
+  if (!options) return {}
   return {
-    x: originX,
-    y: originY,
-    vx: Math.cos(randomAngle) * velocity,
-    vy: -Math.sin(randomAngle) * velocity,
-    color: options.colors[Math.floor(Math.random() * options.colors.length)],
-    size: Math.random() * 8 + 4,
-    rotation: Math.random() * 360,
-    rotationSpeed: (Math.random() - 0.5) * 15,
-    shape: Math.random() > 0.5 ? 'rect' : 'circle',
-    opacity: 1,
-    life: 0,
-    maxLife: options.duration,
+    particleCount: options.particleCount,
+    spread: options.spread,
+    angle: options.angle,
+    startVelocity: options.startVelocity,
+    gravity: options.gravity,
+    decay: options.decay,
+    colors: options.colors,
+    shapes: options.shapes,
+    scalar: options.scalar,
+    ticks: options.ticks,
+    drift: options.drift,
+    origin: (options.originX != null || options.originY != null)
+      ? { x: options.originX ?? 0.5, y: options.originY ?? 0.5 }
+      : undefined,
+    disableForReducedMotion: true,
   }
-}
-
-function renderConfetti(
-  canvas: HTMLCanvasElement,
-  options: ConfettiOptions,
-  mode: 'fullscreen' | 'contained'
-) {
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  const rect = canvas.getBoundingClientRect()
-  const dpr = window.devicePixelRatio || 1
-  canvas.width = rect.width * dpr
-  canvas.height = rect.height * dpr
-  ctx.scale(dpr, dpr)
-
-  const opts: Required<ConfettiOptions> = {
-    particleCount: options.particleCount ?? 80,
-    spread: options.spread ?? 70,
-    angle: options.angle ?? 90,
-    startVelocity: options.startVelocity ?? 45,
-    gravity: options.gravity ?? 1,
-    decay: options.decay ?? 0.92,
-    duration: options.duration ?? 3000,
-    colors: options.colors ?? DEFAULT_COLORS,
-    originX: options.originX ?? 0.5,
-    originY: options.originY ?? 0.5,
-  }
-
-  const originX = opts.originX * rect.width
-  const originY = opts.originY * rect.height
-
-  const particles: Particle[] = Array.from(
-    { length: opts.particleCount },
-    () => createParticle(originX, originY, opts)
-  )
-
-  let prevTime = 0
-
-  function animate(time: number) {
-    if (!prevTime) prevTime = time
-    const dt = Math.min((time - prevTime) / 1000, 0.05) // seconds, capped at 50ms
-    prevTime = time
-
-    ctx!.clearRect(0, 0, rect.width, rect.height)
-
-    let alive = false
-    for (const p of particles) {
-      p.life += dt * 1000
-      if (p.life > p.maxLife) continue
-
-      alive = true
-
-      // Apply gravity (pixels/s²) and velocity (pixels/s)
-      p.vy += opts.gravity * 800 * dt
-      p.x += p.vx * dt
-      p.y += p.vy * dt
-
-      // Decay per-second: v *= decay^(dt*60) to be framerate-independent
-      const frameDec = Math.pow(opts.decay, dt * 60)
-      p.vx *= frameDec
-      p.vy *= frameDec
-
-      p.rotation += p.rotationSpeed * dt * 60
-
-      // Fade out in last 30%
-      const lifeRatio = p.life / p.maxLife
-      p.opacity = lifeRatio > 0.7 ? 1 - (lifeRatio - 0.7) / 0.3 : 1
-
-      ctx!.save()
-      ctx!.translate(p.x, p.y)
-      ctx!.rotate((p.rotation * Math.PI) / 180)
-      ctx!.globalAlpha = p.opacity
-      ctx!.fillStyle = p.color
-
-      if (p.shape === 'rect') {
-        ctx!.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2)
-      } else {
-        ctx!.beginPath()
-        ctx!.arc(0, 0, p.size / 2, 0, Math.PI * 2)
-        ctx!.fill()
-      }
-
-      ctx!.restore()
-    }
-
-    if (alive) {
-      requestAnimationFrame(animate)
-    } else {
-      ctx!.clearRect(0, 0, rect.width, rect.height)
-    }
-  }
-
-  requestAnimationFrame(animate)
 }
 
 // ─── Imperative API ─────────────────────────────────────────────────────────────
 
 /**
- * Fire confetti from a specific point on the page (fullscreen overlay).
- * Creates and removes a temporary canvas.
+ * Fire a realistic confetti burst across the full viewport.
+ * Uses multiple layered shots with different spreads for a natural look.
  */
 export function fireConfetti(options?: ConfettiOptions) {
+  const base = toConfettiOpts(options)
+  const count = options?.particleCount ?? 200
+  const origin = base.origin ?? { x: 0.5, y: 0.5 }
+
+  const fire = (ratio: number, opts: confetti.Options) => {
+    confetti({
+      ...base,
+      ...opts,
+      origin,
+      particleCount: Math.floor(count * ratio),
+      disableForReducedMotion: true,
+    })
+  }
+
+  fire(0.25, { spread: 26, startVelocity: 55 })
+  fire(0.2, { spread: 80 })
+  fire(0.35, { spread: 140, decay: 0.91, scalar: 0.8 })
+  fire(0.1, { spread: 180, startVelocity: 25, decay: 0.92, scalar: 1.2 })
+  fire(0.1, { spread: 180, startVelocity: 45 })
+}
+
+/**
+ * Rain confetti from the top across the full viewport width.
+ * Creates a temporary fullscreen canvas and fires multiple waves
+ * of particles from random x positions along the top edge.
+ */
+export function fireConfettiRain(options?: ConfettiOptions) {
   const canvas = document.createElement('canvas')
   Object.assign(canvas.style, {
     position: 'fixed',
-    top: '0',
-    left: '0',
+    inset: '0',
     width: '100vw',
     height: '100vh',
     pointerEvents: 'none',
@@ -207,116 +123,181 @@ export function fireConfetti(options?: ConfettiOptions) {
   } satisfies Partial<CSSStyleDeclaration>)
   document.body.appendChild(canvas)
 
-  const duration = options?.duration ?? 3000
+  const cannon = confetti.create(canvas, { resize: true })
+  const base = toConfettiOpts(options)
+  const total = options?.particleCount ?? 400
+  const waves = 5
+  const perWave = Math.floor(total / waves)
+  const burstsPer = 30 // random origin points per wave
 
-  // Fire multiple bursts spread across the viewport
-  const bursts = [
-    { originX: 0.15, originY: 0.6 },
-    { originX: 0.5, originY: 0.4 },
-    { originX: 0.85, originY: 0.6 },
-  ]
-  const perBurst = Math.ceil((options?.particleCount ?? 80) / bursts.length)
+  let wavesDone = 0
 
-  for (const burst of bursts) {
-    renderConfetti(
-      canvas,
-      {
-        ...options,
-        particleCount: perBurst,
-        spread: options?.spread ?? 120,
-        originX: burst.originX,
-        originY: burst.originY,
-      },
-      'fullscreen'
-    )
+  function fireWave() {
+    for (let i = 0; i < burstsPer; i++) {
+      cannon({
+        ...base,
+        origin: { x: Math.random(), y: -0.05 },
+        angle: 270 + (Math.random() - 0.5) * 30,
+        spread: 15 + Math.random() * 15,
+        startVelocity: 20 + Math.random() * 40,
+        gravity: 1.2 + Math.random() * 0.6,
+        ticks: options?.ticks ?? 350,
+        particleCount: Math.max(1, Math.floor(perWave / burstsPer)),
+        scalar: 0.7 + Math.random() * 0.6,
+        drift: (Math.random() - 0.5) * 2,
+        colors: options?.colors ?? getAccentColors(),
+        disableForReducedMotion: true,
+      })
+    }
+    wavesDone++
+    if (wavesDone < waves) {
+      setTimeout(fireWave, 350)
+    } else {
+      // Clean up canvas after particles are done
+      setTimeout(() => {
+        cannon.reset()
+        canvas.remove()
+      }, 4000)
+    }
   }
 
-  setTimeout(() => {
-    canvas.remove()
-  }, duration + 100)
+  fireWave()
 }
 
-// ─── ConfettiButton (local or fullscreen) ───────────────────────────────────────
+// ─── ConfettiRain Component ─────────────────────────────────────────────────────
 
+export interface ConfettiRainProps {
+  /** Whether the rain is currently active */
+  active: boolean
+  /** Called when the animation has finished */
+  onComplete?: () => void
+  /** Total particle count (default: 400) */
+  particleCount?: number
+  /** Particle colors */
+  colors?: string[]
+  /** Number of waves (default: 5) */
+  waves?: number
+  /** Delay between waves in ms (default: 350) */
+  waveDelay?: number
+}
+
+/**
+ * Declarative confetti rain overlay.
+ * Set `active` to true to start the animation.
+ */
+export function ConfettiRain({
+  active,
+  onComplete,
+  particleCount = 400,
+  colors,
+  waves = 7,
+  waveDelay = 500,
+}: ConfettiRainProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const cannonRef = useRef<confetti.CreateTypes | null>(null)
+
+  useEffect(() => {
+    if (!active || !canvasRef.current) return
+
+    if (!cannonRef.current) {
+      cannonRef.current = confetti.create(canvasRef.current, { resize: true })
+    }
+    const cannon = cannonRef.current
+
+    const perWave = Math.floor(particleCount / waves)
+    const burstsPer = 30
+    let wavesDone = 0
+    let cancelled = false
+    const timers: ReturnType<typeof setTimeout>[] = []
+
+    function fireWave() {
+      if (cancelled) return
+      for (let i = 0; i < burstsPer; i++) {
+        cannon({
+          origin: { x: Math.random(), y: -0.05 },
+          angle: 270 + (Math.random() - 0.5) * 30,
+          spread: 15 + Math.random() * 15,
+          startVelocity: 20 + Math.random() * 40,
+          gravity: 1.2 + Math.random() * 0.6,
+          ticks: 350,
+          particleCount: Math.max(1, Math.floor(perWave / burstsPer)),
+          scalar: 0.7 + Math.random() * 0.6,
+          drift: (Math.random() - 0.5) * 2,
+          colors: colors ?? getAccentColors(),
+          disableForReducedMotion: true,
+        })
+      }
+      wavesDone++
+      if (wavesDone < waves) {
+        timers.push(setTimeout(fireWave, waveDelay))
+      } else {
+        timers.push(setTimeout(() => onComplete?.(), 3000))
+      }
+    }
+
+    fireWave()
+
+    return () => {
+      cancelled = true
+      timers.forEach(clearTimeout)
+      cannon.reset()
+    }
+  }, [active, particleCount, colors, waves, waveDelay, onComplete])
+
+  if (!active) return null
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        pointerEvents: 'none',
+        zIndex: 9999,
+      }}
+    />
+  )
+}
+
+// ─── ConfettiButton ─────────────────────────────────────────────────────────────
+
+/**
+ * All confetti fires on the global canvas (fullscreen).
+ * Origin is calculated from the button's position in the viewport.
+ */
 export function ConfettiButton({
   children,
-  mode = 'local',
   confettiOptions,
   onClick,
   className,
   style,
   disabled,
 }: ConfettiButtonProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e)
 
-      if (mode === 'fullscreen') {
-        const rect = e.currentTarget.getBoundingClientRect()
-        fireConfetti({
-          ...confettiOptions,
-          originX: rect.left / window.innerWidth + (rect.width / window.innerWidth) / 2,
-          originY: rect.top / window.innerHeight,
-          angle: 90,
-        })
-        return
-      }
-
-      // Local mode: render on the contained canvas
-      if (canvasRef.current) {
-        renderConfetti(
-          canvasRef.current,
-          {
-            particleCount: 40,
-            spread: 60,
-            startVelocity: 30,
-            gravity: 1.2,
-            duration: 2000,
-            ...confettiOptions,
-            originX: 0.5,
-            originY: 0.35,
-            angle: 90,
-          },
-          'contained'
-        )
-      }
+      const rect = e.currentTarget.getBoundingClientRect()
+      fireConfetti({
+        ...confettiOptions,
+        originX: (rect.left + rect.width / 2) / window.innerWidth,
+        originY: (rect.top + rect.height / 2) / window.innerHeight,
+      })
     },
-    [mode, confettiOptions, onClick]
+    [confettiOptions, onClick]
   )
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'relative',
-        display: 'inline-block',
-      }}
+    <button
+      type="button"
+      className={className}
+      style={style}
+      disabled={disabled}
+      onClick={handleClick}
     >
-      <button
-        type="button"
-        className={className}
-        style={style}
-        disabled={disabled}
-        onClick={handleClick}
-      >
-        {children}
-      </button>
-      {mode === 'local' && (
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: 'absolute',
-            top: '-150%',
-            left: '-75%',
-            width: '250%',
-            height: '400%',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-    </div>
+      {children}
+    </button>
   )
 }

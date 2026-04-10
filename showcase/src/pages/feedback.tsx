@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { Section } from '../components/section'
 import { ToastProvider, useToast } from '@components/toast/toast'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
 import { Rating } from '@components/rating/rating'
-import { ConfettiButton, fireConfetti } from '@components/confetti/confetti'
+import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -27,6 +28,8 @@ function ToastDemoButtons() {
 }
 
 export function FeedbackPage() {
+  const [raining, setRaining] = useState(false)
+
   return (
     <>
       <Section title="Toast" description="Stacked toasts with swipe-to-dismiss, progress bar, and enter/exit animations.">
@@ -88,13 +91,12 @@ export function FeedbackPage() {
         </div>
       </Section>
 
-      <Section title="Confetti" description="Particle confetti effect – fullscreen (imperative) and local (around button).">
+      <Section title="Confetti" description="Particle confetti burst – always fullscreen via canvas-confetti. Origin is calculated from the button position.">
         <div className="flex flex-col gap-6">
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Lokal (um den Button)</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Vom Button aus</p>
             <div className="flex gap-4">
               <ConfettiButton
-                mode="local"
                 style={{
                   padding: '10px 24px',
                   borderRadius: '8px',
@@ -110,8 +112,7 @@ export function FeedbackPage() {
                 Add to Cart
               </ConfettiButton>
               <ConfettiButton
-                mode="local"
-                confettiOptions={{ colors: ['#f59e0b', '#f97316', '#ef4444'], particleCount: 30 }}
+                confettiOptions={{ colors: ['#f59e0b', '#f97316', '#ef4444'], particleCount: 80 }}
                 style={{
                   padding: '10px 24px',
                   borderRadius: '8px',
@@ -129,9 +130,10 @@ export function FeedbackPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Fullscreen</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Confetti-Regen (volle Breite)</p>
             <button
-              onClick={() => fireConfetti({ particleCount: 120, spread: 90 })}
+              onClick={() => setRaining(true)}
+              disabled={raining}
               style={{
                 padding: '10px 24px',
                 borderRadius: '8px',
@@ -140,12 +142,19 @@ export function FeedbackPage() {
                 color: '#fff',
                 fontSize: '14px',
                 fontWeight: 500,
-                cursor: 'pointer',
+                cursor: raining ? 'default' : 'pointer',
                 fontFamily: 'inherit',
+                opacity: raining ? 0.6 : 1,
               }}
             >
               Bestellung abgeschlossen!
             </button>
+            <ConfettiRain
+              active={raining}
+              particleCount={700}
+              waves={7}
+              onComplete={() => setRaining(false)}
+            />
           </div>
         </div>
       </Section>

@@ -17,6 +17,7 @@ export default defineConfig({
       '@number-flow/react': path.resolve(__dirname, 'node_modules/@number-flow/react'),
       'lottie-react': path.resolve(__dirname, 'node_modules/lottie-react'),
       'gsap': path.resolve(__dirname, 'node_modules/gsap'),
+      'canvas-confetti': path.resolve(__dirname, 'node_modules/canvas-confetti'),
     },
   },
 })
