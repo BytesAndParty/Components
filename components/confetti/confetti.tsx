@@ -45,17 +45,12 @@ export interface ConfettiButtonProps {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
-const ACCENT_PALETTES: Record<string, string[]> = {
-  indigo:  ['#6366f1', '#818cf8', '#a5b4fc', '#8b5cf6', '#c4b5fd', '#e0e7ff', '#4f46e5', '#7c3aed'],
-  amber:   ['#f59e0b', '#fbbf24', '#fcd34d', '#d97706', '#fde68a', '#b45309', '#f97316', '#fed7aa'],
-  emerald: ['#10b981', '#34d399', '#6ee7b7', '#059669', '#a7f3d0', '#047857', '#14b8a6', '#99f6e4'],
-  rose:    ['#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#fecdd3', '#be123c', '#ec4899', '#f9a8d4'],
-}
-
-function getAccentColors(): string[] {
-  const accent = document.documentElement.getAttribute('data-accent') ?? ''
-  return ACCENT_PALETTES[accent] ?? ACCENT_PALETTES.indigo
-}
+const RAIN_COLORS: [string, string][] = [
+  ['#6366f1', '#818cf8'],   // indigo
+  ['#f59e0b', '#fbbf24'],   // amber
+  ['#10b981', '#34d399'],   // emerald
+  ['#f43f5e', '#fb7185'],   // rose
+]
 
 function toConfettiOpts(options?: ConfettiOptions): confetti.Options {
   if (!options) return {}
@@ -127,27 +122,31 @@ export function fireConfettiRain(options?: ConfettiOptions) {
   const base = toConfettiOpts(options)
   const total = options?.particleCount ?? 400
   const waves = 5
-  const perWave = Math.floor(total / waves)
-  const burstsPer = 30 // random origin points per wave
+  const positions = 4
+  const colorGroups = options?.colors ? [options.colors] : RAIN_COLORS
+  const perShot = Math.max(2, Math.floor(total / (waves * positions * colorGroups.length)))
 
   let wavesDone = 0
 
   function fireWave() {
-    for (let i = 0; i < burstsPer; i++) {
-      cannon({
-        ...base,
-        origin: { x: Math.random(), y: -0.05 },
-        angle: 270 + (Math.random() - 0.5) * 30,
-        spread: 15 + Math.random() * 15,
-        startVelocity: 20 + Math.random() * 40,
-        gravity: 1.2 + Math.random() * 0.6,
-        ticks: options?.ticks ?? 350,
-        particleCount: Math.max(1, Math.floor(perWave / burstsPer)),
-        scalar: 0.7 + Math.random() * 0.6,
-        drift: (Math.random() - 0.5) * 2,
-        colors: options?.colors ?? getAccentColors(),
-        disableForReducedMotion: true,
-      })
+    for (let i = 0; i < positions; i++) {
+      const x = Math.random()
+      for (const group of colorGroups) {
+        cannon({
+          ...base,
+          origin: { x, y: -0.05 },
+          angle: 270 + (Math.random() - 0.5) * 30,
+          spread: 15 + Math.random() * 15,
+          startVelocity: 20 + Math.random() * 40,
+          gravity: 1.2 + Math.random() * 0.6,
+          ticks: options?.ticks ?? 350,
+          particleCount: perShot,
+          scalar: 0.7 + Math.random() * 0.6,
+          drift: (Math.random() - 0.5) * 2,
+          colors: Array.isArray(group) ? group : [group],
+          disableForReducedMotion: true,
+        })
+      }
     }
     wavesDone++
     if (wavesDone < waves) {
@@ -204,28 +203,32 @@ export function ConfettiRain({
     }
     const cannon = cannonRef.current
 
-    const perWave = Math.floor(particleCount / waves)
-    const burstsPer = 30
+    const positions = 4
+    const colorGroups = colors ? [colors] : RAIN_COLORS
+    const perShot = Math.max(2, Math.floor(particleCount / (waves * positions * colorGroups.length)))
     let wavesDone = 0
     let cancelled = false
     const timers: ReturnType<typeof setTimeout>[] = []
 
     function fireWave() {
       if (cancelled) return
-      for (let i = 0; i < burstsPer; i++) {
-        cannon({
-          origin: { x: Math.random(), y: -0.05 },
-          angle: 270 + (Math.random() - 0.5) * 30,
-          spread: 15 + Math.random() * 15,
-          startVelocity: 20 + Math.random() * 40,
-          gravity: 1.2 + Math.random() * 0.6,
-          ticks: 350,
-          particleCount: Math.max(1, Math.floor(perWave / burstsPer)),
-          scalar: 0.7 + Math.random() * 0.6,
-          drift: (Math.random() - 0.5) * 2,
-          colors: colors ?? getAccentColors(),
-          disableForReducedMotion: true,
-        })
+      for (let i = 0; i < positions; i++) {
+        const x = Math.random()
+        for (const group of colorGroups) {
+          cannon({
+            origin: { x, y: -0.05 },
+            angle: 270 + (Math.random() - 0.5) * 30,
+            spread: 15 + Math.random() * 15,
+            startVelocity: 20 + Math.random() * 40,
+            gravity: 1.2 + Math.random() * 0.6,
+            ticks: 350,
+            particleCount: perShot,
+            scalar: 0.7 + Math.random() * 0.6,
+            drift: (Math.random() - 0.5) * 2,
+            colors: Array.isArray(group) ? group : [group],
+            disableForReducedMotion: true,
+          })
+        }
       }
       wavesDone++
       if (wavesDone < waves) {

@@ -89,8 +89,6 @@ export function Layout() {
   return (
     <CartContext.Provider value={cartValue}>
       <ToastProvider placement="bottom-right">
-        <ScrollProgress top="0" color="var(--accent)" height={3} />
-
         <Navbar sticky height={56} bgColor="var(--bg)" borderColor="var(--border)">
           <NavbarSection position="left">
             <Link

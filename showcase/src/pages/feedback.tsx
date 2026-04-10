@@ -4,6 +4,7 @@ import { ToastProvider, useToast } from '@components/toast/toast'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
 import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
+import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -32,6 +33,7 @@ export function FeedbackPage() {
 
   return (
     <>
+      <ScrollProgress top="56px" color="var(--accent)" height={2} zIndex={99} />
       <Section title="Toast" description="Stacked toasts with swipe-to-dismiss, progress bar, and enter/exit animations.">
         <ToastDemoButtons />
       </Section>
