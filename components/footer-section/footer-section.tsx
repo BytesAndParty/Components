@@ -127,7 +127,7 @@ export function Footer({
             <p
               style={{
                 fontSize: '0.8125rem',
-                color: 'var(--text-muted, #71717a)',
+                color: 'var(--muted-foreground, #71717a)',
               }}
             >
               &copy; {new Date().getFullYear()} {companyName}. All rights
@@ -174,7 +174,7 @@ export function Footer({
                         href={link.href}
                         className="footer-link"
                         style={{
-                          color: 'var(--text-muted, #71717a)',
+                          color: 'var(--muted-foreground, #71717a)',
                           textDecoration: 'none',
                           fontSize: '0.8125rem',
                           display: 'inline-flex',

@@ -258,7 +258,7 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
               flexShrink: 0,
             }}
           />
-          <span style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--text)' }}>
+          <span style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--foreground)' }}>
             {title}
           </span>
         </div>
@@ -266,7 +266,7 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
           <p
             style={{
               fontSize: '0.8125rem',
-              color: 'var(--text-muted)',
+              color: 'var(--muted-foreground)',
               marginTop: '0.25rem',
               marginLeft: '1rem',
             }}
@@ -290,7 +290,7 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
           justifyContent: 'center',
           background: 'transparent',
           border: 'none',
-          color: 'var(--text-muted)',
+          color: 'var(--muted-foreground)',
           cursor: 'pointer',
           borderRadius: '0.25rem',
           opacity: hovered ? 1 : 0,

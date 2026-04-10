@@ -120,7 +120,7 @@ export function FeedbackPage() {
                   borderRadius: '8px',
                   border: '1px solid var(--border)',
                   background: 'var(--card)',
-                  color: 'var(--text)',
+                  color: 'var(--foreground)',
                   fontSize: '14px',
                   fontWeight: 500,
                   cursor: 'pointer',

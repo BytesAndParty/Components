@@ -9,7 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const variantStyles: Record<string, React.CSSProperties> = {
   default: { background: 'var(--accent)', color: '#fff' },
   ghost: { background: 'transparent', color: 'inherit' },
-  outline: { background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)' },
+  outline: { background: 'transparent', border: '1px solid var(--border)', color: 'var(--foreground)' },
 }
 
 const sizeStyles: Record<string, React.CSSProperties> = {

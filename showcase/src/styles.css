@@ -1,14 +1,29 @@
 @import "tailwindcss";
 
-@theme {
+@theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  
-  --color-bg: var(--bg);
-  --color-card: var(--card);
-  --color-border: var(--border);
-  --color-foreground: var(--text);
-  --color-muted-foreground: var(--text-muted);
-  --color-accent: var(--accent);
+
+  /* Color mappings */
+  --color-background:             var(--background);
+  --color-foreground:             var(--foreground);
+  --color-card:                   var(--card);
+  --color-card-foreground:        var(--card-foreground);
+  --color-muted:                  var(--muted);
+  --color-muted-foreground:       var(--muted-foreground);
+  --color-border:                 var(--border);
+  --color-input:                  var(--input);
+  --color-ring:                   var(--ring);
+  --color-accent:                 var(--accent);
+  --color-primary:                var(--primary);
+  --color-primary-foreground:     var(--primary-foreground);
+  --color-destructive:            var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
 
   @keyframes aurora {
     0%   { background-position: 0% 50%;   transform: rotate(-5deg) scale(0.9); }
@@ -21,29 +36,44 @@
   --animate-aurora: aurora 10s ease infinite;
 }
 
-/* Base Styles */
+/* ── Dark Mode (default) ─────────────────────────────── */
 :root {
-  --bg: #0a0a0b;
-  --card: #141416;
-  --border: #2a2a2e;
-  --text: #e4e4e7;
-  --text-muted: #71717a;
-  --accent: #6366f1;
-  --theme-primary: 99 102 241;
-  --theme-accent: 139 92 246;
-  --icon-invert: invert(1);
+  --background:             oklch(0.062 0.004 285);
+  --foreground:             oklch(0.905 0.004 285);
+  --card:                   oklch(0.082 0.004 285);
+  --card-foreground:        oklch(0.905 0.004 285);
+  --muted:                  oklch(0.118 0.004 285);
+  --muted-foreground:       oklch(0.491 0.010 285);
+  --border:                 oklch(0.188 0.006 285);
+  --input:                  oklch(0.188 0.006 285);
+  --accent:                 oklch(0.585 0.233 277);
+  --primary:                var(--accent);
+  --primary-foreground:     oklch(1 0 0);
+  --ring:                   var(--accent);
+  --destructive:            oklch(0.577 0.245 27);
+  --destructive-foreground: oklch(1 0 0);
+  --radius:                 0.5rem;
+
+  /* Nicht migrierbar – behalten */
+  --icon-invert:            invert(1);
+  --theme-primary:          99 102 241;
+  --theme-accent:           139 92 246;
 }
 
+/* ── Light Mode ──────────────────────────────────────── */
 [data-theme="light"] {
-  --bg: #f8f8fa;
-  --card: #ffffff;
-  --border: #d4d4d8;
-  --text: #18181b;
-  --text-muted: #71717a;
-  --accent: #6366f1;
-  --theme-primary: 99 102 241;
-  --theme-accent: 139 92 246;
-  --icon-invert: invert(0);
+  --background:             oklch(0.979 0.002 285);
+  --foreground:             oklch(0.141 0.004 285);
+  --card:                   oklch(1 0 0);
+  --card-foreground:        oklch(0.141 0.004 285);
+  --muted:                  oklch(0.961 0.002 285);
+  --muted-foreground:       oklch(0.491 0.010 285);
+  --border:                 oklch(0.870 0.004 285);
+  --input:                  oklch(0.870 0.004 285);
+
+  --icon-invert:            invert(0);
+  --theme-primary:          99 102 241;
+  --theme-accent:           139 92 246;
 }
 
 /* Accent color overrides via data-accent attribute */
@@ -54,7 +84,7 @@
 
 @layer base {
   body {
-    @apply bg-bg text-foreground font-sans antialiased leading-relaxed;
+    @apply bg-background text-foreground font-sans antialiased leading-relaxed;
   }
 }
 

@@ -61,7 +61,7 @@ function PasswordConfirmationDemo() {
             background: 'var(--card)',
             border: '1px solid var(--border)',
             borderRadius: '10px',
-            color: 'var(--text)',
+            color: 'var(--foreground)',
             fontSize: '14px',
             fontFamily: 'monospace',
           }}

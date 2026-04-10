@@ -25,7 +25,7 @@ export interface PasswordConfirmationProps {
   matchColor?: string
   /** Mismatch color (default: '#ef4444') */
   mismatchColor?: string
-  /** Neutral dot color (default: 'var(--text-muted, #71717a)') */
+  /** Neutral dot color (default: 'var(--muted-foreground, #71717a)') */
   neutralColor?: string
   className?: string
   style?: CSSProperties
@@ -73,7 +73,7 @@ export function PasswordConfirmation({
   dotSize = 10,
   matchColor = '#22c55e',
   mismatchColor = '#ef4444',
-  neutralColor = 'var(--text-muted, #71717a)',
+  neutralColor = 'var(--muted-foreground, #71717a)',
   className,
   style,
 }: PasswordConfirmationProps) {

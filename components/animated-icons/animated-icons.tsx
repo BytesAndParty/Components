@@ -256,7 +256,7 @@ function CssIconWrapper({ size = 32, className, children }: CssIconProps & { chi
   return (
     <div
       className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
-      style={{ width: size, height: size, color: 'var(--text, currentColor)' }}
+      style={{ width: size, height: size, color: 'var(--foreground, currentColor)' }}
     >
       {children}
     </div>
@@ -403,7 +403,7 @@ export function HeartIconCss({ size = 32, className }: CssIconProps) {
   return (
     <div
       className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
-      style={{ width: size, height: size, overflow: 'visible', color: 'var(--text, currentColor)' }}
+      style={{ width: size, height: size, overflow: 'visible', color: 'var(--foreground, currentColor)' }}
       onClick={() => setLiked(v => !v)}
     >
       <svg width={size} height={size} viewBox="-3 -1 30 26" fill={liked ? '#ef4444' : 'none'} stroke={liked ? '#ef4444' : 'currentColor'} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.45))' : 'none', transition: 'filter 300ms ease' }}>
@@ -421,7 +421,7 @@ export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
   return (
     <div
       className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
-      style={{ width: size, height: size, overflow: 'visible', color: 'var(--text, currentColor)' }}
+      style={{ width: size, height: size, overflow: 'visible', color: 'var(--foreground, currentColor)' }}
       onClick={() => setLiked(v => !v)}
     >
       <svg width={size} height={size} viewBox="-3 -1 30 26" fill="none" strokeWidth={0} style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 3px 6px rgba(239, 68, 68, 0.5))' : 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25))', transition: 'filter 300ms ease' }}>

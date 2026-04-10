@@ -83,7 +83,7 @@ export function Switch({
           width: c.track.w,
           height: c.track.h,
           borderRadius: c.radius,
-          background: checked ? 'var(--accent)' : 'var(--text-muted)',
+          background: checked ? 'var(--accent)' : 'var(--muted-foreground)',
           transition: 'background 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           flexShrink: 0,
         }}
@@ -106,7 +106,7 @@ export function Switch({
       </span>
 
       {label && (
-        <span style={{ fontSize: '0.875rem', color: 'var(--text)' }}>{label}</span>
+        <span style={{ fontSize: '0.875rem', color: 'var(--foreground)' }}>{label}</span>
       )}
     </label>
   );

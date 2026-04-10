@@ -76,7 +76,7 @@ function getVariantStyle(
         borderWidth:  '1px',
         borderStyle:  'solid',
         borderColor:  'var(--border)',
-        color:        'var(--text)',
+        color:        'var(--foreground)',
       };
 
     case 'primary':
@@ -118,7 +118,7 @@ function getVariantStyle(
         backgroundColor: hovered
           ? 'color-mix(in oklch, var(--accent) 8%, transparent)'
           : 'transparent',
-        color: hovered ? 'var(--text)' : 'var(--text-muted)',
+        color: hovered ? 'var(--foreground)' : 'var(--muted-foreground)',
       };
 
     case 'destructive':

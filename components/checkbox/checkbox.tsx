@@ -84,7 +84,7 @@ export function Checkbox({
             position: 'absolute',
             inset: 0,
             borderRadius: 'inherit',
-            border: `2px solid ${checked ? 'var(--accent)' : 'var(--text-muted)'}`,
+            border: `2px solid ${checked ? 'var(--accent)' : 'var(--muted-foreground)'}`,
             transition: 'border-color 0.2s linear',
             pointerEvents: 'none',
           }}
@@ -134,7 +134,7 @@ export function Checkbox({
       </span>
 
       {label && (
-        <span style={{ fontSize: s.label, color: 'var(--text)' }}>{label}</span>
+        <span style={{ fontSize: s.label, color: 'var(--foreground)' }}>{label}</span>
       )}
     </label>
   );

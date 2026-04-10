@@ -20,7 +20,7 @@ export function BreadcrumbList({
         alignItems: 'center',
         gap: '0.5rem',
         fontSize: '0.875rem',
-        color: 'var(--text-muted, #71717a)',
+        color: 'var(--muted-foreground, #71717a)',
         listStyle: 'none',
         padding: 0,
         margin: 0,
@@ -79,7 +79,7 @@ export function BreadcrumbPage({
       aria-current="page"
       style={{
         fontWeight: 500,
-        color: 'var(--text, #e4e4e7)',
+        color: 'var(--foreground, #e4e4e7)',
         ...style,
       }}
       data-slot="breadcrumb-page"

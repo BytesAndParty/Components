@@ -88,7 +88,7 @@ function StepIndicator({
                       : 'transparent',
                   color: isCompleted || isActive
                     ? '#ffffff'
-                    : 'var(--text-muted, #71717a)',
+                    : 'var(--muted-foreground, #71717a)',
                   border: isPending
                     ? '2px solid var(--border, #2a2a2e)'
                     : '2px solid var(--accent, #6366f1)',
@@ -107,8 +107,8 @@ function StepIndicator({
                   style={{
                     fontSize: '12px',
                     color: isActive
-                      ? 'var(--text, #e4e4e7)'
-                      : 'var(--text-muted, #71717a)',
+                      ? 'var(--foreground, #e4e4e7)'
+                      : 'var(--muted-foreground, #71717a)',
                     fontWeight: isActive ? 600 : 400,
                     whiteSpace: 'nowrap',
                     transition: 'color 300ms ease',
@@ -249,7 +249,7 @@ export function Stepper({
           style={{
             ...buttonBase,
             background: 'transparent',
-            color: isFirstStep ? 'var(--text-muted, #71717a)' : 'var(--text, #e4e4e7)',
+            color: isFirstStep ? 'var(--muted-foreground, #71717a)' : 'var(--foreground, #e4e4e7)',
             border: `1px solid ${isFirstStep ? 'var(--border, #2a2a2e)' : 'var(--border, #2a2a2e)'}`,
             opacity: isFirstStep ? 0.5 : 1,
             cursor: isFirstStep ? 'not-allowed' : 'pointer',

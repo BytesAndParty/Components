@@ -93,6 +93,6 @@ bun run dev
 
 - **Named Exports only** – kein Default Export
 - **Inline Styles** für maximale Portabilität
-- **CSS Custom Properties** (`--accent`, `--bg`, `--card`, `--border`, `--text`) für Theming
+- **CSS Custom Properties** (`--accent`, `--background`, `--card`, `--border`, `--foreground`) für Theming
 - **Controlled + Uncontrolled** Pattern bei checkbox, switch, rating
 - **prefers-reduced-motion** wird respektiert

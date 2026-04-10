@@ -94,7 +94,7 @@ export function PricingInteraction({
               width: '100%',
               padding: '0.4rem',
               fontSize: '0.8125rem',
-              color: 'var(--text)',
+              color: 'var(--foreground)',
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
@@ -165,7 +165,7 @@ export function PricingInteraction({
                 style={{
                   fontWeight: 600,
                   fontSize: '1rem',
-                  color: 'var(--text)',
+                  color: 'var(--foreground)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
@@ -188,13 +188,13 @@ export function PricingInteraction({
                 )}
               </p>
               {option.description && (
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', marginTop: '0.15rem' }}>
                   {option.description}
                 </p>
               )}
               <p
                 style={{
-                  color: 'var(--text-muted)',
+                  color: 'var(--muted-foreground)',
                   fontSize: '0.8125rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -203,7 +203,7 @@ export function PricingInteraction({
               >
                 <span
                   style={{
-                    color: 'var(--text)',
+                    color: 'var(--foreground)',
                     fontWeight: 500,
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -220,7 +220,7 @@ export function PricingInteraction({
             <div
               style={{
                 border: '2px solid',
-                borderColor: active === i ? 'var(--accent)' : 'var(--text-muted)',
+                borderColor: active === i ? 'var(--accent)' : 'var(--muted-foreground)',
                 width: '1.5rem',
                 height: '1.5rem',
                 borderRadius: '9999px',

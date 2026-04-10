@@ -86,7 +86,7 @@ const inputBaseStyle: CSSProperties = {
   background: 'var(--card, #141416)',
   border: '2px solid var(--border, #2a2a2e)',
   borderRadius: '10px',
-  color: 'var(--text, #e4e4e7)',
+  color: 'var(--foreground, #e4e4e7)',
   fontSize: '14px',
   fontFamily: 'inherit',
   outline: 'none',
@@ -96,7 +96,7 @@ const inputBaseStyle: CSSProperties = {
 const labelStyle: CSSProperties = {
   fontSize: '13px',
   fontWeight: 500,
-  color: 'var(--text-muted, #71717a)',
+  color: 'var(--muted-foreground, #71717a)',
   letterSpacing: '0.02em',
 }
 
@@ -172,7 +172,7 @@ function VisibilityToggle({ visible, onToggle, renderVisibilityIcon }: Visibilit
         background: 'none',
         border: 'none',
         cursor: 'pointer',
-        color: 'var(--text, currentColor)',
+        color: 'var(--foreground, currentColor)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -318,7 +318,7 @@ export function PasswordSetup({
 
   // ─── Confirmation dots ────────────────────────────────────────────────────
 
-  const neutralColor = 'var(--text-muted, #71717a)'
+  const neutralColor = 'var(--muted-foreground, #71717a)'
   const dots: ReactNode[] = []
 
   for (let i = 0; i < password.length; i++) {
@@ -433,7 +433,7 @@ export function PasswordSetup({
                   gap: '5px',
                   padding: '5px 10px',
                   fontSize: '12px',
-                  color: 'var(--text-muted, #71717a)',
+                  color: 'var(--muted-foreground, #71717a)',
                   background: 'none',
                   border: '1px solid var(--border, #2a2a2e)',
                   borderRadius: '7px',
@@ -442,11 +442,11 @@ export function PasswordSetup({
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = 'var(--accent, #6366f1)'
-                  e.currentTarget.style.color = 'var(--text, #e4e4e7)'
+                  e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = 'var(--border, #2a2a2e)'
-                  e.currentTarget.style.color = 'var(--text-muted, #71717a)'
+                  e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
                 }}
               >
                 <RefreshIcon /> Generate
@@ -462,7 +462,7 @@ export function PasswordSetup({
                   gap: '5px',
                   padding: '5px 10px',
                   fontSize: '12px',
-                  color: copied ? matchColor : 'var(--text-muted, #71717a)',
+                  color: copied ? matchColor : 'var(--muted-foreground, #71717a)',
                   background: 'none',
                   border: '1px solid var(--border, #2a2a2e)',
                   borderRadius: '7px',
@@ -472,13 +472,13 @@ export function PasswordSetup({
                 onMouseEnter={e => {
                   if (!copied) {
                     e.currentTarget.style.borderColor = 'var(--accent, #6366f1)'
-                    e.currentTarget.style.color = 'var(--text, #e4e4e7)'
+                    e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
                   }
                 }}
                 onMouseLeave={e => {
                   if (!copied) {
                     e.currentTarget.style.borderColor = 'var(--border, #2a2a2e)'
-                    e.currentTarget.style.color = 'var(--text-muted, #71717a)'
+                    e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
                   }
                 }}
               >
@@ -539,7 +539,7 @@ export function PasswordSetup({
                   alignItems: 'center',
                   gap: '6px',
                   fontSize: '12px',
-                  color: check.valid ? matchColor : 'var(--text-muted, #71717a)',
+                  color: check.valid ? matchColor : 'var(--muted-foreground, #71717a)',
                   transition: 'color 200ms ease',
                 }}
               >
@@ -614,8 +614,8 @@ export function PasswordSetup({
 
             {/* Dots or plain text when visible */}
             {confirmVisible ? (
-              <span style={{ fontSize: '14px', color: 'var(--text, #e4e4e7)', fontFamily: 'inherit' }}>
-                {confirm || <span style={{ color: 'var(--text-muted, #71717a)' }}>Confirm…</span>}
+              <span style={{ fontSize: '14px', color: 'var(--foreground, #e4e4e7)', fontFamily: 'inherit' }}>
+                {confirm || <span style={{ color: 'var(--muted-foreground, #71717a)' }}>Confirm…</span>}
               </span>
             ) : (
               <div

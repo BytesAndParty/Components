@@ -226,7 +226,7 @@ export function FloatingCart({
                   <span style={{
                     fontSize: '11px',
                     fontWeight: 700,
-                    color: 'var(--text-muted, #71717a)',
+                    color: 'var(--muted-foreground, #71717a)',
                     textAlign: 'center',
                     lineHeight: 1.2,
                     padding: '4px',
@@ -286,8 +286,8 @@ export function FloatingCart({
                 minWidth: '20px',
                 height: '20px',
                 borderRadius: '10px',
-                background: 'var(--bg, #16161a)',
-                color: 'var(--text, #fff)',
+                background: 'var(--background, #16161a)',
+                color: 'var(--foreground, #fff)',
                 fontSize: '11px',
                 fontWeight: 700,
                 display: 'flex',
@@ -321,9 +321,9 @@ export function FloatingCart({
                   width: '20px',
                   height: '20px',
                   borderRadius: '50%',
-                  background: 'var(--bg, #16161a)',
+                  background: 'var(--background, #16161a)',
                   border: 'none',
-                  color: 'var(--text, #fff)',
+                  color: 'var(--foreground, #fff)',
                   cursor: 'pointer',
                   display: isHovered ? 'flex' : 'none',
                   alignItems: 'center',
@@ -335,7 +335,7 @@ export function FloatingCart({
                   transition: 'background 300ms ease',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = fabColor)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg, #16161a)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--background, #16161a)')}
               >
                 ×
               </button>
@@ -366,9 +366,9 @@ export function FloatingCart({
             : 'fc-hide 200ms ease-in forwards',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--text, #303030)'
+          e.currentTarget.style.borderColor = 'var(--foreground, #303030)'
           const inner = e.currentTarget.firstElementChild as HTMLElement
-          if (inner) inner.style.background = 'var(--text, #303030)'
+          if (inner) inner.style.background = 'var(--foreground, #303030)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = fabColor
@@ -416,8 +416,8 @@ export function FloatingCart({
             left: '50%',
             transform: 'translateX(-50%)',
             borderRadius: '11px',
-            background: 'var(--bg, #0a0a0b)',
-            color: 'var(--text, #e4e4e7)',
+            background: 'var(--background, #0a0a0b)',
+            color: 'var(--foreground, #e4e4e7)',
             fontSize: '11px',
             fontWeight: 700,
             padding: '2px 8px',

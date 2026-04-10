@@ -102,7 +102,7 @@ export function AnimatedSearch({
           border: 'none',
           cursor: 'pointer',
           padding: 0,
-          color: 'var(--text)',
+          color: 'var(--foreground)',
           flexShrink: 0,
         }}
         whileHover={{ scale: 1.1 }}
@@ -154,7 +154,7 @@ export function AnimatedSearch({
                 background: 'transparent',
                 border: 'none',
                 outline: 'none',
-                color: 'var(--text)',
+                color: 'var(--foreground)',
                 fontSize: '0.875rem',
                 fontFamily: 'inherit',
               }}
@@ -185,10 +185,10 @@ export function AnimatedSearch({
               border: 'none',
               cursor: 'pointer',
               padding: 0,
-              color: 'var(--text-muted)',
+              color: 'var(--muted-foreground)',
               flexShrink: 0,
             }}
-            whileHover={{ scale: 1.1, color: 'var(--text)' }}
+            whileHover={{ scale: 1.1, color: 'var(--foreground)' }}
             whileTap={{ scale: 0.95 }}
             aria-label="Close search"
           >
