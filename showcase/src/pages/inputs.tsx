@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import Lottie, { type LottieRefCurrentProps } from 'lottie-react'
 import { Section } from '../components/section'
 import { Checkbox } from '@components/checkbox/checkbox'
 import { Switch } from '@components/switch/switch'
@@ -8,8 +9,38 @@ import { useImageUpload } from '@components/use-image-upload/use-image-upload'
 import { useToast } from '@components/toast/toast'
 import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
 import { PasswordSetup } from '@components/password-setup/password-setup'
-import { VisibilityIcon } from '@components/animated-icons/animated-icons'
+import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.json'
 import { suggestions } from '../data'
+
+// Lottie Eye-Toggle: spielt vorwärts wenn visible=true, rückwärts wenn false.
+// Muss module-level sein damit React die Instanz nicht bei jedem Re-render neu mountet.
+function AnimatedEyeToggle({ visible, size = 20 }: { visible: boolean; size?: number }) {
+  const lottieRef = useRef<LottieRefCurrentProps>(null)
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    const anim = lottieRef.current
+    if (!anim) return
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    anim.setDirection(visible ? -1 : 1)
+    anim.play()
+  }, [visible])
+
+  return (
+    <div style={{ filter: 'var(--icon-invert, invert(1))' }}>
+      <Lottie
+        lottieRef={lottieRef}
+        animationData={visibilityData}
+        loop={false}
+        autoplay={false}
+        style={{ width: size, height: size }}
+      />
+    </div>
+  )
+}
 
 function PasswordConfirmationDemo() {
   const [password] = useState('weinhaus2024')
@@ -159,7 +190,7 @@ export function InputsPage() {
       </Section>
 
       <Section title="AutocompleteCell" description="Input field with filtered autocomplete suggestions.">
-        <div className="border border-border rounded-lg max-w-96 bg-card overflow-hidden shadow-sm">
+        <div className="max-w-96">
           <AutocompleteCell
             value={autocompleteValue}
             onChange={setAutocompleteValue}
@@ -213,7 +244,7 @@ export function InputsPage() {
             confirmLabel="Passwort bestätigen"
             passwordPlaceholder="Dein Passwort eingeben..."
             renderVisibilityIcon={(visible) => (
-              <VisibilityIcon size={20} color="currentColor" trigger="click" />
+              <AnimatedEyeToggle visible={visible} size={20} />
             )}
             onMatch={(pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
           />

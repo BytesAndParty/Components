@@ -1,6 +1,5 @@
 import { Section } from '../components/section'
 import { ToastProvider, useToast } from '@components/toast/toast'
-import { HeartFavorite } from '@components/heart-favorite/heart-favorite'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
 import { Rating } from '@components/rating/rating'
 import { ConfettiButton, fireConfetti } from '@components/confetti/confetti'
@@ -32,29 +31,6 @@ export function FeedbackPage() {
     <>
       <Section title="Toast" description="Stacked toasts with swipe-to-dismiss, progress bar, and enter/exit animations.">
         <ToastDemoButtons />
-      </Section>
-
-      <Section title="HeartFavorite" description="Animated heart toggle with bounce effect.">
-        <div className="flex gap-4">
-          <div className="flex-1 border border-border rounded-xl bg-card overflow-hidden shadow-sm">
-            <div className="h-40 bg-gradient-to-br from-indigo-500/15 to-violet-500/10 relative">
-              <div className="absolute top-3 right-3">
-                <HeartFavorite size={24} />
-              </div>
-            </div>
-            <div className="p-4">
-              <p className="font-semibold text-[0.9375rem] text-foreground">Project Alpha</p>
-              <p className="text-muted-foreground text-[0.8125rem] mt-1">
-                A sample card with the animated heart favorite button.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-2 border border-border rounded-xl bg-card p-6 shadow-sm">
-            <HeartFavorite size={20} />
-            <HeartFavorite size={32} />
-            <HeartFavorite size={44} defaultLiked />
-          </div>
-        </div>
       </Section>
 
       <Section title="PricingInteraction" description="Animated selection with period toggle and smooth number transitions.">

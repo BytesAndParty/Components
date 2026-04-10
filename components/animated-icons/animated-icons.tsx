@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -192,6 +192,21 @@ const cssIconStyles = `
   30% { transform: translateX(5px); }
   60% { transform: translateX(2px); }
 }
+@keyframes heart-pulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.25); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes heart-pop {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.35); }
+  30% { transform: scale(0.9); }
+  45% { transform: scale(1.15); }
+  60% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
 
 .css-icon:hover .icon-sun-rays { animation: sun-rays-rotate 0.8s ease; }
 .css-icon:hover .icon-moon-body { animation: moon-rock 0.7s ease; }
@@ -207,6 +222,7 @@ const cssIconStyles = `
 .css-icon:hover .icon-plus { animation: plus-rotate-pop 0.5s ease; }
 .css-icon:hover .icon-minus { animation: minus-stretch 0.4s ease; }
 .css-icon:hover .icon-truck { animation: truck-roll 0.55s ease; }
+.css-icon:hover .icon-heart { animation: heart-pulse 0.6s ease; }
 @media (prefers-reduced-motion: reduce) {
   .css-icon:hover .icon-sun-rays,
   .css-icon:hover .icon-moon-body,
@@ -221,7 +237,8 @@ const cssIconStyles = `
   .css-icon:hover .icon-user,
   .css-icon:hover .icon-plus,
   .css-icon:hover .icon-minus,
-  .css-icon:hover .icon-truck { animation: none !important; }
+  .css-icon:hover .icon-truck,
+  .css-icon:hover .icon-heart { animation: none !important; }
 }
 `;
 
@@ -380,6 +397,81 @@ export function TruckIconCss({ size = 32, className }: CssIconProps) {
 }
 TruckIconCss.displayName = 'TruckIconCss';
 
+export function HeartIconCss({ size = 32, className }: CssIconProps) {
+  const [liked, setLiked] = useState(false);
+  injectCssOnce();
+  return (
+    <div
+      className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
+      style={{ width: size, height: size, overflow: 'visible', color: 'var(--text, currentColor)' }}
+      onClick={() => setLiked(v => !v)}
+    >
+      <svg width={size} height={size} viewBox="-3 -1 30 26" fill={liked ? '#ef4444' : 'none'} stroke={liked ? '#ef4444' : 'currentColor'} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.45))' : 'none', transition: 'filter 300ms ease' }}>
+        <path className="icon-heart" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" style={{ transformOrigin: '12px 13px', transition: 'fill 200ms ease, stroke 200ms ease', animation: liked ? 'heart-pop 0.5s ease' : undefined }} />
+      </svg>
+    </div>
+  );
+}
+HeartIconCss.displayName = 'HeartIconCss';
+
+export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
+  const [liked, setLiked] = useState(false);
+  const id = 'heart3d-' + (typeof crypto !== 'undefined' ? crypto.randomUUID().slice(0, 6) : Math.random().toString(36).slice(2, 8));
+  injectCssOnce();
+  return (
+    <div
+      className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
+      style={{ width: size, height: size, overflow: 'visible', color: 'var(--text, currentColor)' }}
+      onClick={() => setLiked(v => !v)}
+    >
+      <svg width={size} height={size} viewBox="-3 -1 30 26" fill="none" strokeWidth={0} style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 3px 6px rgba(239, 68, 68, 0.5))' : 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25))', transition: 'filter 300ms ease' }}>
+        <defs>
+          {/* Idle gradient — subtle metallic grey */}
+          <radialGradient id={`${id}-idle`} cx="0.35" cy="0.3" r="0.65">
+            <stop offset="0%" stopColor="#b0b0b0" />
+            <stop offset="50%" stopColor="#787878" />
+            <stop offset="100%" stopColor="#4a4a4a" />
+          </radialGradient>
+          {/* Active gradient — rich red 3D */}
+          <radialGradient id={`${id}-active`} cx="0.35" cy="0.3" r="0.65">
+            <stop offset="0%" stopColor="#ff8a8a" />
+            <stop offset="40%" stopColor="#ef4444" />
+            <stop offset="100%" stopColor="#991b1b" />
+          </radialGradient>
+          {/* Highlight specular */}
+          <radialGradient id={`${id}-shine`} cx="0.3" cy="0.25" r="0.35">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </radialGradient>
+        </defs>
+        {/* Base shape */}
+        <path
+          className="icon-heart"
+          d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+          fill={liked ? `url(#${id}-active)` : `url(#${id}-idle)`}
+          style={{ transformOrigin: '12px 13px', transition: 'fill 300ms ease', animation: liked ? 'heart-pop 0.5s ease' : undefined }}
+        />
+        {/* Specular highlight overlay */}
+        <path
+          d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+          fill={`url(#${id}-shine)`}
+          style={{ pointerEvents: 'none' }}
+        />
+        {/* Bottom edge shadow for depth */}
+        <path
+          d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+          fill="none"
+          stroke={liked ? '#7f1d1d' : '#333'}
+          strokeWidth={0.6}
+          opacity={0.4}
+          style={{ pointerEvents: 'none' }}
+        />
+      </svg>
+    </div>
+  );
+}
+Heart3DIconCss.displayName = 'Heart3DIconCss';
+
 export const animatedIcons = {
   HomeIcon,
   SearchToXIcon,
@@ -404,4 +496,6 @@ export const animatedIcons = {
   PlusIconCss,
   MinusIconCss,
   TruckIconCss,
+  HeartIconCss,
+  Heart3DIconCss,
 } as const;

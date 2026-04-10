@@ -75,7 +75,7 @@ export function AnimatedSearch({
           position: 'absolute',
           inset: 0,
           borderRadius: iconSize / 2,
-          border: '1.5px solid var(--border)',
+          border: '2.5px solid var(--border)',
           background: 'var(--card)',
           cursor: isOpen ? 'default' : 'pointer',
         }}

@@ -150,6 +150,48 @@ function CheckIcon() {
   )
 }
 
+// ─── Visibility toggle button (module-level – stabil über Re-renders) ───────────
+
+interface VisibilityToggleProps {
+  visible: boolean
+  onToggle: () => void
+  renderVisibilityIcon?: (visible: boolean) => ReactNode
+}
+
+function VisibilityToggle({ visible, onToggle, renderVisibilityIcon }: VisibilityToggleProps) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={visible ? 'Hide password' : 'Show password'}
+      style={{
+        position: 'absolute',
+        right: '10px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        color: 'var(--text, currentColor)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '4px',
+        borderRadius: '6px',
+        transition: 'opacity 200ms ease',
+        opacity: 0.5,
+      }}
+      onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
+      onMouseLeave={e => { e.currentTarget.style.opacity = '0.5' }}
+    >
+      {renderVisibilityIcon
+        ? renderVisibilityIcon(visible)
+        : visible ? <EyeOffIcon /> : <EyeIcon />
+      }
+    </button>
+  )
+}
+
 // ─── Strength checks ────────────────────────────────────────────────────────────
 
 interface Check {
@@ -338,41 +380,6 @@ export function PasswordSetup({
     return 'none'
   }
 
-  // ─── Visibility toggle button ─────────────────────────────────────────────
-
-  function VisibilityToggle({ visible, onToggle }: { visible: boolean; onToggle: () => void }) {
-    return (
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label={visible ? 'Hide password' : 'Show password'}
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--text-muted, #71717a)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '4px',
-          borderRadius: '6px',
-          transition: 'color 200ms ease',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.color = 'var(--text, #e4e4e7)' }}
-        onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted, #71717a)' }}
-      >
-        {renderVisibilityIcon
-          ? renderVisibilityIcon(visible)
-          : visible ? <EyeOffIcon /> : <EyeIcon />
-        }
-      </button>
-    )
-  }
-
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
@@ -403,7 +410,7 @@ export function PasswordSetup({
               boxShadow: focused1 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none',
             }}
           />
-          <VisibilityToggle visible={pwVisible} onToggle={() => setPwVisible(v => !v)} />
+          <VisibilityToggle visible={pwVisible} onToggle={() => setPwVisible(v => !v)} renderVisibilityIcon={renderVisibilityIcon} />
         </div>
 
         {/* Actions row */}
@@ -623,7 +630,7 @@ export function PasswordSetup({
               </div>
             )}
 
-            <VisibilityToggle visible={confirmVisible} onToggle={() => setConfirmVisible(v => !v)} />
+            <VisibilityToggle visible={confirmVisible} onToggle={() => setConfirmVisible(v => !v)} renderVisibilityIcon={renderVisibilityIcon} />
           </div>
 
           {/* Match indicator */}

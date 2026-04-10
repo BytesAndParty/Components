@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -32,32 +32,35 @@ function injectStyles() {
   style.id = STYLE_ID
   style.textContent = `
     @keyframes backlight-float-0 {
-      0%, 100% { transform: translate(0%, 0%) scale(1); }
-      33% { transform: translate(5%, -8%) scale(1.1); }
-      66% { transform: translate(-5%, 5%) scale(0.95); }
+      0%, 100% { transform: scale(1) translate(0%, 0%); }
+      33%       { transform: scale(1.08) translate(4%, -5%); }
+      66%       { transform: scale(0.94) translate(-4%, 4%); }
     }
     @keyframes backlight-float-1 {
-      0%, 100% { transform: translate(0%, 0%) scale(1); }
-      33% { transform: translate(-8%, 5%) scale(0.9); }
-      66% { transform: translate(6%, -3%) scale(1.05); }
+      0%, 100% { transform: scale(1) translate(0%, 0%); }
+      33%       { transform: scale(0.92) translate(-5%, 4%); }
+      66%       { transform: scale(1.06) translate(5%, -3%); }
     }
     @keyframes backlight-float-2 {
-      0%, 100% { transform: translate(0%, 0%) scale(1.05); }
-      33% { transform: translate(4%, 6%) scale(0.95); }
-      66% { transform: translate(-6%, -4%) scale(1.1); }
+      0%, 100% { transform: scale(1.04) translate(0%, 0%); }
+      33%       { transform: scale(0.96) translate(3%, 5%); }
+      66%       { transform: scale(1.08) translate(-5%, -4%); }
     }
   `
   document.head.appendChild(style)
 }
 
-// ─── Blob positions ─────────────────────────────────────────────────────────────
+// ─── Blob configs ───────────────────────────────────────────────────────────────
+// cx/cy = Mittelpunkt des Radial-Gradients (innerhalb der Card-Fläche)
+// Blobs decken exakt die Card-Fläche ab (inset: 0), der blur-Filter
+// lässt den Glow symmetrisch nach außen bluten.
 
 const blobConfigs = [
-  { top: '20%', left: '30%', size: '60%' },
-  { top: '30%', left: '50%', size: '55%' },
-  { top: '40%', left: '20%', size: '50%' },
-  { top: '25%', left: '60%', size: '45%' },
-  { top: '45%', left: '40%', size: '50%' },
+  { cx: '50%', cy: '50%', weight: 1.0, animIndex: 0 }, // Zentrum
+  { cx: '30%', cy: '30%', weight: 0.65, animIndex: 1 }, // oben-links
+  { cx: '70%', cy: '70%', weight: 0.65, animIndex: 2 }, // unten-rechts
+  { cx: '70%', cy: '30%', weight: 0.55, animIndex: 0 }, // oben-rechts
+  { cx: '30%', cy: '70%', weight: 0.55, animIndex: 1 }, // unten-links
 ]
 
 // ─── Component ──────────────────────────────────────────────────────────────────
@@ -85,32 +88,6 @@ export function Backlight({
   const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
   const blobCount = Math.min(blobs, blobConfigs.length)
 
-  const blobElements: ReactNode[] = []
-  for (let i = 0; i < blobCount; i++) {
-    const cfg = blobConfigs[i]
-    const duration = (6 + i * 2) / speed
-    const animName = `backlight-float-${i % 3}`
-
-    blobElements.push(
-      <div
-        key={i}
-        style={{
-          position: 'absolute',
-          top: cfg.top,
-          left: cfg.left,
-          width: cfg.size,
-          height: cfg.size,
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${resolvedColor} 0%, transparent 70%)`,
-          opacity: intensity * (0.7 + (i % 2) * 0.3),
-          filter: `blur(${blur}px)`,
-          animation: animated ? `${animName} ${duration}s ease-in-out infinite` : 'none',
-          pointerEvents: 'none',
-        }}
-      />
-    )
-  }
-
   return (
     <div
       className={className}
@@ -119,18 +96,31 @@ export function Backlight({
         ...style,
       }}
     >
-      {/* Glow layer behind content */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: `-${blur}px`,
-          pointerEvents: 'none',
-          zIndex: 0,
-          overflow: 'hidden',
-        }}
-      >
-        {blobElements}
-      </div>
+      {/* Glow-Blobs: decken exakt die Card-Fläche ab (inset: 0).
+          filter: blur lässt den Glow nach außen bluten – symmetrisch
+          auf allen Seiten, da der Startpunkt mittig liegt. */}
+      {Array.from({ length: blobCount }, (_, i) => {
+        const cfg = blobConfigs[i]
+        const duration = (7 + i * 2.5) / speed
+        const animName = `backlight-float-${cfg.animIndex}`
+        return (
+          <div
+            key={i}
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: `radial-gradient(ellipse at ${cfg.cx} ${cfg.cy}, ${resolvedColor} 0%, transparent 65%)`,
+              opacity: intensity * cfg.weight,
+              filter: `blur(${blur}px)`,
+              animation: animated ? `${animName} ${duration}s ease-in-out infinite` : 'none',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
+        )
+      })}
+
       {/* Content on top */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {children}

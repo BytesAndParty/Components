@@ -186,7 +186,7 @@ export function CardsPage() {
                 src="/wine-default.png"
                 alt="Wine bottle"
                 className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                style={{ padding: '20px', mixBlendMode: 'multiply' }}
+                style={{ padding: '20px' }}
               />
             </div>
           ))}
@@ -219,7 +219,7 @@ export function CardsPage() {
                 src="/white-wine-default.png"
                 alt="White wine bottle"
                 className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                style={{ padding: '20px', mixBlendMode: 'multiply' }}
+                style={{ padding: '20px' }}
               />
             </div>
           ))}

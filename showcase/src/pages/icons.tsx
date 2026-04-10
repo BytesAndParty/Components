@@ -8,7 +8,7 @@ import {
   FilterIcon, NotificationIcon, VisibilityIcon,
   CheckmarkIcon, CopyIcon, LoadingIcon, MaximizeMinimizeIcon,
   ShareIcon, TrashIcon,
-  SunIconCss, MoonIconCss, StarIconCss, WineIconCss,
+  SunIconCss, MoonIconCss, StarIconCss, WineIconCss, HeartIconCss, Heart3DIconCss,
 } from '@components/animated-icons/animated-icons'
 
 export function IconsPage() {
@@ -92,6 +92,8 @@ export function IconsPage() {
                 ['Moon', MoonIconCss],
                 ['Star', StarIconCss],
                 ['Wine', WineIconCss],
+                ['Heart', HeartIconCss],
+                ['Heart 3D', Heart3DIconCss],
               ] as [string, typeof SunIconCss][]).map(([label, Icon]) => (
                 <div key={label} className="flex flex-col items-center gap-2">
                   <Icon size={32} />

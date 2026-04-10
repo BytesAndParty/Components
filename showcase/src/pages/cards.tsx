@@ -50,9 +50,10 @@ export function CardsPage() {
       </Section>
 
       <Section title="MagneticButton" description="Button that magnetically follows the cursor on hover.">
-        <div className="space-y-6">
+        <div className="space-y-8">
+
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Variants</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Base Variants</p>
             <div className="flex flex-wrap gap-4 items-center">
               <MagneticButton variant="primary">Primary</MagneticButton>
               <MagneticButton variant="secondary">Secondary</MagneticButton>
@@ -64,10 +65,11 @@ export function CardsPage() {
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Call to Action</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Animated – Call to Action</p>
             <div className="flex flex-wrap gap-4 items-center">
-              <MagneticButton variant="cta">Get started</MagneticButton>
-              <MagneticButton variant="cta" strength={0.5}>Strong pull (0.5)</MagneticButton>
+              <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
+              <MagneticButton variant="glow">Glow Pulse</MagneticButton>
+              <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
             </div>
           </div>
 
@@ -79,6 +81,7 @@ export function CardsPage() {
               <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
             </div>
           </div>
+
         </div>
       </Section>
 
@@ -186,7 +189,7 @@ export function CardsPage() {
                 src="/wine-default.png"
                 alt="Wine bottle"
                 className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                style={{ padding: '20px', mixBlendMode: 'multiply' }}
+                style={{ padding: '20px' }}
               />
             </div>
           ))}
@@ -219,7 +222,7 @@ export function CardsPage() {
                 src="/white-wine-default.png"
                 alt="White wine bottle"
                 className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                style={{ padding: '20px', mixBlendMode: 'multiply' }}
+                style={{ padding: '20px' }}
               />
             </div>
           ))}
@@ -255,7 +258,7 @@ export function CardsPage() {
       </Section>
 
       <Section title="Backlight" description="Animated gradient glow behind images or content.">
-        <div className="grid grid-cols-3 gap-12">
+        <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
           <Backlight intensity={0.45} blur={50}>
             <div
               style={{
@@ -288,6 +291,22 @@ export function CardsPage() {
               <p className="font-medium text-foreground">Rose, 4 blobs</p>
             </div>
           </Backlight>
+          <Backlight color="#10b981" blobs={3} intensity={0.4} blur={55}>
+            <div
+              style={{
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                height: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <p className="font-medium text-foreground">Emerald, color prop</p>
+            </div>
+          </Backlight>
         </div>
       </Section>
 
@@ -309,7 +328,6 @@ export function CardsPage() {
               <img
                 src="/wine-default.png"
                 alt="Wine bottle"
-                className="group-hover:opacity-0"
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -317,8 +335,6 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
-                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               />
               <img
@@ -332,9 +348,7 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
-                  transform: 'scale(1.15)',       /* ← Zoom-Faktor hier anpassen */
-                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'opacity 1600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 }}
               />
             </div>
@@ -355,7 +369,6 @@ export function CardsPage() {
               <img
                 src="/white-wine-default.png"
                 alt="White wine bottle"
-                className="group-hover:opacity-0"
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -363,8 +376,6 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
-                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               />
               <img
@@ -378,9 +389,7 @@ export function CardsPage() {
                   height: '100%',
                   objectFit: 'contain',
                   padding: '20px',
-                  mixBlendMode: 'multiply',
-                  transform: 'scale(1.15)',
-                  transition: 'opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'opacity 1600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 }}
               />
             </div>

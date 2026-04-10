@@ -27,7 +27,7 @@ export const groups = [
     path: '/feedback',
     title: 'Feedback',
     description: 'Toasts, favorites, pricing, ratings, and confetti effects.',
-    components: ['Toast', 'HeartFavorite', 'PricingInteraction', 'Rating', 'Confetti'],
+    components: ['Toast', 'PricingInteraction', 'Rating', 'Confetti'],
   },
   {
     path: '/navigation',

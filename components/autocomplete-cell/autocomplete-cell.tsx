@@ -130,7 +130,7 @@ export function AutocompleteCell({
 
   return (
     <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="relative flex items-center">
+      <div className="relative flex items-center rounded-lg border border-border bg-card transition-colors focus-within:border-accent">
         {/* Left Icon */}
         <div className="absolute left-3.5 text-muted-foreground transition-colors group-focus-within:text-accent">
           {isLoading ? (
@@ -157,8 +157,8 @@ export function AutocompleteCell({
           onBlur={onBlur}
           placeholder={placeholder}
           className={cn(
-            "w-full bg-transparent pl-10 pr-10 py-2.5 text-sm outline-none transition-all",
-            "placeholder:text-muted-foreground/50 focus:ring-1 focus:ring-accent rounded-md"
+            "w-full bg-transparent pl-10 pr-10 py-2.5 text-sm outline-none",
+            "placeholder:text-muted-foreground/50 text-foreground"
           )}
         />
 

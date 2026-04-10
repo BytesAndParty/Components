@@ -75,7 +75,8 @@ function createParticle(
   const angleRad = (options.angle * Math.PI) / 180
   const spreadRad = (options.spread * Math.PI) / 180
   const randomAngle = angleRad + (Math.random() - 0.5) * spreadRad
-  const velocity = options.startVelocity * (0.5 + Math.random() * 0.5)
+  // velocity in pixels per second
+  const velocity = options.startVelocity * 10 * (0.5 + Math.random() * 0.5)
 
   return {
     x: originX,
@@ -128,26 +129,33 @@ function renderConfetti(
     () => createParticle(originX, originY, opts)
   )
 
-  let startTime = performance.now()
+  let prevTime = 0
 
   function animate(time: number) {
-    const elapsed = time - startTime
-    const dt = 1 / 60
+    if (!prevTime) prevTime = time
+    const dt = Math.min((time - prevTime) / 1000, 0.05) // seconds, capped at 50ms
+    prevTime = time
 
     ctx!.clearRect(0, 0, rect.width, rect.height)
 
     let alive = false
     for (const p of particles) {
-      p.life = elapsed
+      p.life += dt * 1000
       if (p.life > p.maxLife) continue
 
       alive = true
-      p.vy += opts.gravity
-      p.vx *= opts.decay
-      p.vy *= opts.decay
-      p.x += p.vx * dt * 16
-      p.y += p.vy * dt * 16
-      p.rotation += p.rotationSpeed
+
+      // Apply gravity (pixels/s²) and velocity (pixels/s)
+      p.vy += opts.gravity * 800 * dt
+      p.x += p.vx * dt
+      p.y += p.vy * dt
+
+      // Decay per-second: v *= decay^(dt*60) to be framerate-independent
+      const frameDec = Math.pow(opts.decay, dt * 60)
+      p.vx *= frameDec
+      p.vy *= frameDec
+
+      p.rotation += p.rotationSpeed * dt * 60
 
       // Fade out in last 30%
       const lifeRatio = p.life / p.maxLife
@@ -263,13 +271,13 @@ export function ConfettiButton({
           canvasRef.current,
           {
             particleCount: 40,
-            spread: 50,
-            startVelocity: 25,
-            gravity: 0.8,
+            spread: 60,
+            startVelocity: 30,
+            gravity: 1.2,
             duration: 2000,
             ...confettiOptions,
             originX: 0.5,
-            originY: 0.6,
+            originY: 0.35,
             angle: 90,
           },
           'contained'
@@ -301,10 +309,10 @@ export function ConfettiButton({
           ref={canvasRef}
           style={{
             position: 'absolute',
-            top: '-100%',
-            left: '-50%',
-            width: '200%',
-            height: '300%',
+            top: '-150%',
+            left: '-75%',
+            width: '250%',
+            height: '400%',
             pointerEvents: 'none',
           }}
         />
