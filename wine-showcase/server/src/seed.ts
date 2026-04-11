@@ -1,21 +1,13 @@
-import { bootstrap, ChannelService, LanguageCode } from '@vendure/core';
-import { config } from './vendure-config.js';
-
 /**
- * Seed-Skript: Legt den Default Channel an, erstellt Produkte mit Wein-Custom-Fields.
- * Wird einmalig via `bun run seed` ausgeführt.
- *
- * Vendure seeded den SuperAdmin automatisch beim ersten Start.
- * Die Produkte werden über die Admin API GraphQL angelegt.
+ * Seed-Skript: Legt Produkte mit Wein-Custom-Fields über die Admin API an.
+ * Setzt voraus, dass der Vendure Server bereits läuft (bun run dev).
  */
+
+const ADMIN_URL = 'http://localhost:3000/admin-api';
+
 async function seed() {
-  const app = await bootstrap(config);
-
-  // Vendure Admin API intern ansprechen
-  const adminUrl = 'http://localhost:3000/admin-api';
-
   // 1. Authenticate as superadmin
-  const authRes = await fetch(adminUrl, {
+  const authRes = await fetch(ADMIN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -29,56 +21,121 @@ async function seed() {
       `,
     }),
   });
-  const authData = await authRes.json();
-  const authCookie = authRes.headers.get('set-cookie') ?? '';
-  console.log('Auth:', JSON.stringify(authData));
+  const authData = await authRes.json() as Record<string, unknown>;
+
+  // Vendure v3: Auth-Token aus verschiedenen Header-Varianten extrahieren
+  const setCookie = authRes.headers.get('set-cookie') ?? '';
+  const vendureToken = authRes.headers.get('vendure-auth-token') ?? '';
+
+  // Debug: alle relevanten Header ausgeben
+  console.log('Auth result:', JSON.stringify(authData));
+  console.log('Set-Cookie:', setCookie ? 'present' : 'none');
+  console.log('vendure-auth-token:', vendureToken || 'none');
 
   // Helper: Admin GQL request with auth
   async function adminGql(query: string, variables?: Record<string, unknown>) {
-    const res = await fetch(adminUrl, {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (setCookie) headers['Cookie'] = setCookie;
+    if (vendureToken) headers['vendure-auth-token'] = vendureToken;
+    // Vendure Bearer token auth (v3 default)
+    if (vendureToken) headers['Authorization'] = `Bearer ${vendureToken}`;
+
+    const res = await fetch(ADMIN_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: authCookie,
-      },
+      headers,
       body: JSON.stringify({ query, variables }),
     });
-    return res.json();
+    return res.json() as Promise<any>;
   }
 
-  // 2. Create a TaxCategory & TaxRate if none exist
-  const taxCatResult = await adminGql(`
-    query { taxCategories { items { id } } }
-  `);
+  // ─── 2. Bootstrap: Country, Zone, TaxCategory, TaxRate, Channel ────────────
+
+  // 2a. Create Country (Austria)
+  let countryResult = await adminGql(`query { countries { items { id code } } }`);
+  let countryId: string;
+  if (!countryResult.data?.countries?.items?.length) {
+    const createCountry = await adminGql(`
+      mutation {
+        createCountry(input: { code: "AT", translations: [{ languageCode: en, name: "Austria" }], enabled: true }) { id code }
+      }
+    `);
+    countryId = createCountry.data?.createCountry?.id;
+    console.log('✅ Country AT angelegt');
+  } else {
+    countryId = countryResult.data.countries.items[0].id;
+    console.log('  ⏭️  Country existiert bereits');
+  }
+
+  // 2b. Create Zone
+  let zoneResult = await adminGql(`query { zones { items { id name } } }`);
+  let zoneId: string;
+  if (!zoneResult.data?.zones?.items?.length) {
+    const createZone = await adminGql(`
+      mutation {
+        createZone(input: { name: "Europe", memberIds: ["${countryId}"] }) { id name }
+      }
+    `);
+    zoneId = createZone.data?.createZone?.id;
+    console.log('✅ Zone "Europe" angelegt');
+  } else {
+    zoneId = zoneResult.data.zones.items[0].id;
+    console.log('  ⏭️  Zone existiert bereits');
+  }
+
+  // 2c. Create TaxCategory
+  const taxCatResult = await adminGql(`query { taxCategories { items { id } } }`);
   let taxCategoryId: string;
   if (!taxCatResult.data?.taxCategories?.items?.length) {
     const createTax = await adminGql(`
-      mutation {
-        createTaxCategory(input: { name: "Standard" }) { id }
-      }
+      mutation { createTaxCategory(input: { name: "Standard" }) { id } }
     `);
-    taxCategoryId = createTax.data.createTaxCategory.id;
-
-    // Get default zone
-    const zones = await adminGql(`query { zones { items { id name } } }`);
-    const defaultZone = zones.data?.zones?.items?.[0];
-    if (defaultZone) {
-      await adminGql(`
-        mutation CreateTaxRate($input: CreateTaxRateInput!) {
-          createTaxRate(input: $input) { id }
-        }
-      `, {
-        input: {
-          name: 'Standard 20%',
-          categoryId: taxCategoryId,
-          zoneId: defaultZone.id,
-          value: 20,
-          enabled: true,
-        },
-      });
-    }
+    taxCategoryId = createTax.data?.createTaxCategory?.id;
+    console.log('✅ TaxCategory angelegt');
   } else {
     taxCategoryId = taxCatResult.data.taxCategories.items[0].id;
+    console.log('  ⏭️  TaxCategory existiert bereits');
+  }
+
+  // 2d. Create TaxRate
+  const taxRateResult = await adminGql(`query { taxRates { items { id } } }`);
+  if (!taxRateResult.data?.taxRates?.items?.length) {
+    await adminGql(`
+      mutation CreateTaxRate($input: CreateTaxRateInput!) {
+        createTaxRate(input: $input) { id }
+      }
+    `, {
+      input: {
+        name: 'Standard 20%',
+        categoryId: taxCategoryId,
+        zoneId: zoneId,
+        value: 20,
+        enabled: true,
+      },
+    });
+    console.log('✅ TaxRate 20% angelegt');
+  } else {
+    console.log('  ⏭️  TaxRate existiert bereits');
+  }
+
+  // 2e. Update default Channel with the zone as defaultTaxZone and defaultShippingZone
+  const channelResult = await adminGql(`query { channels { items { id code } } }`);
+  const defaultChannel = channelResult.data?.channels?.items?.[0];
+  if (defaultChannel) {
+    const updateResult = await adminGql(`
+      mutation UpdateChannel($input: UpdateChannelInput!) {
+        updateChannel(input: $input) {
+          ... on Channel { id code }
+          ... on LanguageNotAvailableError { message }
+        }
+      }
+    `, {
+      input: {
+        id: defaultChannel.id,
+        defaultTaxZoneId: zoneId,
+        defaultShippingZoneId: zoneId,
+      },
+    });
+    console.log('✅ Channel default zones gesetzt');
   }
 
   // 3. Create a ShippingMethod if none exist
@@ -86,18 +143,24 @@ async function seed() {
     query { shippingMethods { items { id } } }
   `);
   if (!shippingResult.data?.shippingMethods?.items?.length) {
-    await adminGql(`
+    const smResult = await adminGql(`
       mutation {
         createShippingMethod(input: {
           code: "standard-versand"
-          translations: [{ languageCode: de, name: "Standardversand", description: "3-5 Werktage" }]
+          translations: [{ languageCode: en, name: "Standardversand", description: "3-5 Werktage" }]
           fulfillmentHandler: "manual-fulfillment"
           checker: { code: "default-shipping-eligibility-checker", arguments: [{ name: "orderMinimum", value: "0" }] }
           calculator: { code: "default-shipping-calculator", arguments: [{ name: "rate", value: "590" }, { name: "includesTax", value: "auto" }] }
         }) { id }
       }
     `);
-    console.log('✅ Shipping Method angelegt');
+    if (smResult.errors) {
+      console.log('⚠️  ShippingMethod:', JSON.stringify(smResult.errors));
+    } else {
+      console.log('✅ Shipping Method angelegt');
+    }
+  } else {
+    console.log('  ⏭️  Shipping Method existiert bereits');
   }
 
   // 4. Create wine products
@@ -251,12 +314,14 @@ async function seed() {
   for (const wine of wines) {
     // Check if product already exists
     const existing = await adminGql(`
-      query($slug: String!) {
-        product(slug: $slug) { id }
+      query {
+        products(options: { filter: { slug: { eq: "${wine.slug}" } } }) {
+          items { id slug }
+        }
       }
-    `, { slug: wine.slug });
+    `);
 
-    if (existing.data?.product) {
+    if (existing.data?.products?.items?.length > 0) {
       console.log(`  ⏭️  ${wine.name} existiert bereits`);
       continue;
     }
@@ -271,8 +336,9 @@ async function seed() {
       }
     `, {
       input: {
+        enabled: true,
         translations: [{
-          languageCode: 'de',
+          languageCode: 'en',
           name: wine.name,
           slug: wine.slug,
           description: wine.description,
@@ -288,11 +354,10 @@ async function seed() {
     }
 
     // Create product variant (single variant per wine)
-    await adminGql(`
+    const variantResult = await adminGql(`
       mutation CreateProductVariants($input: [CreateProductVariantInput!]!) {
         createProductVariants(input: $input) {
-          ... on ProductVariant { id sku }
-          ... on ErrorResult { message }
+          id sku priceWithTax
         }
       }
     `, {
@@ -301,24 +366,38 @@ async function seed() {
         sku: wine.slug,
         taxCategoryId,
         translations: [{
-          languageCode: 'de',
+          languageCode: 'en',
           name: wine.name,
         }],
-        price: wine.price,
+        prices: [{ currencyCode: 'USD', price: wine.price }],
         stockOnHand: 100,
-        trackInventory: false,
+        trackInventory: 'INHERIT',
       }],
     });
 
-    console.log(`  ✅ ${wine.name} angelegt (€ ${(wine.price / 100).toFixed(2)})`);
+    if (variantResult.errors) {
+      console.error(`  ❌ Variant Fehler bei ${wine.name}:`, JSON.stringify(variantResult.errors));
+    } else {
+      const v = variantResult.data?.createProductVariants?.[0];
+      // Vendure v3 bug: prices array in createProductVariants doesn't set the price.
+      // Workaround: update the variant price after creation.
+      if (v?.id) {
+        const updatePrice = await adminGql(`
+          mutation UpdateProductVariants($input: [UpdateProductVariantInput!]!) {
+            updateProductVariants(input: $input) { id priceWithTax }
+          }
+        `, {
+          input: [{ id: v.id, prices: [{ currencyCode: 'USD', price: wine.price }] }],
+        });
+        const updated = updatePrice.data?.updateProductVariants?.[0];
+        console.log(`  ✅ ${wine.name} — Variant ID ${v.id}, Preis: ${updated?.priceWithTax ?? '?'}`);
+      }
+    }
   }
 
   console.log('\n🍷 Seed abgeschlossen!');
-  console.log('   Admin UI: http://localhost:3002/admin');
+  console.log('   Admin UI: http://localhost:3000/admin');
   console.log('   Login: superadmin / superadmin');
-
-  await app.close();
-  process.exit(0);
 }
 
 seed().catch(err => {

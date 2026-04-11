@@ -32,7 +32,7 @@ bun run dev
 | Service           | URL                              |
 |-------------------|----------------------------------|
 | Storefront        | http://localhost:5173            |
-| Vendure Admin UI  | http://localhost:3002/admin      |
+| Vendure Admin UI  | http://localhost:3000/admin      |
 | Shop GraphQL API  | http://localhost:3000/shop-api   |
 | Admin GraphQL API | http://localhost:3000/admin-api  |
 
