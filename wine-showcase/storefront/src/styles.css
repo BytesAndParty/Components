@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+  --color-background:             var(--background);
+  --color-foreground:             var(--foreground);
+  --color-card:                   var(--card);
+  --color-card-foreground:        var(--card-foreground);
+  --color-muted:                  var(--muted);
+  --color-muted-foreground:       var(--muted-foreground);
+  --color-border:                 var(--border);
+  --color-input:                  var(--input);
+  --color-ring:                   var(--ring);
+  --color-accent:                 var(--accent);
+  --color-primary:                var(--primary);
+  --color-primary-foreground:     var(--primary-foreground);
+  --color-destructive:            var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+/* Dark Mode (default) — Premium Wein-Shop */
+:root {
+  --background:             oklch(0.062 0.004 285);
+  --foreground:             oklch(0.905 0.004 285);
+  --card:                   oklch(0.082 0.004 285);
+  --card-foreground:        oklch(0.905 0.004 285);
+  --muted:                  oklch(0.118 0.004 285);
+  --muted-foreground:       oklch(0.491 0.010 285);
+  --border:                 oklch(0.188 0.006 285);
+  --input:                  oklch(0.188 0.006 285);
+  --accent:                 oklch(0.555 0.146 49);
+  --primary:                var(--accent);
+  --primary-foreground:     oklch(1 0 0);
+  --ring:                   var(--accent);
+  --destructive:            oklch(0.577 0.245 27);
+  --destructive-foreground: oklch(1 0 0);
+  --radius:                 0.5rem;
+
+  --theme-primary:          217 119 6;
+  --theme-accent:           245 158 11;
+}
+
+/* Light Mode */
+[data-theme="light"] {
+  --background:             oklch(0.979 0.002 285);
+  --foreground:             oklch(0.141 0.004 285);
+  --card:                   oklch(1 0 0);
+  --card-foreground:        oklch(0.141 0.004 285);
+  --muted:                  oklch(0.961 0.002 285);
+  --muted-foreground:       oklch(0.491 0.010 285);
+  --border:                 oklch(0.870 0.004 285);
+  --input:                  oklch(0.870 0.004 285);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased leading-relaxed;
+  }
+}
+
+/* Wine badge pulse */
+@keyframes wine-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

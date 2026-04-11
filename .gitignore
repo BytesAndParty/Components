@@ -2,3 +2,6 @@ node_modules
 dist
 .vite
 *.local
+
+# Vendure data (SQLite DB + uploaded assets)
+wine-showcase/server/data/
