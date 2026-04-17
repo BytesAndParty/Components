@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type CSSProperties } from 'react'
+import { NumberTicker } from '../number-ticker/number-ticker'
 
 // ─── Keyframes ──────────────────────────────────────────────────────────────────
 
@@ -213,7 +214,13 @@ export function CartIcon({
             pointerEvents: 'none',
           }}
         >
-          {displayCount > 99 ? '99+' : displayCount}
+          {displayCount > 99 ? '99+' : (
+            <NumberTicker
+              value={displayCount}
+              duration={400}
+              style={{ alignItems: 'center' }}
+            />
+          )}
         </span>
       )}
     </button>

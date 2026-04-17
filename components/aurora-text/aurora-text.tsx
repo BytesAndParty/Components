@@ -16,19 +16,28 @@ function injectKeyframes() {
       0%   { background-position: 0% center; }
       100% { background-position: 200% center; }
     }
+    @keyframes aurora-gradient {
+      0%   { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
   `;
   document.head.appendChild(style);
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-interface AuroraTextProps {
+export interface AuroraTextProps {
   children: React.ReactNode;
   className?: string;
   /** Gradient colors for the aurora shimmer effect */
   colors?: string[];
   /** Animation speed multiplier (default: 1) */
   speed?: number;
+  /**
+   * 'aurora'    → sanfter Shimmer mit alternate (default)
+   * 'gradient'  → stetiger Loop ohne alternate, knalliger für CTAs
+   */
+  variant?: 'aurora' | 'gradient';
   style?: React.CSSProperties;
 }
 
@@ -40,6 +49,7 @@ export const AuroraText = memo(
     className,
     colors = ['#FF0080', '#7928CA', '#0070F3', '#38bdf8'],
     speed = 1,
+    variant = 'aurora',
     style,
   }: AuroraTextProps) => {
     const injected = useRef(false);
@@ -49,6 +59,20 @@ export const AuroraText = memo(
         injected.current = true;
       }
     }, []);
+
+    const gradientStyle =
+      variant === 'gradient'
+        ? {
+            // Nahtloser Loop: ersten Farbwert am Ende wiederholen
+            backgroundImage: `linear-gradient(90deg, ${[...colors, colors[0]].join(', ')})`,
+            backgroundSize: '300% auto',
+            animation: `aurora-gradient ${6 / speed}s linear infinite`,
+          }
+        : {
+            backgroundImage: `linear-gradient(135deg, ${colors.join(', ')}, ${colors[0]})`,
+            backgroundSize: '200% auto',
+            animation: `aurora ${10 / speed}s ease-in-out infinite alternate`,
+          };
 
     return (
       <span className={className} style={{ position: 'relative', display: 'inline-block', ...style }}>
@@ -60,12 +84,10 @@ export const AuroraText = memo(
         <span
           style={{
             position: 'relative',
-            backgroundImage: `linear-gradient(135deg, ${colors.join(', ')}, ${colors[0]})`,
-            backgroundSize: '200% auto',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            animation: `aurora ${10 / speed}s ease-in-out infinite alternate`,
+            ...gradientStyle,
           }}
           aria-hidden="true"
         >

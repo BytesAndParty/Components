@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
 import { Stepper, Step } from '@components/stepper/stepper'
+import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
 import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { useToast } from '@components/toast/toast'
@@ -234,6 +235,46 @@ export function ShopPage() {
               </div>
             </Step>
           </Stepper>
+        </div>
+      </Section>
+
+      <Section title="Vertical Stepper" description="Vertikale Variante – alle Schritte sichtbar, aktiver Schritt expandiert. Connector-Linie füllt sich bei Fortschritt.">
+        <div className="max-w-md mx-auto">
+          <VerticalStepper
+            initialStep={1}
+            onStepChange={(step) => console.log('Vertical Step:', step)}
+            onFinalStepCompleted={() =>
+              add({
+                title: 'Bestellung abgeschlossen',
+                description: 'Dein personalisiertes Etikett wird vorbereitet!',
+                variant: 'success',
+              })
+            }
+          >
+            <VerticalStep title="Installiere eine unserer produktionsreifen Libraries, um dein nächstes Projekt zu starten.">
+              <StepList>
+                <StepListItem>Material UI</StepListItem>
+                <StepListItem>MUI Base</StepListItem>
+                <StepListItem>Joy UI</StepListItem>
+              </StepList>
+            </VerticalStep>
+
+            <VerticalStep title="Konfiguriere dein Theme und passe die Akzentfarben an.">
+              <StepList>
+                <StepListItem>Dark Mode aktivieren</StepListItem>
+                <StepListItem>Akzentfarbe wählen</StepListItem>
+                <StepListItem>Typografie festlegen</StepListItem>
+              </StepList>
+            </VerticalStep>
+
+            <VerticalStep title="Veröffentliche dein Projekt und teile es mit der Welt.">
+              <StepList>
+                <StepListItem>Build erstellen</StepListItem>
+                <StepListItem>Deployment konfigurieren</StepListItem>
+                <StepListItem>Domain verknüpfen</StepListItem>
+              </StepList>
+            </VerticalStep>
+          </VerticalStepper>
         </div>
       </Section>
     </>
