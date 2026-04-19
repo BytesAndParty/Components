@@ -7,6 +7,7 @@ import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import { HeartLike } from '@components/heart-like/heart-like'
 import { BounceLoader } from '@components/bounce-loader/bounce-loader'
+import { Countdown } from '@components/countdown/countdown'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -150,6 +151,29 @@ export function FeedbackPage() {
               <BounceLoader size={16} speed={0.5} color="#10b981" label="Laden" />
               <BounceLoader size={16} speed={0.9} color="#f59e0b" label="Laden, langsam" />
             </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Countdown" description="Rolling-digit countdown via @property + CSS translate — smooth, accessible, tabular-num safe.">
+        <div className="flex flex-col gap-8">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Großer Countdown (48 h voraus)</p>
+            <Countdown target={Date.now() + 1000 * 60 * 60 * 48} size="lg" />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Nur Stunden/Min/Sek (hideLeadingZeros)</p>
+            <Countdown target={Date.now() + 1000 * 60 * 45} hideLeadingZeros size="md" />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Transparent + englische Labels</p>
+            <Countdown
+              target={Date.now() + 1000 * 60 * 3 + 27 * 1000}
+              hideLeadingZeros
+              size="sm"
+              transparent
+              labels={{ minutes: 'Min', seconds: 'Sec' }}
+            />
           </div>
         </div>
       </Section>
