@@ -6,6 +6,7 @@ import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import { HeartLike } from '@components/heart-like/heart-like'
+import { BounceLoader } from '@components/bounce-loader/bounce-loader'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -122,6 +123,32 @@ export function FeedbackPage() {
                 <p className="text-xs text-muted-foreground mt-0.5">Premium Bordeaux · 750 ml</p>
               </div>
               <HeartLike size={32} ariaLabel="Zu Favoriten hinzufügen" />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="BounceLoader" description="Three bouncing dots with squish-on-impact — pure CSS, accent-aware.">
+        <div className="flex flex-col gap-8">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Default (accent)</p>
+            <BounceLoader />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Sizes</p>
+            <div className="flex items-end gap-10">
+              <BounceLoader size={10} />
+              <BounceLoader size={16} />
+              <BounceLoader size={24} />
+              <BounceLoader size={32} />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Speeds & custom colors</p>
+            <div className="flex items-end gap-10">
+              <BounceLoader size={16} speed={0.3} color="#ef4444" label="Laden, schnell" />
+              <BounceLoader size={16} speed={0.5} color="#10b981" label="Laden" />
+              <BounceLoader size={16} speed={0.9} color="#f59e0b" label="Laden, langsam" />
             </div>
           </div>
         </div>
