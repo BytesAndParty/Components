@@ -13,6 +13,7 @@ import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { BounceCards } from '@components/bounce-cards/bounce-cards'
 import { Particles } from '@components/particles/particles'
 import { Lens } from '@components/lens/lens'
+import { ImagesSlider } from '@components/images-slider/images-slider'
 import { useState } from 'react'
 
 export function CardsPage() {
@@ -528,6 +529,47 @@ export function CardsPage() {
               />
             </Lens>
           </div>
+        </div>
+      </Section>
+
+      <Section title="ImagesSlider" description="Hero-style image slider with Ken-Burns zoom, directional slide, keyboard arrows, and overlay. Preloads for zero-flash transitions.">
+        <div className="flex flex-col gap-6">
+          <ImagesSlider
+            images={[
+              'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1600&q=80',
+              'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1600&q=80',
+              'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1600&q=80',
+              'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=1600&q=80',
+            ]}
+            height={420}
+            direction="up"
+            interval={4500}
+          >
+            <div style={{ maxWidth: 560 }}>
+              <p
+                style={{
+                  fontSize: 12,
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  opacity: 0.8,
+                  marginBottom: 12,
+                }}
+              >
+                Weinhaus
+              </p>
+              <h2 style={{ fontSize: '2.25rem', fontWeight: 700, margin: 0, lineHeight: 1.1 }}>
+                Direkt vom Winzer,
+                <br />
+                in Ihr Glas.
+              </h2>
+              <p style={{ marginTop: 16, opacity: 0.85, fontSize: 15, lineHeight: 1.6 }}>
+                Handverlesen aus Piemonte, Toskana und der Wachau.
+              </p>
+            </div>
+          </ImagesSlider>
+          <p className="text-muted-foreground text-xs">
+            Pfeiltasten ← / → zum Navigieren. Direction prop: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>.
+          </p>
         </div>
       </Section>
 
