@@ -5,6 +5,7 @@ import { PricingInteraction } from '@components/pricing-interaction/pricing-inte
 import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
+import { HeartLike } from '@components/heart-like/heart-like'
 
 function ToastDemoButtons() {
   const { add } = useToast()
@@ -88,6 +89,39 @@ export function FeedbackPage() {
               <Rating size={16} defaultValue={4} />
               <Rating size={24} defaultValue={4} />
               <Rating size={32} defaultValue={4} />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="HeartLike" description="Like/favorite heart with pop-in fill and spark burst on activate.">
+        <div className="flex flex-col gap-6">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Default (accent)</p>
+            <div className="flex items-center gap-6">
+              <HeartLike size={48} />
+              <HeartLike size={48} defaultChecked />
+              <HeartLike size={48} disabled />
+              <HeartLike size={48} disabled defaultChecked />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Sizes & custom colors</p>
+            <div className="flex items-center gap-6">
+              <HeartLike size={28} color="#ef4444" />
+              <HeartLike size={40} color="#ef4444" defaultChecked />
+              <HeartLike size={56} color="#f43f5e" defaultChecked />
+              <HeartLike size={72} color="#ec4899" defaultChecked />
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">In-product usage</p>
+            <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-card max-w-80">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">Château Margaux 2015</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Premium Bordeaux · 750 ml</p>
+              </div>
+              <HeartLike size={32} ariaLabel="Zu Favoriten hinzufügen" />
             </div>
           </div>
         </div>
