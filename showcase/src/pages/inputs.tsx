@@ -3,6 +3,7 @@ import Lottie, { type LottieRefCurrentProps } from 'lottie-react'
 import { Section } from '../components/section'
 import { Checkbox } from '@components/checkbox/checkbox'
 import { Switch } from '@components/switch/switch'
+import { Slider } from '@components/slider/slider'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
@@ -159,6 +160,8 @@ function ImageUploadDemo() {
 
 export function InputsPage() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
+  const [volume, setVolume] = useState(60)
+  const [priceRange, setPriceRange] = useState(35)
   const { add } = useToast()
 
   return (
@@ -187,6 +190,35 @@ export function InputsPage() {
           </div>
           <Switch label="Disabled" size="md" disabled />
         </div>
+      </Section>
+
+      <Section title="Slider" description="Range slider with drag-to-set, keyboard steering, thumb squish on grab, and accent-aware fill.">
+        <div className="flex flex-col gap-8 max-w-96">
+          <Slider
+            label="Volume"
+            value={volume}
+            onChange={setVolume}
+            formatValue={(v) => `${v} %`}
+          />
+          <Slider
+            label="Max. Preis"
+            value={priceRange}
+            onChange={setPriceRange}
+            min={0}
+            max={200}
+            step={5}
+            formatValue={(v) => `€ ${v}`}
+          />
+          <div className="flex flex-col gap-5">
+            <Slider label="Small" defaultValue={25} size="sm" />
+            <Slider label="Medium" defaultValue={50} size="md" />
+            <Slider label="Large" defaultValue={75} size="lg" />
+          </div>
+          <Slider label="Disabled" defaultValue={40} disabled />
+        </div>
+        <p className="text-muted-foreground text-xs mt-4">
+          Tab zum Fokussieren, dann <code>←</code>/<code>→</code> zum Steuern, <code>PgUp</code>/<code>PgDn</code> für große Sprünge, <code>Home</code>/<code>End</code> für Min/Max.
+        </p>
       </Section>
 
       <Section title="AutocompleteCell" description="Input field with filtered autocomplete suggestions.">
