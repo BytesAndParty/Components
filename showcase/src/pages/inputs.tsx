@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react'
+import { z } from 'zod'
 import { Section } from '../components/section'
 import { Checkbox } from '@components/checkbox/checkbox'
 import { Switch } from '@components/switch/switch'
 import { Slider } from '@components/slider/slider'
+import { FormInput } from '@components/form-input/form-input'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
@@ -82,6 +84,133 @@ function PasswordConfirmationDemo() {
         Each dot shows green (match) or red (mismatch). Shake on overflow, bounce on full match.
       </p>
     </div>
+  )
+}
+
+const signupSchema = z.object({
+  name: z.string().min(2, 'Mindestens 2 Zeichen'),
+  email: z.email('Ungültige E-Mail-Adresse'),
+  phone: z.string().min(6, 'Telefonnummer zu kurz'),
+  age: z.number({ error: 'Bitte eine Zahl eingeben' }).int('Ganze Zahl').min(18, 'Mindestalter 18').max(120, 'Zu hoch'),
+  website: z.url('Ungültige URL').optional().or(z.literal('')),
+})
+
+const emailSchema = signupSchema.shape.email
+const phoneSchema = signupSchema.shape.phone
+const ageSchema = signupSchema.shape.age
+const urlSchema = signupSchema.shape.website
+const nameSchema = signupSchema.shape.name
+
+function FormInputDemo() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', age: '', website: '' })
+  const [serverErrors, setServerErrors] = useState<Partial<Record<keyof typeof form, string>>>({})
+  const { add } = useToast()
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault()
+    const result = signupSchema.safeParse({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      age: form.age === '' ? undefined : Number(form.age),
+      website: form.website,
+    })
+    if (result.success) {
+      setServerErrors({})
+      add({ title: 'Success', description: 'Alle Felder valide.', variant: 'success' })
+      return
+    }
+    const flat: Partial<Record<keyof typeof form, string>> = {}
+    for (const issue of result.error.issues) {
+      const key = issue.path[0] as keyof typeof form
+      if (!flat[key]) flat[key] = issue.message
+    }
+    setServerErrors(flat)
+    add({ title: 'Ungültige Eingaben', description: 'Bitte Fehler beheben.', variant: 'danger' })
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      noValidate
+      className="border border-border rounded-xl bg-card p-6 shadow-sm max-w-xl flex flex-col gap-4"
+    >
+      <FormInput
+        type="text"
+        label="Name"
+        placeholder="Anna Müller"
+        schema={nameSchema}
+        value={form.name}
+        onChange={(v) => setForm((f) => ({ ...f, name: v }))}
+        forceError={serverErrors.name ?? null}
+      />
+      <FormInput
+        type="email"
+        label="E-Mail"
+        placeholder="anna@beispiel.de"
+        schema={emailSchema}
+        value={form.email}
+        onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+        forceError={serverErrors.email ?? null}
+        leftIcon={
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 6-10 7L2 6" />
+          </svg>
+        }
+      />
+      <FormInput
+        type="tel"
+        label="Telefon"
+        placeholder="+49 151 …"
+        autoFormatPhone
+        schema={phoneSchema}
+        value={form.phone}
+        onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+        forceError={serverErrors.phone ?? null}
+        description="Automatische Formatierung für DE / US — andere Länder werden gruppiert."
+      />
+      <div className="grid grid-cols-2 gap-4">
+        <FormInput
+          type="number"
+          label="Alter"
+          placeholder="18–120"
+          min={18}
+          max={120}
+          schema={ageSchema}
+          value={form.age}
+          onChange={(v) => setForm((f) => ({ ...f, age: v }))}
+          forceError={serverErrors.age ?? null}
+        />
+        <FormInput
+          type="url"
+          label="Website (optional)"
+          placeholder="https://"
+          schema={urlSchema}
+          value={form.website}
+          onChange={(v) => setForm((f) => ({ ...f, website: v }))}
+          forceError={serverErrors.website ?? null}
+        />
+      </div>
+      <div className="flex items-center gap-3 pt-2">
+        <button
+          type="submit"
+          className="px-4 py-2 rounded-md bg-accent text-white text-sm font-medium cursor-pointer transition-opacity active:scale-95 hover:opacity-90"
+        >
+          Absenden
+        </button>
+        <button
+          type="button"
+          onClick={() => { setForm({ name: '', email: '', phone: '', age: '', website: '' }); setServerErrors({}) }}
+          className="px-4 py-2 rounded-md border border-border bg-transparent text-foreground text-sm cursor-pointer transition-colors hover:bg-white/5"
+        >
+          Zurücksetzen
+        </button>
+        <p className="text-muted-foreground text-xs ml-auto">
+          Live: onBlur · Server: onSubmit via forceError
+        </p>
+      </div>
+    </form>
   )
 }
 
@@ -191,6 +320,10 @@ export function InputsPage() {
           </div>
           <Switch label="Disabled" size="md" disabled />
         </div>
+      </Section>
+
+      <Section title="FormInput + Zod v4" description="Schema-driven text/email/tel/number inputs. Validates via any .safeParse() validator — Zod v4 shown here. Error shake, success checkmark, accessible aria-invalid/-describedby.">
+        <FormInputDemo />
       </Section>
 
       <Section title="Slider" description="Range slider with drag-to-set, keyboard steering, thumb squish on grab, and accent-aware fill.">

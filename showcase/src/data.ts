@@ -9,7 +9,7 @@ export const groups = [
     path: '/text',
     title: 'Text & Motion',
     description: 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
-    components: ['SparklesText', 'Highlighter', 'Timeline', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
+    components: ['SparklesText', 'Highlighter', 'Paragraph', 'Timeline', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
   },
   {
     path: '/icons',
@@ -21,7 +21,7 @@ export const groups = [
     path: '/inputs',
     title: 'Inputs & Forms',
     description: 'Form controls, search interactions, and file uploads.',
-    components: ['Checkbox', 'Switch', 'Slider', 'AutocompleteCell', 'AnimatedSearch', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
+    components: ['Checkbox', 'Switch', 'Slider', 'FormInput', 'AutocompleteCell', 'AnimatedSearch', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
   },
   {
     path: '/feedback',
