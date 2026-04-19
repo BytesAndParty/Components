@@ -2,6 +2,7 @@ import { Section } from '../components/section'
 import { GlowCard } from '@components/glow-card/glow-card'
 import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
+import { JellyButton } from '@components/jelly-button/jelly-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { ClickSpark } from '@components/click-spark/click-spark'
 import { LightRays } from '@components/light-rays/light-rays'
@@ -82,6 +83,29 @@ export function CardsPage() {
             </div>
           </div>
 
+        </div>
+      </Section>
+
+      <Section title="JellyButton" description="Rubbery CTA with SVG-goo blobs escaping on hover. Pure React state + inline styles.">
+        <div className="space-y-8">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Sizes</p>
+            <div className="flex flex-wrap items-center gap-6">
+              <JellyButton size="sm">Small</JellyButton>
+              <JellyButton size="md">Medium</JellyButton>
+              <JellyButton size="lg">Large</JellyButton>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Accent (theme-aware) & custom colors</p>
+            <div className="flex flex-wrap items-center gap-6">
+              <JellyButton>Theme Accent</JellyButton>
+              <JellyButton color="#ec4899">Pink</JellyButton>
+              <JellyButton color="#10b981">Emerald</JellyButton>
+              <JellyButton color="#f59e0b">Amber</JellyButton>
+              <JellyButton disabled>Disabled</JellyButton>
+            </div>
+          </div>
         </div>
       </Section>
 
