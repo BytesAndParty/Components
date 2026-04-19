@@ -12,6 +12,7 @@ import { Backlight } from '@components/backlight/backlight'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { BounceCards } from '@components/bounce-cards/bounce-cards'
 import { Particles } from '@components/particles/particles'
+import { Lens } from '@components/lens/lens'
 import { useState } from 'react'
 
 export function CardsPage() {
@@ -500,6 +501,33 @@ export function CardsPage() {
             easeType="elastic.out(1, 0.5)"
             enableHover
           />
+        </div>
+      </Section>
+
+      <Section title="Lens" description="Magnifying lens overlay — hover-follow or click-toggle mode. Zooms any DOM content inside a circular ring.">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Hover-Modus</p>
+            <Lens>
+              <img
+                src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=900&q=80"
+                alt="Wine bottle"
+                style={{ width: '100%', height: 320, objectFit: 'cover', display: 'block' }}
+                draggable={false}
+              />
+            </Lens>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Toggle-Modus (Klick)</p>
+            <Lens mode="toggle" zoom={2.2} lensSize={200} ringColor="#f59e0b">
+              <img
+                src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=900&q=80"
+                alt="Wine label detail"
+                style={{ width: '100%', height: 320, objectFit: 'cover', display: 'block' }}
+                draggable={false}
+              />
+            </Lens>
+          </div>
         </div>
       </Section>
 
