@@ -18,6 +18,7 @@ export default defineConfig({
       'lottie-react': path.resolve(__dirname, 'node_modules/lottie-react'),
       'gsap': path.resolve(__dirname, 'node_modules/gsap'),
       'canvas-confetti': path.resolve(__dirname, 'node_modules/canvas-confetti'),
+      '@chenglou/pretext': path.resolve(__dirname, 'node_modules/@chenglou/pretext'),
     },
   },
 })
