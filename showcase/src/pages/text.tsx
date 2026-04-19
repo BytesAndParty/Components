@@ -8,6 +8,7 @@ import { Highlighter } from '@components/highlighter/highlighter'
 import { Paragraph } from '@components/paragraph/paragraph'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { ScrollRotate, RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
+import { Timeline } from '@components/timeline/timeline'
 import { testimonials } from '../data'
 
 const wineDescriptionLong = 'Tiefdunkles Granatrot mit violetten Reflexen. In der Nase entfaltet sich ein vielschichtiges Bouquet aus reifen Brombeeren, schwarzen Kirschen und feinen Anklängen von Vanille, Tabak und mediterranen Kräutern. Am Gaumen kraftvoll und doch elegant, mit samtigen Tanninen, einer perfekten Balance zwischen Frucht und Holz und einem langen, anhaltenden Nachklang. Hervorragender Speisebegleiter zu kräftigem Wild, geschmortem Rind und gereiftem Hartkäse.'
@@ -194,6 +195,50 @@ export function TextPage() {
             <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
             <span>Scroll the page to accelerate</span>
           </div>
+        </div>
+      </Section>
+
+      <Section title="Timeline" description="Vertical timeline with scroll-reveal dots and content. Pure IntersectionObserver + CSS keyframes.">
+        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+          <Timeline
+            items={[
+              {
+                subtitle: '1952',
+                title: 'Gründung des Weinguts',
+                marker: '1',
+                content:
+                  'Großvater Alessandro kauft den ersten Weinberg in den Hügeln von Barolo. Sechs Hektar Nebbiolo auf kalkhaltigem Boden.',
+              },
+              {
+                subtitle: '1987',
+                title: 'Erste internationale Auszeichnung',
+                marker: '2',
+                content:
+                  'Der Barolo Riserva erhält beim Concours Mondial in Brüssel die Goldmedaille — der Beginn einer langen Erfolgsgeschichte.',
+              },
+              {
+                subtitle: '2005',
+                title: 'Umstellung auf biologischen Anbau',
+                marker: '3',
+                content:
+                  'Komplette Umstellung aller Parzellen auf biologisch-dynamische Bewirtschaftung. Zertifizierung nach Demeter-Richtlinien.',
+              },
+              {
+                subtitle: '2018',
+                title: 'Jahrgang des Jahrhunderts',
+                marker: '4',
+                content:
+                  'Ein außergewöhnlich warmer Sommer mit perfekten Reifebedingungen. Der Barolo 2018 wird als bester Jahrgang seit 1990 gefeiert.',
+              },
+              {
+                subtitle: '2024',
+                title: 'Direct-to-Consumer',
+                marker: '5',
+                content:
+                  'Start des Online-Shops. Weine direkt ab Hof, ohne Zwischenhändler — die dritte Generation führt Tradition in die Digitalisierung.',
+              },
+            ]}
+          />
         </div>
       </Section>
 

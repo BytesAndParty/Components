@@ -9,7 +9,7 @@ export const groups = [
     path: '/text',
     title: 'Text & Motion',
     description: 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
-    components: ['SparklesText', 'Highlighter', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
+    components: ['SparklesText', 'Highlighter', 'Timeline', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
   },
   {
     path: '/icons',
