@@ -33,7 +33,7 @@ export const groups = [
     path: '/navigation',
     title: 'Navigation & Layout',
     description: 'Navbar, banner, breadcrumbs, scroll progress, theme controls, and footer.',
-    components: ['Navbar', 'Banner', 'ScrollProgress', 'Breadcrumb', 'AccentSwitcher', 'AnimatedThemeToggler', 'Footer'],
+    components: ['Navbar', 'Banner', 'StickyBanner', 'ScrollProgress', 'Breadcrumb', 'AccentSwitcher', 'AnimatedThemeToggler', 'Footer'],
   },
   {
     path: '/shop',

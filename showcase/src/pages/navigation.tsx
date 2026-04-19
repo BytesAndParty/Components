@@ -7,6 +7,8 @@ import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { Footer } from '@components/footer-section/footer-section'
 import { Banner, BannerLink } from '@components/banner/banner'
+import { StickyBanner } from '@components/sticky-banner/sticky-banner'
+import { Countdown } from '@components/countdown/countdown'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import {
   Navbar as NavbarComponent, NavbarSection, NavbarItem, NavbarLogo,
@@ -27,6 +29,68 @@ export function NavigationPage() {
           <Banner bgColor="#10b981" dismissible={false}>
             Kostenloser Versand ab 50€ Bestellwert
           </Banner>
+        </div>
+      </Section>
+
+      <Section title="StickyBanner" description="Sticky, dismissable banner with gradient variants, localStorage persistence, and an action slot (e.g. for an inline Countdown).">
+        <div className="flex flex-col gap-6">
+          <div className="rounded-xl border border-border overflow-hidden bg-card">
+            <div className="max-h-80 overflow-y-auto">
+              <StickyBanner
+                variant="accent"
+                action={
+                  <Countdown
+                    target={Date.now() + 1000 * 60 * 60 * 6}
+                    hideLeadingZeros
+                    size="sm"
+                    transparent
+                    labels={{ hours: 'Std', minutes: 'Min', seconds: 'Sek' }}
+                  />
+                }
+              >
+                <strong>Flash Sale:</strong> -20 % auf alle Rotweine — endet in
+              </StickyBanner>
+              <div className="p-8 space-y-4">
+                {[...Array(12)].map((_, i) => (
+                  <p key={i} className="text-sm text-muted-foreground">
+                    Scroll-Content Zeile {i + 1} — der Banner bleibt oben kleben, während dieser Container scrollt.
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-border overflow-hidden bg-card">
+              <div className="max-h-40 overflow-y-auto">
+                <StickyBanner variant="neutral" dismissible={false}>
+                  Neutraler Hinweis – passt sich Theme an
+                </StickyBanner>
+                <div className="p-4 h-64" />
+              </div>
+            </div>
+            <div className="rounded-xl border border-border overflow-hidden bg-card">
+              <div className="max-h-40 overflow-y-auto">
+                <StickyBanner variant="warning" dismissible={false}>
+                  Wartungsfenster: Heute 22:00 Uhr
+                </StickyBanner>
+                <div className="p-4 h-64" />
+              </div>
+            </div>
+            <div className="rounded-xl border border-border overflow-hidden bg-card">
+              <div className="max-h-40 overflow-y-auto">
+                <StickyBanner variant="danger" dismissible={false}>
+                  Störung: Checkout derzeit nicht verfügbar
+                </StickyBanner>
+                <div className="p-4 h-64" />
+              </div>
+            </div>
+          </div>
+
+          <p className="text-muted-foreground text-xs">
+            Varianten: <code>accent</code> folgt dem Accent-Switcher (oklch gradient), <code>neutral/warning/danger</code> sind
+            semantisch fix. <code>persistKey</code> speichert Dismiss in localStorage.
+          </p>
         </div>
       </Section>
 
