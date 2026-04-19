@@ -6,6 +6,7 @@ import { Switch } from '@components/switch/switch'
 import { Slider } from '@components/slider/slider'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
+import { GooeyInput } from '@components/gooey-input/gooey-input'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
 import { useToast } from '@components/toast/toast'
 import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
@@ -233,6 +234,41 @@ export function InputsPage() {
         <p className="text-muted-foreground text-xs mt-2">
           Try: "re", "type", "vi", "dr", "node"
         </p>
+      </Section>
+
+      <Section title="GooeyInput" description="Icon-only circle that morphs into a full input via SVG-goo filter. ~1.2s slow morph for liquid feel.">
+        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+          <div className="p-10 flex flex-col gap-8 items-start">
+            <div className="flex items-center gap-6 flex-wrap">
+              <span className="text-muted-foreground text-sm">Default (accent):</span>
+              <GooeyInput
+                placeholder="Weine durchsuchen..."
+                onSubmit={(v) => add({ title: 'Suche', description: `"${v}"`, variant: 'default' })}
+              />
+            </div>
+            <div className="flex items-center gap-6 flex-wrap">
+              <span className="text-muted-foreground text-sm">Wider + custom color:</span>
+              <GooeyInput
+                placeholder="Was suchen Sie?"
+                width={420}
+                color="#10b981"
+                onSubmit={(v) => add({ title: 'Suche', description: `"${v}"`, variant: 'success' })}
+              />
+            </div>
+            <div className="flex items-center gap-6 flex-wrap">
+              <span className="text-muted-foreground text-sm">Fast (600 ms):</span>
+              <GooeyInput
+                placeholder="Schnell..."
+                duration={600}
+                color="#ec4899"
+              />
+            </div>
+          </div>
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+            <span>GooeyInput · SVG goo filter · morph</span>
+            <span>Esc zum Schließen · Enter zum Absenden</span>
+          </div>
+        </div>
       </Section>
 
       <Section title="AnimatedSearch" description="Search icon that morphs into an expanding search input field.">
