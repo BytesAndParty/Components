@@ -12,6 +12,7 @@ export type MagneticButtonVariant =
   | 'shimmer'
   | 'glow'
   | 'gradient'
+  | 'beam'
   | 'cta'; // cta = alias für shimmer (backward compat)
 
 // ─── Keyframe injection ──────────────────────────────────────────────────────────
@@ -38,6 +39,10 @@ function injectStyles() {
       0%   { background-position: 0%   center; }
       100% { background-position: 200% center; }
     }
+    @keyframes mb-beam {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
   `;
   document.head.appendChild(style);
 }
@@ -59,6 +64,7 @@ const variantClasses: Record<MagneticButtonVariant, string> = {
   cta:         `${BASE_LG} overflow-hidden`,
   glow:        `${BASE_LG}`,
   gradient:    `${BASE_LG} overflow-hidden`,
+  beam:        `${BASE_LG} overflow-hidden`,
 };
 
 // ─── Alle visuellen Stile als inline styles ───────────────────────────────────────
@@ -154,6 +160,12 @@ function getVariantStyle(
         boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 40%, transparent)',
       };
 
+    case 'beam':
+      return {
+        backgroundColor: 'var(--card)',
+        color: 'var(--foreground)',
+      };
+
     default:
       return {};
   }
@@ -205,6 +217,7 @@ export function MagneticButton({
   }, [onMouseLeave]);
 
   const isShimmer = variant === 'shimmer' || variant === 'cta';
+  const isBeam = variant === 'beam';
 
   return (
     <button
@@ -243,6 +256,42 @@ export function MagneticButton({
             pointerEvents: 'none',
           }}
         />
+      )}
+
+      {/* Border-Beam: rotierendes conic-gradient + Innen-Maske */}
+      {isBeam && (
+        <>
+          {/* Rotierendes Beam-Div: größer als Button, dreht sich im Zentrum */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              width: '300%',
+              height: '300%',
+              top: '-100%',
+              left: '-100%',
+              background: `conic-gradient(
+                from 0deg,
+                transparent 330deg,
+                color-mix(in oklch, var(--accent) 90%, white) 350deg,
+                var(--accent) 360deg
+              )`,
+              animation: 'mb-beam 2.5s linear infinite',
+              pointerEvents: 'none',
+            }}
+          />
+          {/* Maske: deckt Innenbereich ab → nur Rand leuchtet */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: '1.5px',
+              background: 'var(--card)',
+              borderRadius: '10px', // rounded-xl (12px) minus inset
+              pointerEvents: 'none',
+            }}
+          />
+        </>
       )}
 
       {/* Content über Overlays */}

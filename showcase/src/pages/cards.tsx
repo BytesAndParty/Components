@@ -12,9 +12,31 @@ import { Backlight } from '@components/backlight/backlight'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { BounceCards } from '@components/bounce-cards/bounce-cards'
 import { Particles } from '@components/particles/particles'
+import { ParticlesCard } from '@components/particles/particles-card'
+import { CursorGlow } from '@components/cursor-glow/cursor-glow'
 import { Lens } from '@components/lens/lens'
 import { ImagesSlider } from '@components/images-slider/images-slider'
 import { useState } from 'react'
+
+function CursorGlowDemo() {
+  const [glowOn, setGlowOn] = useState(false)
+  return (
+    <div className="flex items-center gap-4">
+      <button
+        onClick={() => setGlowOn(v => !v)}
+        className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition"
+      >
+        {glowOn ? 'CursorGlow deaktivieren' : 'CursorGlow aktivieren'}
+      </button>
+      <p className="text-xs text-muted-foreground">
+        {glowOn
+          ? 'Bewege die Maus über die Seite — subtiler Glow folgt.'
+          : 'Klicke, um den globalen Cursor-Glow-Effekt zu aktivieren.'}
+      </p>
+      {glowOn && <CursorGlow opacity={0.18} size={350} blur={70} />}
+    </div>
+  )
+}
 
 export function CardsPage() {
   const [splashOn, setSplashOn] = useState(false)
@@ -73,6 +95,7 @@ export function CardsPage() {
               <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
               <MagneticButton variant="glow">Glow Pulse</MagneticButton>
               <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
+              <MagneticButton variant="beam">Border Beam</MagneticButton>
             </div>
           </div>
 
@@ -283,7 +306,7 @@ export function CardsPage() {
         )}
       </Section>
 
-      <Section title="Backlight" description="Animated gradient glow behind images or content.">
+      <Section title="Backlight" description="Animated gradient glow behind images or content. interactive=true lässt den primären Blob dem Cursor folgen.">
         <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
           <Backlight intensity={0.45} blur={50}>
             <div
@@ -317,7 +340,7 @@ export function CardsPage() {
               <p className="font-medium text-foreground">Rose, 4 blobs</p>
             </div>
           </Backlight>
-          <Backlight color="#10b981" blobs={3} intensity={0.4} blur={55}>
+          <Backlight color="#10b981" blobs={3} intensity={0.4} blur={55} interactive>
             <div
               style={{
                 background: 'var(--card)',
@@ -326,11 +349,14 @@ export function CardsPage() {
                 overflow: 'hidden',
                 height: '200px',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
+                gap: '6px',
               }}
             >
-              <p className="font-medium text-foreground">Emerald, color prop</p>
+              <p className="font-medium text-foreground">interactive=true</p>
+              <p className="text-xs text-muted-foreground">Hover, um den Glow zu bewegen</p>
             </div>
           </Backlight>
         </div>
@@ -606,6 +632,58 @@ export function CardsPage() {
             <p className="text-foreground font-medium text-lg">Move your cursor over the particles</p>
           </div>
         </div>
+      </Section>
+
+      <Section title="ParticlesCard" description="ParticlesCard-Wrapper: Particles als Hintergrund-Layer, beliebiger Content darüber.">
+        <div className="grid grid-cols-2 gap-4">
+          <ParticlesCard
+            particleColors={['var(--accent, #6366f1)', '#ffffff', '#a78bfa']}
+            particleCount={120}
+            speed={0.2}
+            style={{
+              height: '220px',
+              borderRadius: '16px',
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>
+              <p className="font-bold text-foreground text-xl">Premium Kollektion</p>
+              <p className="text-muted-foreground text-sm mt-2">Handverlesene Weine aus Italien</p>
+            </div>
+          </ParticlesCard>
+
+          <ParticlesCard
+            particleColors={['#f59e0b', '#f97316', '#fbbf24']}
+            particleCount={80}
+            speed={0.15}
+            particleBaseSize={2}
+            moveParticlesOnHover
+            style={{
+              height: '220px',
+              borderRadius: '16px',
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>
+              <p className="font-bold text-foreground text-xl">Gold Reserve</p>
+              <p className="text-muted-foreground text-sm mt-2">moveParticlesOnHover</p>
+            </div>
+          </ParticlesCard>
+        </div>
+      </Section>
+
+      <Section title="CursorGlow" description="Leichter CSS-Glow, der dem Cursor folgt (position: fixed). Toggle zum Testen.">
+        <CursorGlowDemo />
       </Section>
     </>
   )

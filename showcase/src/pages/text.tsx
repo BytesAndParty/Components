@@ -9,6 +9,9 @@ import { Paragraph } from '@components/paragraph/paragraph'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { ScrollRotate, RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
+import { MorphingText } from '@components/morphing-text/morphing-text'
+import { ShinyText, ShinyButton } from '@components/shiny-text/shiny-text'
+import { BlurFade } from '@components/blur-fade/blur-fade'
 import { testimonials } from '../data'
 
 const wineDescriptionLong = 'Tiefdunkles Granatrot mit violetten Reflexen. In der Nase entfaltet sich ein vielschichtiges Bouquet aus reifen Brombeeren, schwarzen Kirschen und feinen Anklängen von Vanille, Tabak und mediterranen Kräutern. Am Gaumen kraftvoll und doch elegant, mit samtigen Tanninen, einer perfekten Balance zwischen Frucht und Holz und einem langen, anhaltenden Nachklang. Hervorragender Speisebegleiter zu kräftigem Wild, geschmortem Rind und gereiftem Hartkäse.'
@@ -171,14 +174,117 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="AuroraText" description="Gradient text with animated color shifting and subtle rotation.">
-        <div className="text-4xl font-bold tracking-tight text-foreground">
-          <AuroraText speed={1.5}>Premium Quality</AuroraText>
+      <Section title="AuroraText" description="Gradient text with animated color shifting. variant='aurora' (default) sanft wechselnd, variant='gradient' stetiger Loop für CTAs.">
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="aurora" (default)</p>
+            <div className="text-4xl font-bold tracking-tight">
+              <AuroraText speed={1.5}>Premium Quality</AuroraText>
+            </div>
+            <div className="text-xl font-semibold mt-3">
+              <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.8}>
+                Uses your accent color
+              </AuroraText>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="gradient" – stetiger Loop, knallig für CTAs</p>
+            <div className="text-4xl font-bold tracking-tight">
+              <AuroraText variant="gradient" speed={1.2}>Jetzt entdecken</AuroraText>
+            </div>
+            <div className="text-xl font-semibold mt-3">
+              <AuroraText variant="gradient" colors={['#f43f5e', '#f97316', '#fbbf24', '#10b981']} speed={0.7}>
+                Weinkollektion 2024
+              </AuroraText>
+            </div>
+          </div>
         </div>
-        <div className="text-xl font-semibold mt-3">
-          <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.8}>
-            Uses your accent color
-          </AuroraText>
+      </Section>
+
+      <Section title="MorphingText" description="CSS-Blur-Überblend zwischen mehreren Texten – kein Framer Motion.">
+        <div className="space-y-6">
+          <div className="text-4xl font-bold tracking-tight text-foreground">
+            Entdecke{' '}
+            <MorphingText
+              texts={['Barolo', 'Amarone', 'Brunello', 'Riesling', 'Champagner']}
+              duration={2500}
+              style={{ color: 'var(--accent)' }}
+            />
+          </div>
+          <div className="text-xl text-muted-foreground">
+            <MorphingText
+              texts={['Frisch. Fruchtig. Fein.', 'Tief. Komplex. Unvergesslich.', 'Wild. Elegant. Pur.']}
+              duration={3000}
+            />
+          </div>
+        </div>
+      </Section>
+
+      <Section title="ShinyText + ShinyButton" description="Animierter Shine-Effekt auf Text und Button. Kein Framer Motion.">
+        <div className="space-y-6">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyText</p>
+            <div className="flex flex-wrap gap-6 items-center">
+              <span className="text-2xl font-bold">
+                <ShinyText duration={2.5}>Premium Weinkollektion</ShinyText>
+              </span>
+              <span className="text-lg font-semibold">
+                <ShinyText shineColor="rgba(251,191,36,0.9)" duration={3}>Gold Reserve</ShinyText>
+              </span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyButton</p>
+            <div className="flex flex-wrap gap-4 items-center">
+              <ShinyButton>In den Warenkorb</ShinyButton>
+              <ShinyButton duration={2} shineColor="rgba(251,191,36,0.7)" style={{ backgroundColor: '#92400e' }}>
+                Gold Collection
+              </ShinyButton>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver.">
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">direction="up" (default) – Elemente scrollen in den Viewport</p>
+          <div className="grid grid-cols-3 gap-4">
+            {['Barolo Riserva', 'Amarone Classico', 'Brunello DOCG'].map((name, i) => (
+              <BlurFade key={name} delay={i * 120} duration={700}>
+                <div
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                  }}
+                >
+                  <div className="w-8 h-8 rounded-full mb-3" style={{ background: 'var(--accent)', opacity: 0.7 }} />
+                  <p className="font-semibold text-foreground text-sm">{name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Scroll-triggered fade</p>
+                </div>
+              </BlurFade>
+            ))}
+          </div>
+          <div className="flex gap-4 flex-wrap mt-4">
+            {(['up', 'down', 'left', 'right'] as const).map(dir => (
+              <BlurFade key={dir} direction={dir} delay={100} duration={500}>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    padding: '6px 16px',
+                    borderRadius: '999px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--card)',
+                    fontSize: '0.75rem',
+                    color: 'var(--muted-foreground)',
+                  }}
+                >
+                  direction="{dir}"
+                </span>
+              </BlurFade>
+            ))}
+          </div>
         </div>
       </Section>
 

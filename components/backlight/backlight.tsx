@@ -16,6 +16,11 @@ export interface BacklightProps {
   animated?: boolean
   /** Animation speed multiplier (default: 1) */
   speed?: number
+  /**
+   * Cursor-Tracking: primären Blob zur Mausposition bewegen.
+   * Idle-Animationen der übrigen Blobs bleiben erhalten. (default: false)
+   */
+  interactive?: boolean
   className?: string
   style?: CSSProperties
 }
@@ -73,10 +78,13 @@ export function Backlight({
   blur = 60,
   animated = true,
   speed = 1,
+  interactive = false,
   className,
   style,
 }: BacklightProps) {
   const injected = useRef(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const primaryBlobRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!injected.current && animated) {
@@ -85,11 +93,46 @@ export function Backlight({
     }
   }, [animated])
 
+  // Cursor-Tracking für den primären Blob
+  useEffect(() => {
+    if (!interactive) return
+    const container = containerRef.current
+    if (!container) return
+
+    const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
+
+    function onMouseMove(e: MouseEvent) {
+      const rect = container!.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+      if (primaryBlobRef.current) {
+        primaryBlobRef.current.style.backgroundImage =
+          `radial-gradient(ellipse at ${x}% ${y}%, ${resolvedColor} 0%, transparent 65%)`
+      }
+    }
+
+    function onMouseLeave() {
+      // Zurück zur Mitte
+      if (primaryBlobRef.current) {
+        primaryBlobRef.current.style.backgroundImage =
+          `radial-gradient(ellipse at 50% 50%, ${resolvedColor} 0%, transparent 65%)`
+      }
+    }
+
+    container.addEventListener('mousemove', onMouseMove)
+    container.addEventListener('mouseleave', onMouseLeave)
+    return () => {
+      container.removeEventListener('mousemove', onMouseMove)
+      container.removeEventListener('mouseleave', onMouseLeave)
+    }
+  }, [interactive, color])
+
   const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
   const blobCount = Math.min(blobs, blobConfigs.length)
 
   return (
     <div
+      ref={containerRef}
       className={className}
       style={{
         position: 'relative',
@@ -103,9 +146,12 @@ export function Backlight({
         const cfg = blobConfigs[i]
         const duration = (7 + i * 2.5) / speed
         const animName = `backlight-float-${cfg.animIndex}`
+        // Primärer Blob (i=0) bekommt ein ref für Cursor-Tracking
+        const ref = i === 0 ? primaryBlobRef : null
         return (
           <div
             key={i}
+            ref={ref}
             aria-hidden
             style={{
               position: 'absolute',

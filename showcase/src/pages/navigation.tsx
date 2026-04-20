@@ -15,6 +15,8 @@ import {
   NavbarDropdown, NavbarDropdownGroup, NavbarDropdownItem,
   NavbarIconButton, NavbarDivider,
 } from '@components/navbar/navbar'
+import { Dock, DockItem } from '@components/dock/dock'
+import { FileTree, Folder, File } from '@components/file-tree/file-tree'
 import { palettes } from '../data'
 
 export function NavigationPage() {
@@ -236,6 +238,106 @@ export function NavigationPage() {
           <p className="text-muted-foreground text-sm">
             The theme toggle uses the View Transitions API for a smooth circle-clip animation expanding from the button.
           </p>
+        </div>
+      </Section>
+
+      <Section title="Dock" description="macOS-Dock-Style Navigation mit Framer Motion Magnification-Effekt. Scale aus Distanz zur Maus berechnet.">
+        <div className="flex flex-col items-center gap-8">
+          <Dock magnification={1.7} distance={110}>
+            <DockItem
+              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>}
+              label="Home"
+              href="#"
+            />
+            <DockItem
+              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>}
+              label="Suche"
+              href="#"
+            />
+            <DockItem
+              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>}
+              label="Shop"
+              href="#"
+            />
+            <DockItem
+              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>}
+              label="Favoriten"
+              href="#"
+            />
+            <DockItem
+              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>}
+              label="Profil"
+              href="#"
+            />
+          </Dock>
+          <p className="text-xs text-muted-foreground">Hover langsam über die Icons, um die Magnification zu sehen</p>
+        </div>
+      </Section>
+
+      <Section title="FileTree" description="Composable rekursiver Dateibaum mit AnimatePresence height 0→auto. Expand/Collapse via Lucide-Icons.">
+        <div className="grid grid-cols-2 gap-8">
+          <div
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '20px',
+            }}
+          >
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4">Component Library</p>
+            <FileTree>
+              <Folder name="components" defaultOpen>
+                <Folder name="magnetic-button" defaultOpen>
+                  <File name="magnetic-button.tsx" />
+                </Folder>
+                <Folder name="aurora-text">
+                  <File name="aurora-text.tsx" />
+                </Folder>
+                <Folder name="dock">
+                  <File name="dock.tsx" />
+                </Folder>
+                <File name="index.ts" />
+              </Folder>
+              <Folder name="showcase">
+                <Folder name="src">
+                  <File name="App.tsx" />
+                  <File name="layout.tsx" />
+                </Folder>
+                <File name="package.json" />
+              </Folder>
+              <File name="CLAUDE.md" />
+            </FileTree>
+          </div>
+
+          <div
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '20px',
+            }}
+          >
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4">Weinshop Struktur</p>
+            <FileTree indent={14}>
+              <Folder name="src" defaultOpen>
+                <Folder name="pages" defaultOpen>
+                  <File name="index.tsx" />
+                  <File name="products.tsx" />
+                  <File name="checkout.tsx" />
+                </Folder>
+                <Folder name="components">
+                  <File name="ProductCard.tsx" />
+                  <File name="CartDrawer.tsx" />
+                  <File name="Stepper.tsx" />
+                </Folder>
+                <Folder name="lib">
+                  <File name="medusa.ts" />
+                  <File name="stripe.ts" />
+                </Folder>
+              </Folder>
+              <File name="package.json" />
+            </FileTree>
+          </div>
         </div>
       </Section>
 
