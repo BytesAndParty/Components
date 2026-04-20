@@ -41,6 +41,12 @@ export const groups = [
     description: 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
     components: ['CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
   },
+  {
+    path: '/transitions',
+    title: 'View Transitions',
+    description: 'CSS View Transitions API mit 5 Presets + 3 wein-themed Customs (Wine Pour, Cork Pop, Grape Burst).',
+    components: ['ViewTransition'],
+  },
 ] as const
 
 export const palettes = {
