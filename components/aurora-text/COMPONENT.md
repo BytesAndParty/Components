@@ -22,6 +22,7 @@ Gradient text effect with an animated aurora shimmer that flows across the text.
 | `children` | `ReactNode` | required | Text content |
 | `colors` | `string[]` | `['#FF0080', '#7928CA', '#0070F3', '#38bdf8']` | Gradient color stops |
 | `speed` | `number` | `1` | Animation speed multiplier (higher = faster) |
+| `variant` | `'aurora'\|'gradient'` | `'aurora'` | `'aurora'`: subtle shimmer with alternate; `'gradient'`: continuous linear loop |
 
 ## Dependencies
 
