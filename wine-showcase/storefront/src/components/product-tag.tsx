@@ -1,6 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-
-const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
+import { cn } from '../lib/utils';
 
 // ─── Enum ────────────────────────────────────────────────────────────────────
 
@@ -30,68 +29,6 @@ export interface ProductTagGroupProps {
   className?: string;
 }
 
-// ─── CSS (einmalig injiziert) ─────────────────────────────────────────────────
-
-const tagCss = `
-@keyframes ptag-entrance {
-  0%   { transform: scale(0.5) rotate(-6deg); opacity: 0; }
-  65%  { transform: scale(1.06) rotate(1.5deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-@keyframes ptag-shimmer {
-  0%   { left: -60%; }
-  100% { left: 160%; }
-}
-@keyframes ptag-dot-pulse {
-  0%, 100% { transform: scale(1);   opacity: 1; }
-  50%       { transform: scale(1.7); opacity: 0.35; }
-}
-.product-tag {
-  animation: ptag-entrance 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-.product-tag:hover {
-  transform: scale(1.07);
-  filter: drop-shadow(0 0 6px var(--ptag-glow, transparent));
-}
-.product-tag-shimmer {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  transform: skewX(-15deg);
-  pointer-events: none;
-  left: -60%;
-}
-.product-tag:hover .product-tag-shimmer {
-  animation: ptag-shimmer 0.5s ease forwards;
-}
-.product-tag-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: ptag-dot-pulse 1.4s ease-in-out infinite;
-  flex-shrink: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  .product-tag               { animation: none; opacity: 1; }
-  .product-tag:hover         { transform: none; filter: none; }
-  .product-tag:hover .product-tag-shimmer { animation: none; }
-  .product-tag-dot           { animation: none; }
-}
-`;
-
-let cssInjected = false;
-function injectCssOnce() {
-  if (cssInjected || typeof document === 'undefined') return;
-  const style = document.createElement('style');
-  style.textContent = tagCss;
-  document.head.appendChild(style);
-  cssInjected = true;
-}
-
 // ─── Variant-Konfiguration ───────────────────────────────────────────────────
 
 interface VariantConfig {
@@ -116,7 +53,6 @@ const variantConfig: Record<ProductTagVariant, VariantConfig> = {
 // ─── Komponenten ──────────────────────────────────────────────────────────────
 
 export function ProductTag({ variant, discount, label, className }: ProductTagProps) {
-  injectCssOnce();
   const { bg, glow, defaultLabel, shimmer, dot } = variantConfig[variant];
 
   const displayLabel =
@@ -124,29 +60,34 @@ export function ProductTag({ variant, discount, label, className }: ProductTagPr
 
   return (
     <span
-      className={cn('product-tag', className)}
+      className={cn(
+        'inline-flex items-center gap-[5px] text-white text-[11px] font-bold tracking-[0.06em] uppercase px-2 py-[3px] rounded-full leading-none select-none whitespace-nowrap relative overflow-hidden transition-[transform,filter] duration-200 hover:scale-[1.07] animate-[ptag-entrance_0.4s_cubic-bezier(0.34,1.56,0.64,1)_both]',
+        'group',
+        className
+      )}
       style={{
-        '--ptag-glow': glow,
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '5px',
         background: bg,
-        color: '#fff',
-        fontSize: '11px',
-        fontWeight: 700,
-        letterSpacing: '0.06em',
-        textTransform: 'uppercase',
-        padding: '3px 8px',
-        borderRadius: '999px',
-        lineHeight: 1,
-        userSelect: 'none',
-        whiteSpace: 'nowrap',
-        position: 'relative',
-        overflow: 'hidden',
+        '--ptag-glow': glow,
       } as CSSProperties}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.filter = `drop-shadow(0 0 6px ${glow})`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.filter = 'none';
+      }}
     >
-      {shimmer && <span className="product-tag-shimmer" aria-hidden="true" />}
-      {dot && <span className="product-tag-dot" aria-hidden="true" />}
+      {shimmer && (
+        <span
+          className="absolute top-0 bottom-0 w-[40%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] -skew-x-[15deg] pointer-events-none -left-[60%] group-hover:animate-[ptag-shimmer_0.5s_ease_forwards]"
+          aria-hidden="true"
+        />
+      )}
+      {dot && (
+        <span
+          className="inline-block w-1.5 h-1.5 rounded-full bg-current shrink-0 animate-[ptag-dot-pulse_1.4s_ease-in-out_infinite]"
+          aria-hidden="true"
+        />
+      )}
       {displayLabel}
     </span>
   );
@@ -156,8 +97,7 @@ export function ProductTag({ variant, discount, label, className }: ProductTagPr
 export function ProductTagGroup({ children, className }: ProductTagGroupProps) {
   return (
     <div
-      className={cn(className)}
-      style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}
+      className={cn('flex flex-wrap gap-1.5 items-center', className)}
     >
       {children}
     </div>

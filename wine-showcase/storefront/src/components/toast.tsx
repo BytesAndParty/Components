@@ -81,26 +81,16 @@ export function ToastProvider({
   const isTop = placement.startsWith('top');
   const isCenter = placement.endsWith('center');
 
-  const positionStyle: React.CSSProperties = {
-    position: 'fixed',
-    zIndex: 9999,
-    display: 'flex',
-    flexDirection: isTop ? 'column' : 'column-reverse',
-    gap: '0.5rem',
-    padding: '1rem',
-    pointerEvents: 'none',
-    ...(isTop ? { top: 0 } : { bottom: 0 }),
-    ...(isCenter
-      ? { left: '50%', transform: 'translateX(-50%)' }
-      : { right: 0 }),
-  };
-
   const visible = toasts.slice(-maxVisible);
 
   return (
     <ToastContext.Provider value={{ toasts, add, dismiss }}>
       {children}
-      <div style={positionStyle}>
+      <div 
+        className={`fixed z-[9999] flex flex-col pointer-events-none p-4 gap-2 
+          ${isTop ? 'top-0 flex-col' : 'bottom-0 flex-col-reverse'} 
+          ${isCenter ? 'left-1/2 -translate-x-1/2' : 'right-0'}`}
+      >
         <AnimatePresence>
           {visible.map((t, i) => (
             <ToastItem
@@ -120,11 +110,11 @@ export function ToastProvider({
 
 /* ---------- Single Toast ---------- */
 
-const variantColors: Record<ToastVariant, string> = {
-  default: 'var(--accent)',
-  success: '#22c55e',
-  warning: '#eab308',
-  danger: '#ef4444',
+const variantClasses: Record<ToastVariant, string> = {
+  default: 'bg-accent',
+  success: 'bg-green-500',
+  warning: 'bg-yellow-500',
+  danger: 'bg-red-500',
 };
 
 interface ToastItemProps {
@@ -192,8 +182,6 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
     }
   };
 
-  const accentColor = variantColors[variant];
-
   return (
     <motion.div
       layout
@@ -211,66 +199,27 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
       onDragEnd={handleDragEnd}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      style={{
-        pointerEvents: 'auto',
-        position: 'relative',
-        width: '22rem',
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        borderRadius: '0.75rem',
-        overflow: 'hidden',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-        cursor: 'grab',
-      }}
+      className="pointer-events-auto relative w-[22rem] bg-card border border-border rounded-xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.3)] cursor-grab"
     >
       {/* Progress bar */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          height: 3,
-          width: '100%',
-          background: 'rgba(255,255,255,0.05)',
-        }}
-      >
+      <div className="absolute bottom-0 left-0 h-[3px] w-full bg-white/5">
         <div
           ref={progressRef}
-          style={{
-            height: '100%',
-            background: accentColor,
-            opacity: 0.5,
-            width: '0%',
-          }}
+          className={`h-full ${variantClasses[variant]} opacity-50 w-0`}
         />
       </div>
 
       {/* Content */}
-      <div style={{ padding: '0.875rem 1rem', paddingRight: '2.5rem' }}>
+      <div className="py-3.5 px-4 pr-10">
         {/* Variant indicator dot */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: accentColor,
-              flexShrink: 0,
-            }}
-          />
-          <span style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--foreground)' }}>
+        <div className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full shrink-0 ${variantClasses[variant]}`} />
+          <span className="font-semibold text-[0.8125rem] text-foreground">
             {title}
           </span>
         </div>
         {description && (
-          <p
-            style={{
-              fontSize: '0.8125rem',
-              color: 'var(--muted-foreground)',
-              marginTop: '0.25rem',
-              marginLeft: '1rem',
-            }}
-          >
+          <p className="text-[0.8125rem] text-muted-foreground mt-1 ml-4">
             {description}
           </p>
         )}
@@ -279,31 +228,12 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
       {/* Close button */}
       <button
         onClick={() => onDismiss(id)}
-        style={{
-          position: 'absolute',
-          top: '0.625rem',
-          right: '0.625rem',
-          width: '1.5rem',
-          height: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'transparent',
-          border: 'none',
-          color: 'var(--muted-foreground)',
-          cursor: 'pointer',
-          borderRadius: '0.25rem',
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 0.2s, background 0.15s',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = 'transparent';
-        }}
+        className={`
+          absolute top-2.5 right-2.5 w-6 h-6 flex items-center justify-center bg-transparent border-none text-muted-foreground cursor-pointer rounded-md transition-all duration-200 hover:bg-white/10
+          ${hovered ? 'opacity-100' : 'opacity-0'}
+        `}
       >
-        <X style={{ width: '0.875rem', height: '0.875rem' }} />
+        <X className="w-3.5 h-3.5" />
       </button>
     </motion.div>
   );

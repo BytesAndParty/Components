@@ -52,15 +52,7 @@ function StepIndicator({
   titles: (string | undefined)[]
 }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0',
-        marginBottom: '32px',
-      }}
-    >
+    <div className="flex items-center justify-center gap-0 mb-8">
       {Array.from({ length: totalSteps }, (_, i) => {
         const stepNum = i + 1
         const isCompleted = stepNum < currentStep
@@ -68,31 +60,14 @@ function StepIndicator({
         const isPending = stepNum > currentStep
 
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div key={i} className="flex items-center">
+            <div className="flex flex-col items-center gap-1.5">
               <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  transition: 'all 300ms ease',
-                  background: isCompleted
-                    ? 'var(--accent, #6366f1)'
-                    : isActive
-                      ? 'var(--accent, #6366f1)'
-                      : 'transparent',
-                  color: isCompleted || isActive
-                    ? '#ffffff'
-                    : 'var(--muted-foreground, #71717a)',
-                  border: isPending
-                    ? '2px solid var(--border, #2a2a2e)'
-                    : '2px solid var(--accent, #6366f1)',
-                }}
+                className={`
+                  w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300
+                  ${isCompleted || isActive ? 'bg-accent text-white border-2 border-accent' : 'bg-transparent text-muted-foreground border-2 border-border'}
+                  ${isPending ? 'border-border' : 'border-accent'}
+                `}
               >
                 {isCompleted ? (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -104,15 +79,10 @@ function StepIndicator({
               </div>
               {titles[i] && (
                 <span
-                  style={{
-                    fontSize: '12px',
-                    color: isActive
-                      ? 'var(--foreground, #e4e4e7)'
-                      : 'var(--muted-foreground, #71717a)',
-                    fontWeight: isActive ? 600 : 400,
-                    whiteSpace: 'nowrap',
-                    transition: 'color 300ms ease',
-                  }}
+                  className={`
+                    text-[12px] whitespace-nowrap transition-colors duration-300
+                    ${isActive ? 'text-foreground font-semibold' : 'text-muted-foreground font-normal'}
+                  `}
                 >
                   {titles[i]}
                 </span>
@@ -122,17 +92,11 @@ function StepIndicator({
             {/* Connector line */}
             {i < totalSteps - 1 && (
               <div
-                style={{
-                  width: '48px',
-                  height: '2px',
-                  marginLeft: '8px',
-                  marginRight: '8px',
-                  marginBottom: titles[i] ? '22px' : '0',
-                  background: stepNum < currentStep
-                    ? 'var(--accent, #6366f1)'
-                    : 'var(--border, #2a2a2e)',
-                  transition: 'background 300ms ease',
-                }}
+                className={`
+                  w-12 h-0.5 mx-2 transition-colors duration-300
+                  ${titles[i] ? 'mb-[22px]' : 'mb-0'}
+                  ${stepNum < currentStep ? 'bg-accent' : 'bg-border'}
+                `}
               />
             )}
           </div>
@@ -201,23 +165,12 @@ export function Stepper({
     }),
   }
 
-  const buttonBase: CSSProperties = {
-    padding: '10px 24px',
-    borderRadius: '8px',
-    border: 'none',
-    fontSize: '14px',
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'all 200ms ease',
-    fontFamily: 'inherit',
-  }
-
   return (
     <div className={className} style={style}>
       <StepIndicator totalSteps={totalSteps} currentStep={currentStep} titles={titles} />
 
       {/* Step content with animation */}
-      <div style={{ position: 'relative', overflow: 'hidden', minHeight: '120px' }}>
+      <div className="relative overflow-hidden min-h-[120px]">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
@@ -234,26 +187,17 @@ export function Stepper({
       </div>
 
       {/* Navigation buttons */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginTop: '24px',
-          gap: '12px',
-        }}
-      >
+      <div className="flex justify-between mt-6 gap-3">
         <button
           type="button"
           onClick={goBack}
           disabled={isFirstStep}
-          style={{
-            ...buttonBase,
-            background: 'transparent',
-            color: isFirstStep ? 'var(--muted-foreground, #71717a)' : 'var(--foreground, #e4e4e7)',
-            border: `1px solid ${isFirstStep ? 'var(--border, #2a2a2e)' : 'var(--border, #2a2a2e)'}`,
-            opacity: isFirstStep ? 0.5 : 1,
-            cursor: isFirstStep ? 'not-allowed' : 'pointer',
-          }}
+          className={`
+            px-6 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200
+            ${isFirstStep 
+              ? 'bg-transparent text-muted-foreground border-border opacity-50 cursor-not-allowed' 
+              : 'bg-transparent text-foreground border-border cursor-pointer hover:bg-white/5'}
+          `}
         >
           {backButtonText}
         </button>
@@ -261,13 +205,7 @@ export function Stepper({
         <button
           type="button"
           onClick={goNext}
-          style={{
-            ...buttonBase,
-            background: 'var(--accent, #6366f1)',
-            color: '#ffffff',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+          className="px-6 py-2.5 rounded-lg bg-accent text-white text-sm font-medium cursor-pointer transition-all duration-200 hover:opacity-90"
         >
           {isLastStep ? finalButtonText : nextButtonText}
         </button>

@@ -1,30 +1,5 @@
-import { useState, useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
-
-// ─── Keyframes ──────────────────────────────────────────────────────────────────
-
-const STYLE_ID = '__add-to-cart-btn-keyframes__'
-
-function injectStyles() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const s = document.createElement('style')
-  s.id = STYLE_ID
-  s.textContent = `
-    @keyframes atc-cart {
-      0%   { transform: translateX(-120px) rotate(-18deg); }
-      12.5% { transform: translateX(-60px) rotate(-18deg); }
-      25%, 45%, 55%, 75% { transform: none; }
-      50% { transform: scale(.9); }
-      44%, 56% { transform-origin: 12px 23px; }
-      45%, 55% { transform-origin: 50% 50%; }
-      87.5% { transform: translateX(70px) rotate(-18deg); }
-      100% { transform: translateX(140px) rotate(-18deg); }
-    }
-  `
-  document.head.appendChild(s)
-}
-
-if (typeof document !== 'undefined') injectStyles()
+import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
+import { cn } from '../lib/utils'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -39,7 +14,7 @@ export interface AddToCartButtonProps {
   /** Text / icon color */
   textColor?: string
   className?: string
-  style?: CSSProperties
+  style?: React.CSSProperties
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
@@ -84,140 +59,83 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleClick}
-      className={className}
+      className={cn(
+        "relative border-none px-7 py-2 rounded-lg text-center min-w-[144px] overflow-hidden",
+        "transition-transform duration-400 ease-[cubic-bezier(0.36,1.01,0.32,1.27)]",
+        "font-inherit appearance-none [WebkitTapHighlightColor:transparent] [mask-image:-webkit-radial-gradient(white,black)]",
+        loading ? "cursor-default scale-95" : "cursor-pointer scale-100",
+        className
+      )}
       style={{
-        position: 'relative',
-        border: 'none',
-        background: bgColor,
-        padding: '8px 28px',
-        borderRadius: '8px',
-        cursor: loading ? 'default' : 'pointer',
-        textAlign: 'center',
-        minWidth: '144px',
+        backgroundColor: bgColor,
         color: textColor,
-        overflow: 'hidden',
-        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
-        transform: `scale(${loading ? 0.95 : 1})`,
-        transition: 'transform .4s cubic-bezier(.36, 1.01, .32, 1.27)',
-        fontFamily: 'inherit',
-        WebkitAppearance: 'none' as const,
-        WebkitTapHighlightColor: 'transparent',
         ...style,
       }}
     >
       {/* Text label + plus icon */}
       <span
-        style={{
-          fontSize: '14px',
-          fontWeight: 500,
-          display: 'block',
-          position: 'relative',
-          paddingLeft: '24px',
-          marginLeft: '-8px',
-          lineHeight: '26px',
-          transform: `translateY(${loading ? '-32px' : '0'})`,
-          transition: 'transform .7s ease',
-        }}
+        className={cn(
+          "text-sm font-medium block relative pl-6 -ml-2 leading-[26px] transition-transform duration-700 ease-in-out",
+          loading ? "-translate-y-8" : "translate-y-0"
+        )}
       >
         {/* Plus icon – vertical bar */}
         <span
-          style={{
-            position: 'absolute',
-            width: '2px',
-            height: '14px',
-            borderRadius: '1px',
-            left: '8px',
-            top: '6px',
-            background: 'currentColor',
-            transform: `scale(.75) rotate(${loading ? '180deg' : '0deg'})`,
-            transition: 'transform .65s ease .05s',
-          }}
+          className={cn(
+            "absolute w-[2px] height-[14px] rounded-[1px] left-2 top-[6px] bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
+            loading ? "scale-75 rotate-180" : "scale-75 rotate-0"
+          )}
         />
         {/* Plus icon – horizontal bar */}
         <span
-          style={{
-            position: 'absolute',
-            width: '14px',
-            height: '2px',
-            borderRadius: '1px',
-            left: '2px',
-            top: '12px',
-            background: 'currentColor',
-            transform: `scale(.75) rotate(${loading ? '180deg' : '0deg'})`,
-            transition: 'transform .65s ease .05s',
-          }}
+          className={cn(
+            "absolute w-[14px] height-[2px] rounded-[1px] left-0.5 top-3 bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
+            loading ? "scale-75 rotate-180" : "scale-75 rotate-0"
+          )}
         />
         {children}
       </span>
 
       {/* Cart assembly (slides in from outside left, fills, checkmark, slides out right) */}
       <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          margin: '-13px 0 0 -18px',
-          transformOrigin: '12px 23px',
-          transform: loading ? 'translateX(-120px) rotate(-18deg)' : 'translateX(-120px) rotate(-18deg)',
-          animation: loading ? 'atc-cart 3.4s linear forwards .2s' : 'none',
-        }}
+        className={cn(
+          "absolute left-1/2 top-1/2 -mt-[13px] -ml-[18px] origin-[12px_23px] -translate-x-[120px] -rotate-[18deg]",
+          loading ? "animate-[atc-cart_3.4s_linear_forwards_0.2s]" : ""
+        )}
       >
         {/* Wheels */}
         <span
+          className="absolute w-1.5 h-1.5 rounded-full bottom-0 left-[9px]"
           style={{
-            position: 'absolute',
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
             boxShadow: `inset 0 0 0 2px ${textColor}`,
-            bottom: 0,
-            left: '9px',
             filter: `drop-shadow(11px 0 0 ${textColor})`,
           }}
         />
         {/* Cart fill (scales up when loading) */}
         <span
-          style={{
-            position: 'absolute',
-            width: '16px',
-            height: '9px',
-            background: textColor,
-            left: '9px',
-            bottom: '7px',
-            transformOrigin: '50% 100%',
-            transform: `perspective(4px) rotateX(-6deg) scaleY(${loading ? 1 : 0})`,
-            transition: loading
-              ? 'transform 1.2s ease .8s'
-              : 'transform 0s ease 0s',
-          }}
+          className={cn(
+            "absolute w-4 h-[9px] left-[9px] bottom-[7px] origin-bottom",
+            "perspective-[4px] -rotate-x-6",
+            loading ? "scale-y-100 transition-transform duration-[1200ms] ease-in-out delay-[800ms]" : "scale-y-0 transition-transform duration-0"
+          )}
+          style={{ background: textColor }}
         />
         {/* Cart outline + checkmark */}
         <svg
           width="36"
           height="26"
           viewBox="0 0 36 26"
-          style={{
-            position: 'relative',
-            zIndex: 1,
-            display: 'block',
-            fill: 'none',
-            stroke: textColor,
-            strokeWidth: 2,
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round',
-          }}
+          className="relative z-10 block fill-none stroke-current stroke-2 [stroke-linecap:round] [stroke-linejoin:round]"
+          style={{ color: textColor }}
         >
           <polyline points="1 2.5 6 2.5 10 18.5 25.5 18.5 28.5 7.5 7.5 7.5" />
           <polyline
             points="15 13.5 17 15.5 22 10.5"
-            style={{
-              stroke: bgColor,
-              strokeDasharray: '10px',
-              strokeDashoffset: loading ? '0' : '10px',
-              transition: loading
-                ? 'stroke-dashoffset .4s ease 1.73s'
-                : 'stroke-dashoffset 0s ease 0s',
-            }}
+            className={cn(
+              "[stroke-dasharray:10px] transition-[stroke-dashoffset]",
+              loading ? "[stroke-dashoffset:0] duration-400 ease-in-out delay-[1730ms]" : "[stroke-dashoffset:10px] duration-0"
+            )}
+            style={{ stroke: bgColor }}
           />
         </svg>
       </div>

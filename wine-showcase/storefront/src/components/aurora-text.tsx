@@ -1,24 +1,5 @@
-import { memo, useEffect, useRef } from 'react';
-
-// ─── Keyframe injection ─────────────────────────────────────────────────────────
-// The aurora shimmer keyframe must live inside the component so it works
-// standalone without any external stylesheet.
-
-const STYLE_ID = '__aurora-text-keyframes__';
-
-function injectKeyframes() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-    @keyframes aurora {
-      0%   { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-  `;
-  document.head.appendChild(style);
-}
+import { memo } from 'react';
+import { cn } from '../lib/utils';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -42,29 +23,17 @@ export const AuroraText = memo(
     speed = 1,
     style,
   }: AuroraTextProps) => {
-    const injected = useRef(false);
-    useEffect(() => {
-      if (!injected.current) {
-        injectKeyframes();
-        injected.current = true;
-      }
-    }, []);
-
     return (
-      <span className={className} style={{ position: 'relative', display: 'inline-block', ...style }}>
+      <span className={cn("relative inline-block", className)} style={style}>
         {/* Screen-reader accessible text (visually hidden) */}
-        <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+        <span className="absolute w-[1px] h-[1px] overflow-hidden [clip:rect(0,0,0,0)]">
           {children}
         </span>
         {/* Gradient-clipped decorative text */}
         <span
+          className="relative bg-[length:200%_auto] [WebkitBackgroundClip:text] [WebkitTextFillColor:transparent] bg-clip-text"
           style={{
-            position: 'relative',
             backgroundImage: `linear-gradient(135deg, ${colors.join(', ')}, ${colors[0]})`,
-            backgroundSize: '200% auto',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
             animation: `aurora ${10 / speed}s ease-in-out infinite alternate`,
           }}
           aria-hidden="true"

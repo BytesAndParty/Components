@@ -13,10 +13,6 @@ export interface RatingProps {
   onChange?: (value: number) => void
   /** Star size in px (default: 24) */
   size?: number
-  /** Active star color (default: accent) */
-  activeColor?: string
-  /** Inactive star color (default: muted) */
-  inactiveColor?: string
   /** Read-only display mode (default: false) */
   readOnly?: boolean
   className?: string
@@ -25,41 +21,22 @@ export interface RatingProps {
 
 // ─── Star SVG ───────────────────────────────────────────────────────────────────
 
-function StarIcon({ size, fill, stroke }: { size: number; fill: string; stroke: string }) {
+function StarIcon({ size, isFilled, isHovered }: { size: number; isFilled: boolean; isHovered: boolean }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill={fill}
-      stroke={stroke}
+      fill={isFilled ? 'currentColor' : 'none'}
+      stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ display: 'block', transition: 'transform 200ms ease' }}
+      className={`block transition-transform duration-200 ${isHovered ? 'scale-110' : 'scale-100'}`}
     >
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
     </svg>
   )
-}
-
-// ─── Keyframes (injected once) ──────────────────────────────────────────────────
-
-const STYLE_ID = '__rating-keyframes__'
-
-function injectKeyframes() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const style = document.createElement('style')
-  style.id = STYLE_ID
-  style.textContent = `
-    @keyframes rating-pop {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-  `
-  document.head.appendChild(style)
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
@@ -70,8 +47,6 @@ export function Rating({
   defaultValue = 0,
   onChange,
   size = 24,
-  activeColor = 'var(--accent, #6366f1)',
-  inactiveColor = 'var(--border, #2a2a2e)',
   readOnly = false,
   className,
   style,
@@ -96,22 +71,17 @@ export function Rating({
     [readOnly, isControlled, onChange]
   )
 
-  if (typeof document !== 'undefined') injectKeyframes()
-
   return (
     <div
-      className={className}
+      className={`inline-flex gap-0.5 ${className || ''}`}
       role="radiogroup"
       aria-label="Rating"
-      style={{
-        display: 'inline-flex',
-        gap: '2px',
-        ...style,
-      }}
+      style={style}
     >
       {Array.from({ length: count }, (_, i) => {
         const isFilled = i < displayValue
         const isAnimating = i === animatingIndex
+        const isHovered = !readOnly && hoverValue !== null && i < hoverValue
 
         return (
           <button
@@ -124,23 +94,17 @@ export function Rating({
             onClick={() => handleClick(i)}
             onMouseEnter={() => !readOnly && setHoverValue(i + 1)}
             onMouseLeave={() => setHoverValue(null)}
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: '2px',
-              cursor: readOnly ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              animation: isAnimating ? 'rating-pop 300ms ease' : 'none',
-              transition: 'transform 150ms ease',
-              transform: !readOnly && hoverValue !== null && i < hoverValue ? 'scale(1.1)' : 'scale(1)',
-            }}
+            className={`
+              bg-transparent border-none p-0.5 flex items-center justify-center transition-transform duration-150
+              ${readOnly ? 'cursor-default' : 'cursor-pointer'}
+              ${isAnimating ? 'animate-[rating-pop_300ms_ease]' : ''}
+              ${isFilled ? 'text-accent' : 'text-border'}
+            `}
           >
             <StarIcon
               size={size}
-              fill={isFilled ? activeColor : 'none'}
-              stroke={isFilled ? activeColor : inactiveColor}
+              isFilled={isFilled}
+              isHovered={isHovered}
             />
           </button>
         )

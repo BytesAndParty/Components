@@ -1,49 +1,5 @@
 import { useState, useEffect, useRef, type CSSProperties } from 'react'
-
-// ─── Keyframes ──────────────────────────────────────────────────────────────────
-
-const STYLE_ID = '__cart-icon-keyframes__'
-
-function injectStyles() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const s = document.createElement('style')
-  s.id = STYLE_ID
-  s.textContent = `
-    @keyframes ci-box-add {
-      0%   { top: 20%; left: -30%; opacity: 0; }
-      25%  { top: -20%; left: 50%; opacity: 1; }
-      50%  { top: 0%; left: 70%; }
-      75%  { top: 35%; left: 50%; }
-      100% { top: 35%; left: 50%; opacity: 0; }
-    }
-    @keyframes ci-box-remove {
-      0%   { top: 35%; left: 50%; opacity: 0; }
-      25%  { top: 35%; left: 50%; }
-      50%  { top: 0%; left: 70%; opacity: 1; }
-      75%  { top: -20%; left: 50%; opacity: 1; }
-      100% { top: 20%; left: -30%; opacity: 0; }
-    }
-    @keyframes ci-badge-pop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.3); }
-      70%  { transform: scale(0.9); }
-      100% { transform: scale(1); }
-    }
-    @keyframes ci-badge-in {
-      0%   { transform: scale(0); }
-      50%  { transform: scale(1.25); }
-      100% { transform: scale(1); }
-    }
-    @keyframes ci-badge-out {
-      0%   { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
-  `
-  document.head.appendChild(s)
-}
-
-if (typeof document !== 'undefined') injectStyles()
+import { cn } from '../lib/utils'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -117,29 +73,15 @@ export function CartIcon({
   const badgeSize = Math.max(16, Math.round(size * 0.65))
   const boxSize = Math.round(size * 0.4)
 
-  const badgeAnimValue =
-    badgeAnim === 'pop' ? 'ci-badge-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1)' :
-    badgeAnim === 'in' ? 'ci-badge-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1)' :
-    badgeAnim === 'out' ? 'ci-badge-out 250ms ease-in forwards' :
-    'none'
-
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={`Warenkorb${displayCount > 0 ? `, ${displayCount} Artikel` : ''}`}
-      className={className}
+      className={cn("relative inline-flex items-center justify-center p-0 bg-transparent border-none cursor-pointer", className)}
       style={{
-        position: 'relative',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         width: size + 14,
         height: size + 14,
-        padding: 0,
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
         color,
         ...style,
       }}
@@ -149,11 +91,7 @@ export function CartIcon({
         width={size}
         height={size}
         viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        className="fill-none stroke-current stroke-2 [stroke-linecap:round] [stroke-linejoin:round]"
       >
         <circle cx="9" cy="21" r="1" />
         <circle cx="20" cy="21" r="1" />
@@ -163,26 +101,20 @@ export function CartIcon({
       {/* Flying box animation */}
       {anim && (
         <span
+          className={cn(
+            "absolute opacity-0 pointer-events-none",
+            anim === 'add' ? "animate-[ci-box-add_1s_ease-in-out]" : "animate-[ci-box-remove_1s_ease-in-out]"
+          )}
           style={{
-            position: 'absolute',
             width: boxSize,
             height: boxSize,
-            opacity: 0,
-            pointerEvents: 'none',
-            animation: anim === 'add'
-              ? 'ci-box-add 1s ease-in-out'
-              : 'ci-box-remove 1s ease-in-out',
           }}
         >
           <svg
             width="100%"
             height="100%"
             viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            className="fill-none stroke-current stroke-[2.5] [stroke-linecap:round] [stroke-linejoin:round]"
           >
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
           </svg>
@@ -192,25 +124,19 @@ export function CartIcon({
       {/* Badge */}
       {(displayCount > 0 || badgeAnim === 'out') && (
         <span
+          className={cn(
+            "absolute top-0 right-0 px-1 flex items-center justify-center leading-none font-bold font-inherit pointer-events-none",
+            badgeAnim === 'pop' && "animate-[ci-badge-pop_400ms_cubic-bezier(0.34,1.56,0.64,1)]",
+            badgeAnim === 'in' && "animate-[ci-badge-in_350ms_cubic-bezier(0.34,1.56,0.64,1)]",
+            badgeAnim === 'out' && "animate-[ci-badge-out_250ms_ease-in_forwards]"
+          )}
           style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
             minWidth: badgeSize,
             height: badgeSize,
-            padding: '0 4px',
             borderRadius: badgeSize / 2,
             background: badgeColor,
             color: badgeTextColor,
             fontSize: Math.max(9, Math.round(badgeSize * 0.6)),
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            lineHeight: 1,
-            fontFamily: 'inherit',
-            animation: badgeAnimValue,
-            pointerEvents: 'none',
           }}
         >
           {displayCount > 99 ? '99+' : displayCount}

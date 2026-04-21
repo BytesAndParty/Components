@@ -1,6 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-
-const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
+import { cn } from '../lib/utils';
 
 export type MagneticButtonVariant =
   | 'default'
@@ -12,152 +11,25 @@ export type MagneticButtonVariant =
   | 'shimmer'
   | 'glow'
   | 'gradient'
-  | 'cta'; // cta = alias für shimmer (backward compat)
+  | 'cta';
 
-// ─── Keyframe injection ──────────────────────────────────────────────────────────
-
-const STYLE_ID = '__magnetic-btn-styles__';
-
-function injectStyles() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-    @keyframes mb-shimmer {
-      0%   { transform: translateX(-120%) skewX(-20deg); }
-      100% { transform: translateX(320%)  skewX(-20deg); }
-    }
-    @keyframes mb-glow-pulse {
-      0%, 100% { box-shadow: 0 0  8px  3px color-mix(in oklch, var(--accent) 45%, transparent),
-                             0 2px 12px    color-mix(in oklch, var(--accent) 30%, transparent); }
-      50%       { box-shadow: 0 0 22px  8px color-mix(in oklch, var(--accent) 70%, transparent),
-                             0 4px 30px    color-mix(in oklch, var(--accent) 40%, transparent); }
-    }
-    @keyframes mb-gradient {
-      0%   { background-position: 0%   center; }
-      100% { background-position: 200% center; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// ─── Tailwind: nur Spacing + Layout, keine Farben ────────────────────────────────
-// Alle Farb-/Border-Stile kommen aus getVariantStyle → inline styles.
+// ─── Tailwind Classes ────────────────────────────────────────────────────────────
 
 const BASE    = 'px-5 py-2.5 rounded-lg text-sm font-semibold';
 const BASE_LG = 'px-6 py-3   rounded-xl text-sm font-semibold';
 
 const variantClasses: Record<MagneticButtonVariant, string> = {
-  default:     `${BASE}`,
-  primary:     `${BASE}`,
-  secondary:   `${BASE}`,
-  outline:     `${BASE}`,
-  ghost:       'px-4 py-2 rounded-lg text-sm font-medium',
-  destructive: `${BASE}`,
-  shimmer:     `${BASE_LG} overflow-hidden`,
-  cta:         `${BASE_LG} overflow-hidden`,
-  glow:        `${BASE_LG}`,
-  gradient:    `${BASE_LG} overflow-hidden`,
+  default:     `${BASE} border border-border bg-card text-foreground hover:bg-[color-mix(in_oklch,var(--border)_60%,var(--card))]`,
+  primary:     `${BASE} bg-accent text-white shadow-[0_2px_10px_color-mix(in_oklch,var(--accent)_30%,transparent),inset_0_1px_0_rgba(255,255,255,0.12)] hover:shadow-[0_4px_20px_color-mix(in_oklch,var(--accent)_55%,transparent),inset_0_1px_0_rgba(255,255,255,0.2)]`,
+  secondary:   `${BASE} bg-[color-mix(in_oklch,var(--accent)_10%,transparent)] hover:bg-[color-mix(in_oklch,var(--accent)_20%,transparent)] border border-[color-mix(in_oklch,var(--accent)_35%,transparent)] hover:border-[color-mix(in_oklch,var(--accent)_60%,transparent)] text-accent`,
+  outline:     `${BASE} bg-transparent hover:bg-accent border-2 border-accent text-accent hover:text-white hover:shadow-[0_0_0_3px_color-mix(in_oklch,var(--accent)_20%,transparent)]`,
+  ghost:       'px-4 py-2 rounded-lg text-sm font-medium bg-transparent hover:bg-[color-mix(in_oklch,var(--accent)_8%,transparent)] text-muted-foreground hover:text-foreground',
+  destructive: `${BASE} bg-[#e11d48] text-white shadow-[0_2px_10px_rgba(225,29,72,0.28),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_4px_18px_rgba(225,29,72,0.55),inset_0_1px_0_rgba(255,255,255,0.15)]`,
+  shimmer:     `${BASE_LG} overflow-hidden bg-accent text-white shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_45%,transparent)]`,
+  cta:         `${BASE_LG} overflow-hidden bg-accent text-white shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_45%,transparent)]`,
+  glow:        `${BASE_LG} bg-accent text-white animate-[mb-glow-pulse_2.2s_ease-in-out_infinite]`,
+  gradient:    `${BASE_LG} overflow-hidden bg-[linear-gradient(90deg,var(--accent),color-mix(in_oklch,var(--accent)_55%,white)_50%,var(--accent))] bg-[length:200%_auto] text-white animate-[mb-gradient_2.8s_linear_infinite] shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_40%,transparent)]`,
 };
-
-// ─── Alle visuellen Stile als inline styles ───────────────────────────────────────
-
-function getVariantStyle(
-  variant: MagneticButtonVariant,
-  hovered: boolean
-): React.CSSProperties {
-  switch (variant) {
-    case 'default':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--border) 60%, var(--card))'
-          : 'var(--card)',
-        borderWidth:  '1px',
-        borderStyle:  'solid',
-        borderColor:  'var(--border)',
-        color:        'var(--foreground)',
-      };
-
-    case 'primary':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        boxShadow: hovered
-          ? '0 4px 20px color-mix(in oklch, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)'
-          : '0 2px 10px color-mix(in oklch, var(--accent) 30%, transparent), inset 0 1px 0 rgba(255,255,255,0.12)',
-      };
-
-    case 'secondary':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--accent) 20%, transparent)'
-          : 'color-mix(in oklch, var(--accent) 10%, transparent)',
-        borderWidth:  '1px',
-        borderStyle:  'solid',
-        borderColor:  hovered
-          ? 'color-mix(in oklch, var(--accent) 60%, transparent)'
-          : 'color-mix(in oklch, var(--accent) 35%, transparent)',
-        color: 'var(--accent)',
-      };
-
-    case 'outline':
-      return {
-        backgroundColor: hovered ? 'var(--accent)' : 'transparent',
-        borderWidth:  '2px',
-        borderStyle:  'solid',
-        borderColor:  'var(--accent)',
-        color:        hovered ? 'white' : 'var(--accent)',
-        boxShadow:    hovered
-          ? '0 0 0 3px color-mix(in oklch, var(--accent) 20%, transparent)'
-          : 'none',
-      };
-
-    case 'ghost':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--accent) 8%, transparent)'
-          : 'transparent',
-        color: hovered ? 'var(--foreground)' : 'var(--muted-foreground)',
-      };
-
-    case 'destructive':
-      return {
-        backgroundColor: '#e11d48',
-        color: 'white',
-        boxShadow: hovered
-          ? '0 4px 18px rgba(225, 29, 72, 0.55), inset 0 1px 0 rgba(255,255,255,0.15)'
-          : '0 2px 10px rgba(225, 29, 72, 0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
-      };
-
-    case 'shimmer':
-    case 'cta':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
-      };
-
-    case 'glow':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        animation: 'mb-glow-pulse 2.2s ease-in-out infinite',
-      };
-
-    case 'gradient':
-      return {
-        backgroundImage: 'linear-gradient(90deg, var(--accent), color-mix(in oklch, var(--accent) 55%, white) 50%, var(--accent))',
-        backgroundSize: '200% auto',
-        color: 'white',
-        animation: 'mb-gradient 2.8s linear infinite',
-        boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 40%, transparent)',
-      };
-
-    default:
-      return {};
-  }
-}
 
 // ─── Component ───────────────────────────────────────────────────────────────────
 
@@ -178,15 +50,6 @@ export function MagneticButton({
 }: MagneticButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = useState(false);
-  const injected = useRef(false);
-
-  useEffect(() => {
-    if (!injected.current) {
-      injectStyles();
-      injected.current = true;
-    }
-  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
@@ -200,7 +63,6 @@ export function MagneticButton({
 
   const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     setPosition({ x: 0, y: 0 });
-    setHovered(false);
     onMouseLeave?.(e);
   }, [onMouseLeave]);
 
@@ -219,9 +81,7 @@ export function MagneticButton({
       )}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => setHovered(true)}
       style={{
-        ...getVariantStyle(variant, hovered),
         ...style,
         transform: `translate(${position.x}px, ${position.y}px)`,
         willChange: 'transform',
@@ -232,21 +92,12 @@ export function MagneticButton({
       {isShimmer && (
         <span
           aria-hidden
-          style={{
-            position: 'absolute',
-            top: '-10%',
-            left: 0,
-            width: '35%',
-            height: '120%',
-            background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.28), transparent)',
-            animation: 'mb-shimmer 2.2s ease-in-out infinite',
-            pointerEvents: 'none',
-          }}
+          className="absolute top-[-10%] left-0 w-[35%] h-[120%] bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.28),transparent)] animate-[mb-shimmer_2.2s_ease-in-out_infinite] pointer-events-none"
         />
       )}
 
       {/* Content über Overlays */}
-      <span style={{ position: 'relative', zIndex: 1 }}>{children}</span>
+      <span className="relative z-[1]">{children}</span>
     </button>
   );
 }
