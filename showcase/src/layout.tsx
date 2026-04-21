@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { ToastProvider } from '@components/toast/toast'
+import { ToastProvider } from './components/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
-import { CartIcon } from '@components/cart-icon/cart-icon'
+import { CartIcon } from './components/cart-icon'
 import { FloatingCart, type FloatingCartItem } from '@components/floating-cart/floating-cart'
 import {
   Navbar, NavbarSection, NavbarItem,
@@ -94,14 +94,7 @@ export function Layout() {
             <Link
               to="/"
               viewTransition
-              style={{
-                textDecoration: 'none',
-                color: 'var(--foreground)',
-                fontWeight: 700,
-                fontSize: '18px',
-                letterSpacing: '-0.02em',
-                padding: '8px 0',
-              }}
+              className="no-underline text-foreground font-bold text-lg -tracking-[0.02em] py-2"
             >
               Components
             </Link>
@@ -147,7 +140,7 @@ export function Layout() {
         </Navbar>
 
         <div className="max-w-3xl mx-auto pt-6 pb-12 px-6">
-          <main style={{ viewTransitionName: 'page-content' }}>
+          <main className="[view-transition-name:page-content]">
             <Outlet />
           </main>
         </div>

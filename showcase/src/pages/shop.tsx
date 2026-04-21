@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
-import { Stepper, Step } from '@components/stepper/stepper'
-import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
-import { CartIcon } from '@components/cart-icon/cart-icon'
-import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { useToast } from '@components/toast/toast'
+import { Stepper, Step } from '../components/stepper'
+import { VerticalStepper, VerticalStep, StepList, StepListItem } from '../components/stepper-vertical'
+import { CartIcon } from '../components/cart-icon'
+import { AddToCartButton } from '../components/add-to-cart-button'
+import { useToast } from '../components/toast'
 import { useCart } from '../layout'
 
 export function ShopPage() {
@@ -30,19 +30,11 @@ export function ShopPage() {
     <>
       <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
         <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
             {bottles.map((bottle) => (
               <div
                 key={bottle.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '16px',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border)',
-                }}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border"
               >
                 <span className="text-sm font-medium text-foreground">{bottle.name}</span>
                 <span className="text-xs text-muted-foreground">{bottle.price}</span>
@@ -68,43 +60,17 @@ export function ShopPage() {
                 <button
                   type="button"
                   onClick={() => setDemoCount(c => Math.max(0, c - 1))}
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border)',
-                    background: 'none',
-                    color: 'var(--foreground)',
-                    cursor: 'pointer',
-                    fontSize: '18px',
-                    fontFamily: 'inherit',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
+                  className="w-9 h-9 rounded-lg border border-border bg-transparent text-foreground cursor-pointer text-lg flex items-center justify-center font-sans"
                 >
                   −
                 </button>
-                <span className="text-sm text-foreground tabular-nums" style={{ minWidth: '24px', textAlign: 'center' }}>
+                <span className="text-sm text-foreground tabular-nums min-w-[24px] text-center">
                   {demoCount}
                 </span>
                 <button
                   type="button"
                   onClick={() => setDemoCount(c => c + 1)}
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border)',
-                    background: 'none',
-                    color: 'var(--foreground)',
-                    cursor: 'pointer',
-                    fontSize: '18px',
-                    fontFamily: 'inherit',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
+                  className="w-9 h-9 rounded-lg border border-border bg-transparent text-foreground cursor-pointer text-lg flex items-center justify-center font-sans"
                 >
                   +
                 </button>
@@ -113,8 +79,7 @@ export function ShopPage() {
             <button
               type="button"
               onClick={() => { setDemoCount(0); cart.reset() }}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none cursor-pointer font-sans"
             >
               Reset
             </button>
@@ -140,7 +105,7 @@ export function ShopPage() {
             }
           >
             <Step title="Etikett">
-              <div style={{ paddingBottom: '8px' }}>
+              <div className="pb-2">
                 <h3 className="text-lg font-semibold text-foreground mb-2">Etikett auswählen</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Wähle ein Design für dein personalisiertes Weinetikett.
@@ -151,16 +116,10 @@ export function ShopPage() {
                       key={label.id}
                       type="button"
                       onClick={() => setSelectedLabel(label.id)}
-                      className="text-left"
-                      style={{
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        border: `2px solid ${selectedLabel === label.id ? 'var(--accent)' : 'var(--border)'}`,
-                        background: selectedLabel === label.id ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                        cursor: 'pointer',
-                        transition: 'all 200ms ease',
-                        fontFamily: 'inherit',
-                      }}
+                      className={`
+                        text-left p-3 px-4 rounded-lg border-2 cursor-pointer transition-all duration-200 font-sans
+                        ${selectedLabel === label.id ? 'border-accent bg-accent/5' : 'border-border bg-transparent'}
+                      `}
                     >
                       <div className="text-sm font-medium text-foreground">{label.name}</div>
                       <div className="text-xs text-muted-foreground mt-0.5">{label.description}</div>
@@ -171,7 +130,7 @@ export function ShopPage() {
             </Step>
 
             <Step title="Flasche">
-              <div style={{ paddingBottom: '8px' }}>
+              <div className="pb-2">
                 <h3 className="text-lg font-semibold text-foreground mb-2">Flasche zuordnen</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Wähle die Flasche, auf die das Etikett aufgebracht werden soll.
@@ -182,19 +141,10 @@ export function ShopPage() {
                       key={bottle.id}
                       type="button"
                       onClick={() => setSelectedBottle(bottle.id)}
-                      className="text-left"
-                      style={{
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        border: `2px solid ${selectedBottle === bottle.id ? 'var(--accent)' : 'var(--border)'}`,
-                        background: selectedBottle === bottle.id ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                        cursor: 'pointer',
-                        transition: 'all 200ms ease',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        fontFamily: 'inherit',
-                      }}
+                      className={`
+                        text-left p-3 px-4 rounded-lg border-2 flex justify-between items-center cursor-pointer transition-all duration-200 font-sans
+                        ${selectedBottle === bottle.id ? 'border-accent bg-accent/5' : 'border-border bg-transparent'}
+                      `}
                     >
                       <div>
                         <div className="text-sm font-medium text-foreground">{bottle.name}</div>
@@ -207,18 +157,12 @@ export function ShopPage() {
             </Step>
 
             <Step title="Bestätigung">
-              <div style={{ paddingBottom: '8px' }}>
+              <div className="pb-2">
                 <h3 className="text-lg font-semibold text-foreground mb-2">Zusammenfassung</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Prüfe deine Auswahl und schließe die Bestellung ab.
                 </p>
-                <div
-                  style={{
-                    borderRadius: '8px',
-                    border: '1px solid var(--border)',
-                    overflow: 'hidden',
-                  }}
-                >
+                <div className="rounded-lg border border-border overflow-hidden">
                   <div className="p-4 flex justify-between text-sm border-b border-border">
                     <span className="text-muted-foreground">Etikett</span>
                     <span className="text-foreground font-medium">

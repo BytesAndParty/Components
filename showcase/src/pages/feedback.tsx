@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
-import { ToastProvider, useToast } from '@components/toast/toast'
+import { ToastProvider, useToast } from '../components/toast'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
-import { Rating } from '@components/rating/rating'
+import { Rating } from '../components/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import { HeartLike } from '@components/heart-like/heart-like'
@@ -10,7 +10,7 @@ import { BounceLoader } from '@components/bounce-loader/bounce-loader'
 import { Countdown } from '@components/countdown/countdown'
 import { NumberTicker } from '@components/number-ticker/number-ticker'
 import { CircularProgress } from '@components/circular-progress/circular-progress'
-import { CartIcon } from '@components/cart-icon/cart-icon'
+import { CartIcon } from '../components/cart-icon'
 
 function ToastDemoButtons() {
   const { add } = useToast()
