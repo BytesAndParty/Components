@@ -1,5 +1,6 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { forwardRef } from 'react'
+import { cn } from '../../lib/utils'
 
 export const DropdownMenu = DropdownMenuPrimitive.Root
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
@@ -12,17 +13,11 @@ export const DropdownMenuContent = forwardRef<
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
-      className={className}
-      style={{
-        zIndex: 50,
-        minWidth: '8rem',
-        borderRadius: '0.5rem',
-        border: '1px solid var(--border)',
-        background: 'var(--card)',
-        padding: '0.25rem',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
-        ...style,
-      }}
+      className={cn(
+        'z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-card p-1 shadow-2xl',
+        className
+      )}
+      style={style}
       {...props}
     />
   </DropdownMenuPrimitive.Portal>
@@ -35,25 +30,11 @@ export const DropdownMenuItem = forwardRef<
 >(({ className, style, ...props }, ref) => (
   <DropdownMenuPrimitive.Item
     ref={ref}
-    className={className}
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      cursor: 'pointer',
-      userSelect: 'none',
-      borderRadius: '0.25rem',
-      padding: '0.375rem 0.5rem',
-      fontSize: '0.875rem',
-      outline: 'none',
-      transition: 'background 0.1s',
-      ...style,
-    }}
-    onMouseEnter={(e) => {
-      ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)'
-    }}
-    onMouseLeave={(e) => {
-      ;(e.currentTarget as HTMLElement).style.background = 'transparent'
-    }}
+    className={cn(
+      'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-white/10 hover:bg-white/10 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      className
+    )}
+    style={style}
     {...props}
   />
 ))
@@ -65,14 +46,11 @@ export const DropdownMenuLabel = forwardRef<
 >(({ className, style, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={className}
-    style={{
-      padding: '0.375rem 0.5rem',
-      fontSize: '0.8125rem',
-      fontWeight: 600,
-      opacity: 0.6,
-      ...style,
-    }}
+    className={cn(
+      'px-2 py-1.5 text-[0.8125rem] font-semibold opacity-60',
+      className
+    )}
+    style={style}
     {...props}
   />
 ))
@@ -84,13 +62,8 @@ export const DropdownMenuSeparator = forwardRef<
 >(({ className, style, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={className}
-    style={{
-      height: '1px',
-      margin: '0.25rem -0.25rem',
-      background: 'rgba(255,255,255,0.08)',
-      ...style,
-    }}
+    className={cn('-mx-1 my-1 h-px bg-white/10', className)}
+    style={style}
     {...props}
   />
 ))

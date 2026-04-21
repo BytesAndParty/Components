@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import { cn } from '../../lib/utils'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'ghost' | 'outline'
@@ -6,17 +7,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean
 }
 
-const variantStyles: Record<string, React.CSSProperties> = {
-  default: { background: 'var(--accent)', color: '#fff' },
-  ghost: { background: 'transparent', color: 'inherit' },
-  outline: { background: 'transparent', border: '1px solid var(--border)', color: 'var(--foreground)' },
+const variantClasses = {
+  default: 'bg-accent text-white hover:opacity-90',
+  ghost: 'bg-transparent text-inherit hover:bg-white/10',
+  outline: 'bg-transparent border border-border text-foreground hover:bg-white/5',
 }
 
-const sizeStyles: Record<string, React.CSSProperties> = {
-  default: { height: '2.5rem', padding: '0.5rem 1rem', fontSize: '0.875rem' },
-  sm: { height: '2.25rem', padding: '0.5rem 0.75rem', fontSize: '0.8125rem' },
-  lg: { height: '2.75rem', padding: '0.5rem 2rem', fontSize: '0.875rem' },
-  icon: { height: '2.25rem', width: '2.25rem', padding: 0 },
+const sizeClasses = {
+  default: 'h-10 px-4 py-2 text-sm',
+  sm: 'h-9 px-3 text-[0.8125rem]',
+  lg: 'h-11 px-8 text-sm',
+  icon: 'h-9 w-9 p-0',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -24,21 +25,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={['showcase-btn', `showcase-btn--${variant}`, className].filter(Boolean).join(' ')}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.5rem',
-          borderRadius: '0.375rem',
-          fontWeight: 500,
-          cursor: 'pointer',
-          border: 'none',
-          transition: 'background 0.15s, opacity 0.15s',
-          ...variantStyles[variant],
-          ...sizeStyles[size],
-          ...style,
-        }}
+        className={cn(
+          'inline-flex items-center justify-center gap-2 rounded-md font-medium cursor-pointer transition-colors disabled:opacity-50 disabled:pointer-events-none',
+          variantClasses[variant],
+          sizeClasses[size],
+          className
+        )}
+        style={style}
         {...props}
       />
     )
