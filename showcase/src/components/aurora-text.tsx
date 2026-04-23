@@ -10,10 +10,10 @@ interface AuroraTextProps {
   colors?: string[];
   /** Animation speed multiplier (default: 1) */
   speed?: number;
-  /** 
-   * 'aurora' (default) - soft, shifting colors
-   * 'gradient' - steady loop
-   * 'none' - no effect
+  /**
+   * 'aurora'   (default) – sanft wechselnder Multi-Color-Effekt
+   * 'gradient' – stetiger Loop, knallig für CTAs
+   * 'none'     – kein Effekt
    */
   variant?: 'aurora' | 'gradient' | 'none';
   style?: React.CSSProperties;
@@ -30,32 +30,33 @@ export const AuroraText = memo(
     variant = 'aurora',
     style,
   }: AuroraTextProps) => {
-    const finalColors = colors || (variant === 'aurora' 
-      ? ['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']
-      : ['#FF0080', '#7928CA', '#0070F3', '#38bdf8']);
+    const finalColors = colors ?? (
+      variant === 'aurora'
+        ? ['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']
+        : ['#FF0080', '#7928CA', '#0070F3', '#38bdf8']
+    );
+
+    const gradientStyle: React.CSSProperties = variant !== 'none'
+      ? {
+          backgroundImage: variant === 'gradient'
+            ? `linear-gradient(90deg, ${[...finalColors, finalColors[0]].join(', ')})`
+            : `linear-gradient(135deg, ${finalColors.join(', ')}, ${finalColors[0]})`,
+          backgroundSize: variant === 'gradient' ? '300% auto' : '200% auto',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: variant === 'gradient'
+            ? `mb-gradient ${6 / speed}s linear infinite`
+            : `aurora ${10 / speed}s ease-in-out infinite alternate`,
+        }
+      : {};
 
     return (
-      <span className={cn("relative inline-block", className)} style={style}>
-        {/* Screen-reader accessible text (visually hidden) */}
-        <span className="sr-only">
-          {children}
-        </span>
-        {/* Gradient-clipped decorative text */}
-        <span
-          className={cn(
-            "relative bg-[length:200%_auto] [WebkitBackgroundClip:text] [WebkitTextFillColor:transparent] bg-clip-text",
-            variant === 'none' && "[WebkitTextFillColor:initial] [WebkitBackgroundClip:initial] bg-clip-initial"
-          )}
-          style={{
-            backgroundImage: variant !== 'none' ? `linear-gradient(135deg, ${finalColors.join(', ')}, ${finalColors[0]})` : undefined,
-            animation: variant !== 'none' 
-              ? `${variant === 'aurora' ? 'aurora' : 'mb-gradient'} ${10 / speed}s ease-in-out infinite alternate`
-              : undefined,
-          }}
-          aria-hidden="true"
-        >
-          {children}
-        </span>
+      <span
+        className={cn('inline-block', className)}
+        style={{ ...gradientStyle, ...style }}
+      >
+        {children}
       </span>
     );
   }

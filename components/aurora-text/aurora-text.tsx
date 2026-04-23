@@ -75,24 +75,18 @@ export const AuroraText = memo(
           };
 
     return (
-      <span className={className} style={{ position: 'relative', display: 'inline-block', ...style }}>
-        {/* Screen-reader accessible text (visually hidden) */}
-        <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
-          {children}
-        </span>
-        {/* Gradient-clipped decorative text */}
-        <span
-          style={{
-            position: 'relative',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            ...gradientStyle,
-          }}
-          aria-hidden="true"
-        >
-          {children}
-        </span>
+      <span
+        className={className}
+        style={{
+          display: 'inline-block',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          ...gradientStyle,
+          ...style,
+        }}
+      >
+        {children}
       </span>
     );
   }
