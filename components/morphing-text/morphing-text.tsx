@@ -5,8 +5,10 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 export interface MorphingTextProps {
   /** Array von Texten, die zyklisch ineinander überblenden */
   texts: string[]
-  /** Anzeigedauer pro Text in ms (default: 2000) */
+  /** Anzeigedauer pro Text in ms (default: 4000) */
   duration?: number
+  /** Dauer des Blur-Übergangs in ms (default: 1200) */
+  morphDuration?: number
   className?: string
   style?: CSSProperties
 }
@@ -21,7 +23,8 @@ export interface MorphingTextProps {
  */
 export function MorphingText({
   texts,
-  duration = 2000,
+  duration = 4000,
+  morphDuration = 1200,
   className,
   style,
 }: MorphingTextProps) {
@@ -33,11 +36,10 @@ export function MorphingText({
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  const activeMorphDuration = prefersReduced ? 0 : morphDuration
+
   useEffect(() => {
     if (texts.length <= 1) return
-
-    // Morphing-Phase: ca. 600ms vor dem Textwechsel starten
-    const morphDuration = prefersReduced ? 0 : 600
 
     timerRef.current = setTimeout(() => {
       setMorphing(true)
@@ -45,38 +47,40 @@ export function MorphingText({
       setTimeout(() => {
         setIndex(prev => (prev + 1) % texts.length)
         setMorphing(false)
-      }, morphDuration)
-    }, duration - morphDuration)
+      }, activeMorphDuration)
+    }, duration - activeMorphDuration)
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [index, texts, duration, prefersReduced])
+  }, [index, texts, duration, activeMorphDuration])
 
   const nextIndex = (index + 1) % texts.length
+
+  const transition = `opacity ${activeMorphDuration}ms ease, filter ${activeMorphDuration}ms ease`
 
   // Überblend-Stile: aktueller Text faded aus, nächster faded ein
   const currentStyle: CSSProperties = morphing
     ? {
         opacity: 0,
-        filter: prefersReduced ? 'none' : 'blur(8px)',
-        transition: `opacity 600ms ease, filter 600ms ease`,
+        filter: prefersReduced ? 'none' : 'blur(10px)',
+        transition,
       }
     : {
         opacity: 1,
         filter: 'blur(0px)',
-        transition: `opacity 600ms ease, filter 600ms ease`,
+        transition,
       }
 
   const nextStyle: CSSProperties = morphing
     ? {
         opacity: 1,
         filter: 'blur(0px)',
-        transition: `opacity 600ms ease, filter 600ms ease`,
+        transition,
       }
     : {
         opacity: 0,
-        filter: prefersReduced ? 'none' : 'blur(8px)',
+        filter: prefersReduced ? 'none' : 'blur(10px)',
         transition: 'none', // kein Fade beim Reset
       }
 
