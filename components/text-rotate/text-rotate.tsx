@@ -68,7 +68,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
   (
     {
       texts,
-      rotationInterval = 2000,
+      rotationInterval = 3500,
       initial = { y: '100%', opacity: 0 },
       animate = { y: 0, opacity: 1 },
       exit = { y: '-120%', opacity: 0 },
