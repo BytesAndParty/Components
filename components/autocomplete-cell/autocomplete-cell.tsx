@@ -132,7 +132,7 @@ export function AutocompleteCell({
     <div ref={containerRef} className={cn('relative w-full group', className)}>
       <div className="relative flex items-center rounded-lg border border-border bg-card transition-colors focus-within:border-accent">
         {/* Left Icon */}
-        <div className="absolute left-3.5 text-muted-foreground transition-colors group-focus-within:text-accent">
+        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-accent">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
