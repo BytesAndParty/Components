@@ -89,7 +89,7 @@ export function Layout() {
   return (
     <CartContext.Provider value={cartValue}>
       <ToastProvider placement="bottom-right">
-        <Navbar sticky height={56} bgColor="var(--background)" borderColor="var(--border)">
+        <Navbar sticky height={56} bgColor="var(--background)" borderColor="var(--border)" style={{ viewTransitionName: 'nav-bar' }}>
           <NavbarSection position="left">
             <Link
               to="/"

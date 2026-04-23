@@ -190,6 +190,16 @@
   animation: 200ms ease-in both vt-slide-in;
 }
 
+/* Navbar stays above page-content during any view transition */
+::view-transition-group(nav-bar) {
+  z-index: 200;
+}
+::view-transition-old(nav-bar),
+::view-transition-new(nav-bar) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @keyframes vt-slide-in {
   from { opacity: 0; transform: translateY(6px); }
 }
