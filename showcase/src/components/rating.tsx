@@ -15,6 +15,8 @@ export interface RatingProps {
   size?: number
   /** Read-only display mode (default: false) */
   readOnly?: boolean
+  /** Custom active color (overrides text-accent) */
+  activeColor?: string
   className?: string
   style?: CSSProperties
 }
@@ -48,6 +50,7 @@ export function Rating({
   onChange,
   size = 24,
   readOnly = false,
+  activeColor,
   className,
   style,
 }: RatingProps) {
@@ -98,8 +101,11 @@ export function Rating({
               bg-transparent border-none p-0.5 flex items-center justify-center transition-transform duration-150
               ${readOnly ? 'cursor-default' : 'cursor-pointer'}
               ${isAnimating ? 'animate-[rating-pop_300ms_ease]' : ''}
-              ${isFilled ? 'text-accent' : 'text-border'}
+              ${isFilled ? '' : 'text-border'}
             `}
+            style={{
+              color: isFilled ? (activeColor || 'var(--accent)') : undefined
+            }}
           >
             <StarIcon
               size={size}

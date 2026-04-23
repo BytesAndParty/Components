@@ -11,6 +11,7 @@ export type MagneticButtonVariant =
   | 'shimmer'
   | 'glow'
   | 'gradient'
+  | 'beam'
   | 'cta';
 
 // ─── Tailwind Classes ────────────────────────────────────────────────────────────
@@ -29,6 +30,7 @@ const variantClasses: Record<MagneticButtonVariant, string> = {
   cta:         `${BASE_LG} overflow-hidden bg-accent text-white shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_45%,transparent)]`,
   glow:        `${BASE_LG} bg-accent text-white animate-[mb-glow-pulse_2.2s_ease-in-out_infinite]`,
   gradient:    `${BASE_LG} overflow-hidden bg-[linear-gradient(90deg,var(--accent),color-mix(in_oklch,var(--accent)_55%,white)_50%,var(--accent))] bg-[length:200%_auto] text-white animate-[mb-gradient_2.8s_linear_infinite] shadow-[0_4px_18px_color-mix(in_oklch,var(--accent)_40%,transparent)]`,
+  beam:        `${BASE_LG} overflow-hidden bg-card text-foreground`,
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────────
@@ -67,6 +69,7 @@ export function MagneticButton({
   }, [onMouseLeave]);
 
   const isShimmer = variant === 'shimmer' || variant === 'cta';
+  const isBeam = variant === 'beam';
 
   return (
     <button
@@ -94,6 +97,22 @@ export function MagneticButton({
           aria-hidden
           className="absolute top-[-10%] left-0 w-[35%] h-[120%] bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.28),transparent)] animate-[mb-shimmer_2.2s_ease-in-out_infinite] pointer-events-none"
         />
+      )}
+
+      {/* Border-Beam: rotierendes conic-gradient + Innen-Maske */}
+      {isBeam && (
+        <>
+          {/* Rotierendes Beam-Div: größer als Button, dreht sich im Zentrum */}
+          <span
+            aria-hidden
+            className="absolute w-[300%] h-[300%] top-[-100%] left-[-100%] bg-[conic-gradient(from_0deg,transparent_330deg,color-mix(in_oklch,var(--accent)_90%,white)_350deg,var(--accent)_360deg)] animate-[mb-beam_2.5s_linear_infinite] pointer-events-none"
+          />
+          {/* Maske: deckt Innenbereich ab → nur Rand leuchtet */}
+          <span
+            aria-hidden
+            className="absolute inset-[1.5px] bg-card rounded-[inherit] pointer-events-none"
+          />
+        </>
       )}
 
       {/* Content über Overlays */}
