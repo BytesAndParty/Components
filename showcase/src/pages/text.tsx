@@ -123,13 +123,13 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="TextScramble" description="Text reveal with randomized character scramble animation.">
+      <Section title="TextScramble" description="Text reveal with randomized character scramble animation." canReload>
         <div className="text-2xl font-semibold font-mono text-foreground">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />
         </div>
       </Section>
 
-      <Section title="TextRotate" description="Animated text rotation with staggered character transitions.">
+      <Section title="TextRotate" description="Animated text rotation with staggered character transitions." canReload>
         <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
           <div className="p-12 px-8 flex flex-col items-center text-center gap-4">
             <p className="text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">
@@ -139,8 +139,8 @@ export function TextPage() {
               <span className="text-foreground">Discover </span>
               <TextRotate
                 texts={['Barolo', 'Amarone', 'Brunello', 'Chianti', 'Sassicaia', 'Barbaresco']}
-                rotationInterval={2500}
-                staggerDuration={0.04}
+                rotationInterval={4000}
+                staggerDuration={0.06}
                 staggerFrom="first"
                 mainStyle={{}}
                 elementLevelStyle={{ color: 'var(--accent)' }}
@@ -169,20 +169,20 @@ export function TextPage() {
           </div>
           <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
             <span>TextRotate · splitBy: characters · staggerFrom: first</span>
-            <span>rotationInterval: 2500ms</span>
+            <span>rotationInterval: 4000ms</span>
           </div>
         </div>
       </Section>
 
-      <Section title="AuroraText" description="Gradient text with animated color shifting. variant='aurora' (default) sanft wechselnd, variant='gradient' stetiger Loop für CTAs.">
+      <Section title="AuroraText" description="Gradient text with animated color shifting. variant='aurora' (default) sanft wechselnd, variant='gradient' stetiger Loop für CTAs." canReload>
         <div className="space-y-4">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="aurora" (default)</p>
             <div className="text-4xl font-bold tracking-tight">
-              <AuroraText speed={1.5}>Premium Quality</AuroraText>
+              <AuroraText speed={0.8}>Premium Quality</AuroraText>
             </div>
             <div className="text-xl font-semibold mt-3">
-              <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.8}>
+              <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.5}>
                 Uses your accent color
               </AuroraText>
             </div>
@@ -190,10 +190,10 @@ export function TextPage() {
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="gradient" – stetiger Loop, knallig für CTAs</p>
             <div className="text-4xl font-bold tracking-tight">
-              <AuroraText variant="gradient" speed={1.2}>Jetzt entdecken</AuroraText>
+              <AuroraText variant="gradient" speed={0.8}>Jetzt entdecken</AuroraText>
             </div>
             <div className="text-xl font-semibold mt-3">
-              <AuroraText variant="gradient" colors={['#f43f5e', '#f97316', '#fbbf24', '#10b981']} speed={0.7}>
+              <AuroraText variant="gradient" colors={['#f43f5e', '#f97316', '#fbbf24', '#10b981']} speed={0.5}>
                 Weinkollektion 2024
               </AuroraText>
             </div>
@@ -207,14 +207,14 @@ export function TextPage() {
             Entdecke{' '}
             <MorphingText
               texts={['Barolo', 'Amarone', 'Brunello', 'Riesling', 'Champagner']}
-              duration={2500}
+              duration={4000}
               style={{ color: 'var(--accent)' }}
             />
           </div>
           <div className="text-xl text-muted-foreground">
             <MorphingText
               texts={['Frisch. Fruchtig. Fein.', 'Tief. Komplex. Unvergesslich.', 'Wild. Elegant. Pur.']}
-              duration={3000}
+              duration={5000}
             />
           </div>
         </div>
@@ -226,10 +226,10 @@ export function TextPage() {
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyText</p>
             <div className="flex flex-wrap gap-6 items-center">
               <span className="text-2xl font-bold">
-                <ShinyText duration={2.5}>Premium Weinkollektion</ShinyText>
+                <ShinyText duration={6}>Premium Weinkollektion</ShinyText>
               </span>
               <span className="text-lg font-semibold">
-                <ShinyText shineColor="rgba(251,191,36,0.9)" duration={3}>Gold Reserve</ShinyText>
+                <ShinyText shineColor="rgba(251,191,36,0.9)" duration={8}>Gold Reserve</ShinyText>
               </span>
             </div>
           </div>

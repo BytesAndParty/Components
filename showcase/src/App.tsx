@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router'
+import { createBrowserRouter, RouterProvider, ScrollRestoration } from 'react-router'
 import { Layout } from './layout'
 
 const IndexPage = lazy(() => import('./pages/index').then(m => ({ default: m.IndexPage })))
@@ -14,7 +14,12 @@ const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ de
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: (
+      <>
+        <Layout />
+        <ScrollRestoration />
+      </>
+    ),
     children: [
       { index: true, element: <Suspense><IndexPage /></Suspense> },
       { path: 'cards', element: <Suspense><CardsPage /></Suspense> },
