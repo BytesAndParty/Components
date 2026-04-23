@@ -82,14 +82,14 @@ export function AddToCartButton({
         {/* Plus icon – vertical bar */}
         <span
           className={cn(
-            "absolute w-[2px] height-[14px] rounded-[1px] left-2 top-[6px] bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
+            "absolute w-[2px] h-[14px] rounded-[1px] left-2 top-[6px] bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
             loading ? "scale-75 rotate-180" : "scale-75 rotate-0"
           )}
         />
         {/* Plus icon – horizontal bar */}
         <span
           className={cn(
-            "absolute w-[14px] height-[2px] rounded-[1px] left-0.5 top-3 bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
+            "absolute w-[14px] h-[2px] rounded-[1px] left-0.5 top-3 bg-current transition-transform duration-[650ms] ease-in-out delay-[50ms]",
             loading ? "scale-75 rotate-180" : "scale-75 rotate-0"
           )}
         />
@@ -99,8 +99,10 @@ export function AddToCartButton({
       {/* Cart assembly (slides in from outside left, fills, checkmark, slides out right) */}
       <div
         className={cn(
-          "absolute left-1/2 top-1/2 -mt-[13px] -ml-[18px] origin-[12px_23px] -translate-x-[120px] -rotate-[18deg]",
-          loading ? "animate-[atc-cart_3.4s_linear_forwards_0.2s]" : ""
+          "absolute left-1/2 top-1/2 -mt-[13px] -ml-[18px] origin-[12px_23px]",
+          loading
+            ? "animate-[atc-cart_3.4s_linear_both_0.2s]"
+            : "-translate-x-[120px] -rotate-[18deg]"
         )}
       >
         {/* Wheels */}
