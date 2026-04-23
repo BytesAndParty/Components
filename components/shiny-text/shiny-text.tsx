@@ -27,7 +27,7 @@ export interface ShinyTextProps {
   children: ReactNode
   /** Shine-Farbe (default: white mit 80% Opacity) */
   shineColor?: string
-  /** Animationsdauer in Sekunden (default: 3) */
+  /** Animationsdauer in Sekunden (default: 5) */
   duration?: number
   className?: string
   style?: CSSProperties
@@ -37,7 +37,7 @@ export interface ShinyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
   children: ReactNode
   /** Shine-Farbe (default: rgba(255,255,255,0.6)) */
   shineColor?: string
-  /** Animationsdauer in Sekunden (default: 3) */
+  /** Animationsdauer in Sekunden (default: 5) */
   duration?: number
   style?: CSSProperties
 }
@@ -47,7 +47,7 @@ export interface ShinyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
 export function ShinyText({
   children,
   shineColor = 'rgba(255,255,255,0.8)',
-  duration = 3,
+  duration = 5,
   className,
   style,
 }: ShinyTextProps) {

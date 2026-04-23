@@ -92,7 +92,7 @@ export function Timeline({
         listStyle: 'none',
         padding: 0,
         margin: 0,
-        paddingLeft: spineOffset * 2 + 4,
+        paddingLeft: spineOffset * 2 + 12,
         ...style,
       }}
     >

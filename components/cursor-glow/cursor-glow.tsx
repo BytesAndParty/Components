@@ -28,7 +28,7 @@ export interface CursorGlowProps {
 export function CursorGlow({
   color = 'auto',
   size = 300,
-  opacity = 0.15,
+  opacity = 0.3,
   blur = 60,
 }: CursorGlowProps) {
   const glowRef = useRef<HTMLDivElement>(null)
