@@ -4,7 +4,6 @@ import { ToastProvider, useToast } from '../components/toast'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
 import { Rating } from '../components/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
-import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import { HeartLike } from '@components/heart-like/heart-like'
 import { BounceLoader } from '@components/bounce-loader/bounce-loader'
 import { Countdown } from '@components/countdown/countdown'
@@ -153,8 +152,6 @@ export function FeedbackPage() {
 
   return (
     <>
-      <ScrollProgress top="56px" color="var(--accent)" height={2} zIndex={99} />
-
       <Section title="NumberTicker" description="Slot-Machine-Rollen pro Ziffer via CSS translateY – kein Framer Motion. Integriert im CartIcon-Badge.">
         <NumberTickerDemo />
       </Section>
