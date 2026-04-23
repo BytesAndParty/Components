@@ -33,7 +33,7 @@ function CursorGlowDemo() {
           ? 'Bewege die Maus über die Seite — subtiler Glow folgt.'
           : 'Klicke, um den globalen Cursor-Glow-Effekt zu aktivieren.'}
       </p>
-      {glowOn && <CursorGlow opacity={0.18} size={350} blur={70} />}
+      {glowOn && <CursorGlow opacity={0.28} size={350} blur={70} />}
     </div>
   )
 }
