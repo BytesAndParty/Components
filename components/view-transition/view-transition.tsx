@@ -153,14 +153,21 @@ export function runViewTransition(
 
   const commit = () => flushSync(update)
 
+  // Always set data-vt so CSS [data-vt="..."] selectors work in all browsers.
+  // The :active-view-transition-type() selector only works in browsers that
+  // support the types option — both paths are needed for cross-browser compat.
+  document.documentElement.dataset.vt = type
+
   let transition: ViewTransitionLike | undefined
   try {
     transition = doc.startViewTransition({ update: commit, types: [type] })
   } catch {
-    document.documentElement.dataset.vt = type
     transition = doc.startViewTransition(commit)
-    transition?.finished?.finally(() => { delete document.documentElement.dataset.vt })
   }
+
+  transition?.finished?.finally(() => {
+    delete document.documentElement.dataset.vt
+  })
 
   if (transition && options.origin && (type === 'vt-circular-reveal' || type === 'vt-grape-burst')) {
     const { x, y } = options.origin
