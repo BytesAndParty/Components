@@ -11,7 +11,7 @@ export interface AutocompleteSuggestion {
   subLabel?: string
 }
 
-interface AutocompleteCellProps {
+export interface AutocompleteCellProps {
   value: string
   suggestions: AutocompleteSuggestion[]
   onChange: (value: string) => void
@@ -24,9 +24,6 @@ interface AutocompleteCellProps {
   isLoading?: boolean
 }
 
-/**
- * An input field with filtered autocomplete suggestions, icons, and animations.
- */
 export function AutocompleteCell({
   value,
   suggestions,
@@ -62,13 +59,12 @@ export function AutocompleteCell({
           }
           return rank(a) - rank(b)
         })
-    : [] // Show nothing if value is empty, or change to `suggestions` to show all
+    : []
 
   useEffect(() => {
     setHighlightIndex(0)
   }, [value])
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -123,22 +119,16 @@ export function AutocompleteCell({
     onKeyDown?.(e)
   }
 
-  const handleClear = () => {
-    onChange('')
-    inputRef.current?.focus()
-  }
-
   return (
     <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="relative flex items-center rounded-lg border border-border bg-card transition-colors focus-within:border-accent">
-        {/* Left Icon */}
-        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-accent">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 transition-colors focus-within:border-accent">
+        <span className="shrink-0 text-muted-foreground transition-colors group-focus-within:text-accent">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Search className="h-4 w-4" />
           )}
-        </div>
+        </span>
 
         <input
           ref={inputRef}
@@ -156,21 +146,17 @@ export function AutocompleteCell({
           }}
           onBlur={onBlur}
           placeholder={placeholder}
-          className={cn(
-            "w-full bg-transparent pl-10 pr-10 py-2.5 text-sm outline-none",
-            "placeholder:text-muted-foreground/50 text-foreground"
-          )}
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
         />
 
-        {/* Right Clear Button */}
         <AnimatePresence>
           {value && (
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              onClick={handleClear}
-              className="absolute right-3 p-1 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => { onChange(''); inputRef.current?.focus() }}
+              className="shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
             </motion.button>
@@ -193,7 +179,7 @@ export function AutocompleteCell({
                   key={item.id}
                   type="button"
                   className={cn(
-                    'w-full text-left px-3.5 py-2 text-sm flex items-center justify-between transition-colors',
+                    'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors',
                     i === highlightIndex
                       ? 'bg-accent text-white'
                       : 'hover:bg-white/5 text-foreground'
@@ -208,16 +194,16 @@ export function AutocompleteCell({
                     <span className="font-medium truncate">{item.label}</span>
                     {item.subLabel && (
                       <span className={cn(
-                        "text-[10px] truncate opacity-70",
-                        i === highlightIndex ? "text-white" : "text-muted-foreground"
+                        'text-[10px] truncate opacity-70',
+                        i === highlightIndex ? 'text-white' : 'text-muted-foreground'
                       )}>
                         {item.subLabel}
                       </span>
                     )}
                   </div>
                   <ChevronRight className={cn(
-                    "h-3.5 w-3.5 shrink-0 opacity-50",
-                    i === highlightIndex ? "translate-x-0.5 opacity-100" : ""
+                    'h-3.5 w-3.5 shrink-0 opacity-40 transition-[opacity,transform]',
+                    i === highlightIndex && 'translate-x-0.5 opacity-100'
                   )} />
                 </button>
               ))}
