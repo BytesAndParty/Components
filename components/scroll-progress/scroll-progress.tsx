@@ -3,11 +3,11 @@ import { useEffect, useState, type CSSProperties } from 'react'
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 export interface ScrollProgressProps {
-  /** Color of the progress bar (default: accent) */
+  /** Color of the progress bar (default: var(--accent)) */
   color?: string
   /** Height of the bar in px (default: 3) */
   height?: number
-  /** CSS top position, e.g. '65px' to place below navbar (default: '0') */
+  /** CSS top position, e.g. '56px' to place below a 56px navbar (default: '0') */
   top?: string
   /** z-index (default: 50) */
   zIndex?: number
@@ -30,12 +30,9 @@ export function ScrollProgress({
   useEffect(() => {
     function handleScroll() {
       const scrollTop = document.documentElement.scrollTop
-      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
-      if (scrollHeight <= 0) {
-        setProgress(0)
-        return
-      }
-      setProgress(scrollTop / scrollHeight)
+      const scrollHeight =
+        document.documentElement.scrollHeight - document.documentElement.clientHeight
+      setProgress(scrollHeight <= 0 ? 0 : scrollTop / scrollHeight)
     }
 
     handleScroll()

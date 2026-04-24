@@ -237,7 +237,7 @@ export function TextPage() {
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyButton</p>
             <div className="flex flex-wrap gap-4 items-center">
               <ShinyButton>In den Warenkorb</ShinyButton>
-              <ShinyButton duration={2} shineColor="rgba(251,191,36,0.7)" style={{ backgroundColor: '#92400e' }}>
+              <ShinyButton shineColor="rgba(251,191,36,0.7)" style={{ backgroundColor: '#92400e' }}>
                 Gold Collection
               </ShinyButton>
             </div>
@@ -309,37 +309,32 @@ export function TextPage() {
           <Timeline
             items={[
               {
-                subtitle: '1952',
+                year: '1952',
                 title: 'Gründung des Weinguts',
-                marker: '1',
                 content:
                   'Großvater Alessandro kauft den ersten Weinberg in den Hügeln von Barolo. Sechs Hektar Nebbiolo auf kalkhaltigem Boden.',
               },
               {
-                subtitle: '1987',
+                year: '1987',
                 title: 'Erste internationale Auszeichnung',
-                marker: '2',
                 content:
                   'Der Barolo Riserva erhält beim Concours Mondial in Brüssel die Goldmedaille — der Beginn einer langen Erfolgsgeschichte.',
               },
               {
-                subtitle: '2005',
+                year: '2005',
                 title: 'Umstellung auf biologischen Anbau',
-                marker: '3',
                 content:
                   'Komplette Umstellung aller Parzellen auf biologisch-dynamische Bewirtschaftung. Zertifizierung nach Demeter-Richtlinien.',
               },
               {
-                subtitle: '2018',
+                year: '2018',
                 title: 'Jahrgang des Jahrhunderts',
-                marker: '4',
                 content:
                   'Ein außergewöhnlich warmer Sommer mit perfekten Reifebedingungen. Der Barolo 2018 wird als bester Jahrgang seit 1990 gefeiert.',
               },
               {
-                subtitle: '2024',
+                year: '2024',
                 title: 'Direct-to-Consumer',
-                marker: '5',
                 content:
                   'Start des Online-Shops. Weine direkt ab Hof, ohne Zwischenhändler — die dritte Generation führt Tradition in die Digitalisierung.',
               },

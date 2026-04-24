@@ -9,7 +9,6 @@ import { Footer } from '@components/footer-section/footer-section'
 import { Banner, BannerLink } from '@components/banner/banner'
 import { StickyBanner } from '@components/sticky-banner/sticky-banner'
 import { Countdown } from '@components/countdown/countdown'
-import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
 import {
   Navbar as NavbarComponent, NavbarSection, NavbarItem, NavbarLogo,
   NavbarDropdown, NavbarDropdownGroup, NavbarDropdownItem,
@@ -98,15 +97,12 @@ export function NavigationPage() {
 
       <Section title="ScrollProgress" description="Scroll position indicator bar, typically placed below a navbar.">
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
-          <div className="p-8 flex flex-col items-center gap-4">
-            <p className="text-sm text-muted-foreground text-center">
-              The accent-colored line at the very top of the page is the ScrollProgress component.
-            </p>
-            <ScrollProgress top="0" color="var(--accent)" height={3} />
+          <div className="border-b border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+            <span>ScrollProgress · position: fixed · top: 56px · scaleX transform</span>
+            <span>Scroll this page to see it fill ↑</span>
           </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
-            <span>ScrollProgress · position: fixed · scaleX transform</span>
-            <span>Scroll to see it fill</span>
+          <div className="p-8 text-sm text-muted-foreground">
+            The accent bar directly below the navbar is the <code className="text-xs bg-muted px-1 py-0.5 rounded">ScrollProgress</code> component — active on every page of this showcase.
           </div>
         </div>
       </Section>

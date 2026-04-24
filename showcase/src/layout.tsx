@@ -138,6 +138,7 @@ export function Layout() {
             ))}
           </NavbarMobileMenu>
         </Navbar>
+        <ScrollProgress top="56px" />
 
         <div className="max-w-3xl mx-auto pt-6 pb-12 px-6">
           <main className="[view-transition-name:page-content]">

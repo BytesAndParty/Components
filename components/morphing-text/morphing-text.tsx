@@ -7,7 +7,7 @@ export interface MorphingTextProps {
   texts: string[]
   /** Anzeigedauer pro Text in ms (default: 4000) */
   duration?: number
-  /** Dauer des Blur-Übergangs in ms (default: 1200) */
+  /** Dauer des Blur-Übergangs in ms (default: 2000) */
   morphDuration?: number
   className?: string
   style?: CSSProperties
@@ -24,7 +24,7 @@ export interface MorphingTextProps {
 export function MorphingText({
   texts,
   duration = 4000,
-  morphDuration = 1200,
+  morphDuration = 2000,
   className,
   style,
 }: MorphingTextProps) {

@@ -11,8 +11,13 @@ function injectKeyframes() {
   style.id = STYLE_ID
   style.textContent = `
     @keyframes shiny-text {
-      0%   { background-position: 200% center; }
-      100% { background-position: -200% center; }
+      0% {
+        background-position: 200% center;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      25%     { background-position: -200% center; }
+      25.001% { background-position: 200% center; }
+      100%    { background-position: 200% center; }
     }
     @media (prefers-reduced-motion: reduce) {
       .shiny-text-anim { animation: none !important; }
@@ -27,7 +32,7 @@ export interface ShinyTextProps {
   children: ReactNode
   /** Shine-Farbe (default: white mit 80% Opacity) */
   shineColor?: string
-  /** Animationsdauer in Sekunden (default: 5) */
+  /** Gesamtdauer eines Zyklus in Sekunden – Sweep dauert 25% davon, Rest ist Pause (default: 10) */
   duration?: number
   className?: string
   style?: CSSProperties
@@ -37,7 +42,7 @@ export interface ShinyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
   children: ReactNode
   /** Shine-Farbe (default: rgba(255,255,255,0.6)) */
   shineColor?: string
-  /** Animationsdauer in Sekunden (default: 5) */
+  /** Gesamtdauer eines Zyklus in Sekunden – Sweep dauert 25% davon, Rest ist Pause (default: 10) */
   duration?: number
   style?: CSSProperties
 }
@@ -47,7 +52,7 @@ export interface ShinyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
 export function ShinyText({
   children,
   shineColor = 'rgba(255,255,255,0.8)',
-  duration = 5,
+  duration = 10,
   className,
   style,
 }: ShinyTextProps) {
@@ -87,7 +92,7 @@ export function ShinyText({
 export function ShinyButton({
   children,
   shineColor = 'rgba(255,255,255,0.6)',
-  duration = 3,
+  duration = 10,
   style,
   ...props
 }: ShinyButtonProps) {
