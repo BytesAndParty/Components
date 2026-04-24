@@ -1,5 +1,38 @@
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
 import * as React from 'react';
+import { useEffect } from 'react';
+
+const STYLE_ID = 'breadcrumb-styles';
+
+function injectStyles() {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = `
+    .bc-link {
+      position: relative;
+      transition: color 0.18s ease;
+    }
+    .bc-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 0;
+      height: 1px;
+      background: var(--accent, oklch(0.7 0.15 250));
+      transition: width 0.22s ease;
+    }
+    .bc-link:hover {
+      color: var(--foreground, #e4e4e7);
+    }
+    .bc-link:hover::after {
+      width: 100%;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export function Breadcrumb({
   style,
@@ -54,13 +87,14 @@ export function BreadcrumbLink({
   style,
   ...props
 }: React.ComponentProps<'a'>): React.ReactElement {
+  useEffect(() => { injectStyles(); }, []);
+
   return (
     <a
-      className="breadcrumb-link"
+      className="bc-link"
       style={{
         color: 'inherit',
         textDecoration: 'none',
-        transition: 'color 0.2s',
         cursor: 'pointer',
         ...style,
       }}
