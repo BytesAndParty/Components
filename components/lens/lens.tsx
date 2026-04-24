@@ -126,7 +126,7 @@ export function Lens({
             style={{
               width: size.w,
               height: size.h,
-              transform: `scale(${zoom}) translate(${(lensSize / 2 - pos.x) / zoom}px, ${(lensSize / 2 - pos.y) / zoom}px)`,
+              transform: `scale(${zoom}) translate(${lensSize / (2 * zoom) - pos.x}px, ${lensSize / (2 * zoom) - pos.y}px)`,
               transformOrigin: '0 0',
             }}
           >
