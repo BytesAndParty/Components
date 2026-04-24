@@ -37,43 +37,42 @@ function injectStyles(stageName: string) {
   if (typeof document === 'undefined') return
   if (document.getElementById(STYLE_ID)) return
 
+  // :is() uses a forgiving selector list — if :active-view-transition-type() is
+  // unknown to the browser, it is silently ignored and [data-vt] still matches.
+  // Without :is(), an invalid selector in a grouped rule drops the WHOLE rule,
+  // which broke the [data-vt] fallback in browsers without type support.
+  //
+  // No space before ::view-transition-old/new — these are pseudo-elements
+  // directly on <html>, not DOM descendants. A space (descendant combinator)
+  // produces a selector that never matches anything.
+  const s = stageName
   const css = `
-    ::view-transition-group(${stageName}) { animation-duration: .6s; }
-    ::view-transition-old(${stageName}),
-    ::view-transition-new(${stageName}) { mix-blend-mode: normal; backface-visibility: hidden; }
+    ::view-transition-group(${s}) { animation-duration: .6s; }
+    ::view-transition-old(${s}),
+    ::view-transition-new(${s}) { mix-blend-mode: normal; backface-visibility: hidden; }
 
     @keyframes vt-fade-out { to { opacity: 0 } }
     @keyframes vt-fade-in  { from { opacity: 0 } }
-    html:active-view-transition-type(vt-fade) ::view-transition-old(${stageName}),
-    html[data-vt="vt-fade"] ::view-transition-old(${stageName}) { animation: vt-fade-out .35s ease both; }
-    html:active-view-transition-type(vt-fade) ::view-transition-new(${stageName}),
-    html[data-vt="vt-fade"] ::view-transition-new(${stageName}) { animation: vt-fade-in .35s ease both; }
+    :is(html:active-view-transition-type(vt-fade), html[data-vt="vt-fade"])::view-transition-old(${s}) { animation: vt-fade-out .35s ease both; }
+    :is(html:active-view-transition-type(vt-fade), html[data-vt="vt-fade"])::view-transition-new(${s}) { animation: vt-fade-in .35s ease both; }
 
     @keyframes vt-slide-out-l { to { transform: translateX(-30%); opacity: 0 } }
     @keyframes vt-slide-in-r  { from { transform: translateX(30%); opacity: 0 } }
-    html:active-view-transition-type(vt-slide-left) ::view-transition-old(${stageName}),
-    html[data-vt="vt-slide-left"] ::view-transition-old(${stageName}) { animation: vt-slide-out-l .45s cubic-bezier(.4,0,.2,1) both; }
-    html:active-view-transition-type(vt-slide-left) ::view-transition-new(${stageName}),
-    html[data-vt="vt-slide-left"] ::view-transition-new(${stageName}) { animation: vt-slide-in-r .45s cubic-bezier(.4,0,.2,1) both; }
+    :is(html:active-view-transition-type(vt-slide-left), html[data-vt="vt-slide-left"])::view-transition-old(${s}) { animation: vt-slide-out-l .45s cubic-bezier(.4,0,.2,1) both; }
+    :is(html:active-view-transition-type(vt-slide-left), html[data-vt="vt-slide-left"])::view-transition-new(${s}) { animation: vt-slide-in-r .45s cubic-bezier(.4,0,.2,1) both; }
 
     @keyframes vt-slide-up-out { to { transform: translateY(-20%); opacity: 0 } }
     @keyframes vt-slide-up-in  { from { transform: translateY(20%); opacity: 0 } }
-    html:active-view-transition-type(vt-slide-up) ::view-transition-old(${stageName}),
-    html[data-vt="vt-slide-up"] ::view-transition-old(${stageName}) { animation: vt-slide-up-out .5s cubic-bezier(.4,0,.2,1) both; }
-    html:active-view-transition-type(vt-slide-up) ::view-transition-new(${stageName}),
-    html[data-vt="vt-slide-up"] ::view-transition-new(${stageName}) { animation: vt-slide-up-in .5s cubic-bezier(.4,0,.2,1) both; }
+    :is(html:active-view-transition-type(vt-slide-up), html[data-vt="vt-slide-up"])::view-transition-old(${s}) { animation: vt-slide-up-out .5s cubic-bezier(.4,0,.2,1) both; }
+    :is(html:active-view-transition-type(vt-slide-up), html[data-vt="vt-slide-up"])::view-transition-new(${s}) { animation: vt-slide-up-in .5s cubic-bezier(.4,0,.2,1) both; }
 
     @keyframes vt-scale-out { to { transform: scale(.92); opacity: 0 } }
     @keyframes vt-scale-in  { from { transform: scale(.94); opacity: 0 } }
-    html:active-view-transition-type(vt-scale) ::view-transition-old(${stageName}),
-    html[data-vt="vt-scale"] ::view-transition-old(${stageName}) { animation: vt-scale-out .35s ease-out both; }
-    html:active-view-transition-type(vt-scale) ::view-transition-new(${stageName}),
-    html[data-vt="vt-scale"] ::view-transition-new(${stageName}) { animation: vt-scale-in .45s cubic-bezier(.34,1.56,.64,1) both; }
+    :is(html:active-view-transition-type(vt-scale), html[data-vt="vt-scale"])::view-transition-old(${s}) { animation: vt-scale-out .35s ease-out both; }
+    :is(html:active-view-transition-type(vt-scale), html[data-vt="vt-scale"])::view-transition-new(${s}) { animation: vt-scale-in .45s cubic-bezier(.34,1.56,.64,1) both; }
 
-    html:active-view-transition-type(vt-circular-reveal) ::view-transition-old(${stageName}),
-    html[data-vt="vt-circular-reveal"] ::view-transition-old(${stageName}) { animation: vt-fade-out .4s ease both; }
-    html:active-view-transition-type(vt-circular-reveal) ::view-transition-new(${stageName}),
-    html[data-vt="vt-circular-reveal"] ::view-transition-new(${stageName}) { animation: none; }
+    :is(html:active-view-transition-type(vt-circular-reveal), html[data-vt="vt-circular-reveal"])::view-transition-old(${s}) { animation: vt-fade-out .4s ease both; }
+    :is(html:active-view-transition-type(vt-circular-reveal), html[data-vt="vt-circular-reveal"])::view-transition-new(${s}) { animation: none; }
 
     @keyframes vt-wine-sink {
       0%   { transform: translateY(0);  opacity: 1; filter: saturate(1) }
@@ -85,10 +84,8 @@ function injectStyles(stageName: string) {
       70%  { filter: brightness(.97) saturate(1.08) }
       100% { clip-path: inset(0 0 0 0); filter: none }
     }
-    html:active-view-transition-type(vt-wine-pour) ::view-transition-old(${stageName}),
-    html[data-vt="vt-wine-pour"] ::view-transition-old(${stageName}) { animation: vt-wine-sink .55s cubic-bezier(.6,0,.4,1) both; }
-    html:active-view-transition-type(vt-wine-pour) ::view-transition-new(${stageName}),
-    html[data-vt="vt-wine-pour"] ::view-transition-new(${stageName}) { animation: vt-wine-pour .95s cubic-bezier(.5,.05,.15,1) both; }
+    :is(html:active-view-transition-type(vt-wine-pour), html[data-vt="vt-wine-pour"])::view-transition-old(${s}) { animation: vt-wine-sink .55s cubic-bezier(.6,0,.4,1) both; }
+    :is(html:active-view-transition-type(vt-wine-pour), html[data-vt="vt-wine-pour"])::view-transition-new(${s}) { animation: vt-wine-pour .95s cubic-bezier(.5,.05,.15,1) both; }
 
     @keyframes vt-cork-out {
       0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1 }
@@ -100,24 +97,20 @@ function injectStyles(stageName: string) {
       80%  { transform: scale(.97) }
       100% { transform: scale(1) }
     }
-    html:active-view-transition-type(vt-cork-pop) ::view-transition-old(${stageName}),
-    html[data-vt="vt-cork-pop"] ::view-transition-old(${stageName}) { animation: vt-cork-out .45s cubic-bezier(.55,-.2,.75,.1) both; }
-    html:active-view-transition-type(vt-cork-pop) ::view-transition-new(${stageName}),
-    html[data-vt="vt-cork-pop"] ::view-transition-new(${stageName}) { animation: vt-cork-in .7s cubic-bezier(.34,1.56,.64,1) both; }
+    :is(html:active-view-transition-type(vt-cork-pop), html[data-vt="vt-cork-pop"])::view-transition-old(${s}) { animation: vt-cork-out .45s cubic-bezier(.55,-.2,.75,.1) both; }
+    :is(html:active-view-transition-type(vt-cork-pop), html[data-vt="vt-cork-pop"])::view-transition-new(${s}) { animation: vt-cork-in .7s cubic-bezier(.34,1.56,.64,1) both; }
 
     @keyframes vt-grape-tint {
       0%   { filter: saturate(1.9) hue-rotate(-28deg) brightness(.88) contrast(1.12) }
       60%  { filter: saturate(1.25) hue-rotate(-10deg) brightness(.96) }
       100% { filter: none }
     }
-    html:active-view-transition-type(vt-grape-burst) ::view-transition-old(${stageName}),
-    html[data-vt="vt-grape-burst"] ::view-transition-old(${stageName}) { animation: vt-fade-out .35s ease both; }
-    html:active-view-transition-type(vt-grape-burst) ::view-transition-new(${stageName}),
-    html[data-vt="vt-grape-burst"] ::view-transition-new(${stageName}) { animation: vt-grape-tint .75s ease-out both; }
+    :is(html:active-view-transition-type(vt-grape-burst), html[data-vt="vt-grape-burst"])::view-transition-old(${s}) { animation: vt-fade-out .35s ease both; }
+    :is(html:active-view-transition-type(vt-grape-burst), html[data-vt="vt-grape-burst"])::view-transition-new(${s}) { animation: vt-grape-tint .75s ease-out both; }
 
     @media (prefers-reduced-motion: reduce) {
-      ::view-transition-old(${stageName}),
-      ::view-transition-new(${stageName}) { animation-duration: .001ms !important; animation: none !important; }
+      ::view-transition-old(${s}),
+      ::view-transition-new(${s}) { animation-duration: .001ms !important; animation: none !important; }
     }
   `
 
