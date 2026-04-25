@@ -1,0 +1,219 @@
+---
+import Base from '../layouts/Base.astro';
+
+const presets = [
+  { id: 'vt-fade',            label: 'Fade',            desc: 'Klassischer Crossfade, opacity 0→1' },
+  { id: 'vt-slide-left',      label: 'Slide',           desc: 'Old rutscht links raus, New von rechts rein' },
+  { id: 'vt-slide-up',        label: 'Slide Up',        desc: 'Vertikaler Wechsel zwischen Seiten' },
+  { id: 'vt-scale',           label: 'Scale',           desc: 'Zoom-out + Zoom-in mit Spring-Overshoot' },
+  { id: 'vt-circular-reveal', label: 'Circular Reveal', desc: 'Kreisförmige clip-path Expansion via WAAPI' },
+  { id: 'vt-wine-pour',       label: 'Wine Pour ✦',     desc: 'New füllt sich von oben wie eingeschenkter Wein' },
+  { id: 'vt-cork-pop',        label: 'Cork Pop ✦',      desc: 'Old springt raus & rotiert, New federt ein' },
+  { id: 'vt-grape-burst',     label: 'Grape Burst ✦',   desc: 'Radial-Bloom ab Zentrum mit Traubenlila-Tint' },
+];
+---
+
+<Base title="Info" page="info">
+  <div class="info">
+
+    <header class="info-header">
+      <h1>Über diesen Showcase</h1>
+      <p>Natives Cross-Document View Transitions API — echter URL-Wechsel, kein SPA-Router.</p>
+    </header>
+
+    <div class="card">
+      <h2>Wie es funktioniert</h2>
+      <div class="code-block">
+        <pre>/* 1. CSS Opt-in — in global.css */
+@view-transition &#123;
+  navigation: auto;
+&#125;
+
+/* 2. Element benennen */
+&lt;main style="view-transition-name: page-content"&gt;
+
+/* 3. Typ setzen — via pageswap/pagereveal */
+window.addEventListener('pagereveal', (e) =&gt; &#123;
+  e.viewTransition.types.add('vt-wine-pour');
+&#125;);
+
+/* 4. CSS-Animation für den Typ */
+:is(
+  html:active-view-transition-type(vt-wine-pour),
+  html[data-vt="vt-wine-pour"]          /* fallback */
+)::view-transition-new(page-content) &#123;
+  animation: vt-wine-pour .95s ...;
+&#125;</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Presets</h2>
+      <div class="preset-table">
+        {presets.map(p => (
+          <div class="preset-row">
+            <span class="preset-name">{p.label}</span>
+            <span class="preset-desc">{p.desc}</span>
+          </div>
+        ))}
+      </div>
+      <p class="footnote">✦ Wine-themed Presets aus dem Projekt-Design-System</p>
+    </div>
+
+    <div class="card">
+      <h2>Besonderheiten</h2>
+      <ul class="feature-list">
+        <li><strong>Shared Element Morphing</strong> — Das Weinbild auf der Collection-Seite teilt <code>view-transition-name</code> mit dem Hero auf der Detail-Seite. Der Browser morpht Position und Größe automatisch.</li>
+        <li><strong>:is() Selector</strong> — Kombiniert <code>:active-view-transition-type()</code> mit einem <code>[data-vt]</code>-Fallback in einer forgiving selector list.</li>
+        <li><strong>pageswap / pagereveal</strong> — Setzt den Transitions-Typ auf der alten bzw. neuen Seite. Circular Reveal animiert den clip-path zusätzlich via Web Animations API.</li>
+        <li><strong>Kein SPA-Router</strong> — Jede Navigation ist ein echter Browser-Request. Der URL ändert sich wirklich.</li>
+      </ul>
+    </div>
+
+    <a href="/" class="back-link">← Zurück zur Collection</a>
+
+  </div>
+</Base>
+
+<style>
+  .info {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .info-header h1 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .info-header p {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card h2 {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .code-block {
+    border-radius: 8px;
+    background: oklch(0.07 0.008 250);
+    border: 1px solid var(--border);
+    overflow: auto;
+  }
+
+  .code-block pre {
+    padding: 16px;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
+    color: oklch(0.80 0.02 250);
+    white-space: pre;
+  }
+
+  .preset-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .preset-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
+
+  .preset-row:last-child { border-bottom: none; }
+
+  .preset-name {
+    font-weight: 500;
+    white-space: nowrap;
+    min-width: 130px;
+    color: var(--accent);
+  }
+
+  .preset-desc { color: var(--muted); }
+
+  .footnote {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .feature-list li {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: oklch(0.75 0.005 250);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .feature-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .feature-list strong { color: var(--fg); }
+
+  .feature-list code {
+    font-size: 0.8125rem;
+    font-family: "SF Mono", monospace;
+    background: oklch(0.15 0.01 250);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    align-self: flex-start;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .back-link:hover { color: var(--fg); border-color: var(--fg); }
+</style>

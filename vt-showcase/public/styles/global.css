@@ -1,0 +1,232 @@
+/* ─── Design Tokens ─────────────────────────────────────────────── */
+:root {
+  --bg:      oklch(0.08 0.008 250);
+  --fg:      oklch(0.93 0.005 250);
+  --muted:   oklch(0.48 0.012 250);
+  --border:  oklch(0.20 0.010 250);
+  --card:    oklch(0.11 0.010 250);
+  --accent:  oklch(0.62 0.18 22);
+  --radius:  12px;
+  --font:    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ─── Cross-Document View Transitions Opt-in ────────────────────── */
+@view-transition {
+  navigation: auto;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ─── Nav ────────────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, var(--bg) 80%, transparent);
+  backdrop-filter: blur(12px);
+  view-transition-name: site-nav;
+}
+
+.nav-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-links a {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+  color: var(--fg);
+  background: color-mix(in oklch, var(--fg) 8%, transparent);
+}
+
+/* Keep nav static during transitions */
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) { animation: none; }
+
+/* ─── Main Content Area ──────────────────────────────────────────── */
+.page-main {
+  padding-top: 56px;
+  min-height: 100dvh;
+}
+
+/* ─── Preset Bar ─────────────────────────────────────────────────── */
+.preset-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 90%, transparent);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.4);
+  view-transition-name: preset-bar;
+}
+
+::view-transition-old(preset-bar),
+::view-transition-new(preset-bar) { animation: none; }
+
+.preset-bar-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding-right: 4px;
+  border-right: 1px solid var(--border);
+  margin-right: 2px;
+}
+
+.preset-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 600px;
+}
+
+.preset-pill {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.preset-pill:hover {
+  color: var(--fg);
+  background: color-mix(in oklch, var(--fg) 8%, transparent);
+}
+
+.preset-pill.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+
+/* ─── VT Keyframes ───────────────────────────────────────────────── */
+@keyframes vt-fade-out    { to   { opacity: 0 } }
+@keyframes vt-fade-in     { from { opacity: 0 } }
+
+@keyframes vt-slide-out-l { to   { transform: translateX(-30%); opacity: 0 } }
+@keyframes vt-slide-in-r  { from { transform: translateX(30%);  opacity: 0 } }
+
+@keyframes vt-slide-up-out { to   { transform: translateY(-20%); opacity: 0 } }
+@keyframes vt-slide-up-in  { from { transform: translateY(20%);  opacity: 0 } }
+
+@keyframes vt-scale-out { to   { transform: scale(0.92); opacity: 0 } }
+@keyframes vt-scale-in  { from { transform: scale(0.94); opacity: 0 } }
+
+@keyframes vt-wine-sink {
+  to { transform: translateY(8%); opacity: 0; filter: saturate(1.6) hue-rotate(-10deg) }
+}
+@keyframes vt-wine-pour {
+  0%   { clip-path: inset(0 0 100% 0); filter: brightness(.78) saturate(1.55) sepia(.22) hue-rotate(-14deg) }
+  25%  { filter: brightness(.85) saturate(1.35) sepia(.15) hue-rotate(-10deg) }
+  70%  { filter: brightness(.97) saturate(1.08) }
+  100% { clip-path: inset(0 0 0% 0); filter: none }
+}
+
+@keyframes vt-cork-out {
+  to { transform: translateY(-14%) scale(1.12) rotate(5deg); opacity: 0 }
+}
+@keyframes vt-cork-in {
+  0%   { transform: scale(.72); opacity: 0; filter: blur(10px) }
+  55%  { transform: scale(1.07); opacity: 1; filter: blur(0) }
+  80%  { transform: scale(.97) }
+  100% { transform: scale(1) }
+}
+
+@keyframes vt-grape-tint {
+  0%   { filter: saturate(1.9) hue-rotate(-28deg) brightness(.88) contrast(1.12) }
+  60%  { filter: saturate(1.25) hue-rotate(-10deg) brightness(.96) }
+  100% { filter: none }
+}
+
+/* Image morph group — smooth position/size interpolation */
+@keyframes vt-img-out { to   { opacity: 0 } }
+@keyframes vt-img-in  { from { opacity: 0 } }
+
+::view-transition-group(wine-rouge),
+::view-transition-group(wine-blanc) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-old(wine-rouge),
+::view-transition-old(wine-blanc) { animation: vt-img-out 0.18s ease both; }
+::view-transition-new(wine-rouge),
+::view-transition-new(wine-blanc) { animation: vt-img-in 0.18s ease 0.1s both; }
+
+/* ─── VT Preset Animations on page-content ───────────────────────── */
+/* :is() uses a forgiving selector list so [data-vt] works as fallback
+   even in browsers that don't know :active-view-transition-type().      */
+
+:is(html:active-view-transition-type(vt-fade), html[data-vt="vt-fade"])::view-transition-old(page-content) { animation: vt-fade-out .35s ease both; }
+:is(html:active-view-transition-type(vt-fade), html[data-vt="vt-fade"])::view-transition-new(page-content) { animation: vt-fade-in  .35s ease both; }
+
+:is(html:active-view-transition-type(vt-slide-left), html[data-vt="vt-slide-left"])::view-transition-old(page-content) { animation: vt-slide-out-l .45s cubic-bezier(.4,0,.2,1) both; }
+:is(html:active-view-transition-type(vt-slide-left), html[data-vt="vt-slide-left"])::view-transition-new(page-content) { animation: vt-slide-in-r  .45s cubic-bezier(.4,0,.2,1) both; }
+
+:is(html:active-view-transition-type(vt-slide-up), html[data-vt="vt-slide-up"])::view-transition-old(page-content) { animation: vt-slide-up-out .5s cubic-bezier(.4,0,.2,1) both; }
+:is(html:active-view-transition-type(vt-slide-up), html[data-vt="vt-slide-up"])::view-transition-new(page-content) { animation: vt-slide-up-in  .5s cubic-bezier(.4,0,.2,1) both; }
+
+:is(html:active-view-transition-type(vt-scale), html[data-vt="vt-scale"])::view-transition-old(page-content) { animation: vt-scale-out .35s ease-out both; }
+:is(html:active-view-transition-type(vt-scale), html[data-vt="vt-scale"])::view-transition-new(page-content) { animation: vt-scale-in  .45s cubic-bezier(.34,1.56,.64,1) both; }
+
+:is(html:active-view-transition-type(vt-circular-reveal), html[data-vt="vt-circular-reveal"])::view-transition-old(page-content) { animation: vt-fade-out .4s ease both; }
+:is(html:active-view-transition-type(vt-circular-reveal), html[data-vt="vt-circular-reveal"])::view-transition-new(page-content) { animation: none; }
+
+:is(html:active-view-transition-type(vt-wine-pour), html[data-vt="vt-wine-pour"])::view-transition-old(page-content) { animation: vt-wine-sink .55s cubic-bezier(.6,0,.4,1) both; }
+:is(html:active-view-transition-type(vt-wine-pour), html[data-vt="vt-wine-pour"])::view-transition-new(page-content) { animation: vt-wine-pour .95s cubic-bezier(.5,.05,.15,1) both; }
+
+:is(html:active-view-transition-type(vt-cork-pop), html[data-vt="vt-cork-pop"])::view-transition-old(page-content) { animation: vt-cork-out .45s cubic-bezier(.55,-.2,.75,.1) both; }
+:is(html:active-view-transition-type(vt-cork-pop), html[data-vt="vt-cork-pop"])::view-transition-new(page-content) { animation: vt-cork-in  .7s  cubic-bezier(.34,1.56,.64,1) both; }
+
+:is(html:active-view-transition-type(vt-grape-burst), html[data-vt="vt-grape-burst"])::view-transition-old(page-content) { animation: vt-fade-out .35s ease both; }
+:is(html:active-view-transition-type(vt-grape-burst), html[data-vt="vt-grape-burst"])::view-transition-new(page-content) { animation: vt-grape-tint .75s ease-out both; }
+
+/* ─── Reduced Motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}

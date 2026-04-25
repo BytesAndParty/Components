@@ -1,0 +1,142 @@
+---
+interface Props {
+  title: string;
+  page?: string;
+}
+const { title, page = '' } = Astro.props;
+
+const presets = [
+  { id: 'vt-fade',           label: 'Fade' },
+  { id: 'vt-slide-left',     label: 'Slide' },
+  { id: 'vt-slide-up',       label: 'Slide Up' },
+  { id: 'vt-scale',          label: 'Scale' },
+  { id: 'vt-circular-reveal',label: 'Circular' },
+  { id: 'vt-wine-pour',      label: 'Wine Pour' },
+  { id: 'vt-cork-pop',       label: 'Cork Pop' },
+  { id: 'vt-grape-burst',    label: 'Grape Burst' },
+];
+
+const navLinks = [
+  { href: '/',       label: 'Collection', key: 'index' },
+  { href: '/rouge',  label: 'Rouge',      key: 'rouge' },
+  { href: '/blanc',  label: 'Blanc',      key: 'blanc' },
+  { href: '/info',   label: 'Info',       key: 'info' },
+];
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — VT Showcase</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+
+    <nav class="site-nav">
+      <a href="/" class="nav-logo">Vins ✦</a>
+      <div class="nav-links">
+        {navLinks.map(l => (
+          <a href={l.href} aria-current={page === l.key ? 'page' : undefined}>
+            {l.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+
+    <main class="page-main" style="view-transition-name: page-content">
+      <slot />
+    </main>
+
+    <!-- Preset Selector -->
+    <div class="preset-bar" id="preset-bar">
+      <span class="preset-bar-label">Transition</span>
+      <div class="preset-pills" id="preset-pills">
+        {presets.map(p => (
+          <button class="preset-pill" data-preset={p.id}>{p.label}</button>
+        ))}
+      </div>
+    </div>
+
+  </body>
+</html>
+
+<script>
+  // ─── Preset state ───────────────────────────────────────────────
+  const DEFAULT_PRESET = 'vt-wine-pour';
+  const STORAGE_KEY    = 'vt-active';
+  const NEXT_KEY       = 'vt-next';
+
+  function getActive(): string {
+    return localStorage.getItem(STORAGE_KEY) ?? DEFAULT_PRESET;
+  }
+
+  function setActive(id: string) {
+    localStorage.setItem(STORAGE_KEY, id);
+    document.querySelectorAll('.preset-pill').forEach(el => {
+      el.classList.toggle('active', (el as HTMLElement).dataset.preset === id);
+    });
+  }
+
+  // Restore active state on every page load
+  setActive(getActive());
+
+  document.querySelectorAll('.preset-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = (btn as HTMLElement).dataset.preset ?? DEFAULT_PRESET;
+      setActive(id);
+    });
+  });
+
+  // ─── Store preset before each navigation ───────────────────────
+  document.addEventListener('click', (e) => {
+    const link = (e.target as Element).closest('a[href]');
+    if (!link) return;
+    const href = (link as HTMLAnchorElement).href;
+    if (!href.startsWith(location.origin)) return;
+    sessionStorage.setItem(NEXT_KEY, getActive());
+  });
+
+  // ─── pageswap: old page — add type to outgoing transition ──────
+  window.addEventListener('pageswap', (e: any) => {
+    if (!e.viewTransition) return;
+    const type = sessionStorage.getItem(NEXT_KEY) ?? DEFAULT_PRESET;
+    e.viewTransition.types.add(type);
+  });
+
+  // ─── pagereveal: new page — add type + set data-vt fallback ────
+  window.addEventListener('pagereveal', (e: any) => {
+    if (!e.viewTransition) return;
+    const type = sessionStorage.getItem(NEXT_KEY) ?? DEFAULT_PRESET;
+
+    e.viewTransition.types.add(type);
+    document.documentElement.dataset.vt = type;
+
+    // Circular reveal & grape burst: animate clip-path via WAAPI
+    if (type === 'vt-circular-reveal' || type === 'vt-grape-burst') {
+      e.viewTransition.ready.then(() => {
+        const x = window.innerWidth  / 2;
+        const y = window.innerHeight / 2;
+        const r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+        document.documentElement.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+          {
+            duration: type === 'vt-grape-burst' ? 780 : 520,
+            easing:   type === 'vt-grape-burst' ? 'cubic-bezier(.2,.7,.1,1)' : 'ease-out',
+            pseudoElement: '::view-transition-new(page-content)',
+          }
+        );
+      });
+    }
+
+    e.viewTransition.finished.finally(() => {
+      delete document.documentElement.dataset.vt;
+      sessionStorage.removeItem(NEXT_KEY);
+    });
+  });
+</script>
+
+<style>
+  /* Inline layout styles not in global.css */
+</style>

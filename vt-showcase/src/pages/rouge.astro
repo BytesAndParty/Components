@@ -1,0 +1,170 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Château Rouge" page="rouge">
+  <div class="detail">
+
+    <div class="hero">
+      <img
+        src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1400&q=85"
+        alt="Château Rouge 2023"
+        class="hero-img"
+        style="view-transition-name: wine-rouge"
+      />
+      <div class="hero-overlay" />
+      <div class="hero-content">
+        <span class="badge">ROUGE</span>
+        <h1>Château Rouge 2023</h1>
+        <p class="subtitle">Bordeaux Blend · 14.5% vol.</p>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="section">
+        <h2>Verkostungsnotiz</h2>
+        <p>Tiefes Rubinrot mit violetten Reflexen. Die Nase öffnet sich mit intensiven Aromen von schwarzen Kirschen, Brombeeren und einer Spur Veilchen. Am Gaumen zeigt sich der Wein körperreich mit seidigen Tanninen, einer eleganten Holzwürze von 12 Monaten Barrique-Reifung und einem langen, persistenten Abgang.</p>
+      </div>
+
+      <div class="specs">
+        <div class="spec"><span class="spec-label">Jahrgang</span><span>2023</span></div>
+        <div class="spec"><span class="spec-label">Appellation</span><span>Bordeaux AOC</span></div>
+        <div class="spec"><span class="spec-label">Rebsorte</span><span>Cabernet Sauvignon 60%, Merlot 40%</span></div>
+        <div class="spec"><span class="spec-label">Alkohol</span><span>14.5% vol.</span></div>
+        <div class="spec"><span class="spec-label">Ausbau</span><span>12 Monate Barriques (50% neu)</span></div>
+        <div class="spec"><span class="spec-label">Temperatur</span><span>16–18 °C</span></div>
+      </div>
+
+      <div class="nav-between">
+        <a href="/" class="btn-ghost">← Collection</a>
+        <a href="/blanc" class="btn-accent">Blanc entdecken →</a>
+      </div>
+    </div>
+
+  </div>
+</Base>
+
+<style>
+  .detail { max-width: 800px; margin: 0 auto; padding-bottom: 120px; }
+
+  .hero {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    margin: 24px 24px 0;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, oklch(0.06 0.01 22 / 0.85) 0%, transparent 55%);
+  }
+
+  .hero-content {
+    position: absolute;
+    bottom: 28px;
+    left: 28px;
+    right: 28px;
+    color: #fff;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: oklch(0 0 0 / 0.45);
+    backdrop-filter: blur(6px);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: #d4a574;
+    margin-bottom: 10px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .subtitle { font-size: 0.9375rem; opacity: 0.8; }
+
+  .body { padding: 32px 24px 0; display: flex; flex-direction: column; gap: 32px; }
+
+  .section h2 {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .section p {
+    line-height: 1.75;
+    color: oklch(0.78 0.005 250);
+  }
+
+  .specs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .spec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .spec:last-child { border-bottom: none; }
+
+  .spec-label { color: var(--muted); }
+
+  .nav-between {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-ghost {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .btn-ghost:hover { color: var(--fg); border-color: var(--fg); }
+
+  .btn-accent {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--accent);
+    transition: background 0.15s;
+  }
+
+  .btn-accent:hover { background: color-mix(in oklch, var(--accent) 22%, transparent); }
+</style>

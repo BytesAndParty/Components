@@ -1,0 +1,167 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Collection" page="index">
+  <div class="collection">
+    <header class="collection-header">
+      <h1>Vins Sélectionnés</h1>
+      <p>Wähle ein Preset unten, dann klick eine Karte — und beobachte den echten URL-Wechsel.</p>
+    </header>
+
+    <div class="cards-grid">
+
+      <!-- Rouge -->
+      <a href="/rouge" class="wine-card">
+        <div class="wine-card-image-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80"
+            alt="Rotwein"
+            class="wine-card-img"
+            style="view-transition-name: wine-rouge"
+          />
+          <span class="wine-badge" style="color: #d4a574">ROUGE</span>
+        </div>
+        <div class="wine-card-body">
+          <h2>Château Rouge 2023</h2>
+          <p class="wine-sub">Bordeaux Blend · 14.5% vol.</p>
+          <p class="wine-note">Dichte Frucht, Eiche, Veilchen. 12 Monate im Fass gereift.</p>
+          <span class="wine-cta">Entdecken →</span>
+        </div>
+      </a>
+
+      <!-- Blanc -->
+      <a href="/blanc" class="wine-card">
+        <div class="wine-card-image-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=900&q=80"
+            alt="Weißwein"
+            class="wine-card-img"
+            style="view-transition-name: wine-blanc"
+          />
+          <span class="wine-badge" style="color: #c9a961">BLANC</span>
+        </div>
+        <div class="wine-card-body">
+          <h2>Blanc Cuvée Spéciale</h2>
+          <p class="wine-sub">Chardonnay · 13% vol.</p>
+          <p class="wine-note">Knackige Säure, Zitrus, Mineralik. Stahltank-Ausbau.</p>
+          <span class="wine-cta">Entdecken →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</Base>
+
+<style>
+  .collection {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 120px;
+  }
+
+  .collection-header {
+    margin-bottom: 40px;
+  }
+
+  .collection-header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+
+  .collection-header p {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  .wine-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+
+  .wine-card:hover {
+    border-color: color-mix(in oklch, var(--accent) 50%, var(--border));
+    transform: translateY(-2px);
+  }
+
+  .wine-card-image-wrap {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: oklch(0.12 0.01 250);
+  }
+
+  .wine-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: opacity 0.3s, transform 0.4s;
+  }
+
+  .wine-card:hover .wine-card-img {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+
+  .wine-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: oklch(0 0 0 / 0.45);
+    backdrop-filter: blur(6px);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+
+  .wine-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .wine-card-body h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .wine-sub {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .wine-note {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+
+  .wine-cta {
+    margin-top: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+</style>
