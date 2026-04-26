@@ -7,7 +7,7 @@ export interface MorphingTextProps {
   texts: string[]
   /** Anzeigedauer pro Text in ms (default: 4000) */
   duration?: number
-  /** Dauer des Blur-Übergangs in ms (default: 2000) */
+  /** Dauer des Blur-Übergangs in ms (default: 800) */
   morphDuration?: number
   className?: string
   style?: CSSProperties
@@ -24,7 +24,7 @@ export interface MorphingTextProps {
 export function MorphingText({
   texts,
   duration = 4000,
-  morphDuration = 2000,
+  morphDuration = 800,
   className,
   style,
 }: MorphingTextProps) {
@@ -59,43 +59,37 @@ export function MorphingText({
 
   const transition = `opacity ${activeMorphDuration}ms ease, filter ${activeMorphDuration}ms ease`
 
-  // Überblend-Stile: aktueller Text faded aus, nächster faded ein
+  // Aktueller Text: sofort sichtbar (kein Fade-In beim Index-Wechsel), faded bei Morph aus
   const currentStyle: CSSProperties = morphing
-    ? {
-        opacity: 0,
-        filter: prefersReduced ? 'none' : 'blur(10px)',
-        transition,
-      }
-    : {
-        opacity: 1,
-        filter: 'blur(0px)',
-        transition,
-      }
+    ? { opacity: 0, filter: 'blur(10px)', transition }
+    : { opacity: 1, filter: 'blur(0px)', transition: 'none' }
 
+  // Nächster Text: sofort unsichtbar, faded bei Morph ein
   const nextStyle: CSSProperties = morphing
-    ? {
-        opacity: 1,
-        filter: 'blur(0px)',
-        transition,
-      }
-    : {
-        opacity: 0,
-        filter: prefersReduced ? 'none' : 'blur(10px)',
-        transition: 'none', // kein Fade beim Reset
-      }
+    ? { opacity: 1, filter: 'blur(0px)', transition }
+    : { opacity: 0, filter: 'blur(10px)', transition: 'none' }
 
   return (
     <span
       className={className}
-      style={{
-        display: 'inline-grid',
-        ...style,
-      }}
+      style={{ display: 'inline-grid', ...style }}
     >
-      {/* Beide Spans überlagert auf demselben Grid-Slot */}
-      <span style={{ gridArea: '1 / 1', ...currentStyle }}>
-        {texts[index]}
-      </span>
+      {/* Unsichtbare Sizer-Spans: Grid-Breite = breitester Text → kein Layout-Sprung */}
+      {texts.map((t, i) => (
+        <span
+          key={i}
+          aria-hidden
+          style={{
+            gridArea: '1 / 1',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+        >
+          {t}
+        </span>
+      ))}
+      <span style={{ gridArea: '1 / 1', ...currentStyle }}>{texts[index]}</span>
       <span style={{ gridArea: '1 / 1', ...nextStyle }} aria-hidden>
         {texts[nextIndex]}
       </span>

@@ -10,14 +10,15 @@ function injectKeyframes() {
   const style = document.createElement('style')
   style.id = STYLE_ID
   style.textContent = `
+    /* Theme-aware shine: weiß im Dark Mode, mittelhell im Light Mode */
+    :root { --shiny-text-shine: rgba(255, 255, 255, 0.85); }
+    [data-theme="light"] {
+      --shiny-text-shine: color-mix(in oklch, var(--foreground) 35%, var(--background));
+    }
+
     @keyframes shiny-text {
-      0% {
-        background-position: 200% center;
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      25%     { background-position: -200% center; }
-      25.001% { background-position: 200% center; }
-      100%    { background-position: 200% center; }
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
     }
     @media (prefers-reduced-motion: reduce) {
       .shiny-text-anim { animation: none !important; }
@@ -30,7 +31,7 @@ function injectKeyframes() {
 
 export interface ShinyTextProps {
   children: ReactNode
-  /** Shine-Farbe (default: white mit 80% Opacity) */
+  /** Shine-Farbe (default: CSS-Variable --shiny-text-shine, theme-aware) */
   shineColor?: string
   /** Gesamtdauer eines Zyklus in Sekunden – Sweep dauert 25% davon, Rest ist Pause (default: 10) */
   duration?: number
@@ -51,7 +52,7 @@ export interface ShinyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement
 
 export function ShinyText({
   children,
-  shineColor = 'rgba(255,255,255,0.8)',
+  shineColor = 'var(--shiny-text-shine)',
   duration = 10,
   className,
   style,

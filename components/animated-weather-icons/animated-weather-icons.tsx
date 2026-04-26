@@ -9,10 +9,14 @@ interface WeatherIconProps {
 export function SunIcon({ size = 48, className, style }: WeatherIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className} style={style}>
-      <motion.circle cx="24" cy="24" r="8" fill="#FBBF24" fillOpacity={0.2} stroke="#FBBF24" strokeWidth={2}
-        animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity }} />
-      <motion.g stroke="#FBBF24" strokeWidth={2} strokeLinecap="round"
-        animate={{ rotate: 360 }} transition={{ duration: 12, repeat: Infinity, ease: 'linear' }} style={{ originX: '24px', originY: '24px' }}>
+      {/* Kreis + Strahlen in EINER Gruppe → drehen sich gemeinsam als Einheit */}
+      <motion.g
+        stroke="#FBBF24" strokeWidth={2} strokeLinecap="round"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+        style={{ originX: 0.5, originY: 0.5 }}
+      >
+        <circle cx="24" cy="24" r="8" fill="#FBBF24" fillOpacity={0.35} stroke="#FBBF24" />
         {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => {
           const r1 = 12, r2 = 16, rad = (a * Math.PI) / 180;
           return <line key={a} x1={24 + r1 * Math.cos(rad)} y1={24 + r1 * Math.sin(rad)} x2={24 + r2 * Math.cos(rad)} y2={24 + r2 * Math.sin(rad)} />;
@@ -23,10 +27,22 @@ export function SunIcon({ size = 48, className, style }: WeatherIconProps) {
 }
 
 export function MoonIcon({ size = 48, className, style }: WeatherIconProps) {
-  const stars = [[12, 10], [36, 8], [10, 32], [34, 30]] as const;
+  // Stars positioned away from the crescent body (tips at ~20,16 and ~34,30)
+  const stars = [[10, 10], [38, 8], [8, 34], [40, 30]] as const;
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className} style={style}>
-      <path d="M28 8a14 14 0 1 0 0 28 10 10 0 0 1 0-28Z" fill="#A78BFA" fillOpacity={0.15} stroke="#A78BFA" strokeWidth={2} />
+      {/*
+        Crescent via two arcs, both geometrically valid:
+        1. a10 10 0 0 0 14 14  – chord=14√2≈19.8 < 2r=20 ✓  (near-impossible → near-straight face)
+        2. 14 14 0 1 1-14-14  – chord=19.8 < 2r=28 ✓         (large CW arc = outer boundary)
+      */}
+      <motion.path
+        d="M20 16a10 10 0 0 0 14 14 14 14 0 1 1-14-14Z"
+        fill="#A78BFA" fillOpacity={0.15} stroke="#A78BFA" strokeWidth={2}
+        animate={{ rotate: [-3, 3, -3] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ originX: '24px', originY: '24px' }}
+      />
       {stars.map(([cx, cy], i) => (
         <motion.circle key={i} cx={cx} cy={cy} r={1.2} fill="#A78BFA"
           animate={{ scale: [0.5, 1, 0.5], opacity: [0.3, 1, 0.3] }}

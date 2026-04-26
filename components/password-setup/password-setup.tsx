@@ -67,6 +67,10 @@ function injectStyles() {
       50% { transform: scale(1.4); }
       100% { transform: scale(1); }
     }
+    @keyframes pws-dot-reveal {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
     @keyframes pws-fade-in {
       from { opacity: 0; transform: translateY(-4px); }
       to { opacity: 1; transform: translateY(0); }
@@ -348,7 +352,9 @@ export function PasswordSetup({
           backgroundColor: bgColor,
           boxShadow: isTyped ? `0 0 6px ${glowColor}` : 'none',
           transition: 'background-color 150ms ease, box-shadow 150ms ease',
-          animation: justTyped ? 'pws-dot-pop 200ms ease' : 'none',
+          animation: justTyped 
+            ? 'pws-dot-pop 200ms ease' 
+            : !confirmVisible ? `pws-dot-reveal 500ms cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 80}ms backwards` : 'none',
           opacity: isTyped ? 1 : 0.3,
         }}
       />
@@ -613,22 +619,30 @@ export function PasswordSetup({
             />
 
             {/* Dots or plain text when visible */}
-            {confirmVisible ? (
-              <span style={{ fontSize: '14px', color: 'var(--foreground, #e4e4e7)', fontFamily: 'inherit' }}>
-                {confirm || <span style={{ color: 'var(--muted-foreground, #71717a)' }}>Confirm…</span>}
-              </span>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  gap: `${Math.max(6, dotSize * 0.6)}px`,
-                  alignItems: 'center',
-                  minHeight: `${dotSize + 4}px`,
-                }}
-              >
-                {dots}
-              </div>
-            )}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: `${Math.max(21, dotSize + 4)}px`,
+              }}
+            >
+              {confirmVisible ? (
+                <span style={{ fontSize: '14px', color: 'var(--foreground, #e4e4e7)', fontFamily: 'inherit', lineHeight: '21px' }}>
+                  {confirm || <span style={{ color: 'var(--muted-foreground, #71717a)' }}>{confirmLabel}…</span>}
+                </span>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: `${Math.max(6, dotSize * 0.6)}px`,
+                    alignItems: 'center',
+                    minHeight: `${dotSize + 4}px`,
+                  }}
+                >
+                  {dots}
+                </div>
+              )}
+            </div>
 
             <VisibilityToggle visible={confirmVisible} onToggle={() => setConfirmVisible(v => !v)} renderVisibilityIcon={renderVisibilityIcon} />
           </div>

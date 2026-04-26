@@ -232,16 +232,36 @@ export function PasswordConfirmation({
           }}
         />
 
-        {/* Dots display – always visible */}
+        {/* Display – dots or placeholder */}
         <div
           style={{
             display: 'flex',
-            gap: `${Math.max(6, dotSize * 0.6)}px`,
             alignItems: 'center',
-            minHeight: `${dotSize + 4}px`,
+            minHeight: `${Math.max(21, dotSize + 4)}px`,
           }}
         >
-          {dots}
+          {value.length === 0 && placeholder ? (
+            <span
+              style={{
+                fontSize: '14px',
+                color: 'var(--muted-foreground, #71717a)',
+                lineHeight: '21px',
+              }}
+            >
+              {placeholder}
+            </span>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                gap: `${Math.max(6, dotSize * 0.6)}px`,
+                alignItems: 'center',
+                minHeight: `${dotSize + 4}px`,
+              }}
+            >
+              {dots}
+            </div>
+          )}
         </div>
       </div>
 
