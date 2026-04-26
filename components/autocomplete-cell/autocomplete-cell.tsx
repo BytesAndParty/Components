@@ -171,7 +171,7 @@ export function AutocompleteCell({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 top-full mt-1.5 w-full bg-card border border-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-border"
+            className="absolute left-0 top-full mt-1.5 w-full bg-card border border-accent rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-border"
           >
             <div className="py-1">
               {filtered.map((item, i) => (

@@ -25,6 +25,8 @@ export interface GooeyInputProps {
   color?: string;
   /** Ink color for the icon (default #fff) */
   iconColor?: string;
+  /** 'filled' = solid background (default), 'outline' = transparent with colored border */
+  variant?: 'filled' | 'outline';
   className?: string;
   style?: CSSProperties;
 }
@@ -43,9 +45,11 @@ export function GooeyInput({
   icon,
   color = 'var(--accent)',
   iconColor = '#fff',
+  variant = 'filled',
   className,
   style,
 }: GooeyInputProps) {
+  const isOutline = variant === 'outline';
   const filterId = useId().replace(/:/g, '-');
   const [open, setOpen] = useState(false);
   const [internal, setInternal] = useState(defaultValue);
@@ -118,7 +122,8 @@ export function GooeyInput({
             top: 0,
             height,
             width: open ? width : height,
-            background: color,
+            background: isOutline ? 'var(--card)' : color,
+            boxShadow: isOutline ? `inset 0 0 0 2.5px ${color}` : 'none',
             borderRadius: height,
             transition: `width ${duration}ms cubic-bezier(0.77, 0, 0.18, 1)`,
           }}
@@ -136,8 +141,9 @@ export function GooeyInput({
             height,
             borderRadius: '50%',
             border: 'none',
-            background: color,
-            color: iconColor,
+            background: isOutline ? 'var(--card)' : color,
+            boxShadow: isOutline ? `inset 0 0 0 2.5px ${color}` : 'none',
+            color: isOutline ? color : iconColor,
             cursor: 'pointer',
             display: 'grid',
             placeItems: 'center',
@@ -180,7 +186,8 @@ export function GooeyInput({
           outline: 'none',
           borderRadius: height,
           background: 'transparent',
-          color: '#fff',
+          color: isOutline ? 'var(--foreground)' : '#fff',
+          caretColor: isOutline ? color : '#fff',
           fontSize: 14,
           fontFamily: 'inherit',
           opacity: open ? 1 : 0,
