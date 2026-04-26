@@ -11,13 +11,10 @@ import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
 import { useImageUpload } from '@components/use-image-upload/image-upload'
 import { useToast } from '@components/toast/toast'
-import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
 import { PasswordSetup } from '@components/password-setup/password-setup'
 import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.json'
 import { suggestions } from '../data'
 
-// Lottie Eye-Toggle: spielt vorwärts wenn visible=true, rückwärts wenn false.
-// Muss module-level sein damit React die Instanz nicht bei jedem Re-render neu mountet.
 function AnimatedEyeToggle({ visible, size = 20 }: { visible: boolean; size?: number }) {
   const lottieRef = useRef<LottieRefCurrentProps>(null)
   const isFirstRender = useRef(true)
@@ -46,47 +43,6 @@ function AnimatedEyeToggle({ visible, size = 20 }: { visible: boolean; size?: nu
   )
 }
 
-function PasswordConfirmationDemo() {
-  const [password] = useState('weinhaus2024')
-
-  return (
-    <div className="max-w-96 space-y-4">
-      <div>
-        <label className="text-xs text-muted-foreground uppercase tracking-widest mb-2 block">
-          Password (pre-filled)
-        </label>
-        <input
-          type="text"
-          readOnly
-          value="weinhaus2024"
-          style={{
-            width: '100%',
-            padding: '10px 14px',
-            background: 'var(--card)',
-            border: '1px solid var(--border)',
-            borderRadius: '10px',
-            color: 'var(--foreground)',
-            fontSize: '14px',
-            fontFamily: 'monospace',
-          }}
-        />
-      </div>
-      <div>
-        <label className="text-xs text-muted-foreground uppercase tracking-widest mb-2 block">
-          Confirm password
-        </label>
-        <PasswordConfirmation
-          password={password}
-          placeholder="Type to confirm..."
-        />
-      </div>
-      <p className="text-muted-foreground text-xs">
-        Each dot shows green (match) or red (mismatch). Shake on overflow, bounce on full match.
-      </p>
-    </div>
-  )
-}
-
 const signupSchema = z.object({
   name: z.string().min(2, 'Mindestens 2 Zeichen'),
   email: z.email('Ungültige E-Mail-Adresse'),
@@ -94,12 +50,6 @@ const signupSchema = z.object({
   age: z.number({ error: 'Bitte eine Zahl eingeben' }).int('Ganze Zahl').min(18, 'Mindestalter 18').max(120, 'Zu hoch'),
   website: z.url('Ungültige URL').optional().or(z.literal('')),
 })
-
-const emailSchema = signupSchema.shape.email
-const phoneSchema = signupSchema.shape.phone
-const ageSchema = signupSchema.shape.age
-const urlSchema = signupSchema.shape.website
-const nameSchema = signupSchema.shape.name
 
 function FormInputDemo() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', age: '', website: '' })
@@ -139,7 +89,7 @@ function FormInputDemo() {
         type="text"
         label="Name"
         placeholder="Anna Müller"
-        schema={nameSchema}
+        schema={signupSchema.shape.name}
         value={form.name}
         onChange={(v) => setForm((f) => ({ ...f, name: v }))}
         forceError={serverErrors.name ?? null}
@@ -148,7 +98,7 @@ function FormInputDemo() {
         type="email"
         label="E-Mail"
         placeholder="anna@beispiel.de"
-        schema={emailSchema}
+        schema={signupSchema.shape.email}
         value={form.email}
         onChange={(v) => setForm((f) => ({ ...f, email: v }))}
         forceError={serverErrors.email ?? null}
@@ -159,34 +109,21 @@ function FormInputDemo() {
           </svg>
         }
       />
-      <FormInput
-        type="tel"
-        label="Telefon"
-        placeholder="+49 151 …"
-        autoFormatPhone
-        schema={phoneSchema}
-        value={form.phone}
-        onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
-        forceError={serverErrors.phone ?? null}
-        description="Automatische Formatierung für DE / US — andere Länder werden gruppiert."
-      />
       <div className="grid grid-cols-2 gap-4">
         <FormInput
           type="number"
           label="Alter"
           placeholder="18–120"
-          min={18}
-          max={120}
-          schema={ageSchema}
+          schema={signupSchema.shape.age}
           value={form.age}
           onChange={(v) => setForm((f) => ({ ...f, age: v }))}
           forceError={serverErrors.age ?? null}
         />
         <FormInput
           type="url"
-          label="Website (optional)"
+          label="Website"
           placeholder="https://"
-          schema={urlSchema}
+          schema={signupSchema.shape.website}
           value={form.website}
           onChange={(v) => setForm((f) => ({ ...f, website: v }))}
           forceError={serverErrors.website ?? null}
@@ -206,9 +143,6 @@ function FormInputDemo() {
         >
           Zurücksetzen
         </button>
-        <p className="text-muted-foreground text-xs ml-auto">
-          Live: onBlur · Server: onSubmit via forceError
-        </p>
       </div>
     </form>
   )
@@ -250,7 +184,6 @@ function ImageUploadDemo() {
               <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
             </svg>
             <p className="text-[0.8125rem]">Click to upload an image</p>
-            <p className="text-[0.7rem] opacity-50 mt-1">JPG, PNG, GIF, WebP</p>
           </div>
         )}
         <input
@@ -291,154 +224,11 @@ function ImageUploadDemo() {
 export function InputsPage() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
   const [volume, setVolume] = useState(60)
-  const [priceRange, setPriceRange] = useState(35)
   const { add } = useToast()
 
   return (
     <>
-      <Section title="Checkbox" description="Animated checkbox with stroke-draw checkmark and scale-from-center fill.">
-        <div className="flex flex-col gap-4">
-          <Checkbox label="Accept terms and conditions" size="md" />
-          <Checkbox label="Subscribe to newsletter" size="md" defaultChecked />
-          <div className="flex gap-6">
-            <Checkbox label="Small" size="sm" />
-            <Checkbox label="Medium" size="md" />
-            <Checkbox label="Large" size="lg" />
-          </div>
-          <Checkbox label="Disabled" size="md" disabled />
-        </div>
-      </Section>
-
-      <Section title="Switch" description="iOS-style toggle with thumb squish animation on press.">
-        <div className="flex flex-col gap-4">
-          <Switch label="Dark mode" size="md" />
-          <Switch label="Notifications" size="md" defaultChecked />
-          <div className="flex gap-6">
-            <Switch label="Small" size="sm" />
-            <Switch label="Medium" size="md" />
-            <Switch label="Large" size="lg" />
-          </div>
-          <Switch label="Disabled" size="md" disabled />
-        </div>
-      </Section>
-
-      <Section title="FormInput + Zod v4" description="Schema-driven text/email/tel/number inputs. Validates via any .safeParse() validator — Zod v4 shown here. Error shake, success checkmark, accessible aria-invalid/-describedby.">
-        <FormInputDemo />
-      </Section>
-
-      <Section title="Slider" description="Range slider with drag-to-set, keyboard steering, thumb squish on grab, and accent-aware fill.">
-        <div className="flex flex-col gap-8 max-w-96">
-          <Slider
-            label="Volume"
-            value={volume}
-            onChange={setVolume}
-            formatValue={(v) => `${v} %`}
-          />
-          <Slider
-            label="Max. Preis"
-            value={priceRange}
-            onChange={setPriceRange}
-            min={0}
-            max={200}
-            step={5}
-            formatValue={(v) => `€ ${v}`}
-          />
-          <div className="flex flex-col gap-5">
-            <Slider label="Small" defaultValue={25} size="sm" />
-            <Slider label="Medium" defaultValue={50} size="md" />
-            <Slider label="Large" defaultValue={75} size="lg" />
-          </div>
-          <Slider label="Disabled" defaultValue={40} disabled />
-        </div>
-        <p className="text-muted-foreground text-xs mt-4">
-          Tab zum Fokussieren, dann <code>←</code>/<code>→</code> zum Steuern, <code>PgUp</code>/<code>PgDn</code> für große Sprünge, <code>Home</code>/<code>End</code> für Min/Max.
-        </p>
-      </Section>
-
-      <Section title="AutocompleteCell" description="Input field with filtered autocomplete suggestions.">
-        <div className="max-w-96">
-          <AutocompleteCell
-            value={autocompleteValue}
-            onChange={setAutocompleteValue}
-            suggestions={suggestions}
-            placeholder="Search tools & frameworks..."
-          />
-        </div>
-        <p className="text-muted-foreground text-xs mt-2">
-          Try: "re", "type", "vi", "dr", "node"
-        </p>
-      </Section>
-
-      <Section title="GooeyInput" description="Icon-only circle that morphs into a full input via SVG-goo filter. ~1.2s slow morph for liquid feel.">
-        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
-          <div className="p-10 flex flex-col gap-8 items-start">
-            <div className="flex items-center gap-6 flex-wrap">
-              <span className="text-muted-foreground text-sm">Default (accent):</span>
-              <GooeyInput
-                placeholder="Weine durchsuchen..."
-                onSubmit={(v) => add({ title: 'Suche', description: `"${v}"`, variant: 'default' })}
-              />
-            </div>
-            <div className="flex items-center gap-6 flex-wrap">
-              <span className="text-muted-foreground text-sm">Wider + custom color:</span>
-              <GooeyInput
-                placeholder="Was suchen Sie?"
-                width={420}
-                color="#10b981"
-                onSubmit={(v) => add({ title: 'Suche', description: `"${v}"`, variant: 'success' })}
-              />
-            </div>
-            <div className="flex items-center gap-6 flex-wrap">
-              <span className="text-muted-foreground text-sm">Fast (600 ms):</span>
-              <GooeyInput
-                placeholder="Schnell..."
-                duration={600}
-                color="#ec4899"
-              />
-            </div>
-          </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
-            <span>GooeyInput · SVG goo filter · morph</span>
-            <span>Esc zum Schließen · Enter zum Absenden</span>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="AnimatedSearch" description="Search icon that morphs into an expanding search input field.">
-        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
-          <div className="p-12 px-8 flex flex-col items-center gap-8">
-            <div className="flex items-center gap-6">
-              <span className="text-muted-foreground text-sm">Click the icon:</span>
-              <AnimatedSearch
-                placeholder="Search components..."
-                onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
-              />
-            </div>
-            <div className="flex items-center gap-6">
-              <span className="text-muted-foreground text-sm">Wider variant:</span>
-              <AnimatedSearch
-                placeholder="What are you looking for?"
-                expandedWidth={360}
-                onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
-              />
-            </div>
-          </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
-            <span>AnimatedSearch · spring physics · icon morph</span>
-            <span>Esc to close · Enter to submit</span>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="useImageUpload" description="Hook for image upload with preview and cleanup.">
-        <ImageUploadDemo />
-      </Section>
-
-      <Section title="PasswordConfirmation" description="Per-character visual feedback for password confirmation fields.">
-        <PasswordConfirmationDemo />
-      </Section>
-
-      <Section title="PasswordSetup" description="Complete password creation with strength meter, generate, copy, and dot-based confirmation.">
+      <Section title="PasswordSetup" description="Fancy dot-based password creation with strength meter and reveal animations.">
         <div className="max-w-96">
           <PasswordSetup
             passwordLabel="Passwort"
@@ -450,6 +240,66 @@ export function InputsPage() {
             onMatch={(pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
           />
         </div>
+      </Section>
+
+      <Section title="FormInput + Zod" description="Schema-driven inputs with real-time validation and error shake.">
+        <FormInputDemo />
+      </Section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Section title="Checkbox" description="Animated checkmark with scale-from-center fill.">
+          <Checkbox label="Accept terms and conditions" defaultChecked />
+        </Section>
+
+        <Section title="Switch" description="iOS-style toggle with thumb squish animation.">
+          <Switch label="Enable notifications" defaultChecked />
+        </Section>
+      </div>
+
+      <Section title="Slider" description="Range slider with thumb squish on grab and accent-aware fill.">
+        <div className="max-w-96">
+          <Slider
+            label="Volume Control"
+            value={volume}
+            onChange={setVolume}
+            formatValue={(v) => `${v} %`}
+          />
+        </div>
+      </Section>
+
+      <Section title="AutocompleteCell" description="Input field with filtered autocomplete suggestions.">
+        <div className="max-w-96">
+          <AutocompleteCell
+            value={autocompleteValue}
+            onChange={setAutocompleteValue}
+            suggestions={suggestions}
+            placeholder="Search frameworks..."
+          />
+        </div>
+      </Section>
+
+      <Section title="GooeyInput" description="Icon-only circle that morphs into a full input via SVG-goo filter.">
+        <div className="border border-border rounded-xl bg-card p-10 flex flex-col gap-6">
+          <GooeyInput
+            placeholder="Weine durchsuchen..."
+            onSubmit={(v) => add({ title: 'Suche gestartet', description: `Suchen nach: "${v}"`, variant: 'default' })}
+          />
+          <p className="text-[0.7rem] text-muted-foreground">Esc zum Schließen · Enter zum Absenden</p>
+        </div>
+      </Section>
+
+      <Section title="AnimatedSearch" description="Search icon that morphs into an expanding input field.">
+        <div className="border border-border rounded-xl bg-card p-10 flex flex-col items-center gap-6">
+          <AnimatedSearch
+            placeholder="Search components..."
+            onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
+          />
+          <p className="text-[0.7rem] text-muted-foreground">Spring physics powered icon morph</p>
+        </div>
+      </Section>
+
+      <Section title="useImageUpload" description="Hook for image upload with preview and removal logic.">
+        <ImageUploadDemo />
       </Section>
     </>
   )
