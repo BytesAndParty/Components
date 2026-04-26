@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { ToastProvider } from './components/toast'
+import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
 import { ScrollProgress } from '@components/scroll-progress/scroll-progress'
-import { CartIcon } from './components/cart-icon'
+import { CartIcon } from '@components/cart-icon/cart-icon'
 import { FloatingCart, type FloatingCartItem } from '@components/floating-cart/floating-cart'
 import {
   Navbar, NavbarSection, NavbarItem,
