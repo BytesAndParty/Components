@@ -43,6 +43,10 @@ function injectStyles() {
       from { transform: scaleY(0); }
       to   { transform: scaleY(1); }
     }
+    @keyframes timeline-dot-pulse {
+      0%   { transform: scale(1); opacity: 0.55; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
     @media (prefers-reduced-motion: reduce) {
       [data-timeline-item] * { animation: none !important; }
     }
@@ -151,29 +155,53 @@ export function Timeline({
                 alignItems: 'center',
               }}
             >
-              {/* Dot */}
+              {/* Dot wrapper — relative so pulse ring can overlay */}
               <div
-                aria-hidden="true"
                 style={{
+                  position: 'relative',
                   width: DOT_SIZE,
                   height: DOT_SIZE,
                   flexShrink: 0,
-                  borderRadius: '50%',
-                  background: dotColor,
-                  border: '3px solid var(--background)',
-                  boxShadow: `0 0 0 2px ${dotColor}, 0 0 14px color-mix(in oklch, ${dotColor} 30%, transparent)`,
-                  display: 'grid',
-                  placeItems: 'center',
-                  color: '#fff',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  animation: show
-                    ? 'timeline-dot-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
-                    : 'none',
-                  opacity: show ? 1 : 0,
                 }}
               >
-                {it.marker ?? i + 1}
+                {/* Dot */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    background: dotColor,
+                    border: '3px solid var(--background)',
+                    boxShadow: `0 0 0 2px ${dotColor}, 0 0 14px color-mix(in oklch, ${dotColor} 30%, transparent)`,
+                    display: 'grid',
+                    placeItems: 'center',
+                    color: '#fff',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    animation: show
+                      ? 'timeline-dot-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
+                      : 'none',
+                    opacity: show ? 1 : 0,
+                  }}
+                >
+                  {it.marker ?? i + 1}
+                </div>
+                {/* Pulse ring — fires once after dot-in completes */}
+                {show && (
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '50%',
+                      border: `2px solid ${dotColor}`,
+                      animation: 'timeline-dot-pulse 0.65s ease-out both',
+                      animationDelay: '300ms',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
               </div>
 
               {/* Spine segment below dot */}

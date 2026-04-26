@@ -226,7 +226,7 @@ export function VerticalStepper({
                 }}
               >
                 {isCompleted ? (
-                  <svg
+                  <motion.svg
                     width="16"
                     height="16"
                     viewBox="0 0 24 24"
@@ -236,8 +236,13 @@ export function VerticalStepper({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
+                    <motion.polyline
+                      points="20 6 9 17 4 12"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                    />
+                  </motion.svg>
                 ) : (
                   stepNum
                 )}
@@ -337,15 +342,24 @@ export function VerticalStepper({
             {!isLast && (
               <div
                 style={{
-                  marginLeft: `${20 + CONNECTOR_OFFSET}px`, // card padding + badge centre
+                  marginLeft: `${20 + CONNECTOR_OFFSET}px`,
                   width: '2px',
                   height: '20px',
-                  background: isCompleted
-                    ? 'var(--accent, #6366f1)'
-                    : 'var(--border, #3f3f46)',
-                  transition: 'background 400ms ease',
+                  background: 'var(--border, #3f3f46)',
+                  borderRadius: 2,
+                  overflow: 'hidden',
                 }}
-              />
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: isCompleted ? '100%' : '0%',
+                    background: 'var(--accent, #6366f1)',
+                    transition: 'height 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                    borderRadius: 'inherit',
+                  }}
+                />
+              </div>
             )}
           </div>
         )
