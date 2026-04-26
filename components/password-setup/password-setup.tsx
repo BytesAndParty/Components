@@ -71,6 +71,18 @@ function injectStyles() {
       from { transform: scale(0); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+    @keyframes pws-dot-hide {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0); opacity: 0; }
+    }
+    @keyframes pws-text-reveal {
+      from { opacity: 0; transform: translateY(4px); filter: blur(4px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes pws-placeholder-hide {
+      from { opacity: 1; transform: scale(1); filter: blur(0); }
+      to { opacity: 0; transform: scale(1.05); filter: blur(4px); }
+    }
     @keyframes pws-fade-in {
       from { opacity: 0; transform: translateY(-4px); }
       to { opacity: 1; transform: translateY(0); }
@@ -82,20 +94,7 @@ function injectStyles() {
   document.head.appendChild(style)
 }
 
-// ─── Shared input style ─────────────────────────────────────────────────────────
-
-const inputBaseStyle: CSSProperties = {
-  width: '100%',
-  padding: '12px 44px 12px 14px',
-  background: 'var(--card, #141416)',
-  border: '2px solid var(--border, #2a2a2e)',
-  borderRadius: '10px',
-  color: 'var(--foreground, #e4e4e7)',
-  fontSize: '14px',
-  fontFamily: 'inherit',
-  outline: 'none',
-  transition: 'border-color 200ms ease, box-shadow 200ms ease',
-}
+// ─── Shared Styles ─────────────────────────────────────────────────────────────
 
 const labelStyle: CSSProperties = {
   fontSize: '13px',
@@ -154,7 +153,7 @@ function CheckIcon() {
   )
 }
 
-// ─── Visibility toggle button (module-level – stabil über Re-renders) ───────────
+// ─── Visibility toggle button ──────────────────────────────────────────────────
 
 interface VisibilityToggleProps {
   visible: boolean
@@ -196,7 +195,189 @@ function VisibilityToggle({ visible, onToggle, renderVisibilityIcon }: Visibilit
   )
 }
 
-// ─── Strength checks ────────────────────────────────────────────────────────────
+// ─── Fancy Dot Input Sub-Component ───────────────────────────────────────────
+
+interface FancyDotInputProps {
+  value: string
+  targetValue?: string // Optional: what to match against (for confirm field)
+  placeholder?: string
+  visible: boolean
+  onToggleVisible: () => void
+  onChange: (val: string) => void
+  onFocus: () => void
+  onBlur: () => void
+  borderColor: string
+  boxShadow: string
+  shake?: boolean
+  matched?: boolean
+  dotSize: number
+  matchColor: string
+  mismatchColor: string
+  renderVisibilityIcon?: (visible: boolean) => ReactNode
+  autoComplete?: string
+}
+
+function FancyDotInput({
+  value,
+  targetValue,
+  placeholder,
+  visible,
+  onToggleVisible,
+  onChange,
+  onFocus,
+  onBlur,
+  borderColor,
+  boxShadow,
+  shake,
+  matched,
+  dotSize,
+  matchColor,
+  mismatchColor,
+  renderVisibilityIcon,
+  autoComplete = 'off',
+}: FancyDotInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const lastCharRef = useRef(value.length)
+  const neutralColor = 'var(--muted-foreground, #71717a)'
+
+  const displayLength = targetValue ? targetValue.length : value.length
+  const dots: ReactNode[] = []
+
+  for (let i = 0; i < displayLength; i++) {
+    const isTyped = i < value.length
+    const justTyped = i === value.length - 1 && value.length > lastCharRef.current
+
+    let bgColor = neutralColor
+    let glowColor = 'transparent'
+
+    if (targetValue) {
+      const isMatch = isTyped && value[i] === targetValue[i]
+      const isMismatch = isTyped && value[i] !== targetValue[i]
+      if (isMatch) { bgColor = matchColor; glowColor = matchColor }
+      else if (isMismatch) { bgColor = mismatchColor; glowColor = mismatchColor }
+    } else {
+      if (isTyped) { bgColor = 'var(--foreground, #e4e4e7)' }
+    }
+
+    dots.push(
+      <span
+        key={i}
+        style={{
+          display: 'inline-block',
+          width: `${dotSize}px`,
+          height: `${dotSize}px`,
+          borderRadius: '50%',
+          backgroundColor: bgColor,
+          boxShadow: isTyped ? `0 0 6px ${glowColor}` : 'none',
+          transition: 'background-color 200ms ease, box-shadow 200ms ease',
+          animation: justTyped 
+            ? 'pws-dot-pop 200ms ease' 
+            : visible 
+              ? `pws-dot-hide 300ms ease ${i * 40}ms forwards`
+              : `pws-dot-reveal 300ms ease ${i * 40}ms backwards`,
+          animationFillMode: 'both',
+          opacity: isTyped ? 1 : 0.25,
+        }}
+      />
+    )
+  }
+
+  lastCharRef.current = value.length
+
+  return (
+    <div
+      onClick={() => inputRef.current?.focus()}
+      style={{
+        position: 'relative',
+        border: `2px solid ${borderColor}`,
+        borderRadius: '10px',
+        padding: '12px 44px 12px 14px',
+        cursor: 'text',
+        background: 'var(--card, #141416)',
+        transition: 'border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease',
+        boxShadow,
+        animation: shake
+          ? 'pws-shake 400ms ease'
+          : matched
+            ? 'pws-bounce 300ms ease'
+            : 'none',
+      }}
+    >
+      <input
+        ref={inputRef}
+        type={visible ? 'text' : 'password'}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete={autoComplete}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
+          cursor: 'text',
+          border: 'none',
+          background: 'none',
+        }}
+      />
+
+      <div style={{ display: 'flex', alignItems: 'center', minHeight: '21px', position: 'relative' }}>
+        {/* Placeholder Layer */}
+        {value.length === 0 && (
+          <span style={{ 
+            position: 'absolute',
+            left: 0,
+            fontSize: '14px', 
+            color: 'var(--muted-foreground, #71717a)', 
+            lineHeight: '21px',
+            animation: 'pws-text-reveal 300ms ease both',
+            pointerEvents: 'none',
+          }}>
+            {placeholder}…
+          </span>
+        )}
+
+        {/* Content Layer (Dots or Text) */}
+        {value.length > 0 && (
+          <>
+            <div style={{ 
+              display: 'flex', 
+              gap: `${Math.max(6, dotSize * 0.6)}px`, 
+              alignItems: 'center',
+              position: visible ? 'absolute' : 'relative',
+              pointerEvents: 'none',
+            }}>
+              {dots}
+            </div>
+
+            {visible && (
+              <span style={{ 
+                fontSize: '14px', 
+                color: 'var(--foreground, #e4e4e7)', 
+                fontFamily: 'inherit', 
+                lineHeight: '21px',
+                animation: 'pws-text-reveal 300ms ease both',
+              }}>
+                {value}
+              </span>
+            )}
+          </>
+        )}
+      </div>
+
+      <VisibilityToggle 
+        visible={visible} 
+        onToggle={onToggleVisible} 
+        renderVisibilityIcon={renderVisibilityIcon} 
+      />
+    </div>
+  )
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────────
 
 interface Check {
   label: string
@@ -225,8 +406,6 @@ function generatePassword(length = 16): string {
   return Array.from(array, v => charset[v % charset.length]).join('')
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────────
-
 export function PasswordSetup({
   onMatch,
   onPasswordChange,
@@ -252,7 +431,7 @@ export function PasswordSetup({
   const [shake, setShake] = useState(false)
   const [matched, setMatched] = useState(false)
   const [copied, setCopied] = useState(false)
-  const confirmInputRef = useRef<HTMLInputElement>(null)
+  
   const injected = useRef(false)
   const matchedRef = useRef(false)
 
@@ -263,47 +442,22 @@ export function PasswordSetup({
     }
   }, [])
 
-  // ─── Password field handlers ──────────────────────────────────────────────
-
-  function handlePasswordChange(e: ChangeEvent<HTMLInputElement>) {
-    const v = e.target.value
+  const handlePasswordChange = (v: string) => {
     setPassword(v)
     onPasswordChange?.(v)
-    // Reset confirm state when password changes
     if (confirm && confirm !== v) {
       setMatched(false)
       matchedRef.current = false
     }
   }
 
-  function handleGenerate() {
-    const pw = generatePassword()
-    setPassword(pw)
-    setPwVisible(true)
-    onPasswordChange?.(pw)
-    setConfirm('')
-    setMatched(false)
-    matchedRef.current = false
-  }
-
-  async function handleCopy() {
-    if (!password) return
-    await navigator.clipboard.writeText(password)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
-  }
-
-  // ─── Confirmation handlers ────────────────────────────────────────────────
-
-  function handleConfirmChange(e: ChangeEvent<HTMLInputElement>) {
-    const v = e.target.value
+  const handleConfirmChange = (v: string) => {
     if (v.length > password.length) {
       setShake(true)
       setTimeout(() => setShake(false), 400)
       return
     }
     setConfirm(v)
-
     if (v === password && v.length > 0 && !matchedRef.current) {
       matchedRef.current = true
       setMatched(true)
@@ -314,79 +468,26 @@ export function PasswordSetup({
     }
   }
 
-  // ─── Strength calculation ─────────────────────────────────────────────────
+  const handleGenerate = () => {
+    const pw = generatePassword()
+    setPassword(pw)
+    setPwVisible(true)
+    onPasswordChange?.(pw)
+    setConfirm('')
+    setMatched(false)
+    matchedRef.current = false
+  }
+
+  const handleCopy = async () => {
+    if (!password) return
+    await navigator.clipboard.writeText(password)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   const checkResults = defaultChecks.map(c => ({ ...c, valid: c.test(password) }))
   const passed = checkResults.filter(c => c.valid).length
   const strength = getStrength(passed, defaultChecks.length)
-
-  // ─── Confirmation dots ────────────────────────────────────────────────────
-
-  const neutralColor = 'var(--muted-foreground, #71717a)'
-  const dots: ReactNode[] = []
-
-  for (let i = 0; i < password.length; i++) {
-    const isTyped = i < confirm.length
-    const isMatch = isTyped && confirm[i] === password[i]
-    const isMismatch = isTyped && confirm[i] !== password[i]
-    const justTyped = i === confirm.length - 1
-
-    let bgColor = neutralColor
-    let glowColor = 'transparent'
-    if (isMatch) {
-      bgColor = matchColor
-      glowColor = matchColor
-    } else if (isMismatch) {
-      bgColor = mismatchColor
-      glowColor = mismatchColor
-    }
-
-    dots.push(
-      <span
-        key={i}
-        style={{
-          display: 'inline-block',
-          width: `${dotSize}px`,
-          height: `${dotSize}px`,
-          borderRadius: '50%',
-          backgroundColor: bgColor,
-          boxShadow: isTyped ? `0 0 6px ${glowColor}` : 'none',
-          transition: 'background-color 150ms ease, box-shadow 150ms ease',
-          animation: justTyped 
-            ? 'pws-dot-pop 200ms ease' 
-            : !confirmVisible ? `pws-dot-reveal 500ms cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 80}ms backwards` : 'none',
-          opacity: isTyped ? 1 : 0.3,
-        }}
-      />
-    )
-  }
-
-  // ─── Border helpers ───────────────────────────────────────────────────────
-
-  function getBorder1() {
-    if (focused1) return 'var(--accent, #6366f1)'
-    return 'var(--border, #2a2a2e)'
-  }
-
-  function getBorder2() {
-    if (matched) return matchColor
-    if (confirm.length > 0) {
-      const allMatch = confirm === password.slice(0, confirm.length)
-      return allMatch
-        ? focused2 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'
-        : mismatchColor
-    }
-    if (focused2) return 'var(--accent, #6366f1)'
-    return 'var(--border, #2a2a2e)'
-  }
-
-  function getShadow2() {
-    if (focused2 && !matched) return '0 0 0 3px rgba(99, 102, 241, 0.15)'
-    if (matched) return `0 0 0 3px ${matchColor}26`
-    return 'none'
-  }
-
-  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <div
@@ -401,34 +502,25 @@ export function PasswordSetup({
       {/* ── Password field ── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={labelStyle}>{passwordLabel}</label>
-        <div style={{ position: 'relative' }}>
-          <input
-            type={pwVisible ? 'text' : 'password'}
-            value={password}
-            onChange={handlePasswordChange}
-            placeholder={passwordPlaceholder}
-            autoComplete="new-password"
-            onFocus={() => setFocused1(true)}
-            onBlur={() => setFocused1(false)}
-            style={{
-              ...inputBaseStyle,
-              borderColor: getBorder1(),
-              boxShadow: focused1 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none',
-            }}
-          />
-          <VisibilityToggle visible={pwVisible} onToggle={() => setPwVisible(v => !v)} renderVisibilityIcon={renderVisibilityIcon} />
-        </div>
+        <FancyDotInput
+          value={password}
+          placeholder={passwordPlaceholder}
+          visible={pwVisible}
+          onToggleVisible={() => setPwVisible(!pwVisible)}
+          onChange={handlePasswordChange}
+          onFocus={() => setFocused1(true)}
+          onBlur={() => setFocused1(false)}
+          borderColor={focused1 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
+          boxShadow={focused1 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none'}
+          dotSize={dotSize}
+          matchColor={matchColor}
+          mismatchColor={mismatchColor}
+          renderVisibilityIcon={renderVisibilityIcon}
+          autoComplete="new-password"
+        />
 
-        {/* Actions row */}
         {(allowGenerate || password) && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginTop: '2px',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
             {allowGenerate && (
               <button
                 type="button"
@@ -444,15 +536,6 @@ export function PasswordSetup({
                   border: '1px solid var(--border, #2a2a2e)',
                   borderRadius: '7px',
                   cursor: 'pointer',
-                  transition: 'border-color 200ms ease, color 200ms ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--accent, #6366f1)'
-                  e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border, #2a2a2e)'
-                  e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
                 }}
               >
                 <RefreshIcon /> Generate
@@ -473,19 +556,6 @@ export function PasswordSetup({
                   border: '1px solid var(--border, #2a2a2e)',
                   borderRadius: '7px',
                   cursor: 'pointer',
-                  transition: 'border-color 200ms ease, color 200ms ease',
-                }}
-                onMouseEnter={e => {
-                  if (!copied) {
-                    e.currentTarget.style.borderColor = 'var(--accent, #6366f1)'
-                    e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!copied) {
-                    e.currentTarget.style.borderColor = 'var(--border, #2a2a2e)'
-                    e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
-                  }
                 }}
               >
                 {copied ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
@@ -494,173 +564,59 @@ export function PasswordSetup({
           </div>
         )}
 
-        {/* Strength meter */}
-        {showStrength && password && (
-          <div style={{ animation: 'pws-fade-in 200ms ease' }}>
-            <div
-              style={{
-                height: '4px',
-                width: '100%',
-                background: 'var(--border, #2a2a2e)',
-                borderRadius: '2px',
-                overflow: 'hidden',
-                marginTop: '4px',
-              }}
-            >
-              <div
-                style={{
-                  height: '100%',
-                  width: `${(passed / defaultChecks.length) * 100}%`,
-                  background: strength.color,
-                  borderRadius: '2px',
-                  transition: 'width 300ms ease, background 300ms ease',
-                  animation: 'pws-strength-grow 300ms ease',
-                }}
-              />
-            </div>
-            <span style={{ fontSize: '12px', color: strength.color, marginTop: '2px', display: 'block' }}>
-              {strength.label}
-            </span>
-          </div>
-        )}
-
-        {/* Checklist */}
-        {showChecklist && password && (
-          <ul
-            style={{
-              listStyle: 'none',
-              margin: 0,
-              padding: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '3px',
-              animation: 'pws-fade-in 200ms ease',
-            }}
-          >
-            {checkResults.map((check, i) => (
-              <li
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '12px',
-                  color: check.valid ? matchColor : 'var(--muted-foreground, #71717a)',
-                  transition: 'color 200ms ease',
-                }}
-              >
-                {check.valid ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <path d="M22 4 12 14.01l-3-3" />
-                  </svg>
-                ) : (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="m15 9-6 6" /><path d="m9 9 6 6" />
-                  </svg>
-                )}
-                {check.label}
-              </li>
-            ))}
-          </ul>
+        {password && (
+          <>
+            {showStrength && (
+              <div style={{ animation: 'pws-fade-in 200ms ease' }}>
+                <div style={{ height: '4px', width: '100%', background: 'var(--border, #2a2a2e)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
+                  <div style={{ height: '100%', width: `${(passed / defaultChecks.length) * 100}%`, background: strength.color, borderRadius: '2px', transition: 'width 300ms ease, background 300ms ease', animation: 'pws-strength-grow 300ms ease' }} />
+                </div>
+                <span style={{ fontSize: '12px', color: strength.color, marginTop: '2px', display: 'block' }}>{strength.label}</span>
+              </div>
+            )}
+            {showChecklist && (
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '3px', animation: 'pws-fade-in 200ms ease' }}>
+                {checkResults.map((check, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? matchColor : 'var(--muted-foreground, #71717a)', transition: 'color 200ms ease' }}>
+                    {check.valid ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></svg>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
+                    )}
+                    {check.label}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </div>
 
       {/* ── Confirmation field ── */}
       {password.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-            animation: 'pws-fade-in 250ms ease',
-          }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', animation: 'pws-fade-in 250ms ease' }}>
           <label style={labelStyle}>{confirmLabel}</label>
-
-          <div
-            onClick={() => confirmInputRef.current?.focus()}
-            style={{
-              position: 'relative',
-              border: `2px solid ${getBorder2()}`,
-              borderRadius: '10px',
-              padding: '12px 44px 12px 14px',
-              cursor: 'text',
-              background: 'var(--card, #141416)',
-              transition: 'border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease',
-              boxShadow: getShadow2(),
-              animation: shake
-                ? 'pws-shake 400ms ease'
-                : matched
-                  ? 'pws-bounce 300ms ease'
-                  : 'none',
-            }}
-          >
-            <input
-              ref={confirmInputRef}
-              type={confirmVisible ? 'text' : 'password'}
-              value={confirm}
-              onChange={handleConfirmChange}
-              autoComplete="new-password"
-              onFocus={() => setFocused2(true)}
-              onBlur={() => setFocused2(false)}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                opacity: 0,
-                cursor: 'text',
-                border: 'none',
-                background: 'none',
-              }}
-            />
-
-            {/* Dots or plain text when visible */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                minHeight: `${Math.max(21, dotSize + 4)}px`,
-              }}
-            >
-              {confirmVisible ? (
-                <span style={{ fontSize: '14px', color: 'var(--foreground, #e4e4e7)', fontFamily: 'inherit', lineHeight: '21px' }}>
-                  {confirm || <span style={{ color: 'var(--muted-foreground, #71717a)' }}>{confirmLabel}…</span>}
-                </span>
-              ) : (
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: `${Math.max(6, dotSize * 0.6)}px`,
-                    alignItems: 'center',
-                    minHeight: `${dotSize + 4}px`,
-                  }}
-                >
-                  {dots}
-                </div>
-              )}
-            </div>
-
-            <VisibilityToggle visible={confirmVisible} onToggle={() => setConfirmVisible(v => !v)} renderVisibilityIcon={renderVisibilityIcon} />
-          </div>
-
-          {/* Match indicator */}
+          <FancyDotInput
+            value={confirm}
+            targetValue={password}
+            placeholder={confirmLabel}
+            visible={confirmVisible}
+            onToggleVisible={() => setConfirmVisible(!confirmVisible)}
+            onChange={handleConfirmChange}
+            onFocus={() => setFocused2(true)}
+            onBlur={() => setFocused2(false)}
+            borderColor={matched ? matchColor : confirm.length > 0 && confirm !== password.slice(0, confirm.length) ? mismatchColor : focused2 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
+            boxShadow={matched ? `0 0 0 3px ${matchColor}26` : focused2 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none'}
+            shake={shake}
+            matched={matched}
+            dotSize={dotSize}
+            matchColor={matchColor}
+            mismatchColor={mismatchColor}
+            renderVisibilityIcon={renderVisibilityIcon}
+          />
           {matched && (
-            <span
-              style={{
-                fontSize: '12px',
-                color: matchColor,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                animation: 'pws-fade-in 200ms ease',
-              }}
-            >
-              <CheckIcon />
-              Passwords match
+            <span style={{ fontSize: '12px', color: matchColor, display: 'flex', alignItems: 'center', gap: '5px', animation: 'pws-fade-in 200ms ease' }}>
+              <CheckIcon /> Passwords match
             </span>
           )}
         </div>
