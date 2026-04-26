@@ -51,6 +51,8 @@ export function Slider({
   const [internal, setInternal] = useState(() => clamp(defaultValue, min, max));
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [elasticOffset, setElasticOffset] = useState(0);
+  const [magnetOffset, setMagnetOffset] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const id = useId();
 
@@ -75,9 +77,24 @@ export function Slider({
 
   useEffect(() => {
     if (!dragging) return;
-    const onMove = (e: PointerEvent) => update(valueFromClientX(e.clientX));
+    const onMove = (e: PointerEvent) => {
+      update(valueFromClientX(e.clientX));
+      // Elastic physics: logarithmic resistance past bounds
+      const el = trackRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      if (ratio < 0) {
+        setElasticOffset(-Math.log1p(-ratio * 8) * 12);
+      } else if (ratio > 1) {
+        setElasticOffset(Math.log1p((ratio - 1) * 8) * 12);
+      } else {
+        setElasticOffset(0);
+      }
+    };
     const onUp = () => {
       setDragging(false);
+      setElasticOffset(0); // spring transition on thumb handles snap-back
       onChangeEnd?.(value);
     };
     window.addEventListener('pointermove', onMove);
@@ -92,6 +109,24 @@ export function Slider({
     // value updates are pulled live inside onMove via valueFromClientX.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dragging]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (dragging) return;
+    const rect = trackRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const cursorX = e.clientX - rect.left;
+    const thumbX = (pct / 100) * rect.width;
+    const dist = cursorX - thumbX;
+    const absD = Math.abs(dist);
+    const MAGNET_RANGE = 44;
+    if (absD < MAGNET_RANGE) {
+      // Quadratic falloff: strongest pull close to thumb, fades at range edge
+      const pull = (dist / MAGNET_RANGE) * 5 * Math.pow(1 - absD / MAGNET_RANGE, 1.5);
+      setMagnetOffset(pull);
+    } else {
+      setMagnetOffset(0);
+    }
+  };
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (disabled) return;
@@ -169,8 +204,11 @@ export function Slider({
           if (disabled) return;
           e.currentTarget.setPointerCapture(e.pointerId);
           setDragging(true);
+          setMagnetOffset(0);
           update(valueFromClientX(e.clientX));
         }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setMagnetOffset(0)}
         style={{
           position: 'relative',
           height: Math.max(s.thumbActive, s.trackH) + 4,
@@ -202,9 +240,39 @@ export function Slider({
             height: s.trackH,
             borderRadius: s.trackH,
             background: 'var(--accent)',
-            transition: dragging ? 'none' : 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: dragging
+              ? '0 0 10px 2px color-mix(in oklch, var(--accent) 35%, transparent)'
+              : 'none',
+            transition: dragging
+              ? 'none'
+              : 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease',
           }}
         />
+        {/* Floating value tooltip */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: `${pct}%`,
+            bottom: 'calc(100% + 8px)',
+            transform: `translateX(calc(-50% + ${elasticOffset}px))`,
+            background: 'var(--foreground)',
+            color: 'var(--background)',
+            fontSize: '0.6875rem',
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontVariantNumeric: 'tabular-nums',
+            fontWeight: 600,
+            padding: '2px 7px',
+            borderRadius: 6,
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            opacity: dragging ? 1 : 0,
+            transition: 'opacity 0.12s ease',
+            zIndex: 10,
+          }}
+        >
+          {displayValue}
+        </div>
         {/* Thumb */}
         <div
           id={id}
@@ -230,9 +298,10 @@ export function Slider({
               focused || dragging
                 ? `0 0 0 4px color-mix(in oklch, var(--accent) 25%, transparent), 0 1px 3px rgba(0,0,0,0.3)`
                 : '0 1px 3px rgba(0,0,0,0.25)',
+            transform: `translateX(${elasticOffset + magnetOffset}px)`,
             transition: dragging
-              ? 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear'
-              : 'left 0.15s cubic-bezier(0.4, 0, 0.2, 1), width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear',
+              ? 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear, transform 0.06s linear'
+              : 'left 0.15s cubic-bezier(0.4, 0, 0.2, 1), width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear, transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             outline: 'none',
           }}
         />

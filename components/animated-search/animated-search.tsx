@@ -1,6 +1,21 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const STYLE_ID = 'animated-search-styles';
+function injectStyles() {
+  if (typeof document === 'undefined' || document.getElementById(STYLE_ID)) return;
+  const s = document.createElement('style');
+  s.id = STYLE_ID;
+  s.textContent = `
+    @keyframes as-border-pulse {
+      0%, 100% { box-shadow: 0 0 0 0px color-mix(in oklch, var(--accent) 0%, transparent); }
+      50%       { box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent); }
+    }
+  `;
+  document.head.appendChild(s);
+}
+injectStyles();
+
 interface AnimatedSearchProps {
   placeholder?: string;
   onSearch?: (value: string) => void;
@@ -23,6 +38,7 @@ export function AnimatedSearch({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const iconSize = 42;
+  const hasContent = value.length > 0;
 
   const open = useCallback(() => {
     setIsOpen(true);
@@ -41,6 +57,20 @@ export function AnimatedSearch({
       return () => clearTimeout(id);
     }
   }, [isOpen]);
+
+  // Keyboard shortcut: / or ⌘K opens the search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
+      if ((e.key === '/' || (e.metaKey && e.key === 'k')) && !isOpen) {
+        e.preventDefault();
+        open();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, open]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && value.trim()) {
@@ -86,6 +116,19 @@ export function AnimatedSearch({
         onClick={!isOpen ? open : undefined}
       />
 
+      {/* Border pulse overlay — visible while typing */}
+      {hasContent && isOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: iconSize / 2,
+            pointerEvents: 'none',
+            animation: 'as-border-pulse 2s ease-in-out infinite',
+          }}
+        />
+      )}
+
       {/* Search icon button */}
       <motion.button
         type="button"
@@ -102,7 +145,8 @@ export function AnimatedSearch({
           border: 'none',
           cursor: 'pointer',
           padding: 0,
-          color: 'var(--foreground)',
+          color: hasContent && isOpen ? 'var(--accent)' : 'var(--foreground)',
+          transition: 'color 0.25s ease',
           flexShrink: 0,
         }}
         whileHover={{ scale: 1.1 }}
@@ -157,6 +201,7 @@ export function AnimatedSearch({
                 color: 'var(--foreground)',
                 fontSize: '0.875rem',
                 fontFamily: 'inherit',
+                caretColor: 'var(--accent)',
               }}
             />
           </motion.div>
