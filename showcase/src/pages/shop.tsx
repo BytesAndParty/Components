@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Section } from '../components/section'
 import { Stepper, Step } from '@components/stepper/stepper'
 import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
-import { CartIcon } from '../components/cart-icon'
-import { AddToCartButton } from '../components/add-to-cart-button'
-import { useToast } from '../components/toast'
+import { CartIcon } from '@components/cart-icon/cart-icon'
+import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
+import { useToast } from '@components/toast/toast'
 import { useCart } from '../layout'
 
 export function ShopPage() {

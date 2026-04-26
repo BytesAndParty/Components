@@ -10,7 +10,7 @@ import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cel
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
 import { useImageUpload } from '@components/use-image-upload/image-upload'
-import { useToast } from '../components/toast'
+import { useToast } from '@components/toast/toast'
 import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
 import { PasswordSetup } from '@components/password-setup/password-setup'
 import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.json'
