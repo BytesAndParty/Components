@@ -11,32 +11,49 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const isPostgres = process.env.DB_TYPE === 'postgres';
+
+const corsOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:5173,http://localhost:4321')
+  .split(',')
+  .map((o) => o.trim());
+
 export const config: VendureConfig = {
   apiOptions: {
-    port: 3000,
+    port: parseInt(process.env.PORT ?? '3000'),
     adminApiPath: 'admin-api',
     shopApiPath: 'shop-api',
-    // CORS für Storefront auf Port 5173 (Vite Dev)
     cors: {
-      origin: ['http://localhost:5173', 'http://localhost:3000'],
+      origin: corsOrigins,
       credentials: true,
     },
   },
   authOptions: {
     tokenMethod: ['bearer', 'cookie'],
     cookieOptions: {
-      secret: 'wine-showcase-dev-secret',
+      secret: process.env.COOKIE_SECRET ?? 'wine-showcase-dev-secret',
     },
     superadminCredentials: {
-      identifier: 'superadmin',
-      password: 'superadmin',
+      identifier: process.env.SUPERADMIN_USERNAME ?? 'superadmin',
+      password: process.env.SUPERADMIN_PASSWORD ?? 'superadmin',
     },
   },
-  dbConnectionOptions: {
-    type: 'better-sqlite3',
-    synchronize: true,
-    database: path.join(__dirname, '..', 'data', 'vendure.sqlite'),
-  },
+  dbConnectionOptions: isPostgres
+    ? {
+        type: 'postgres',
+        host: process.env.DB_HOST ?? 'localhost',
+        port: parseInt(process.env.DB_PORT ?? '5432'),
+        database: process.env.DB_NAME ?? 'wine_server',
+        username: process.env.DB_USER ?? 'vendure',
+        password: process.env.DB_PASSWORD ?? 'vendure_pw',
+        synchronize: process.env.NODE_ENV !== 'production',
+        logging: false,
+      }
+    : {
+        type: 'better-sqlite3',
+        synchronize: true,
+        database: path.join(__dirname, '..', 'data', 'vendure.sqlite'),
+        logging: false,
+      },
   plugins: [
     AssetServerPlugin.init({
       route: 'assets',
@@ -46,7 +63,7 @@ export const config: VendureConfig = {
     DefaultJobQueuePlugin.init({}),
     AdminUiPlugin.init({
       route: 'admin',
-      port: 3002,
+      port: parseInt(process.env.ADMIN_PORT ?? '3002'),
     }),
   ],
   customFields: {
