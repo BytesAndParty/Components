@@ -42,6 +42,12 @@ export const groups = [
     components: ['CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
   },
   {
+    path: '/designer',
+    title: 'Designer',
+    description: 'Building blocks für den Wine Label Designer: Color Picker, Text Toolbar und weitere Editor-Komponenten.',
+    components: ['ColorPicker'],
+  },
+  {
     path: '/transitions',
     title: 'View Transitions',
     description: 'CSS View Transitions API mit 5 Presets + 3 wein-themed Customs (Wine Pour, Cork Pop, Grape Burst).',

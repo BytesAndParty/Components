@@ -11,6 +11,7 @@ const FeedbackPage = lazy(() => import('./pages/feedback').then(m => ({ default:
 const NavigationPage = lazy(() => import('./pages/navigation').then(m => ({ default: m.NavigationPage })))
 const ShopPage = lazy(() => import('./pages/shop').then(m => ({ default: m.ShopPage })))
 const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
+const DesignerPage = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: 'navigation', element: <Suspense><NavigationPage /></Suspense> },
       { path: 'shop', element: <Suspense><ShopPage /></Suspense> },
       { path: 'transitions', element: <Suspense><TransitionsPage /></Suspense> },
+      { path: 'designer', element: <Suspense><DesignerPage /></Suspense> },
     ],
   },
 ])
