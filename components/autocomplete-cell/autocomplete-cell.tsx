@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
-
-const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ')
+import { cn } from '../lib/utils'
 
 export interface AutocompleteSuggestion {
   id: number | string
@@ -121,7 +120,7 @@ export function AutocompleteCell({
 
   return (
     <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 transition-colors focus-within:border-accent">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 transition-all duration-200 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20">
         <span className="shrink-0 text-muted-foreground transition-colors group-focus-within:text-accent">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -146,7 +145,7 @@ export function AutocompleteCell({
           }}
           onBlur={onBlur}
           placeholder={placeholder}
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
         />
 
         <AnimatePresence>
@@ -171,7 +170,7 @@ export function AutocompleteCell({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 top-full mt-1.5 w-full bg-card border border-accent rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-border"
+            className="absolute left-0 top-full mt-1.5 w-full bg-card border border-accent/50 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-accent/20 hover:scrollbar-thumb-accent/40"
           >
             <div className="py-1">
               {filtered.map((item, i) => (
@@ -182,7 +181,7 @@ export function AutocompleteCell({
                     'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors',
                     i === highlightIndex
                       ? 'bg-accent text-white'
-                      : 'hover:bg-white/5 text-foreground'
+                      : 'hover:bg-accent/5 text-foreground'
                   )}
                   onMouseDown={(e) => {
                     e.preventDefault()
@@ -194,16 +193,16 @@ export function AutocompleteCell({
                     <span className="font-medium truncate">{item.label}</span>
                     {item.subLabel && (
                       <span className={cn(
-                        'text-[10px] truncate opacity-70',
-                        i === highlightIndex ? 'text-white' : 'text-muted-foreground'
+                        'text-[10px] truncate transition-opacity',
+                        i === highlightIndex ? 'text-white/90' : 'text-muted-foreground/80'
                       )}>
                         {item.subLabel}
                       </span>
                     )}
                   </div>
                   <ChevronRight className={cn(
-                    'h-3.5 w-3.5 shrink-0 opacity-40 transition-[opacity,transform]',
-                    i === highlightIndex && 'translate-x-0.5 opacity-100'
+                    'h-3.5 w-3.5 shrink-0 transition-[opacity,transform]',
+                    i === highlightIndex ? 'translate-x-0.5 opacity-100' : 'opacity-20'
                   )} />
                 </button>
               ))}

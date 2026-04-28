@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { cn } from '../lib/utils';
 
 export interface GooeyInputProps {
   placeholder?: string;
@@ -86,17 +87,15 @@ export function GooeyInput({
 
   return (
     <div
-      className={className}
+      className={cn("relative inline-block", className)}
       style={{
-        position: 'relative',
-        display: 'inline-block',
         width,
         height,
         ...style,
       }}
     >
       {/* Hidden goo filter defs */}
-      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+      <svg width="0" height="0" className="absolute" aria-hidden="true">
         <defs>
           <filter id={`gooey-${filterId}`}>
             <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
@@ -108,24 +107,21 @@ export function GooeyInput({
 
       {/* Goo-filtered layer: pill + button share the filter so they fuse */}
       <div
+        className="absolute inset-0"
         style={{
-          position: 'absolute',
-          inset: 0,
           filter: `url(#gooey-${filterId})`,
         }}
       >
         {/* Pill background */}
         <div
+          className="absolute right-0 top-0 transition-[width] cubic-bezier(0.77, 0, 0.18, 1)"
           style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
             height,
             width: open ? width : height,
             background: isOutline ? 'var(--card)' : color,
             boxShadow: isOutline ? `inset 0 0 0 2.5px ${color}` : 'none',
             borderRadius: height,
-            transition: `width ${duration}ms cubic-bezier(0.77, 0, 0.18, 1)`,
+            transitionDuration: `${duration}ms`,
           }}
         />
         {/* Trigger circle (same color, fused) */}
@@ -133,31 +129,27 @@ export function GooeyInput({
           type="button"
           aria-label={open ? 'Suche schließen' : 'Suche öffnen'}
           onClick={() => setOpen((v) => !v)}
+          className={cn(
+            "absolute right-0 top-0 rounded-full border-none cursor-pointer p-0 grid place-items-center transition-transform",
+            isOutline ? "bg-[var(--card)]" : "bg-[var(--accent)]"
+          )}
           style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
             width: height,
             height,
-            borderRadius: '50%',
-            border: 'none',
             background: isOutline ? 'var(--card)' : color,
             boxShadow: isOutline ? `inset 0 0 0 2.5px ${color}` : 'none',
             color: isOutline ? color : iconColor,
-            cursor: 'pointer',
-            display: 'grid',
-            placeItems: 'center',
-            padding: 0,
             transform: open ? 'scale(1.08)' : 'scale(1)',
-            transition: `transform ${duration * 0.45}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
-            fontFamily: 'inherit',
+            transitionDuration: `${duration * 0.45}ms`,
+            transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
           <span
+            className="inline-flex transition-transform"
             style={{
-              display: 'inline-flex',
               transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-              transition: `transform ${duration * 0.5}ms cubic-bezier(0.68, -0.55, 0.27, 1.55)`,
+              transitionDuration: `${duration * 0.5}ms`,
+              transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
             }}
           >
             {icon ?? defaultIcon}
@@ -175,24 +167,20 @@ export function GooeyInput({
         onKeyDown={handleKey}
         tabIndex={open ? 0 : -1}
         aria-hidden={!open}
+        className={cn(
+          "absolute left-0 top-0 border-none outline-none bg-transparent text-sm transition-[opacity,width]",
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
         style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
           height,
           width: open ? width - height : 0,
           padding: open ? `0 ${height * 0.4}px 0 ${height * 0.5}px` : 0,
-          border: 'none',
-          outline: 'none',
           borderRadius: height,
-          background: 'transparent',
           color: isOutline ? 'var(--foreground)' : '#fff',
           caretColor: isOutline ? color : '#fff',
-          fontSize: 14,
-          fontFamily: 'inherit',
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? 'auto' : 'none',
-          transition: `opacity ${duration * 0.5}ms ease ${duration * 0.4}ms, width ${duration}ms cubic-bezier(0.77, 0, 0.18, 1)`,
+          transitionDuration: `${duration}ms`,
+          transitionDelay: open ? `${duration * 0.4}ms` : '0ms',
+          transitionTimingFunction: 'cubic-bezier(0.77, 0, 0.18, 1)',
         }}
       />
     </div>

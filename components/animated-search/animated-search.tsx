@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../lib/utils';
 
 const STYLE_ID = 'animated-search-styles';
 function injectStyles() {
@@ -88,27 +89,18 @@ export function AnimatedSearch({
 
   return (
     <motion.div
-      className={className}
-      style={{
-        position: 'relative',
-        height: iconSize,
-        display: 'inline-flex',
-        alignItems: 'center',
-        ...style,
-      }}
+      className={cn("relative inline-flex items-center h-[42px]", className)}
+      style={{ ...style }}
       animate={{ width: isOpen ? expandedWidth : iconSize }}
       transition={{ type: 'spring', damping: 22, stiffness: 170 }}
     >
       {/* Background pill */}
       <motion.div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: iconSize / 2,
-          border: '2.5px solid var(--border)',
-          background: 'var(--card)',
-          cursor: isOpen ? 'default' : 'pointer',
-        }}
+        className={cn(
+          "absolute inset-0 border-[2.5px] bg-[var(--card)] transition-colors duration-300",
+          isOpen ? "border-[var(--accent)] cursor-default" : "border-[var(--border)] cursor-pointer"
+        )}
+        style={{ borderRadius: iconSize / 2 }}
         animate={{
           borderColor: isOpen ? 'var(--accent)' : 'var(--border)',
         }}
@@ -119,11 +111,9 @@ export function AnimatedSearch({
       {/* Border pulse overlay — visible while typing */}
       {hasContent && isOpen && (
         <div
+          className="absolute inset-0 pointer-events-none"
           style={{
-            position: 'absolute',
-            inset: 0,
             borderRadius: iconSize / 2,
-            pointerEvents: 'none',
             animation: 'as-border-pulse 2s ease-in-out infinite',
           }}
         />
@@ -133,22 +123,10 @@ export function AnimatedSearch({
       <motion.button
         type="button"
         onClick={isOpen ? () => { if (value.trim()) onSearch?.(value.trim()); else close(); } : open}
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          width: iconSize,
-          height: iconSize,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 0,
-          color: hasContent && isOpen ? 'var(--accent)' : 'var(--foreground)',
-          transition: 'color 0.25s ease',
-          flexShrink: 0,
-        }}
+        className={cn(
+          "relative z-10 w-[42px] h-[42px] flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 transition-colors duration-250",
+          hasContent && isOpen ? "text-[var(--accent)]" : "text-[var(--foreground)]"
+        )}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         aria-label={isOpen ? 'Submit search' : 'Open search'}
@@ -176,14 +154,7 @@ export function AnimatedSearch({
             animate={{ opacity: 1, width: expandedWidth - iconSize - iconSize }}
             exit={{ opacity: 0, width: 0 }}
             transition={{ type: 'spring', damping: 22, stiffness: 170 }}
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              overflow: 'hidden',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className="relative z-10 overflow-hidden h-full flex items-center"
           >
             <input
               ref={inputRef}
@@ -192,17 +163,7 @@ export function AnimatedSearch({
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              style={{
-                width: '100%',
-                height: '100%',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                color: 'var(--foreground)',
-                fontSize: '0.875rem',
-                fontFamily: 'inherit',
-                caretColor: 'var(--accent)',
-              }}
+              className="w-full h-full bg-transparent border-none outline-none text-[var(--foreground)] text-sm font-inherit caret-[var(--accent)]"
             />
           </motion.div>
         )}
@@ -218,21 +179,7 @@ export function AnimatedSearch({
             exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
             transition={{ type: 'spring', damping: 18, stiffness: 170 }}
             onClick={close}
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              width: iconSize,
-              height: iconSize,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              color: 'var(--muted-foreground)',
-              flexShrink: 0,
-            }}
+            className="relative z-10 w-[42px] h-[42px] flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 text-[var(--muted-foreground)]"
             whileHover={{ scale: 1.1, color: 'var(--foreground)' }}
             whileTap={{ scale: 0.95 }}
             aria-label="Close search"

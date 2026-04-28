@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react';
+import { cn } from '../lib/utils';
 
 export interface TimelineItem {
-  /** Year or date label — shown left of the dot */
+  /** Year or date label — shown left of the dot on desktop, above title on mobile */
   year?: string;
   /** Title of the entry */
   title: string;
@@ -99,8 +100,8 @@ export function Timeline({
   return (
     <ol
       ref={rootRef}
-      className={className}
-      style={{ listStyle: 'none', padding: 0, margin: 0, ...style }}
+      className={cn("list-none p-0 m-0", className)}
+      style={style}
     >
       {items.map((it, i) => {
         const show = visible.has(i);
@@ -111,18 +112,12 @@ export function Timeline({
             key={i}
             data-timeline-item
             data-index={i}
-            style={{
-              display: 'grid',
-              // year col | dot+spine col | content col
-              gridTemplateColumns: '72px 44px 1fr',
-              columnGap: 16,
-            }}
+            className="grid grid-cols-[36px_1fr] sm:grid-cols-[72px_44px_1fr] gap-x-4"
           >
-            {/* ── Year ─────────────────────────────────────────── */}
+            {/* ── Year (Desktop) ───────────────────────────── */}
             <div
+              className="hidden sm:block text-right"
               style={{
-                textAlign: 'right',
-                // vertically center year label with dot center
                 paddingTop: (DOT_SIZE - 18) / 2,
                 opacity: show ? 1 : 0,
                 animation: show
@@ -132,15 +127,8 @@ export function Timeline({
             >
               {it.year && (
                 <span
-                  style={{
-                    display: 'block',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    letterSpacing: '0.04em',
-                    fontVariantNumeric: 'tabular-nums',
-                    color: dotColor,
-                    lineHeight: '18px',
-                  }}
+                  className="block text-[13px] font-semibold tracking-wide tabular-nums leading-[18px]"
+                  style={{ color: dotColor }}
                 >
                   {it.year}
                 </span>
@@ -148,37 +136,19 @@ export function Timeline({
             </div>
 
             {/* ── Dot + vertical spine ──────────────────────────── */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              {/* Dot wrapper — relative so pulse ring can overlay */}
+            <div className="flex flex-col items-center">
+              {/* Dot wrapper */}
               <div
-                style={{
-                  position: 'relative',
-                  width: DOT_SIZE,
-                  height: DOT_SIZE,
-                  flexShrink: 0,
-                }}
+                className="relative shrink-0"
+                style={{ width: DOT_SIZE, height: DOT_SIZE }}
               >
                 {/* Dot */}
                 <div
                   aria-hidden="true"
+                  className="absolute inset-0 rounded-full border-[3px] border-[var(--background)] grid place-items-center text-white text-[13px] font-bold"
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
                     background: dotColor,
-                    border: '3px solid var(--background)',
                     boxShadow: `0 0 0 2px ${dotColor}, 0 0 14px color-mix(in oklch, ${dotColor} 30%, transparent)`,
-                    display: 'grid',
-                    placeItems: 'center',
-                    color: '#fff',
-                    fontSize: 13,
-                    fontWeight: 700,
                     animation: show
                       ? 'timeline-dot-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
                       : 'none',
@@ -187,18 +157,15 @@ export function Timeline({
                 >
                   {it.marker ?? i + 1}
                 </div>
-                {/* Pulse ring — fires once after dot-in completes */}
+                {/* Pulse ring */}
                 {show && (
                   <div
                     aria-hidden="true"
+                    className="absolute inset-0 rounded-full pointer-events-none"
                     style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '50%',
                       border: `2px solid ${dotColor}`,
                       animation: 'timeline-dot-pulse 0.65s ease-out both',
                       animationDelay: '300ms',
-                      pointerEvents: 'none',
                     }}
                   />
                 )}
@@ -208,14 +175,9 @@ export function Timeline({
               {!isLast && (
                 <div
                   aria-hidden="true"
+                  className="flex-1 w-[2px] min-h-[24px] mt-1 rounded-sm origin-top"
                   style={{
-                    flex: 1,
-                    width: 2,
-                    minHeight: 24,
-                    marginTop: 4,
                     background: lineColor,
-                    borderRadius: 2,
-                    transformOrigin: 'top',
                     animation: show
                       ? 'timeline-line-grow 350ms ease both'
                       : 'none',
@@ -228,36 +190,34 @@ export function Timeline({
 
             {/* ── Content ───────────────────────────────────────── */}
             <div
+              className={cn(show ? "opacity-100" : "opacity-0")}
               style={{
                 paddingBottom: isLast ? 0 : 40,
-                opacity: show ? 1 : 0,
                 animation: show
                   ? 'timeline-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both'
                   : 'none',
                 animationDelay: show ? '80ms' : undefined,
               }}
             >
+              {/* Year (Mobile only) */}
+              {it.year && (
+                <span
+                  className="sm:hidden block text-xs font-semibold mb-1"
+                  style={{ color: dotColor, paddingTop: (DOT_SIZE - 22) / 2 }}
+                >
+                  {it.year}
+                </span>
+              )}
+              
               <h3
+                className="m-0 text-base font-semibold text-[var(--foreground)] leading-[1.35]"
                 style={{
-                  margin: 0,
-                  // align title baseline with dot center
-                  paddingTop: (DOT_SIZE - 22) / 2,
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: 'var(--foreground)',
-                  lineHeight: 1.35,
+                  paddingTop: it.year ? 0 : (DOT_SIZE - 22) / 2,
                 }}
               >
                 {it.title}
               </h3>
-              <div
-                style={{
-                  marginTop: 8,
-                  color: 'var(--muted-foreground)',
-                  fontSize: 14,
-                  lineHeight: 1.65,
-                }}
-              >
+              <div className="mt-2 text-[var(--muted-foreground)] text-sm leading-[1.65]">
                 {it.content}
               </div>
             </div>

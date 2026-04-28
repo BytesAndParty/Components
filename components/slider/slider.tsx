@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { cn } from '../lib/utils';
 
 type Size = 'sm' | 'md' | 'lg';
 
@@ -167,31 +168,18 @@ export function Slider({
 
   return (
     <div
-      className={className}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.5rem',
-        opacity: disabled ? 0.5 : 1,
-        ...style,
-      }}
+      className={cn("flex flex-col gap-2", className)}
+      style={{ opacity: disabled ? 0.5 : 1, ...style }}
     >
       {(label || showValue) && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '1rem' }}>
+        <div className="flex justify-between items-baseline gap-4">
           {label && (
-            <label htmlFor={id} style={{ fontSize: '0.8125rem', color: 'var(--foreground)', fontWeight: 500 }}>
+            <label htmlFor={id} className="text-[13px] text-[var(--foreground)] font-medium">
               {label}
             </label>
           )}
           {showValue && (
-            <span
-              style={{
-                fontSize: '0.8125rem',
-                color: 'var(--muted-foreground)',
-                fontVariantNumeric: 'tabular-nums',
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              }}
-            >
+            <span className="text-[13px] text-[var(--muted-foreground)] font-mono tabular-nums">
               {displayValue}
             </span>
           )}
@@ -209,37 +197,30 @@ export function Slider({
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setMagnetOffset(0)}
+        className={cn(
+          "relative flex items-center touch-none select-none",
+          disabled ? "cursor-not-allowed" : "cursor-pointer"
+        )}
         style={{
-          position: 'relative',
           height: Math.max(s.thumbActive, s.trackH) + 4,
-          display: 'flex',
-          alignItems: 'center',
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          touchAction: 'none',
           WebkitTapHighlightColor: 'transparent',
         }}
       >
         {/* Track (off portion) */}
         <div
+          className="absolute left-0 right-0 border border-[var(--border)] bg-[var(--muted)]"
           style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
             height: s.trackH,
             borderRadius: s.trackH,
-            background: 'var(--muted)',
-            border: '1px solid var(--border)',
           }}
         />
         {/* Filled portion */}
         <div
+          className="absolute left-0 bg-[var(--accent)]"
           style={{
-            position: 'absolute',
-            left: 0,
             width: `${pct}%`,
             height: s.trackH,
             borderRadius: s.trackH,
-            background: 'var(--accent)',
             boxShadow: dragging
               ? '0 0 10px 2px color-mix(in oklch, var(--accent) 35%, transparent)'
               : 'none',
@@ -251,24 +232,13 @@ export function Slider({
         {/* Floating value tooltip */}
         <div
           aria-hidden="true"
+          className={cn(
+            "absolute bottom-[calc(100%+8px)] bg-[var(--foreground)] text-[var(--background)] text-[11px] font-mono font-bold px-[7px] py-[2px] rounded-[6px] whitespace-nowrap pointer-events-none z-10 transition-opacity duration-150",
+            dragging ? "opacity-100" : "opacity-0"
+          )}
           style={{
-            position: 'absolute',
             left: `${pct}%`,
-            bottom: 'calc(100% + 8px)',
             transform: `translateX(calc(-50% + ${elasticOffset}px))`,
-            background: 'var(--foreground)',
-            color: 'var(--background)',
-            fontSize: '0.6875rem',
-            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-            fontVariantNumeric: 'tabular-nums',
-            fontWeight: 600,
-            padding: '2px 7px',
-            borderRadius: 6,
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            opacity: dragging ? 1 : 0,
-            transition: 'opacity 0.12s ease',
-            zIndex: 10,
           }}
         >
           {displayValue}
@@ -287,13 +257,12 @@ export function Slider({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onKeyDown={handleKey}
+          className="absolute bg-white outline-none"
           style={{
-            position: 'absolute',
             left: `calc(${pct}% - ${thumbW / 2}px)`,
             width: thumbW,
             height: s.thumb,
             borderRadius: s.thumb / 2,
-            background: '#fff',
             boxShadow:
               focused || dragging
                 ? `0 0 0 4px color-mix(in oklch, var(--accent) 25%, transparent), 0 1px 3px rgba(0,0,0,0.3)`
@@ -302,7 +271,6 @@ export function Slider({
             transition: dragging
               ? 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear, transform 0.06s linear'
               : 'left 0.15s cubic-bezier(0.4, 0, 0.2, 1), width 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear, transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            outline: 'none',
           }}
         />
       </div>

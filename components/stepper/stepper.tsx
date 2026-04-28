@@ -7,6 +7,7 @@ import {
   isValidElement,
 } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '../lib/utils'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -52,15 +53,7 @@ function StepIndicator({
   titles: (string | undefined)[]
 }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0',
-        marginBottom: '32px',
-      }}
-    >
+    <div className="flex flex-wrap items-center justify-center gap-x-0 gap-y-4 mb-8">
       {Array.from({ length: totalSteps }, (_, i) => {
         const stepNum = i + 1
         const isCompleted = stepNum < currentStep
@@ -68,31 +61,15 @@ function StepIndicator({
         const isPending = stepNum > currentStep
 
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div key={i} className="flex items-center">
+            <div className="flex flex-col items-center gap-1.5">
               <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  transition: 'all 300ms ease',
-                  background: isCompleted
-                    ? 'var(--accent, #6366f1)'
-                    : isActive
-                      ? 'var(--accent, #6366f1)'
-                      : 'transparent',
-                  color: isCompleted || isActive
-                    ? '#ffffff'
-                    : 'var(--muted-foreground, #71717a)',
-                  border: isPending
-                    ? '2px solid var(--border, #2a2a2e)'
-                    : '2px solid var(--accent, #6366f1)',
-                }}
+                className={cn(
+                  "w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 border-2",
+                  isCompleted || isActive
+                    ? "bg-[var(--accent,#6366f1)] text-white border-[var(--accent,#6366f1)]"
+                    : "bg-transparent text-[var(--muted-foreground,#71717a)] border-[var(--border,#2a2a2e)]"
+                )}
               >
                 {isCompleted ? (
                   <motion.svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -109,15 +86,12 @@ function StepIndicator({
               </div>
               {titles[i] && (
                 <span
-                  style={{
-                    fontSize: '12px',
-                    color: isActive
-                      ? 'var(--foreground, #e4e4e7)'
-                      : 'var(--muted-foreground, #71717a)',
-                    fontWeight: isActive ? 600 : 400,
-                    whiteSpace: 'nowrap',
-                    transition: 'color 300ms ease',
-                  }}
+                  className={cn(
+                    "text-[10px] md:text-xs transition-colors duration-300 whitespace-nowrap",
+                    isActive
+                      ? "text-[var(--foreground,#e4e4e7)] font-semibold"
+                      : "text-[var(--muted-foreground,#71717a)] font-normal"
+                  )}
                 >
                   {titles[i]}
                 </span>
@@ -127,25 +101,14 @@ function StepIndicator({
             {/* Connector line */}
             {i < totalSteps - 1 && (
               <div
-                style={{
-                  width: '48px',
-                  height: '2px',
-                  marginLeft: '8px',
-                  marginRight: '8px',
-                  marginBottom: titles[i] ? '22px' : '0',
-                  background: 'var(--border, #2a2a2e)',
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                }}
+                className={cn(
+                  "w-8 md:w-12 h-[2px] mx-1 md:mx-2 bg-[var(--border,#2a2a2e)] rounded-sm overflow-hidden",
+                  titles[i] ? "mb-[18px] md:mb-[22px]" : "mb-0"
+                )}
               >
                 <div
-                  style={{
-                    height: '100%',
-                    width: stepNum < currentStep ? '100%' : '0%',
-                    background: 'var(--accent, #6366f1)',
-                    transition: 'width 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
-                    borderRadius: 'inherit',
-                  }}
+                  className="h-full bg-[var(--accent,#6366f1)] transition-[width] duration-450 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                  style={{ width: stepNum < currentStep ? '100%' : '0%' }}
                 />
               </div>
             )}
@@ -215,23 +178,12 @@ export function Stepper({
     }),
   }
 
-  const buttonBase: CSSProperties = {
-    padding: '10px 24px',
-    borderRadius: '8px',
-    border: 'none',
-    fontSize: '14px',
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'all 200ms ease',
-    fontFamily: 'inherit',
-  }
-
   return (
     <div className={className} style={style}>
       <StepIndicator totalSteps={totalSteps} currentStep={currentStep} titles={titles} />
 
       {/* Step content with animation */}
-      <div style={{ position: 'relative', overflow: 'hidden', minHeight: '120px' }}>
+      <div className="relative overflow-hidden min-h-[120px]">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
@@ -248,26 +200,17 @@ export function Stepper({
       </div>
 
       {/* Navigation buttons */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginTop: '24px',
-          gap: '12px',
-        }}
-      >
+      <div className="flex justify-between mt-6 gap-3">
         <button
           type="button"
           onClick={goBack}
           disabled={isFirstStep}
-          style={{
-            ...buttonBase,
-            background: 'transparent',
-            color: isFirstStep ? 'var(--muted-foreground, #71717a)' : 'var(--foreground, #e4e4e7)',
-            border: `1px solid ${isFirstStep ? 'var(--border, #2a2a2e)' : 'var(--border, #2a2a2e)'}`,
-            opacity: isFirstStep ? 0.5 : 1,
-            cursor: isFirstStep ? 'not-allowed' : 'pointer',
-          }}
+          className={cn(
+            "px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border cursor-pointer",
+            isFirstStep
+              ? "bg-transparent text-[var(--muted-foreground,#71717a)] border-[var(--border,#2a2a2e)] opacity-50 cursor-not-allowed"
+              : "bg-transparent text-[var(--foreground,#e4e4e7)] border-[var(--border,#2a2a2e)] hover:bg-white/5"
+          )}
         >
           {backButtonText}
         </button>
@@ -275,13 +218,7 @@ export function Stepper({
         <button
           type="button"
           onClick={goNext}
-          style={{
-            ...buttonBase,
-            background: 'var(--accent, #6366f1)',
-            color: '#ffffff',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+          className="px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 bg-[var(--accent,#6366f1)] text-white border-none cursor-pointer hover:opacity-90 active:scale-95"
         >
           {isLastStep ? finalButtonText : nextButtonText}
         </button>
