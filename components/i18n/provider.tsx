@@ -1,35 +1,75 @@
-import { createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { en } from './locales/en'
 import { de } from './locales/de'
 import type { Locale, GlobalMessages } from './types'
 import { interpolate } from './types'
+
+const STORAGE_KEY = 'design-engine-locale'
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
 interface I18nContextValue {
   locale: Locale
   t: (key: keyof GlobalMessages, vars?: Record<string, string | number>) => string
-  setLocale?: (locale: Locale) => void
+  setLocale: (locale: Locale) => void
 }
 
 const locales: Record<Locale, GlobalMessages> = { en, de }
 
+function readStoredLocale(): Locale {
+  if (typeof localStorage === 'undefined') return 'de'
+  const stored = localStorage.getItem(STORAGE_KEY)
+  return stored === 'en' || stored === 'de' ? stored : 'de'
+}
+
 const I18nContext = createContext<I18nContextValue>({
   locale: 'de',
   t: (key, vars) => interpolate(de[key] ?? en[key] ?? key, vars),
+  setLocale: () => {},
 })
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 interface I18nProviderProps {
-  locale: Locale
-  /** Optional partial overrides — merged on top of the built-in locale strings. */
+  /** Optional controlled locale — if provided, overrides localStorage. */
+  locale?: Locale
+  /** Optional partial string overrides merged on top of the built-in locale. */
   overrides?: Partial<GlobalMessages>
+  /** Called when locale changes (useful in controlled mode). */
   onLocaleChange?: (locale: Locale) => void
+  /** localStorage key. Default: 'design-engine-locale'. */
+  storageKey?: string
   children: ReactNode
 }
 
-export function I18nProvider({ locale, overrides, onLocaleChange, children }: I18nProviderProps) {
+export function I18nProvider({
+  locale: localeProp,
+  overrides,
+  onLocaleChange,
+  storageKey = STORAGE_KEY,
+  children,
+}: I18nProviderProps) {
+  const [locale, setLocaleState] = useState<Locale>(
+    localeProp ?? readStoredLocale()
+  )
+
+  // Sync if controlled prop changes externally
+  useEffect(() => {
+    if (localeProp && localeProp !== locale) setLocaleState(localeProp)
+  }, [localeProp])
+
+  // Sync DOM on every locale change
+  useEffect(() => {
+    document.documentElement.lang = locale
+    document.documentElement.setAttribute('data-locale', locale)
+  }, [locale])
+
+  function setLocale(next: Locale) {
+    setLocaleState(next)
+    try { localStorage.setItem(storageKey, next) } catch {}
+    onLocaleChange?.(next)
+  }
+
   const base = locales[locale]
 
   function t(key: keyof GlobalMessages, vars?: Record<string, string | number>): string {
@@ -38,7 +78,7 @@ export function I18nProvider({ locale, overrides, onLocaleChange, children }: I1
   }
 
   return (
-    <I18nContext value={{ locale, t, setLocale: onLocaleChange }}>
+    <I18nContext value={{ locale, t, setLocale }}>
       {children}
     </I18nContext>
   )
@@ -46,19 +86,10 @@ export function I18nProvider({ locale, overrides, onLocaleChange, children }: I1
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
 
-/** Access global translations. Must be inside I18nProvider. */
 export function useI18n() {
   return useContext(I18nContext)
 }
 
-/**
- * Hook for components with their own message shapes (Option C).
- * Merges component-level defaults with any consumer override from the `messages` prop.
- *
- * @example
- * const m = useComponentMessages(defaultMessages, props.messages)
- * // m.deleteLayer → 'Ebene löschen' (de) or consumer override
- */
 export function useComponentMessages<T extends Record<string, string>>(
   defaults: Record<Locale, T>,
   override?: Partial<T>
