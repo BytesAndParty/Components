@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Reorder, useDragControls } from 'framer-motion'
+import { Reorder, useDragControls } from 'motion/react'
 import {
   Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode,
   Eye, EyeOff, Lock, Unlock, Trash2, GripVertical,

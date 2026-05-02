@@ -6,7 +6,7 @@ import {
   Children,
   isValidElement,
 } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 

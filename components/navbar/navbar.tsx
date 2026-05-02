@@ -8,7 +8,7 @@ import {
   type ReactNode,
   type CSSProperties,
 } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 
 // ─── Context ────────────────────────────────────────────────────────────────────
 

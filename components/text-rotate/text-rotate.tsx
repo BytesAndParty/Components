@@ -6,7 +6,7 @@ import {
   useMemo,
   useImperativeHandle,
 } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 function splitText(text: string, splitBy: string): string[] {
   if (splitBy === 'characters') {

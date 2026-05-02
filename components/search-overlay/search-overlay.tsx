@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';

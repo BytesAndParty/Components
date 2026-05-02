@@ -7,7 +7,17 @@ const nm = (pkg: string) => path.resolve(__dirname, `node_modules/${pkg}`)
 const arkui = (name: string) => nm(`@ark-ui/react/dist/components/${name}/index.js`)
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          // React Compiler — eliminates manual useMemo/useCallback
+          ['babel-plugin-react-compiler', { compilationMode: 'all' }],
+        ],
+      },
+    }),
+    tailwindcss(),
+  ],
   publicDir: path.resolve(__dirname, '../_public_'),
   resolve: {
     alias: {
@@ -21,8 +31,12 @@ export default defineConfig({
       '@ark-ui/react/popover':        arkui('popover'),
       '@ark-ui/react/portal':         arkui('portal'),
 
+      // motion (formerly framer-motion) — components import from 'motion/react'
+      // Note: no root 'motion' alias — internal motion/dom imports must resolve naturally
+      'motion/react':                 nm('motion/react'),
+      'framer-motion':                nm('framer-motion'), // kept until all imports migrated
+
       // All other deps that components use from showcase/node_modules
-      'framer-motion':                nm('framer-motion'),
       'lucide-react':                 nm('lucide-react'),
       'clsx':                         nm('clsx'),
       'tailwind-merge':               nm('tailwind-merge'),

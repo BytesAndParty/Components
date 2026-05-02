@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { useHotkey, HotkeyOptions } from '@tanstack/react-hotkeys';
+import { useDeviceCapabilities } from '../lib/use-device-capabilities';
 
 export interface HotkeyMetadata {
   key: string;
@@ -24,9 +25,7 @@ export function useHotkeysRegistry() {
   return context;
 }
 
-/**
- * Enhanced hook that wraps TanStack useHotkey and registers metadata for the Overview UI.
- */
+/** Wraps TanStack useHotkey, registers metadata for ShortcutOverview, and auto-disables on touch devices. */
 export function useDesignEngineHotkey(
   key: string,
   callback: (event: KeyboardEvent) => void,
@@ -34,27 +33,23 @@ export function useDesignEngineHotkey(
   options?: HotkeyOptions
 ) {
   const { register, unregister } = useHotkeysRegistry();
+  const { hasFinePointer } = useDeviceCapabilities();
   const id = React.useId();
 
-  // 1. Register with TanStack Hotkeys
-  useHotkey(key, callback, options);
+  useHotkey(key, callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) });
 
-  // 2. Register metadata for the Overview UI
   React.useEffect(() => {
+    if (!hasFinePointer) return;
     register(id, { key, ...metadata });
     return () => unregister(id);
-  }, [id, key, metadata.label, metadata.description, metadata.category, register, unregister]);
+  }, [id, key, metadata.label, metadata.description, metadata.category, register, unregister, hasFinePointer]);
 }
 
-interface HotkeysProviderProps {
-  children: ReactNode;
-}
-
-export function HotkeysProvider({ children }: HotkeysProviderProps) {
+export function HotkeysProvider({ children }: { children: ReactNode }) {
   const [registry, setRegistry] = useState<Map<string, HotkeyMetadata>>(new Map());
 
   const register = useCallback((id: string, metadata: HotkeyMetadata) => {
-    setRegistry((prev) => {
+    setRegistry(prev => {
       const next = new Map(prev);
       next.set(id, metadata);
       return next;
@@ -62,7 +57,7 @@ export function HotkeysProvider({ children }: HotkeysProviderProps) {
   }, []);
 
   const unregister = useCallback((id: string) => {
-    setRegistry((prev) => {
+    setRegistry(prev => {
       const next = new Map(prev);
       next.delete(id);
       return next;

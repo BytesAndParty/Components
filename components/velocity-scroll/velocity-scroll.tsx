@@ -7,7 +7,7 @@ import {
   useSpring,
   useTransform,
   useVelocity,
-} from 'framer-motion';
+} from 'motion/react';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
 /* -------------------------------------------------------------------------- */

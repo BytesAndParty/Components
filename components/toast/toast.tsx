@@ -6,7 +6,7 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
+import { motion, AnimatePresence, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
 
 /* ---------- Types ---------- */

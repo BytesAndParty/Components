@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type CSSProperties, type ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { Folder as FolderIcon, FolderOpen, FileText } from 'lucide-react'
 
 // ─── Context ────────────────────────────────────────────────────────────────────
