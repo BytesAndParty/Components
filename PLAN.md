@@ -186,6 +186,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | Locale-Switcher in Navbar | ✅ `LanguageSwitcher` Komponente — Globe-Icon, Badge-Flip-Animation, localStorage, data-locale |
 | Vite Config — Subpath-Alias-System | ✅ Stabil, alle Packages explizit aliased |
 | `useDesignEngineHotkey` + ShortcutOverview | ✅ Fertig — `?`-Key, Shift-Hold, Escape |
+| **AtelierProvider** (unified theme+accent+locale) | ✅ — `useAtelier()`, `AtelierInitScript` für FOUC |
 | Ark UI `translations`-Bridge | ⬜ Ausstehend |
 | `@dnd-kit/core` LayerPanel Migration | ⬜ Ausstehend |
 | HotkeysProvider Context-Split | ⬜ Ausstehend |
