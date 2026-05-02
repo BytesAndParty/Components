@@ -5,6 +5,8 @@ import {
   Eye, EyeOff, Lock, Unlock, Trash2, GripVertical,
 } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
+import type { ComponentMessages } from '../i18n'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -18,6 +20,14 @@ export interface Layer {
   locked: boolean
 }
 
+export type LayerPanelMessages = {
+  deleteLayer: string
+  renameLayer: string
+  dragHandle: string
+  visibility: string
+  lock: string
+}
+
 export interface LayerPanelProps {
   layers: Layer[]
   selectedIds?: string[]
@@ -28,7 +38,27 @@ export interface LayerPanelProps {
   onRename?:           (id: string, name: string) => void
   onDelete?:           (id: string) => void
   className?: string
+  messages?: Partial<LayerPanelMessages>
 }
+
+// ── Default messages ──────────────────────────────────────────────────────────
+
+const LAYER_MESSAGES = {
+  de: {
+    deleteLayer: 'Ebene löschen',
+    renameLayer: 'Ebene umbenennen',
+    dragHandle:  'Zum Sortieren ziehen',
+    visibility:  'Sichtbarkeit umschalten',
+    lock:        'Sperre umschalten',
+  },
+  en: {
+    deleteLayer: 'Delete layer',
+    renameLayer: 'Rename layer',
+    dragHandle:  'Drag to reorder',
+    visibility:  'Toggle visibility',
+    lock:        'Toggle lock',
+  },
+} as const satisfies ComponentMessages<LayerPanelMessages>
 
 // ── Icon map ──────────────────────────────────────────────────────────────────
 
@@ -55,7 +85,10 @@ export function LayerPanel({
   onRename,
   onDelete,
   className,
+  messages,
 }: LayerPanelProps) {
+  const m = useComponentMessages(LAYER_MESSAGES, messages)
+
   return (
     <div className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
       {/* Header */}
@@ -84,6 +117,7 @@ export function LayerPanel({
               key={layer.id}
               layer={layer}
               selected={selectedIds.includes(layer.id)}
+              messages={m}
               onSelect={() => onSelect?.(layer.id)}
               onVisibilityToggle={() => onVisibilityToggle?.(layer.id)}
               onLockToggle={() => onLockToggle?.(layer.id)}
@@ -102,6 +136,7 @@ export function LayerPanel({
 function LayerRow({
   layer,
   selected,
+  messages,
   onSelect,
   onVisibilityToggle,
   onLockToggle,
@@ -110,6 +145,7 @@ function LayerRow({
 }: {
   layer: Layer
   selected: boolean
+  messages: LayerPanelMessages
   onSelect: () => void
   onVisibilityToggle: () => void
   onLockToggle: () => void
@@ -144,6 +180,8 @@ function LayerRow({
       {/* Drag handle */}
       <button
         type="button"
+        aria-label={messages.dragHandle}
+        title={messages.dragHandle}
         className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity touch-none"
         onPointerDown={(e) => { e.stopPropagation(); controls.start(e) }}
       >
@@ -164,6 +202,7 @@ function LayerRow({
             type="text"
             value={draft}
             autoFocus
+            aria-label={messages.renameLayer}
             className="w-full text-xs bg-input border border-ring rounded px-1 py-0.5 text-foreground focus:outline-none"
             onChange={(e) => setDraft(e.target.value)}
             onBlur={commitRename}
@@ -189,13 +228,13 @@ function LayerRow({
         className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => e.stopPropagation()}
       >
-        <RowBtn onClick={onVisibilityToggle} title={layer.visible ? 'Hide' : 'Show'}>
+        <RowBtn onClick={onVisibilityToggle} title={messages.visibility}>
           {layer.visible ? <Eye size={11} /> : <EyeOff size={11} />}
         </RowBtn>
-        <RowBtn onClick={onLockToggle} title={layer.locked ? 'Unlock' : 'Lock'}>
+        <RowBtn onClick={onLockToggle} title={messages.lock}>
           {layer.locked ? <Lock size={11} /> : <Unlock size={11} />}
         </RowBtn>
-        <RowBtn onClick={onDelete} title="Delete" danger>
+        <RowBtn onClick={onDelete} title={messages.deleteLayer} danger>
           <Trash2 size={11} />
         </RowBtn>
       </div>

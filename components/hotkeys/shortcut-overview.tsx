@@ -3,6 +3,32 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useHeldKeys, useHotkey } from '@tanstack/react-hotkeys';
 import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-provider';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+
+export type ShortcutOverviewMessages = {
+  title: string;
+  subtitle: string;
+  openHint: string;
+  holdHint: string;
+}
+
+const SHORTCUT_MESSAGES = {
+  de: {
+    title:    'Tastenkürzel',
+    subtitle: 'Alle aktiven Tastenkürzel auf dieser Seite',
+    openHint: 'zum Öffnen',
+    holdHint: 'Halte',
+  },
+  en: {
+    title:    'Shortcut Overview',
+    subtitle: 'All active shortcuts on this page',
+    openHint: 'to open',
+    holdHint: 'Hold',
+  },
+} as const satisfies ComponentMessages<ShortcutOverviewMessages>;
 
 interface ShortcutOverviewProps {
   /** Key to hold to show the overview (default: Shift) */
@@ -10,13 +36,16 @@ interface ShortcutOverviewProps {
   /** Duration to hold in ms before showing (default: 800) */
   holdDuration?: number;
   className?: string;
+  messages?: Partial<ShortcutOverviewMessages>;
 }
 
 export function ShortcutOverview({
   triggerKey = 'Shift',
   holdDuration = 800,
-  className
+  className,
+  messages,
 }: ShortcutOverviewProps) {
+  const m = useComponentMessages(SHORTCUT_MESSAGES, messages);
   const { registry } = useHotkeysRegistry();
   const heldKeys = useHeldKeys();
   const [isVisible, setIsVisible] = useState(false);
@@ -69,7 +98,7 @@ export function ShortcutOverview({
         <div
           role="dialog"
           aria-modal="false"
-          aria-label="Shortcut Übersicht"
+          aria-label={m.title}
           className={cn('fixed inset-0 z-[1000] flex items-center justify-center p-6', className)}
         >
           {/* Backdrop */}
@@ -92,17 +121,17 @@ export function ShortcutOverview({
           >
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-foreground tracking-tight">Shortcut Overview</h2>
+                <h2 className="text-3xl font-bold text-foreground tracking-tight">{m.title}</h2>
                 <p className="text-muted-foreground mt-1">
-                  Alle aktiven Tastenkürzel auf dieser Seite
+                  {m.subtitle}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1.5 bg-muted border border-border rounded-full text-xs text-muted-foreground font-medium">
-                  <kbd className="font-bold text-foreground">?</kbd> zum Öffnen
+                  <kbd className="font-bold text-foreground">?</kbd> {m.openHint}
                 </span>
                 <span className="px-3 py-1.5 bg-muted border border-border rounded-full text-xs text-muted-foreground font-medium">
-                  Halte <kbd className="font-bold text-accent">{triggerKey}</kbd>
+                  {m.holdHint} <kbd className="font-bold text-accent">{triggerKey}</kbd>
                 </span>
               </div>
             </div>
