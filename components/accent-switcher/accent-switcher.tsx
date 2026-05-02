@@ -22,7 +22,8 @@
  *   />
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useAtelier } from '../atelier';
 
 /* -------------------------------------------------------------------------- */
 /*  oklch interpolation helpers                                               */
@@ -99,13 +100,9 @@ export function AccentSwitcher({
 	style,
 }: AccentSwitcherProps) {
 	const paletteKeys = Object.keys(palettes);
-	
-	// Internal state should be initialized from DOM if possible, otherwise fallback
-	const [accent, setAccent] = useState(() => {
-		if (typeof document === 'undefined') return defaultPalette ?? paletteKeys[0];
-		return document.documentElement.getAttribute(accentAttribute) ?? defaultPalette ?? paletteKeys[0];
-	});
-	
+
+	const { accent, setAccent: setAtelierAccent } = useAtelier();
+
 	const [open, setOpen] = useState(false);
 	const [hovered, setHovered] = useState(false);
 	
@@ -128,31 +125,11 @@ export function AccentSwitcher({
 			currentOklchRef.current = parseOklch(palettes[currentAccent]?.oklch ?? '');
 		}
 
-		// Initial sync
-		const attrValue = document.documentElement.getAttribute(accentAttribute);
-		if (attrValue && palettes[attrValue] && attrValue !== accent) {
-			setAccent(attrValue);
-		}
-
-		// MutationObserver to sync multiple instances via the DOM attribute
-		const observer = new MutationObserver(() => {
-			const val = document.documentElement.getAttribute(accentAttribute);
-			if (val && palettes[val]) {
-				setAccent(val);
-			}
-		});
-		
-		observer.observe(document.documentElement, { 
-			attributes: true, 
-			attributeFilter: [accentAttribute] 
-		});
-
 		return () => {
 			if (animRef.current) cancelAnimationFrame(animRef.current);
 			styleEl.remove();
-			observer.disconnect();
 		};
-	}, [accentAttribute, palettes, currentAccent, accent]);
+	}, []);
 
 	// Close on outside click
 	useEffect(() => {
@@ -167,57 +144,52 @@ export function AccentSwitcher({
 		return () => document.removeEventListener('mousedown', handleClick);
 	}, [open]);
 
-	const selectAccent = useCallback(
-		(key: string) => {
-			const target = palettes[key];
-			if (!target) return;
+	function selectAccent(key: string) {
+		const target = palettes[key];
+		if (!target) return;
 
-			const toOklch = parseOklch(target.oklch);
-			const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
+		const toOklch = parseOklch(target.oklch);
+		const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
 
-			setAccent(key);
-			setOpen(false);
-			onAccentChange?.(key);
+		setAtelierAccent(key);
+		setOpen(false);
+		onAccentChange?.(key);
 
-			// Instant switch if no interpolation possible or granularity is 0
-			if (!toOklch || !fromOklch || granularity <= 0) {
-				if (styleRef.current) styleRef.current.textContent = '';
-				document.documentElement.setAttribute(accentAttribute, key);
-				if (toOklch) currentOklchRef.current = toOklch;
-				return;
+		// Instant switch if no interpolation possible or granularity is 0
+		if (!toOklch || !fromOklch || granularity <= 0) {
+			if (styleRef.current) styleRef.current.textContent = '';
+			if (toOklch) currentOklchRef.current = toOklch;
+			return;
+		}
+
+		if (animRef.current) cancelAnimationFrame(animRef.current);
+
+		const writeAccent = (value: string) => {
+			if (styleRef.current) {
+				styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
 			}
+		};
 
-			if (animRef.current) cancelAnimationFrame(animRef.current);
+		// Pin to start color — AtelierProvider already set the attribute via setAtelierAccent
+		writeAccent(lerpOklch(fromOklch, toOklch, 0));
 
-			const writeAccent = (value: string) => {
-				if (styleRef.current) {
-					styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
-				}
-			};
+		const start = performance.now();
 
-			// Pin to start color, then switch attribute (CSS rule changes but !important wins)
-			writeAccent(lerpOklch(fromOklch, toOklch, 0));
-			document.documentElement.setAttribute(accentAttribute, key);
+		const step = (now: number) => {
+			const t = Math.min((now - start) / granularity, 1);
+			writeAccent(lerpOklch(fromOklch, toOklch, easeInOutCubic(t)));
 
-			const start = performance.now();
+			if (t < 1) {
+				animRef.current = requestAnimationFrame(step);
+			} else {
+				if (styleRef.current) styleRef.current.textContent = '';
+				currentOklchRef.current = toOklch;
+				animRef.current = 0;
+			}
+		};
 
-			const step = (now: number) => {
-				const t = Math.min((now - start) / granularity, 1);
-				writeAccent(lerpOklch(fromOklch, toOklch, easeInOutCubic(t)));
-
-				if (t < 1) {
-					animRef.current = requestAnimationFrame(step);
-				} else {
-					if (styleRef.current) styleRef.current.textContent = '';
-					currentOklchRef.current = toOklch;
-					animRef.current = 0;
-				}
-			};
-
-			animRef.current = requestAnimationFrame(step);
-		},
-		[palettes, currentAccent, accentAttribute, granularity, onAccentChange]
-	);
+		animRef.current = requestAnimationFrame(step);
+	}
 
 	// First 4 palette colors for the icon dots
 	const dotColors = paletteKeys.slice(0, 4).map((key) => palettes[key]?.oklch ?? 'currentColor');

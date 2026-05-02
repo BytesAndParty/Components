@@ -66,7 +66,10 @@ export function I18nProvider({
 
   function setLocale(next: Locale) {
     setLocaleState(next)
-    try { localStorage.setItem(storageKey, next) } catch {}
+    // Skip own localStorage write when controlled by a parent (e.g. AtelierProvider)
+    if (!localeProp) {
+      try { localStorage.setItem(storageKey, next) } catch {}
+    }
     onLocaleChange?.(next)
   }
 

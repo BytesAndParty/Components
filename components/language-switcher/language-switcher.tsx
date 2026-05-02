@@ -15,7 +15,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { useI18n } from '../i18n'
+import { useAtelier } from '../atelier'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -50,7 +50,7 @@ export function LanguageSwitcher({
   className,
   style,
 }: LanguageSwitcherProps) {
-  const { locale, setLocale } = useI18n()
+  const { locale, setLocale } = useAtelier()
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [flipping, setFlipping] = useState(false)

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { flushSync } from 'react-dom';
+import { useAtelier } from '../atelier';
 
 interface AnimatedThemeTogglerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Animation duration in ms. Default: 400 */
@@ -55,26 +56,11 @@ export function AnimatedThemeToggler({
   style,
   ...props
 }: AnimatedThemeTogglerProps) {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof document === 'undefined') return true;
-    const stored = localStorage.getItem('theme_pref');
-    if (stored) return stored === 'dark';
-    return true; // :root CSS defaults to dark
-  });
+  const { theme, setTheme } = useAtelier();
+  const isDark = theme === 'dark';
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    // Sync DOM with resolved initial state
-    document.documentElement.classList.toggle('dark', isDark);
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-
-    const update = () => setIsDark(document.documentElement.classList.contains('dark'));
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
-
-  const toggleTheme = useCallback(() => {
+  function toggleTheme() {
     const button = buttonRef.current;
     if (!button) return;
 
@@ -85,24 +71,18 @@ export function AnimatedThemeToggler({
     const vh = window.visualViewport?.height ?? window.innerHeight;
     const maxRadius = Math.hypot(Math.max(x, vw - x), Math.max(y, vh - y));
 
-    const apply = () => {
+    function apply() {
       const next = !isDark;
-      setIsDark(next);
-      document.documentElement.classList.toggle('dark');
-      // Also set data-theme for our CSS var system
-      document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
-      localStorage.setItem('theme_pref', next ? 'dark' : 'light');
+      setTheme(next ? 'dark' : 'light');
       onThemeChange?.(next);
-    };
+    }
 
     if (typeof document.startViewTransition !== 'function') {
       apply();
       return;
     }
 
-    const transition = document.startViewTransition(() => {
-      flushSync(apply);
-    });
+    const transition = document.startViewTransition(() => { flushSync(apply); });
 
     transition.ready.then(() => {
       document.documentElement.animate(
@@ -112,14 +92,10 @@ export function AnimatedThemeToggler({
             `circle(${maxRadius}px at ${x}px ${y}px)`,
           ],
         },
-        {
-          duration,
-          easing: 'ease-in-out',
-          pseudoElement: '::view-transition-new(root)',
-        }
+        { duration, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)' }
       );
     });
-  }, [isDark, duration, onThemeChange]);
+  }
 
   return (
     <>

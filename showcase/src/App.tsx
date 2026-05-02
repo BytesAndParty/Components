@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, ScrollRestoration } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HotkeysProvider } from '@components/hotkeys/hotkeys-provider'
-import { I18nProvider } from '@components/i18n'
+import { AtelierProvider } from '@components/atelier'
 import { Layout } from './layout'
 
 const queryClient = new QueryClient()
@@ -44,11 +44,11 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
+      <AtelierProvider>
         <HotkeysProvider>
           <RouterProvider router={router} />
         </HotkeysProvider>
-      </I18nProvider>
+      </AtelierProvider>
     </QueryClientProvider>
   )
 }
