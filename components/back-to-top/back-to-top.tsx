@@ -3,27 +3,41 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MagneticButton } from '../magnetic-button/magnetic-button';
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
+
+export type BackToTopMessages = {
+  ariaLabel: string;
+  shortcutLabel: string;
+  shortcutDescription: string;
+};
+
+const BACK_TO_TOP_MESSAGES = {
+  de: {
+    ariaLabel: 'Nach oben scrollen',
+    shortcutLabel: 'Nach oben',
+    shortcutDescription: 'Scrollt sanft zum Seitenanfang',
+  },
+  en: {
+    ariaLabel: 'Scroll to top',
+    shortcutLabel: 'Scroll to top',
+    shortcutDescription: 'Smoothly scrolls to the top of the page',
+  },
+} as const satisfies ComponentMessages<BackToTopMessages>;
 
 interface BackToTopProps {
   threshold?: number;
   className?: string;
-  labels?: {
-    shortcutLabel?: string;
-    description?: string;
-  };
+  messages?: Partial<BackToTopMessages>;
 }
 
-export function BackToTop({ 
-  threshold = 400, 
+export function BackToTop({
+  threshold = 400,
   className,
-  labels = {}
+  messages,
 }: BackToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
-
-  const {
-    shortcutLabel = "Nach oben",
-    description = "Scrollt sanft zum Seitenanfang"
-  } = labels;
+  const m = useComponentMessages(BACK_TO_TOP_MESSAGES, messages);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,8 +62,8 @@ export function BackToTop({
       scrollToTop();
     }
   }, {
-    label: shortcutLabel,
-    description,
+    label: m.shortcutLabel,
+    description: m.shortcutDescription,
     category: 'Navigation'
   });
 
@@ -66,7 +80,7 @@ export function BackToTop({
             onClick={scrollToTop}
             variant="default"
             className="w-12 h-12 flex items-center justify-center !p-0 rounded-full shadow-2xl"
-            aria-label="Nach oben scrollen"
+            aria-label={m.ariaLabel}
           >
             <svg
               width="20"

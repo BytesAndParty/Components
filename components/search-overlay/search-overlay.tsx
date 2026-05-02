@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
 
 interface SearchResult {
   id: string;
@@ -14,73 +16,91 @@ interface SearchResult {
   icon?: React.ReactNode;
 }
 
+export type SearchOverlayMessages = {
+  placeholder: string;
+  noResults: string;
+  emptyState: string;
+  navigationHelp: string;
+  selectionHelp: string;
+  shortcutLabel: string;
+  closeLabel: string;
+  ariaLabel: string;
+};
+
+const SEARCH_OVERLAY_MESSAGES = {
+  de: {
+    placeholder: 'Suche nach Produkten oder Seiten…',
+    noResults: 'Keine Ergebnisse gefunden.',
+    emptyState: 'Tippe etwas ein, um die Suche zu starten…',
+    navigationHelp: 'navigieren',
+    selectionHelp: 'auswählen',
+    shortcutLabel: 'Suche öffnen',
+    closeLabel: 'Suche schließen',
+    ariaLabel: 'Spotlight Suche',
+  },
+  en: {
+    placeholder: 'Search for products or pages…',
+    noResults: 'No results found.',
+    emptyState: 'Start typing to search…',
+    navigationHelp: 'navigate',
+    selectionHelp: 'select',
+    shortcutLabel: 'Open search',
+    closeLabel: 'Close search',
+    ariaLabel: 'Spotlight Search',
+  },
+} as const satisfies ComponentMessages<SearchOverlayMessages>;
+
 interface SearchOverlayProps {
-  /** 
+  /**
    * Search function that returns a promise of results.
    */
   fetchResults?: (query: string) => Promise<SearchResult[]>;
   /** Initial/static results for the "empty" state or suggestions */
   initialSuggestions?: SearchResult[];
-  /** Labels for i18n support */
-  labels?: {
-    placeholder?: string;
-    noResults?: string;
-    emptyState?: string;
-    navigationHelp?: string;
-    selectionHelp?: string;
-    shortcutLabel?: string;
-    closeLabel?: string;
-  };
+  messages?: Partial<SearchOverlayMessages>;
   className?: string;
 }
 
-export function SearchOverlay({ 
-  fetchResults, 
-  initialSuggestions = [], 
-  labels = {},
-  className 
+export function SearchOverlay({
+  fetchResults,
+  initialSuggestions = [],
+  messages,
+  className
 }: SearchOverlayProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // i18n Defaults
-  const {
-    placeholder = "Suche nach Produkten oder Seiten...",
-    noResults = "Keine Ergebnisse gefunden.",
-    emptyState = "Tippe etwas ein, um die Suche zu starten...",
-    navigationHelp = "navigieren",
-    selectionHelp = "auswählen",
-    shortcutLabel = "Suche öffnen",
-    closeLabel = "Suche schließen"
-  } = labels;
+  const m = useComponentMessages(SEARCH_OVERLAY_MESSAGES, messages);
 
   // Open/Close logic
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => {
+  function open() {
+    setIsOpen(true);
+  }
+
+  function close() {
     setIsOpen(false);
     setQuery('');
     setSelectedIndex(0);
-  }, []);
+  }
 
   // TanStack Hotkeys Integration via Design Engine Registry
   useDesignEngineHotkey('Mod+K', (e) => {
     e.preventDefault();
     open();
   }, {
-    label: shortcutLabel,
+    label: m.shortcutLabel,
     description: "Öffnet die globale Spotlight-Suche",
     category: 'Global'
   });
-  
+
   useDesignEngineHotkey('Escape', (e) => {
     if (isOpen) {
       e.preventDefault();
       close();
     }
   }, {
-    label: closeLabel,
+    label: m.closeLabel,
     description: "Schließt das aktuelle Overlay",
     category: 'Actions'
   });
@@ -125,11 +145,11 @@ export function SearchOverlay({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div 
+        <div
           className={cn("fixed inset-0 z-[999] flex items-start justify-center pt-[15vh] px-4", className)}
           role="dialog"
           aria-modal="true"
-          aria-label="Spotlight Search"
+          aria-label={m.ariaLabel}
         >
           {/* Backdrop */}
           <motion.div
@@ -170,7 +190,7 @@ export function SearchOverlay({
                 aria-expanded={displayResults.length > 0}
                 aria-controls="search-results"
                 aria-autocomplete="list"
-                placeholder={placeholder}
+                placeholder={m.placeholder}
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -184,14 +204,14 @@ export function SearchOverlay({
               </div>
             </div>
 
-            <div 
-              id="search-results" 
-              role="listbox" 
+            <div
+              id="search-results"
+              role="listbox"
               className="max-h-[60vh] overflow-y-auto custom-scrollbar p-2"
             >
               {query.length === 0 && initialSuggestions.length === 0 ? (
                 <div className="px-4 py-8 text-center">
-                  <p className="text-[var(--muted-foreground,#71717a)] text-sm">{emptyState}</p>
+                  <p className="text-[var(--muted-foreground,#71717a)] text-sm">{m.emptyState}</p>
                 </div>
               ) : displayResults.length > 0 ? (
                 <div className="space-y-1">
@@ -208,8 +228,8 @@ export function SearchOverlay({
                       }}
                       className={cn(
                         "w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left outline-none",
-                        index === selectedIndex 
-                          ? "bg-[var(--accent,#6366f1)] text-white shadow-lg shadow-[var(--accent)]/20" 
+                        index === selectedIndex
+                          ? "bg-[var(--accent,#6366f1)] text-white shadow-lg shadow-[var(--accent)]/20"
                           : "hover:bg-[var(--border,#2a2a2e)] text-[var(--foreground,#e4e4e7)]"
                       )}
                     >
@@ -247,7 +267,7 @@ export function SearchOverlay({
                 </div>
               ) : (
                 <div className="px-4 py-12 text-center">
-                  <p className="text-[var(--muted-foreground,#71717a)]">{noResults}</p>
+                  <p className="text-[var(--muted-foreground,#71717a)]">{m.noResults}</p>
                 </div>
               )}
             </div>
@@ -256,11 +276,11 @@ export function SearchOverlay({
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
                   <kbd className="px-1 py-0.5 border border-[var(--border,#2a2a2e)] rounded bg-[var(--card,#141416)] text-[9px]" aria-hidden="true">ENTER</kbd>
-                  {selectionHelp}
+                  {m.selectionHelp}
                 </span>
                 <span className="flex items-center gap-1">
                   <kbd className="px-1 py-0.5 border border-[var(--border,#2a2a2e)] rounded bg-[var(--card,#141416)] text-[9px]" aria-hidden="true">↑↓</kbd>
-                  {navigationHelp}
+                  {m.navigationHelp}
                 </span>
               </div>
               <div className="opacity-50">

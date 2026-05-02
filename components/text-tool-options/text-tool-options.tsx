@@ -8,6 +8,8 @@ import {
 import { cn } from '../lib/utils'
 import { NumberInput } from '../number-input/number-input'
 import { ColorPickerPanel } from '../color-picker/color-picker'
+import { useComponentMessages } from '../i18n'
+import type { ComponentMessages } from '../i18n'
 
 // ── Font catalogue ────────────────────────────────────────────────────────────
 
@@ -55,19 +57,62 @@ export const defaultTextFormat: TextFormatValues = {
   color:       '#000000',
 }
 
+export type TextToolOptionsMessages = {
+  bold: string
+  italic: string
+  underline: string
+  alignLeft: string
+  alignCenter: string
+  alignRight: string
+  alignJustify: string
+  textColor: string
+}
+
+const TEXT_TOOL_OPTIONS_MESSAGES = {
+  de: {
+    bold: 'Fett (Strg+B)',
+    italic: 'Kursiv (Strg+I)',
+    underline: 'Unterstrichen (Strg+U)',
+    alignLeft: 'Linksbündig',
+    alignCenter: 'Zentriert',
+    alignRight: 'Rechtsbündig',
+    alignJustify: 'Blocksatz',
+    textColor: 'Textfarbe',
+  },
+  en: {
+    bold: 'Bold (Ctrl+B)',
+    italic: 'Italic (Ctrl+I)',
+    underline: 'Underline (Ctrl+U)',
+    alignLeft: 'Align left',
+    alignCenter: 'Align center',
+    alignRight: 'Align right',
+    alignJustify: 'Justify',
+    textColor: 'Text color',
+  },
+} as const satisfies ComponentMessages<TextToolOptionsMessages>
+
 export interface TextToolOptionsProps {
   value?: Partial<TextFormatValues>
   onChange?: (patch: Partial<TextFormatValues>) => void
   className?: string
+  messages?: Partial<TextToolOptionsMessages>
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function TextToolOptions({ value, onChange, className }: TextToolOptionsProps) {
+export function TextToolOptions({ value, onChange, className, messages }: TextToolOptionsProps) {
   const fmt = { ...defaultTextFormat, ...value }
+  const m = useComponentMessages(TEXT_TOOL_OPTIONS_MESSAGES, messages)
 
   function set<K extends keyof TextFormatValues>(key: K, val: TextFormatValues[K]) {
     onChange?.({ [key]: val })
+  }
+
+  const alignTitles: Record<typeof fmt.textAlign, string> = {
+    left: m.alignLeft,
+    center: m.alignCenter,
+    right: m.alignRight,
+    justify: m.alignJustify,
   }
 
   // Load Google Fonts once
@@ -113,21 +158,21 @@ export function TextToolOptions({ value, onChange, className }: TextToolOptionsP
         <ToggleBtn
           active={fmt.bold}
           onClick={() => set('bold', !fmt.bold)}
-          title="Bold (Ctrl+B)"
+          title={m.bold}
         >
           <Bold size={13} strokeWidth={2.5} />
         </ToggleBtn>
         <ToggleBtn
           active={fmt.italic}
           onClick={() => set('italic', !fmt.italic)}
-          title="Italic (Ctrl+I)"
+          title={m.italic}
         >
           <Italic size={13} strokeWidth={2.5} />
         </ToggleBtn>
         <ToggleBtn
           active={fmt.underline}
           onClick={() => set('underline', !fmt.underline)}
-          title="Underline (Ctrl+U)"
+          title={m.underline}
         >
           <Underline size={13} strokeWidth={2.5} />
         </ToggleBtn>
@@ -144,7 +189,7 @@ export function TextToolOptions({ value, onChange, className }: TextToolOptionsP
               key={align}
               active={fmt.textAlign === align}
               onClick={() => set('textAlign', align)}
-              title={`Align ${align}`}
+              title={alignTitles[align]}
             >
               <Icon size={13} strokeWidth={2} />
             </ToggleBtn>
@@ -177,7 +222,7 @@ export function TextToolOptions({ value, onChange, className }: TextToolOptionsP
       <Divider />
 
       {/* ── Color ─────────────────────────────────────────────── */}
-      <ColorSwatch color={fmt.color} onChange={(v) => set('color', v)} />
+      <ColorSwatch color={fmt.color} onChange={(v) => set('color', v)} title={m.textColor} />
     </div>
   )
 }
@@ -295,13 +340,13 @@ function FontSelect({
   )
 }
 
-function ColorSwatch({ color, onChange }: { color: string; onChange: (v: string) => void }) {
+function ColorSwatch({ color, onChange, title }: { color: string; onChange: (v: string) => void; title?: string }) {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <button
           type="button"
-          title="Text color"
+          title={title}
           className="flex items-center gap-1.5 px-3 h-full hover:bg-muted/50 transition-colors"
         >
           <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">A</span>
