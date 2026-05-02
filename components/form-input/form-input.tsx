@@ -3,53 +3,27 @@ import {
   useId,
   useRef,
   useState,
+  forwardRef,
   type CSSProperties,
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
-
-/**
- * Minimal Zod-compatible validator shape. Accepts Zod v4 or any lib with
- * `.safeParse(value) → { success, data, error: { issues: [{ message }] } }`.
- * We type loosely so we don't force a peer dep.
- */
-export interface FormInputSchema {
-  safeParse: (value: unknown) => {
-    success: boolean;
-    data?: unknown;
-    error?: { issues: Array<{ message: string }> };
-  };
-}
+import { cn } from '../lib/utils';
 
 export type FormInputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'url';
-export type FormInputValidateMode = 'onBlur' | 'onChange' | 'onSubmit';
 
 export interface FormInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'defaultValue' | 'onChange'> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'prefix'> {
   type?: FormInputType;
   label?: string;
   description?: string;
-  /** Zod schema (or any lib with .safeParse) */
-  schema?: FormInputSchema;
-  /** When to run validation. Default: onBlur (after user leaves field) */
-  validateMode?: FormInputValidateMode;
-  /** Override validation trigger from parent form */
-  forceError?: string | null;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  onValidate?: (result: { valid: boolean; error: string | null }) => void;
+  error?: string;
+  /** Show success state (e.g. green border/check) */
+  success?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
-  /** Format phone as you type (only for type="tel") */
-  autoFormatPhone?: boolean;
-  /** Numeric min/max for type="number" (beyond native) */
-  min?: number;
-  max?: number;
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
   wrapperClassName?: string;
-  style?: CSSProperties;
 }
 
 const STYLE_ID = '__form-input-styles__';
@@ -80,127 +54,42 @@ const sizes = {
   lg: { height: 52, fontSize: 15, pad: 14, labelSize: 12 },
 } satisfies Record<'sm' | 'md' | 'lg', { height: number; fontSize: number; pad: number; labelSize: number }>;
 
-/** Simple progressive phone formatting — pure presentation, no locale detection */
-function formatPhone(raw: string) {
-  const digits = raw.replace(/\D/g, '');
-  if (!digits) return '';
-  if (digits.startsWith('49')) {
-    // DE: +49 XXX XXX XXXX
-    const rest = digits.slice(2);
-    const a = rest.slice(0, 3);
-    const b = rest.slice(3, 6);
-    const c = rest.slice(6, 10);
-    return `+49 ${a}${b ? ' ' + b : ''}${c ? ' ' + c : ''}`.trim();
-  }
-  if (digits.startsWith('1') && digits.length <= 11) {
-    // US: +1 (XXX) XXX-XXXX
-    const rest = digits.slice(1);
-    const a = rest.slice(0, 3);
-    const b = rest.slice(3, 6);
-    const c = rest.slice(6, 10);
-    return `+1 ${a ? `(${a})` : ''}${b ? ' ' + b : ''}${c ? '-' + c : ''}`.trim();
-  }
-  // fallback: group 2-3-3-...
-  return digits.replace(/(\d{2})(\d{3})(\d{3})(\d+)?/, (_m, a, b, c, d) =>
-    [a, b, c, d].filter(Boolean).join(' ')
-  );
-}
-
-export function FormInput({
+/**
+ * FormInput - A high-end, accessible input component.
+ * Optimized for integration with TanStack Form.
+ */
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   type = 'text',
   label,
   description,
-  schema,
-  validateMode = 'onBlur',
-  forceError = null,
-  value: controlled,
-  defaultValue = '',
-  onChange,
-  onValidate,
-  onBlur,
+  error,
+  success,
   leftIcon,
   rightIcon,
-  autoFormatPhone = false,
-  min,
-  max,
   size = 'md',
   className,
   wrapperClassName,
   style,
   disabled,
   ...rest
-}: FormInputProps) {
+}, ref) => {
   const reactId = useId();
   const id = rest.id ?? `form-input-${reactId}`;
-  const [internal, setInternal] = useState(defaultValue);
-  const [touched, setTouched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [shakeKey, setShakeKey] = useState(0);
-
-  const value = controlled ?? internal;
   const sz = sizes[size];
+  const [shakeKey, setShakeKey] = useState(0);
 
   useEffect(() => {
     injectStyles();
   }, []);
 
   useEffect(() => {
-    if (forceError !== null) {
-      setError(forceError);
-      if (forceError) setShakeKey((k) => k + 1);
+    if (error) {
+      setShakeKey((k) => k + 1);
     }
-  }, [forceError]);
+  }, [error]);
 
-  function runValidate(v: string) {
-    if (!schema) return { valid: true, error: null as string | null };
-    const parsed = schema.safeParse(
-      type === 'number' ? (v === '' ? undefined : Number(v)) : v
-    );
-    if (parsed.success) {
-      return { valid: true, error: null };
-    }
-    const firstIssue = parsed.error?.issues?.[0]?.message ?? 'Invalid value';
-    return { valid: false, error: firstIssue };
-  }
-
-  function updateValue(next: string) {
-    let out = next;
-    if (type === 'tel' && autoFormatPhone) {
-      out = formatPhone(next);
-    }
-    if (type === 'number' && next !== '') {
-      const n = Number(next);
-      if (!Number.isNaN(n)) {
-        if (min !== undefined && n < min) out = String(min);
-        if (max !== undefined && n > max) out = String(max);
-      }
-    }
-    if (controlled === undefined) setInternal(out);
-    onChange?.(out);
-    if (validateMode === 'onChange' && touched) {
-      const r = runValidate(out);
-      setError(r.error);
-      setShowSuccess(r.valid && out.length > 0);
-      onValidate?.(r);
-    }
-  }
-
-  function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-    setTouched(true);
-    if (validateMode === 'onBlur' || validateMode === 'onChange') {
-      const r = runValidate(value);
-      setError(r.error);
-      setShowSuccess(r.valid && value.length > 0);
-      if (!r.valid) setShakeKey((k) => k + 1);
-      onValidate?.(r);
-    }
-    onBlur?.(e);
-  }
-
-  const effectiveError = forceError ?? error;
   const state: 'idle' | 'error' | 'success' =
-    effectiveError ? 'error' : showSuccess ? 'success' : 'idle';
+    error ? 'error' : success ? 'success' : 'idle';
 
   const borderColor =
     state === 'error'
@@ -210,88 +99,56 @@ export function FormInput({
         : 'var(--border)';
 
   return (
-    <div className={wrapperClassName} style={{ width: '100%' }}>
+    <div className={cn("w-full flex flex-col items-start", wrapperClassName)}>
       {label && (
         <label
           htmlFor={id}
-          style={{
-            display: 'block',
-            fontSize: sz.labelSize,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: 'var(--muted-foreground)',
-            marginBottom: 6,
-            fontWeight: 500,
-          }}
+          className="block font-medium uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5"
+          style={{ fontSize: sz.labelSize }}
         >
           {label}
         </label>
       )}
       <div
         key={shakeKey}
+        className={cn(
+          "relative flex items-center w-full rounded-xl bg-[var(--card)] transition-all duration-200",
+          state === 'error' && "animate-[form-input-shake_360ms_cubic-bezier(.36,.07,.19,.97)]"
+        )}
         style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
           height: sz.height,
-          borderRadius: 10,
-          background: 'var(--card)',
           border: `1px solid ${borderColor}`,
           padding: `0 ${sz.pad}px`,
-          transition: 'border-color 160ms ease, box-shadow 160ms ease',
           boxShadow:
             state === 'error'
               ? '0 0 0 3px rgba(239, 68, 68, 0.12)'
               : state === 'success'
                 ? '0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent)'
                 : 'none',
-          animation: effectiveError && shakeKey > 0 ? 'form-input-shake 360ms cubic-bezier(0.36, 0.07, 0.19, 0.97)' : undefined,
           opacity: disabled ? 0.55 : 1,
           ...style,
         }}
       >
         {leftIcon && (
-          <span style={{ display: 'inline-flex', color: 'var(--muted-foreground)', marginRight: 8 }}>
+          <span className="inline-flex text-[var(--muted-foreground)] mr-2 shrink-0">
             {leftIcon}
           </span>
         )}
         <input
           {...rest}
+          ref={ref}
           id={id}
           type={type}
-          value={value}
           disabled={disabled}
-          onChange={(e) => updateValue(e.target.value)}
-          onBlur={handleBlur}
-          inputMode={
-            type === 'number' ? 'decimal' :
-            type === 'tel' ? 'tel' :
-            type === 'email' ? 'email' :
-            type === 'url' ? 'url' :
-            undefined
-          }
-          autoComplete={
-            type === 'email' ? 'email' :
-            type === 'tel' ? 'tel' :
-            type === 'password' ? 'current-password' :
-            rest.autoComplete
-          }
-          className={className}
+          className={cn(
+            "flex-1 min-w-0 h-full bg-transparent border-none outline-none text-[var(--foreground)] font-inherit placeholder:text-[var(--muted-foreground)]/50",
+            className
+          )}
+          style={{ fontSize: sz.fontSize }}
           aria-invalid={state === 'error' || undefined}
           aria-describedby={
-            effectiveError ? `${id}-error` : description ? `${id}-desc` : undefined
+            error ? `${id}-error` : description ? `${id}-desc` : undefined
           }
-          style={{
-            flex: 1,
-            minWidth: 0,
-            height: '100%',
-            border: 'none',
-            outline: 'none',
-            background: 'transparent',
-            color: 'var(--foreground)',
-            fontSize: sz.fontSize,
-            fontFamily: 'inherit',
-          }}
         />
         {state === 'success' && !rightIcon && (
           <svg
@@ -304,7 +161,7 @@ export function FormInput({
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
-            style={{ marginLeft: 8, flexShrink: 0 }}
+            className="ml-2 shrink-0"
           >
             <path
               d="M20 6 9 17l-5-5"
@@ -324,7 +181,7 @@ export function FormInput({
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
-            style={{ marginLeft: 8, flexShrink: 0 }}
+            className="ml-2 shrink-0"
           >
             <circle cx="12" cy="12" r="10" />
             <path d="M12 8v4" />
@@ -332,27 +189,42 @@ export function FormInput({
           </svg>
         )}
         {rightIcon && (
-          <span style={{ display: 'inline-flex', color: 'var(--muted-foreground)', marginLeft: 8 }}>
+          <span className="inline-flex text-[var(--muted-foreground)] ml-2 shrink-0">
             {rightIcon}
           </span>
         )}
       </div>
-      {effectiveError ? (
-        <p
-          id={`${id}-error`}
-          role="alert"
-          style={{ fontSize: 12, color: '#ef4444', marginTop: 6, minHeight: '1em' }}
-        >
-          {effectiveError}
-        </p>
-      ) : description ? (
-        <p
-          id={`${id}-desc`}
-          style={{ fontSize: 12, color: 'var(--muted-foreground)', marginTop: 6, minHeight: '1em' }}
-        >
-          {description}
-        </p>
-      ) : null}
+      
+      {/* Footer Area: Errors & Description */}
+      <div className="min-h-[20px] mt-1.5 w-full">
+        <AnimatePresence mode="wait">
+          {error ? (
+            <motion.p
+              key="error"
+              id={`${id}-error`}
+              role="alert"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              className="text-[12px] text-[#ef4444] font-medium"
+            >
+              {error}
+            </motion.p>
+          ) : description ? (
+            <motion.p
+              key="desc"
+              id={`${id}-desc`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-[12px] text-[var(--muted-foreground)]"
+            >
+              {description}
+            </motion.p>
+          ) : null}
+        </AnimatePresence>
+      </div>
     </div>
   );
-}
+});
+
+FormInput.displayName = 'FormInput';
