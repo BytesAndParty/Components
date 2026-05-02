@@ -1,6 +1,7 @@
 # Design Engine — Implementation Plan
 
-> Letztes Update: 2026-05-02  
+> Letztes Update: 2026-05-02 (nach LanguageSwitcher)
+
 > Branch: `main` — 8 Commits seit Session-Start
 
 ---
@@ -104,6 +105,12 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `tooltip` | ✅ | n/a | n/a | 🔶 | 🔶 |
 | `velocity-scroll` | ✅ | n/a | n/a | ⬜ | 🔶 |
 
+### Neu hinzugefügt
+
+| Komponente | motion/react | i18n | A11y | Status |
+|---|---|---|---|---|
+| `language-switcher` | n/a | ✅ via context | ✅ | ✅ |
+
 ### Bestehende Komponenten — Noch nicht angepasst
 
 > Enthalten keine `framer-motion`-Imports. Brauchen ggf. i18n und A11y-Überarbeitung.
@@ -176,7 +183,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `useComponentMessages` Pattern | ✅ In 8 Komponenten implementiert |
 | CSS hover-guard (`@custom-variant hover`) | ✅ Globaler Schutz für alle `hover:`-Utilities |
 | CSS `prefers-reduced-motion` global | ✅ Alle `*`-Elemente abgedeckt |
-| Locale-Switcher in Navbar | ✅ DE/EN Toggle live |
+| Locale-Switcher in Navbar | ✅ `LanguageSwitcher` Komponente — Globe-Icon, Badge-Flip-Animation, localStorage, data-locale |
 | Vite Config — Subpath-Alias-System | ✅ Stabil, alle Packages explizit aliased |
 | `useDesignEngineHotkey` + ShortcutOverview | ✅ Fertig — `?`-Key, Shift-Hold, Escape |
 | Ark UI `translations`-Bridge | ⬜ Ausstehend |
