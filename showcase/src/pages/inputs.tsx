@@ -53,8 +53,16 @@ const signupSchema = z.object({
 
 function FormInputDemo() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', age: '', website: '' })
-  const [serverErrors, setServerErrors] = useState<Partial<Record<keyof typeof form, string>>>({})
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({})
   const { add } = useToast()
+
+  function validate(field: keyof typeof form, val: string) {
+    const res = signupSchema.shape[field].safeParse(
+      field === 'age' ? (val === '' ? undefined : Number(val)) : val
+    )
+    setErrors(prev => ({ ...prev, [field]: res.success ? undefined : res.error.issues[0].message }))
+    return res.success
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -65,17 +73,19 @@ function FormInputDemo() {
       age: form.age === '' ? undefined : Number(form.age),
       website: form.website,
     })
+    
     if (result.success) {
-      setServerErrors({})
+      setErrors({})
       add({ title: 'Success', description: 'Alle Felder valide.', variant: 'success' })
       return
     }
+
     const flat: Partial<Record<keyof typeof form, string>> = {}
     for (const issue of result.error.issues) {
       const key = issue.path[0] as keyof typeof form
       if (!flat[key]) flat[key] = issue.message
     }
-    setServerErrors(flat)
+    setErrors(flat)
     add({ title: 'Ungültige Eingaben', description: 'Bitte Fehler beheben.', variant: 'danger' })
   }
 
@@ -89,19 +99,25 @@ function FormInputDemo() {
         type="text"
         label="Name"
         placeholder="Anna Müller"
-        schema={signupSchema.shape.name}
         value={form.name}
-        onChange={(v) => setForm((f) => ({ ...f, name: v }))}
-        forceError={serverErrors.name ?? null}
+        error={errors.name}
+        onChange={(e) => {
+          const v = e.target.value
+          setForm(f => ({ ...f, name: v }))
+          validate('name', v)
+        }}
       />
       <FormInput
         type="email"
         label="E-Mail"
         placeholder="anna@beispiel.de"
-        schema={signupSchema.shape.email}
         value={form.email}
-        onChange={(v) => setForm((f) => ({ ...f, email: v }))}
-        forceError={serverErrors.email ?? null}
+        error={errors.email}
+        onChange={(e) => {
+          const v = e.target.value
+          setForm(f => ({ ...f, email: v }))
+          validate('email', v)
+        }}
         leftIcon={
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="4" width="20" height="16" rx="2" />
@@ -114,19 +130,25 @@ function FormInputDemo() {
           type="number"
           label="Alter"
           placeholder="18–120"
-          schema={signupSchema.shape.age}
           value={form.age}
-          onChange={(v) => setForm((f) => ({ ...f, age: v }))}
-          forceError={serverErrors.age ?? null}
+          error={errors.age}
+          onChange={(e) => {
+            const v = e.target.value
+            setForm(f => ({ ...f, age: v }))
+            validate('age', v)
+          }}
         />
         <FormInput
           type="url"
           label="Website"
           placeholder="https://"
-          schema={signupSchema.shape.website}
           value={form.website}
-          onChange={(v) => setForm((f) => ({ ...f, website: v }))}
-          forceError={serverErrors.website ?? null}
+          error={errors.website}
+          onChange={(e) => {
+            const v = e.target.value
+            setForm(f => ({ ...f, website: v }))
+            validate('website', v)
+          }}
         />
       </div>
       <div className="flex items-center gap-3 pt-2">

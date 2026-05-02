@@ -1,15 +1,29 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagneticButton } from '../magnetic-button/magnetic-button';
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
 
 interface BackToTopProps {
   threshold?: number;
   className?: string;
+  labels?: {
+    shortcutLabel?: string;
+    description?: string;
+  };
 }
 
-export function BackToTop({ threshold = 400, className }: BackToTopProps) {
+export function BackToTop({ 
+  threshold = 400, 
+  className,
+  labels = {}
+}: BackToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
+
+  const {
+    shortcutLabel = "Nach oben",
+    description = "Scrollt sanft zum Seitenanfang"
+  } = labels;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +40,18 @@ export function BackToTop({ threshold = 400, className }: BackToTopProps) {
       behavior: 'smooth',
     });
   };
+
+  // Register Shortcut with Design Engine
+  useDesignEngineHotkey('Mod+ArrowUp', (e) => {
+    if (isVisible) {
+      e.preventDefault();
+      scrollToTop();
+    }
+  }, {
+    label: shortcutLabel,
+    description,
+    category: 'Navigation'
+  });
 
   return (
     <AnimatePresence>

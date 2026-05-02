@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
@@ -11,6 +11,10 @@ import {
   NavbarDivider, NavbarMobileToggle, NavbarMobileMenu,
   NavbarDesktopOnly,
 } from '@components/navbar/navbar'
+import { SearchOverlay } from '@components/search-overlay/search-overlay'
+import { Tooltip } from '@components/tooltip/tooltip'
+import { BackToTop } from '@components/back-to-top/back-to-top'
+import { ShortcutOverview } from '@components/hotkeys/shortcut-overview'
 import { palettes, groups } from './data'
 
 // ─── Cart Context (showcase-only) ───────────────────────────────────────────────
@@ -35,6 +39,15 @@ export function useCart() {
   return useContext(CartContext)
 }
 
+// ─── Mock Search Results ────────────────────────────────────────────────────────
+
+const mockResults = [
+  { id: '1', title: 'Riesling 2023', category: 'Wein', href: '/shop', description: 'Ein klassischer Weißwein aus der Pfalz.' },
+  { id: '2', title: 'Spätburgunder', category: 'Wein', href: '/shop', description: 'Eleganter Rotwein mit feiner Note.' },
+  { id: '3', title: 'Komponenten-Guide', category: 'Doku', href: '/', description: 'Erfahre mehr über unsere Design Engine.' },
+  { id: '4', title: 'Checkout-Flow', category: 'Prozess', href: '/shop', description: 'Vom Warenkorb bis zur Bestellung.' },
+]
+
 // ─── Layout ─────────────────────────────────────────────────────────────────────
 
 export function Layout() {
@@ -44,7 +57,7 @@ export function Layout() {
 
   const cartCount = cartItems.reduce((sum, item) => sum + (item.count ?? 1), 0)
 
-  const addItem = useCallback((item?: { id: string; label?: string; image?: string }) => {
+  function addItem(item?: { id: string; label?: string; image?: string }) {
     const id = item?.id ?? `wine-${Date.now()}`
     setCartItems(prev => {
       const existing = prev.find(i => i.id === id)
@@ -53,11 +66,10 @@ export function Layout() {
       }
       return [...prev, { id, label: item?.label ?? 'Wein', image: item?.image, count: 1 }]
     })
-  }, [])
+  }
 
-  const removeItem = useCallback((id?: string) => {
+  function removeItem(id?: string) {
     if (!id) {
-      // Remove last item's count by 1
       setCartItems(prev => {
         if (prev.length === 0) return prev
         const last = prev[prev.length - 1]
@@ -74,9 +86,9 @@ export function Layout() {
         return prev.map(i => i.id === id ? { ...i, count: (i.count ?? 1) - 1 } : i)
       })
     }
-  }, [])
+  }
 
-  const resetCart = useCallback(() => setCartItems([]), [])
+  function resetCart() { setCartItems([]) }
 
   const cartValue: CartContextValue = {
     count: cartCount,
@@ -89,6 +101,14 @@ export function Layout() {
   return (
     <CartContext.Provider value={cartValue}>
       <ToastProvider placement="bottom-right">
+        {/* UI Essentials */}
+        <SearchOverlay 
+          fetchResults={async (q) => mockResults.filter(r => r.title.toLowerCase().includes(q.toLowerCase()))} 
+          initialSuggestions={mockResults.slice(0, 2)}
+        />
+        <ShortcutOverview triggerKey="Shift" holdDuration={1000} />
+        <BackToTop threshold={300} />
+
         <Navbar sticky height={56} bgColor="var(--background)" borderColor="var(--border)" style={{ viewTransitionName: 'nav-bar' }}>
           <NavbarSection position="left">
             <Link
@@ -115,11 +135,13 @@ export function Layout() {
           </NavbarDesktopOnly>
 
           <NavbarSection position="right">
-            <CartIcon
-              count={cartCount}
-              size={20}
-              onClick={() => navigate('/shop')}
-            />
+            <Tooltip content="Warenkorb öffnen" position="bottom">
+              <CartIcon
+                count={cartCount}
+                size={20}
+                onClick={() => navigate('/shop')}
+              />
+            </Tooltip>
             <NavbarDivider />
             <AnimatedThemeToggler />
             <AccentSwitcher palettes={palettes} defaultPalette="indigo" />

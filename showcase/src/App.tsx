@@ -1,6 +1,10 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, ScrollRestoration } from 'react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { HotkeysProvider } from '@components/hotkeys/hotkeys-provider'
 import { Layout } from './layout'
+
+const queryClient = new QueryClient()
 
 const IndexPage = lazy(() => import('./pages/index').then(m => ({ default: m.IndexPage })))
 const CardsPage = lazy(() => import('./pages/cards').then(m => ({ default: m.CardsPage })))
@@ -37,5 +41,11 @@ const router = createBrowserRouter([
 ])
 
 export function App() {
-  return <RouterProvider router={router} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HotkeysProvider>
+        <RouterProvider router={router} />
+      </HotkeysProvider>
+    </QueryClientProvider>
+  )
 }

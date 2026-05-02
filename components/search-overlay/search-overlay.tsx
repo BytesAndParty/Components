@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useHotkey } from '@tanstack/react-hotkeys';
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
 
 interface SearchResult {
@@ -27,6 +28,8 @@ interface SearchOverlayProps {
     emptyState?: string;
     navigationHelp?: string;
     selectionHelp?: string;
+    shortcutLabel?: string;
+    closeLabel?: string;
   };
   className?: string;
 }
@@ -48,7 +51,9 @@ export function SearchOverlay({
     noResults = "Keine Ergebnisse gefunden.",
     emptyState = "Tippe etwas ein, um die Suche zu starten...",
     navigationHelp = "navigieren",
-    selectionHelp = "auswählen"
+    selectionHelp = "auswählen",
+    shortcutLabel = "Suche öffnen",
+    closeLabel = "Suche schließen"
   } = labels;
 
   // Open/Close logic
@@ -59,18 +64,25 @@ export function SearchOverlay({
     setSelectedIndex(0);
   }, []);
 
-  // TanStack Hotkeys Integration
-  // Mod maps to Cmd on Mac and Ctrl on Windows/Linux
-  useHotkey('Mod+K', (e) => {
+  // TanStack Hotkeys Integration via Design Engine Registry
+  useDesignEngineHotkey('Mod+K', (e) => {
     e.preventDefault();
     open();
+  }, {
+    label: shortcutLabel,
+    description: "Öffnet die globale Spotlight-Suche",
+    category: 'Global'
   });
   
-  useHotkey('Escape', (e) => {
+  useDesignEngineHotkey('Escape', (e) => {
     if (isOpen) {
       e.preventDefault();
       close();
     }
+  }, {
+    label: closeLabel,
+    description: "Schließt das aktuelle Overlay",
+    category: 'Actions'
   });
 
   // TanStack Query Integration for Search
