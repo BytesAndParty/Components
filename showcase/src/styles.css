@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* ── Mobile hover guard ──────────────────────────────────
+   Overrides Tailwind's hover: variant so decorative hover
+   effects only fire on real pointer devices (mouse/trackpad).
+   Touch devices never get stuck hover states or mis-fired
+   hover animations. Covers every hover: class in the project.
+─────────────────────────────────────────────────────────── */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 @theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 
@@ -169,6 +183,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Disable all transitions and animations for users who prefer it */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Specific overrides for components using inline animation */
   .rotating-glow-spinner,
   .rotating-glow-blur {
     animation: none;

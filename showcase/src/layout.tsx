@@ -15,6 +15,7 @@ import { SearchOverlay } from '@components/search-overlay/search-overlay'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { BackToTop } from '@components/back-to-top/back-to-top'
 import { ShortcutOverview } from '@components/hotkeys/shortcut-overview'
+import { useI18n } from '@components/i18n'
 import { palettes, groups } from './data'
 
 // ─── Cart Context (showcase-only) ───────────────────────────────────────────────
@@ -143,6 +144,8 @@ export function Layout() {
               />
             </Tooltip>
             <NavbarDivider />
+            <LocaleSwitcher />
+            <NavbarDivider />
             <AnimatedThemeToggler />
             <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
             <NavbarMobileToggle />
@@ -175,5 +178,24 @@ export function Layout() {
         />
       </ToastProvider>
     </CartContext.Provider>
+  )
+}
+
+// ─── Locale Switcher ───────────────────────────────��────────────────────────────
+
+function LocaleSwitcher() {
+  const { locale, setLocale } = useI18n()
+  if (!setLocale) return null
+
+  return (
+    <button
+      type="button"
+      onClick={() => setLocale(locale === 'de' ? 'en' : 'de')}
+      className="flex items-center h-7 px-2.5 rounded-md border border-border text-[11px] font-semibold tracking-wider text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors select-none"
+      aria-label={locale === 'de' ? 'Switch to English' : 'Zu Deutsch wechseln'}
+      title={locale === 'de' ? 'Switch to English' : 'Zu Deutsch wechseln'}
+    >
+      {locale.toUpperCase()}
+    </button>
   )
 }
