@@ -44,7 +44,7 @@ export function SplashCursor({
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = canvasRef.current!
     if (!canvas) return
 
     // ── Config ────────────────────────────────────────────────────────────────

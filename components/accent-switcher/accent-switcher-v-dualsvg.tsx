@@ -179,7 +179,7 @@ export function AccentSwitcherDualSvg({
 				ref={triggerRef}
 				type="button"
 				className={`${CLS}-btn`}
-				onClick={() => setOpen((v) => !v)}
+				onClick={() => setOpen((v: boolean) => !v)}
 				aria-label={dropdownLabel}
 				aria-expanded={open}
 				style={{
@@ -227,8 +227,8 @@ export function AccentSwitcherDualSvg({
 									background: 'transparent', color: 'inherit', fontSize: '0.875rem',
 									cursor: 'pointer', transition: 'background 0.1s',
 								}}
-								onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
-								onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+								onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; }}
+								onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
 							>
 								<span style={{ width: '0.875rem', height: '0.875rem', flexShrink: 0, borderRadius: '9999px', boxShadow: '0 0 0 1px var(--border)', backgroundColor: oklch }} />
 								<span>{label}</span>

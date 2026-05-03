@@ -75,7 +75,7 @@ function VelocityRow({ children, baseVelocity, className, gap = '1rem' }: Veloci
         className="flex whitespace-nowrap"
         style={{ gap, x: baseX }}
       >
-        {Array.from({ length: reps }, (_, i) => (
+        {Array.from({ length: reps }, (_: unknown, i: number) => (
           <div
             key={i}
             ref={i === 0 ? innerRef : undefined}

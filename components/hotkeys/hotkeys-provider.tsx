@@ -36,7 +36,7 @@ export function useDesignEngineHotkey(
   const { hasFinePointer } = useDeviceCapabilities();
   const id = React.useId();
 
-  useHotkey(key, callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) });
+  useHotkey(key as Parameters<typeof useHotkey>[0], callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) });
 
   React.useEffect(() => {
     if (!hasFinePointer) return;

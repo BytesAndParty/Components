@@ -208,7 +208,7 @@ export function AccentSwitcher({
 			<button
 				ref={triggerRef}
 				type="button"
-				onClick={() => setOpen((v) => !v)}
+				onClick={() => setOpen((v: boolean) => !v)}
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				aria-label={dropdownLabel}
@@ -310,10 +310,10 @@ export function AccentSwitcher({
 									cursor: 'pointer',
 									transition: 'background 0.1s',
 								}}
-								onMouseEnter={(e) => {
+								onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
 									(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
 								}}
-								onMouseLeave={(e) => {
+								onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
 									(e.currentTarget as HTMLElement).style.background = 'transparent';
 								}}
 							>

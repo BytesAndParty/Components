@@ -1,5 +1,7 @@
 export type Locale = 'de' | 'en'
 
+export type { GlobalMessages } from './locales/en'
+
 /** Shape that every component's messages object must satisfy. */
 export type ComponentMessages<T extends Record<string, string>> = {
   readonly [L in Locale]: T

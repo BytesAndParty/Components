@@ -6,7 +6,7 @@ import {
   useMemo,
   useImperativeHandle,
 } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, type Transition, type TargetAndTransition, type VariantLabels } from 'motion/react';
 
 function splitText(text: string, splitBy: string): string[] {
   if (splitBy === 'characters') {
@@ -46,10 +46,10 @@ export interface TextRotateRef {
 export interface TextRotateProps {
   texts: string[];
   rotationInterval?: number;
-  initial?: object;
-  animate?: object;
-  exit?: object;
-  transition?: object;
+  initial?: TargetAndTransition | VariantLabels | boolean;
+  animate?: TargetAndTransition | VariantLabels | boolean;
+  exit?: TargetAndTransition | VariantLabels;
+  transition?: Transition;
   staggerDuration?: number;
   staggerFrom?: 'first' | 'last' | 'center' | 'random' | number;
   splitBy?: 'characters' | 'words' | 'lines' | string;
@@ -92,7 +92,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
 
     const advance = useCallback(
       (direction: 1 | -1) => {
-        setCurrentIndex((prev) => {
+        setCurrentIndex((prev: number) => {
           let next = prev + direction;
           if (loop) {
             next = ((next % texts.length) + texts.length) % texts.length;
@@ -128,7 +128,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
     );
 
     const defaultTransition = {
-      type: 'spring',
+      type: 'spring' as const,
       damping: 25,
       stiffness: 300,
     };

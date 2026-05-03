@@ -68,4 +68,4 @@ export const en = {
   'shortcuts.holdHint':   'Hold',
 } as const
 
-export type GlobalMessages = typeof en
+export type GlobalMessages = { readonly [K in keyof typeof en]: string }

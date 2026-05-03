@@ -64,12 +64,12 @@ export function ToastProvider({
 
   const add = useCallback((opts: Omit<ToastData, 'id'>) => {
     const id = `toast-${++counter.current}`;
-    setToasts((prev) => [...prev, { ...opts, id, duration: opts.duration ?? 4000 }]);
+    setToasts((prev: ToastData[]) => [...prev, { ...opts, id, duration: opts.duration ?? 4000 }]);
     return id;
   }, []);
 
   const dismiss = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts((prev: ToastData[]) => prev.filter((t) => t.id !== id));
   }, []);
 
   // Expose global `toast()`
@@ -296,10 +296,10 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
           opacity: hovered ? 1 : 0,
           transition: 'opacity 0.2s, background 0.15s',
         }}
-        onMouseEnter={(e) => {
+        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
           (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
         }}
-        onMouseLeave={(e) => {
+        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
           (e.currentTarget as HTMLElement).style.background = 'transparent';
         }}
       >

@@ -164,7 +164,7 @@ export function Dock({
 
   // Children mit mouseX, magnification, distance anreichern
   const items = Array.isArray(children) ? children : [children]
-  const enrichedItems = items.map((child, i) => {
+  const enrichedItems = items.map((child: React.ReactNode, i: number) => {
     if (!child || typeof child !== 'object') return child
     const el = child as React.ReactElement<DockItemProps>
     if (el.type !== DockItem) return child

@@ -85,7 +85,7 @@ export function SearchOverlay({
   }
 
   // TanStack Hotkeys Integration via Design Engine Registry
-  useDesignEngineHotkey('Mod+K', (e) => {
+  useDesignEngineHotkey('Mod+K', (e: KeyboardEvent | React.KeyboardEvent) => {
     e.preventDefault();
     open();
   }, {
@@ -94,7 +94,7 @@ export function SearchOverlay({
     category: 'Global'
   });
 
-  useDesignEngineHotkey('Escape', (e) => {
+  useDesignEngineHotkey('Escape', (e: KeyboardEvent | React.KeyboardEvent) => {
     if (isOpen) {
       e.preventDefault();
       close();
@@ -130,10 +130,10 @@ export function SearchOverlay({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev + 1) % Math.max(1, displayResults.length));
+      setSelectedIndex((prev: number) => (prev + 1) % Math.max(1, displayResults.length));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev - 1 + displayResults.length) % Math.max(1, displayResults.length));
+      setSelectedIndex((prev: number) => (prev - 1 + displayResults.length) % Math.max(1, displayResults.length));
     } else if (e.key === 'Enter') {
       if (displayResults[selectedIndex]) {
         console.log('Navigating to:', displayResults[selectedIndex].href);
@@ -192,7 +192,7 @@ export function SearchOverlay({
                 aria-autocomplete="list"
                 placeholder={m.placeholder}
                 value={query}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setQuery(e.target.value);
                   setSelectedIndex(0);
                 }}
@@ -215,7 +215,7 @@ export function SearchOverlay({
                 </div>
               ) : displayResults.length > 0 ? (
                 <div className="space-y-1">
-                  {displayResults.map((result, index) => (
+                  {displayResults.map((result: SearchResult, index: number) => (
                     <button
                       key={result.id}
                       id={`result-item-${index}`}

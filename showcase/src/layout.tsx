@@ -60,7 +60,7 @@ export function Layout() {
 
   function addItem(item?: { id: string; label?: string; image?: string }) {
     const id = item?.id ?? `wine-${Date.now()}`
-    setCartItems(prev => {
+    setCartItems((prev: FloatingCartItem[]) => {
       const existing = prev.find(i => i.id === id)
       if (existing) {
         return prev.map(i => i.id === id ? { ...i, count: (i.count ?? 1) + 1 } : i)
@@ -71,7 +71,7 @@ export function Layout() {
 
   function removeItem(id?: string) {
     if (!id) {
-      setCartItems(prev => {
+      setCartItems((prev: FloatingCartItem[]) => {
         if (prev.length === 0) return prev
         const last = prev[prev.length - 1]
         if ((last.count ?? 1) <= 1) return prev.slice(0, -1)
@@ -80,7 +80,7 @@ export function Layout() {
         )
       })
     } else {
-      setCartItems(prev => {
+      setCartItems((prev: FloatingCartItem[]) => {
         const existing = prev.find(i => i.id === id)
         if (!existing) return prev
         if ((existing.count ?? 1) <= 1) return prev.filter(i => i.id !== id)

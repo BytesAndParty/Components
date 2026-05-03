@@ -105,7 +105,7 @@ export function SparklesText({
 
   const tick = useCallback(() => {
     const now = Date.now()
-    setSparkles(prev => {
+    setSparkles((prev: Sparkle[]) => {
       const alive = prev.filter(s => now - s.createdAt < 700)
       if (alive.length < sparkleCount) {
         return [...alive, generateSparkle(sparkleColor, minSize, maxSize)]

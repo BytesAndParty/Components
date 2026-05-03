@@ -23,7 +23,7 @@ export interface ConfettiOptions {
   /** Origin y (0-1) */
   originY?: number
   /** Shapes: 'square' | 'circle' | 'star' */
-  shapes?: confetti.shape[]
+  shapes?: confetti.Shape[]
   /** Scale factor (default: 1) */
   scalar?: number
   /** Ticks / lifetime (default: 200) */
