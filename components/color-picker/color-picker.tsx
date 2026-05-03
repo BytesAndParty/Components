@@ -38,14 +38,18 @@ export function ColorPickerPanel({
 
   return (
     <ColorPicker.Root
-      format={format}
       {...(parsedValue
         ? { value: parsedValue }
         : { defaultValue: parseColor(defaultValue) }
       )}
       onValueChange={(details: ColorValueChangeDetails) => {
-        // always return hex so Fabric.js consumers don't need to parse
-        onChange?.(details.value.toString('hex'))
+        // Emit hex; if format is non-hex and direct conversion fails,
+        // use valueAsString (Ark UI always provides a valid CSS string)
+        try {
+          onChange?.(details.value.toString('hex'))
+        } catch {
+          onChange?.(details.valueAsString)
+        }
       }}
       onFormatChange={(details: ColorFormatChangeDetails) => {
         setFormat(details.format as ColorFormat)

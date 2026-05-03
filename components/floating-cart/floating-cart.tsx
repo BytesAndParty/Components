@@ -1,53 +1,8 @@
 import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
-// ─── Keyframes (matching Quickbeam.js originals) ────────────────────────────────
-
-const STYLE_ID = '__floating-cart-keyframes__'
-
-function injectStyles() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const s = document.createElement('style')
-  s.id = STYLE_ID
-  s.textContent = `
-    @keyframes fc-show {
-      0%   { transform: rotate(70deg); right: -100px; }
-      50%  { transform: rotate(-20deg); right: 20px; }
-      100% { transform: rotate(0deg); right: 0; }
-    }
-    @keyframes fc-hide {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(200px); }
-    }
-    @keyframes fc-remove-product {
-      0%   { transform: translateX(0); opacity: 1; }
-      100% { transform: translateX(200px); opacity: 0; }
-    }
-    @keyframes fc-fade-down {
-      0%   { transform: rotate(0deg) translateY(0px); opacity: 1; }
-      100% { transform: rotate(5deg) translateY(5px); opacity: 0; }
-    }
-    @keyframes fc-fade-up {
-      0%   { transform: rotate(5deg) translateY(5px); opacity: 0; }
-      100% { transform: rotate(0deg) translateY(0px); opacity: 1; }
-    }
-    @keyframes fc-item-in {
-      0%   { opacity: 0; transform: scale(0.4) translateY(10px); }
-      50%  { opacity: 0.7; transform: scale(1.06) translateY(-2px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    @keyframes fc-badge-bump {
-      0%   { transform: translateX(-50%) scale(1); }
-      50%  { transform: translateX(-50%) scale(1.3); }
-      100% { transform: translateX(-50%) scale(1); }
-    }
-  `
-  document.head.appendChild(s)
-}
-
-if (typeof document !== 'undefined') injectStyles()
-
 // ─── Types ──────────────────────────────────────────────────────────────────────
+// Keyframes (fc-show, fc-hide, fc-remove-product, fc-fade-*, fc-item-in, fc-badge-bump)
+// are defined in styles.css
 
 export interface FloatingCartItem {
   /** Unique item id */

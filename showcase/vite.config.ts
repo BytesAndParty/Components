@@ -11,8 +11,12 @@ export default defineConfig({
     react({
       babel: {
         plugins: [
-          // React Compiler — eliminates manual useMemo/useCallback
-          ['babel-plugin-react-compiler', { compilationMode: 'all' }],
+          // React Compiler — eliminates manual useMemo/useCallback.
+          // No compilationMode: default infers correctly (only instruments
+          // function components and hooks, not utility functions).
+          // 'all' would compile every function incl. module-level utilities,
+          // causing useMemoCache calls before React is initialized.
+          'babel-plugin-react-compiler',
         ],
       },
     }),

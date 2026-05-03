@@ -17,7 +17,7 @@ Shopping cart icon with flying box animation on count changes and an animated ba
 
 1. **Diff detection**: A `useRef` tracks the previous count. On each change, the component determines if items were added or removed and selects the appropriate animation.
 2. **Staggered state updates**: `displayCount` updates 500ms into the animation (midpoint) so the number changes while the box is visually "in the cart". Badge animation clears after 500ms, box animation after 1000ms.
-3. **Keyframe injection**: All keyframes (`ci-box-add`, `ci-box-remove`, `ci-badge-pop`, `ci-badge-in`, `ci-badge-out`) are injected once on module load.
+3. **CSS keyframes**: All keyframes (`ci-box-add`, `ci-box-remove`, `ci-badge-pop`, `ci-badge-in`, `ci-badge-out`) are defined in `showcase/src/styles.css` (see Required CSS below).
 4. **First-mount guard**: The component skips animation on initial render to prevent entrance artifacts.
 
 ## Props
@@ -30,6 +30,42 @@ Shopping cart icon with flying box animation on count changes and an animated ba
 | `badgeColor` | `string` | `'var(--accent)'` | Badge background |
 | `badgeTextColor` | `string` | `'#fff'` | Badge text color |
 | `onClick` | `() => void` | — | Click handler |
+
+## Required CSS
+
+Add to your global stylesheet if not using `showcase/src/styles.css`:
+
+```css
+@keyframes ci-box-add {
+  0%   { top: 20%;  left: -30%; opacity: 0; }
+  25%  { top: -20%; left: 50%;  opacity: 1; }
+  50%  { top: 0%;   left: 70%; }
+  75%  { top: 35%;  left: 50%; }
+  100% { top: 35%;  left: 50%;  opacity: 0; }
+}
+@keyframes ci-box-remove {
+  0%   { top: 35%;  left: 50%;  opacity: 0; }
+  25%  { top: 35%;  left: 50%; }
+  50%  { top: 0%;   left: 70%;  opacity: 1; }
+  75%  { top: -20%; left: 50%;  opacity: 1; }
+  100% { top: 20%;  left: -30%; opacity: 0; }
+}
+@keyframes ci-badge-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+@keyframes ci-badge-in {
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes ci-badge-out {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+```
 
 ## Dependencies
 

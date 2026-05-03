@@ -43,26 +43,8 @@ function StarIcon({ size, fill, stroke }: { size: number; fill: string; stroke: 
   )
 }
 
-// ─── Keyframes (injected once) ──────────────────────────────────────────────────
-
-const STYLE_ID = '__rating-keyframes__'
-
-function injectKeyframes() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const style = document.createElement('style')
-  style.id = STYLE_ID
-  style.textContent = `
-    @keyframes rating-pop {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-  `
-  document.head.appendChild(style)
-}
-
 // ─── Component ──────────────────────────────────────────────────────────────────
+// Keyframes: rating-pop → showcase/src/styles.css (standalone: see COMPONENT.md)
 
 export function Rating({
   count = 5,
@@ -95,8 +77,6 @@ export function Rating({
     },
     [readOnly, isControlled, onChange]
   )
-
-  if (typeof document !== 'undefined') injectKeyframes()
 
   return (
     <div

@@ -771,27 +771,7 @@ export function NavbarDivider() {
 
 // ─── Keyframes for mobile toggle (inject responsive styles) ─────────────────────
 
-const NAVBAR_STYLE_ID = '__navbar-responsive__'
-
-function injectNavbarResponsive() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(NAVBAR_STYLE_ID)) return
-  const style = document.createElement('style')
-  style.id = NAVBAR_STYLE_ID
-  style.textContent = `
-    @media (max-width: 768px) {
-      [data-navbar-desktop] { display: none !important; }
-      [data-navbar-mobile-toggle] { display: flex !important; }
-    }
-    @media (min-width: 769px) {
-      [data-navbar-mobile-toggle] { display: none !important; }
-    }
-  `
-  document.head.appendChild(style)
-}
-
-// Auto-inject on module load
-if (typeof document !== 'undefined') injectNavbarResponsive()
+// Responsive rules are defined in styles.css (.navbar-desktop, .navbar-mobile-toggle)
 
 // Export a utility to mark desktop-only elements
 export function NavbarDesktopOnly({ children, style, ...rest }: { children: ReactNode; style?: CSSProperties } & Record<string, unknown>) {

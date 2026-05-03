@@ -1,52 +1,8 @@
 import { useState, useEffect, useRef, type CSSProperties } from 'react'
 import { NumberTicker } from '../number-ticker/number-ticker'
 
-// ─── Keyframes ──────────────────────────────────────────────────────────────────
-
-const STYLE_ID = '__cart-icon-keyframes__'
-
-function injectStyles() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const s = document.createElement('style')
-  s.id = STYLE_ID
-  s.textContent = `
-    @keyframes ci-box-add {
-      0%   { top: 20%; left: -30%; opacity: 0; }
-      25%  { top: -20%; left: 50%; opacity: 1; }
-      50%  { top: 0%; left: 70%; }
-      75%  { top: 35%; left: 50%; }
-      100% { top: 35%; left: 50%; opacity: 0; }
-    }
-    @keyframes ci-box-remove {
-      0%   { top: 35%; left: 50%; opacity: 0; }
-      25%  { top: 35%; left: 50%; }
-      50%  { top: 0%; left: 70%; opacity: 1; }
-      75%  { top: -20%; left: 50%; opacity: 1; }
-      100% { top: 20%; left: -30%; opacity: 0; }
-    }
-    @keyframes ci-badge-pop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.3); }
-      70%  { transform: scale(0.9); }
-      100% { transform: scale(1); }
-    }
-    @keyframes ci-badge-in {
-      0%   { transform: scale(0); }
-      50%  { transform: scale(1.25); }
-      100% { transform: scale(1); }
-    }
-    @keyframes ci-badge-out {
-      0%   { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
-    }
-  `
-  document.head.appendChild(s)
-}
-
-if (typeof document !== 'undefined') injectStyles()
-
 // ─── Types ──────────────────────────────────────────────────────────────────────
+// Keyframes: ci-box-add, ci-box-remove, ci-badge-* → showcase/src/styles.css (standalone: see COMPONENT.md)
 
 export interface CartIconProps {
   /** Number of items in cart */

@@ -17,10 +17,9 @@ Animated add-to-cart button with a multi-stage cart roll-in animation inspired b
 
 ## How It Works
 
-1. **Keyframe injection**: A `<style>` element with the `atc-cart` keyframe is injected into `<head>` once on module load (SSR-safe via `typeof document` check).
-2. **Loading lock**: A `loading` state prevents double-clicks. The animation auto-resets via `setTimeout(duration)`.
-3. **CSS-driven animation**: The cart assembly uses pure CSS animations (`animation: atc-cart 3.4s`). Fill and checkmark use CSS transitions with staggered delays.
-4. **Cleanup**: Timer refs are cleared on unmount to prevent memory leaks.
+1. **Loading lock**: A `loading` state prevents double-clicks. The animation auto-resets via `setTimeout(duration)`.
+2. **CSS-driven animation**: The cart assembly uses pure CSS animations (`animation: atc-cart 3.4s`). Fill and checkmark use CSS transitions with staggered delays.
+3. **Cleanup**: Timer refs are cleared on unmount to prevent memory leaks.
 
 ## Props
 
@@ -31,6 +30,23 @@ Animated add-to-cart button with a multi-stage cart roll-in animation inspired b
 | `duration` | `number` | `3700` | Total animation + reset duration in ms |
 | `bgColor` | `string` | `'var(--accent)'` | Button background |
 | `textColor` | `string` | `'#fff'` | Text and icon color |
+
+## Required CSS
+
+Add to your global stylesheet if not using `showcase/src/styles.css`:
+
+```css
+@keyframes atc-cart {
+  0%    { transform: translateX(-120px) rotate(-18deg); }
+  12.5% { transform: translateX(-60px) rotate(-18deg); }
+  25%, 45%, 55%, 75% { transform: none; }
+  50%   { transform: scale(.9); }
+  44%, 56% { transform-origin: 12px 23px; }
+  45%, 55% { transform-origin: 50% 50%; }
+  87.5% { transform: translateX(70px) rotate(-18deg); }
+  100%  { transform: translateX(140px) rotate(-18deg); }
+}
+```
 
 ## Dependencies
 

@@ -15,7 +15,7 @@ Star rating component with controlled/uncontrolled support, hover preview, and p
 
 1. **Controlled/uncontrolled pattern**: If `value` is provided, the component is controlled. Otherwise `defaultValue` + internal state is used.
 2. **Display value**: `hoverValue ?? currentValue` determines which stars are filled, so hover always takes visual priority.
-3. **Keyframe injection**: The `rating-pop` keyframe is injected once via the standard ID-deduplicated pattern.
+3. **CSS keyframe**: `rating-pop` is defined in `showcase/src/styles.css` (see Required CSS below).
 4. **ARIA**: Uses `role="radiogroup"` with individual `role="radio"` and `aria-checked` per star for full screen reader support.
 
 ## Props
@@ -30,6 +30,18 @@ Star rating component with controlled/uncontrolled support, hover preview, and p
 | `activeColor` | `string` | `'var(--accent)'` | Filled star color |
 | `inactiveColor` | `string` | `'var(--border)'` | Empty star color |
 | `readOnly` | `boolean` | `false` | Disable interactions |
+
+## Required CSS
+
+Add to your global stylesheet if not using `showcase/src/styles.css`:
+
+```css
+@keyframes rating-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+```
 
 ## Dependencies
 

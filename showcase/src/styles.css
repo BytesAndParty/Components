@@ -39,88 +39,6 @@
   --radius-lg: calc(var(--radius) + 4px);
   --radius-xl: calc(var(--radius) + 8px);
 
-  @keyframes aurora {
-    0%   { background-position: 0% center; }
-    100% { background-position: 200% center; }
-  }
-
-  @keyframes atc-cart {
-    0%   { transform: translateX(-120px) rotate(-18deg); }
-    12.5% { transform: translateX(-60px) rotate(-18deg); }
-    25%, 45%, 55%, 75% { transform: none; }
-    50% { transform: scale(.9); }
-    44%, 56% { transform-origin: 12px 23px; }
-    45%, 55% { transform-origin: 50% 50%; }
-    87.5% { transform: translateX(70px) rotate(-18deg); }
-    100% { transform: translateX(140px) rotate(-18deg); }
-  }
-  @keyframes ptag-entrance {
-    0%   { transform: scale(0.5) rotate(-6deg); opacity: 0; }
-    65%  { transform: scale(1.06) rotate(1.5deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-  @keyframes ptag-shimmer {
-    0%   { left: -60%; }
-    100% { left: 160%; }
-  }
-  @keyframes ptag-dot-pulse {
-    0%, 100% { transform: scale(1);   opacity: 1; }
-    50%       { transform: scale(1.7); opacity: 0.35; }
-  }
-  @keyframes rating-pop {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
-  @keyframes mb-shimmer {
-    0%   { transform: translateX(-120%) skewX(-20deg); }
-    100% { transform: translateX(320%)  skewX(-20deg); }
-  }
-  @keyframes mb-glow-pulse {
-    0%, 100% { box-shadow: 0 0  8px  3px color-mix(in oklch, var(--accent) 45%, transparent),
-                           0 2px 12px    color-mix(in oklch, var(--accent) 30%, transparent); }
-    50%       { box-shadow: 0 0 22px  8px color-mix(in oklch, var(--accent) 70%, transparent),
-                           0 4px 30px    color-mix(in oklch, var(--accent) 40%, transparent); }
-  }
-  @keyframes mb-gradient {
-    0%   { background-position: 0%   center; }
-    100% { background-position: 200% center; }
-  }
-  @keyframes ci-box-add {
-    0%   { top: 20%; left: -30%; opacity: 0; }
-    25%  { top: -20%; left: 50%; opacity: 1; }
-    50%  { top: 0%; left: 70%; }
-    75%  { top: 35%; left: 50%; }
-    100% { top: 35%; left: 50%; opacity: 0; }
-  }
-  @keyframes ci-box-remove {
-    0%   { top: 35%; left: 50%; opacity: 0; }
-    25%  { top: 35%; left: 50%; }
-    50%  { top: 0%; left: 70%; opacity: 1; }
-    75%  { top: -20%; left: 50%; opacity: 1; }
-    100% { top: 20%; left: -30%; opacity: 0; }
-  }
-  @keyframes ci-badge-pop {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(1.3); }
-    70%  { transform: scale(0.9); }
-    100% { transform: scale(1); }
-  }
-  @keyframes ci-badge-in {
-    0%   { transform: scale(0); }
-    50%  { transform: scale(1.25); }
-    100% { transform: scale(1); }
-  }
-  @keyframes ci-badge-out {
-    0%   { transform: scale(1); opacity: 1; }
-    100% { transform: scale(0); opacity: 0; }
-  }
-
-  @keyframes mb-beam {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-
   --animate-aurora: aurora 10s ease infinite;
 }
 
@@ -236,4 +154,141 @@
 
 .scrollbar-thumb-border {
   scrollbar-color: var(--border) transparent;
+}
+
+/* AuroraText keyframes */
+@keyframes aurora {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes aurora-gradient {
+  0%   { background-position: 0% center; }
+  100% { background-position: 300% center; }
+}
+
+/* AddToCartButton keyframes */
+@keyframes atc-cart {
+  0%    { transform: translateX(-120px) rotate(-18deg); }
+  12.5% { transform: translateX(-60px) rotate(-18deg); }
+  25%, 45%, 55%, 75% { transform: none; }
+  50%   { transform: scale(.9); }
+  44%, 56% { transform-origin: 12px 23px; }
+  45%, 55% { transform-origin: 50% 50%; }
+  87.5% { transform: translateX(70px) rotate(-18deg); }
+  100%  { transform: translateX(140px) rotate(-18deg); }
+}
+
+/* PriceTag keyframes */
+@keyframes ptag-entrance {
+  0%   { transform: scale(0.5) rotate(-6deg); opacity: 0; }
+  65%  { transform: scale(1.06) rotate(1.5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes ptag-shimmer {
+  0%   { left: -60%; }
+  100% { left: 160%; }
+}
+@keyframes ptag-dot-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.7); opacity: 0.35; }
+}
+
+/* Rating keyframes */
+@keyframes rating-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* MagicButton keyframes */
+@keyframes mb-shimmer {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(320%)  skewX(-20deg); }
+}
+@keyframes mb-glow-pulse {
+  0%, 100% { box-shadow: 0 0  8px  3px color-mix(in oklch, var(--accent) 45%, transparent),
+                         0 2px 12px    color-mix(in oklch, var(--accent) 30%, transparent); }
+  50%       { box-shadow: 0 0 22px  8px color-mix(in oklch, var(--accent) 70%, transparent),
+                         0 4px 30px    color-mix(in oklch, var(--accent) 40%, transparent); }
+}
+@keyframes mb-gradient {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 200% center; }
+}
+@keyframes mb-beam {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* CartIcon keyframes */
+@keyframes ci-box-add {
+  0%   { top: 20%;  left: -30%; opacity: 0; }
+  25%  { top: -20%; left: 50%;  opacity: 1; }
+  50%  { top: 0%;   left: 70%; }
+  75%  { top: 35%;  left: 50%; }
+  100% { top: 35%;  left: 50%;  opacity: 0; }
+}
+@keyframes ci-box-remove {
+  0%   { top: 35%;  left: 50%;  opacity: 0; }
+  25%  { top: 35%;  left: 50%; }
+  50%  { top: 0%;   left: 70%;  opacity: 1; }
+  75%  { top: -20%; left: 50%;  opacity: 1; }
+  100% { top: 20%;  left: -30%; opacity: 0; }
+}
+@keyframes ci-badge-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+@keyframes ci-badge-in {
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes ci-badge-out {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* FloatingCart keyframes — replaces module-level injectStyles() */
+@keyframes fc-show {
+  0%   { transform: rotate(70deg); right: -100px; }
+  50%  { transform: rotate(-20deg); right: 20px; }
+  100% { transform: rotate(0deg); right: 0; }
+}
+@keyframes fc-hide {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(200px); }
+}
+@keyframes fc-remove-product {
+  0%   { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(200px); opacity: 0; }
+}
+@keyframes fc-fade-down {
+  0%   { transform: rotate(0deg) translateY(0px); opacity: 1; }
+  100% { transform: rotate(5deg) translateY(5px); opacity: 0; }
+}
+@keyframes fc-fade-up {
+  0%   { transform: rotate(5deg) translateY(5px); opacity: 0; }
+  100% { transform: rotate(0deg) translateY(0px); opacity: 1; }
+}
+@keyframes fc-item-in {
+  0%   { opacity: 0; transform: scale(0.4) translateY(10px); }
+  50%  { opacity: 0.7; transform: scale(1.06) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes fc-badge-bump {
+  0%   { transform: translateX(-50%) scale(1); }
+  50%  { transform: translateX(-50%) scale(1.3); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* Navbar responsive — replaces module-level injectNavbarResponsive() */
+@media (max-width: 768px) {
+  [data-navbar-desktop] { display: none !important; }
+  [data-navbar-mobile-toggle] { display: flex !important; }
+}
+@media (min-width: 769px) {
+  [data-navbar-mobile-toggle] { display: none !important; }
 }

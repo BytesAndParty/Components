@@ -1,28 +1,7 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo } from 'react';
 
-// ─── Keyframe injection ─────────────────────────────────────────────────────────
-// The aurora shimmer keyframe must live inside the component so it works
-// standalone without any external stylesheet.
-
-const STYLE_ID = '__aurora-text-keyframes__';
-
-function injectKeyframes() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-    @keyframes aurora {
-      0%   { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-    @keyframes aurora-gradient {
-      0%   { background-position: 0% center; }
-      100% { background-position: 300% center; }
-    }
-  `;
-  document.head.appendChild(style);
-}
+// ─── Keyframes ──────────────────────────────────────────────────────────────────
+// aurora, aurora-gradient → showcase/src/styles.css (standalone: see COMPONENT.md)
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -52,15 +31,7 @@ export const AuroraText = memo(
     variant = 'aurora',
     style,
   }: AuroraTextProps) => {
-    const injected = useRef(false);
-    useEffect(() => {
-      if (!injected.current) {
-        injectKeyframes();
-        injected.current = true;
-      }
-    }, []);
-
-    const gradientStyle =
+      const gradientStyle =
       variant === 'gradient'
         ? {
             // Nahtloser Loop: ersten Farbwert am Ende wiederholen

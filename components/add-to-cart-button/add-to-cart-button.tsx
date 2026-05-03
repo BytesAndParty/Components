@@ -1,32 +1,7 @@
 import { useState, useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
-// ─── Keyframes ──────────────────────────────────────────────────────────────────
-
-const STYLE_ID = '__add-to-cart-btn-keyframes__'
-
-function injectStyles() {
-  if (typeof document === 'undefined') return
-  if (document.getElementById(STYLE_ID)) return
-  const s = document.createElement('style')
-  s.id = STYLE_ID
-  s.textContent = `
-    @keyframes atc-cart {
-      0%   { transform: translateX(-120px) rotate(-18deg); }
-      12.5% { transform: translateX(-60px) rotate(-18deg); }
-      25%, 45%, 55%, 75% { transform: none; }
-      50% { transform: scale(.9); }
-      44%, 56% { transform-origin: 12px 23px; }
-      45%, 55% { transform-origin: 50% 50%; }
-      87.5% { transform: translateX(70px) rotate(-18deg); }
-      100% { transform: translateX(140px) rotate(-18deg); }
-    }
-  `
-  document.head.appendChild(s)
-}
-
-if (typeof document !== 'undefined') injectStyles()
-
 // ─── Types ──────────────────────────────────────────────────────────────────────
+// Keyframes: atc-cart → showcase/src/styles.css (standalone: see COMPONENT.md)
 
 export interface AddToCartButtonProps {
   children?: ReactNode
