@@ -30,7 +30,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 
 | # | Question | Decision |
 |---|---|---|
-| 1 | Image upload | **File input only.** Clipboard paste (`Ctrl+V`) also supported — pastes image directly onto canvas. |
+| 1 | Image upload | **File input only.** Clipboard paste (`Ctrl+V`) also supported — pastes image directly onto canvas. Showcase-Testing: **client-side only** — kein Server-Upload. |
 | 2 | Autosave | **localStorage auto + `onSave` callback** for DB. Component handles localStorage, app wires `onSave` to Vendure account mutation. Manual "Save" button triggers `onSave(state)`. |
 | 3 | Print bleed | **Yes, 3mm bleed indicator** on canvas — dashed overlay, non-interactive. Required for professional offset printing. |
 | 4 | Signature Pad | **"Extras" insert panel** — low priority section alongside decorative dividers, ornaments, etc. Signature is one of several extras. Not a main toolbar tool. |
@@ -346,19 +346,20 @@ interface CellarCanvasProps {
 ## Implementation Phases
 
 ### Phase 1 — Atomic Sub-Components ← current
-Build and showcase each UI primitive in isolation before wiring to Fabric.
+Priorität: Jede Komponente **inhaltlich vollständig + Styling perfektioniert** bevor Phase 2 beginnt.
+Jede Komponente wird in `/designer` als eigene Section showcased.
 
 | Component | Status |
 |---|---|
 | `ColorPickerPanel` — HEX/RGB/HSL, alpha, swatches | ✅ done |
-| `TextToolOptions` — font, bold/italic/underline, letter-spacing, color | ⬜ next |
-| `ImageCropperModal` — Ark UI ImageCropper + FocusTrap | ⬜ |
-| `LayerPanel` — Framer Motion Reorder (no Fabric yet, mock data) | ⬜ |
-| `FontPicker` — dropdown with Google Font previews | ⬜ |
-| `NumberInput` — inline stepper (px / deg / %) | ⬜ |
-| `AlignmentBar` — 6 align + 2 distribute buttons | ⬜ |
-| `IconButton` + `Tooltip` primitives | ⬜ |
-| `ValidatorBadge` — badge + popover (mock warnings) | ⬜ |
+| `TextToolOptions` — font, bold/italic/underline, letter-spacing, color | ✅ done |
+| `ImageCropperModal` — Ark UI ImageCropper + FocusTrap | ✅ done |
+| `LayerPanel` — Framer Motion Reorder (mock data, kein Fabric) | ✅ done |
+| `FontPicker` — in TextToolOptions inline (kein standalone nötig) | ✅ done (inline) |
+| `NumberInput` — inline stepper (px / deg / %) | ✅ built, ⬜ Showcase + Styling-Review |
+| `AlignmentBar` — 6 align + 2 distribute buttons | ✅ done |
+| `Tooltip` primitive | ✅ done |
+| `ValidatorBadge` — badge + popover (mock warnings) | ✅ done |
 
 ### Phase 2 — Canvas Foundation
 - Install `fabric`, `zustand`
@@ -393,6 +394,7 @@ Build and showcase each UI primitive in isolation before wiring to Fabric.
 - `BleedOverlay` (3mm dashed zone)
 - Snap to grid + smart guides
 - Group / Ungroup
+- **Testing: client-side only** — kein Server-Upload, `onExport` callback wird im Showcase nur geloggt
 
 ### Phase 6 — Templates + Undo/Redo + Multi-Area
 - Install `jspdf`

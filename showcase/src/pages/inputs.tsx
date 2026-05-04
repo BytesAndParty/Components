@@ -101,7 +101,7 @@ function FormInputDemo() {
         placeholder="Anna Müller"
         value={form.name}
         error={errors.name}
-        onChange={(e) => {
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           const v = e.target.value
           setForm(f => ({ ...f, name: v }))
           validate('name', v)
@@ -113,7 +113,7 @@ function FormInputDemo() {
         placeholder="anna@beispiel.de"
         value={form.email}
         error={errors.email}
-        onChange={(e) => {
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           const v = e.target.value
           setForm(f => ({ ...f, email: v }))
           validate('email', v)
@@ -132,7 +132,7 @@ function FormInputDemo() {
           placeholder="18–120"
           value={form.age}
           error={errors.age}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const v = e.target.value
             setForm(f => ({ ...f, age: v }))
             validate('age', v)
@@ -144,7 +144,7 @@ function FormInputDemo() {
           placeholder="https://"
           value={form.website}
           error={errors.website}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const v = e.target.value
             setForm(f => ({ ...f, website: v }))
             validate('website', v)
@@ -160,7 +160,7 @@ function FormInputDemo() {
         </button>
         <button
           type="button"
-          onClick={() => { setForm({ name: '', email: '', phone: '', age: '', website: '' }); setServerErrors({}) }}
+          onClick={() => { setForm({ name: '', email: '', phone: '', age: '', website: '' }); setErrors({}) }}
           className="px-4 py-2 rounded-md border border-border bg-transparent text-foreground text-sm cursor-pointer transition-colors hover:bg-white/5"
         >
           Zurücksetzen

@@ -1,15 +1,36 @@
-import { ColorPicker, parseColor, type ColorValueChangeDetails, type ColorFormatChangeDetails } from '@ark-ui/react/color-picker'
+import { ColorPicker, parseColor, type ColorPickerValueChangeDetails, type ColorPickerFormatChangeDetails } from '@ark-ui/react/color-picker'
 import { Pipette } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
 
 type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
-const WINE_LABEL_PRESETS = [
-  '#ffffff', '#f5f0e8', '#fef3c7', '#fde68a',
-  '#d4af37', '#c5a028', '#8b4513', '#722f37',
-  '#4a0e1a', '#2c1810', '#1a0a0a', '#000000',
-  '#f8f0e3', '#e8d5b7', '#c19a6b', '#6b4f2a',
+export type PaletteGroup = {
+  label: string
+  colors: string[]
+}
+
+const DEFAULT_PALETTE_GROUPS: PaletteGroup[] = [
+  {
+    label: 'Ivory & Parchment',
+    colors: ['#ffffff', '#fef9f0', '#f5eedc', '#ede0c8', '#e0d0b0', '#c8b890', '#a89870', '#7a6850', '#3c2d1f'],
+  },
+  {
+    label: 'Gold & Amber',
+    colors: ['#fef9c3', '#fde68a', '#fbbf24', '#f59e0b', '#d4af37', '#c5a028', '#a07020', '#7a5010', '#4a3008'],
+  },
+  {
+    label: 'Burgundy & Wine',
+    colors: ['#fdf2f4', '#f5c6cf', '#e07890', '#c04060', '#9c1f38', '#7c2832', '#722f37', '#501828', '#2d0810'],
+  },
+  {
+    label: 'Midnight & Navy',
+    colors: ['#f0f2f8', '#ccd4ec', '#8090cc', '#4060a8', '#1c3878', '#10204a', '#0a1430', '#050918', '#020408'],
+  },
+  {
+    label: 'Bark & Earth',
+    colors: ['#fdf6ee', '#e8d4b8', '#c8a880', '#a07848', '#7a5828', '#5a3c1a', '#3c280e', '#20160a', '#000000'],
+  },
 ]
 
 export interface ColorPickerProps {
@@ -18,6 +39,7 @@ export interface ColorPickerProps {
   onChange?: (hex: string) => void
   showAlpha?: boolean
   presets?: string[]
+  paletteGroups?: PaletteGroup[]
   className?: string
 }
 
@@ -26,7 +48,8 @@ export function ColorPickerPanel({
   defaultValue = '#000000',
   onChange,
   showAlpha = false,
-  presets = WINE_LABEL_PRESETS,
+  presets = [],
+  paletteGroups = DEFAULT_PALETTE_GROUPS,
   className,
 }: ColorPickerProps) {
   const [format, setFormat] = useState<ColorFormat>('hex')
@@ -38,28 +61,31 @@ export function ColorPickerPanel({
 
   return (
     <ColorPicker.Root
+      inline
       {...(parsedValue
         ? { value: parsedValue }
         : { defaultValue: parseColor(defaultValue) }
       )}
-      onValueChange={(details: ColorValueChangeDetails) => {
-        // Emit hex; if format is non-hex and direct conversion fails,
-        // use valueAsString (Ark UI always provides a valid CSS string)
+      onValueChange={(details: ColorPickerValueChangeDetails) => {
         try {
           onChange?.(details.value.toString('hex'))
         } catch {
           onChange?.(details.valueAsString)
         }
       }}
-      onFormatChange={(details: ColorFormatChangeDetails) => {
+      onFormatChange={(details: ColorPickerFormatChangeDetails) => {
         setFormat(details.format as ColorFormat)
       }}
     >
-      <div className={cn('flex flex-col gap-3', className)}>
+      <ColorPicker.Content className={cn('flex flex-col gap-3', className)}>
 
-        {/* ── 2D Saturation / Lightness Area ──────────────────── */}
-        <ColorPicker.Area className="relative w-full h-36 rounded-md overflow-hidden cursor-crosshair">
-          <ColorPicker.AreaBackground className="absolute inset-0" />
+        {/* ── 2D Saturation / Brightness Area ──────────────────── */}
+        <ColorPicker.Area 
+          xChannel="saturation" 
+          yChannel="brightness"
+          className="relative w-full h-40 rounded-lg cursor-crosshair overflow-hidden border border-border/50"
+        >
+          <ColorPicker.AreaBackground className="absolute inset-0 w-full h-full" />
           <ColorPicker.AreaThumb className="absolute w-4 h-4 rounded-full border-2 border-white -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing shadow-[0_0_0_1px_rgba(0,0,0,0.25)]" />
         </ColorPicker.Area>
 
@@ -71,20 +97,21 @@ export function ColorPickerPanel({
 
           <div className="flex flex-1 flex-col gap-2">
             {/* Hue */}
-            <ColorPicker.ChannelSlider channel="hue" className="relative h-3 w-full rounded-full overflow-hidden">
-              <ColorPicker.ChannelSliderTrack
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(to right,#f00 0%,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00 100%)' }}
-              />
-              <ColorPicker.ChannelSliderThumb className="absolute top-1/2 w-3 h-3 rounded-full border-2 border-white -translate-y-1/2 -translate-x-1/2 cursor-grab shadow-[0_0_0_1px_rgba(0,0,0,0.25)]" />
+            <ColorPicker.ChannelSlider channel="hue" className="relative h-3 w-full">
+              <div className="absolute inset-0 rounded-full overflow-hidden">
+                <ColorPicker.ChannelSliderTrack className="w-full h-full" />
+              </div>
+              <ColorPicker.ChannelSliderThumb className="absolute top-1/2 w-3 h-3 rounded-full border-2 border-white -translate-x-1/2 -translate-y-1/2 cursor-grab shadow-[0_0_0_1px_rgba(0,0,0,0.25)]" />
             </ColorPicker.ChannelSlider>
 
             {/* Alpha */}
             {showAlpha && (
-              <ColorPicker.ChannelSlider channel="alpha" className="relative h-3 w-full rounded-full overflow-hidden">
-                <ColorPicker.TransparencyGrid className="absolute inset-0 [--size:6px]" />
-                <ColorPicker.ChannelSliderTrack className="absolute inset-0" />
-                <ColorPicker.ChannelSliderThumb className="absolute top-1/2 w-3 h-3 rounded-full border-2 border-white -translate-y-1/2 -translate-x-1/2 cursor-grab shadow-[0_0_0_1px_rgba(0,0,0,0.25)]" />
+              <ColorPicker.ChannelSlider channel="alpha" className="relative h-3 w-full">
+                <div className="absolute inset-0 rounded-full overflow-hidden">
+                  <ColorPicker.TransparencyGrid />
+                  <ColorPicker.ChannelSliderTrack className="w-full h-full" />
+                </div>
+                <ColorPicker.ChannelSliderThumb className="absolute top-1/2 w-3 h-3 rounded-full border-2 border-white -translate-x-1/2 -translate-y-1/2 cursor-grab shadow-[0_0_0_1px_rgba(0,0,0,0.25)]" />
               </ColorPicker.ChannelSlider>
             )}
           </div>
@@ -135,21 +162,45 @@ export function ColorPickerPanel({
           )}
         </div>
 
-        {/* ── Preset Swatches ────────────────────────────────── */}
+        {/* ── Preset Swatches (flat) ────────────────────────── */}
         {presets.length > 0 && (
-          <ColorPicker.SwatchGroup className="flex flex-wrap gap-1.5 pt-1 border-t border-border">
+          <ColorPicker.SwatchGroup className="flex flex-wrap gap-1 pt-1 border-t border-border">
             {presets.map((color) => (
               <ColorPicker.SwatchTrigger
                 key={color}
                 value={color}
-                className="w-6 h-6 rounded cursor-pointer ring-1 ring-border hover:ring-2 hover:ring-accent transition-shadow overflow-hidden"
+                className="w-6 h-6 rounded cursor-pointer ring-1 ring-border hover:ring-2 hover:ring-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent transition-shadow overflow-hidden"
               >
                 <ColorPicker.Swatch value={color} className="w-full h-full" />
               </ColorPicker.SwatchTrigger>
             ))}
           </ColorPicker.SwatchGroup>
         )}
-      </div>
+
+        {/* ── Palette Groups ─────────────────────────────────── */}
+        {paletteGroups.length > 0 && (
+          <div className="flex flex-col gap-3 pt-2 border-t border-border">
+            {paletteGroups.map((group) => (
+              <div key={group.label} className="flex flex-col gap-1">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+                  {group.label}
+                </p>
+                <ColorPicker.SwatchGroup className="flex flex-wrap gap-1">
+                  {group.colors.map((color) => (
+                    <ColorPicker.SwatchTrigger
+                      key={color}
+                      value={color}
+                      className="w-6 h-6 rounded cursor-pointer ring-1 ring-border hover:ring-2 hover:ring-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent transition-shadow overflow-hidden"
+                    >
+                      <ColorPicker.Swatch value={color} className="w-full h-full" />
+                    </ColorPicker.SwatchTrigger>
+                  ))}
+                </ColorPicker.SwatchGroup>
+              </div>
+            ))}
+          </div>
+        )}
+      </ColorPicker.Content>
 
       <ColorPicker.HiddenInput />
     </ColorPicker.Root>

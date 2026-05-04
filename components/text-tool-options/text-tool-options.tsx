@@ -360,7 +360,7 @@ function ColorSwatch({ color, onChange, title }: { color: string; onChange: (v: 
       <Portal>
       <Popover.Positioner style={{ zIndex: 50 }}>
         <Popover.Content>
-          <div className="bg-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="w-72 bg-card border border-border rounded-xl p-3 shadow-xl">
             <ColorPickerPanel
               value={color}
               onChange={onChange}
@@ -368,6 +368,7 @@ function ColorSwatch({ color, onChange, title }: { color: string; onChange: (v: 
                 '#000000', '#ffffff', '#722f37', '#d4af37',
                 '#4a0e1a', '#f5f0e8', '#2c1810', '#c5a028',
               ]}
+              paletteGroups={[]}
             />
           </div>
         </Popover.Content>

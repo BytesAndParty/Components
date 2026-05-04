@@ -13,19 +13,32 @@ import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-provider'
 function ColorPickerDemo() {
   const [color, setColor] = useState('#722f37')
   return (
-    <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-      <div className="w-64 bg-card border border-border rounded-xl p-3 shadow-sm">
-        <ColorPickerPanel value={color} onChange={setColor} />
-      </div>
+    <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
       <div className="flex flex-col gap-3">
-        <p className="text-xs text-muted-foreground font-mono">onChange value:</p>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg border border-border shadow-sm" style={{ background: color }} />
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-8 h-8 rounded-lg border border-border shadow-sm shrink-0" style={{ background: color }} />
           <code className="text-sm font-mono bg-muted px-2 py-1 rounded">{color}</code>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground font-mono">with Alpha:</p>
-        <div className="w-64 bg-card border border-border rounded-xl p-3 shadow-sm">
-          <ColorPickerPanel defaultValue="#d4af37" showAlpha presets={[]} />
+        <div className="w-80 bg-card border border-border rounded-xl p-4 shadow-sm">
+          <ColorPickerPanel value={color} onChange={setColor} />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">Alpha Support:</p>
+          <div className="w-72 bg-card border border-border rounded-xl p-4 shadow-sm">
+            <ColorPickerPanel defaultValue="#d4af37" showAlpha paletteGroups={[]} />
+          </div>
+        </div>
+
+        <div className="p-4 bg-muted/30 border border-dashed border-border rounded-xl max-w-sm">
+          <h4 className="text-sm font-semibold mb-2">Design Engine Palette</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Der Color Picker verwendet vordefinierte <span className="text-foreground font-medium">Palette Groups</span>, 
+            die speziell auf das Wine-Branding (Ivory, Burgundy, Midnight, Earth) abgestimmt sind. 
+            Dies garantiert visuelle Konsistenz über alle Labels hinweg.
+          </p>
         </div>
       </div>
     </div>
@@ -39,7 +52,7 @@ function TextToolOptionsDemo() {
   return (
     <div className="flex flex-col gap-4">
       <div className="overflow-x-auto pb-1">
-        <TextToolOptions value={fmt} onChange={(p) => setFmt(prev => ({ ...prev, ...p }))} />
+        <TextToolOptions value={fmt} onChange={(p: Partial<TextFormatValues>) => setFmt((prev: TextFormatValues) => ({ ...prev, ...p }))} />
       </div>
       <div className="p-6 bg-card border border-border rounded-xl">
         <p
@@ -134,14 +147,14 @@ function LayerPanelDemo() {
   const [selected, setSelected] = useState<string[]>(['1'])
 
   function toggle<K extends 'visible' | 'locked'>(id: string, key: K) {
-    setLayers(prev => prev.map(l => l.id === id ? { ...l, [key]: !l[key] } : l))
+    setLayers((prev: Layer[]) => prev.map((l: Layer) => l.id === id ? { ...l, [key]: !l[key] } : l))
   }
 
   useDesignEngineHotkey(
     'Delete',
     () => {
       if (selected.length === 0) return
-      setLayers(prev => prev.filter(l => !selected.includes(l.id)))
+      setLayers((prev: Layer[]) => prev.filter((l: Layer) => !selected.includes(l.id)))
       setSelected([])
     },
     { label: 'Ebene löschen', description: 'Ausgewählte Ebene(n) entfernen', category: 'Actions' }
@@ -162,8 +175,8 @@ function LayerPanelDemo() {
         onSelect={(id) => setSelected([id])}
         onVisibilityToggle={(id) => toggle(id, 'visible')}
         onLockToggle={(id) => toggle(id, 'locked')}
-        onRename={(id, name) => setLayers(prev => prev.map(l => l.id === id ? { ...l, name } : l))}
-        onDelete={(id) => setLayers(prev => prev.filter(l => l.id !== id))}
+        onRename={(id, name) => setLayers((prev: Layer[]) => prev.map((l: Layer) => l.id === id ? { ...l, name } : l))}
+        onDelete={(id) => setLayers((prev: Layer[]) => prev.filter((l: Layer) => l.id !== id))}
       />
       <p className="text-xs text-muted-foreground">
         Doppelklick zum Umbenennen · Drag am Grip zum Sortieren · <kbd className="text-[10px] bg-muted px-1 rounded">Delete</kbd> löscht Auswahl
@@ -183,7 +196,7 @@ function ImageCropperDemo() {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = (ev) => {
+    reader.onload = (ev: ProgressEvent<FileReader>) => {
       setImageSrc(ev.target?.result as string)
       setOpen(true)
     }
