@@ -1,7 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
-import { ToastProvider } from '@/components/toast'
-import { CartIcon } from '@/components/cart-icon'
 import type { Order } from '@/lib/types'
 import { createCartActions, CartContext } from '@/lib/cart-context'
 
@@ -75,19 +73,7 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      style={{
-        background: 'none',
-        border: '1px solid var(--border)',
-        borderRadius: '8px',
-        width: '36px',
-        height: '36px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'var(--foreground)',
-        fontSize: '16px',
-      }}
+      className="w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-muted transition-colors"
       aria-label="Theme wechseln"
     >
       {isDark ? '☀️' : '🌙'}
@@ -104,16 +90,9 @@ function NavLink({ to, children }: { to: string; children: ReactNode }) {
   return (
     <Link
       to={to}
-      style={{
-        textDecoration: 'none',
-        color: isActive ? 'var(--accent)' : 'var(--muted-foreground)',
-        fontWeight: isActive ? 600 : 400,
-        fontSize: '14px',
-        padding: '8px 12px',
-        borderRadius: '8px',
-        transition: 'all 200ms ease',
-        background: isActive ? 'color-mix(in oklch, var(--accent) 10%, transparent)' : 'transparent',
-      }}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+        isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
+      }`}
     >
       {children}
     </Link>
@@ -126,54 +105,37 @@ export function Layout() {
   const { totalQuantity } = useContext(CartContext)!
 
   return (
-    <>
-      {/* Header */}
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-          background: 'var(--background)',
-          borderBottom: '1px solid var(--border)',
-          backdropFilter: 'blur(12px)',
-        }}
-      >
-        <div className="max-w-6xl mx-auto px-6" style={{ display: 'flex', alignItems: 'center', height: '56px', gap: '24px' }}>
-          <Link
-            to="/"
-            style={{
-              textDecoration: 'none',
-              color: 'var(--foreground)',
-              fontWeight: 700,
-              fontSize: '18px',
-              letterSpacing: '-0.02em',
-            }}
-          >
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+          <Link to="/" className="text-xl font-bold tracking-tight shrink-0">
             🍷 Weingut
           </Link>
 
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+          <nav className="flex items-center gap-1 flex-1 px-4">
             <NavLink to="/">Weine</NavLink>
             <NavLink to="/cart">Warenkorb</NavLink>
-            <NavLink to="/admin-info">Vendure Admin</NavLink>
+            <NavLink to="/admin-info">Admin</NavLink>
           </nav>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CartIcon
-              count={totalQuantity ?? 0}
-              size={20}
-              badgeColor="var(--accent)"
-            />
+          <div className="flex items-center gap-4">
+            <Link to="/cart" className="relative p-2 hover:bg-muted rounded-lg transition-colors">
+              <span className="text-xl">🛒</span>
+              {totalQuantity > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {totalQuantity}
+                </span>
+              )}
+            </Link>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 pt-6 pb-16">
+      <main className="max-w-6xl mx-auto px-6 py-10">
         <Outlet />
-      </div>
-    </>
+      </main>
+    </div>
   )
 }
 
@@ -182,9 +144,7 @@ export function Layout() {
 export function LayoutWithProviders() {
   return (
     <CartProvider>
-      <ToastProvider placement="bottom-right">
-        <Layout />
-      </ToastProvider>
+      <Layout />
     </CartProvider>
   )
 }
