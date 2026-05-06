@@ -33,7 +33,7 @@
 ### 🟡 Code-Qualität
 
 - [x] **hotkeys-provider.tsx** — Read-Context (registry) und Write-Context (register/unregister) trennen (erledigt)
-- [ ] **designer.tsx:194** — `URL.createObjectURL(blob)` wird bei erneutem Crop nicht revoked (kleiner Memory-Leak im Demo)
+- [x] **designer.tsx:194** — `URL.createObjectURL(blob)` wird bei erneutem Crop nicht revoked (kleiner Memory-Leak im Demo) (erledigt)
 - [ ] **search-overlay.tsx:93** — `description: "Öffnet die globale Spotlight-Suche"` ist hartkodiertes Deutsch, nicht im i18n-System
 
 ### 🔵 Features & Infrastruktur

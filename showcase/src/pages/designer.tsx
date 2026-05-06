@@ -198,6 +198,15 @@ function ImageCropperDemo() {
   const [imageSrc, setImageSrc]   = useState<string | undefined>()
   const [cropped, setCropped]     = useState<string | undefined>()
 
+  // Cleanup object URL to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (cropped && cropped.startsWith('blob:')) {
+        URL.revokeObjectURL(cropped)
+      }
+    }
+  }, [cropped])
+
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -210,6 +219,9 @@ function ImageCropperDemo() {
   }
 
   function handleCrop(blob: Blob) {
+    if (cropped && cropped.startsWith('blob:')) {
+      URL.revokeObjectURL(cropped)
+    }
     setCropped(URL.createObjectURL(blob))
   }
 
