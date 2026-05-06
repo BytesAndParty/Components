@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type CSSProperties } from 'react'
+import { useState, useEffect, useMemo, useRef, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -69,22 +69,22 @@ export function PixelImage({
     return () => observer.disconnect()
   }, [triggerOnView, revealed, threshold])
 
-  // Generate shuffled reveal order
-  const revealOrder = useRef<number[]>([])
-  if (revealOrder.current.length !== cellCount) {
-    revealOrder.current = Array.from({ length: cellCount }, (_, i) => i)
+  // Generate shuffled reveal order — stable per cellCount
+  const revealOrder = useMemo(() => {
+    const order = Array.from({ length: cellCount }, (_, i) => i)
     // Fisher-Yates shuffle
     for (let i = cellCount - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[revealOrder.current[i], revealOrder.current[j]] = [revealOrder.current[j], revealOrder.current[i]]
+      ;[order[i], order[j]] = [order[j], order[i]]
     }
-  }
+    return order
+  }, [cellCount])
 
   const cells: React.ReactNode[] = []
   for (let row = 0; row < grid.rows; row++) {
     for (let col = 0; col < grid.cols; col++) {
       const cellIndex = row * grid.cols + col
-      const order = revealOrder.current.indexOf(cellIndex)
+      const order = revealOrder.indexOf(cellIndex)
       const delay = order * stagger
 
       cells.push(
