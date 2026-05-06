@@ -48,7 +48,7 @@ Folgende Komponenten haben user-facing Strings, aber noch kein `messages?`-Prop:
 
 - [x] `toast` — Action-Labels (via Consumer), Dismiss-Button (erledigt)
 - [x] `form-input` — Required-Label, i18n-Prop (erledigt)
-- [ ] `color-picker` — Format-Switcher (HEX/RGB/HSL), Preset-Label, Eye-Dropper aria-label
+- [x] `color-picker` — Format-Switcher, Paletten-Labels, Eyedropper & Slider A11y (erledigt)
 - [ ] `navbar` — Mobile-Toggle aria-label, Close-aria-label
 - [ ] `tooltip` — kein i18n nötig (Content ist Consumer-Prop), aber `aria-label` via Messages wäre sinnvoll
 - [ ] `breadcrumb` — aria-label "Breadcrumb navigation"

@@ -2,6 +2,8 @@ import { Pipette } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
+import type { ComponentMessages } from '../i18n'
 
 type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
@@ -10,28 +12,79 @@ export type PaletteGroup = {
   colors: string[]
 }
 
-const DEFAULT_PALETTE_GROUPS: PaletteGroup[] = [
-  {
-    label: 'Ivory & Parchment',
-    colors: ['#ffffff', '#fef9f0', '#f5eedc', '#ede0c8', '#e0d0b0', '#c8b890', '#a89870', '#7a6850', '#3c2d1f'],
+export type ColorPickerMessages = {
+  formatHex: string
+  formatRgb: string
+  formatHsl: string
+  eyedropper: string
+  hue: string
+  alpha: string
+  saturationBrightness: string
+  presetsLabel: string
+  paletteIvory: string
+  paletteGold: string
+  paletteWine: string
+  paletteMidnight: string
+  paletteBark: string
+}
+
+const COLOR_PICKER_MESSAGES = {
+  de: {
+    formatHex: 'Hex',
+    formatRgb: 'RGB',
+    formatHsl: 'HSL',
+    eyedropper: 'Farbe vom Bildschirm wählen',
+    hue: 'Farbton',
+    alpha: 'Transparenz',
+    saturationBrightness: 'Sättigung und Helligkeit',
+    presetsLabel: 'Vorgaben',
+    paletteIvory: 'Elfenbein & Pergament',
+    paletteGold: 'Gold & Bernstein',
+    paletteWine: 'Burgunder & Wein',
+    paletteMidnight: 'Mitternacht & Marine',
+    paletteBark: 'Rinde & Erde',
   },
-  {
-    label: 'Gold & Amber',
-    colors: ['#fef9c3', '#fde68a', '#fbbf24', '#f59e0b', '#d4af37', '#c5a028', '#a07020', '#7a5010', '#4a3008'],
+  en: {
+    formatHex: 'Hex',
+    formatRgb: 'RGB',
+    formatHsl: 'HSL',
+    eyedropper: 'Pick color from screen',
+    hue: 'Hue',
+    alpha: 'Alpha',
+    saturationBrightness: 'Saturation and brightness',
+    presetsLabel: 'Presets',
+    paletteIvory: 'Ivory & Parchment',
+    paletteGold: 'Gold & Amber',
+    paletteWine: 'Burgundy & Wine',
+    paletteMidnight: 'Midnight & Navy',
+    paletteBark: 'Bark & Earth',
   },
-  {
-    label: 'Burgundy & Wine',
-    colors: ['#fdf2f4', '#f5c6cf', '#e07890', '#c04060', '#9c1f38', '#7c2832', '#722f37', '#501828', '#2d0810'],
-  },
-  {
-    label: 'Midnight & Navy',
-    colors: ['#f0f2f8', '#ccd4ec', '#8090cc', '#4060a8', '#1c3878', '#10204a', '#0a1430', '#050918', '#020408'],
-  },
-  {
-    label: 'Bark & Earth',
-    colors: ['#fdf6ee', '#e8d4b8', '#c8a880', '#a07848', '#7a5828', '#5a3c1a', '#3c280e', '#20160a', '#000000'],
-  },
-]
+} as const satisfies ComponentMessages<ColorPickerMessages>
+
+function getDefaultPaletteGroups(m: ColorPickerMessages): PaletteGroup[] {
+  return [
+    {
+      label: m.paletteIvory,
+      colors: ['#ffffff', '#fef9f0', '#f5eedc', '#ede0c8', '#e0d0b0', '#c8b890', '#a89870', '#7a6850', '#3c2d1f'],
+    },
+    {
+      label: m.paletteGold,
+      colors: ['#fef9c3', '#fde68a', '#fbbf24', '#f59e0b', '#d4af37', '#c5a028', '#a07020', '#7a5010', '#4a3008'],
+    },
+    {
+      label: m.paletteWine,
+      colors: ['#fdf2f4', '#f5c6cf', '#e07890', '#c04060', '#9c1f38', '#7c2832', '#722f37', '#501828', '#2d0810'],
+    },
+    {
+      label: m.paletteMidnight,
+      colors: ['#f0f2f8', '#ccd4ec', '#8090cc', '#4060a8', '#1c3878', '#10204a', '#0a1430', '#050918', '#020408'],
+    },
+    {
+      label: m.paletteBark,
+      colors: ['#fdf6ee', '#e8d4b8', '#c8a880', '#a07848', '#7a5828', '#5a3c1a', '#3c280e', '#20160a', '#000000'],
+    },
+  ]
+}
 
 export interface ColorPickerProps {
   value?: string
@@ -41,6 +94,7 @@ export interface ColorPickerProps {
   presets?: string[]
   paletteGroups?: PaletteGroup[]
   className?: string
+  messages?: Partial<ColorPickerMessages>
 }
 
 type Hsba = { h: number; s: number; b: number; a: number }
@@ -59,14 +113,17 @@ export function ColorPickerPanel({
   onChange,
   showAlpha = false,
   presets = [],
-  paletteGroups = DEFAULT_PALETTE_GROUPS,
+  paletteGroups,
   className,
+  messages,
 }: ColorPickerProps) {
   const [hsba, setHsba] = useState<Hsba>(() => hexToHsba(value ?? defaultValue))
   const [hexDraft, setHexDraft] = useState<string>(() => hsbaToHex(hexToHsba(value ?? defaultValue), showAlpha))
   const [format, setFormat] = useState<ColorFormat>('hex')
   const lastEmittedRef = useRef<string>(hexDraft)
   const eyedropperSupported = isEyeDropperSupported()
+  const m = useComponentMessages(COLOR_PICKER_MESSAGES, messages)
+  const finalPaletteGroups = paletteGroups ?? getDefaultPaletteGroups(m)
 
   useEffect(() => {
     if (value === undefined) return
@@ -121,14 +178,14 @@ export function ColorPickerPanel({
         </div>
       </div>
 
-      <Custom2DArea hsba={hsba} onCommit={commit} />
+      <Custom2DArea hsba={hsba} onCommit={commit} messages={m} />
 
       <div className="flex items-center gap-2">
         {eyedropperSupported && (
           <button
             type="button"
             onClick={pickFromScreen}
-            aria-label="Pick color from screen"
+            aria-label={m.eyedropper}
             className="flex items-center justify-center w-9 h-9 shrink-0 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <Pipette className="w-3.5 h-3.5" />
@@ -136,14 +193,14 @@ export function ColorPickerPanel({
         )}
 
         <div className="flex flex-1 flex-col gap-2">
-          <CustomHueSlider hue={hsba.h} onChange={(h) => commit({ ...hsba, h })} />
+          <CustomHueSlider hue={hsba.h} onChange={(h) => commit({ ...hsba, h })} messages={m} />
           {showAlpha && (
-            <CustomAlphaSlider alpha={hsba.a} solidRgb={rgb} onChange={(a) => commit({ ...hsba, a })} />
+            <CustomAlphaSlider alpha={hsba.a} solidRgb={rgb} onChange={(a) => commit({ ...hsba, a })} messages={m} />
           )}
         </div>
       </div>
 
-      <PureFormatToggle format={format} onFormatChange={setFormat} />
+      <PureFormatToggle format={format} onFormatChange={setFormat} messages={m} />
 
       {format === 'hex' && (
         <div className="flex gap-1.5">
@@ -168,7 +225,7 @@ export function ColorPickerPanel({
               spellCheck={false}
               className="w-full px-1.5 py-1.5 text-xs font-mono text-center bg-input border border-border rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-ring uppercase"
             />
-            <span className="text-[10px] font-medium text-muted-foreground text-center">Hex</span>
+            <span className="text-[10px] font-medium text-muted-foreground text-center">{m.formatHex}</span>
           </div>
           {showAlpha && (
             <NumericChannelField
@@ -224,7 +281,7 @@ export function ColorPickerPanel({
 
       <CustomSwatches
         presets={presets}
-        paletteGroups={paletteGroups}
+        paletteGroups={finalPaletteGroups}
         currentHex={currentHex.slice(0, 7).toLowerCase()}
         onPick={(hex) => commit({ ...hexToHsba(hex), a: hsba.a })}
       />
@@ -241,7 +298,7 @@ export function ColorPickerPanel({
 
 // ── 2D area ──────────────────────────────────────────────────────────────
 
-function Custom2DArea({ hsba, onCommit }: { hsba: Hsba; onCommit: (next: Hsba) => void }) {
+function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (next: Hsba) => void; messages: ColorPickerMessages }) {
   const ref = useRef<HTMLDivElement | null>(null)
 
   function setFromPointer(event: ReactPointerEvent<HTMLDivElement>) {
@@ -265,7 +322,7 @@ function Custom2DArea({ hsba, onCommit }: { hsba: Hsba; onCommit: (next: Hsba) =
       ref={ref}
       role="application"
       tabIndex={0}
-      aria-label="Saturation and brightness"
+      aria-label={messages.saturationBrightness}
       aria-roledescription="2d slider"
       aria-valuetext={`saturation ${hsba.s}, brightness ${hsba.b}`}
       className="relative h-52 w-full touch-none rounded-xl cursor-crosshair overflow-hidden border border-border/70 shadow-inner focus:outline-none focus:ring-2 focus:ring-ring"
@@ -301,7 +358,7 @@ function Custom2DArea({ hsba, onCommit }: { hsba: Hsba; onCommit: (next: Hsba) =
 
 // ── Sliders ──────────────────────────────────────────────────────────────
 
-function CustomHueSlider({ hue, onChange }: { hue: number; onChange: (hue: number) => void }) {
+function CustomHueSlider({ hue, onChange, messages }: { hue: number; onChange: (hue: number) => void; messages: ColorPickerMessages }) {
   const ref = useRef<HTMLDivElement | null>(null)
 
   function setFromPointer(event: ReactPointerEvent<HTMLDivElement>) {
@@ -316,7 +373,7 @@ function CustomHueSlider({ hue, onChange }: { hue: number; onChange: (hue: numbe
       ref={ref}
       role="slider"
       tabIndex={0}
-      aria-label="Hue"
+      aria-label={messages.hue}
       aria-valuemin={0}
       aria-valuemax={360}
       aria-valuenow={Math.round(hue)}
@@ -348,10 +405,12 @@ function CustomAlphaSlider({
   alpha,
   solidRgb,
   onChange,
+  messages,
 }: {
   alpha: number
   solidRgb: { r: number; g: number; b: number }
   onChange: (alpha: number) => void
+  messages: ColorPickerMessages
 }) {
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -367,7 +426,7 @@ function CustomAlphaSlider({
       ref={ref}
       role="slider"
       tabIndex={0}
-      aria-label="Alpha"
+      aria-label={messages.alpha}
       aria-valuemin={0}
       aria-valuemax={1}
       aria-valuenow={Number(alpha.toFixed(2))}
@@ -437,10 +496,18 @@ function NumericChannelField({
 function PureFormatToggle({
   format,
   onFormatChange,
+  messages,
 }: {
   format: ColorFormat
   onFormatChange: (format: ColorFormat) => void
+  messages: ColorPickerMessages
 }) {
+  const formatLabels: Record<ColorFormat, string> = {
+    hex: messages.formatHex,
+    rgb: messages.formatRgb,
+    hsl: messages.formatHsl,
+  }
+
   return (
     <div className="flex gap-0.5 p-0.5 bg-muted rounded-md">
       {(['hex', 'rgb', 'hsl'] as ColorFormat[]).map((f) => (
@@ -456,7 +523,7 @@ function PureFormatToggle({
               : 'text-muted-foreground hover:text-foreground',
           )}
         >
-          {f}
+          {formatLabels[f]}
         </button>
       ))}
     </div>
