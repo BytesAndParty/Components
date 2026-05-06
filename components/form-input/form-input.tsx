@@ -10,8 +10,23 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
 
 export type FormInputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'url';
+
+export type FormInputMessages = {
+  requiredLabel: string;
+};
+
+const FORM_INPUT_MESSAGES = {
+  de: {
+    requiredLabel: '*',
+  },
+  en: {
+    requiredLabel: '*',
+  },
+} as const satisfies ComponentMessages<FormInputMessages>;
 
 export interface FormInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'prefix'> {
@@ -25,6 +40,8 @@ export interface FormInputProps
   rightIcon?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
   wrapperClassName?: string;
+  required?: boolean;
+  messages?: Partial<FormInputMessages>;
 }
 
 const STYLE_ID = '__form-input-styles__';
@@ -72,12 +89,15 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   wrapperClassName,
   style,
   disabled,
+  required,
+  messages,
   ...rest
 }, ref) => {
   const reactId = useId();
   const id = rest.id ?? `form-input-${reactId}`;
   const sz = sizes[size];
   const [shakeKey, setShakeKey] = useState(0);
+  const m = useComponentMessages(FORM_INPUT_MESSAGES, messages);
 
   useEffect(() => {
     injectStyles();
@@ -108,6 +128,11 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           style={{ fontSize: sz.labelSize }}
         >
           {label}
+          {required && (
+            <span className="text-destructive ml-1" aria-hidden="true">
+              {m.requiredLabel}
+            </span>
+          )}
         </label>
       )}
       <div
@@ -141,12 +166,14 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           id={id}
           type={type}
           disabled={disabled}
+          required={required}
           className={cn(
             "flex-1 min-w-0 h-full bg-transparent border-none outline-none text-[var(--foreground)] font-inherit placeholder:text-[var(--muted-foreground)]/50",
             className
           )}
           style={{ fontSize: sz.fontSize }}
           aria-invalid={state === 'error' || undefined}
+          aria-required={required || undefined}
           aria-describedby={
             error ? `${id}-error` : description ? `${id}-desc` : undefined
           }
