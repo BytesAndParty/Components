@@ -6,7 +6,6 @@ import {
   VendureConfig,
   DefaultSearchPlugin,
   DefaultJobQueuePlugin,
-  LanguageCode,
 } from '@vendure/core';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';

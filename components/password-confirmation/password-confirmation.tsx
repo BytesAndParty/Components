@@ -5,7 +5,6 @@ import {
   useCallback,
   type CSSProperties,
   type ChangeEvent,
-  type KeyboardEvent,
 } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────

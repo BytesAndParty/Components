@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import type { Order } from './types';
 import { vendureClient } from './vendure-client';
 import { GET_ACTIVE_ORDER, ADD_TO_ORDER, ADJUST_ORDER_LINE, REMOVE_ORDER_LINE } from './queries';

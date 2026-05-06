@@ -12,7 +12,7 @@ import { Countdown } from '@components/countdown/countdown'
 import {
   Navbar as NavbarComponent, NavbarSection, NavbarItem, NavbarLogo,
   NavbarDropdown, NavbarDropdownGroup, NavbarDropdownItem,
-  NavbarIconButton, NavbarDivider,
+  NavbarIconButton,
 } from '@components/navbar/navbar'
 import { Dock, DockItem } from '@components/dock/dock'
 import { FileTree, Folder, File } from '@components/file-tree/file-tree'

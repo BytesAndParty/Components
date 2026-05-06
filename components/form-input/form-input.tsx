@@ -2,10 +2,8 @@ import { motion, AnimatePresence } from 'motion/react'
 import {
   useEffect,
   useId,
-  useRef,
   useState,
   forwardRef,
-  type CSSProperties,
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
