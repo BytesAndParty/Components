@@ -107,7 +107,7 @@ export function Layout() {
           fetchResults={async (q) => mockResults.filter(r => r.title.toLowerCase().includes(q.toLowerCase()))} 
           initialSuggestions={mockResults.slice(0, 2)}
         />
-        <ShortcutOverview triggerKey="Shift" holdDuration={1000} />
+        <ShortcutOverview />
         <BackToTop threshold={300} />
 
         <Navbar sticky height={56} bgColor="var(--background)" borderColor="var(--border)" style={{ viewTransitionName: 'nav-bar' }}>

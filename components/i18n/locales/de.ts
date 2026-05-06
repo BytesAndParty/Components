@@ -67,5 +67,4 @@ export const de: GlobalMessages = {
   'shortcuts.title':      'Tastenkürzel',
   'shortcuts.subtitle':   'Alle aktiven Tastenkürzel auf dieser Seite',
   'shortcuts.openHint':   'zum Öffnen',
-  'shortcuts.holdHint':   'Halte',
 } as const

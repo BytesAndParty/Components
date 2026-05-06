@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useHeldKeys, useHotkey } from '@tanstack/react-hotkeys'
+import { useHotkey } from '@tanstack/react-hotkeys'
 import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-provider'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -11,7 +11,6 @@ export type ShortcutOverviewMessages = {
   title: string
   subtitle: string
   openHint: string
-  holdHint: string
 }
 
 const SHORTCUT_MESSAGES = {
@@ -19,37 +18,27 @@ const SHORTCUT_MESSAGES = {
     title:    'Tastenkürzel',
     subtitle: 'Alle aktiven Tastenkürzel auf dieser Seite',
     openHint: 'zum Öffnen',
-    holdHint: 'Halte',
   },
   en: {
     title:    'Shortcut Overview',
     subtitle: 'All active shortcuts on this page',
     openHint: 'to open',
-    holdHint: 'Hold',
   },
 } as const satisfies ComponentMessages<ShortcutOverviewMessages>
 
 interface ShortcutOverviewProps {
-  /** Key to hold to show the overview (default: Shift) */
-  triggerKey?: string
-  /** Duration to hold in ms before showing (default: 800) */
-  holdDuration?: number
   className?: string
   messages?: Partial<ShortcutOverviewMessages>
 }
 
 export function ShortcutOverview({
-  triggerKey = 'Shift',
-  holdDuration = 800,
   className,
   messages,
 }: ShortcutOverviewProps) {
   const m = useComponentMessages(SHORTCUT_MESSAGES, messages)
   const { registry } = useHotkeysRegistry()
-  const heldKeys = useHeldKeys()
   const [isVisible, setIsVisible] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   function closeOverview() {
     setIsVisible(false)
@@ -84,29 +73,6 @@ export function ShortcutOverview({
     }
   }, [isVisible])
 
-  // Hold-trigger: show after holdDuration, hide on release
-  useEffect(() => {
-    const isTriggerHeld = heldKeys.includes(triggerKey)
-
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current)
-      holdTimerRef.current = null
-    }
-
-    if (isTriggerHeld) {
-      holdTimerRef.current = setTimeout(() => setIsVisible(true), holdDuration)
-    } else {
-      setIsVisible(false)
-    }
-
-    return () => {
-      if (holdTimerRef.current) {
-        clearTimeout(holdTimerRef.current)
-        holdTimerRef.current = null
-      }
-    }
-  }, [heldKeys, triggerKey, holdDuration])
-
   const groupedHotkeys = Array.from(registry.values()).reduce((acc, curr) => {
     if (!acc[curr.category]) acc[curr.category] = []
     acc[curr.category].push(curr)
@@ -138,9 +104,6 @@ export function ShortcutOverview({
             <div className="flex items-center gap-2 flex-wrap justify-end">
               <span className="px-3 py-1.5 bg-muted border border-border rounded-full text-xs text-muted-foreground font-medium">
                 <kbd className="font-bold text-foreground">?</kbd> {m.openHint}
-              </span>
-              <span className="px-3 py-1.5 bg-muted border border-border rounded-full text-xs text-muted-foreground font-medium">
-                {m.holdHint} <kbd className="font-bold text-accent">{triggerKey}</kbd>
               </span>
             </div>
           </div>

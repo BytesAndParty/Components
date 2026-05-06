@@ -65,7 +65,6 @@ export const en = {
   'shortcuts.title':      'Shortcut Overview',
   'shortcuts.subtitle':   'All active shortcuts on this page',
   'shortcuts.openHint':   'to open',
-  'shortcuts.holdHint':   'Hold',
 } as const
 
 export type GlobalMessages = { readonly [K in keyof typeof en]: string }
