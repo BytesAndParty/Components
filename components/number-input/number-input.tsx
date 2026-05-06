@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
 import { cn } from '../lib/utils'
 
 export interface NumberInputProps {
@@ -28,6 +28,7 @@ export function NumberInput({
   const [draft, setDraft] = useState('')
   const buttonRef = useRef<HTMLButtonElement>(null)
   const nudgeRef = useRef<(dir: 1 | -1) => void>(() => {})
+  const inputId = useId()
 
   const clamp = (v: number) => Math.min(max, Math.max(min, v))
   const display = decimals > 0 ? value.toFixed(decimals) : String(value)
@@ -65,9 +66,12 @@ export function NumberInput({
   return (
     <div className={cn('group relative flex items-center gap-0', className)}>
       {label && (
-        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mr-1 select-none">
+        <label 
+          htmlFor={inputId}
+          className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mr-1 select-none cursor-pointer"
+        >
           {label}
-        </span>
+        </label>
       )}
 
       <div className="relative flex items-center">
@@ -86,6 +90,7 @@ export function NumberInput({
         {/* Input */}
         {editing ? (
           <input
+            id={inputId}
             type="text"
             inputMode="decimal"
             value={draft}
@@ -98,6 +103,7 @@ export function NumberInput({
           />
         ) : (
           <button
+            id={inputId}
             ref={buttonRef}
             type="button"
             onDoubleClick={() => { setDraft(display); setEditing(true) }}

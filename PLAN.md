@@ -23,7 +23,7 @@
 
 ### 🔴 Accessibility — Priorität hoch
 
-- [ ] **NumberInput** — `<span>` statt `<label>` für das Label-Element → kein htmlFor/id-Pairing mit dem Input
+- [x] **NumberInput** — `<span>` statt `<label>` für das Label-Element → kein htmlFor/id-Pairing mit dem Input (erledigt)
 - [ ] **TextToolOptions / ToggleBtn** — `aria-pressed={active}` fehlt auf Bold, Italic, Underline, Align-Buttons
 - [ ] **TextToolOptions / FontSelect** — `aria-haspopup="listbox"`, `aria-expanded`, `role="listbox"` + `role="option"` fehlen
 - [ ] **AlignmentBar** — Roving-tabIndex-Pattern fehlt (Arrow-Key-Navigation innerhalb der Toolbar nach WAI-ARIA Toolbar-Pattern)
