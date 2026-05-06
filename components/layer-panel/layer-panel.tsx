@@ -37,6 +37,7 @@ export interface LayerPanelProps {
   onLockToggle?:       (id: string) => void
   onRename?:           (id: string, name: string) => void
   onDelete?:           (id: string) => void
+  onMove?:             (id: string, dir: 1 | -1) => void
   className?: string
   messages?: Partial<LayerPanelMessages>
 }
@@ -47,14 +48,14 @@ const LAYER_MESSAGES = {
   de: {
     deleteLayer: 'Ebene löschen',
     renameLayer: 'Ebene umbenennen',
-    dragHandle:  'Zum Sortieren ziehen',
+    dragHandle:  'Zum Sortieren ziehen (Shift + ↑/↓)',
     visibility:  'Sichtbarkeit umschalten',
     lock:        'Sperre umschalten',
   },
   en: {
     deleteLayer: 'Delete layer',
     renameLayer: 'Rename layer',
-    dragHandle:  'Drag to reorder',
+    dragHandle:  'Drag to reorder (Shift + ↑/↓)',
     visibility:  'Toggle visibility',
     lock:        'Toggle lock',
   },
@@ -84,10 +85,29 @@ export function LayerPanel({
   onLockToggle,
   onRename,
   onDelete,
+  onMove,
   className,
   messages,
 }: LayerPanelProps) {
   const m = useComponentMessages(LAYER_MESSAGES, messages)
+
+  const handleMove = (id: string, dir: 1 | -1) => {
+    if (onMove) {
+      onMove(id, dir)
+      return
+    }
+    
+    if (!onReorder) return
+    const idx = layers.findIndex(l => l.id === id)
+    if (idx === -1) return
+    const nextIdx = idx + dir
+    if (nextIdx < 0 || nextIdx >= layers.length) return
+
+    const nextLayers = [...layers]
+    const [removed] = nextLayers.splice(idx, 1)
+    nextLayers.splice(nextIdx, 0, removed)
+    onReorder(nextLayers)
+  }
 
   return (
     <div className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
@@ -111,6 +131,8 @@ export function LayerPanel({
           onReorder={onReorder ?? (() => {})}
           className="flex flex-col divide-y divide-border"
           layoutScroll
+          role="listbox"
+          aria-label="Layer list"
         >
           {layers.map((layer) => (
             <LayerRow
@@ -123,6 +145,7 @@ export function LayerPanel({
               onLockToggle={() => onLockToggle?.(layer.id)}
               onRename={(name) => onRename?.(layer.id, name)}
               onDelete={() => onDelete?.(layer.id)}
+              onMove={(dir) => handleMove(layer.id, dir)}
             />
           ))}
         </Reorder.Group>
@@ -142,6 +165,7 @@ function LayerRow({
   onLockToggle,
   onRename,
   onDelete,
+  onMove,
 }: {
   layer: Layer
   selected: boolean
@@ -151,6 +175,7 @@ function LayerRow({
   onLockToggle: () => void
   onRename: (name: string) => void
   onDelete: () => void
+  onMove: (dir: 1 | -1) => void
 }) {
   const controls = useDragControls()
   const [editing, setEditing] = useState(false)
@@ -164,17 +189,30 @@ function LayerRow({
     setEditing(false)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowUp' && e.shiftKey) {
+      e.preventDefault()
+      onMove(-1)
+    } else if (e.key === 'ArrowDown' && e.shiftKey) {
+      e.preventDefault()
+      onMove(1)
+    }
+  }
+
   return (
     <Reorder.Item
       value={layer}
       dragListener={false}
       dragControls={controls}
+      role="option"
+      aria-selected={selected}
       className={cn(
-        'group flex items-center gap-1.5 px-2 py-1.5 cursor-pointer transition-colors',
+        'group flex items-center gap-1.5 px-2 py-1.5 cursor-pointer transition-colors outline-none focus-visible:bg-accent/5',
         selected ? 'bg-accent/10' : 'hover:bg-muted/40',
         !layer.visible && 'opacity-40',
       )}
       onClick={onSelect}
+      onKeyDown={handleKeyDown}
       layout
     >
       {/* Drag handle */}
@@ -182,7 +220,7 @@ function LayerRow({
         type="button"
         aria-label={messages.dragHandle}
         title={messages.dragHandle}
-        className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity touch-none"
+        className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity touch-none focus-visible:opacity-100 focus-visible:text-accent focus:outline-none"
         onPointerDown={(e) => { e.stopPropagation(); controls.start(e) }}
       >
         <GripVertical size={12} strokeWidth={2} />
@@ -225,7 +263,7 @@ function LayerRow({
 
       {/* Controls — visible on hover or active */}
       <div
-        className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         <RowBtn onClick={onVisibilityToggle} title={messages.visibility}>
