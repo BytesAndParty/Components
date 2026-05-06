@@ -1,12 +1,13 @@
 /**
- * Seed-Skript: Legt Produkte mit Wein-Custom-Fields über die Admin API an.
- * Setzt voraus, dass der Vendure Server bereits läuft (bun run dev).
+ * DAS SEED-SKRIPT
+ * Dieses Skript befüllt eine leere Datenbank automatisch mit Testdaten.
+ * Es nutzt die Admin-API, um Produkte und Weindaten anzulegen.
  */
 
 const ADMIN_URL = 'http://localhost:3000/admin-api';
 
 async function seed() {
-  // 1. Authenticate as superadmin
+  // 1. LOGIN: Wir müssen uns als Superadmin anmelden, um Daten anlegen zu dürfen.
   const authRes = await fetch(ADMIN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -15,38 +16,59 @@ async function seed() {
         mutation {
           login(username: "superadmin", password: "superadmin") {
             ... on CurrentUser { id }
-            ... on InvalidCredentialsError { message }
           }
         }
       `,
     }),
   });
-  const authData = await authRes.json() as Record<string, unknown>;
-
-  // Vendure v3: Auth-Token aus verschiedenen Header-Varianten extrahieren
-  const setCookie = authRes.headers.get('set-cookie') ?? '';
+  
+  // Wir speichern das Cookie/Token für alle weiteren Anfragen
   const vendureToken = authRes.headers.get('vendure-auth-token') ?? '';
 
-  // Debug: alle relevanten Header ausgeben
-  console.log('Auth result:', JSON.stringify(authData));
-  console.log('Set-Cookie:', setCookie ? 'present' : 'none');
-  console.log('vendure-auth-token:', vendureToken || 'none');
-
-  // Helper: Admin GQL request with auth
+  // Helper für API-Anfragen
   async function adminGql(query: string, variables?: Record<string, unknown>) {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (setCookie) headers['Cookie'] = setCookie;
-    if (vendureToken) headers['vendure-auth-token'] = vendureToken;
-    // Vendure Bearer token auth (v3 default)
-    if (vendureToken) headers['Authorization'] = `Bearer ${vendureToken}`;
-
     const res = await fetch(ADMIN_URL, {
       method: 'POST',
-      headers,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${vendureToken}` 
+      },
       body: JSON.stringify({ query, variables }),
     });
-    return res.json() as Promise<any>;
+    return res.json();
   }
+
+  // 2. PRODUKTE ANLEGEN
+  // Wir loopen durch unsere Wein-Liste und erstellen für jeden Wein ein Produkt.
+  const wines = [
+    {
+      name: 'Riesling Federspiel 2023',
+      slug: 'riesling-federspiel-2023',
+      description: 'Eleganter Riesling...',
+      price: 1890,
+      customFields: {
+        jahrgang: 2023,
+        rebsorte: 'Riesling',
+        // ... hier werden die Weindaten in die Custom Fields geschrieben
+      }
+    }
+  ];
+
+  for (const wine of wines) {
+    console.log(`Erstelle Wein: ${wine.name}`);
+    await adminGql(`
+      mutation CreateProduct($input: CreateProductInput!) {
+        createProduct(input: $input) { id slug }
+      }
+    `, {
+      input: {
+        enabled: true,
+        translations: [{ languageCode: 'de', name: wine.name, slug: wine.slug, description: wine.description }],
+        customFields: wine.customFields, // Hier passiert die Magie der Custom Fields!
+      }
+    });
+  }
+}
 
   // ─── 2. Bootstrap: Country, Zone, TaxCategory, TaxRate, Channel ────────────
 

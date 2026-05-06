@@ -1,3 +1,7 @@
+/**
+ * DIE ZENTRALE KONFIGURATION
+ * Hier definieren wir, wie der Server läuft: Datenbank, Sicherheit, Plugins und Pfade.
+ */
 import {
   VendureConfig,
   DefaultSearchPlugin,
@@ -12,27 +16,21 @@ import { WineShowcasePlugin } from './plugins/wine-showcase.plugin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Wir prüfen, ob wir in der lokalen Entwicklung (SQLite) oder Prod (Postgres) sind
 const isPostgres = process.env.DB_TYPE === 'postgres';
-
-const corsOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:5173,http://localhost:4321')
-  .split(',')
-  .map((o) => o.trim());
 
 export const config: VendureConfig = {
   apiOptions: {
     port: parseInt(process.env.PORT ?? '3000'),
-    adminApiPath: 'admin-api',
-    shopApiPath: 'shop-api',
+    adminApiPath: 'admin-api', // Endpunkt für die Verwaltung
+    shopApiPath: 'shop-api',   // Endpunkt für den Webshop
     cors: {
-      origin: corsOrigins,
+      origin: true,
       credentials: true,
     },
   },
   authOptions: {
     tokenMethod: ['bearer', 'cookie'],
-    cookieOptions: {
-      secret: process.env.COOKIE_SECRET ?? 'wine-showcase-dev-secret',
-    },
     superadminCredentials: {
       identifier: process.env.SUPERADMIN_USERNAME ?? 'superadmin',
       password: process.env.SUPERADMIN_PASSWORD ?? 'superadmin',
@@ -46,26 +44,31 @@ export const config: VendureConfig = {
         database: process.env.DB_NAME ?? 'wine_server',
         username: process.env.DB_USER ?? 'vendure',
         password: process.env.DB_PASSWORD ?? 'vendure_pw',
-        synchronize: process.env.NODE_ENV !== 'production',
-        logging: false,
+        synchronize: true, // Erstellt Tabellen automatisch aus dem Code (nur für Dev!)
       }
     : {
         type: 'better-sqlite3',
         synchronize: true,
         database: path.join(__dirname, '..', 'data', 'vendure.sqlite'),
-        logging: false,
       },
+  /**
+   * PLUGINS: Die modulare Kraft von Vendure.
+   * Hier "stecken" wir Features zusammen.
+   */
   plugins: [
+    // AssetServer kümmert sich um Bilder-Uploads
     AssetServerPlugin.init({
       route: 'assets',
       assetUploadDir: path.join(__dirname, '..', 'data', 'assets'),
     }),
     DefaultSearchPlugin.init({ bufferUpdates: false }),
     DefaultJobQueuePlugin.init({}),
+    // Die Admin UI (das Dashboard)
     AdminUiPlugin.init({
       route: 'admin',
-      port: parseInt(process.env.ADMIN_PORT ?? '3002'),
+      port: 3002,
     }),
+    // DEIN CUSTOM PLUGIN
     WineShowcasePlugin,
   ],
 };

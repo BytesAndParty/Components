@@ -1,8 +1,13 @@
+/**
+ * DER EINSTIEGSPUNKT FÜR DAS BACKEND
+ * Hier wird die NestJS Applikation mit der Vendure-Konfiguration gestartet.
+ */
 import { bootstrap } from '@vendure/core';
 import { config } from './vendure-config.js';
 
 bootstrap(config)
   .then(() => {
+    // Diese Konsolenausgaben helfen uns zu wissen, wo wir testen können
     console.log('🍷 Vendure Wine Server gestartet');
     console.log('   Shop API:  http://localhost:3000/shop-api');
     console.log('   Admin API: http://localhost:3000/admin-api');
