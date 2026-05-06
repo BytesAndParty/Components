@@ -249,6 +249,7 @@ function ToggleBtn({
       type="button"
       onClick={onClick}
       title={title}
+      aria-pressed={active}
       className={cn(
         'flex items-center justify-center w-8 h-full transition-colors',
         active
@@ -272,6 +273,7 @@ function FontSelect({
   const [pos, setPos] = useState({ top: 0, left: 0 })
   const triggerRef = useRef<HTMLButtonElement>(null)
   const current = FONTS.find(f => f.family === value) ?? FONTS[0]
+  const listboxId = React.useId()
 
   function handleOpen() {
     if (triggerRef.current) {
@@ -287,6 +289,9 @@ function FontSelect({
         ref={triggerRef}
         type="button"
         onClick={handleOpen}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listboxId : undefined}
         className="flex items-center gap-1.5 px-3 h-full hover:bg-muted/50 transition-colors min-w-[160px] max-w-[200px]"
         style={{ fontFamily: current.family }}
       >
@@ -305,6 +310,8 @@ function FontSelect({
         <Portal>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
+            id={listboxId}
+            role="listbox"
             className="fixed z-50 bg-card border border-border rounded-lg shadow-xl overflow-hidden min-w-[200px]"
             style={{ top: pos.top, left: pos.left }}
           >
@@ -312,7 +319,7 @@ function FontSelect({
               const fontsInCat = FONTS.filter(f => f.category === cat)
               if (!fontsInCat.length) return null
               return (
-                <div key={cat}>
+                <div key={cat} role="presentation">
                   <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground bg-muted/30">
                     {cat}
                   </div>
@@ -320,6 +327,8 @@ function FontSelect({
                     <button
                       key={font.family}
                       type="button"
+                      role="option"
+                      aria-selected={value === font.family}
                       onClick={() => { onChange(font.family); setOpen(false) }}
                       className={cn(
                         'w-full flex items-center px-3 py-2 text-sm text-left transition-colors hover:bg-muted/60',
