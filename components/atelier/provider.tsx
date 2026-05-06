@@ -132,7 +132,7 @@ export function AtelierProvider({
   // that gets shadowed once children call useI18n().t().
   // The AtelierContext's own t() is only needed for useAtelier() callers.
   // We re-read it from I18nProvider via the onLocaleChange bridge.
-  function t(key: keyof GlobalMessages, vars?: Record<string, string | number>): string {
+  function t(key: keyof GlobalMessages, _vars?: Record<string, string | number>): string {
     return String(key) // placeholder — real t() lives in I18nProvider below
   }
 

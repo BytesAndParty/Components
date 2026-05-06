@@ -259,7 +259,7 @@ export function InputsPage() {
             renderVisibilityIcon={(visible) => (
               <AnimatedEyeToggle visible={visible} size={20} />
             )}
-            onMatch={(pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
+            onMatch={(_pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
           />
         </div>
       </Section>

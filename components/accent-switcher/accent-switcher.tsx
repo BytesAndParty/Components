@@ -90,9 +90,9 @@ export interface AccentSwitcherProps {
 
 export function AccentSwitcher({
 	palettes,
-	defaultPalette,
+	defaultPalette: _defaultPalette,
 	activePalette,
-	accentAttribute = 'data-accent',
+	accentAttribute: _accentAttribute = 'data-accent',
 	dropdownLabel = 'Accent color',
 	granularity = 400,
 	onAccentChange,

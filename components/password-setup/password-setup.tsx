@@ -389,7 +389,7 @@ const defaultChecks: Check[] = [
   { label: 'Ein Sonderzeichen', test: v => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(v) },
 ]
 
-function getStrength(passed: number, total: number) {
+function getStrength(passed: number, _total: number) {
   if (passed === 0) return { label: 'Sehr schwach', color: '#ef4444' }
   if (passed === 1) return { label: 'Schwach', color: '#f97316' }
   if (passed === 2) return { label: 'Mittel', color: '#eab308' }

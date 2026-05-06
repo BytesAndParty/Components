@@ -155,7 +155,7 @@ interface ToastItemProps {
   onDismiss: (id: string) => void;
 }
 
-function ToastItem({ data, index, total, placement, messages, onDismiss }: ToastItemProps) {
+function ToastItem({ data, index: _index, total: _total, placement, messages, onDismiss }: ToastItemProps) {
   const { id, title, description, variant = 'default', duration = 4000 } = data;
   const progressRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
