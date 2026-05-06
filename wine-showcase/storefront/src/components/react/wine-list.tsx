@@ -8,15 +8,22 @@ function formatPrice(cents: number): string {
   return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
 }
 
+/**
+ * Diese React-Komponente bekommt die 'initialProducts' direkt von Astro (Build-Time).
+ * Wenn diese vorhanden sind, zeigt sie diese sofort an, ohne im Browser neu zu laden.
+ */
 export function WineListPage({ initialProducts }: { initialProducts?: Product[] }) {
+  // State wird mit den statischen Daten von Astro vor-initialisiert
   const [products, setProducts] = useState<Product[]>(initialProducts ?? [])
   const [loading, setLoading] = useState(!initialProducts)
   const [error, setError] = useState<string | null>(null)
   const { addToCart } = useCart()
 
   useEffect(() => {
-    if (initialProducts) return // Skip fetch if we have static data
+    // Wenn wir bereits Daten von Astro haben, müssen wir im Browser nichts mehr tun.
+    if (initialProducts) return 
     
+    // Fallback: Falls die Komponente ohne Daten geladen wird, laden wir sie hier nach.
     vendureClient.query(GET_PRODUCTS, {}).toPromise().then(result => {
       if (result.error) {
         setError('Vendure Server nicht erreichbar.')

@@ -1,10 +1,18 @@
 ---
+/**
+ * DYNAMISCHE ROUTEN IN ASTRO
+ * Diese Datei generiert für JEDEN Wein eine eigene statische HTML-Seite.
+ */
 import Layout from '@/layouts/Layout.astro';
 import { WineDetailPage } from '@/components/react/wine-detail';
 import { shopApiRequest } from '@/lib/vendure-client';
 import { GET_PRODUCTS, GET_PRODUCT } from '@/lib/queries';
 import type { Product } from '@/lib/types';
 
+/**
+ * 1. getStaticPaths sagt Astro, welche Seiten generiert werden sollen.
+ * Wir fragen Vendure nach allen Produkten und geben deren Slugs zurück.
+ */
 export async function getStaticPaths() {
 	const data = await shopApiRequest<{ products: { items: Product[] } }>(GET_PRODUCTS);
 	return data.products.items.map(product => ({
@@ -12,7 +20,10 @@ export async function getStaticPaths() {
 	}));
 }
 
+// 2. Den aktuellen Slug aus der URL holen
 const { slug } = Astro.params;
+
+// 3. Die Daten für genau DIESEN Wein beim Build laden
 const data = await shopApiRequest<{ product: Product }>(GET_PRODUCT, { slug });
 const initialProduct = data.product;
 ---
