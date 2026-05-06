@@ -1,0 +1,10 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { CartPage } from '@/components/react/cart';
+---
+
+<Layout title="Warenkorb">
+	<main class="max-w-6xl mx-auto px-6 py-10">
+		<CartPage client:only="react" />
+	</main>
+</Layout>

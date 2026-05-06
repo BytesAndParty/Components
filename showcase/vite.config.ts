@@ -2,9 +2,16 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import fs from 'fs'
 
-const nm = (pkg: string) => path.resolve(__dirname, `node_modules/${pkg}`)
-const arkui = (name: string) => nm(`@ark-ui/react/dist/components/${name}/index.js`)
+const nm = (pkg: string) => {
+  const p = path.resolve(__dirname, `node_modules/${pkg}`)
+  return fs.existsSync(p) ? p : pkg
+}
+const arkui = (name: string) => {
+  const p = nm(`@ark-ui/react/dist/components/${name}/index.js`)
+  return p
+}
 
 export default defineConfig({
   plugins: [

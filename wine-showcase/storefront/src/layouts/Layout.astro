@@ -1,0 +1,31 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@/styles.css';
+import { Providers } from '@/components/react/Providers';
+import { Header } from '@/components/react/Header';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Weingut Showcase - Statisch geladen" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Weingut</title>
+		<ClientRouter />
+	</head>
+	<body class="min-h-screen bg-background text-foreground font-sans antialiased">
+		<Providers client:load>
+			<Header client:load />
+			<slot />
+		</Providers>
+	</body>
+</html>

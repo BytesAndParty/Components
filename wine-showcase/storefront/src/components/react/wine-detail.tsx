@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router'
 import { useCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCT } from '@/lib/queries'
@@ -9,19 +8,19 @@ function formatPrice(cents: number): string {
   return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
 }
 
-export function WineDetailPage() {
-  const { slug } = useParams<{ slug: string }>()
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
+export function WineDetailPage({ slug, initialProduct }: { slug: string, initialProduct?: Product }) {
+  const [product, setProduct] = useState<Product | null>(initialProduct ?? null)
+  const [loading, setLoading] = useState(!initialProduct)
   const { addToCart } = useCart()
 
   useEffect(() => {
+    if (initialProduct) return // Skip fetch if we have static data
     if (!slug) return
     vendureClient.query(GET_PRODUCT, { slug }).toPromise().then(result => {
       setProduct(result.data?.product ?? null)
       setLoading(false)
     })
-  }, [slug])
+  }, [slug, initialProduct])
 
   if (loading) {
     return (
@@ -35,7 +34,7 @@ export function WineDetailPage() {
     return (
       <div className="py-20 text-center">
         <h2 className="text-2xl font-bold mb-4">Wein nicht gefunden</h2>
-        <Link to="/" className="text-accent hover:underline">← Zurück zur Übersicht</Link>
+        <a href="/" className="text-accent hover:underline">← Zurück zur Übersicht</a>
       </div>
     )
   }
@@ -57,7 +56,7 @@ export function WineDetailPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
-        <Link to="/" className="hover:text-foreground transition-colors">Weine</Link>
+        <a href="/" className="hover:text-foreground transition-colors">Weine</a>
         <span>/</span>
         <span className="text-foreground font-medium">{product.name}</span>
       </nav>

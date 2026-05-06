@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router'
 import { useCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCTS } from '@/lib/queries'
@@ -9,23 +8,25 @@ function formatPrice(cents: number): string {
   return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
 }
 
-export function WineListPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+export function WineListPage({ initialProducts }: { initialProducts?: Product[] }) {
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? [])
+  const [loading, setLoading] = useState(!initialProducts)
   const [error, setError] = useState<string | null>(null)
   const { addToCart } = useCart()
 
   useEffect(() => {
+    if (initialProducts) return // Skip fetch if we have static data
+    
     vendureClient.query(GET_PRODUCTS, {}).toPromise().then(result => {
       if (result.error) {
-        setError('Vendure Server nicht erreichbar. Bitte starte den Server.')
+        setError('Vendure Server nicht erreichbar.')
         setLoading(false)
         return
       }
       setProducts(result.data?.products?.items ?? [])
       setLoading(false)
     })
-  }, [])
+  }, [initialProducts])
 
   if (loading) {
     return (
@@ -75,9 +76,9 @@ export function WineListPage() {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-lg">
-                    <Link to={`/wine/${product.slug}`} className="hover:text-accent transition-colors">
+                    <a href={`/wine/${product.slug}`} className="hover:text-accent transition-colors">
                       {product.name}
-                    </Link>
+                    </a>
                   </h3>
                   <span className="font-bold text-lg">
                     {variant ? formatPrice(variant.priceWithTax) : '—'}

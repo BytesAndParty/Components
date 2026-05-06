@@ -1,0 +1,28 @@
+---
+/**
+ * ALLES ZWISCHEN DEN '---' LÄUFT NUR BEIM BUILD (NODE.JS)
+ * Hier holen wir die Daten von Vendure, damit sie statisch in das HTML
+ * geschrieben werden können. Das ist super für SEO und Performance.
+ */
+import Layout from '@/layouts/Layout.astro';
+import { WineListPage } from '@/components/react/wine-list';
+import { shopApiRequest } from '@/lib/vendure-client';
+import { GET_PRODUCTS } from '@/lib/queries';
+import type { Product } from '@/lib/types';
+
+// 1. Daten beim Build von Vendure abfragen
+const data = await shopApiRequest<{ products: { items: Product[] } }>(GET_PRODUCTS);
+const initialProducts = data.products.items;
+---
+
+<Layout title="Unsere Weine">
+	<main class="max-w-6xl mx-auto px-6 py-10">
+		{/* 
+		  2. Daten an die React-Komponente übergeben.
+		  client:only="react" sorgt dafür, dass die Komponente im Browser geladen wird,
+		  da sie interaktive Features (Warenkorb) nutzt, die Browser-APIs brauchen.
+		*/}
+		<WineListPage client:only="react" initialProducts={initialProducts} />
+	</main>
+</Layout>
+

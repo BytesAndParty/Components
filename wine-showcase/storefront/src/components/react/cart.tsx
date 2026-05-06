@@ -1,4 +1,3 @@
-import { Link } from 'react-router'
 import { useCart } from '@/lib/cart-context'
 
 function formatPrice(cents: number): string {
@@ -23,12 +22,12 @@ export function CartPage() {
         <div className="text-6xl">🛒</div>
         <h2 className="text-2xl font-bold">Warenkorb ist leer</h2>
         <p className="text-muted-foreground">Füge Weine aus unserem Sortiment hinzu.</p>
-        <Link
-          to="/"
+        <a
+          href="/"
           className="inline-block py-3 px-8 bg-foreground text-background font-bold rounded-xl hover:opacity-90 transition-opacity"
         >
           Weine entdecken
-        </Link>
+        </a>
       </div>
     )
   }
@@ -49,12 +48,12 @@ export function CartPage() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <Link
-                  to={`/wine/${line.productVariant.product.slug}`}
+                <a
+                  href={`/wine/${line.productVariant.product.slug}`}
                   className="font-bold hover:text-accent transition-colors truncate block"
                 >
                   {line.productVariant.name}
-                </Link>
+                </a>
                 <p className="text-sm text-muted-foreground">
                   {formatPrice(line.productVariant.priceWithTax)} / Flasche
                 </p>

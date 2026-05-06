@@ -1,5 +1,3 @@
-import { Link } from 'react-router'
-
 export function AdminInfoPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-12">

@@ -1,0 +1,24 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { WineDetailPage } from '@/components/react/wine-detail';
+import { shopApiRequest } from '@/lib/vendure-client';
+import { GET_PRODUCTS, GET_PRODUCT } from '@/lib/queries';
+import type { Product } from '@/lib/types';
+
+export async function getStaticPaths() {
+	const data = await shopApiRequest<{ products: { items: Product[] } }>(GET_PRODUCTS);
+	return data.products.items.map(product => ({
+		params: { slug: product.slug },
+	}));
+}
+
+const { slug } = Astro.params;
+const data = await shopApiRequest<{ product: Product }>(GET_PRODUCT, { slug });
+const initialProduct = data.product;
+---
+
+<Layout title={initialProduct?.name || "Wein Details"}>
+	<main class="max-w-6xl mx-auto px-6 py-10">
+		<WineDetailPage client:only="react" slug={slug!} initialProduct={initialProduct} />
+	</main>
+</Layout>
