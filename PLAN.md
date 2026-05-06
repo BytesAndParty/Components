@@ -32,7 +32,7 @@
 
 ### 🟡 Code-Qualität
 
-- [ ] **hotkeys-provider.tsx** — `useCallback` auf `register`/`unregister` ist korrekt für Kontext-Stabilität, konfligiert aber mit React Compiler-Philosophie. Sauberste Lösung: Read-Context (registry) und Write-Context (register/unregister) trennen → verhindert, dass Registry-Consumer bei jeder Registrierung neu rendern
+- [x] **hotkeys-provider.tsx** — Read-Context (registry) und Write-Context (register/unregister) trennen (erledigt)
 - [ ] **designer.tsx:194** — `URL.createObjectURL(blob)` wird bei erneutem Crop nicht revoked (kleiner Memory-Leak im Demo)
 - [ ] **search-overlay.tsx:93** — `description: "Öffnet die globale Spotlight-Suche"` ist hartkodiertes Deutsch, nicht im i18n-System
 
@@ -40,7 +40,7 @@
 
 - [ ] **@dnd-kit/core Migration** für `LayerPanel` — Framer Motion `Reorder.Group` hat bekannte Touch/Scroll-Konflikte auf iOS. `@dnd-kit/core` ist stabiler für Production-Drag-and-Drop (relevant sobald Cellar Canvas auf Tablet läuft)
 - [ ] **Ark UI `translations`-Bridge** — Ark UI DatePicker, Select, Combobox etc. haben ein eingebautes `translations`-Prop für ARIA-Labels. Wenn diese Komponenten hinzukommen, sollte der `I18nProvider` automatisch die passenden Ark-Translations liefern. Bridge-Pattern: `useArkTranslations('dialog')` → Ark-kompatibles Objekt
-- [ ] **HotkeysProvider Context-Split** — Read-Context (nur `registry`) von Write-Context (`register`, `unregister`) trennen. Lesende Komponenten (ShortcutOverview) sollen nicht bei jeder Shortcut-Registrierung neu rendern
+- [x] **HotkeysProvider Context-Split** — Read-Context (nur `registry`) von Write-Context (`register`, `unregister`) trennen. Lesende Komponenten (ShortcutOverview) sollen nicht bei jeder Shortcut-Registrierung neu rendern (erledigt)
 
 ### 🔵 i18n — Noch nicht migrierte Komponenten
 

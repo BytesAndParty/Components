@@ -9,18 +9,30 @@ export interface HotkeyMetadata {
   category: 'Global' | 'Navigation' | 'Actions' | 'Context';
 }
 
-interface HotkeysContextValue {
+interface HotkeysRegistryContextValue {
   registry: Map<string, HotkeyMetadata>;
+}
+
+interface HotkeysActionsContextValue {
   register: (id: string, metadata: HotkeyMetadata) => void;
   unregister: (id: string) => void;
 }
 
-const HotkeysContext = createContext<HotkeysContextValue | null>(null);
+const HotkeysRegistryContext = createContext<HotkeysRegistryContextValue | null>(null);
+const HotkeysActionsContext = createContext<HotkeysActionsContextValue | null>(null);
 
 export function useHotkeysRegistry() {
-  const context = useContext(HotkeysContext);
+  const context = useContext(HotkeysRegistryContext);
   if (!context) {
     throw new Error('useHotkeysRegistry must be used within a HotkeysProvider');
+  }
+  return context;
+}
+
+export function useHotkeysActions() {
+  const context = useContext(HotkeysActionsContext);
+  if (!context) {
+    throw new Error('useHotkeysActions must be used within a HotkeysProvider');
   }
   return context;
 }
@@ -32,7 +44,7 @@ export function useDesignEngineHotkey(
   metadata: Omit<HotkeyMetadata, 'key'>,
   options?: HotkeyOptions
 ) {
-  const { register, unregister } = useHotkeysRegistry();
+  const { register, unregister } = useHotkeysActions();
   const { hasFinePointer } = useDeviceCapabilities();
   const id = React.useId();
 
@@ -64,9 +76,14 @@ export function HotkeysProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const registryValue = React.useMemo(() => ({ registry }), [registry]);
+  const actionsValue = React.useMemo(() => ({ register, unregister }), [register, unregister]);
+
   return (
-    <HotkeysContext.Provider value={{ registry, register, unregister }}>
-      {children}
-    </HotkeysContext.Provider>
+    <HotkeysRegistryContext.Provider value={registryValue}>
+      <HotkeysActionsContext.Provider value={actionsValue}>
+        {children}
+      </HotkeysActionsContext.Provider>
+    </HotkeysRegistryContext.Provider>
   );
 }
