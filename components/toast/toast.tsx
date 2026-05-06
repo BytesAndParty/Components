@@ -8,11 +8,26 @@ import {
 } from 'react';
 import { motion, AnimatePresence, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
 
 /* ---------- Types ---------- */
 
 type ToastVariant = 'default' | 'success' | 'warning' | 'danger';
 type Placement = 'top-right' | 'top-center' | 'bottom-right' | 'bottom-center';
+
+export type ToastMessages = {
+  dismiss: string;
+};
+
+const TOAST_MESSAGES = {
+  de: {
+    dismiss: 'Schließen',
+  },
+  en: {
+    dismiss: 'Dismiss',
+  },
+} as const satisfies ComponentMessages<ToastMessages>;
 
 interface ToastData {
   id: string;
@@ -52,15 +67,18 @@ interface ToastProviderProps {
   children: React.ReactNode;
   placement?: Placement;
   maxVisible?: number;
+  messages?: Partial<ToastMessages>;
 }
 
 export function ToastProvider({
   children,
   placement = 'bottom-right',
   maxVisible = 4,
+  messages,
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const counter = useRef(0);
+  const m = useComponentMessages(TOAST_MESSAGES, messages);
 
   const add = useCallback((opts: Omit<ToastData, 'id'>) => {
     const id = `toast-${++counter.current}`;
@@ -109,6 +127,7 @@ export function ToastProvider({
               index={i}
               total={visible.length}
               placement={placement}
+              messages={m}
               onDismiss={dismiss}
             />
           ))}
@@ -132,10 +151,11 @@ interface ToastItemProps {
   index: number;
   total: number;
   placement: Placement;
+  messages: ToastMessages;
   onDismiss: (id: string) => void;
 }
 
-function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps) {
+function ToastItem({ data, index, total, placement, messages, onDismiss }: ToastItemProps) {
   const { id, title, description, variant = 'default', duration = 4000 } = data;
   const progressRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -279,6 +299,7 @@ function ToastItem({ data, index, total, placement, onDismiss }: ToastItemProps)
       {/* Close button */}
       <button
         onClick={() => onDismiss(id)}
+        aria-label={messages.dismiss}
         style={{
           position: 'absolute',
           top: '0.625rem',

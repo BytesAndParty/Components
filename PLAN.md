@@ -46,7 +46,7 @@
 
 Folgende Komponenten haben user-facing Strings, aber noch kein `messages?`-Prop:
 
-- [ ] `toast` — Action-Labels, Dismiss-Button
+- [x] `toast` — Action-Labels (via Consumer), Dismiss-Button (erledigt)
 - [ ] `form-input` — Validation-Messages, Required-Label, Error-States
 - [ ] `color-picker` — Format-Switcher (HEX/RGB/HSL), Preset-Label, Eye-Dropper aria-label
 - [ ] `navbar` — Mobile-Toggle aria-label, Close-aria-label
