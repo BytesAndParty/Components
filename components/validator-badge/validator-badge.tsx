@@ -11,6 +11,8 @@ export type ValidatorBadgeMessages = {
   panelTitle: string
   footer: string
   close: string
+  error: string
+  warning: string
 }
 
 const VALIDATOR_BADGE_MESSAGES = {
@@ -20,6 +22,8 @@ const VALIDATOR_BADGE_MESSAGES = {
     panelTitle: 'EU Label Compliance',
     footer: 'EU-Verordnung 2023/2977 — Pflichtfelder für Wein in der EU.',
     close: 'Schließen',
+    error: 'Fehler',
+    warning: 'Warnung',
   },
   en: {
     compliant: 'EU compliant',
@@ -27,6 +31,8 @@ const VALIDATOR_BADGE_MESSAGES = {
     panelTitle: 'EU Label Compliance',
     footer: 'EU Regulation 2023/2977 — required fields for wine sold in the EU.',
     close: 'Close',
+    error: 'Error',
+    warning: 'Warning',
   },
 } as const satisfies ComponentMessages<ValidatorBadgeMessages>
 
@@ -71,6 +77,9 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
             className,
           )}
         >
+          <span className="sr-only">
+            {hasError ? m.error : m.warning}:
+          </span>
           {hasError
             ? <AlertCircle size={13} />
             : <AlertTriangle size={13} />
@@ -113,6 +122,9 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
                       'mt-0.5 shrink-0',
                       w.severity === 'error' ? 'text-destructive' : 'text-amber-500',
                     )}>
+                      <span className="sr-only">
+                        {w.severity === 'error' ? m.error : m.warning}:
+                      </span>
                       {w.severity === 'error'
                         ? <AlertCircle size={13} />
                         : <AlertTriangle size={13} />

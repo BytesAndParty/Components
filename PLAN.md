@@ -28,7 +28,7 @@
 - [x] **TextToolOptions / FontSelect** — `aria-haspopup="listbox"`, `aria-expanded`, `role="listbox"` + `role="option"` fehlen (erledigt)
 - [x] **AlignmentBar** — Roving-tabIndex-Pattern fehlt (Arrow-Key-Navigation innerhalb der Toolbar nach WAI-ARIA Toolbar-Pattern) (erledigt)
 - [x] **LayerPanel** — Drag-Handle nicht per Tastatur bedienbar (Shift+↑↓ für Reorder), `aria-selected` auf Rows, `aria-label` auf `<ul>` (erledigt)
-- [ ] **ValidatorBadge** — Error vs Warning nur durch Farbe unterschieden — screen reader-taugliche Severity-Kennzeichnung fehlt (z.B. visually-hidden prefix)
+- [x] **ValidatorBadge** — Error vs Warning nur durch Farbe unterschieden — screen reader-taugliche Severity-Kennzeichnung fehlt (z.B. visually-hidden prefix) (erledigt)
 
 ### 🟡 Code-Qualität
 
