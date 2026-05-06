@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react'
 import {
   AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal,
   AlignStartVertical, AlignCenterVertical, AlignEndVertical,
@@ -80,11 +81,38 @@ export interface AlignmentBarProps {
 
 export function AlignmentBar({ onAlign, disabled = false, className, messages }: AlignmentBarProps) {
   const m = useComponentMessages(ALIGNMENT_BAR_MESSAGES, messages)
+  const [focusIndex, setFocusIndex] = useState(0)
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return
+
+    let nextIndex = focusIndex
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      nextIndex = (focusIndex + 1) % BUTTONS.length
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      nextIndex = (focusIndex - 1 + BUTTONS.length) % BUTTONS.length
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      nextIndex = 0
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      nextIndex = BUTTONS.length - 1
+    } else {
+      return
+    }
+
+    setFocusIndex(nextIndex)
+    buttonRefs.current[nextIndex]?.focus()
+  }
 
   return (
     <div
       role="toolbar"
       aria-label={m.ariaLabel}
+      onKeyDown={handleKeyDown}
       className={cn(
         'flex items-center h-9 bg-card border border-border rounded-lg text-sm select-none',
         disabled && 'opacity-40 pointer-events-none',
@@ -96,10 +124,15 @@ export function AlignmentBar({ onAlign, disabled = false, className, messages }:
           {/* Divider between align group and distribute group */}
           {i === 6 && <div className="w-px h-5 bg-border mx-0.5" />}
           <button
+            ref={el => { buttonRefs.current[i] = el }}
             type="button"
+            tabIndex={focusIndex === i ? 0 : -1}
             title={m[BUTTON_TITLES[action]]}
-            onClick={() => onAlign(action)}
-            className="flex items-center justify-center w-8 h-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            onClick={() => {
+              setFocusIndex(i)
+              onAlign(action)
+            }}
+            className="flex items-center justify-center w-8 h-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:bg-muted focus-visible:text-foreground outline-none"
           >
             <Icon size={13} strokeWidth={1.75} />
           </button>
