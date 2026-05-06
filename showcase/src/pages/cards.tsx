@@ -1,4 +1,5 @@
 import { Section } from '../components/section'
+import { ShapeCard, type CornerShape } from '@components/shape-card/shape-card'
 import { GlowCard } from '@components/glow-card/glow-card'
 import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
@@ -17,6 +18,56 @@ import { CursorGlow } from '@components/cursor-glow/cursor-glow'
 import { Lens } from '@components/lens/lens'
 import { ImagesSlider } from '@components/images-slider/images-slider'
 import { useState } from 'react'
+
+/* ── ShapeCard helpers ──────────────────────────────────── */
+
+function WineMedia({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div
+      style={{
+        aspectRatio: '4 / 3',
+        display: 'grid',
+        placeItems: 'center',
+        background:
+          'radial-gradient(circle at 30% 20%, color-mix(in oklch, var(--accent) 14%, transparent), transparent 60%), var(--muted)',
+      }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          height: '88%',
+          objectFit: 'contain',
+          filter: 'drop-shadow(0 8px 16px oklch(0 0 0 / 0.25))',
+        }}
+      />
+    </div>
+  )
+}
+
+function WineBody({
+  name,
+  region,
+  vintage,
+  price,
+  note,
+}: {
+  name: string
+  region: string
+  vintage: number
+  price: string
+  note?: string
+}) {
+  return (
+    <div style={{ padding: '1.25rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <p className="text-[0.625rem] uppercase tracking-[0.18em] text-muted-foreground">{region}</p>
+      <h3 className="text-foreground font-bold text-base leading-tight m-0">{name}</h3>
+      <p className="text-muted-foreground text-xs m-0">Jahrgang {vintage}</p>
+      {note && <p className="text-muted-foreground text-xs italic m-0 mt-1">{note}</p>}
+      <p className="font-bold text-base mt-2 m-0" style={{ color: 'var(--accent)' }}>{price}</p>
+    </div>
+  )
+}
 
 function CursorGlowDemo() {
   const [glowOn, setGlowOn] = useState(false)
@@ -41,8 +92,167 @@ function CursorGlowDemo() {
 export function CardsPage() {
   const [splashOn, setSplashOn] = useState(false)
 
+  const shapeVariants: { shape: CornerShape; label: string; sub: string }[] = [
+    { shape: 'round',    label: 'round',    sub: 'classic ellipse' },
+    { shape: 'squircle', label: 'squircle', sub: 'superellipse(2)' },
+    { shape: 'scoop',    label: 'scoop',    sub: 'concave ellipse' },
+    { shape: 'notch',    label: 'notch',    sub: '90° concave' },
+    { shape: 'bevel',    label: 'bevel',    sub: 'diagonal cut' },
+  ]
+
   return (
     <>
+      <Section
+        title="ShapeCard – corner-shape variants"
+        description="Was möglich ist: identische Cards, fünf verschiedene Eckengeometrien (radius 48px) — round, squircle, scoop, notch, bevel. Chrome 139+ zeigt die echten Shapes; Firefox/Safari fallen auf border-radius zurück."
+      >
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {shapeVariants.map((v, i) => (
+            <ShapeCard key={v.shape} shape={v.shape} radius={48} hoverLift={false}>
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  aspectRatio: '3 / 4',
+                  background:
+                    'radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 65%)',
+                }}
+              >
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'grid',
+                    placeItems: 'center',
+                    padding: '1.25rem 1rem 0.5rem',
+                  }}
+                >
+                  <img
+                    src={i % 2 === 0 ? '/wine-default.png' : '/white-wine-default.png'}
+                    alt={v.label}
+                    style={{
+                      maxHeight: '100%',
+                      maxWidth: '70%',
+                      objectFit: 'contain',
+                      filter: 'drop-shadow(0 14px 22px oklch(0 0 0 / 0.35))',
+                    }}
+                  />
+                </div>
+                <div style={{ textAlign: 'center', padding: '0 1rem 1.25rem' }}>
+                  <p
+                    className="font-bold text-foreground"
+                    style={{ fontSize: '0.9375rem', margin: 0, letterSpacing: '-0.01em' }}
+                  >
+                    {v.label}
+                  </p>
+                  <p
+                    className="text-muted-foreground"
+                    style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 4 }}
+                  >
+                    {v.sub}
+                  </p>
+                </div>
+              </div>
+            </ShapeCard>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        title="ShapeCard – Asymmetric / Premium"
+        description="Asymmetrische Shapes wirken intentional und premium — eine Ecke besonders, die anderen drei sauber. Drei Varianten: einzelner Akzent oben (Reihe 1), unten rechts (Reihe 2), und mittig an einer Seite (Reihe 3, kein Eck-Cutout sondern Halbkreis im Edge)."
+      >
+        <div className="space-y-8">
+
+          {/* Reihe 1: Akzent oben */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ShapeCard
+              shape={['round', 'bevel', 'round', 'round']}
+              radius="20px 56px 20px 20px"
+            >
+              <WineMedia src="/wine-default.png" alt="Barolo Riserva" />
+              <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
+            </ShapeCard>
+
+            <ShapeCard
+              shape={['scoop', 'scoop', 'squircle', 'squircle']}
+              radius="3.25rem 3.25rem 1.25rem 1.25rem"
+            >
+              <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" />
+              <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
+            </ShapeCard>
+
+            <ShapeCard
+              shape={['scoop', 'round', 'round', 'round']}
+              radius="80px 20px 20px 20px"
+            >
+              <WineMedia src="/wine-default.png" alt="Brunello di Montalcino" />
+              <WineBody name="Brunello di Montalcino" region="Toskana · Italien" vintage={2018} price="€ 64,00" note="Single scoop · Top-Left" />
+            </ShapeCard>
+          </div>
+
+          {/* Reihe 2: Akzent unten rechts */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ShapeCard
+              shape={['round', 'round', 'bevel', 'round']}
+              radius="20px 20px 56px 20px"
+            >
+              <WineMedia src="/white-wine-default.png" alt="Sauvignon Blanc" />
+              <WineBody name="Sauvignon Blanc Réserve" region="Steiermark · Österreich" vintage={2022} price="€ 42,00" note="Single bevel · Bottom-Right" />
+            </ShapeCard>
+
+            <ShapeCard
+              shape={['round', 'round', 'scoop', 'round']}
+              radius="20px 20px 72px 20px"
+            >
+              <WineMedia src="/wine-default.png" alt="Chianti Classico" />
+              <WineBody name="Chianti Classico" region="Toskana · Italien" vintage={2020} price="€ 26,80" note="Single scoop · Bottom-Right" />
+            </ShapeCard>
+
+            <ShapeCard
+              shape={['round', 'round', 'notch', 'round']}
+              radius="20px 20px 56px 20px"
+            >
+              <WineMedia src="/white-wine-default.png" alt="Grüner Veltliner" />
+              <WineBody name="Grüner Veltliner" region="Wachau · Österreich" vintage={2023} price="€ 18,90" note="Single notch · Bottom-Right" />
+            </ShapeCard>
+          </div>
+
+          {/* Reihe 3: Halbkreis-Notch in der Mitte einer Seite */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ShapeCard
+              shape="squircle"
+              radius={24}
+              sideNotch={{ side: 'top', size: 56 }}
+            >
+              <div style={{ paddingTop: 36 }}>
+                <WineMedia src="/wine-default.png" alt="Amarone" />
+                <WineBody name="Amarone Valpolicella" region="Venetien · Italien" vintage={2017} price="€ 78,00" note="Top-edge notch" />
+              </div>
+            </ShapeCard>
+
+            <ShapeCard
+              shape="squircle"
+              radius={24}
+              sideNotch={{ side: 'right', size: 64 }}
+            >
+              <WineMedia src="/white-wine-default.png" alt="Pinot Grigio" />
+              <WineBody name="Pinot Grigio Alto Adige" region="Südtirol · Italien" vintage={2023} price="€ 22,40" note="Right-edge notch" />
+            </ShapeCard>
+
+            <ShapeCard
+              shape="squircle"
+              radius={24}
+              sideNotch={{ side: 'bottom', size: 56 }}
+            >
+              <WineMedia src="/wine-default.png" alt="Cannonau" />
+              <WineBody name="Cannonau di Sardegna" region="Sardinien · Italien" vintage={2021} price="€ 28,90" note="Bottom-edge notch" />
+            </ShapeCard>
+          </div>
+
+        </div>
+      </Section>
+
       <Section title="GlowCard" description="Card with a cursor-following glow border effect.">
         <GlowCard className="p-8">
           <p className="font-medium text-foreground">Hover over this card</p>

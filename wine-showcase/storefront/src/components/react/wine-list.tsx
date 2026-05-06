@@ -3,10 +3,7 @@ import { useCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCTS } from '@/lib/queries'
 import type { Product } from '@/lib/types'
-
-function formatPrice(cents: number): string {
-  return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
-}
+import { WineCard } from './wine-card'
 
 /**
  * Diese React-Komponente bekommt die 'initialProducts' direkt von Astro (Build-Time).
@@ -65,54 +62,15 @@ export function WineListPage({ initialProducts }: { initialProducts?: Product[] 
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {products.map((product) => {
-          const variant = product.variants[0]
-          const cf = product.customFields
-
-          return (
-            <div
-              key={product.id}
-              className="group relative bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="aspect-[4/3] bg-muted flex items-center justify-center text-6xl">
-                {cf.rebsorte?.toLowerCase().includes('rosé') ? '🌸' :
-                 cf.rebsorte?.toLowerCase().includes('rot') || cf.rebsorte?.toLowerCase().includes('blaufränkisch') ? '🍷' :
-                 '🥂'}
-              </div>
-
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg">
-                    <a href={`/wine/${product.slug}`} className="hover:text-accent transition-colors">
-                      {product.name}
-                    </a>
-                  </h3>
-                  <span className="font-bold text-lg">
-                    {variant ? formatPrice(variant.priceWithTax) : '—'}
-                  </span>
-                </div>
-
-                <div className="text-sm text-muted-foreground space-x-2 mb-4">
-                  {cf.rebsorte && <span>{cf.rebsorte}</span>}
-                  {cf.jahrgang && <span>• {cf.jahrgang}</span>}
-                  {cf.region && <span>• {cf.region}</span>}
-                </div>
-
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-6">
-                  {cf.geschmacksprofil || product.description}
-                </p>
-
-                <button
-                  onClick={() => variant && addToCart(variant.id)}
-                  disabled={!variant}
-                  className="w-full py-2 px-4 bg-foreground text-background font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  In den Warenkorb
-                </button>
-              </div>
-            </div>
-          )
-        })}
+        {products.map((product, idx) => (
+          <WineCard
+            key={product.id}
+            product={product}
+            variant={idx % 2 === 0 ? 'premium' : 'label'}
+            featuredLabel={idx === 0 ? 'Wein des Monats' : undefined}
+            onAddToCart={addToCart}
+          />
+        ))}
       </div>
     </div>
   )
