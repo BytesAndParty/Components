@@ -42,7 +42,12 @@ export function NumberInput({
   function nudge(dir: 1 | -1) {
     onChange(clamp(parseFloat((value + dir * step).toFixed(decimals + 2))))
   }
-  nudgeRef.current = nudge
+
+  // Keep nudgeRef pointed at the latest closure so the non-passive wheel
+  // listener (registered once below) always nudges from the current value.
+  useEffect(() => {
+    nudgeRef.current = nudge
+  })
 
   // Non-passive wheel listener so preventDefault() actually prevents page scroll
   useEffect(() => {
