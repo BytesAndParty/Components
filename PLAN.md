@@ -52,7 +52,7 @@ Folgende Komponenten haben user-facing Strings, aber noch kein `messages?`-Prop:
 - [x] `navbar` — Mobile-Toggle & Close aria-labels (erledigt)
 - [x] `tooltip` — aria-label & A11y linkage (erledigt)
 - [x] `breadcrumb` — aria-label & more-label (erledigt)
-- [ ] `slider` — aria-label, value-Formatierung
+- [x] `slider` — aria-label & localized formatting (erledigt)
 - [ ] `rating` — aria-label, star-Beschreibung
 
 ---
