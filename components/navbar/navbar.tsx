@@ -9,6 +9,8 @@ import {
   type CSSProperties,
 } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { useComponentMessages } from '../i18n'
+import type { ComponentMessages } from '../i18n'
 
 // ─── Context ────────────────────────────────────────────────────────────────────
 
@@ -19,22 +21,37 @@ interface NavbarContextValue {
   setMobileOpen: (open: boolean) => void
   activeDropdown: string | null
   setActiveDropdown: (id: string | null) => void
+  messages: NavbarMessages
 }
 
-const NavbarContext = createContext<NavbarContextValue>({
-  scrolled: false,
-  transparent: false,
-  mobileOpen: false,
-  setMobileOpen: () => {},
-  activeDropdown: null,
-  setActiveDropdown: () => {},
-})
+const NavbarContext = createContext<NavbarContextValue | null>(null)
 
 function useNavbar() {
-  return useContext(NavbarContext)
+  const ctx = useContext(NavbarContext)
+  if (!ctx) throw new Error('useNavbar must be used within <Navbar>')
+  return ctx
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
+
+export type NavbarMessages = {
+  ariaLabel: string
+  openMenu: string
+  closeMenu: string
+}
+
+const NAVBAR_MESSAGES = {
+  de: {
+    ariaLabel: 'Hauptnavigation',
+    openMenu: 'Menü öffnen',
+    closeMenu: 'Menü schließen',
+  },
+  en: {
+    ariaLabel: 'Main navigation',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+  },
+} as const satisfies ComponentMessages<NavbarMessages>
 
 export interface NavbarProps {
   children: ReactNode
@@ -52,6 +69,7 @@ export interface NavbarProps {
   borderColor?: string
   className?: string
   style?: CSSProperties
+  messages?: Partial<NavbarMessages>
 }
 
 export interface NavbarSectionProps {
@@ -138,10 +156,12 @@ export function Navbar({
   borderColor = 'var(--border, #2a2a2e)',
   className,
   style,
+  messages,
 }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const m = useComponentMessages(NAVBAR_MESSAGES, messages)
 
   useEffect(() => {
     if (!sticky && !transparent) return
@@ -171,12 +191,20 @@ export function Navbar({
 
   return (
     <NavbarContext.Provider
-      value={{ scrolled, transparent, mobileOpen, setMobileOpen, activeDropdown, setActiveDropdown }}
+      value={{
+        scrolled,
+        transparent,
+        mobileOpen,
+        setMobileOpen,
+        activeDropdown,
+        setActiveDropdown,
+        messages: m,
+      }}
     >
       <nav
         className={className}
         role="navigation"
-        aria-label="Hauptnavigation"
+        aria-label={m.ariaLabel}
         style={{
           position: sticky ? 'fixed' : 'relative',
           top: 0,
@@ -584,13 +612,13 @@ export function NavbarIconButton({
 // ─── NavbarMobileToggle ─────────────────────────────────────────────────────────
 
 export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps) {
-  const { mobileOpen, setMobileOpen } = useNavbar()
+  const { mobileOpen, setMobileOpen, messages: m } = useNavbar()
 
   return (
     <button
       type="button"
       onClick={() => setMobileOpen(!mobileOpen)}
-      aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
+      aria-label={mobileOpen ? m.closeMenu : m.openMenu}
       aria-expanded={mobileOpen}
       className={className}
       style={{
@@ -629,7 +657,7 @@ export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps
 // ─── NavbarMobileMenu ───────────────────────────────────────────────────────────
 
 export function NavbarMobileMenu({ children, className, style }: NavbarMobileMenuProps) {
-  const { mobileOpen, setMobileOpen } = useNavbar()
+  const { mobileOpen, setMobileOpen, messages: m } = useNavbar()
 
   // Lock body scroll
   useEffect(() => {
@@ -692,7 +720,7 @@ export function NavbarMobileMenu({ children, className, style }: NavbarMobileMen
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
-              aria-label="Menü schließen"
+              aria-label={m.closeMenu}
               style={{
                 position: 'absolute',
                 top: '16px',
