@@ -25,6 +25,8 @@ export type SearchOverlayMessages = {
   shortcutLabel: string;
   closeLabel: string;
   ariaLabel: string;
+  searchDescription: string;
+  closeDescription: string;
 };
 
 const SEARCH_OVERLAY_MESSAGES = {
@@ -37,6 +39,8 @@ const SEARCH_OVERLAY_MESSAGES = {
     shortcutLabel: 'Suche öffnen',
     closeLabel: 'Suche schließen',
     ariaLabel: 'Spotlight Suche',
+    searchDescription: 'Öffnet die globale Spotlight-Suche',
+    closeDescription: 'Schließt das aktuelle Overlay',
   },
   en: {
     placeholder: 'Search for products or pages…',
@@ -47,6 +51,8 @@ const SEARCH_OVERLAY_MESSAGES = {
     shortcutLabel: 'Open search',
     closeLabel: 'Close search',
     ariaLabel: 'Spotlight Search',
+    searchDescription: 'Opens the global spotlight search',
+    closeDescription: 'Closes the current overlay',
   },
 } as const satisfies ComponentMessages<SearchOverlayMessages>;
 
@@ -90,7 +96,7 @@ export function SearchOverlay({
     open();
   }, {
     label: m.shortcutLabel,
-    description: "Öffnet die globale Spotlight-Suche",
+    description: m.searchDescription,
     category: 'Global'
   });
 
@@ -101,7 +107,7 @@ export function SearchOverlay({
     }
   }, {
     label: m.closeLabel,
-    description: "Schließt das aktuelle Overlay",
+    description: m.closeDescription,
     category: 'Actions'
   });
 
