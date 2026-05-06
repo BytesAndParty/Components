@@ -45,18 +45,18 @@ export function BlurFade({
   style,
 }: BlurFadeProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  // prefers-reduced-motion: Animation überspringen
-  const prefersReduced =
+  // prefers-reduced-motion: Sample once on mount via lazy initial state.
+  // matchMedia in render would be impure (react-hooks/purity); doing it
+  // here means visible can start as `true` for reduced-motion users
+  // without a setState-in-effect.
+  const [prefersReduced] = useState(() =>
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+  const [visible, setVisible] = useState(prefersReduced)
 
   useEffect(() => {
-    if (prefersReduced) {
-      setVisible(true)
-      return
-    }
+    if (prefersReduced) return
 
     const el = ref.current
     if (!el) return
