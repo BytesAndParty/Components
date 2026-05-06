@@ -97,7 +97,7 @@ export function NavigationPage() {
 
       <Section title="ScrollProgress" description="Scroll position indicator bar, typically placed below a navbar.">
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
-          <div className="border-b border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+          <div className="border-b border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
             <span>ScrollProgress · position: fixed · top: 56px · scaleX transform</span>
             <span>Scroll this page to see it fill ↑</span>
           </div>
@@ -166,7 +166,7 @@ export function NavigationPage() {
             </NavbarSection>
           </NavbarComponent>
 
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
             <span>Navbar · transparent · uppercase · minimal UIkit-style</span>
             <span>Hover "Weine" for mega-menu</span>
           </div>

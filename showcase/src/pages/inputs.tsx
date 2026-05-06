@@ -185,7 +185,7 @@ function ImageUploadDemo() {
       <div
         onClick={!previewUrl ? handleThumbnailClick : undefined}
         className={`h-48 flex items-center justify-center relative transition-colors ${
-          previewUrl ? 'cursor-default' : 'cursor-pointer bg-white/[0.02] hover:bg-white/[0.04]'
+          previewUrl ? 'cursor-default' : 'cursor-pointer bg-white/2 hover:bg-white/4'
         }`}
       >
         {previewUrl ? (

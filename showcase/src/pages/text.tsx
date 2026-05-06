@@ -167,7 +167,7 @@ export function TextPage() {
               ))}
             </div>
           </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
             <span>TextRotate · splitBy: characters · staggerFrom: first</span>
             <span>rotationInterval: 4000ms</span>
           </div>
@@ -297,7 +297,7 @@ export function TextPage() {
               ))}
             </VelocityScroll>
           </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/[0.01]">
+          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
             <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
             <span>Scroll the page to accelerate</span>
           </div>
