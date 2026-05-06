@@ -201,7 +201,7 @@ Optional: pre-commit via `lint-staged`:
 | Phase | Status | Owner | Findings vorher | nachher |
 |---|---|---|---:|---:|
 | 1 — Trivial cleanup | ✅ | claude | 24 | 0 |
-| 2a — `refs` | ☐ | — | 13 | — |
+| 2a — `refs` | ✅ | claude | 13 | 0 |
 | 2b — `set-state-in-effect` | ☐ | — | 13 | — |
 | 2c — `purity` | ☐ | — | 5 | — |
 | 3 — `exhaustive-deps` | ☐ | — | 8 | — |
@@ -217,6 +217,7 @@ Antipatterns, die beim Lint-Fixen auffallen, aber bewusst **nicht** mitgefixt we
 
 - **[components/accent-switcher/accent-switcher.tsx](components/accent-switcher/accent-switcher.tsx)** (Phase 1) — Props `defaultPalette` und `accentAttribute` sind im Type definiert + per Default belegt, werden aber im Component-Body nicht benutzt. Lint-Fix: nur Binding mit `_` prefixed (`defaultPalette: _defaultPalette`). Follow-up: entweder Verhalten implementieren oder Props aus dem Type entfernen.
 - **[components/toast/toast.tsx](components/toast/toast.tsx)** (Phase 1) — Props `index` und `total` (`ToastItemProps`) sind ungenutzt. Vermutlich war dort mal Stagger-Layout oder "X of Y"-Anzeige geplant. Lint-Fix: `_`-prefixed. Follow-up: Feature implementieren oder aus Interface streichen.
+- **[components/particles/COMPONENT.md](components/particles/COMPONENT.md) ↔ [particles.tsx](components/particles/particles.tsx)** (Phase 1) — Doku verspricht `particleSpread` "scales initial distribution", aber im Code wird die Prop in `createParticles` nie verwendet (Partikel-x/y sind `Math.random() * width/height`). Der `const spread = particleSpread * 20` war Tot­code, den Phase 1 entfernt hat. Pre-existing Doku-Drift. Follow-up: entweder Spread-Logik implementieren oder Prop + Doku-Eintrag streichen.
 
 ---
 
@@ -237,3 +238,8 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
   - **Step 2** (`7e63497`) — particles.tsx (`hexToRgba`-Helper + `spread`-Const), stepper.tsx (`isPending`).
   - **Step 3** (`99c46a9`) — `_`-Prefix für ungenutzte Args/Destructured-Props (accent-switcher, toast, atelier/provider, password-setup, inputs page). Zwei §7-Einträge ergänzt für accent-switcher und toast (echte Dead-Props, follow-up nötig).
   - User-Präferenz festgehalten: Commit pro Sub-Step in einer Phase ([feedback memory](../../.claude/projects/-Users-robert-stickler-Development---Components--/memory/feedback_commit_per_step.md)).
+- **2026-05-06** — Phase 2a ✅ erledigt (13 → 0 Findings, 3 Commits):
+  - **Step 1** (`c1b4fbb`) — pixel-image: Fisher-Yates shuffle aus `useRef`+render-mutation auf `useMemo` umgestellt. Eliminiert alle 10 refs-Findings + 1 purity-Finding (Math.random() im useMemo OK).
+  - **Step 2** (`6b8b03b`) — password-setup `FancyDotInput`: `lastCharRef.current`-Write in `useEffect` verschoben. Read in Render bleibt mit `eslint-disable-next-line` + Begründung (offizieller usePrevious-Pattern für one-shot Animation-Trigger).
+  - **Step 3** (`0fbe0b0`) — number-input: `nudgeRef.current = nudge` aus Render in deps-losen `useEffect` verschoben (bridge für stale-closure im einmaligen non-passive wheel-listener).
+  - COMPONENT.md-Check: Verhalten unverändert in allen vier betroffenen Components, keine Doku-Updates nötig. Eine pre-existing Doku-Drift in `particles` (Prop `particleSpread` ist im Code nie wirklich angewandt) als §7-Eintrag aufgenommen.
