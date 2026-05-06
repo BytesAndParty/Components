@@ -1,6 +1,8 @@
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, createContext, useContext } from 'react';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
 
 const STYLE_ID = 'breadcrumb-styles';
 
@@ -34,11 +36,54 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
+// ─── Context ────────────────────────────────────────────────────────────────────
+
+interface BreadcrumbContextValue {
+  messages: BreadcrumbMessages;
+}
+
+const BreadcrumbContext = createContext<BreadcrumbContextValue | null>(null);
+
+function useBreadcrumb() {
+  const ctx = useContext(BreadcrumbContext);
+  if (!ctx) throw new Error('useBreadcrumb must be used within <Breadcrumb>');
+  return ctx;
+}
+
+// ─── Types ──────────────────────────────────────────────────────────────────────
+
+export type BreadcrumbMessages = {
+  ariaLabel: string;
+  more: string;
+};
+
+const BREADCRUMB_MESSAGES = {
+  de: {
+    ariaLabel: 'Brotkrumen-Navigation',
+    more: 'Mehr',
+  },
+  en: {
+    ariaLabel: 'Breadcrumb navigation',
+    more: 'More',
+  },
+} as const satisfies ComponentMessages<BreadcrumbMessages>;
+
+export interface BreadcrumbProps extends React.ComponentProps<'nav'> {
+  messages?: Partial<BreadcrumbMessages>;
+}
+
 export function Breadcrumb({
   style,
+  messages,
   ...props
-}: React.ComponentProps<'nav'>): React.ReactElement {
-  return <nav aria-label="breadcrumb" data-slot="breadcrumb" style={style} {...props} />;
+}: BreadcrumbProps): React.ReactElement {
+  const m = useComponentMessages(BREADCRUMB_MESSAGES, messages);
+
+  return (
+    <BreadcrumbContext.Provider value={{ messages: m }}>
+      <nav aria-label={m.ariaLabel} data-slot="breadcrumb" style={style} {...props} />
+    </BreadcrumbContext.Provider>
+  );
 }
 
 export function BreadcrumbList({
@@ -149,6 +194,8 @@ export function BreadcrumbEllipsis({
   style,
   ...props
 }: React.ComponentProps<'span'>): React.ReactElement {
+  const { messages: m } = useBreadcrumb();
+
   return (
     <span
       aria-hidden="true"
@@ -163,7 +210,7 @@ export function BreadcrumbEllipsis({
     >
       <MoreHorizontal style={{ width: '1rem', height: '1rem' }} />
       <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
-        More
+        {m.more}
       </span>
     </span>
   );

@@ -51,7 +51,7 @@ Folgende Komponenten haben user-facing Strings, aber noch kein `messages?`-Prop:
 - [x] `color-picker` — Format-Switcher, Paletten-Labels, Eyedropper & Slider A11y (erledigt)
 - [x] `navbar` — Mobile-Toggle & Close aria-labels (erledigt)
 - [x] `tooltip` — aria-label & A11y linkage (erledigt)
-- [ ] `breadcrumb` — aria-label "Breadcrumb navigation"
+- [x] `breadcrumb` — aria-label & more-label (erledigt)
 - [ ] `slider` — aria-label, value-Formatierung
 - [ ] `rating` — aria-label, star-Beschreibung
 
