@@ -1,6 +1,21 @@
-import { useState, useRef, useEffect, ReactNode } from 'react';
+import { useState, useRef, useEffect, ReactNode, useId } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import type { ComponentMessages } from '../i18n';
+
+export type TooltipMessages = {
+  ariaLabel: string;
+};
+
+const TOOLTIP_MESSAGES = {
+  de: {
+    ariaLabel: 'Tooltip',
+  },
+  en: {
+    ariaLabel: 'Tooltip',
+  },
+} as const satisfies ComponentMessages<TooltipMessages>;
 
 interface TooltipProps {
   children: ReactNode;
@@ -8,6 +23,7 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'left' | 'right';
   delay?: number;
   className?: string;
+  messages?: Partial<TooltipMessages>;
 }
 
 export function Tooltip({
@@ -16,9 +32,12 @@ export function Tooltip({
   position = 'top',
   delay = 0.2,
   className,
+  messages,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const id = useId();
+  const m = useComponentMessages(TOOLTIP_MESSAGES, messages);
 
   const show = () => {
     timeoutRef.current = setTimeout(() => setIsVisible(true), delay * 1000);
@@ -56,11 +75,15 @@ export function Tooltip({
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
+      aria-describedby={isVisible ? id : undefined}
     >
       {children}
       <AnimatePresence>
         {isVisible && (
           <motion.div
+            id={id}
+            role="tooltip"
+            aria-label={m.ariaLabel}
             initial={animationVariants[position]}
             animate={{ opacity: 1, y: position === 'top' || position === 'bottom' ? 0 : '-50%', x: position === 'left' || position === 'right' ? 0 : '-50%', scale: 1 }}
             exit={animationVariants[position]}
