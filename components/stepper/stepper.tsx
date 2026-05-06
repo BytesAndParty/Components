@@ -58,7 +58,6 @@ function StepIndicator({
         const stepNum = i + 1
         const isCompleted = stepNum < currentStep
         const isActive = stepNum === currentStep
-        const isPending = stepNum > currentStep
 
         return (
           <div key={i} className="flex items-center">
