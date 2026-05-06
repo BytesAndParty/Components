@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "lint": "eslint src ../components"
   },
   "dependencies": {
     "@ark-ui/react": "^5.36.2",
