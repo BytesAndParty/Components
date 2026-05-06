@@ -238,11 +238,22 @@ function FancyDotInput({
   const lastCharRef = useRef(value.length)
   const neutralColor = 'var(--muted-foreground, #71717a)'
 
+  // Sync prev-length tracker after every render so the pop animation only
+  // fires on insertions (value.length grew), not deletions. Writing the ref
+  // in an effect keeps render-body pure (react-hooks/refs).
+  useEffect(() => {
+    lastCharRef.current = value.length
+  }, [value.length])
+
   const displayLength = targetValue ? targetValue.length : value.length
   const dots: ReactNode[] = []
 
   for (let i = 0; i < displayLength; i++) {
     const isTyped = i < value.length
+    // Reading ref.current in render is the documented usePrevious pattern
+    // for one-shot animation triggers; the ref is only ever mutated in the
+    // effect above, so the value is stable per render.
+    // eslint-disable-next-line react-hooks/refs
     const justTyped = i === value.length - 1 && value.length > lastCharRef.current
 
     let bgColor = neutralColor
@@ -279,8 +290,6 @@ function FancyDotInput({
       />
     )
   }
-
-  lastCharRef.current = value.length
 
   return (
     <div
