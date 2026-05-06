@@ -200,13 +200,13 @@ Optional: pre-commit via `lint-staged`:
 
 | Phase | Status | Owner | Findings vorher | nachher |
 |---|---|---|---:|---:|
-| 1 — Trivial cleanup | ☐ | — | 24 | — |
+| 1 — Trivial cleanup | ✅ | claude | 24 | 0 |
 | 2a — `refs` | ☐ | — | 13 | — |
 | 2b — `set-state-in-effect` | ☐ | — | 13 | — |
 | 2c — `purity` | ☐ | — | 5 | — |
 | 3 — `exhaustive-deps` | ☐ | — | 8 | — |
 | 4 — HMR (optional) | ☐ | — | 34 | — |
-| 5 — Doku in techstack-base | ☐ | — | — | — |
+| 5 — Doku in techstack-base | ✅ | claude | — | 4 docs + README |
 | **Gesamt** | — | — | **102** | **0** |
 
 ---
@@ -215,7 +215,8 @@ Optional: pre-commit via `lint-staged`:
 
 Antipatterns, die beim Lint-Fixen auffallen, aber bewusst **nicht** mitgefixt werden (Surgical-Changes-Regel). Pro Eintrag: File, kurze Beschreibung, ggf. Phase.
 
-_(noch leer)_
+- **[components/accent-switcher/accent-switcher.tsx](components/accent-switcher/accent-switcher.tsx)** (Phase 1) — Props `defaultPalette` und `accentAttribute` sind im Type definiert + per Default belegt, werden aber im Component-Body nicht benutzt. Lint-Fix: nur Binding mit `_` prefixed (`defaultPalette: _defaultPalette`). Follow-up: entweder Verhalten implementieren oder Props aus dem Type entfernen.
+- **[components/toast/toast.tsx](components/toast/toast.tsx)** (Phase 1) — Props `index` und `total` (`ToastItemProps`) sind ungenutzt. Vermutlich war dort mal Stagger-Layout oder "X of Y"-Anzeige geplant. Lint-Fix: `_`-prefixed. Follow-up: Feature implementieren oder aus Interface streichen.
 
 ---
 
@@ -225,3 +226,14 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
 
 - **2026-05-06** — §0 Working Principles ergänzt (Karpathy + ARTELIER). Tracking um Phase 5 (Doku) und Sections §7/§8 erweitert.
 - **2026-05-06** — Phase 5 gestartet: `__AI-Workflow__/Skills/techstack-base/` wird angelegt, ESLint-Stack-Dokus für die installierten Versionen werden archiviert.
+- **2026-05-06** — Phase 5 ✅ erledigt. Angelegt:
+  - [`techstack-base/README.md`](../__AI-Workflow__/Skills/techstack-base/README.md) — Index + Konventionen.
+  - [`techstack-base/eslint/eslint-flat-config.md`](../__AI-Workflow__/Skills/techstack-base/eslint/eslint-flat-config.md) — ESLint v10.3.0.
+  - [`techstack-base/eslint/eslint-plugin-react-hooks.md`](../__AI-Workflow__/Skills/techstack-base/eslint/eslint-plugin-react-hooks.md) — v7.1.1 inkl. Compiler-Rules.
+  - [`techstack-base/eslint/eslint-plugin-react-refresh.md`](../__AI-Workflow__/Skills/techstack-base/eslint/eslint-plugin-react-refresh.md) — v0.5.2.
+  - [`techstack-base/eslint/typescript-eslint.md`](../__AI-Workflow__/Skills/techstack-base/eslint/typescript-eslint.md) — v8.59.2.
+- **2026-05-06** — Phase 1 ✅ erledigt (24 → 0 Findings, 3 Commits):
+  - **Step 1** (`20ad3cc`) — 10 Files: ungenutzte Imports entfernt (form-input, images-slider, password-confirmation, password-setup, pixel-image, search-overlay, navigation, text, vendure-config, cart-context).
+  - **Step 2** (`7e63497`) — particles.tsx (`hexToRgba`-Helper + `spread`-Const), stepper.tsx (`isPending`).
+  - **Step 3** (`99c46a9`) — `_`-Prefix für ungenutzte Args/Destructured-Props (accent-switcher, toast, atelier/provider, password-setup, inputs page). Zwei §7-Einträge ergänzt für accent-switcher und toast (echte Dead-Props, follow-up nötig).
+  - User-Präferenz festgehalten: Commit pro Sub-Step in einer Phase ([feedback memory](../../.claude/projects/-Users-robert-stickler-Development---Components--/memory/feedback_commit_per_step.md)).
