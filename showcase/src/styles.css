@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Tailwind v4 auto-scans the Vite project root. The shared component library
+   lives outside that root (../components/**), so we explicitly include it here.
+   Without this, classes used only in the shared components (e.g. h-40, h-52,
+   cursor-crosshair on the color picker) are never generated and elements
+   silently collapse to 0/2px. */
+@source "../../components/**/*.{ts,tsx}";
+
 /* ── Mobile hover guard ──────────────────────────────────
    Overrides Tailwind's hover: variant so decorative hover
    effects only fire on real pointer devices (mouse/trackpad).

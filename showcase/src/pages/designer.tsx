@@ -1,15 +1,6 @@
 import { useState } from 'react'
-import type { ComponentType } from 'react'
 import { Section } from '../components/section'
-import {
-  ColorPickerPanelArkBackground,
-  ColorPickerPanelBeforeChanges,
-  ColorPickerPanelManualArea,
-  ColorPickerPanelNativeArea,
-  ColorPickerPanelPureCustom,
-  ColorPickerPanelTwoSliders,
-  type ColorPickerProps,
-} from '@components/color-picker/color-picker'
+import { ColorPickerPanel } from '@components/color-picker/color-picker'
 import { TextToolOptions, type TextFormatValues, defaultTextFormat } from '@components/text-tool-options/text-tool-options'
 import { AlignmentBar, type AlignAction } from '@components/alignment-bar/alignment-bar'
 import { ValidatorBadge, type ValidationWarning } from '@components/validator-badge/validator-badge'
@@ -20,97 +11,41 @@ import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-provider'
 // ── Color Picker ──────────────────────────────────────────────────────────────
 
 function ColorPickerDemo() {
-  const [colors, setColors] = useState<Record<string, string>>({
-    before: '#722f37',
-    ark: '#722f37',
-    manual: '#722f37',
-    native: '#722f37',
-    sliders: '#722f37',
-    pure: '#722f37',
-  })
-
-  const variants: Array<{
-    id: string
-    title: string
-    description: string
-    Component: ComponentType<ColorPickerProps>
-    showAlpha?: boolean
-    paletteGroups?: []
-  }> = [
-    {
-      id: 'before',
-      title: 'Before changes',
-      description: 'Original Ark AreaBackground implementation.',
-      Component: ColorPickerPanelBeforeChanges,
-    },
-    {
-      id: 'ark',
-      title: 'Ark background',
-      description: 'Ark AreaBackground with explicit full-size style.',
-      Component: ColorPickerPanelArkBackground,
-    },
-    {
-      id: 'manual',
-      title: 'Manual Ark area',
-      description: 'Ark Area for dragging, custom visible gradient.',
-      Component: ColorPickerPanelManualArea,
-    },
-    {
-      id: 'native',
-      title: 'Native pointer area',
-      description: 'Custom X/Y pointer math, Ark state underneath.',
-      Component: ColorPickerPanelNativeArea,
-    },
-    {
-      id: 'sliders',
-      title: 'Two sliders',
-      description: 'No 2D field: saturation and brightness as sliders.',
-      Component: ColorPickerPanelTwoSliders,
-      showAlpha: true,
-      paletteGroups: [],
-    },
-    {
-      id: 'pure',
-      title: 'Pure custom (no Ark)',
-      description: 'Zero Ark UI dependency — own HSB state, native pointer events.',
-      Component: ColorPickerPanelPureCustom,
-      showAlpha: true,
-    },
-  ]
+  const [color, setColor] = useState('#722f37')
+  const [colorAlpha, setColorAlpha] = useState('#722f37')
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        {variants.map(({ id, title, description, Component, showAlpha, paletteGroups }) => (
-          <div key={id} className="flex flex-col gap-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">{title}</h4>
-                <p className="text-xs text-muted-foreground">{description}</p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: colors[id] }} />
-                <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{colors[id]}</code>
-              </div>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-              <Component
-                value={colors[id]}
-                onChange={(next) => setColors((prev) => ({ ...prev, [id]: next }))}
-                showAlpha={showAlpha}
-                paletteGroups={paletteGroups}
-              />
-            </div>
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h4 className="text-sm font-semibold text-foreground">Standard</h4>
+            <p className="text-xs text-muted-foreground">Hex / RGB / HSL — ohne Alpha-Kanal.</p>
           </div>
-        ))}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: color }} />
+            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{color}</code>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+          <ColorPickerPanel value={color} onChange={setColor} />
+        </div>
       </div>
 
-      <div className="p-4 bg-muted/30 border border-dashed border-border rounded-xl">
-        <h4 className="text-sm font-semibold mb-2">Testing notes</h4>
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Bitte vor allem prüfen: Ist die 2D-Fläche sichtbar, verändert vertikales Ziehen die Helligkeit,
-          und bleibt horizontales Ziehen für Saturation stabil?
-        </p>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h4 className="text-sm font-semibold text-foreground">Mit Alpha-Kanal</h4>
+            <p className="text-xs text-muted-foreground">Hex / RGB / HSL inkl. Transparenz-Slider.</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: colorAlpha }} />
+            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{colorAlpha}</code>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+          <ColorPickerPanel value={colorAlpha} onChange={setColorAlpha} showAlpha />
+        </div>
       </div>
     </div>
   )
