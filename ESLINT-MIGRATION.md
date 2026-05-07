@@ -202,7 +202,7 @@ Optional: pre-commit via `lint-staged`:
 |---|---|---|---:|---:|
 | 1 — Trivial cleanup | ✅ | claude | 24 | 0 |
 | 2a — `refs` | ✅ | claude | 13 | 0 |
-| 2b — `set-state-in-effect` | ☐ | — | 13 | — |
+| 2b — `set-state-in-effect` | ✅ | claude | 13 | 0 |
 | 2c — `purity` | ☐ | — | 5 | — |
 | 3 — `exhaustive-deps` | ☐ | — | 8 | — |
 | 4 — HMR (optional) | ☐ | — | 34 | — |
@@ -243,3 +243,10 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
   - **Step 2** (`6b8b03b`) — password-setup `FancyDotInput`: `lastCharRef.current`-Write in `useEffect` verschoben. Read in Render bleibt mit `eslint-disable-next-line` + Begründung (offizieller usePrevious-Pattern für one-shot Animation-Trigger).
   - **Step 3** (`0fbe0b0`) — number-input: `nudgeRef.current = nudge` aus Render in deps-losen `useEffect` verschoben (bridge für stale-closure im einmaligen non-passive wheel-listener).
   - COMPONENT.md-Check: Verhalten unverändert in allen vier betroffenen Components, keine Doku-Updates nötig. Eine pre-existing Doku-Drift in `particles` (Prop `particleSpread` ist im Code nie wirklich angewandt) als §7-Eintrag aufgenommen.
+- **2026-05-07** — Phase 2b ✅ erledigt (13 → 0 Findings, 5 Commits, gruppiert nach Pattern):
+  - **Step 1** (`5914b8f`) — blur-fade: `prefersReduced` von in-render-`matchMedia` auf `useState`-Lazy-Init umgestellt; `visible` kann initial `true` sein für reduced-motion-User. Echte Code-Verbesserung (kein Disable nötig). Bonus: ein purity-Finding auch behoben.
+  - **Step 2** (`2b319fb`) — Reset-on-prop-change-Pattern (5 Files: ambient-image, autocomplete-cell, password-confirmation, sparkles-text, text-scramble). Disable + Begründung. Alternative `key`-Reset würde public API zerschießen.
+  - **Step 3** (`2785607`) — Hydrate-from-DOM/storage (3 Files: sticky-banner, ThemeToggle, accent-switcher-v-dualsvg). Lazy-Init nicht möglich wegen SSR. Disable + Begründung.
+  - **Step 4** (`5ff8910`) — i18n/provider: controlled-prop sync. Disable + Begründung (Uncontrolled-default-API muss bleiben).
+  - **Step 5** (`3b3153c`) — Timer/async (countdown wall-clock, floating-cart FAB-visibility, Providers cart-refresh). Disable + Begründung.
+  - Erkenntnis: die Rule feuert nur 1× pro `useEffect`, nicht pro `setState`-Call innerhalb. Bei mehreren setStates pro Effect reicht ein einziger `eslint-disable-next-line` an der ersten Stelle.
