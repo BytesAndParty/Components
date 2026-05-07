@@ -446,7 +446,7 @@ export function CardsPage() {
         </div>
       </Section>
 
-      <Section title="BounceCards" description="Stacked image cards with elastic bounce entrance and hover push interaction (GSAP).">
+      <Section title="BounceCards" description="Stacked image cards with elastic spring entrance and hover push interaction.">
         <div className="flex items-center justify-center" style={{ minHeight: '400px', margin: '40px 0' }}>
           <BounceCards
             images={[
@@ -460,7 +460,6 @@ export function CardsPage() {
             containerHeight={350}
             animationDelay={0.5}
             animationStagger={0.08}
-            easeType="elastic.out(1, 0.5)"
             enableHover
           />
         </div>

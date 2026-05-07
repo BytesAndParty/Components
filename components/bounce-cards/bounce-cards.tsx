@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, type CSSProperties } from 'react'
-import { gsap } from 'gsap'
+import { animate, stagger } from 'motion/react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -14,8 +14,6 @@ export interface BounceCardsProps {
   animationDelay?: number
   /** Stagger between each card's entrance animation (seconds) */
   animationStagger?: number
-  /** GSAP easing function string */
-  easeType?: string
   /** Custom CSS transform strings for each card position */
   transformStyles?: string[]
   /** Enable hover interaction that pushes siblings apart */
@@ -47,6 +45,15 @@ function getPushedTransform(baseTransform: string, offsetX: number): string {
     : `${baseTransform} translate(${offsetX}px)`
 }
 
+// Spring-Profile statt GSAP-Easings:
+// - ENTRANCE: niedriges Damping → spürbares Federn (≈ "elastic.out")
+// - HOVER:    snappy, geringe Schwingung (≈ "back.out(1.4)")
+const ENTRANCE_SPRING = { type: 'spring' as const, stiffness: 100, damping: 9 }
+const HOVER_SPRING = { type: 'spring' as const, stiffness: 280, damping: 22 }
+
+const PUSH_DISTANCE = 160
+const PUSH_STAGGER = 0.05
+
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export function BounceCards({
@@ -55,7 +62,6 @@ export function BounceCards({
   containerHeight = 400,
   animationDelay = 0.5,
   animationStagger = 0.06,
-  easeType = 'elastic.out(1, 0.8)',
   transformStyles = [
     'rotate(10deg) translate(-170px)',
     'rotate(5deg) translate(-85px)',
@@ -69,26 +75,29 @@ export function BounceCards({
 }: BounceCardsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Entrance animation
+  // Entrance animation: scale-Property animieren, transform bleibt unangetastet.
+  // CSS `scale` und `transform` sind separate Properties — sie komponieren
+  // ohne sich gegenseitig zu überschreiben.
   useEffect(() => {
     if (!containerRef.current) return
-    const cards = containerRef.current.querySelectorAll<HTMLElement>('[data-bounce-card]')
+    const cards = Array.from(
+      containerRef.current.querySelectorAll<HTMLElement>('[data-bounce-card]')
+    )
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        cards,
-        { scale: 0 },
-        {
-          scale: 1,
-          stagger: animationStagger,
-          ease: easeType,
-          delay: animationDelay,
-        }
-      )
-    }, containerRef)
+    // Startzustand setzen, bevor Motion die Animation übernimmt
+    cards.forEach(c => { c.style.scale = '0' })
 
-    return () => ctx.revert()
-  }, [animationStagger, easeType, animationDelay])
+    const controls = animate(
+      cards,
+      { scale: 1 },
+      {
+        delay: stagger(animationStagger, { startDelay: animationDelay }),
+        ...ENTRANCE_SPRING,
+      }
+    )
+
+    return () => controls.stop()
+  }, [animationStagger, animationDelay])
 
   const pushSiblings = useCallback(
     (hoveredIdx: number) => {
@@ -97,27 +106,23 @@ export function BounceCards({
       images.forEach((_, i) => {
         const target = containerRef.current!.querySelector<HTMLElement>(`[data-bounce-card="${i}"]`)
         if (!target) return
-        gsap.killTweensOf(target)
 
         const baseTransform = transformStyles[i] || 'none'
 
         if (i === hoveredIdx) {
-          gsap.to(target, {
-            transform: getNoRotationTransform(baseTransform),
-            duration: 0.4,
-            ease: 'back.out(1.4)',
-            overwrite: 'auto',
-          })
+          animate(
+            target,
+            { transform: getNoRotationTransform(baseTransform) },
+            HOVER_SPRING
+          )
         } else {
-          const offsetX = i < hoveredIdx ? -160 : 160
+          const offsetX = i < hoveredIdx ? -PUSH_DISTANCE : PUSH_DISTANCE
           const distance = Math.abs(hoveredIdx - i)
-          gsap.to(target, {
-            transform: getPushedTransform(baseTransform, offsetX),
-            duration: 0.4,
-            ease: 'back.out(1.4)',
-            delay: distance * 0.05,
-            overwrite: 'auto',
-          })
+          animate(
+            target,
+            { transform: getPushedTransform(baseTransform, offsetX) },
+            { ...HOVER_SPRING, delay: distance * PUSH_STAGGER }
+          )
         }
       })
     },
@@ -130,13 +135,7 @@ export function BounceCards({
     images.forEach((_, i) => {
       const target = containerRef.current!.querySelector<HTMLElement>(`[data-bounce-card="${i}"]`)
       if (!target) return
-      gsap.killTweensOf(target)
-      gsap.to(target, {
-        transform: transformStyles[i] || 'none',
-        duration: 0.4,
-        ease: 'back.out(1.4)',
-        overwrite: 'auto',
-      })
+      animate(target, { transform: transformStyles[i] || 'none' }, HOVER_SPRING)
     })
   }, [enableHover, images, transformStyles])
 

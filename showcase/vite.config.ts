@@ -53,7 +53,6 @@ export default defineConfig({
       'zod':                          nm('zod'),
       '@number-flow/react':           nm('@number-flow/react'),
       '@lottiefiles/dotlottie-react': nm('@lottiefiles/dotlottie-react'),
-      'gsap':                         nm('gsap'),
       'canvas-confetti':              nm('canvas-confetti'),
       '@chenglou/pretext':            nm('@chenglou/pretext'),
       '@tanstack/react-hotkeys':      nm('@tanstack/react-hotkeys'),
