@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import eslintPluginAstro from 'eslint-plugin-astro'
 import globals from 'globals'
 
 export default tseslint.config(
@@ -14,13 +15,24 @@ export default tseslint.config(
       '**/.vite/**',
       '**/_public_/**',
       '**/_resources_/**',
-      '**/*.astro',
     ],
   },
 
   js.configs.recommended,
   ...tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
+  ...eslintPluginAstro.configs.recommended,
+
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.astro'],
+        sourceType: 'module',
+      },
+    },
+  },
 
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
