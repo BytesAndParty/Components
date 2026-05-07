@@ -25,3 +25,10 @@ Jedes Frontend-Projekt verwendet ESLint mit folgendem Stack (Flat Config, ESLint
 - **`typescript-eslint`** — TypeScript-aware Rules (Type-Imports, ungenutzte Vars, `any`-Eskalation, exhaustive switch, etc.).
 
 Standardisiert: jedes Projekt hat ein `eslint.config.js` mit diesen drei Plugins, ein `bun lint` Script und CI-Integration. Pre-commit-Hook über `lint-staged` empfohlen.
+
+#### 6. Dependency Modernization
+- **Newest-First:** Bei jeder neuen Lib-Adoption oder Migration zur **aktuell vom Format-/Spec-Owner empfohlenen** Variante greifen — nicht zur populärsten Google-Hit-Lib, sondern zur **aktiv gepflegten** Version (z. B. `motion` statt `framer-motion`, `@lottiefiles/dotlottie-react` statt `lottie-react`/`lottie-web`).
+- **Replace, don't patch:** Stagnierende Libs mit Eval-Use, CSP-Inkompatibilität oder Single-Maintainer-Risk werden ersetzt, nicht umschifft.
+- **Dead-Code-Audit:** Bei jedem Touch eines Workspaces `package.json` gegen `grep`-Imports prüfen — ungenutzte Deps konsequent entfernen (führt regelmäßig zu Funden wie `framer-motion` ohne Imports oder Wrapper-Files ohne Consumer).
+- **Docs-Cache:** Vor einer Migration die offizielle Doku der Ziel-Lib in `__AI-Workflow__/Skills/UpToDateDocs/<lib>.md` ablegen (mit `verified`-Datum + Source-URL). Beim späteren Coden gegen diesen Cache arbeiten — nicht gegen veraltete Trainings-Daten.
+- **Stack-Consolidation:** Wenn ein Workspace bereits eine Headless-Lib (z. B. Ark UI) hat, neue Anforderungen dort lösen statt eine zweite Lib (Radix, Headless UI, …) parallel zu installieren.
