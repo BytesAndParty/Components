@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Section } from '../components/section'
 import {
   Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink,
@@ -19,6 +20,10 @@ import { FileTree, Folder, File } from '@components/file-tree/file-tree'
 import { palettes } from '../data'
 
 export function NavigationPage() {
+  // Pin the StickyBanner demo's countdown target to mount-time so it
+  // doesn't reset every time NavigationPage re-renders.
+  const [countdownTarget] = useState(() => Date.now() + 1000 * 60 * 60 * 6)
+
   return (
     <>
       <Section title="Banner" description="Dismissible announcement bar for promotions and notices.">
@@ -41,7 +46,7 @@ export function NavigationPage() {
                 variant="accent"
                 action={
                   <Countdown
-                    target={Date.now() + 1000 * 60 * 60 * 6}
+                    target={countdownTarget}
                     hideLeadingZeros
                     size="sm"
                     transparent

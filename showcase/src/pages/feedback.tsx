@@ -70,6 +70,9 @@ function CircularProgressDemo() {
 
 export function FeedbackPage() {
   const [raining, setRaining] = useState(false)
+  // Pin the demo's countdown target to mount-time so the timer doesn't
+  // visibly jump back to "48h from now" on every parent re-render.
+  const [countdownTarget] = useState(() => Date.now() + 1000 * 60 * 60 * 48)
 
   return (
     <>
@@ -115,7 +118,7 @@ export function FeedbackPage() {
       </Section>
 
       <Section title="Countdown" description="Rolling-digit timer with high-precision CSS animations.">
-        <Countdown target={Date.now() + 1000 * 60 * 60 * 48} size="lg" />
+        <Countdown target={countdownTarget} size="lg" />
       </Section>
 
       <Section title="Confetti" description="Fullscreen particle bursts triggered by interactions.">
