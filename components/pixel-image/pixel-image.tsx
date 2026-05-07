@@ -69,11 +69,15 @@ export function PixelImage({
     return () => observer.disconnect()
   }, [triggerOnView, revealed, threshold])
 
-  // Generate shuffled reveal order — stable per cellCount
+  // Generate shuffled reveal order — stable per cellCount.
+  // Math.random is the feature here: a deterministic shuffle would
+  // give every PixelImage instance the same reveal pattern, which
+  // defeats the visual effect.
   const revealOrder = useMemo(() => {
     const order = Array.from({ length: cellCount }, (_, i) => i)
     // Fisher-Yates shuffle
     for (let i = cellCount - 1; i > 0; i--) {
+      // eslint-disable-next-line react-hooks/purity
       const j = Math.floor(Math.random() * (i + 1))
       ;[order[i], order[j]] = [order[j], order[i]]
     }

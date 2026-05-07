@@ -173,6 +173,10 @@ export function AccentSwitcher({
 		// Pin to start color — AtelierProvider already set the attribute via setAtelierAccent
 		writeAccent(lerpOklch(fromOklch, toOklch, 0));
 
+		// performance.now is impure but this whole function is invoked from
+		// onClick (selectAccent). The lint rule is line-based and can't see
+		// that — it's not actually called during render.
+		// eslint-disable-next-line react-hooks/purity
 		const start = performance.now();
 
 		const step = (now: number) => {
