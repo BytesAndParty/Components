@@ -118,8 +118,11 @@ export function AmbientImage({
     })
   }, [])
 
-  // Re-extract when src changes
+  // Re-extract when src changes — reset derived state from new prop.
+  // Canonical alternative would be `key={src}` at the parent; keeping
+  // this local so the API stays uncontrolled.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setColors(null)
     setLoaded(false)
   }, [src])

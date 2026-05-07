@@ -118,8 +118,11 @@ export function PasswordConfirmation({
     [password, onChange, onMatch]
   )
 
-  // Reset when password changes
+  // Reset confirmation state when the password prop changes (e.g. user
+  // edits the password field above). Local resets stay here so callers
+  // don't need to remount via key.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue('')
     setMatched(false)
     matchedRef.current = false

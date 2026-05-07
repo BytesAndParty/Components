@@ -36,8 +36,11 @@ export function TextScramble({
   const isInView = useInView(ref, { once: true });
   const hasStarted = useRef(false);
 
+  // Reset scramble state when the displayed text or its placeholder changes,
+  // so the animation re-runs from scratch on prop swap.
   useEffect(() => {
     hasStarted.current = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsComplete(false);
     setDisplayText(generatePlaceholder(text, placeholder));
   }, [text, placeholder]);

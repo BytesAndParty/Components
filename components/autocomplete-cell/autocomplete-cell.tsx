@@ -60,7 +60,10 @@ export function AutocompleteCell({
         })
     : []
 
+  // Reset highlight index when filter value changes — local state needs
+  // resetting because the suggestion list it indexes into is also resetting.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHighlightIndex(0)
   }, [value])
 

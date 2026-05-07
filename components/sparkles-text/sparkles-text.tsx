@@ -116,6 +116,8 @@ export function SparklesText({
 
   useEffect(() => {
     if (!enabled) {
+      // Drop existing sparkles when feature is disabled mid-life.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSparkles([])
       return
     }
