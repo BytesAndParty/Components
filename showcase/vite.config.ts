@@ -64,4 +64,29 @@ export default defineConfig({
       '@tanstack/react-table':        nm('@tanstack/react-table'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Manual vendor chunks: stable libraries land in long-lived files
+        // so their hashes don't change when only app code is touched.
+        // The browser can keep the cached vendor bundle across deploys
+        // and only re-fetches whichever group actually changed.
+        //
+        // Each branch matches by exact package name (with trailing slash)
+        // so e.g. `react-router` doesn't accidentally match `react`.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) {
+            return 'vendor-react'
+          }
+          if (id.includes('/react-router/')) return 'vendor-router'
+          if (id.includes('/motion/') || id.includes('/framer-motion/')) return 'vendor-motion'
+          if (id.includes('/@tanstack/')) return 'vendor-tanstack'
+          if (id.includes('/@ark-ui/') || id.includes('/@radix-ui/') || id.includes('/@zag-js/')) {
+            return 'vendor-ui'
+          }
+        },
+      },
+    },
+  },
 })
