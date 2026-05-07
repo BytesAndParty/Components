@@ -45,7 +45,6 @@ export default defineConfig({
       // motion (formerly framer-motion) — components import from 'motion/react'
       // Note: no root 'motion' alias — internal motion/dom imports must resolve naturally
       'motion/react':                 nm('motion/react'),
-      'framer-motion':                nm('framer-motion'), // kept until all imports migrated
 
       // All other deps that components use from showcase/node_modules
       'lucide-react':                 nm('lucide-react'),
