@@ -204,7 +204,7 @@ Optional: pre-commit via `lint-staged`:
 | 2a — `refs` | ✅ | claude | 13 | 0 |
 | 2b — `set-state-in-effect` | ✅ | claude | 13 | 0 |
 | 2c — `purity` | ✅ | claude | 5 | 0 |
-| 3 — `exhaustive-deps` | ☐ | — | 8 | — |
+| 3 — `exhaustive-deps` | ✅ | claude | 9 | 0 |
 | 4 — HMR (optional) | ☐ | — | 34 | — |
 | 5 — Doku in techstack-base | ✅ | claude | — | 4 docs + README |
 | **Gesamt** | — | — | **102** | **0** |
@@ -243,6 +243,10 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
   - **Step 2** (`6b8b03b`) — password-setup `FancyDotInput`: `lastCharRef.current`-Write in `useEffect` verschoben. Read in Render bleibt mit `eslint-disable-next-line` + Begründung (offizieller usePrevious-Pattern für one-shot Animation-Trigger).
   - **Step 3** (`0fbe0b0`) — number-input: `nudgeRef.current = nudge` aus Render in deps-losen `useEffect` verschoben (bridge für stale-closure im einmaligen non-passive wheel-listener).
   - COMPONENT.md-Check: Verhalten unverändert in allen vier betroffenen Components, keine Doku-Updates nötig. Eine pre-existing Doku-Drift in `particles` (Prop `particleSpread` ist im Code nie wirklich angewandt) als §7-Eintrag aufgenommen.
+- **2026-05-07** — Phase 3 ✅ erledigt (9 → 0 Findings, 3 Commits — eigentlich 9 statt 8 nach erneuter Zählung):
+  - **Step 1** (`4f6c268`) — particles: ungenutzte `particleSpread`-Dep aus `useCallback` entfernt (Leftover aus Phase 1 Cleanup).
+  - **Step 2** (`13b3fb5`) — Providers: `actions` via `useMemo` stabilisiert. Eliminiert alle 4 Findings im File ohne Verhaltensänderung.
+  - **Step 3** (`5f4762f`) — 4 dokumentierte Disables (accent-switcher mount-effect, atelier DOM-seed, hotkeys decomposed metadata deps, i18n controlled-prop guard). Wichtige Erkenntnis: `eslint-disable-next-line react-hooks/exhaustive-deps` muss an der Deps-Array-Zeile stehen (oder als `eslint-disable-line` am Zeilenende), nicht vor der `useEffect`-Zeile — die Rule fires auf dem Array, nicht auf dem Hook-Call.
 - **2026-05-07** — Phase 2c ✅ erledigt (5 → 0 Findings, 3 Commits):
   - **Step 1** (`32e1083`) — animated-icons `Heart3DIconCss`: zufällige SVG-Gradient-IDs (`crypto.randomUUID`/`Math.random`) durch `useId()` ersetzt. Echte React-19-API-Korrektur.
   - **Step 2** (`2d981ec`) — feedback + navigation showcase: inline `Date.now() + N*hour` Targets in `useState`-Lazy-Init verschoben. Behebt einen subtilen Bug (Countdown sprang bei Parent-Re-Render zurück auf "N Stunden ab jetzt").
