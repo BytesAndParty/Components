@@ -79,7 +79,7 @@ export function Particles({
       }
       return particles
     },
-    [particleCount, particleSpread, speed, particleBaseSize, particleColors]
+    [particleCount, speed, particleBaseSize, particleColors]
   )
 
   useEffect(() => {
