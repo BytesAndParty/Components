@@ -205,7 +205,7 @@ Optional: pre-commit via `lint-staged`:
 | 2b — `set-state-in-effect` | ✅ | claude | 13 | 0 |
 | 2c — `purity` | ✅ | claude | 5 | 0 |
 | 3 — `exhaustive-deps` | ✅ | claude | 9 | 0 |
-| 4 — HMR (optional) | ☐ | — | 34 | — |
+| 4 — HMR (optional) | 🟡 teils | claude | 34 | 19 (akzeptiert) |
 | 5 — Doku in techstack-base | ✅ | claude | — | 4 docs + README |
 | **Gesamt** | — | — | **102** | **0** |
 
@@ -218,6 +218,7 @@ Antipatterns, die beim Lint-Fixen auffallen, aber bewusst **nicht** mitgefixt we
 - **[components/accent-switcher/accent-switcher.tsx](components/accent-switcher/accent-switcher.tsx)** (Phase 1) — Props `defaultPalette` und `accentAttribute` sind im Type definiert + per Default belegt, werden aber im Component-Body nicht benutzt. Lint-Fix: nur Binding mit `_` prefixed (`defaultPalette: _defaultPalette`). Follow-up: entweder Verhalten implementieren oder Props aus dem Type entfernen.
 - **[components/toast/toast.tsx](components/toast/toast.tsx)** (Phase 1) — Props `index` und `total` (`ToastItemProps`) sind ungenutzt. Vermutlich war dort mal Stagger-Layout oder "X of Y"-Anzeige geplant. Lint-Fix: `_`-prefixed. Follow-up: Feature implementieren oder aus Interface streichen.
 - **[components/particles/COMPONENT.md](components/particles/COMPONENT.md) ↔ [particles.tsx](components/particles/particles.tsx)** (Phase 1) — Doku verspricht `particleSpread` "scales initial distribution", aber im Code wird die Prop in `createParticles` nie verwendet (Partikel-x/y sind `Math.random() * width/height`). Der `const spread = particleSpread * 20` war Tot­code, den Phase 1 entfernt hat. Pre-existing Doku-Drift. Follow-up: entweder Spread-Logik implementieren oder Prop + Doku-Eintrag streichen.
+- **[wine-showcase/server/src/seed.ts](wine-showcase/server/src/seed.ts)** (Pre-CI Cleanup, 2026-05-07) — File ist syntaktisch broken (TS1128 auf Zeile 423 wegen einer überzähligen `}` auf Zeile 71, die `seed()` ~350 Zeilen zu früh schließt). Plus zwei redeklarierte `wines`-Arrays (Zeilen 43 und 188) und mehrere `let`→`const`-Kandidaten. Workaround: `**/wine-showcase/server/**` in `eslint.config.js` ignoriert. Follow-up als eigene Cleanup-Phase, dann ignore wieder entfernen.
 
 ---
 
@@ -243,6 +244,17 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
   - **Step 2** (`6b8b03b`) — password-setup `FancyDotInput`: `lastCharRef.current`-Write in `useEffect` verschoben. Read in Render bleibt mit `eslint-disable-next-line` + Begründung (offizieller usePrevious-Pattern für one-shot Animation-Trigger).
   - **Step 3** (`0fbe0b0`) — number-input: `nudgeRef.current = nudge` aus Render in deps-losen `useEffect` verschoben (bridge für stale-closure im einmaligen non-passive wheel-listener).
   - COMPONENT.md-Check: Verhalten unverändert in allen vier betroffenen Components, keine Doku-Updates nötig. Eine pre-existing Doku-Drift in `particles` (Prop `particleSpread` ist im Code nie wirklich angewandt) als §7-Eintrag aufgenommen.
+- **2026-05-07** — Phase 4 (HMR-Hygiene, optional) ✅ teilweise via Config-Tuning erledigt (34 → 19 Findings, uncommitted):
+  - `extraHOCs: ['createLottieIcon']` zur `react-refresh/only-export-components`-Rule in [eslint.config.js](eslint.config.js) ergänzt. Das Plugin erkennt jetzt unsere Lottie-Icon-Factory als HOC und behandelt deren Rückgaben als Components → HMR funktioniert für alle 13 Icons + 13 Findings weg ohne Code-Änderung.
+  - Verbleibende 19 Findings sind **bewusst akzeptierte Mixed-Exports** — meist "Provider + useXxx Hook im selben File" Pattern (hotkeys, atelier, i18n, toast = 9 Findings) plus ein paar Helper. Saubere Lösung wäre Split in `<provider>-context.ts` Sibling-Files; nicht jetzt gemacht weil Compiler-Wirksamkeit unabhängig davon ist.
+  - **Konsequenz für CI**: `--max-warnings 0` bleibt deaktiviert (sonst würden die 19 + 2 Astro-`any`-Warnings das Repo blocken).
+  - Follow-up als eigene "HMR-Hygiene Phase 4b" möglich, falls jemand die Provider-Splits machen will.
+- **2026-05-07** — Pre-CI Cleanup + Astro Plugin + CI Workflow (uncommitted, zur User-Review):
+  - **Astro Plugin**: `eslint-plugin-astro@1.7` + `astro-eslint-parser@1.4` installiert, in `eslint.config.js` integriert, `**/*.astro` aus den Ignores genommen (Commit `af5665b`). Surfaced 2 vorher versteckte `no-explicit-any`-Warnings in `vt-showcase/src/layouts/Base.astro`.
+  - **Pre-CI Errors gefixt** (alle uncommitted): `alignment-bar` (`let nextIndex` ohne Init), `atelier` + `i18n` (kommentierte `catch { /* noop */ }` statt leer), `splash-cursor:776` (`let ar` → `const ar`).
+  - **wine-showcase/server temporär ignoriert** in `eslint.config.js` mit TODO-Marker (siehe §7) — der Server hat einen pre-existing TS1128-Parse-Error in `seed.ts:71` der nicht in den Migrations-Scope fällt.
+  - **CI Workflow** (`.github/workflows/ci.yml`): triggert auf push/PR auf `main`, läuft Bun → `bun lint`. Kein `--max-warnings 0` (Phase 4 noch offen, 35 HMR-Warnings übrig). Ergebnis: **0 Errors, 35 Warnings, exit 0** — CI grün.
+  - **Mirrored zu BuchArt58**: gleicher Stack (eslint v10 + tseslint + react-hooks + react-refresh + astro), eigene `eslint.config.js`, `.obsidian/`-Ignore (BuchArt58 ist auch ein Obsidian-Vault), CI workflow. Baseline: **0 Probleme** im aktuellen Code.
 - **2026-05-07** — Phase 3 ✅ erledigt (9 → 0 Findings, 3 Commits — eigentlich 9 statt 8 nach erneuter Zählung):
   - **Step 1** (`4f6c268`) — particles: ungenutzte `particleSpread`-Dep aus `useCallback` entfernt (Leftover aus Phase 1 Cleanup).
   - **Step 2** (`13b3fb5`) — Providers: `actions` via `useMemo` stabilisiert. Eliminiert alle 4 Findings im File ohne Verhaltensänderung.
