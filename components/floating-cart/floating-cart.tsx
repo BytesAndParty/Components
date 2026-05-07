@@ -61,8 +61,12 @@ export function FloatingCart({
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [countAnim, setCountAnim] = useState<Record<string, 'up' | 'down' | null>>({})
 
-  // Show/hide FAB based on item count
+  // Show/hide FAB based on item count. The synchronous setVisible(true)
+  // could be derived from `totalCount > 0`, but the hide path needs a
+  // 300ms delay (post-removal animation), so we keep both transitions
+  // in one effect to share state.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (totalCount > 0 && !visible) setVisible(true)
     if (totalCount === 0 && visible) {
       const t = setTimeout(() => setVisible(false), 300)

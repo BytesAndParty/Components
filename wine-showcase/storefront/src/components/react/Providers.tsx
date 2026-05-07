@@ -37,6 +37,11 @@ export function Providers({ children }: { children: ReactNode }) {
     if (o) setOrder(o)
   }, [])
 
+  // Fetch the active cart once on mount. `refresh()` is async and
+  // updates state internally — the rule flags the call because the
+  // resulting setState happens within the effect's lifecycle, but this
+  // is a standard "load on mount" pattern with no synchronous cascade.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { refresh() }, [refresh])
 
   return (

@@ -155,7 +155,13 @@ export function Countdown({
     }
   }, []);
 
+  // External-source sync: the wall clock. Initial setRemaining writes
+  // the freshly computed value before the first interval tick fires
+  // (otherwise users see a 1s gap on mount or targetMs change). Inside
+  // the interval callback the setState is a subscription update, which
+  // the rule allows; only the synchronous one needs a disable.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRemaining(calcRemaining(targetMs));
     completedRef.current = false;
     const id = window.setInterval(() => {
