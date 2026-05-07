@@ -773,7 +773,7 @@ export function SplashCursor({
 
     // ── Pointer / splat ──────────────────────────────────────────────────────
     function correctRadius(radius: number) {
-      let ar = canvas.width / canvas.height
+      const ar = canvas.width / canvas.height
       if (ar > 1) radius *= ar
       return radius
     }

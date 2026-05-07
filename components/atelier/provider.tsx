@@ -62,7 +62,9 @@ function readStorage(key: string, fallback: string): string {
 }
 
 function writeStorage(key: string, value: string) {
-  try { localStorage.setItem(key, value) } catch {}
+  // localStorage write may throw in private mode / Safari with strict
+  // settings — silently swallow since persistence is best-effort.
+  try { localStorage.setItem(key, value) } catch { /* noop */ }
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────

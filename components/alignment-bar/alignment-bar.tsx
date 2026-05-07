@@ -87,7 +87,7 @@ export function AlignmentBar({ onAlign, disabled = false, className, messages }:
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return
 
-    let nextIndex = focusIndex
+    let nextIndex: number
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
       nextIndex = (focusIndex + 1) % BUTTONS.length
