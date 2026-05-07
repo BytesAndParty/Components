@@ -115,7 +115,10 @@ export function AccentSwitcher({
 	const triggerRef = useRef<HTMLButtonElement>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
 
-	// Persistent <style> element for transition overrides + seed initial oklch
+	// Persistent <style> element for transition overrides + seed initial oklch.
+	// Mount-only by design: re-creating the style element on every accent
+	// change would tear down the in-flight rAF transition. Subsequent oklch
+	// updates flow through selectAccent, not this effect.
 	useEffect(() => {
 		const styleEl = document.createElement('style');
 		document.head.appendChild(styleEl);
@@ -129,7 +132,7 @@ export function AccentSwitcher({
 			if (animRef.current) cancelAnimationFrame(animRef.current);
 			styleEl.remove();
 		};
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Close on outside click
 	useEffect(() => {

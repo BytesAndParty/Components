@@ -92,7 +92,10 @@ export function AtelierProvider({
     () => readStorage(ATELIER_KEYS.locale, defaultLocale) as Locale
   )
 
-  // Initial DOM sync after mount
+  // Initial DOM sync after mount. Subsequent updates flow through the
+  // setters below (setTheme/setAccent/setLocale), so re-running this
+  // effect on every change would be redundant and would clobber any
+  // imperative DOM tweaks made between renders.
   useEffect(() => {
     const d = document.documentElement
     d.setAttribute('data-theme',  theme)
@@ -100,7 +103,7 @@ export function AtelierProvider({
     d.setAttribute('data-locale', locale)
     d.lang = locale
     d.classList.toggle('dark', theme === 'dark')
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Setters ────────────────────────────────────────────────────────────────
 

@@ -58,10 +58,14 @@ export function I18nProvider({
   // with-controlled-override pattern; React's recommendation to "make
   // it fully controlled" would break the uncontrolled-default API
   // contract that callers rely on.
+  // Intentionally omits `locale` from deps: adding it would make the
+  // effect re-run on every internal locale change, defeating the
+  // controlled-prop guard (the if-check would still prevent loops, but
+  // we'd run for nothing).
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (localeProp && localeProp !== locale) setLocaleState(localeProp)
-  }, [localeProp])
+  }, [localeProp]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync DOM on every locale change
   useEffect(() => {

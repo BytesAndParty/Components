@@ -50,10 +50,15 @@ export function useDesignEngineHotkey(
 
   useHotkey(key as Parameters<typeof useHotkey>[0], callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) });
 
+  // Decompose `metadata` deps so callers can pass new object literals
+  // without triggering re-registration. The rule wants the whole
+  // `metadata` object as a dep, but that would un-stabilize every
+  // call site that builds metadata inline.
   React.useEffect(() => {
     if (!hasFinePointer) return;
     register(id, { key, ...metadata });
     return () => unregister(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, key, metadata.label, metadata.description, metadata.category, register, unregister, hasFinePointer]);
 }
 
