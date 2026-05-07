@@ -4,8 +4,11 @@ export function ThemeToggle() {
   const [isDark, setIsDark] = useState(true)
 
   useEffect(() => {
-    // Check initial theme
+    // Hydrate from the data-theme attribute that the SSR layer set.
+    // Cannot be a lazy initializer because document is unavailable on
+    // the server; the two-render hydration is intentional.
     const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(!isLight)
   }, [])
 

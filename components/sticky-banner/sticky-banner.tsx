@@ -80,7 +80,12 @@ export function StickyBanner({
   const [scrolledEnough, setScrolledEnough] = useState(showAfterScrollY === undefined);
   const [mounted, setMounted] = useState(false);
 
+  // Hydrate dismissal flag from localStorage on mount. This is a true
+  // external-source sync (browser storage), so the cascading-render
+  // warning doesn't apply — we deliberately need one render with the
+  // initial server-safe value, then a second with the persisted value.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDismissed(readDismissed(persistKey));
     setMounted(true);
   }, [persistKey]);

@@ -101,7 +101,13 @@ export function AccentSwitcherDualSvg({
 			currentOklchRef.current = parseOklch(palettes[currentAccent]?.oklch ?? '');
 		}
 
+		// External-source sync: hydrate accent from documentElement on
+		// mount, then subscribe to MutationObserver for later changes.
+		// The setState inside the observer callback is fine (subscription
+		// callback, not synchronous effect body); the initial sync is the
+		// one the rule flags, which is the intended hydration.
 		const attrValue = document.documentElement.getAttribute(accentAttribute);
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		if (attrValue && palettes[attrValue] && attrValue !== accent) setAccent(attrValue);
 
 		const observer = new MutationObserver(() => {
