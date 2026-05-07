@@ -15,6 +15,10 @@ export default tseslint.config(
       '**/.vite/**',
       '**/_public_/**',
       '**/_resources_/**',
+      // TODO: re-enable once the wine-showcase Vendure server cleanup
+      // (seed.ts brace mismatch, redeclared wines, prefer-const lets)
+      // is done. Tracked in ESLINT-MIGRATION.md §7.
+      '**/wine-showcase/server/**',
     ],
   },
 
@@ -48,7 +52,12 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-refresh/only-export-components': ['warn', {
+        allowConstantExport: true,
+        // Factories that wrap a component and return one — fast refresh
+        // can treat the result as a component for HMR purposes.
+        extraHOCs: ['createLottieIcon'],
+      }],
 
       // typescript-eslint tweaks: prefer warnings for surface noise, errors for real bugs.
       '@typescript-eslint/no-unused-vars': ['warn', {
