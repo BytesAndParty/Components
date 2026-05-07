@@ -203,7 +203,7 @@ Optional: pre-commit via `lint-staged`:
 | 1 — Trivial cleanup | ✅ | claude | 24 | 0 |
 | 2a — `refs` | ✅ | claude | 13 | 0 |
 | 2b — `set-state-in-effect` | ✅ | claude | 13 | 0 |
-| 2c — `purity` | ☐ | — | 5 | — |
+| 2c — `purity` | ✅ | claude | 5 | 0 |
 | 3 — `exhaustive-deps` | ☐ | — | 8 | — |
 | 4 — HMR (optional) | ☐ | — | 34 | — |
 | 5 — Doku in techstack-base | ✅ | claude | — | 4 docs + README |
@@ -243,6 +243,10 @@ Chronologische Einträge zu Fortschritt, Entscheidungen, Reverts. Jeder Eintrag 
   - **Step 2** (`6b8b03b`) — password-setup `FancyDotInput`: `lastCharRef.current`-Write in `useEffect` verschoben. Read in Render bleibt mit `eslint-disable-next-line` + Begründung (offizieller usePrevious-Pattern für one-shot Animation-Trigger).
   - **Step 3** (`0fbe0b0`) — number-input: `nudgeRef.current = nudge` aus Render in deps-losen `useEffect` verschoben (bridge für stale-closure im einmaligen non-passive wheel-listener).
   - COMPONENT.md-Check: Verhalten unverändert in allen vier betroffenen Components, keine Doku-Updates nötig. Eine pre-existing Doku-Drift in `particles` (Prop `particleSpread` ist im Code nie wirklich angewandt) als §7-Eintrag aufgenommen.
+- **2026-05-07** — Phase 2c ✅ erledigt (5 → 0 Findings, 3 Commits):
+  - **Step 1** (`32e1083`) — animated-icons `Heart3DIconCss`: zufällige SVG-Gradient-IDs (`crypto.randomUUID`/`Math.random`) durch `useId()` ersetzt. Echte React-19-API-Korrektur.
+  - **Step 2** (`2d981ec`) — feedback + navigation showcase: inline `Date.now() + N*hour` Targets in `useState`-Lazy-Init verschoben. Behebt einen subtilen Bug (Countdown sprang bei Parent-Re-Render zurück auf "N Stunden ab jetzt").
+  - **Step 3** (`50ab935`) — pixel-image + accent-switcher: bewusste Impurities (`Math.random` im Fisher-Yates-Shuffle bzw. `performance.now()` im `onClick`-getriggerten `selectAccent`). Disable + Begründung statt Refactoring.
 - **2026-05-07** — Phase 2b ✅ erledigt (13 → 0 Findings, 5 Commits, gruppiert nach Pattern):
   - **Step 1** (`5914b8f`) — blur-fade: `prefersReduced` von in-render-`matchMedia` auf `useState`-Lazy-Init umgestellt; `visible` kann initial `true` sein für reduced-motion-User. Echte Code-Verbesserung (kein Disable nötig). Bonus: ein purity-Finding auch behoben.
   - **Step 2** (`2b319fb`) — Reset-on-prop-change-Pattern (5 Files: ambient-image, autocomplete-cell, password-confirmation, sparkles-text, text-scramble). Disable + Begründung. Alternative `key`-Reset würde public API zerschießen.
