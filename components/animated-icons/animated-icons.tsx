@@ -1,5 +1,5 @@
 import { useId, useRef, useCallback, useState } from 'react';
-import Lottie, { type LottieRefCurrentProps } from 'lottie-react';
+import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
 import homeData from '../../_resources_/Home/home.json';
@@ -26,48 +26,51 @@ interface AnimatedIconProps {
 }
 
 /**
- * A Lottie icon that plays forward on hover and reverses on mouse leave.
+ * A dotLottie icon that plays forward on hover and reverses on mouse leave.
+ *
+ * dotLottieRefCallback fires once nach WASM-Init mit der Player-Instanz und
+ * erneut mit `null` beim Unmount — wir spiegeln das in einem Ref, damit die
+ * Handler immer den aktuellen Player kennen, ohne State + Re-Render.
  */
 function useLottieHover() {
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const playerRef = useRef<DotLottie | null>(null);
+  const setPlayer = useCallback((d: DotLottie | null) => { playerRef.current = d; }, []);
 
   const onMouseEnter = useCallback(() => {
-    const anim = lottieRef.current;
-    if (!anim) return;
-    anim.setDirection(1);
-    anim.play();
+    const p = playerRef.current;
+    if (!p) return;
+    p.setMode('forward');
+    p.play();
   }, []);
 
   const onMouseLeave = useCallback(() => {
-    const anim = lottieRef.current;
-    if (!anim) return;
-    anim.setDirection(-1);
-    anim.play();
+    const p = playerRef.current;
+    if (!p) return;
+    p.setMode('reverse');
+    p.play();
   }, []);
 
   const onClick = useCallback(() => {
-    const anim = lottieRef.current;
-    if (!anim) return;
-    anim.setDirection(1);
-    anim.play();
-    // For click trigger, we often want it to return to start after a bit
-    // But since these are mostly toggle-like or action-like, 
-    // maybe we just play it once or play/reverse.
-    // Let's implement a simple "play then return" for non-looping click icons.
+    const p = playerRef.current;
+    if (!p) return;
+    p.setMode('forward');
+    p.play();
+    // Click-Trigger: nach 1 s zurück abspielen, damit das Icon wieder im
+    // Ruhezustand landet (Toggle-Verhalten ohne State).
     setTimeout(() => {
-      anim.setDirection(-1);
-      anim.play();
+      p.setMode('reverse');
+      p.play();
     }, 1000);
   }, []);
 
-  return { lottieRef, onMouseEnter, onMouseLeave, onClick };
+  return { setPlayer, onMouseEnter, onMouseLeave, onClick };
 }
 
 function createLottieIcon(animationData: unknown, displayName: string, options: { loop?: boolean; autoplay?: boolean } = {}) {
   const { loop = false, autoplay = false } = options;
 
   function Icon({ size = 32, className, color, trigger = 'hover' }: AnimatedIconProps) {
-    const { lottieRef, onMouseEnter, onMouseLeave, onClick } = useLottieHover();
+    const { setPlayer, onMouseEnter, onMouseLeave, onClick } = useLottieHover();
 
     const isHover = trigger === 'hover' && !loop;
     const isClick = trigger === 'click' && !loop;
@@ -87,9 +90,9 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
           filter: color ? 'none' : 'var(--icon-invert, invert(1))',
         }}
       >
-        <Lottie
-          lottieRef={lottieRef}
-          animationData={animationData}
+        <DotLottieReact
+          dotLottieRefCallback={setPlayer}
+          data={animationData as Record<string, unknown>}
           loop={loop}
           autoplay={autoplay}
           style={{ width: size, height: size }}

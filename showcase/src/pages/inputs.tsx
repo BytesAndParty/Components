@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import Lottie, { type LottieRefCurrentProps } from 'lottie-react'
+import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react'
 import { z } from 'zod'
 import { Section } from '../components/section'
 import { Checkbox } from '@components/checkbox/checkbox'
@@ -16,25 +16,27 @@ import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.jso
 import { suggestions } from '../data'
 
 function AnimatedEyeToggle({ visible, size = 20 }: { visible: boolean; size?: number }) {
-  const lottieRef = useRef<LottieRefCurrentProps>(null)
+  const playerRef = useRef<DotLottie | null>(null)
   const isFirstRender = useRef(true)
 
   useEffect(() => {
-    const anim = lottieRef.current
-    if (!anim) return
+    const p = playerRef.current
+    if (!p) return
+    // Erstes Mounten überspringen: Toggle-Animation soll nur auf User-Aktion
+    // reagieren, nicht beim initialen Render.
     if (isFirstRender.current) {
       isFirstRender.current = false
       return
     }
-    anim.setDirection(visible ? -1 : 1)
-    anim.play()
+    p.setMode(visible ? 'reverse' : 'forward')
+    p.play()
   }, [visible])
 
   return (
     <div style={{ filter: 'var(--icon-invert, invert(1))' }}>
-      <Lottie
-        lottieRef={lottieRef}
-        animationData={visibilityData}
+      <DotLottieReact
+        dotLottieRefCallback={(d) => { playerRef.current = d }}
+        data={visibilityData as Record<string, unknown>}
         loop={false}
         autoplay={false}
         style={{ width: size, height: size }}

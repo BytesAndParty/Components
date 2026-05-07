@@ -53,7 +53,7 @@ export default defineConfig({
       'zod':                          nm('zod'),
       '@radix-ui/react-dropdown-menu': nm('@radix-ui/react-dropdown-menu'),
       '@number-flow/react':           nm('@number-flow/react'),
-      'lottie-react':                 nm('lottie-react'),
+      '@lottiefiles/dotlottie-react': nm('@lottiefiles/dotlottie-react'),
       'gsap':                         nm('gsap'),
       'canvas-confetti':              nm('canvas-confetti'),
       '@chenglou/pretext':            nm('@chenglou/pretext'),
