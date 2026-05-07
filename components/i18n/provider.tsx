@@ -53,8 +53,13 @@ export function I18nProvider({
     localeProp ?? readStoredLocale()
   )
 
-  // Sync if controlled prop changes externally
+  // Sync internal state with the optional controlled `locale` prop
+  // when it changes externally. This is the documented uncontrolled-
+  // with-controlled-override pattern; React's recommendation to "make
+  // it fully controlled" would break the uncontrolled-default API
+  // contract that callers rely on.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (localeProp && localeProp !== locale) setLocaleState(localeProp)
   }, [localeProp])
 
