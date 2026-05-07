@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useId, useRef, useCallback, useState } from 'react';
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -416,7 +416,10 @@ HeartIconCss.displayName = 'HeartIconCss';
 
 export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
   const [liked, setLiked] = useState(false);
-  const id = 'heart3d-' + (typeof crypto !== 'undefined' ? crypto.randomUUID().slice(0, 6) : Math.random().toString(36).slice(2, 8));
+  // useId is the React-native source of stable, unique IDs across mounts;
+  // the colons it returns are valid in SVG id refs but stripped here so
+  // the values are also safe for any downstream CSS selector use.
+  const id = `heart3d-${useId().replace(/:/g, '')}`;
   injectCssOnce();
   return (
     <div
