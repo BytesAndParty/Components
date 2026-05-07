@@ -51,7 +51,6 @@ export default defineConfig({
       'clsx':                         nm('clsx'),
       'tailwind-merge':               nm('tailwind-merge'),
       'zod':                          nm('zod'),
-      '@radix-ui/react-dropdown-menu': nm('@radix-ui/react-dropdown-menu'),
       '@number-flow/react':           nm('@number-flow/react'),
       '@lottiefiles/dotlottie-react': nm('@lottiefiles/dotlottie-react'),
       'gsap':                         nm('gsap'),
@@ -81,9 +80,7 @@ export default defineConfig({
           if (id.includes('/react-router/')) return 'vendor-router'
           if (id.includes('/motion/') || id.includes('/framer-motion/')) return 'vendor-motion'
           if (id.includes('/@tanstack/')) return 'vendor-tanstack'
-          if (id.includes('/@ark-ui/') || id.includes('/@radix-ui/') || id.includes('/@zag-js/')) {
-            return 'vendor-ui'
-          }
+          if (id.includes('/@ark-ui/') || id.includes('/@zag-js/')) return 'vendor-ui'
         },
       },
     },
