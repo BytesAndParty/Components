@@ -1,11 +1,13 @@
-import { useState, useCallback, useEffect, type ReactNode } from 'react'
+import { useState, useCallback, useEffect, useMemo, type ReactNode } from 'react'
 import type { Order } from '@/lib/types'
 import { createCartActions, CartContext } from '@/lib/cart-context'
 
 export function Providers({ children }: { children: ReactNode }) {
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(false)
-  const actions = createCartActions()
+  // Stable actions object — createCartActions() returns a fresh object
+  // each call, which would otherwise invalidate every callback below.
+  const actions = useMemo(() => createCartActions(), [])
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -15,7 +17,7 @@ export function Providers({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [actions])
 
   const addToCart = useCallback(async (variantId: string, quantity = 1) => {
     setLoading(true)
@@ -25,17 +27,17 @@ export function Providers({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [actions])
 
   const adjustLine = useCallback(async (lineId: string, quantity: number) => {
     const o = await actions.adjustLine(lineId, quantity)
     if (o) setOrder(o)
-  }, [])
+  }, [actions])
 
   const removeLine = useCallback(async (lineId: string) => {
     const o = await actions.removeLine(lineId)
     if (o) setOrder(o)
-  }, [])
+  }, [actions])
 
   // Fetch the active cart once on mount. `refresh()` is async and
   // updates state internally — the rule flags the call because the
