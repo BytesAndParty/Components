@@ -1,9 +1,28 @@
 import { useState } from 'react'
-import { Reorder, useDragControls } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode,
   Eye, EyeOff, Lock, Unlock, Trash2, GripVertical,
 } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  defaultDropAnimationSideEffects,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import type { ComponentMessages } from '../i18n'
@@ -26,6 +45,8 @@ export type LayerPanelMessages = {
   dragHandle: string
   visibility: string
   lock: string
+  layersHeader: string
+  noObjects: string
 }
 
 export interface LayerPanelProps {
@@ -51,6 +72,8 @@ const LAYER_MESSAGES = {
     dragHandle:  'Zum Sortieren ziehen (Shift + ↑/↓)',
     visibility:  'Sichtbarkeit umschalten',
     lock:        'Sperre umschalten',
+    layersHeader: 'Ebenen',
+    noObjects: 'Noch keine Objekte. Füge Text, Bilder oder Formen hinzu.',
   },
   en: {
     deleteLayer: 'Delete layer',
@@ -58,6 +81,8 @@ const LAYER_MESSAGES = {
     dragHandle:  'Drag to reorder (Shift + ↑/↓)',
     visibility:  'Toggle visibility',
     lock:        'Toggle lock',
+    layersHeader: 'Layers',
+    noObjects: 'No objects yet. Add text, images or shapes to the canvas.',
   },
 } as const satisfies ComponentMessages<LayerPanelMessages>
 
@@ -91,6 +116,22 @@ export function LayerPanel({
 }: LayerPanelProps) {
   const m = useComponentMessages(LAYER_MESSAGES, messages)
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      const oldIndex = layers.findIndex((l) => l.id === active.id)
+      const newIndex = layers.findIndex((l) => l.id === over.id)
+      if (onReorder) onReorder(arrayMove(layers, oldIndex, newIndex))
+    }
+  }
+
   const handleMove = (id: string, dir: 1 | -1) => {
     if (onMove) {
       onMove(id, dir)
@@ -114,7 +155,7 @@ export function LayerPanel({
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Layers
+          {m.layersHeader}
         </span>
         <span className="text-xs text-muted-foreground">{layers.length}</span>
       </div>
@@ -122,39 +163,91 @@ export function LayerPanel({
       {/* Layer list */}
       {layers.length === 0 ? (
         <div className="flex items-center justify-center py-8 px-4 text-xs text-muted-foreground text-center">
-          No objects yet. Add text, images or shapes to the canvas.
+          {m.noObjects}
         </div>
       ) : (
-        <Reorder.Group
-          axis="y"
-          values={layers}
-          onReorder={onReorder ?? (() => {})}
-          className="flex flex-col divide-y divide-border"
-          layoutScroll
-          role="listbox"
-          aria-label="Layer list"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {layers.map((layer) => (
-            <LayerRow
-              key={layer.id}
-              layer={layer}
-              selected={selectedIds.includes(layer.id)}
-              messages={m}
-              onSelect={() => onSelect?.(layer.id)}
-              onVisibilityToggle={() => onVisibilityToggle?.(layer.id)}
-              onLockToggle={() => onLockToggle?.(layer.id)}
-              onRename={(name) => onRename?.(layer.id, name)}
-              onDelete={() => onDelete?.(layer.id)}
-              onMove={(dir) => handleMove(layer.id, dir)}
-            />
-          ))}
-        </Reorder.Group>
+          <SortableContext items={layers.map(l => l.id)} strategy={verticalListSortingStrategy}>
+            <div className="flex flex-col divide-y divide-border" role="listbox" aria-label="Layer list">
+              <AnimatePresence initial={false}>
+                {layers.map((layer) => (
+                  <SortableLayerRow
+                    key={layer.id}
+                    layer={layer}
+                    selected={selectedIds.includes(layer.id)}
+                    messages={m}
+                    onSelect={() => onSelect?.(layer.id)}
+                    onVisibilityToggle={() => onVisibilityToggle?.(layer.id)}
+                    onLockToggle={() => onLockToggle?.(layer.id)}
+                    onRename={(name) => onRename?.(layer.id, name)}
+                    onDelete={() => onDelete?.(layer.id)}
+                    onMove={(dir) => handleMove(layer.id, dir)}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
     </div>
   )
 }
 
-// ── Row ───────────────────────────────────────────────────────────────────────
+// ── Sortable Row ───────────────────────────────────────────────────────────────
+
+function SortableLayerRow(props: {
+  layer: Layer
+  selected: boolean
+  messages: LayerPanelMessages
+  onSelect: () => void
+  onVisibilityToggle: () => void
+  onLockToggle: () => void
+  onRename: (name: string) => void
+  onDelete: () => void
+  onMove: (dir: 1 | -1) => void
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.layer.id })
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  }
+
+  return (
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      layout
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className={cn(
+        'relative z-0',
+        isDragging && 'z-10 shadow-lg'
+      )}
+    >
+      <LayerRow
+        {...props}
+        dragAttributes={attributes}
+        dragListeners={listeners}
+        isDragging={isDragging}
+      />
+    </motion.div>
+  )
+}
+
+// ── Row Content ───────────────────────────────────────────────────────────────
 
 function LayerRow({
   layer,
@@ -166,6 +259,9 @@ function LayerRow({
   onRename,
   onDelete,
   onMove,
+  dragAttributes,
+  dragListeners,
+  isDragging,
 }: {
   layer: Layer
   selected: boolean
@@ -176,8 +272,10 @@ function LayerRow({
   onRename: (name: string) => void
   onDelete: () => void
   onMove: (dir: 1 | -1) => void
+  dragAttributes: any
+  dragListeners: any
+  isDragging: boolean
 }) {
-  const controls = useDragControls()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(layer.name)
   const TypeIcon = TYPE_ICON[layer.type]
@@ -200,20 +298,18 @@ function LayerRow({
   }
 
   return (
-    <Reorder.Item
-      value={layer}
-      dragListener={false}
-      dragControls={controls}
+    <div
       role="option"
       aria-selected={selected}
       className={cn(
         'group flex items-center gap-1.5 px-2 py-1.5 cursor-pointer transition-colors outline-none focus-visible:bg-accent/5',
         selected ? 'bg-accent/10' : 'hover:bg-muted/40',
         !layer.visible && 'opacity-40',
+        isDragging && 'bg-accent/5 cursor-grabbing',
       )}
       onClick={onSelect}
       onKeyDown={handleKeyDown}
-      layout
+      tabIndex={0}
     >
       {/* Drag handle */}
       <button
@@ -221,7 +317,9 @@ function LayerRow({
         aria-label={messages.dragHandle}
         title={messages.dragHandle}
         className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity touch-none focus-visible:opacity-100 focus-visible:text-accent focus:outline-none"
-        onPointerDown={(e) => { e.stopPropagation(); controls.start(e) }}
+        {...dragAttributes}
+        {...dragListeners}
+        onClick={(e) => e.stopPropagation()}
       >
         <GripVertical size={12} strokeWidth={2} />
       </button>
@@ -276,7 +374,7 @@ function LayerRow({
           <Trash2 size={11} />
         </RowBtn>
       </div>
-    </Reorder.Item>
+    </div>
   )
 }
 

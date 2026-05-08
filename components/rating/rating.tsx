@@ -1,6 +1,26 @@
 import { useState, useCallback, type CSSProperties } from 'react'
+import { useComponentMessages, interpolate } from '../i18n'
+import type { ComponentMessages } from '../i18n'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
+
+export interface RatingMessages {
+  /** ARIA label for the entire rating group (default: "Rating" / "Bewertung") */
+  ariaLabel: string
+  /** Individual star label with {current} and {total} placeholders */
+  starLabel: string
+}
+
+const RATING_MESSAGES = {
+  de: {
+    ariaLabel: 'Bewertung',
+    starLabel: '{current} von {total} Sternen',
+  },
+  en: {
+    ariaLabel: 'Rating',
+    starLabel: '{current} of {total} stars',
+  },
+} as const satisfies ComponentMessages<RatingMessages>
 
 export interface RatingProps {
   /** Number of stars (default: 5) */
@@ -19,6 +39,8 @@ export interface RatingProps {
   inactiveColor?: string
   /** Read-only display mode (default: false) */
   readOnly?: boolean
+  /** i18n overrides */
+  messages?: Partial<RatingMessages>
   className?: string
   style?: CSSProperties
 }
@@ -55,6 +77,7 @@ export function Rating({
   activeColor = 'var(--accent, #6366f1)',
   inactiveColor = 'var(--border, #2a2a2e)',
   readOnly = false,
+  messages,
   className,
   style,
 }: RatingProps) {
@@ -62,6 +85,8 @@ export function Rating({
   const [internalValue, setInternalValue] = useState(defaultValue)
   const [hoverValue, setHoverValue] = useState<number | null>(null)
   const [animatingIndex, setAnimatingIndex] = useState<number | null>(null)
+
+  const m = useComponentMessages(RATING_MESSAGES, messages)
 
   const currentValue = isControlled ? controlledValue : internalValue
   const displayValue = hoverValue ?? currentValue
@@ -82,7 +107,7 @@ export function Rating({
     <div
       className={className}
       role="radiogroup"
-      aria-label="Rating"
+      aria-label={m.ariaLabel}
       style={{
         display: 'inline-flex',
         gap: '2px',
@@ -99,7 +124,7 @@ export function Rating({
             type="button"
             role="radio"
             aria-checked={i < currentValue}
-            aria-label={`${i + 1} von ${count} Sternen`}
+            aria-label={interpolate(m.starLabel, { current: i + 1, total: count })}
             disabled={readOnly}
             onClick={() => handleClick(i)}
             onMouseEnter={() => !readOnly && setHoverValue(i + 1)}
@@ -128,3 +153,4 @@ export function Rating({
     </div>
   )
 }
+

@@ -38,8 +38,9 @@
 
 ### 🔵 Features & Infrastruktur
 
-- [ ] **@dnd-kit/core Migration** für `LayerPanel` — Framer Motion `Reorder.Group` hat bekannte Touch/Scroll-Konflikte auf iOS. `@dnd-kit/core` ist stabiler für Production-Drag-and-Drop (relevant sobald Cellar Canvas auf Tablet läuft)
-- [ ] **Ark UI `translations`-Bridge** — Ark UI DatePicker, Select, Combobox etc. haben ein eingebautes `translations`-Prop für ARIA-Labels. Wenn diese Komponenten hinzukommen, sollte der `I18nProvider` automatisch die passenden Ark-Translations liefern. Bridge-Pattern: `useArkTranslations('dialog')` → Ark-kompatibles Objekt
+- [x] **Data Table** — Implement accessible, high-performance table using TanStack Table (erledigt)
+- [x] **@dnd-kit/core Migration** für `LayerPanel` — Erledigt (stabilere Interaktion auf Touch-Geräten)
+- [x] **Ark UI `translations`-Bridge** — Erledigt (automatisierte i18n für Ark-Komponenten)
 - [x] **HotkeysProvider Context-Split** — Read-Context (nur `registry`) von Write-Context (`register`, `unregister`) trennen. Lesende Komponenten (ShortcutOverview) sollen nicht bei jeder Shortcut-Registrierung neu rendern (erledigt)
 
 ### 🔵 i18n — Noch nicht migrierte Komponenten
@@ -53,7 +54,7 @@ Folgende Komponenten haben user-facing Strings, aber noch kein `messages?`-Prop:
 - [x] `tooltip` — aria-label & A11y linkage (erledigt)
 - [x] `breadcrumb` — aria-label & more-label (erledigt)
 - [x] `slider` — aria-label & localized formatting (erledigt)
-- [ ] `rating` — aria-label, star-Beschreibung
+- [x] `rating` — aria-label, star-Beschreibung (erledigt)
 
 ---
 
@@ -65,14 +66,15 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | motion/react | i18n | Hotkeys | A11y | Status |
 |---|---|---|---|---|---|
-| `alignment-bar` | n/a | ✅ | n/a | 🔶 roving-tabIndex fehlt | 🔶 |
+| `alignment-bar` | n/a | ✅ | n/a | ✅ | ✅ |
 | `hotkeys/provider` | n/a | n/a | ✅ | ✅ | ✅ |
 | `hotkeys/shortcut-overview` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `data-table` | n/a | ✅ | n/a | ✅ | ✅ |
 | `image-cropper-modal` | n/a | ✅ | n/a | ✅ | ✅ |
-| `layer-panel` | ✅ | ✅ | n/a | 🔶 keyboard-reorder, aria-selected fehlen | 🔶 |
-| `number-input` | n/a | n/a | n/a | 🔶 label-Assoziation fehlt | 🔶 |
-| `text-tool-options` | n/a | ✅ | n/a | 🔶 aria-pressed, FontSelect-ARIA fehlen | 🔶 |
-| `validator-badge` | n/a | ✅ | n/a | 🔶 Severity nur via Farbe | 🔶 |
+| `layer-panel` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `number-input` | n/a | n/a | n/a | ✅ | ✅ |
+| `text-tool-options` | n/a | ✅ | n/a | ✅ | ✅ |
+| `validator-badge` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Refactored (diese Session)
 
@@ -187,9 +189,9 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | Vite Config — Subpath-Alias-System | ✅ Stabil, alle Packages explizit aliased |
 | `useDesignEngineHotkey` + ShortcutOverview | ✅ Fertig — `?`-Key, Shift-Hold, Escape |
 | **AtelierProvider** (unified theme+accent+locale) | ✅ — `useAtelier()`, `AtelierInitScript` für FOUC |
-| Ark UI `translations`-Bridge | ⬜ Ausstehend |
-| `@dnd-kit/core` LayerPanel Migration | ⬜ Ausstehend |
-| HotkeysProvider Context-Split | ⬜ Ausstehend |
+| Ark UI `translations`-Bridge | ✅ |
+| `@dnd-kit/core` LayerPanel Migration | ✅ |
+| HotkeysProvider Context-Split | ✅ |
 
 ---
 

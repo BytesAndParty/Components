@@ -8,7 +8,7 @@ import {
 import { cn } from '../lib/utils'
 import { NumberInput } from '../number-input/number-input'
 import { ColorPickerPanel } from '../color-picker/color-picker'
-import { useComponentMessages } from '../i18n'
+import { useComponentMessages, useArkTranslations } from '../i18n'
 import type { ComponentMessages } from '../i18n'
 
 // ── Font catalogue ────────────────────────────────────────────────────────────
@@ -350,8 +350,10 @@ function FontSelect({
 }
 
 function ColorSwatch({ color, onChange, title }: { color: string; onChange: (v: string) => void; title?: string }) {
+  const popoverTranslations = useArkTranslations('popover')
+
   return (
-    <Popover.Root>
+    <Popover.Root translations={popoverTranslations}>
       <Popover.Trigger asChild>
         <button
           type="button"

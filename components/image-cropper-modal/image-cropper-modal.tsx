@@ -4,7 +4,7 @@ import { ImageCropper, useImageCropperContext } from '@ark-ui/react/image-croppe
 import { Portal } from '@ark-ui/react/portal'
 import { X, RotateCcw, FlipHorizontal, FlipVertical, ZoomIn, ZoomOut } from 'lucide-react'
 import { cn } from '../lib/utils'
-import { useComponentMessages } from '../i18n'
+import { useComponentMessages, useArkTranslations } from '../i18n'
 import type { ComponentMessages } from '../i18n'
 
 // ── Messages ──────────────────────────────────────────────────────────────────
@@ -72,12 +72,15 @@ export function ImageCropperModal({
   messages,
 }: ImageCropperModalProps) {
   const m = useComponentMessages(CROPPER_MESSAGES, messages)
+  const dialogTranslations = useArkTranslations('dialog')
+  const cropperTranslations = useArkTranslations('imageCropper')
 
   return (
     <Dialog.Root
       open={open}
       onOpenChange={(d: { open: boolean }) => onOpenChange(d.open)}
       modal
+      translations={dialogTranslations}
     >
       <Portal>
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
@@ -116,6 +119,7 @@ export function ImageCropperModal({
                 minZoom={0.5}
                 maxZoom={4}
                 zoomStep={0.1}
+                translations={cropperTranslations}
               >
                 {/* Canvas */}
                 <div className="relative w-full bg-muted/30" style={{ height: 340 }}>
