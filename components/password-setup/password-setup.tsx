@@ -278,13 +278,15 @@ function FancyDotInput({
           borderRadius: '50%',
           backgroundColor: bgColor,
           boxShadow: isTyped ? `0 0 6px ${glowColor}` : 'none',
-          transition: 'background-color 200ms ease, box-shadow 200ms ease',
+          transition: 'background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease, opacity 200ms ease',
           animation: justTyped 
             ? 'pws-dot-pop 200ms ease forwards' 
             : 'none',
-          opacity: isTyped ? 1 : 0.25,
-          transform: isTyped ? 'scale(1)' : 'scale(0.8)',
-        }}
+          // Use CSS transitions for reveal/hide to avoid "animation restart" on re-render
+          opacity: visible ? 0 : (isTyped ? 1 : 0.25),
+          transform: visible ? 'scale(0)' : (isTyped ? 'scale(1)' : 'scale(0.8)'),
+          transitionDelay: visible ? `${i * 25}ms` : `${(displayLength - 1 - i) * 25}ms`,
+        } as CSSProperties}
       />
     )
   }
@@ -353,27 +355,30 @@ function FancyDotInput({
               gap: `${Math.max(6, dotSize * 0.6)}px`, 
               alignItems: 'center',
               pointerEvents: 'none',
-              transition: 'opacity 300ms ease, transform 300ms ease',
-              opacity: visible ? 0 : 1,
-              transform: visible ? 'translateY(-4px) scale(0.95)' : 'translateY(0) scale(1)',
-              filter: visible ? 'blur(4px)' : 'none',
+              position: 'relative',
             }}>
               {dots}
             </div>
 
-            {visible && (
+            <div style={{ 
+              position: 'absolute',
+              left: 0,
+              pointerEvents: 'none',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateY(0)' : 'translateY(4px)',
+              filter: visible ? 'blur(0)' : 'blur(4px)',
+              transition: 'opacity 300ms ease, transform 300ms ease, filter 300ms ease',
+              transitionDelay: visible ? '150ms' : '0ms',
+            }}>
               <span style={{ 
-                position: 'absolute',
-                left: 0,
                 fontSize: '14px', 
                 color: 'var(--foreground, #e4e4e7)', 
                 fontFamily: 'inherit', 
                 lineHeight: '21px',
-                animation: 'pws-text-reveal 300ms ease both',
               }}>
                 {value}
               </span>
-            )}
+            </div>
           </div>
         )}
       </div>
