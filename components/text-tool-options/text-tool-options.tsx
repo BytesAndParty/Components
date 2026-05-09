@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useId, type ReactNode } from 'react'
 import { Popover } from '@ark-ui/react/popover'
 import { Portal } from '@ark-ui/react/portal'
 import {
@@ -242,7 +242,7 @@ function ToggleBtn({
   active: boolean
   onClick: () => void
   title?: string
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <button
@@ -273,7 +273,7 @@ function FontSelect({
   const [pos, setPos] = useState({ top: 0, left: 0 })
   const triggerRef = useRef<HTMLButtonElement>(null)
   const current = FONTS.find(f => f.family === value) ?? FONTS[0]
-  const listboxId = React.useId()
+  const listboxId = useId()
 
   function handleOpen() {
     if (triggerRef.current) {

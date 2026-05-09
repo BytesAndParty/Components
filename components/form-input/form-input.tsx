@@ -133,7 +133,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           )}
         </label>
       )}
-      <div
+      <motion.div
         key={shakeKey}
         className={cn(
           "relative flex items-center w-full rounded-xl bg-[var(--card)] transition-all duration-200",
@@ -219,7 +219,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
             {rightIcon}
           </span>
         )}
-      </div>
+      </motion.div>
       
       {/* Footer Area: Errors & Description */}
       <div className="min-h-[20px] mt-1.5 w-full">

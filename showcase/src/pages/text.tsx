@@ -245,7 +245,7 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver.">
+      <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver." canReload>
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground uppercase tracking-widest">direction="up" (default) – Elemente scrollen in den Viewport</p>
           <div className="grid grid-cols-3 gap-4">

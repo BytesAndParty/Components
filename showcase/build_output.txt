@@ -1,0 +1,58 @@
+$ vite build
+vite v6.4.2 building for production...
+transforming...
+✓ 50 modules transformed.
+✗ Build failed in 1.42s
+error during build:
+[vite:react-babel] /Users/robert.stickler/Development/__Components__/components/form-input/form-input.tsx: Missing initializer in const declaration. (77:68)
+
+  75 |  * Optimized for integration with TanStack Form.
+  76 |  */
+> 77 | export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
+     |                                                                     ^
+  78 |   type = 'text',
+  79 |   label,
+  80 |   description,
+file: /Users/robert.stickler/Development/__Components__/components/form-input/form-input.tsx:77:68
+    at constructor (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:365:19)
+    at TypeScriptParserMixin.raise (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:6599:19)
+    at TypeScriptParserMixin.parseVar (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13391:16)
+    at TypeScriptParserMixin.parseVarStatement (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13230:10)
+    at TypeScriptParserMixin.parseVarStatement (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:9408:31)
+    at TypeScriptParserMixin.parseStatementContent (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12851:23)
+    at TypeScriptParserMixin.parseStatementContent (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12767:17)
+    at TypeScriptParserMixin.parseStatementListItem (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12747:17)
+    at TypeScriptParserMixin.parseExportDeclaration (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13934:17)
+    at TypeScriptParserMixin.parseExportDeclaration (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:9629:85)
+    at TypeScriptParserMixin.maybeParseExportDeclaration (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13893:31)
+    at TypeScriptParserMixin.parseExport (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13812:29)
+    at TypeScriptParserMixin.parseExport (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:9385:20)
+    at TypeScriptParserMixin.parseStatementContent (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12878:27)
+    at TypeScriptParserMixin.parseStatementContent (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:12612:25)
+    at TypeScriptParserMixin.parse (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:14488:25)
+    at TypeScriptParserMixin.parse (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:10126:18)
+    at parse (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+parser@7.29.2/node_modules/@babel/parser/lib/index.js:14522:38)
+    at parser (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/parser/index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/transformation/normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/transformation/index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (/Users/robert.stickler/Development/__Components__/node_modules/.bun/gensync@1.0.0-beta.2/node_modules/gensync/index.js:261:32)
+    at evaluateAsync (/Users/robert.stickler/Development/__Components__/node_modules/.bun/gensync@1.0.0-beta.2/node_modules/gensync/index.js:291:5)
+    at /Users/robert.stickler/Development/__Components__/node_modules/.bun/gensync@1.0.0-beta.2/node_modules/gensync/index.js:93:9
+    at new Promise (<anonymous>)
+    at async (/Users/robert.stickler/Development/__Components__/node_modules/.bun/gensync@1.0.0-beta.2/node_modules/gensync/index.js:92:14)
+    at stopHiding - secret - don't use this - v1 (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/errors/rewrite-stack-trace.js:47:12)
+    at Module.transformAsync (/Users/robert.stickler/Development/__Components__/node_modules/.bun/@babel+core@7.29.0+b097dd6c05d04ee2/node_modules/@babel/core/lib/transform.js:43:77)
+    at Object.handler (file:///Users/robert.stickler/Development/__Components__/node_modules/.bun/@vitejs+plugin-react@4.7.0+feed8534451a443e/node_modules/@vitejs/plugin-react/dist/index.js:195:34)
+error: script "build" exited with code 1

@@ -106,7 +106,9 @@ function FormInputDemo() {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           const v = e.target.value
           setForm(f => ({ ...f, name: v }))
-          validate('name', v)
+        }}
+        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+          validate('name', e.target.value)
         }}
       />
       <FormInput
@@ -118,7 +120,9 @@ function FormInputDemo() {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           const v = e.target.value
           setForm(f => ({ ...f, email: v }))
-          validate('email', v)
+        }}
+        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+          validate('email', e.target.value)
         }}
         leftIcon={
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -137,7 +141,9 @@ function FormInputDemo() {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const v = e.target.value
             setForm(f => ({ ...f, age: v }))
-            validate('age', v)
+          }}
+          onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+            validate('age', e.target.value)
           }}
         />
         <FormInput
@@ -149,7 +155,9 @@ function FormInputDemo() {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const v = e.target.value
             setForm(f => ({ ...f, website: v }))
-            validate('website', v)
+          }}
+          onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+            validate('website', e.target.value)
           }}
         />
       </div>

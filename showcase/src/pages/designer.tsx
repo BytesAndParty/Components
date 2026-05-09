@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, type ChangeEvent } from 'react'
 import { Section } from '../components/section'
 import { ColorPickerPanel } from '@components/color-picker/color-picker'
 import { TextToolOptions, type TextFormatValues, defaultTextFormat } from '@components/text-tool-options/text-tool-options'
@@ -12,40 +12,21 @@ import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-provider'
 
 function ColorPickerDemo() {
   const [color, setColor] = useState('#722f37')
-  const [colorAlpha, setColorAlpha] = useState('#722f37')
 
   return (
-    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      <div className="flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">Standard</h4>
-            <p className="text-xs text-muted-foreground">Hex / RGB / HSL — ohne Alpha-Kanal.</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: color }} />
-            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{color}</code>
-          </div>
+    <div className="flex flex-col gap-3 max-w-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h4 className="text-sm font-semibold text-foreground">Color Picker</h4>
+          <p className="text-xs text-muted-foreground">Hex / RGB / HSL inkl. Alpha-Kanal & Eye Dropper.</p>
         </div>
-        <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-          <ColorPickerPanel value={color} onChange={setColor} />
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: color }} />
+          <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{color}</code>
         </div>
       </div>
-
-      <div className="flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">Mit Alpha-Kanal</h4>
-            <p className="text-xs text-muted-foreground">Hex / RGB / HSL inkl. Transparenz-Slider.</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: colorAlpha }} />
-            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{colorAlpha}</code>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-          <ColorPickerPanel value={colorAlpha} onChange={setColorAlpha} showAlpha />
-        </div>
+      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+        <ColorPickerPanel value={color} onChange={setColor} showAlpha />
       </div>
     </div>
   )
@@ -207,7 +188,7 @@ function ImageCropperDemo() {
     }
   }, [cropped])
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()

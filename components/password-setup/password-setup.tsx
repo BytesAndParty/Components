@@ -280,12 +280,10 @@ function FancyDotInput({
           boxShadow: isTyped ? `0 0 6px ${glowColor}` : 'none',
           transition: 'background-color 200ms ease, box-shadow 200ms ease',
           animation: justTyped 
-            ? 'pws-dot-pop 200ms ease' 
-            : visible 
-              ? `pws-dot-hide 300ms ease ${i * 40}ms forwards`
-              : `pws-dot-reveal 300ms ease ${i * 40}ms backwards`,
-          animationFillMode: 'both',
+            ? 'pws-dot-pop 200ms ease forwards' 
+            : 'none',
           opacity: isTyped ? 1 : 0.25,
+          transform: isTyped ? 'scale(1)' : 'scale(0.8)',
         }}
       />
     )
@@ -349,19 +347,24 @@ function FancyDotInput({
 
         {/* Content Layer (Dots or Text) */}
         {value.length > 0 && (
-          <>
+          <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
             <div style={{ 
               display: 'flex', 
               gap: `${Math.max(6, dotSize * 0.6)}px`, 
               alignItems: 'center',
-              position: visible ? 'absolute' : 'relative',
               pointerEvents: 'none',
+              transition: 'opacity 300ms ease, transform 300ms ease',
+              opacity: visible ? 0 : 1,
+              transform: visible ? 'translateY(-4px) scale(0.95)' : 'translateY(0) scale(1)',
+              filter: visible ? 'blur(4px)' : 'none',
             }}>
               {dots}
             </div>
 
             {visible && (
               <span style={{ 
+                position: 'absolute',
+                left: 0,
                 fontSize: '14px', 
                 color: 'var(--foreground, #e4e4e7)', 
                 fontFamily: 'inherit', 
@@ -371,7 +374,7 @@ function FancyDotInput({
                 {value}
               </span>
             )}
-          </>
+          </div>
         )}
       </div>
 

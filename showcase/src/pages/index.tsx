@@ -14,11 +14,11 @@ export function IndexPage() {
         // Jede Karte bekommt ihr eigenes BlurFade mit ansteigendem `delay`.
         // BlurFade kümmert sich intern um IntersectionObserver +
         // prefers-reduced-motion, daher reicht hier der Wrapper.
-        <BlurFade key={group.path} delay={i * STAGGER_MS}>
+        <BlurFade key={group.path} delay={i * STAGGER_MS} className="h-full">
           <Link
             to={group.path}
             viewTransition
-            className="group border border-border rounded-xl bg-card p-6 shadow-sm transition-all hover:border-accent/50 hover:shadow-md no-underline block"
+            className="group border border-border rounded-xl bg-card p-6 shadow-sm transition-all hover:border-accent/50 hover:shadow-md no-underline flex flex-col h-full"
           >
             <h2 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">
               {group.title}
@@ -26,7 +26,7 @@ export function IndexPage() {
             <p className="text-muted-foreground text-sm mt-2">
               {group.description}
             </p>
-            <div className="flex flex-wrap gap-1.5 mt-4">
+            <div className="flex flex-wrap gap-1.5 mt-auto pt-4">
               {group.components.map((c) => (
                 <span
                   key={c}
