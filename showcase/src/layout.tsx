@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { cn } from '@components/lib/utils'
 import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
@@ -16,6 +17,7 @@ import { Tooltip } from '@components/tooltip/tooltip'
 import { BackToTop } from '@components/back-to-top/back-to-top'
 import { ShortcutOverview } from '@components/hotkeys/shortcut-overview'
 import { LanguageSwitcher } from '@components/language-switcher/language-switcher'
+import { ErrorBoundary } from './components/error-boundary'
 import { palettes, groups } from './data'
 
 // ─── Cart Context (showcase-only) ───────────────────────────────────────────────
@@ -167,7 +169,9 @@ export function Layout() {
 
         <div className="max-w-3xl mx-auto pt-6 pb-12 px-6">
           <main className="[view-transition-name:page-content]">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </main>
         </div>
 

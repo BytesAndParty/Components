@@ -7,6 +7,9 @@ import { ValidatorBadge, type ValidationWarning } from '@components/validator-ba
 import { LayerPanel, type Layer } from '@components/layer-panel/layer-panel'
 import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper-modal'
 import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-provider'
+import { NumberInput } from '@components/number-input/number-input'
+import { Tooltip } from '@components/tooltip/tooltip'
+import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
 
 // ── Color Picker ──────────────────────────────────────────────────────────────
 
@@ -64,7 +67,9 @@ function AlignmentBarDemo() {
   const [last, setLast] = useState<AlignAction | null>(null)
   return (
     <div className="flex flex-col gap-4">
-      <AlignmentBar onAlign={setLast} />
+      <div className="flex items-center gap-2">
+        <AlignmentBar onAlign={setLast} />
+      </div>
       {last && (
         <p className="text-xs font-mono text-muted-foreground">
           Last action: <span className="text-foreground">{last}</span>
@@ -72,6 +77,29 @@ function AlignmentBarDemo() {
       )}
       <p className="text-xs text-muted-foreground">
         In Cellar Canvas wird diese Toolbar eingeblendet wenn ≥ 2 Objekte selektiert sind.
+      </p>
+    </div>
+  )
+}
+
+// ── Number Input ──────────────────────────────────────────────────────────────
+
+function NumberInputDemo() {
+  const [x, setX] = useState(120)
+  const [y, setY] = useState(45)
+  const [rot, setRot] = useState(0)
+  const [opacity, setOpacity] = useState(100)
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-8 items-center p-4 bg-card border border-border rounded-xl shadow-sm">
+        <NumberInput label="X" value={x} onChange={setX} unit="mm" />
+        <NumberInput label="Y" value={y} onChange={setY} unit="mm" />
+        <NumberInput label="Rot" value={rot} onChange={setRot} unit="°" min={0} max={360} />
+        <NumberInput label="Opac" value={opacity} onChange={setOpacity} unit="%" min={0} max={100} />
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Hochpräzise Steuerung für Geometrie. <kbd className="text-[10px] bg-muted px-1 rounded">Double-Click</kbd> zum Editieren · <kbd className="text-[10px] bg-muted px-1 rounded">Mouse Wheel</kbd> zum nudgen.
       </p>
     </div>
   )
@@ -241,6 +269,38 @@ function ImageCropperDemo() {
   )
 }
 
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+
+function TooltipDemo() {
+  return (
+    <div className="flex flex-wrap gap-10 items-center p-8 bg-card border border-border rounded-xl">
+      <Tooltip content="Speichern (Strg+S)">
+        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium">
+          Hover me
+        </button>
+      </Tooltip>
+      
+      <Tooltip content="Ebene löschen" position="bottom">
+        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+          Bottom
+        </button>
+      </Tooltip>
+
+      <Tooltip content="Hilfe anzeigen" position="left">
+        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+          Left
+        </button>
+      </Tooltip>
+
+      <Tooltip content="Eigenschaften" position="right">
+        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+          Right
+        </button>
+      </Tooltip>
+    </div>
+  )
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function DesignerPage() {
@@ -268,35 +328,55 @@ export function DesignerPage() {
   })
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-2">Designer Components</h1>
-      <p className="text-muted-foreground mb-10">
-        Atomic building blocks für Cellar Canvas — den Wine Label Designer.
-      </p>
+    <div className="pb-20 space-y-12">
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold tracking-tight">Cellar Canvas</h1>
+        <p className="text-muted-foreground">
+          The full integrated Wine Label Designer. Build labels, export print-ready files.
+        </p>
+        <div className="border border-border rounded-2xl overflow-hidden shadow-2xl bg-card w-full">
+          <CellarCanvas />
+        </div>
+      </div>
 
-      <Section title="Text Tool Options" description="Font, Größe, Bold/Italic/Underline, Ausrichtung, Letter-Spacing, Line-Height, Farbe. Schriftarten in ihrem eigenen Stil im Dropdown.">
-        <TextToolOptionsDemo />
-      </Section>
+      <div className="pt-12 border-t border-border">
+        <h2 className="text-2xl font-bold mb-2">Atomic Components</h2>
+        <p className="text-muted-foreground mb-10">
+          Die Bausteine des Designers zum einzeln Testen und Stylen.
+        </p>
 
-      <Section title="Alignment Bar" description="Erscheint wenn ≥ 2 Objekte selektiert sind. 6 Ausrichtungs- + 2 Verteilungs-Actions.">
-        <AlignmentBarDemo />
-      </Section>
+        <Section title="Text Tool Options" description="Font, Größe, Bold/Italic/Underline, Ausrichtung, Letter-Spacing, Line-Height, Farbe. Schriftarten in ihrem eigenen Stil im Dropdown.">
+          <TextToolOptionsDemo />
+        </Section>
 
-      <Section title="Layer Panel" description="Ebenen-Liste mit Drag-to-Reorder, Visibility, Lock, Rename, Delete. Framer Motion Reorder.Group.">
-        <LayerPanelDemo />
-      </Section>
+        <Section title="Number Input" description="Kompakter Stepper für exakte mm/grad/pixel Werte. Unterstützt Scrubbing (Scrollrad) und Tastatur-Nudges.">
+          <NumberInputDemo />
+        </Section>
 
-      <Section title="EU Compliance Validator" description="Zeigt fehlende Pflichtfelder gemäß EU-Verordnung 2023/2977. Rot = Error, Gelb = Warning, Grün = Compliant.">
-        <ValidatorBadgeDemo />
-      </Section>
+        <Section title="Alignment Bar" description="Erscheint wenn ≥ 2 Objekte selektiert sind. 6 Ausrichtungs- + 2 Verteilungs-Actions.">
+          <AlignmentBarDemo />
+        </Section>
 
-      <Section title="Image Cropper Modal" description="Ark UI ImageCropper in einem Dialog mit FocusTrap. Zoom-Slider, Flip, Rotation. Upload-Trigger + Crop-Callback.">
-        <ImageCropperDemo />
-      </Section>
+        <Section title="Layer Panel" description="Ebenen-Liste mit Drag-to-Reorder, Visibility, Lock, Rename, Delete. Framer Motion Reorder.Group.">
+          <LayerPanelDemo />
+        </Section>
 
-      <Section title="Color Picker" description="HEX / RGB / HSL, Hue + Alpha Sliders, Eye Dropper, Preset Swatches.">
-        <ColorPickerDemo />
-      </Section>
+        <Section title="EU Compliance Validator" description="Zeigt fehlende Pflichtfelder gemäß EU-Verordnung 2023/2977. Rot = Error, Gelb = Warning, Grün = Compliant.">
+          <ValidatorBadgeDemo />
+        </Section>
+
+        <Section title="Image Cropper Modal" description="Ark UI ImageCropper in einem Dialog mit FocusTrap. Zoom-Slider, Flip, Rotation. Upload-Trigger + Crop-Callback.">
+          <ImageCropperDemo />
+        </Section>
+
+        <Section title="Tooltip" description="Leichtgewichtige Overlays für Tooltips mit smarten Positions-Defaults und Micro-Animations.">
+          <TooltipDemo />
+        </Section>
+
+        <Section title="Color Picker" description="HEX / RGB / HSL, Hue + Alpha Sliders, Eye Dropper, Preset Swatches.">
+          <ColorPickerDemo />
+        </Section>
+      </div>
     </div>
   )
 }
