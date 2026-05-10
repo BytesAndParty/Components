@@ -1,4 +1,5 @@
 # Artelier Workflow Guidelines
+**Reference Date for "Latest Standards": Saturday, May 9, 2026**
 
 #### 1. Runtime & Package Management
 - **Bun First:** Nutze primär `bun` für alle Operationen (Installation, Scripts, Runtime).

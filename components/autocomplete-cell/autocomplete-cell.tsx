@@ -37,6 +37,15 @@ export function AutocompleteCell({
 }: AutocompleteCellProps) {
   const [open, setOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(0)
+  const [prevValue, setPrevValue] = useState(value)
+
+  // Adjust state during render when value changes to avoid extra render cycles
+  // and align with React Compiler / Hooks best practices.
+  if (value !== prevValue) {
+    setPrevValue(value)
+    setHighlightIndex(0)
+  }
+
   const containerRef = useRef<HTMLDivElement>(null)
   const internalRef = useRef<HTMLInputElement>(null)
   const inputRef = externalRef || internalRef
@@ -60,13 +69,6 @@ export function AutocompleteCell({
         })
     : []
 
-  // Reset highlight index when filter value changes — local state needs
-  // resetting because the suggestion list it indexes into is also resetting.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHighlightIndex(0)
-  }, [value])
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -78,18 +80,18 @@ export function AutocompleteCell({
   }, [])
 
   function selectItem(item: AutocompleteSuggestion) {
-    onChange(item.key)
+    onChange(item.label)
     setOpen(false)
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Tab' && !e.shiftKey) {
       if (open && filtered.length > 0 && value.length > 0) {
-        const exactMatch = filtered.find((s) => s.key.toLowerCase() === value.toLowerCase())
+        const exactMatch = filtered.find((s) => s.label.toLowerCase() === value.toLowerCase())
         if (!exactMatch) {
           e.preventDefault()
           const idx = Math.min(highlightIndex, filtered.length - 1)
-          onChange(filtered[idx].key)
+          onChange(filtered[idx].label)
           setOpen(false)
           return
         }

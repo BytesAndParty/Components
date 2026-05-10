@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Section } from '../components/section'
 import {
   runViewTransition,
@@ -178,11 +178,13 @@ function PresetPill({
 function TransitionsDemo() {
   const [preset, setPreset] = useState<VtPreset>('vt-wine-pour')
   const [idx, setIdx] = useState(0)
+  const stageRef = useRef<HTMLDivElement>(null)
 
   function swap(e: React.MouseEvent<HTMLButtonElement>) {
     const rect = e.currentTarget.getBoundingClientRect()
     runViewTransition(preset, () => setIdx((i) => 1 - i), {
       origin: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+      scope: stageRef.current ?? undefined,
     })
   }
 
@@ -191,6 +193,7 @@ function TransitionsDemo() {
     if (!needsOrigin) return
     runViewTransition(preset, () => setIdx((i) => 1 - i), {
       origin: { x: e.clientX, y: e.clientY },
+      scope: stageRef.current ?? undefined,
     })
   }
 
@@ -204,7 +207,7 @@ function TransitionsDemo() {
         role={needsOrigin ? 'button' : undefined}
         aria-label={needsOrigin ? 'Klicke irgendwo um Transition ab Klickpunkt zu triggern' : undefined}
       >
-        <TransitionStage>
+        <TransitionStage ref={stageRef}>
           <WineCard scene={SCENES[idx]} />
         </TransitionStage>
       </div>
@@ -269,21 +272,21 @@ export function TransitionsPage() {
       <header className="mb-10">
         <h1 className="text-3xl font-semibold tracking-tight mb-2">View Transitions</h1>
         <p className="text-muted-foreground text-sm">
-          CSS View Transitions API (<code>document.startViewTransition</code>) mit 5 Standard-Presets
+          <strong>May 2026 Edition:</strong> Nutzt die neueste View Transition API (Baseline 2026) mit 5 Standard-Presets
           + 3 custom wein-inspirierten: <em>Wine Pour</em>, <em>Cork Pop</em>, <em>Grape Burst</em>.
         </p>
       </header>
 
       <Section
         title="Preset-Playground"
-        description="Wähle ein Preset, klicke Swap. Circular Reveal und Grape Burst reagieren zusätzlich auf Klickposition auf der Karte."
+        description="Wähle ein Preset, klicke Swap. Circular Reveal und Grape Burst reagieren zusätzlich auf Klickposition auf der Karte. Beachte, dass die Transition jz auf die Karte 'scoped' ist (der Rest der Seite bleibt statisch)."
       >
         <TransitionsDemo />
       </Section>
 
       <Section
-        title="Wie es funktioniert"
-        description="Die Stage trägt einen view-transition-name. Der Helper wrapped den State-Swap in startViewTransition mit types-Array; CSS selektiert via :active-view-transition-type(…)."
+        title="Wie es funktioniert (2026 Standard)"
+        description="Die Transition wird via element.startViewTransition() auf die Stage beschränkt (Scoped Transition). Die Stage nutzt view-transition-group: nearest für korrektes Nesting innerhalb der CSS-Hierarchie."
       >
         <pre
           style={{
@@ -301,12 +304,17 @@ export function TransitionsPage() {
 
 function Demo() {
   const [idx, setIdx] = useState(0)
+  const stageRef = useRef(null)
+
   return (
     <>
-      <TransitionStage>
+      {/* 2026 Scoping via Ref */}
+      <TransitionStage ref={stageRef}>
         {idx === 0 ? <CardA /> : <CardB />}
       </TransitionStage>
+
       <button onClick={e => runViewTransition('vt-wine-pour', () => setIdx(i => 1-i), {
+        scope: stageRef.current, // Element-level transition
         origin: { x: e.clientX, y: e.clientY },
       })}>
         Pour
