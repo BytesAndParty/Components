@@ -90,6 +90,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `slider` | n/a | ✅ | n/a | ✅ | ✅ |
 | `rating` | n/a | ✅ | n/a | ✅ | ✅ |
 | `navbar` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `checkbox` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -135,7 +136,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `bounce-cards` | n/a | ⬜ | ⬜ |
 | `bounce-loader` | n/a | n/a | ⬜ |
 | `cart-icon` | ⬜ | ⬜ | ⬜ |
-| `checkbox` | n/a | ✅ | ✅ |
 | `circular-progress` | ⬜ | ⬜ | ⬜ |
 | `click-spark` | n/a | n/a | ⬜ |
 | `confetti` | n/a | n/a | ⬜ |
