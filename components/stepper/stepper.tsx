@@ -8,6 +8,8 @@ import {
 } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from '../lib/utils'
+import { useComponentMessages, interpolate } from '../i18n'
+import { MESSAGES, type StepperMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -19,12 +21,8 @@ export interface StepperProps {
   onStepChange?: (step: number) => void
   /** Callback when all steps are completed */
   onFinalStepCompleted?: () => void
-  /** Back button text (default: 'Zurück') */
-  backButtonText?: string
-  /** Next button text (default: 'Weiter') */
-  nextButtonText?: string
-  /** Final step button text (default: 'Abschließen') */
-  finalButtonText?: string
+  /** i18n overrides for button labels and SR step counter. */
+  messages?: Partial<StepperMessages>
   className?: string
   style?: CSSProperties
 }
@@ -47,20 +45,26 @@ function StepIndicator({
   totalSteps,
   currentStep,
   titles,
+  completedLabel,
 }: {
   totalSteps: number
   currentStep: number
   titles: (string | undefined)[]
+  completedLabel: string
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-0 gap-y-4 mb-8">
+    <ol className="flex flex-wrap items-center justify-center gap-x-0 gap-y-4 mb-8 list-none p-0 m-0">
       {Array.from({ length: totalSteps }, (_, i) => {
         const stepNum = i + 1
         const isCompleted = stepNum < currentStep
         const isActive = stepNum === currentStep
 
         return (
-          <div key={i} className="flex items-center">
+          <li
+            key={i}
+            className="flex items-center"
+            aria-current={isActive ? 'step' : undefined}
+          >
             <div className="flex flex-col items-center gap-1.5">
               <div
                 className={cn(
@@ -69,9 +73,15 @@ function StepIndicator({
                     ? "bg-[var(--accent,#6366f1)] text-white border-[var(--accent,#6366f1)]"
                     : "bg-transparent text-[var(--muted-foreground,#71717a)] border-[var(--border,#2a2a2e)]"
                 )}
+                aria-label={isCompleted ? `${titles[i] ?? stepNum} ${completedLabel}` : undefined}
               >
                 {isCompleted ? (
-                  <motion.svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <motion.svg
+                    width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="3"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    aria-hidden
+                  >
                     <motion.polyline
                       points="20 6 9 17 4 12"
                       initial={{ pathLength: 0 }}
@@ -100,6 +110,7 @@ function StepIndicator({
             {/* Connector line */}
             {i < totalSteps - 1 && (
               <div
+                aria-hidden
                 className={cn(
                   "w-8 md:w-12 h-[2px] mx-1 md:mx-2 bg-[var(--border,#2a2a2e)] rounded-sm overflow-hidden",
                   titles[i] ? "mb-[18px] md:mb-[22px]" : "mb-0"
@@ -111,10 +122,10 @@ function StepIndicator({
                 />
               </div>
             )}
-          </div>
+          </li>
         )
       })}
-    </div>
+    </ol>
   )
 }
 
@@ -125,12 +136,11 @@ export function Stepper({
   initialStep = 1,
   onStepChange,
   onFinalStepCompleted,
-  backButtonText = 'Zurück',
-  nextButtonText = 'Weiter',
-  finalButtonText = 'Abschließen',
+  messages,
   className,
   style,
 }: StepperProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const [currentStep, setCurrentStep] = useState(initialStep)
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = backward
 
@@ -179,10 +189,20 @@ export function Stepper({
 
   return (
     <div className={className} style={style}>
-      <StepIndicator totalSteps={totalSteps} currentStep={currentStep} titles={titles} />
+      <StepIndicator
+        totalSteps={totalSteps}
+        currentStep={currentStep}
+        titles={titles}
+        completedLabel={m.completed}
+      />
 
       {/* Step content with animation */}
-      <div className="relative overflow-hidden min-h-[120px]">
+      <div
+        className="relative overflow-hidden min-h-[120px]"
+        role="group"
+        aria-label={interpolate(m.stepOfTotal, { current: currentStep, total: totalSteps })}
+        aria-live="polite"
+      >
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
@@ -211,7 +231,7 @@ export function Stepper({
               : "bg-transparent text-[var(--foreground,#e4e4e7)] border-[var(--border,#2a2a2e)] hover:bg-white/5"
           )}
         >
-          {backButtonText}
+          {m.back}
         </button>
 
         <button
@@ -219,7 +239,7 @@ export function Stepper({
           onClick={goNext}
           className="px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 bg-[var(--accent,#6366f1)] text-white border-none cursor-pointer hover:opacity-90 active:scale-95"
         >
-          {isLastStep ? finalButtonText : nextButtonText}
+          {isLastStep ? m.finalize : m.next}
         </button>
       </div>
     </div>

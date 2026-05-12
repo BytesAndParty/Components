@@ -7,6 +7,8 @@ import {
   isValidElement,
 } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { useComponentMessages, interpolate } from '../i18n'
+import { MESSAGES, type StepperMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -18,12 +20,8 @@ export interface VerticalStepperProps {
   onStepChange?: (step: number) => void
   /** Callback when all steps are completed */
   onFinalStepCompleted?: () => void
-  /** Back button text (default: 'Zurück') */
-  backButtonText?: string
-  /** Next button text (default: 'Weiter') */
-  nextButtonText?: string
-  /** Final step button text (default: 'Abschließen') */
-  finalButtonText?: string
+  /** i18n overrides for button labels and SR step counter. */
+  messages?: Partial<StepperMessages>
   className?: string
   style?: CSSProperties
 }
@@ -129,12 +127,11 @@ export function VerticalStepper({
   initialStep = 1,
   onStepChange,
   onFinalStepCompleted,
-  backButtonText = 'Zurück',
-  nextButtonText = 'Weiter',
-  finalButtonText = 'Abschließen',
+  messages,
   className,
   style,
 }: VerticalStepperProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const [currentStep, setCurrentStep] = useState(initialStep)
 
   // Collect VerticalStep children
@@ -176,7 +173,10 @@ export function VerticalStepper({
   }
 
   return (
-    <div className={className} style={style}>
+    <ol
+      className={className}
+      style={{ listStyle: 'none', padding: 0, margin: 0, ...style }}
+    >
       {steps.map((step, i) => {
         const stepNum = i + 1
         const isActive = stepNum === currentStep
@@ -185,7 +185,11 @@ export function VerticalStepper({
         const isLast = i === totalSteps - 1
 
         return (
-          <div key={i}>
+          <li
+            key={i}
+            aria-current={isActive ? 'step' : undefined}
+            aria-label={interpolate(m.stepOfTotal, { current: stepNum, total: totalSteps })}
+          >
             {/* ── Step card ── */}
             <div
               style={{
@@ -235,6 +239,8 @@ export function VerticalStepper({
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-label={m.completed}
+                    role="img"
                   >
                     <motion.polyline
                       points="20 6 9 17 4 12"
@@ -315,7 +321,7 @@ export function VerticalStepper({
                             onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
                             onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                           >
-                            {backButtonText}
+                            {m.back}
                           </button>
                         )}
                         <button
@@ -329,7 +335,7 @@ export function VerticalStepper({
                           onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                           onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                         >
-                          {isLastStep ? finalButtonText : nextButtonText}
+                          {isLastStep ? m.finalize : m.next}
                         </button>
                       </div>
                     </motion.div>
@@ -341,6 +347,7 @@ export function VerticalStepper({
             {/* ── Vertical connector between steps ── */}
             {!isLast && (
               <div
+                aria-hidden
                 style={{
                   marginLeft: `${20 + CONNECTOR_OFFSET}px`,
                   width: '2px',
@@ -361,9 +368,9 @@ export function VerticalStepper({
                 />
               </div>
             )}
-          </div>
+          </li>
         )
       })}
-    </div>
+    </ol>
   )
 }
