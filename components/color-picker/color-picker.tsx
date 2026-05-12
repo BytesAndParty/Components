@@ -6,7 +6,58 @@ import { useComponentMessages } from '../i18n'
 import { MESSAGES, type ColorPickerMessages } from './messages'
 
 type ColorFormat = 'hex' | 'rgb' | 'hsl'
-...
+
+export type PaletteGroup = {
+  label: string
+  colors: string[]
+}
+
+function getDefaultPaletteGroups(m: ColorPickerMessages): PaletteGroup[] {
+  return [
+    {
+      label: m.paletteIvory,
+      colors: ['#ffffff', '#fef9f0', '#f5eedc', '#ede0c8', '#e0d0b0', '#c8b890', '#a89870', '#7a6850', '#3c2d1f'],
+    },
+    {
+      label: m.paletteGold,
+      colors: ['#fef9c3', '#fde68a', '#fbbf24', '#f59e0b', '#d4af37', '#c5a028', '#a07020', '#7a5010', '#4a3008'],
+    },
+    {
+      label: m.paletteWine,
+      colors: ['#fdf2f4', '#f5c6cf', '#e07890', '#c04060', '#9c1f38', '#7c2832', '#722f37', '#501828', '#2d0810'],
+    },
+    {
+      label: m.paletteMidnight,
+      colors: ['#f0f2f8', '#ccd4ec', '#8090cc', '#4060a8', '#1c3878', '#10204a', '#0a1430', '#050918', '#020408'],
+    },
+    {
+      label: m.paletteBark,
+      colors: ['#fdf6ee', '#e8d4b8', '#c8a880', '#a07848', '#7a5828', '#5a3c1a', '#3c280e', '#20160a', '#000000'],
+    },
+  ]
+}
+
+export interface ColorPickerProps {
+  value?: string
+  defaultValue?: string
+  onChange?: (hex: string) => void
+  showAlpha?: boolean
+  presets?: string[]
+  paletteGroups?: PaletteGroup[]
+  className?: string
+  messages?: Partial<ColorPickerMessages>
+}
+
+type Hsba = { h: number; s: number; b: number; a: number }
+
+const TRANSPARENCY_GRID_BG: CSSProperties = {
+  backgroundImage:
+    'linear-gradient(45deg, rgba(0,0,0,0.15) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.15) 75%),' +
+    'linear-gradient(45deg, rgba(0,0,0,0.15) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.15) 75%)',
+  backgroundSize: '8px 8px',
+  backgroundPosition: '0 0, 4px 4px',
+}
+
 export function ColorPickerPanel({
   value,
   defaultValue = '#000000',

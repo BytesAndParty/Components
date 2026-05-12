@@ -1,26 +1,8 @@
 import { useState, useCallback, type CSSProperties } from 'react'
 import { useComponentMessages, interpolate } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type RatingMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
-
-export interface RatingMessages {
-  /** ARIA label for the entire rating group (default: "Rating" / "Bewertung") */
-  ariaLabel: string
-  /** Individual star label with {current} and {total} placeholders */
-  starLabel: string
-}
-
-const RATING_MESSAGES = {
-  de: {
-    ariaLabel: 'Bewertung',
-    starLabel: '{current} von {total} Sternen',
-  },
-  en: {
-    ariaLabel: 'Rating',
-    starLabel: '{current} of {total} stars',
-  },
-} as const satisfies ComponentMessages<RatingMessages>
 
 export interface RatingProps {
   /** Number of stars (default: 5) */
@@ -86,7 +68,7 @@ export function Rating({
   const [hoverValue, setHoverValue] = useState<number | null>(null)
   const [animatingIndex, setAnimatingIndex] = useState<number | null>(null)
 
-  const m = useComponentMessages(RATING_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
 
   const currentValue = isControlled ? controlledValue : internalValue
   const displayValue = hoverValue ?? currentValue
@@ -153,4 +135,3 @@ export function Rating({
     </div>
   )
 }
-

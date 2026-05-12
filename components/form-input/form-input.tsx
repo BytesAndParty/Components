@@ -17,15 +17,6 @@ export type FormInputMessages = {
   requiredLabel: string;
 };
 
-const FORM_INPUT_MESSAGES = {
-  de: {
-    requiredLabel: '*',
-  },
-  en: {
-    requiredLabel: '*',
-  },
-} as const satisfies ComponentMessages<FormInputMessages>;
-
 export interface FormInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'prefix'> {
   type?: FormInputType;

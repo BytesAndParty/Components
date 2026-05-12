@@ -2,7 +2,7 @@ import { ChevronRight, MoreHorizontal } from 'lucide-react';
 import * as React from 'react';
 import { useEffect, createContext, useContext } from 'react';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
+import { MESSAGES, type BreadcrumbMessages } from './messages';
 
 const STYLE_ID = 'breadcrumb-styles';
 
@@ -187,19 +187,6 @@ export function BreadcrumbEllipsis({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        ...style,
-      }}
-      data-slot="breadcrumb-ellipsis"
-      {...props}
-    >
-      <MoreHorizontal style={{ width: '1rem', height: '1rem' }} />
-      <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
-        {m.more}
-      </span>
-    </span>
-  );
-}
-gnItems: 'center',
         ...style,
       }}
       data-slot="breadcrumb-ellipsis"

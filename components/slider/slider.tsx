@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 import { useComponentMessages, useI18n } from '../i18n';
-import type { ComponentMessages } from '../i18n';
+import { MESSAGES, type SliderMessages } from './messages';
 
 type Size = 'sm' | 'md' | 'lg';
 
@@ -10,19 +10,6 @@ const sizes: Record<Size, { trackH: number; thumb: number; thumbActive: number }
   md: { trackH: 6, thumb: 18, thumbActive: 22 },
   lg: { trackH: 8, thumb: 22, thumbActive: 28 },
 };
-
-export type SliderMessages = {
-  ariaLabel: string;
-};
-
-const SLIDER_MESSAGES = {
-  de: {
-    ariaLabel: 'Schieberegler',
-  },
-  en: {
-    ariaLabel: 'Slider',
-  },
-} as const satisfies ComponentMessages<SliderMessages>;
 
 export interface SliderProps {
   value?: number;
@@ -74,7 +61,7 @@ export function Slider({
   const trackRef = useRef<HTMLDivElement>(null);
   const id = useId();
   const { locale } = useI18n();
-  const m = useComponentMessages(SLIDER_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   const isControlled = controlled !== undefined;
   const value = clamp(isControlled ? (controlled as number) : internal, min, max);

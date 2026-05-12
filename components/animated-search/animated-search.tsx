@@ -22,21 +22,25 @@ interface AnimatedSearchProps {
   onSearch?: (value: string) => void;
   onChange?: (value: string) => void;
   expandedWidth?: number;
+  messages?: Partial<AnimatedSearchMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
 
 export function AnimatedSearch({
-  placeholder = 'Search...',
+  placeholder: _placeholder,
   onSearch,
   onChange,
   expandedWidth = 280,
+  messages,
   className,
   style,
 }: AnimatedSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const m = useComponentMessages(MESSAGES, messages);
+  const placeholder = _placeholder ?? m.placeholder;
 
   const iconSize = 42;
   const hasContent = value.length > 0;

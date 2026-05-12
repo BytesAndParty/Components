@@ -2,20 +2,7 @@ import { useState, useRef, useEffect, ReactNode, useId } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
-
-export type TooltipMessages = {
-  ariaLabel: string;
-};
-
-const TOOLTIP_MESSAGES = {
-  de: {
-    ariaLabel: 'Tooltip',
-  },
-  en: {
-    ariaLabel: 'Tooltip',
-  },
-} as const satisfies ComponentMessages<TooltipMessages>;
+import { MESSAGES, type TooltipMessages } from './messages';
 
 interface TooltipProps {
   children: ReactNode;
@@ -37,7 +24,7 @@ export function Tooltip({
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
-  const m = useComponentMessages(TOOLTIP_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   const show = () => {
     timeoutRef.current = setTimeout(() => setIsVisible(true), delay * 1000);

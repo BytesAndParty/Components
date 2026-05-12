@@ -66,27 +66,6 @@ export interface LayerPanelProps {
 
 // ── Default messages ──────────────────────────────────────────────────────────
 
-const LAYER_MESSAGES = {
-  de: {
-    deleteLayer: 'Ebene löschen',
-    renameLayer: 'Ebene umbenennen',
-    dragHandle:  'Zum Sortieren ziehen (Shift + ↑/↓)',
-    visibility:  'Sichtbarkeit umschalten',
-    lock:        'Sperre umschalten',
-    layersHeader: 'Ebenen',
-    noObjects: 'Noch keine Objekte. Füge Text, Bilder oder Formen hinzu.',
-  },
-  en: {
-    deleteLayer: 'Delete layer',
-    renameLayer: 'Rename layer',
-    dragHandle:  'Drag to reorder (Shift + ↑/↓)',
-    visibility:  'Toggle visibility',
-    lock:        'Toggle lock',
-    layersHeader: 'Layers',
-    noObjects: 'No objects yet. Add text, images or shapes to the canvas.',
-  },
-} as const satisfies ComponentMessages<LayerPanelMessages>
-
 // ── Icon map ──────────────────────────────────────────────────────────────────
 
 const TYPE_ICON: Record<LayerType, React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {

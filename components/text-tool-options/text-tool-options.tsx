@@ -9,7 +9,7 @@ import { cn } from '../lib/utils'
 import { NumberInput } from '../number-input/number-input'
 import { ColorPickerPanel } from '../color-picker/color-picker'
 import { useComponentMessages, useArkTranslations } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type TextToolOptionsMessages } from './messages'
 
 // ── Font catalogue ────────────────────────────────────────────────────────────
 

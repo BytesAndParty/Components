@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useComponentMessages } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type NavbarMessages } from './messages'
 
 // ─── Context ────────────────────────────────────────────────────────────────────
 
@@ -33,25 +33,6 @@ function useNavbar() {
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
-
-export type NavbarMessages = {
-  ariaLabel: string
-  openMenu: string
-  closeMenu: string
-}
-
-const NAVBAR_MESSAGES = {
-  de: {
-    ariaLabel: 'Hauptnavigation',
-    openMenu: 'Menü öffnen',
-    closeMenu: 'Menü schließen',
-  },
-  en: {
-    ariaLabel: 'Main navigation',
-    openMenu: 'Open menu',
-    closeMenu: 'Close menu',
-  },
-} as const satisfies ComponentMessages<NavbarMessages>
 
 export interface NavbarProps {
   children: ReactNode
@@ -161,7 +142,7 @@ export function Navbar({
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  const m = useComponentMessages(NAVBAR_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
 
   useEffect(() => {
     if (!sticky && !transparent) return

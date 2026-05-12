@@ -8,7 +8,10 @@ import { useComponentMessages, useArkTranslations } from '../i18n'
 import { MESSAGES, type ImageCropperMessages } from './messages'
 
 export interface ImageCropperModalProps {
-...
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  imageSrc?: string
+  aspectRatio?: number
   onCrop: (blob: Blob) => void
   className?: string
   messages?: Partial<ImageCropperMessages>

@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type AutocompleteMessages } from './messages'
 
 export interface AutocompleteSuggestion {
   id: number | string
@@ -19,6 +21,7 @@ export interface AutocompleteCellProps {
   onFocus?: () => void
   onBlur?: () => void
   placeholder?: string
+  messages?: Partial<AutocompleteMessages>
   className?: string
   isLoading?: boolean
 }
@@ -31,10 +34,12 @@ export function AutocompleteCell({
   inputRef: externalRef,
   onFocus,
   onBlur,
-  placeholder = 'Suchen...',
+  placeholder: _placeholder,
+  messages,
   className,
   isLoading = false,
 }: AutocompleteCellProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const [open, setOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(0)
   const [prevValue, setPrevValue] = useState(value)
@@ -49,6 +54,7 @@ export function AutocompleteCell({
   const containerRef = useRef<HTMLDivElement>(null)
   const internalRef = useRef<HTMLInputElement>(null)
   const inputRef = externalRef || internalRef
+  const placeholder = _placeholder ?? m.placeholder
 
   const filtered = value
     ? suggestions

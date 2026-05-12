@@ -9,25 +9,12 @@ import {
 import { motion, AnimatePresence, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
+import { MESSAGES, type ToastMessages } from './messages';
 
 /* ---------- Types ---------- */
 
 type ToastVariant = 'default' | 'success' | 'warning' | 'danger';
 type Placement = 'top-right' | 'top-center' | 'bottom-right' | 'bottom-center';
-
-export type ToastMessages = {
-  dismiss: string;
-};
-
-const TOAST_MESSAGES = {
-  de: {
-    dismiss: 'Schließen',
-  },
-  en: {
-    dismiss: 'Dismiss',
-  },
-} as const satisfies ComponentMessages<ToastMessages>;
 
 interface ToastData {
   id: string;
@@ -78,7 +65,7 @@ export function ToastProvider({
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const counter = useRef(0);
-  const m = useComponentMessages(TOAST_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   const add = useCallback((opts: Omit<ToastData, 'id'>) => {
     const id = `toast-${++counter.current}`;
