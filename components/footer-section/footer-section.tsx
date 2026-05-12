@@ -8,6 +8,8 @@ import {
   LinkedinIcon,
   YoutubeIcon,
 } from 'lucide-react';
+import { useI18n, useComponentMessages } from '../i18n';
+import { MESSAGES, type FooterMessages } from './messages';
 
 interface FooterLink {
   title: string;
@@ -27,56 +29,102 @@ export interface FooterProps {
   companyName?: string;
   /** Logo element or icon */
   logo?: ReactNode;
+  /** i18n overrides for the copyright suffix. */
+  messages?: Partial<FooterMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
 
-const defaultSections: FooterSectionData[] = [
-  {
-    label: 'Product',
-    links: [
-      { title: 'Features', href: '#features' },
-      { title: 'Pricing', href: '#pricing' },
-      { title: 'Testimonials', href: '#testimonials' },
-      { title: 'Integration', href: '#' },
-    ],
-  },
-  {
-    label: 'Company',
-    links: [
-      { title: 'FAQs', href: '#' },
-      { title: 'About Us', href: '#' },
-      { title: 'Privacy Policy', href: '#' },
-      { title: 'Terms of Services', href: '#' },
-    ],
-  },
-  {
-    label: 'Resources',
-    links: [
-      { title: 'Blog', href: '#' },
-      { title: 'Changelog', href: '#' },
-      { title: 'Brand', href: '#' },
-      { title: 'Help', href: '#' },
-    ],
-  },
-  {
-    label: 'Social Links',
-    links: [
-      { title: 'Facebook', href: '#', icon: FacebookIcon },
-      { title: 'Instagram', href: '#', icon: InstagramIcon },
-      { title: 'Youtube', href: '#', icon: YoutubeIcon },
-      { title: 'LinkedIn', href: '#', icon: LinkedinIcon },
-    ],
-  },
-];
+const defaultSectionsByLocale: Record<'de' | 'en', FooterSectionData[]> = {
+  en: [
+    {
+      label: 'Product',
+      links: [
+        { title: 'Features', href: '#features' },
+        { title: 'Pricing', href: '#pricing' },
+        { title: 'Testimonials', href: '#testimonials' },
+        { title: 'Integration', href: '#' },
+      ],
+    },
+    {
+      label: 'Company',
+      links: [
+        { title: 'FAQs', href: '#' },
+        { title: 'About Us', href: '#' },
+        { title: 'Privacy Policy', href: '#' },
+        { title: 'Terms of Services', href: '#' },
+      ],
+    },
+    {
+      label: 'Resources',
+      links: [
+        { title: 'Blog', href: '#' },
+        { title: 'Changelog', href: '#' },
+        { title: 'Brand', href: '#' },
+        { title: 'Help', href: '#' },
+      ],
+    },
+    {
+      label: 'Social Links',
+      links: [
+        { title: 'Facebook', href: '#', icon: FacebookIcon },
+        { title: 'Instagram', href: '#', icon: InstagramIcon },
+        { title: 'Youtube', href: '#', icon: YoutubeIcon },
+        { title: 'LinkedIn', href: '#', icon: LinkedinIcon },
+      ],
+    },
+  ],
+  de: [
+    {
+      label: 'Produkt',
+      links: [
+        { title: 'Funktionen', href: '#features' },
+        { title: 'Preise', href: '#pricing' },
+        { title: 'Stimmen', href: '#testimonials' },
+        { title: 'Integration', href: '#' },
+      ],
+    },
+    {
+      label: 'Unternehmen',
+      links: [
+        { title: 'FAQ', href: '#' },
+        { title: 'Über uns', href: '#' },
+        { title: 'Datenschutz', href: '#' },
+        { title: 'AGB', href: '#' },
+      ],
+    },
+    {
+      label: 'Ressourcen',
+      links: [
+        { title: 'Blog', href: '#' },
+        { title: 'Änderungen', href: '#' },
+        { title: 'Marke', href: '#' },
+        { title: 'Hilfe', href: '#' },
+      ],
+    },
+    {
+      label: 'Soziale Netzwerke',
+      links: [
+        { title: 'Facebook', href: '#', icon: FacebookIcon },
+        { title: 'Instagram', href: '#', icon: InstagramIcon },
+        { title: 'Youtube', href: '#', icon: YoutubeIcon },
+        { title: 'LinkedIn', href: '#', icon: LinkedinIcon },
+      ],
+    },
+  ],
+};
 
 export function Footer({
-  sections = defaultSections,
+  sections,
   companyName = 'Asme',
   logo,
+  messages,
   className,
   style,
 }: FooterProps) {
+  const { locale } = useI18n();
+  const m = useComponentMessages(MESSAGES, messages);
+  const resolvedSections = sections ?? defaultSectionsByLocale[locale];
   return (
     <footer
       className={className}
@@ -123,28 +171,28 @@ export function Footer({
         {/* Brand column */}
         <AnimatedContainer>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {logo ?? <FrameIcon style={{ width: '2rem', height: '2rem' }} />}
+            {logo ?? <FrameIcon aria-hidden style={{ width: '2rem', height: '2rem' }} />}
             <p
               style={{
                 fontSize: '0.8125rem',
                 color: 'var(--muted-foreground, #71717a)',
               }}
             >
-              &copy; {new Date().getFullYear()} {companyName}. All rights
-              reserved.
+              &copy; {new Date().getFullYear()} {companyName}. {m.rightsReserved}
             </p>
           </div>
         </AnimatedContainer>
 
         {/* Link columns */}
-        <div
+        <nav
+          aria-label={companyName}
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${sections.length}, 1fr)`,
+            gridTemplateColumns: `repeat(${resolvedSections.length}, 1fr)`,
             gap: '2rem',
           }}
         >
-          {sections.map((section, index) => (
+          {resolvedSections.map((section, index) => (
             <AnimatedContainer key={section.label} delay={0.1 + index * 0.1}>
               <div>
                 <h3
@@ -185,6 +233,7 @@ export function Footer({
                       >
                         {link.icon && (
                           <link.icon
+                            aria-hidden
                             style={{ width: '1rem', height: '1rem' }}
                           />
                         )}
@@ -196,7 +245,7 @@ export function Footer({
               </div>
             </AnimatedContainer>
           ))}
-        </div>
+        </nav>
       </div>
     </footer>
   );

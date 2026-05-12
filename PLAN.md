@@ -101,6 +101,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `autocomplete-cell` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `dock` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `file-tree` | ✅ | n/a | n/a | ✅ | ✅ |
+| `footer-section` | ✅ | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -109,7 +110,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | Komponente | motion/react | i18n | Hotkeys | A11y | Status |
 |---|---|---|---|---|---|
 | `animated-weather-icons` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
-| `footer-section` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `scroll-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 | `search-morph` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `stepper` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
