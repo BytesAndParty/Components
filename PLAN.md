@@ -105,6 +105,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `search-morph` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `stepper` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `stepper-vertical` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `animated-weather-icons` | ✅ | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -112,7 +113,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | motion/react | i18n | Hotkeys | A11y | Status |
 |---|---|---|---|---|---|
-| `animated-weather-icons` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `scroll-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 | `text-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 | `text-scramble` | ✅ | n/a | n/a | ⬜ | 🔶 |
@@ -198,6 +198,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 26
-- **Teilweise refactored (🔶):** 13
+- **Vollständig refactored (✅):** 35
+- **Teilweise refactored (🔶):** 4
 - **Ausstehend (⬜):** 37
