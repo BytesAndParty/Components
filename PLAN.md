@@ -95,6 +95,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `heart-like` | n/a | ✅ | n/a | ✅ | ✅ |
 | `animated-theme-toggler` | n/a | ✅ | n/a | ✅ | ✅ |
 | `accent-switcher` | n/a | ✅ | n/a | ✅ | ✅ |
+| `jelly-button` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -149,7 +150,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `highlighter` | n/a | n/a | ⬜ |
 | `hover-3d-card` | n/a | ⬜ | ⬜ |
 | `images-slider` | ⬜ | ✅ | ⬜ |
-| `jelly-button` | ⬜ | ⬜ | ⬜ |
 | `lens` | n/a | ⬜ | ⬜ |
 | `light-rays` | n/a | n/a | ⬜ |
 | `magnetic-button` | ⬜ | ⬜ | ⬜ |

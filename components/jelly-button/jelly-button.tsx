@@ -20,20 +20,29 @@ export function JellyButton({
   children,
   size = 'md',
   color = 'var(--accent)',
+  // Default to "button" to avoid implicit form submission. Consumers can opt in to submit.
+  type = 'button',
   style,
   onMouseEnter,
   onMouseLeave,
   onMouseDown,
   onMouseUp,
+  onFocus,
+  onBlur,
   disabled,
   ...rest
 }: JellyButtonProps) {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
   const filterId = `jelly-goo-${useId().replace(/:/g, '')}`;
 
   const s = sizes[size];
   const shadow = `color-mix(in oklch, ${color} 35%, transparent)`;
+  // Focus ring stacks on top of the press shadow so it stays visible
+  const focusRing = focusVisible
+    ? `, 0 0 0 3px var(--background, #fff), 0 0 0 5px var(--accent)`
+    : '';
 
   const buttonTransform = pressed
     ? 'scaleX(0.94) scaleY(1.06)'
@@ -60,6 +69,7 @@ export function JellyButton({
   return (
     <button
       {...rest}
+      type={type}
       disabled={disabled}
       onMouseEnter={(e) => {
         if (!disabled) setHovered(true);
@@ -77,6 +87,14 @@ export function JellyButton({
       onMouseUp={(e) => {
         setPressed(false);
         onMouseUp?.(e);
+      }}
+      onFocus={(e) => {
+        setFocusVisible(e.target.matches(':focus-visible'));
+        onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setFocusVisible(false);
+        onBlur?.(e);
       }}
       style={{
         position: 'relative',
@@ -99,10 +117,11 @@ export function JellyButton({
           ? 'transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s ease, background 0.2s ease'
           : 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, background 0.3s ease',
         boxShadow: pressed
-          ? `0 0.15em 0.5em ${shadow}`
+          ? `0 0.15em 0.5em ${shadow}${focusRing}`
           : hovered
-            ? `0 0.3em 1.2em ${shadow}`
-            : `0 0.2em 0.8em ${shadow}`,
+            ? `0 0.3em 1.2em ${shadow}${focusRing}`
+            : `0 0.2em 0.8em ${shadow}${focusRing}`,
+        outline: 'none',
         WebkitTapHighlightColor: 'transparent',
         ...style,
       }}
@@ -124,6 +143,7 @@ export function JellyButton({
 
       {/* Blobs — escape the button on hover, get sucked into the goo filter */}
       <span
+        aria-hidden
         style={{
           ...blobBase,
           width: '1.6em',
@@ -136,6 +156,7 @@ export function JellyButton({
         }}
       />
       <span
+        aria-hidden
         style={{
           ...blobBase,
           width: '1.2em',
@@ -149,6 +170,7 @@ export function JellyButton({
         }}
       />
       <span
+        aria-hidden
         style={{
           ...blobBase,
           width: '0.9em',
