@@ -8,22 +8,16 @@
  * currentColor trick: <g style={{ color: oklch(...) }}> + fill="currentColor".
  * CSS `color` supports oklch, and `currentColor` resolves it for SVG `fill`.
  *
- * Dependencies: none (lucide-react removed)
+ * A11y: WAI-ARIA menu pattern with menuitemradio. Arrow keys cycle items,
+ * Home/End jump to ends, Escape closes and returns focus to the trigger.
  *
- * Usage:
- *   <AccentSwitcher
- *     palettes={{
- *       amber:     { label: 'Amber',     oklch: 'oklch(0.555 0.146 49)' },
- *       emerald:   { label: 'Emerald',   oklch: 'oklch(0.511 0.086 186.4)' },
- *     }}
- *     defaultPalette="amber"
- *     granularity={400}
- *     onAccentChange={(key) => { ... }}
- *   />
+ * Dependencies: none (lucide-react removed)
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId, useCallback } from 'react';
 import { useAtelier } from '../atelier';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type AccentSwitcherMessages } from './messages';
 
 /* -------------------------------------------------------------------------- */
 /*  oklch interpolation helpers                                               */
@@ -70,8 +64,6 @@ export interface AccentSwitcherProps {
 	activePalette?: string;
 	/** HTML attribute name set on <html> for the accent. Default: "data-accent". */
 	accentAttribute?: string;
-	/** Label for the dropdown header. */
-	dropdownLabel?: string;
 	/**
 	 * Transition duration in ms for the color fade between accents.
 	 * Higher = longer & smoother, lower = faster & coarser. 0 = instant.
@@ -80,6 +72,8 @@ export interface AccentSwitcherProps {
 	granularity?: number;
 	/** Callback when accent palette changes. */
 	onAccentChange?: (key: string) => void;
+	/** i18n overrides for trigger label and current-item suffix. */
+	messages?: Partial<AccentSwitcherMessages>;
 	className?: string;
 	style?: React.CSSProperties;
 }
@@ -93,19 +87,22 @@ export function AccentSwitcher({
 	defaultPalette: _defaultPalette,
 	activePalette,
 	accentAttribute: _accentAttribute = 'data-accent',
-	dropdownLabel = 'Accent color',
 	granularity = 400,
 	onAccentChange,
+	messages,
 	className,
 	style,
 }: AccentSwitcherProps) {
 	const paletteKeys = Object.keys(palettes);
+	const m = useComponentMessages(MESSAGES, messages);
+	const menuId = useId();
 
 	const { accent, setAccent: setAtelierAccent } = useAtelier();
 
 	const [open, setOpen] = useState(false);
 	const [hovered, setHovered] = useState(false);
-	
+	const [focusVisible, setFocusVisible] = useState(false);
+
 	// currentAccent respects controlled prop first, then internal synced state
 	const currentAccent = activePalette && palettes[activePalette] ? activePalette : accent;
 
@@ -114,6 +111,7 @@ export function AccentSwitcher({
 	const styleRef = useRef<HTMLStyleElement | null>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
+	const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
 	// Persistent <style> element for transition overrides + seed initial oklch.
 	// Mount-only by design: re-creating the style element on every accent
@@ -147,6 +145,19 @@ export function AccentSwitcher({
 		return () => document.removeEventListener('mousedown', handleClick);
 	}, [open]);
 
+	// On open: focus the active item so arrow keys work immediately
+	useEffect(() => {
+		if (!open) return;
+		const activeIdx = paletteKeys.indexOf(currentAccent);
+		const target = itemRefs.current[activeIdx >= 0 ? activeIdx : 0];
+		target?.focus();
+	}, [open, currentAccent, paletteKeys]);
+
+	const closeAndRestoreFocus = useCallback(() => {
+		setOpen(false);
+		triggerRef.current?.focus();
+	}, []);
+
 	function selectAccent(key: string) {
 		const target = palettes[key];
 		if (!target) return;
@@ -155,7 +166,7 @@ export function AccentSwitcher({
 		const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
 
 		setAtelierAccent(key);
-		setOpen(false);
+		closeAndRestoreFocus();
 		onAccentChange?.(key);
 
 		// Instant switch if no interpolation possible or granularity is 0
@@ -198,6 +209,48 @@ export function AccentSwitcher({
 		animRef.current = requestAnimationFrame(step);
 	}
 
+	function focusItemAt(idx: number) {
+		const last = paletteKeys.length - 1;
+		const clamped = idx < 0 ? last : idx > last ? 0 : idx;
+		itemRefs.current[clamped]?.focus();
+	}
+
+	function handleMenuKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+		const activeIdx = itemRefs.current.findIndex((el) => el === document.activeElement);
+		switch (e.key) {
+			case 'ArrowDown':
+				e.preventDefault();
+				focusItemAt(activeIdx + 1);
+				break;
+			case 'ArrowUp':
+				e.preventDefault();
+				focusItemAt(activeIdx - 1);
+				break;
+			case 'Home':
+				e.preventDefault();
+				focusItemAt(0);
+				break;
+			case 'End':
+				e.preventDefault();
+				focusItemAt(paletteKeys.length - 1);
+				break;
+			case 'Escape':
+				e.preventDefault();
+				closeAndRestoreFocus();
+				break;
+			case 'Tab':
+				setOpen(false);
+				break;
+		}
+	}
+
+	function handleTriggerKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
+		if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			setOpen(true);
+		}
+	}
+
 	// First 4 palette colors for the icon dots
 	const dotColors = paletteKeys.slice(0, 4).map((key) => palettes[key]?.oklch ?? 'currentColor');
 
@@ -216,10 +269,15 @@ export function AccentSwitcher({
 				ref={triggerRef}
 				type="button"
 				onClick={() => setOpen((v: boolean) => !v)}
+				onKeyDown={handleTriggerKeyDown}
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
-				aria-label={dropdownLabel}
+				onFocus={(e) => setFocusVisible(e.target.matches(':focus-visible'))}
+				onBlur={() => setFocusVisible(false)}
+				aria-label={m.label}
+				aria-haspopup="menu"
 				aria-expanded={open}
+				aria-controls={menuId}
 				style={{
 					display: 'inline-flex',
 					alignItems: 'center',
@@ -231,13 +289,17 @@ export function AccentSwitcher({
 					background: hovered ? 'rgba(255,255,255,0.08)' : 'transparent',
 					color: 'inherit',
 					cursor: 'pointer',
-					transition: 'background 0.15s',
+					transition: 'background 0.15s, box-shadow 0.15s linear',
+					boxShadow: focusVisible
+						? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+						: 'none',
 				}}
 			>
 				<svg
 					width="18" height="18"
 					viewBox="0 0 24 24" fill="none" stroke="currentColor"
 					strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+					aria-hidden
 				>
 					<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
 					{/* oklch trick: CSS `color` supports oklch, fill="currentColor" resolves it */}
@@ -260,6 +322,10 @@ export function AccentSwitcher({
 			{open && (
 				<div
 					ref={menuRef}
+					id={menuId}
+					role="menu"
+					aria-label={m.label}
+					onKeyDown={handleMenuKeyDown}
 					style={{
 						position: 'absolute',
 						top: '100%',
@@ -283,11 +349,12 @@ export function AccentSwitcher({
 							opacity: 0.6,
 						}}
 					>
-						{dropdownLabel}
+						{m.label}
 					</div>
 
 					{/* Separator */}
 					<div
+						aria-hidden
 						style={{
 							height: '1px',
 							margin: '0.25rem -0.25rem',
@@ -296,12 +363,16 @@ export function AccentSwitcher({
 					/>
 
 					{/* Items */}
-					{paletteKeys.map((key) => {
+					{paletteKeys.map((key, idx) => {
 						const { label, oklch } = palettes[key];
+						const isActive = currentAccent === key;
 						return (
 							<button
 								key={key}
+								ref={(el) => { itemRefs.current[idx] = el; }}
 								type="button"
+								role="menuitemradio"
+								aria-checked={isActive}
 								onClick={() => selectAccent(key)}
 								style={{
 									display: 'flex',
@@ -323,8 +394,15 @@ export function AccentSwitcher({
 								onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
 									(e.currentTarget as HTMLElement).style.background = 'transparent';
 								}}
+								onFocus={(e: React.FocusEvent<HTMLButtonElement>) => {
+									(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+								}}
+								onBlur={(e: React.FocusEvent<HTMLButtonElement>) => {
+									(e.currentTarget as HTMLElement).style.background = 'transparent';
+								}}
 							>
 								<span
+									aria-hidden
 									style={{
 										width: '0.875rem',
 										height: '0.875rem',
@@ -335,10 +413,20 @@ export function AccentSwitcher({
 									}}
 								/>
 								<span>{label}</span>
-								{currentAccent === key && (
-									<span style={{ marginLeft: 'auto', fontSize: '0.75rem', opacity: 0.7 }}>
-										&#10003;
-									</span>
+								{isActive && (
+									<>
+										<span aria-hidden style={{ marginLeft: 'auto', fontSize: '0.75rem', opacity: 0.7 }}>
+											&#10003;
+										</span>
+										<span style={{
+											position: 'absolute',
+											width: 1, height: 1, padding: 0, margin: -1,
+											overflow: 'hidden', clip: 'rect(0,0,0,0)',
+											whiteSpace: 'nowrap', border: 0,
+										}}>
+											{m.current}
+										</span>
+									</>
 								)}
 							</button>
 						);

@@ -94,6 +94,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `switch` | n/a | n/a | n/a | ✅ | ✅ |
 | `heart-like` | n/a | ✅ | n/a | ✅ | ✅ |
 | `animated-theme-toggler` | n/a | ✅ | n/a | ✅ | ✅ |
+| `accent-switcher` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -127,7 +128,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | i18n nötig | A11y-Audit nötig | Status |
 |---|---|---|---|
-| `accent-switcher` | ⬜ | ⬜ | ⬜ |
 | `add-to-cart-button` | ⬜ | ⬜ | ⬜ |
 | `ambient-image` | n/a | ⬜ | ⬜ |
 | `animated-icons` | n/a | ⬜ | ⬜ |
