@@ -1,25 +1,31 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type SearchMorphMessages } from './messages';
 
-interface SearchMorphProps {
+export interface SearchMorphProps {
   placeholder?: string;
   onSearch?: (value: string) => void;
   onChange?: (value: string) => void;
   expandedWidth?: number;
   strokeWidth?: number;
+  messages?: Partial<SearchMorphMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
 
 export function SearchMorph({
-  placeholder = 'Search...',
+  placeholder: _placeholder,
   onSearch,
   onChange,
   expandedWidth = 280,
   strokeWidth = 2.5,
+  messages,
   className,
   style,
 }: SearchMorphProps) {
+  const m = useComponentMessages(MESSAGES, messages);
+  const placeholder = _placeholder ?? m.placeholder;
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -85,13 +91,14 @@ export function SearchMorph({
           setIsOpen(true);
         }
       }}
-      aria-label={isOpen ? undefined : 'Open search'}
+      aria-label={isOpen ? undefined : m.openLabel}
     >
       <svg
         width={expandedWidth}
         height={size}
         viewBox={`0 0 ${expandedWidth} ${size}`}
         fill="none"
+        aria-hidden
         style={{ position: 'absolute', left: 0, top: 0, pointerEvents: isOpen ? 'none' : undefined }}
       >
         {/* Underline - extends from right to left as circle unrolls */}
@@ -192,7 +199,7 @@ export function SearchMorph({
       {/* Input field */}
       <motion.input
         ref={inputRef}
-        type="text"
+        type="search"
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -200,6 +207,7 @@ export function SearchMorph({
           if (!value) close();
         }}
         placeholder={placeholder}
+        aria-label={m.placeholder}
         initial={false}
         animate={{ opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.2, delay: isOpen ? 0.55 : 0 }}
@@ -241,7 +249,7 @@ export function SearchMorph({
             border: 'none',
             cursor: 'pointer',
           }}
-          aria-label="Close search"
+          aria-label={m.closeLabel}
         />
       )}
     </motion.div>
