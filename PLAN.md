@@ -97,6 +97,8 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `accent-switcher` | n/a | ✅ | n/a | ✅ | ✅ |
 | `jelly-button` | n/a | n/a | n/a | ✅ | ✅ |
 | `magnetic-button` | n/a | n/a | n/a | ✅ | ✅ |
+| `animated-search` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `autocomplete-cell` | ✅ | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -104,9 +106,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | motion/react | i18n | Hotkeys | A11y | Status |
 |---|---|---|---|---|---|
-| `animated-search` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `animated-weather-icons` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
-| `autocomplete-cell` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `dock` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `file-tree` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `footer-section` | ✅ | ⬜ | n/a | ⬜ | 🔶 |

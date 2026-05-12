@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useId } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -55,6 +55,8 @@ export function AutocompleteCell({
   const internalRef = useRef<HTMLInputElement>(null)
   const inputRef = externalRef || internalRef
   const placeholder = _placeholder ?? m.placeholder
+  const listboxId = useId()
+  const optionIdPrefix = useId()
 
   const filtered = value
     ? suggestions
@@ -143,6 +145,13 @@ export function AutocompleteCell({
         <input
           ref={inputRef}
           type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={open && filtered.length > 0}
+          aria-controls={listboxId}
+          aria-activedescendant={
+            open && filtered.length > 0 ? `${optionIdPrefix}-${highlightIndex}` : undefined
+          }
           value={value}
           onChange={(e) => {
             onChange(e.target.value)
@@ -162,10 +171,12 @@ export function AutocompleteCell({
         <AnimatePresence>
           {value && (
             <motion.button
+              type="button"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={() => { onChange(''); inputRef.current?.focus() }}
+              aria-label={m.clearLabel}
               className="shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
@@ -177,6 +188,9 @@ export function AutocompleteCell({
       <AnimatePresence>
         {open && filtered.length > 0 && (
           <motion.div
+            id={listboxId}
+            role="listbox"
+            aria-label={m.suggestionsLabel}
             initial={{ opacity: 0, y: 4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
@@ -185,11 +199,13 @@ export function AutocompleteCell({
           >
             <div className="py-1">
               {filtered.map((item, i) => (
-                <button
+                <div
                   key={item.id}
-                  type="button"
+                  id={`${optionIdPrefix}-${i}`}
+                  role="option"
+                  aria-selected={i === highlightIndex}
                   className={cn(
-                    'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors',
+                    'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors cursor-pointer',
                     i === highlightIndex
                       ? 'bg-accent text-white'
                       : 'hover:bg-accent/5 text-foreground'
@@ -211,11 +227,14 @@ export function AutocompleteCell({
                       </span>
                     )}
                   </div>
-                  <ChevronRight className={cn(
-                    'h-3.5 w-3.5 shrink-0 transition-[opacity,transform]',
-                    i === highlightIndex ? 'translate-x-0.5 opacity-100' : 'opacity-20'
-                  )} />
-                </button>
+                  <ChevronRight
+                    aria-hidden
+                    className={cn(
+                      'h-3.5 w-3.5 shrink-0 transition-[opacity,transform]',
+                      i === highlightIndex ? 'translate-x-0.5 opacity-100' : 'opacity-20'
+                    )}
+                  />
+                </div>
               ))}
             </div>
           </motion.div>
