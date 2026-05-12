@@ -92,6 +92,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `navbar` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `checkbox` | n/a | n/a | n/a | ✅ | ✅ |
 | `switch` | n/a | n/a | n/a | ✅ | ✅ |
+| `heart-like` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -145,7 +146,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `floating-cart` | ✅ | ✅ | ⬜ |
 | `glow-card` | n/a | ⬜ | ⬜ |
 | `gooey-input` | ✅ | ✅ | ⬜ |
-| `heart-like` | ⬜ | ⬜ | ⬜ |
 | `highlighter` | n/a | n/a | ⬜ |
 | `hover-3d-card` | n/a | ⬜ | ⬜ |
 | `images-slider` | ⬜ | ✅ | ⬜ |

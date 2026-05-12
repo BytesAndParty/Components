@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type HeartLikeMessages } from './messages';
 
 const STYLE_ID = '__heart-like-styles__';
 
@@ -30,7 +32,8 @@ export interface HeartLikeProps {
   size?: number;
   color?: string;
   disabled?: boolean;
-  ariaLabel?: string;
+  /** i18n overrides for the `like` / `unlike` labels. */
+  messages?: Partial<HeartLikeMessages>;
   className?: string;
 }
 
@@ -41,13 +44,15 @@ export function HeartLike({
   size = 50,
   color = 'var(--accent)',
   disabled = false,
-  ariaLabel = 'Like',
+  messages,
   className,
 }: HeartLikeProps) {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
   const [celebrateKey, setCelebrateKey] = useState(0);
+  const [focusVisible, setFocusVisible] = useState(false);
   const id = useId();
   const injected = useRef(false);
+  const m = useComponentMessages(MESSAGES, messages);
 
   useEffect(() => {
     if (!injected.current) {
@@ -58,6 +63,7 @@ export function HeartLike({
 
   const isControlled = controlledChecked !== undefined;
   const checked = isControlled ? controlledChecked : internalChecked;
+  const label = checked ? m.unlike : m.like;
 
   const toggle = () => {
     if (disabled) return;
@@ -70,7 +76,7 @@ export function HeartLike({
   return (
     <label
       htmlFor={id}
-      title={ariaLabel}
+      title={label}
       className={className}
       style={{
         position: 'relative',
@@ -80,15 +86,22 @@ export function HeartLike({
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
         WebkitTapHighlightColor: 'transparent',
+        borderRadius: '50%',
+        boxShadow: focusVisible
+          ? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+          : 'none',
+        transition: 'box-shadow 0.15s linear',
       }}
     >
       <input
         id={id}
         type="checkbox"
-        aria-label={ariaLabel}
+        aria-label={label}
         checked={checked}
         disabled={disabled}
         onChange={toggle}
+        onFocus={(e) => setFocusVisible(e.target.matches(':focus-visible'))}
+        onBlur={() => setFocusVisible(false)}
         style={{
           position: 'absolute',
           inset: 0,
