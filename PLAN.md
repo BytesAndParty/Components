@@ -1,8 +1,8 @@
 # Design Engine — Implementation Plan
 
-> Letztes Update: 2026-05-02 (nach LanguageSwitcher)
+> Letztes Update: 2026-05-12 (Form-Primitives-Batch + Reconcile)
 
-> Branch: `main` — 8 Commits seit Session-Start
+> Branch: `main`
 
 ---
 
@@ -82,7 +82,14 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 |---|---|---|---|---|---|
 | `back-to-top` | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `search-overlay` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `form-input` | n/a | ⬜ | n/a | 🔶 | 🔶 |
+| `form-input` | n/a | ✅ | n/a | ✅ | ✅ |
+| `toast` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `tooltip` | ✅ | ✅ | n/a | ✅ | ✅ |
+| `breadcrumb` | n/a | ✅ | n/a | ✅ | ✅ |
+| `color-picker` | n/a | ✅ | n/a | ✅ | ✅ |
+| `slider` | n/a | ✅ | n/a | ✅ | ✅ |
+| `rating` | n/a | ✅ | n/a | ✅ | ✅ |
+| `navbar` | ✅ | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -96,15 +103,12 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `dock` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `file-tree` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `footer-section` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
-| `navbar` | ✅ | ⬜ | n/a | 🔶 | 🔶 |
 | `scroll-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 | `search-morph` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `stepper` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `stepper-vertical` | ✅ | ⬜ | n/a | ⬜ | 🔶 |
 | `text-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 | `text-scramble` | ✅ | n/a | n/a | ⬜ | 🔶 |
-| `toast` | ✅ | ⬜ | n/a | 🔶 | 🔶 |
-| `tooltip` | ✅ | n/a | n/a | 🔶 | 🔶 |
 | `velocity-scroll` | ✅ | n/a | n/a | ⬜ | 🔶 |
 
 ### Neu hinzugefügt
@@ -130,12 +134,9 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `blur-fade` | n/a | n/a | ⬜ |
 | `bounce-cards` | n/a | ⬜ | ⬜ |
 | `bounce-loader` | n/a | n/a | ⬜ |
-| `breadcrumb` | ✅ | ✅ | ⬜ |
 | `cart-icon` | ⬜ | ⬜ | ⬜ |
-| `checkbox` | ⬜ | ✅ | ⬜ |
 | `circular-progress` | ⬜ | ⬜ | ⬜ |
 | `click-spark` | n/a | n/a | ⬜ |
-| `color-picker` | ✅ | ✅ | ⬜ |
 | `confetti` | n/a | n/a | ⬜ |
 | `countdown` | ⬜ | ⬜ | ⬜ |
 | `cursor-glow` | n/a | n/a | ⬜ |
@@ -160,10 +161,8 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `pricing-interaction` | ✅ | ✅ | ⬜ |
 | `product-badge` | ⬜ | ⬜ | ⬜ |
 | `product-tag` | ⬜ | ⬜ | ⬜ |
-| `rating` | ✅ | ✅ | ⬜ |
 | `scroll-progress` | n/a | ⬜ | ⬜ |
 | `shiny-text` | n/a | n/a | ⬜ |
-| `slider` | ✅ | ✅ | ⬜ |
 | `sparkles-text` | n/a | n/a | ⬜ |
 | `splash-cursor` | n/a | n/a | ⬜ |
 | `sticky-banner` | ✅ | ⬜ | ⬜ |
@@ -198,6 +197,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 5
-- **Teilweise refactored (🔶):** 26
-- **Ausstehend (⬜):** 45
+- **Vollständig refactored (✅):** 19
+- **Teilweise refactored (🔶):** 13
+- **Ausstehend (⬜):** 44
