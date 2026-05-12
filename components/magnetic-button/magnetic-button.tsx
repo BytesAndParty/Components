@@ -43,6 +43,10 @@ function injectStyles() {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
+    .magnetic-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -182,6 +186,8 @@ export function MagneticButton({
   className,
   strength = 0.3,
   variant = 'default',
+  // Default to "button" so MagneticButton doesn't accidentally submit forms.
+  type = 'button',
   onMouseMove,
   onMouseLeave,
   style,
@@ -222,8 +228,9 @@ export function MagneticButton({
   return (
     <button
       ref={buttonRef}
+      type={type}
       className={cn(
-        'relative before:absolute before:-inset-3 before:-z-10',
+        'magnetic-btn relative before:absolute before:-inset-3 before:-z-10',
         'motion-safe:transition-[transform,box-shadow,background-color,border-color,color]',
         'motion-safe:duration-200 motion-safe:ease-out',
         'motion-reduce:transition-none',

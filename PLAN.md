@@ -96,6 +96,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `animated-theme-toggler` | n/a | ✅ | n/a | ✅ | ✅ |
 | `accent-switcher` | n/a | ✅ | n/a | ✅ | ✅ |
 | `jelly-button` | n/a | n/a | n/a | ✅ | ✅ |
+| `magnetic-button` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -152,7 +153,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `images-slider` | ⬜ | ✅ | ⬜ |
 | `lens` | n/a | ⬜ | ⬜ |
 | `light-rays` | n/a | n/a | ⬜ |
-| `magnetic-button` | ⬜ | ⬜ | ⬜ |
 | `morphing-text` | n/a | n/a | ⬜ |
 | `number-ticker` | n/a | ⬜ | ⬜ |
 | `paragraph` | n/a | n/a | ⬜ |
@@ -198,6 +198,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 19
+- **Vollständig refactored (✅):** 26
 - **Teilweise refactored (🔶):** 13
-- **Ausstehend (⬜):** 44
+- **Ausstehend (⬜):** 37
