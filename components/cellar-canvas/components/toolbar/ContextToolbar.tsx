@@ -1,11 +1,11 @@
 import { useDesignerStore } from '../../store/designer-store'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
-import { ColorPickerPanel } from '../../../color-picker/color-picker'
-import { AlignmentBar, type AlignAction } from '../../../alignment-bar/alignment-bar'
+import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { Tooltip } from '../shared'
-import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import { useEffect, useState } from 'react'
+import { BringToFront, SendToBack } from 'lucide-react'
+import type { FabricObjectProperties } from '../../store/types'
 
 interface ContextToolbarProps {
   bridge: React.MutableRefObject<FabricBridge | null>
@@ -13,7 +13,7 @@ interface ContextToolbarProps {
 
 export function ContextToolbar({ bridge }: ContextToolbarProps) {
   const selectedIds = useDesignerStore(s => s.selectedIds)
-  const [props, setProps] = useState<any>(null)
+  const [props, setProps] = useState<FabricObjectProperties | null>(null)
 
   // Update local state when selection changes or object is modified
   useEffect(() => {
@@ -21,10 +21,8 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       setProps(bridge.current?.getActiveObjectProperties())
     }
 
-    // Initial update
     update()
 
-    // Listen for canvas events
     const canvas = bridge.current?.canvas
     if (canvas) {
       canvas.on('object:moving', update)
@@ -34,6 +32,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       canvas.on('selection:created', update)
       canvas.on('selection:updated', update)
       canvas.on('selection:cleared', update)
+      canvas.on('text:changed', update)
     }
 
     return () => {
@@ -45,6 +44,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
         canvas.off('selection:created', update)
         canvas.off('selection:updated', update)
         canvas.off('selection:cleared', update)
+        canvas.off('text:changed', update)
       }
     }
   }, [selectedIds, bridge])
@@ -58,12 +58,17 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   }
 
   const isText = props.type === 'text' || props.type === 'wine-field'
+  const isWineField = props.type === 'wine-field'
 
   const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
-    // Map UI values back to Fabric properties if necessary
-    const fabricProps: any = { ...newFmt }
+    const fabricProps: Partial<FabricObjectProperties> = {}
     if (newFmt.bold !== undefined) fabricProps.fontWeight = newFmt.bold ? 'bold' : 'normal'
     if (newFmt.italic !== undefined) fabricProps.fontStyle = newFmt.italic ? 'italic' : 'normal'
+    if (newFmt.color !== undefined) fabricProps.fill = newFmt.color
+    if (newFmt.fontFamily !== undefined) fabricProps.fontFamily = newFmt.fontFamily
+    if (newFmt.fontSize !== undefined) fabricProps.fontSize = newFmt.fontSize
+    if (newFmt.underline !== undefined) fabricProps.underline = newFmt.underline
+    if (newFmt.textAlign !== undefined) fabricProps.textAlign = newFmt.textAlign
     
     bridge.current?.updateActiveObject(fabricProps)
   }
@@ -72,6 +77,15 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
     <div className="h-full flex items-center px-4 gap-6">
       {isText && (
         <div className="flex items-center gap-4">
+          {!isWineField && (
+            <input 
+              type="text" 
+              value={props.text || ''} 
+              onChange={(e) => bridge.current?.updateActiveObject({ text: e.target.value })}
+              className="text-xs font-medium bg-muted/50 border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-32"
+              placeholder="Text content..."
+            />
+          )}
           <TextToolOptions 
             value={{
               fontFamily: props.fontFamily,
@@ -89,24 +103,29 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
         </div>
       )}
 
-      {props.type === 'rect' && (
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] font-bold uppercase text-muted-foreground">Fill</span>
-          <div className="w-8 h-8 rounded border border-border overflow-hidden">
-             {/* Simple color trigger for now, ColorPicker is usually in a popover or panel */}
-             <div 
-               className="w-full h-full cursor-pointer" 
-               style={{ background: props.fill }}
-               onClick={() => {/* TODO: Open Color Picker Popover */}}
-             />
-          </div>
-        </div>
-      )}
+      <div className="flex items-center gap-1 border-l border-border pl-4">
+        <Tooltip content="Bring to Front">
+          <button 
+            onClick={() => bridge.current?.bringToFront()}
+            className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground"
+          >
+            <BringToFront size={16} />
+          </button>
+        </Tooltip>
+        <Tooltip content="Send to Back">
+          <button 
+            onClick={() => bridge.current?.sendToBack()}
+            className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground"
+          >
+            <SendToBack size={16} />
+          </button>
+        </Tooltip>
+      </div>
 
       {selectedIds.length >= 2 && (
         <div className="flex items-center gap-2 border-l border-border pl-4">
           <AlignmentBar onAlign={(action) => {
-            // TODO: Implement alignment in FabricBridge
+            // Alignment logic would go here
             console.log('Align:', action)
           }} />
         </div>

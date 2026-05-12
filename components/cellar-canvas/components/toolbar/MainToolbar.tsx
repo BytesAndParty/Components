@@ -3,6 +3,7 @@ import { useDesignerStore } from '../../store/designer-store'
 import { Tooltip } from '../shared'
 import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
+import type { DesignerState } from '../../store/types'
 
 interface MainToolbarProps {
   bridge: React.MutableRefObject<FabricBridge | null>
@@ -27,7 +28,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         <Tooltip key={tool.id} content={tool.label} position="right">
           <button
             onClick={() => {
-              setActiveTool(tool.id as any)
+              setActiveTool(tool.id as DesignerState['activeTool'])
               if ('action' in tool) tool.action()
             }}
             className={cn(

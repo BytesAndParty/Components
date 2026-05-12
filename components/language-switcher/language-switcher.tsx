@@ -16,6 +16,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useAtelier } from '../atelier'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type LanguageSwitcherMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -31,6 +33,10 @@ export interface LanguageSwitcherProps {
   languages?: Record<string, LanguageOption>
   /** Aria label for the trigger button. */
   triggerLabel?: string
+  /** Translation overrides. */
+  messages?: Partial<LanguageSwitcherMessages>
+  /** Called when language is changed. */
+  onChange?: (locale: string) => void
   className?: string
   style?: React.CSSProperties
 }
@@ -46,11 +52,14 @@ const DEFAULT_LANGUAGES: Record<string, LanguageOption> = {
 
 export function LanguageSwitcher({
   languages = DEFAULT_LANGUAGES,
-  triggerLabel = 'Select language',
+  triggerLabel: _triggerLabel,
+  messages,
+  onChange,
   className,
   style,
 }: LanguageSwitcherProps) {
   const { locale, setLocale } = useAtelier()
+  const m = useComponentMessages(MESSAGES, messages)
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [flipping, setFlipping] = useState(false)
@@ -59,6 +68,8 @@ export function LanguageSwitcher({
 
   const current = languages[locale] ?? Object.values(languages)[0]
   const localeKeys = Object.keys(languages)
+
+  const effectiveTriggerLabel = _triggerLabel ?? m.triggerLabel
 
   // Close on outside click
   useEffect(() => {
@@ -78,6 +89,7 @@ export function LanguageSwitcher({
     setFlipping(true)
     setTimeout(() => {
       setLocale(key as typeof locale)
+      onChange?.(key)
       setFlipping(false)
     }, 150)
     setOpen(false)
@@ -117,7 +129,7 @@ export function LanguageSwitcher({
           onClick={() => setOpen(v => !v)}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          aria-label={triggerLabel}
+          aria-label={effectiveTriggerLabel}
           aria-expanded={open}
           style={{
             position: 'relative',
@@ -175,7 +187,7 @@ export function LanguageSwitcher({
           <div
             ref={menuRef}
             role="listbox"
-            aria-label={triggerLabel}
+            aria-label={effectiveTriggerLabel}
             style={{
               position: 'absolute',
               top: '100%',
@@ -199,7 +211,7 @@ export function LanguageSwitcher({
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
             }}>
-              Language
+              {m.header}
             </div>
 
             <div style={{ height: '1px', margin: '0.25rem -0.25rem', background: 'var(--border)' }} />

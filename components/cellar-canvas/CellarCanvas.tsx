@@ -1,4 +1,4 @@
-import { type LabelArea } from './store/types'
+import * as fabric from 'fabric'
 import { useFabricCanvas } from './engine/use-fabric-canvas'
 import { LabelCanvas } from './components/canvas/LabelCanvas'
 import { useDesignerStore } from './store/designer-store'
@@ -12,6 +12,7 @@ import { validateCompliance } from './wine-fields/validator'
 import { useEffect, useState, useRef } from 'react'
 import { cn } from '../lib/utils'
 import { Maximize2, Minimize2 } from 'lucide-react'
+import type { FabricObjectProperties, FabricObjectMeta } from './store/types'
 
 export interface WineFieldValues {
   name?:               string
@@ -30,22 +31,21 @@ export interface WineFieldValues {
 
 export interface CellarCanvasProps {
   // Dimensions
-  dimensions?:          Partial<Record<LabelArea, { widthMm: number; heightMm: number }>>
+  widthMm?:  number
+  heightMm?: number
 
   // Pre-fill
   initialWineFields?:   WineFieldValues
-  initialState?:        Partial<Record<LabelArea, object>>
-  enabledAreas?:        LabelArea[]
-  defaultArea?:         LabelArea
+  initialState?:        object // Fabric JSON
 
   // Export
   exportDpi?:           number
   enablePdfExport?:     boolean
 
   // Callbacks
-  onChange?:            (state: Partial<Record<LabelArea, object>>) => void
-  onSave?:              (state: Partial<Record<LabelArea, object>>) => Promise<void>
-  onExport?:            (result: { area: LabelArea; format: 'png' | 'pdf'; blob: Blob }) => void
+  onChange?:            (state: object) => void
+  onSave?:              (state: object) => Promise<void>
+  onExport?:            (result: { format: 'png' | 'pdf'; blob: Blob }) => void
   onValidationChange?:  (warnings: string[]) => void
 
   // Styling
@@ -55,11 +55,8 @@ export interface CellarCanvasProps {
 }
 
 export function CellarCanvas({
-  dimensions = {
-    front: { widthMm: 90, heightMm: 120 },
-    back:  { widthMm: 90, heightMm: 120 },
-    neck:  { widthMm: 80, heightMm: 40 },
-  },
+  widthMm = 90,
+  heightMm = 120,
   initialWineFields = {
     name: 'Château des Vignes',
     vintage: '2021',
@@ -67,18 +64,15 @@ export function CellarCanvas({
     volumeMl: '750ml',
     nutritionalInfoUrl: 'https://wine-info.eu/vignes-2021'
   },
-  enabledAreas = ['front', 'back', 'neck'],
-  defaultArea = 'front',
   className,
   style,
   height = '80vh',
 }: CellarCanvasProps) {
-  const currentDimensions = dimensions[defaultArea] || { widthMm: 90, heightMm: 120 }
-  const { canvasRef, bridge } = useFabricCanvas(currentDimensions)
+  const { canvasRef, bridge } = useFabricCanvas({ widthMm, heightMm })
   const selectedIds = useDesignerStore(s => s.selectedIds)
-  const [activeProps, setActiveProps] = useState<any>(null)
+  const [activeProps, setActiveProps] = useState<FabricObjectProperties | null>(null)
   const [layers, setLayers] = useState<Layer[]>([])
-  const [warnings, setWarnings] = useState<any[]>([])
+  const [warnings, setWarnings] = useState<string[]>([])
   const [rightTab, setRightTab] = useState<'props' | 'fields'>('props')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -157,16 +151,12 @@ export function CellarCanvas({
         gridTemplateRows: '48px 48px 1fr',
       }}
     >
-      {/* Area Tabs (Top) */}
+      {/* Area Tabs (Top) - Simplified */}
       <div className="border-b border-border flex items-center px-4 h-12 bg-card/50" style={{ gridColumn: '1 / -1' }}>
         <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">Cellar Canvas</h2>
         <div className="mx-6 h-4 w-px bg-border" />
-        <div className="flex gap-1 flex-1">
-          {enabledAreas.map(area => (
-            <button key={area} className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider hover:bg-muted rounded-md transition-colors">
-              {area}
-            </button>
-          ))}
+        <div className="flex-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          Standard Label ({widthMm}x{heightMm}mm)
         </div>
         <button 
           onClick={toggleFullscreen}
@@ -262,6 +252,7 @@ export function CellarCanvas({
         </div>
 
         <div className="p-4 border-t border-border bg-muted/10 relative">
+           {/* Validator Badge floating relative to the layers list */}
            <div className="absolute -top-6 right-4">
               <ValidatorBadge warnings={warnings} />
            </div>
@@ -274,7 +265,7 @@ export function CellarCanvas({
              layers={layers}
              selectedIds={selectedIds}
              onSelect={(id) => {
-               const obj = bridge.current?.canvas.getObjects().find((o: any) => o.id === id)
+               const obj = bridge.current?.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
                if (obj) bridge.current?.canvas.setActiveObject(obj).renderAll()
              }}
              onReorder={(newLayers) => bridge.current?.reorderLayers(newLayers.map(l => l.id))}

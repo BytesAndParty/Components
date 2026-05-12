@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
+import { MESSAGES, type FormInputMessages } from './messages';
 
 export type FormInputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'url';
 
@@ -95,7 +95,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   const id = rest.id ?? `form-input-${reactId}`;
   const sz = sizes[size];
   const [shakeKey, setShakeKey] = useState(0);
-  const m = useComponentMessages(FORM_INPUT_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   useEffect(() => {
     injectStyles();

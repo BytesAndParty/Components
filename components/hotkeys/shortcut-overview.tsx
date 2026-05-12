@@ -3,39 +3,15 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-provider'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type ShortcutOverviewMessages } from './messages'
 
-// ── Messages ──────────────────────────────────────────────────────────────────
-
-export type ShortcutOverviewMessages = {
-  title: string
-  subtitle: string
-  openHint: string
-}
-
-const SHORTCUT_MESSAGES = {
-  de: {
-    title:    'Tastenkürzel',
-    subtitle: 'Alle aktiven Tastenkürzel auf dieser Seite',
-    openHint: 'zum Öffnen',
-  },
-  en: {
-    title:    'Shortcut Overview',
-    subtitle: 'All active shortcuts on this page',
-    openHint: 'to open',
-  },
-} as const satisfies ComponentMessages<ShortcutOverviewMessages>
-
-interface ShortcutOverviewProps {
-  className?: string
-  messages?: Partial<ShortcutOverviewMessages>
-}
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export function ShortcutOverview({
   className,
   messages,
 }: ShortcutOverviewProps) {
-  const m = useComponentMessages(SHORTCUT_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
   const { registry } = useHotkeysRegistry()
   const [isVisible, setIsVisible] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)

@@ -42,7 +42,7 @@ interface Particle {
 export function Particles({
   particleColors = ['#ffffff'],
   particleCount = 200,
-  particleSpread = 10,
+  particleSpread: _particleSpread = 10,
   speed = 0.1,
   particleBaseSize = 2,
   moveParticlesOnHover = false,

@@ -11,40 +11,9 @@ import { useState } from 'react'
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type DataTableMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-
-export type DataTableMessages = {
-  noResults: string
-  nextPage: string
-  prevPage: string
-  firstPage: string
-  lastPage: string
-  pageOf: string // e.g. "Seite {current} von {total}"
-  rowsPerPage: string
-}
-
-const DATA_TABLE_MESSAGES = {
-  de: {
-    noResults: 'Keine Ergebnisse gefunden.',
-    nextPage: 'Nächste Seite',
-    prevPage: 'Vorherige Seite',
-    firstPage: 'Erste Seite',
-    lastPage: 'Letzte Seite',
-    pageOf: 'Seite {current} von {total}',
-    rowsPerPage: 'Zeilen pro Seite',
-  },
-  en: {
-    noResults: 'No results found.',
-    nextPage: 'Next page',
-    prevPage: 'Previous page',
-    firstPage: 'First page',
-    lastPage: 'Last page',
-    pageOf: 'Page {current} of {total}',
-    rowsPerPage: 'Rows per page',
-  },
-} as const satisfies ComponentMessages<DataTableMessages>
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -64,7 +33,7 @@ export function DataTable<TData, TValue>({
   messages,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const m = useComponentMessages(DATA_TABLE_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
 
   const table = useReactTable({
     data,

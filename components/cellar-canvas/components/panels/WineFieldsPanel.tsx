@@ -1,8 +1,6 @@
-import { useDesignerStore } from '../../store/designer-store'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { WineFieldValues } from '../../CellarCanvas'
 import { Plus, QrCode } from 'lucide-react'
-import { cn } from '../../../lib/utils'
 
 interface WineFieldsPanelProps {
   bridge: React.MutableRefObject<FabricBridge | null>
@@ -10,8 +8,6 @@ interface WineFieldsPanelProps {
 }
 
 export function WineFieldsPanel({ bridge, values = {} }: WineFieldsPanelProps) {
-  const selectedIds = useDesignerStore(s => s.selectedIds)
-  
   const fields = [
     { key: 'name',           label: 'Wine Name',   value: values.name },
     { key: 'vintage',        label: 'Vintage',     value: values.vintage },

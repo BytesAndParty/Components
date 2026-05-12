@@ -11,14 +11,15 @@ export interface CanvasDimensions {
 export function useFabricCanvas(initialDimensions: CanvasDimensions) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const bridgeRef = useRef<FabricBridge | null>(null)
+  const { widthMm, heightMm } = initialDimensions
 
   useEffect(() => {
     if (!canvasRef.current) return
 
     // Initialize Fabric Canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
-      width: mmToPx(initialDimensions.widthMm),
-      height: mmToPx(initialDimensions.heightMm),
+      width: mmToPx(widthMm),
+      height: mmToPx(heightMm),
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
     })
@@ -37,7 +38,7 @@ export function useFabricCanvas(initialDimensions: CanvasDimensions) {
       bridge.dispose()
       bridgeRef.current = null
     }
-  }, [])
+  }, [widthMm, heightMm])
 
   return { canvasRef, bridge: bridgeRef }
 }

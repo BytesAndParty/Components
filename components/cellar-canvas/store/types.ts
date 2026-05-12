@@ -9,6 +9,28 @@ export interface FabricObjectMeta {
   _extras?: boolean
 }
 
+export interface FabricObjectProperties {
+  type: string
+  fill: string
+  stroke: string
+  strokeWidth?: number
+  opacity?: number
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation?: number
+  text?: string
+  fontSize?: number
+  fontFamily?: string
+  fontWeight?: string | number
+  fontStyle?: string
+  textAlign?: string
+  underline?: boolean
+  charSpacing?: number
+  lineHeight?: number
+}
+
 export interface DesignerState {
   activeArea: LabelArea
   zoom: number
@@ -18,7 +40,7 @@ export interface DesignerState {
   selectedIds: string[]
   
   // History
-  history: Array<Record<LabelArea, any>>
+  history: Array<Record<LabelArea, string>> // Store as JSON strings
   historyIndex: number
   
   // UI State

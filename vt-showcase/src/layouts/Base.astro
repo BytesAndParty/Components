@@ -99,23 +99,27 @@ const navLinks = [
   });
 
   // ─── pageswap: old page — add type to outgoing transition ──────
-  window.addEventListener('pageswap', (e: any) => {
-    if (!e.viewTransition) return;
+  window.addEventListener('pageswap', (e: Event) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ev = e as any;
+    if (!ev.viewTransition) return;
     const type = sessionStorage.getItem(NEXT_KEY) ?? DEFAULT_PRESET;
-    e.viewTransition.types.add(type);
+    ev.viewTransition.types.add(type);
   });
 
   // ─── pagereveal: new page — add type + set data-vt fallback ────
-  window.addEventListener('pagereveal', (e: any) => {
-    if (!e.viewTransition) return;
+  window.addEventListener('pagereveal', (e: Event) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ev = e as any;
+    if (!ev.viewTransition) return;
     const type = sessionStorage.getItem(NEXT_KEY) ?? DEFAULT_PRESET;
 
-    e.viewTransition.types.add(type);
+    ev.viewTransition.types.add(type);
     document.documentElement.dataset.vt = type;
 
     // Circular reveal & grape burst: animate clip-path via WAAPI
     if (type === 'vt-circular-reveal' || type === 'vt-grape-burst') {
-      e.viewTransition.ready.then(() => {
+      ev.viewTransition.ready.then(() => {
         const x = window.innerWidth  / 2;
         const y = window.innerHeight / 2;
         const r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
@@ -130,7 +134,7 @@ const navLinks = [
       });
     }
 
-    e.viewTransition.finished.finally(() => {
+    ev.viewTransition.finished.finally(() => {
       delete document.documentElement.dataset.vt;
       sessionStorage.removeItem(NEXT_KEY);
     });

@@ -1,4 +1,3 @@
-import { QRCodeCanvas } from 'qrcode.react' // Wait, I installed qrcode package, not qrcode.react. Let's use the standard one.
 import QRCode from 'qrcode'
 
 /**

@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
+import { MESSAGES, type SearchOverlayMessages } from './messages';
 
 interface SearchResult {
   id: string;
@@ -14,46 +14,6 @@ interface SearchResult {
   description?: string;
   icon?: React.ReactNode;
 }
-
-export type SearchOverlayMessages = {
-  placeholder: string;
-  noResults: string;
-  emptyState: string;
-  navigationHelp: string;
-  selectionHelp: string;
-  shortcutLabel: string;
-  closeLabel: string;
-  ariaLabel: string;
-  searchDescription: string;
-  closeDescription: string;
-};
-
-const SEARCH_OVERLAY_MESSAGES = {
-  de: {
-    placeholder: 'Suche nach Produkten oder Seiten…',
-    noResults: 'Keine Ergebnisse gefunden.',
-    emptyState: 'Tippe etwas ein, um die Suche zu starten…',
-    navigationHelp: 'navigieren',
-    selectionHelp: 'auswählen',
-    shortcutLabel: 'Suche öffnen',
-    closeLabel: 'Suche schließen',
-    ariaLabel: 'Spotlight Suche',
-    searchDescription: 'Öffnet die globale Spotlight-Suche',
-    closeDescription: 'Schließt das aktuelle Overlay',
-  },
-  en: {
-    placeholder: 'Search for products or pages…',
-    noResults: 'No results found.',
-    emptyState: 'Start typing to search…',
-    navigationHelp: 'navigate',
-    selectionHelp: 'select',
-    shortcutLabel: 'Open search',
-    closeLabel: 'Close search',
-    ariaLabel: 'Spotlight Search',
-    searchDescription: 'Opens the global spotlight search',
-    closeDescription: 'Closes the current overlay',
-  },
-} as const satisfies ComponentMessages<SearchOverlayMessages>;
 
 interface SearchOverlayProps {
   /**
@@ -76,7 +36,7 @@ export function SearchOverlay({
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const m = useComponentMessages(SEARCH_OVERLAY_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   // Open/Close logic
   function open() {

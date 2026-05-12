@@ -52,22 +52,6 @@ function useBreadcrumb() {
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-export type BreadcrumbMessages = {
-  ariaLabel: string;
-  more: string;
-};
-
-const BREADCRUMB_MESSAGES = {
-  de: {
-    ariaLabel: 'Brotkrumen-Navigation',
-    more: 'Mehr',
-  },
-  en: {
-    ariaLabel: 'Breadcrumb navigation',
-    more: 'More',
-  },
-} as const satisfies ComponentMessages<BreadcrumbMessages>;
-
 export interface BreadcrumbProps extends React.ComponentProps<'nav'> {
   messages?: Partial<BreadcrumbMessages>;
 }
@@ -77,7 +61,7 @@ export function Breadcrumb({
   messages,
   ...props
 }: BreadcrumbProps): React.ReactElement {
-  const m = useComponentMessages(BREADCRUMB_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   return (
     <BreadcrumbContext.Provider value={{ messages: m }}>
@@ -203,6 +187,19 @@ export function BreadcrumbEllipsis({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
+        ...style,
+      }}
+      data-slot="breadcrumb-ellipsis"
+      {...props}
+    >
+      <MoreHorizontal style={{ width: '1rem', height: '1rem' }} />
+      <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+        {m.more}
+      </span>
+    </span>
+  );
+}
+gnItems: 'center',
         ...style,
       }}
       data-slot="breadcrumb-ellipsis"

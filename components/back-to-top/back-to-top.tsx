@@ -4,26 +4,7 @@ import { MagneticButton } from '../magnetic-button/magnetic-button';
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
-import type { ComponentMessages } from '../i18n';
-
-export type BackToTopMessages = {
-  ariaLabel: string;
-  shortcutLabel: string;
-  shortcutDescription: string;
-};
-
-const BACK_TO_TOP_MESSAGES = {
-  de: {
-    ariaLabel: 'Nach oben scrollen',
-    shortcutLabel: 'Nach oben',
-    shortcutDescription: 'Scrollt sanft zum Seitenanfang',
-  },
-  en: {
-    ariaLabel: 'Scroll to top',
-    shortcutLabel: 'Scroll to top',
-    shortcutDescription: 'Smoothly scrolls to the top of the page',
-  },
-} as const satisfies ComponentMessages<BackToTopMessages>;
+import { MESSAGES, type BackToTopMessages } from './messages';
 
 interface BackToTopProps {
   threshold?: number;
@@ -37,7 +18,7 @@ export function BackToTop({
   messages,
 }: BackToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const m = useComponentMessages(BACK_TO_TOP_MESSAGES, messages);
+  const m = useComponentMessages(MESSAGES, messages);
 
   useEffect(() => {
     const handleScroll = () => {

@@ -12,8 +12,9 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  defaultDropAnimationSideEffects,
 } from '@dnd-kit/core'
+import type { DraggableAttributes } from '@dnd-kit/core'
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 import {
   arrayMove,
   SortableContext,
@@ -25,7 +26,7 @@ import { CSS } from '@dnd-kit/utilities'
 
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type LayerPanelMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ export function LayerPanel({
   className,
   messages,
 }: LayerPanelProps) {
-  const m = useComponentMessages(LAYER_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -272,8 +273,8 @@ function LayerRow({
   onRename: (name: string) => void
   onDelete: () => void
   onMove: (dir: 1 | -1) => void
-  dragAttributes: any
-  dragListeners: any
+  dragAttributes: DraggableAttributes
+  dragListeners: SyntheticListenerMap | undefined
   isDragging: boolean
 }) {
   const [editing, setEditing] = useState(false)

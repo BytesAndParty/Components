@@ -1,4 +1,4 @@
-import type { Layer } from '../layer-panel/layer-panel'
+import type { FabricObjectMeta } from '../store/types'
 import type { ValidationWarning } from '../../validator-badge/validator-badge'
 
 /**
@@ -11,8 +11,8 @@ const MANDATORY_KEYS = [
   { key: 'qrCode',         label: 'QR code (nutritional info)', description: 'EU Reg. 2023/2977 requires nutritional declaration', severity: 'warning' },
 ] as const
 
-export function validateCompliance(layers: any[]): ValidationWarning[] {
-  const presentKeys = new Set(layers.map(l => l._fieldKey).filter(Boolean))
+export function validateCompliance(objects: FabricObjectMeta[]): ValidationWarning[] {
+  const presentKeys = new Set(objects.map(o => o._fieldKey).filter(Boolean))
   
   const warnings: ValidationWarning[] = []
   

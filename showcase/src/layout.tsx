@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { cn } from '@components/lib/utils'
 import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'

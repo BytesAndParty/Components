@@ -6,49 +6,12 @@ import {
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
-import type { ComponentMessages } from '../i18n'
+import { MESSAGES, type AlignmentBarMessages } from './messages'
 
 export type AlignAction =
   | 'align-left' | 'align-center-h' | 'align-right'
   | 'align-top'  | 'align-center-v' | 'align-bottom'
   | 'distribute-h' | 'distribute-v'
-
-export type AlignmentBarMessages = {
-  alignLeft: string
-  alignCenterH: string
-  alignRight: string
-  alignTop: string
-  alignCenterV: string
-  alignBottom: string
-  distributeH: string
-  distributeV: string
-  ariaLabel: string
-}
-
-const ALIGNMENT_BAR_MESSAGES = {
-  de: {
-    alignLeft: 'Links ausrichten',
-    alignCenterH: 'Horizontal zentrieren',
-    alignRight: 'Rechts ausrichten',
-    alignTop: 'Oben ausrichten',
-    alignCenterV: 'Vertikal zentrieren',
-    alignBottom: 'Unten ausrichten',
-    distributeH: 'Horizontal verteilen',
-    distributeV: 'Vertikal verteilen',
-    ariaLabel: 'Objekt-Ausrichtung',
-  },
-  en: {
-    alignLeft: 'Align left',
-    alignCenterH: 'Align center horizontal',
-    alignRight: 'Align right',
-    alignTop: 'Align top',
-    alignCenterV: 'Align center vertical',
-    alignBottom: 'Align bottom',
-    distributeH: 'Distribute horizontally',
-    distributeV: 'Distribute vertically',
-    ariaLabel: 'Object alignment',
-  },
-} as const satisfies ComponentMessages<AlignmentBarMessages>
 
 const BUTTON_TITLES: Record<AlignAction, keyof AlignmentBarMessages> = {
   'align-left':     'alignLeft',
@@ -80,7 +43,7 @@ export interface AlignmentBarProps {
 }
 
 export function AlignmentBar({ onAlign, disabled = false, className, messages }: AlignmentBarProps) {
-  const m = useComponentMessages(ALIGNMENT_BAR_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
   const [focusIndex, setFocusIndex] = useState(0)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([])
 

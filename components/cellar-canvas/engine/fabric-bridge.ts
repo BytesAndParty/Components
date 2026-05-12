@@ -1,6 +1,6 @@
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
-import type { FabricObjectMeta } from '../store/types'
+import type { FabricObjectMeta, FabricObjectProperties } from '../store/types'
 import { pxToMm, mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 
@@ -20,7 +20,7 @@ export class FabricBridge {
    */
   updateStoreSelection() {
     const activeObjects = this.canvas.getActiveObjects()
-    const ids = activeObjects.map(obj => (obj as any).id).filter(Boolean)
+    const ids = activeObjects.map(obj => (obj as fabric.Object & FabricObjectMeta).id).filter(Boolean)
     useDesignerStore.getState().setSelectedIds(ids)
   }
 
@@ -120,12 +120,12 @@ export class FabricBridge {
   /**
    * Returns properties of the currently active object for the UI.
    */
-  getActiveObjectProperties() {
-    const obj = this.canvas.getActiveObject()
+  getActiveObjectProperties(): FabricObjectProperties | null {
+    const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
     if (!obj) return null
 
     return {
-      type: (obj as any)._type,
+      type: obj._type,
       fill: obj.fill as string,
       stroke: obj.stroke as string,
       strokeWidth: obj.strokeWidth,
@@ -154,19 +154,26 @@ export class FabricBridge {
   /**
    * Updates properties on the active object.
    */
-  updateActiveObject(props: Partial<any>) {
-    const obj = this.canvas.getActiveObject()
+  updateActiveObject(props: Partial<FabricObjectProperties & fabric.IObjectOptions>) {
+    const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
     if (!obj) return
 
+    // If it's a wine field, don't allow changing the 'text' property
+    const cleanProps = { ...props }
+    if (obj._type === 'wine-field' && cleanProps.text !== undefined) {
+      delete cleanProps.text
+    }
+
     // Convert mm props back to px
-    const fabricProps = { ...props }
-    if (props.x !== undefined) fabricProps.left = mmToPx(props.x)
-    if (props.y !== undefined) fabricProps.top = mmToPx(props.y)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fabricProps: Record<string, any> = { ...cleanProps }
+    if (cleanProps.x !== undefined) fabricProps.left = mmToPx(cleanProps.x)
+    if (cleanProps.y !== undefined) fabricProps.top = mmToPx(cleanProps.y)
     
     // Width/Height scaling for non-text objects
     if (!(obj instanceof fabric.IText)) {
-      if (props.width !== undefined) fabricProps.scaleX = mmToPx(props.width) / obj.width!
-      if (props.height !== undefined) fabricProps.scaleY = mmToPx(props.height) / obj.height!
+      if (cleanProps.width !== undefined) fabricProps.scaleX = mmToPx(cleanProps.width) / obj.width!
+      if (cleanProps.height !== undefined) fabricProps.scaleY = mmToPx(cleanProps.height) / obj.height!
     }
 
     obj.set(fabricProps)
@@ -180,70 +187,20 @@ export class FabricBridge {
     useDesignerStore.getState().setDirty(true)
   }
 
-  /**
-   * Returns all objects as a Layer array for the UI.
-   * Fabric z-order is bottom-to-top, but Layer Panel is top-to-bottom.
-   */
-  getLayers() {
-    return this.canvas.getObjects().map((obj: any) => ({
-      id: obj.id,
-      name: obj._layerName || obj.text || 'Unnamed Layer',
-      type: obj._type,
-      visible: obj.visible,
-      locked: !!obj.lockMovementX, // Basic lock check
-    })).reverse()
-  }
-
-  setLayerVisibility(id: string, visible: boolean) {
-    const obj = this.canvas.getObjects().find((o: any) => o.id === id)
+  bringToFront() {
+    const obj = this.canvas.getActiveObject()
     if (obj) {
-      obj.set('visible', visible)
+      obj.bringToFront()
       this.canvas.renderAll()
     }
   }
 
-  setLayerLocked(id: string, locked: boolean) {
-    const obj = this.canvas.getObjects().find((o: any) => o.id === id)
+  sendToBack() {
+    const obj = this.canvas.getActiveObject()
     if (obj) {
-      obj.set({
-        lockMovementX: locked,
-        lockMovementY: locked,
-        lockScalingX: locked,
-        lockScalingY: locked,
-        lockRotation: locked,
-        hasControls: !locked,
-      })
+      obj.sendToBack()
       this.canvas.renderAll()
     }
-  }
-
-  deleteLayer(id: string) {
-    const obj = this.canvas.getObjects().find((o: any) => o.id === id)
-    if (obj) {
-      this.canvas.remove(obj)
-      this.canvas.renderAll()
-      this.updateStoreSelection()
-    }
-  }
-
-  renameLayer(id: string, name: string) {
-    const obj = this.canvas.getObjects().find((o: any) => o.id === id)
-    if (obj) {
-      (obj as any)._layerName = name
-      this.canvas.renderAll()
-    }
-  }
-
-  reorderLayers(ids: string[]) {
-    // ids are top-to-bottom
-    const reversedIds = [...ids].reverse()
-    reversedIds.forEach((id, index) => {
-      const obj = this.canvas.getObjects().find((o: any) => o.id === id)
-      if (obj) {
-        obj.moveTo(index)
-      }
-    })
-    this.canvas.renderAll()
   }
 
   /**
@@ -272,6 +229,75 @@ export class FabricBridge {
     
     this.canvas.requestRenderAll()
     useDesignerStore.getState().setZoom(zoom)
+  }
+
+  /**
+   * Returns all objects as a Layer array for the UI.
+   * Fabric z-order is bottom-to-top, but Layer Panel is top-to-bottom.
+   */
+  getLayers() {
+    return this.canvas.getObjects().map((obj) => {
+      const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
+      return {
+        id: o.id,
+        name: o._layerName || o.text || 'Unnamed Layer',
+        type: o._type,
+        visible: o.visible,
+        locked: !!o.lockMovementX, // Basic lock check
+      }
+    }).reverse()
+  }
+
+  setLayerVisibility(id: string, visible: boolean) {
+    const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+    if (obj) {
+      obj.set('visible', visible)
+      this.canvas.renderAll()
+    }
+  }
+
+  setLayerLocked(id: string, locked: boolean) {
+    const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+    if (obj) {
+      obj.set({
+        lockMovementX: locked,
+        lockMovementY: locked,
+        lockScalingX: locked,
+        lockScalingY: locked,
+        lockRotation: locked,
+        hasControls: !locked,
+      })
+      this.canvas.renderAll()
+    }
+  }
+
+  deleteLayer(id: string) {
+    const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+    if (obj) {
+      this.canvas.remove(obj)
+      this.canvas.renderAll()
+      this.updateStoreSelection()
+    }
+  }
+
+  renameLayer(id: string, name: string) {
+    const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+    if (obj) {
+      (obj as fabric.Object & FabricObjectMeta)._layerName = name
+      this.canvas.renderAll()
+    }
+  }
+
+  reorderLayers(ids: string[]) {
+    // ids are top-to-bottom
+    const reversedIds = [...ids].reverse()
+    reversedIds.forEach((id, index) => {
+      const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+      if (obj) {
+        obj.moveTo(index)
+      }
+    })
+    this.canvas.renderAll()
   }
 
   /**
