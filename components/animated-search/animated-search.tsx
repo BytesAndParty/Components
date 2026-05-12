@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type AnimatedSearchMessages } from './messages';
 
 const STYLE_ID = 'animated-search-styles';
 function injectStyles() {
@@ -17,7 +19,7 @@ function injectStyles() {
 }
 injectStyles();
 
-interface AnimatedSearchProps {
+export interface AnimatedSearchProps {
   placeholder?: string;
   onSearch?: (value: string) => void;
   onChange?: (value: string) => void;
@@ -133,7 +135,7 @@ export function AnimatedSearch({
         )}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        aria-label={isOpen ? 'Submit search' : 'Open search'}
+        aria-label={isOpen ? m.submitLabel : m.openLabel}
       >
         <svg
           width="18"
@@ -144,6 +146,7 @@ export function AnimatedSearch({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden
         >
           <circle cx="11" cy="11" r="7" />
           <line x1="16.5" y1="16.5" x2="21" y2="21" />
@@ -162,11 +165,12 @@ export function AnimatedSearch({
           >
             <input
               ref={inputRef}
-              type="text"
+              type="search"
               value={value}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
+              aria-label={m.placeholder}
               className="w-full h-full bg-transparent border-none outline-none text-[var(--foreground)] text-sm font-inherit caret-[var(--accent)]"
             />
           </motion.div>
@@ -186,7 +190,7 @@ export function AnimatedSearch({
             className="relative z-10 w-[42px] h-[42px] flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 text-[var(--muted-foreground)]"
             whileHover={{ scale: 1.1, color: 'var(--foreground)' }}
             whileTap={{ scale: 0.95 }}
-            aria-label="Close search"
+            aria-label={m.closeLabel}
           >
             <svg
               width="14"
@@ -197,6 +201,7 @@ export function AnimatedSearch({
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden
             >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
