@@ -6,6 +6,7 @@ import { Checkbox } from '@components/checkbox/checkbox'
 import { Switch } from '@components/switch/switch'
 import { Slider } from '@components/slider/slider'
 import { FormInput } from '@components/form-input/form-input'
+import { FieldHint } from '@components/field-hint/field-hint'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
@@ -100,6 +101,7 @@ function FormInputDemo() {
       <FormInput
         type="text"
         label="Name"
+        hint="Vor- und Nachname, wie er auf deinem Ausweis steht."
         placeholder="Anna Müller"
         value={form.name}
         error={errors.name}
@@ -135,6 +137,8 @@ function FormInputDemo() {
         <FormInput
           type="number"
           label="Alter"
+          hint="Volljährig (ab 18) und höchstens 120 — wir prüfen die Eingabe gegen ein Zod-Schema."
+          hintPosition="right"
           placeholder="18–120"
           value={form.age}
           error={errors.age}
@@ -274,8 +278,59 @@ export function InputsPage() {
         </div>
       </Section>
 
-      <Section title="FormInput + Zod" description="Schema-driven inputs with real-time validation and error shake.">
+      <Section title="FormInput + Zod" description="Schema-driven inputs with real-time validation and error shake. Hier mit hint-Prop bei Name und Alter — Tooltip + aria-describedby.">
         <FormInputDemo />
+      </Section>
+
+      <Section title="FieldHint" description="Info-Icon mit Tooltip für Labels. Per Tab fokussierbar, sr-only-Text zusätzlich im A11y-Tree.">
+        <div className="border border-border rounded-xl bg-card p-6 shadow-sm max-w-xl flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <label
+                htmlFor="fieldhint-demo-tax"
+                className="block font-medium uppercase tracking-wider text-muted-foreground text-[12px]"
+              >
+                Steuer-ID
+              </label>
+              <FieldHint
+                id="fieldhint-demo-tax-hint"
+                content="11-stellige Steuer-Identifikationsnummer (nicht zu verwechseln mit der Steuernummer des Finanzamts)."
+              />
+            </div>
+            <input
+              id="fieldhint-demo-tax"
+              aria-describedby="fieldhint-demo-tax-hint"
+              placeholder="12 345 678 901"
+              className="h-11 rounded-xl bg-card border border-border px-3 text-foreground outline-none focus:border-accent transition-colors text-sm"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <label
+                htmlFor="fieldhint-demo-iban"
+                className="block font-medium uppercase tracking-wider text-muted-foreground text-[12px]"
+              >
+                IBAN
+              </label>
+              <FieldHint
+                id="fieldhint-demo-iban-hint"
+                position="right"
+                content="Internationale Kontonummer. In Deutschland 22 Stellen, beginnend mit „DE“."
+              />
+            </div>
+            <input
+              id="fieldhint-demo-iban"
+              aria-describedby="fieldhint-demo-iban-hint"
+              placeholder="DE00 0000 0000 0000 0000 00"
+              className="h-11 rounded-xl bg-card border border-border px-3 text-foreground outline-none focus:border-accent transition-colors text-sm font-mono"
+            />
+          </div>
+
+          <p className="text-[12px] text-muted-foreground pt-1 border-t border-border">
+            Tipp: Mit <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-border text-[10px]">Tab</kbd> auf das Icon fokussieren — der Tooltip öffnet auch via Keyboard.
+          </p>
+        </div>
       </Section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

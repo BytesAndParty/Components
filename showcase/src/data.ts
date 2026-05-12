@@ -21,7 +21,7 @@ export const groups = [
     path: '/inputs',
     title: 'Inputs & Forms',
     description: 'Form controls, search interactions, and file uploads.',
-    components: ['Checkbox', 'Switch', 'Slider', 'FormInput', 'AutocompleteCell', 'AnimatedSearch', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
+    components: ['Checkbox', 'Switch', 'Slider', 'FormInput', 'FieldHint', 'AutocompleteCell', 'AnimatedSearch', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
   },
   {
     path: '/feedback',

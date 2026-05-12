@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
+import { FieldHint } from '../field-hint/field-hint';
 import { MESSAGES, type FormInputMessages } from './messages';
 
 export type FormInputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'url';
@@ -27,6 +28,10 @@ export interface FormInputProps
   success?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  /** Optional info-icon hint shown next to the label. Linked to the input via `aria-describedby`. */
+  hint?: ReactNode;
+  /** Tooltip position for the hint. */
+  hintPosition?: 'top' | 'bottom' | 'left' | 'right';
   size?: 'sm' | 'md' | 'lg';
   wrapperClassName?: string;
   required?: boolean;
@@ -73,6 +78,8 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   success,
   leftIcon,
   rightIcon,
+  hint,
+  hintPosition = 'top',
   size = 'md',
   className,
   wrapperClassName,
@@ -110,19 +117,31 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
 
   return (
     <div className={cn("w-full flex flex-col items-start", wrapperClassName)}>
-      {label && (
-        <label
-          htmlFor={id}
-          className="block font-medium uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5"
-          style={{ fontSize: sz.labelSize }}
-        >
-          {label}
-          {required && (
-            <span className="text-destructive ml-1" aria-hidden="true">
-              {m.requiredLabel}
-            </span>
+      {(label || hint) && (
+        <div className="flex items-center gap-1.5 mb-1.5">
+          {label && (
+            <label
+              htmlFor={id}
+              className="block font-medium uppercase tracking-wider text-[var(--muted-foreground)]"
+              style={{ fontSize: sz.labelSize }}
+            >
+              {label}
+              {required && (
+                <span className="text-destructive ml-1" aria-hidden="true">
+                  {m.requiredLabel}
+                </span>
+              )}
+            </label>
           )}
-        </label>
+          {hint && (
+            <FieldHint
+              id={`${id}-hint`}
+              content={hint}
+              position={hintPosition}
+              size={12}
+            />
+          )}
+        </div>
       )}
       <motion.div
         key={shakeKey}
@@ -164,7 +183,12 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           aria-invalid={state === 'error' || undefined}
           aria-required={required || undefined}
           aria-describedby={
-            error ? `${id}-error` : description ? `${id}-desc` : undefined
+            [
+              error ? `${id}-error` : description ? `${id}-desc` : null,
+              hint ? `${id}-hint` : null,
+            ]
+              .filter(Boolean)
+              .join(' ') || undefined
           }
         />
         {state === 'success' && !rightIcon && (
