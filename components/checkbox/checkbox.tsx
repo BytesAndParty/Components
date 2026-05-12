@@ -7,6 +7,12 @@ interface CheckboxProps {
   label?: string;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  /** Accessible name when no visible `label` is supplied. */
+  'aria-label'?: string;
+  /** ID of element labelling the checkbox (overrides `label`/`aria-label`). */
+  'aria-labelledby'?: string;
+  /** ID of element describing the checkbox (errors, help text). */
+  'aria-describedby'?: string;
   className?: string;
 }
 
@@ -23,10 +29,14 @@ export function Checkbox({
   label,
   disabled = false,
   size = 'md',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
+  'aria-describedby': ariaDescribedby,
   className,
 }: CheckboxProps) {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
   const [pressed, setPressed] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
   const id = useId();
 
   const isControlled = controlledChecked !== undefined;
@@ -61,10 +71,16 @@ export function Checkbox({
         checked={checked}
         onChange={toggle}
         disabled={disabled}
+        aria-label={!label && !ariaLabelledby ? ariaLabel : undefined}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        onFocus={(e) => setFocusVisible(e.target.matches(':focus-visible'))}
+        onBlur={() => setFocusVisible(false)}
         style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
       />
 
       <span
+        aria-hidden
         onPointerDown={() => setPressed(true)}
         onPointerUp={() => setPressed(false)}
         onPointerLeave={() => setPressed(false)}
@@ -75,7 +91,10 @@ export function Checkbox({
           flexShrink: 0,
           borderRadius: s.box * 0.25,
           transform: pressed ? 'scale(0.92)' : 'scale(1)',
-          transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear',
+          boxShadow: focusVisible
+            ? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+            : 'none',
         }}
       >
         {/* Border */}

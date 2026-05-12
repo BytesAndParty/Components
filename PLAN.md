@@ -135,6 +135,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `bounce-cards` | n/a | ⬜ | ⬜ |
 | `bounce-loader` | n/a | n/a | ⬜ |
 | `cart-icon` | ⬜ | ⬜ | ⬜ |
+| `checkbox` | n/a | ✅ | ✅ |
 | `circular-progress` | ⬜ | ⬜ | ⬜ |
 | `click-spark` | n/a | n/a | ⬜ |
 | `confetti` | n/a | n/a | ⬜ |
