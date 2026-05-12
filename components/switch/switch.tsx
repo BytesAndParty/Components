@@ -7,6 +7,10 @@ interface SwitchProps {
   label?: string;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  /** Accessible name when no visible `label` is supplied. */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
   className?: string;
 }
 
@@ -23,10 +27,14 @@ export function Switch({
   label,
   disabled = false,
   size = 'md',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
+  'aria-describedby': ariaDescribedby,
   className,
 }: SwitchProps) {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
   const [pressed, setPressed] = useState(false);
+  const [focusVisible, setFocusVisible] = useState(false);
   const id = useId();
 
   const isControlled = controlledChecked !== undefined;
@@ -71,10 +79,16 @@ export function Switch({
         checked={checked}
         onChange={toggle}
         disabled={disabled}
+        aria-label={!label && !ariaLabelledby ? ariaLabel : undefined}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        onFocus={(e) => setFocusVisible(e.target.matches(':focus-visible'))}
+        onBlur={() => setFocusVisible(false)}
         style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
       />
 
       <span
+        aria-hidden
         onPointerDown={() => !disabled && setPressed(true)}
         onPointerUp={() => setPressed(false)}
         onPointerLeave={() => setPressed(false)}
@@ -84,8 +98,11 @@ export function Switch({
           height: c.track.h,
           borderRadius: c.radius,
           background: checked ? 'var(--accent)' : 'var(--muted-foreground)',
-          transition: 'background 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear',
           flexShrink: 0,
+          boxShadow: focusVisible
+            ? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+            : 'none',
         }}
       >
         {/* Thumb */}

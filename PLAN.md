@@ -91,6 +91,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `rating` | n/a | ✅ | n/a | ✅ | ✅ |
 | `navbar` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `checkbox` | n/a | n/a | n/a | ✅ | ✅ |
+| `switch` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -167,7 +168,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `sparkles-text` | n/a | n/a | ⬜ |
 | `splash-cursor` | n/a | n/a | ⬜ |
 | `sticky-banner` | ✅ | ⬜ | ⬜ |
-| `switch` | ✅ | ✅ | ⬜ |
 | `timeline` | ⬜ | ⬜ | ⬜ |
 | `use-image-upload` | ✅ | ✅ | ⬜ |
 | `view-transition` | n/a | n/a | ⬜ |
