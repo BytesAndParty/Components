@@ -10,6 +10,8 @@ import {
   useTransform,
   type MotionValue,
 } from 'motion/react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type DockMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -19,6 +21,8 @@ export interface DockProps {
   magnification?: number
   /** Radius des Magnification-Effekts in px (default: 100) */
   distance?: number
+  /** i18n overrides — currently only `toolbarLabel`. */
+  messages?: Partial<DockMessages>
   className?: string
   style?: CSSProperties
 }
@@ -76,33 +80,26 @@ function DockItemInternal({
     mass: 0.5,
   })
 
-  const content = (
-    <motion.div
-      ref={ref}
-      style={{
-        scale,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '0.35rem',
-        cursor: href || onClick ? 'pointer' : 'default',
-        transformOrigin: 'bottom center',
-        willChange: 'transform',
-      }}
-      className={className}
-      onClick={onClick}
-      title={label}
-      role={href || onClick ? 'button' : undefined}
-      tabIndex={href || onClick ? 0 : undefined}
-      onKeyDown={e => {
-        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
-          e.preventDefault()
-          onClick()
-        }
-      }}
-    >
-      {/* Icon-Container */}
+  const innerStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.35rem',
+    transformOrigin: 'bottom center',
+    willChange: 'transform',
+    background: 'transparent',
+    border: 'none',
+    padding: 0,
+    color: 'inherit',
+    textDecoration: 'none',
+    cursor: href || onClick ? 'pointer' : 'default',
+  }
+
+  const inner = (
+    <>
+      {/* Icon container — decorative wrapper, label sits below for accessible name */}
       <span
+        aria-hidden
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -122,7 +119,6 @@ function DockItemInternal({
         {icon}
       </span>
 
-      {/* Tooltip-Label (immer sichtbar, klein) */}
       <span
         style={{
           fontSize: '0.65rem',
@@ -134,13 +130,45 @@ function DockItemInternal({
       >
         {label}
       </span>
-    </motion.div>
+    </>
   )
 
   if (href) {
-    return <a href={href} style={{ textDecoration: 'none', color: 'inherit' }}>{content}</a>
+    return (
+      <motion.a
+        ref={ref as React.RefObject<HTMLAnchorElement>}
+        href={href}
+        className={className}
+        style={{ ...innerStyle, scale }}
+      >
+        {inner}
+      </motion.a>
+    )
   }
-  return content
+
+  if (onClick) {
+    return (
+      <motion.button
+        ref={ref as React.RefObject<HTMLButtonElement>}
+        type="button"
+        onClick={onClick}
+        className={className}
+        style={{ ...innerStyle, scale }}
+      >
+        {inner}
+      </motion.button>
+    )
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{ ...innerStyle, scale }}
+    >
+      {inner}
+    </motion.div>
+  )
 }
 
 // ─── Dock (Root) ────────────────────────────────────────────────────────────────
@@ -149,10 +177,12 @@ export function Dock({
   children,
   magnification = 1.6,
   distance = 100,
+  messages,
   className,
   style,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity)
+  const m = useComponentMessages(MESSAGES, messages)
 
   function handleMouseMove(e: React.MouseEvent) {
     mouseX.set(e.clientX)
@@ -182,6 +212,9 @@ export function Dock({
   return (
     <motion.div
       className={className}
+      role="toolbar"
+      aria-orientation="horizontal"
+      aria-label={m.toolbarLabel}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
