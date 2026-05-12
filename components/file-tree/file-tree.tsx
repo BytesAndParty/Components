@@ -7,9 +7,11 @@ import { Folder as FolderIcon, FolderOpen, FileText } from 'lucide-react'
 interface FileTreeContextValue {
   /** Einrückung pro Ebene in px (default: 16) */
   indent: number
+  /** Tiefe — wird pro Folder-Schachtelung inkrementiert (für aria-level) */
+  level: number
 }
 
-const FileTreeContext = createContext<FileTreeContextValue>({ indent: 16 })
+const FileTreeContext = createContext<FileTreeContextValue>({ indent: 16, level: 1 })
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -17,6 +19,8 @@ export interface FileTreeProps {
   children: ReactNode
   /** Einrückung pro Ebene in px (default: 16) */
   indent?: number
+  /** Optionaler aria-label für den Tree-Container. */
+  'aria-label'?: string
   className?: string
   style?: CSSProperties
 }
@@ -31,16 +35,25 @@ export interface FolderProps {
 
 export interface FileProps {
   name: string
+  /** Klick-Handler — macht das File-Item interaktiv & fokussierbar. */
+  onClick?: () => void
   className?: string
 }
 
 // ─── FileTree (Root) ─────────────────────────────────────────────────────────────
 
-export function FileTree({ children, indent = 16, className, style }: FileTreeProps) {
+export function FileTree({
+  children,
+  indent = 16,
+  'aria-label': ariaLabel,
+  className,
+  style,
+}: FileTreeProps) {
   return (
-    <FileTreeContext.Provider value={{ indent }}>
+    <FileTreeContext value={{ indent, level: 1 }}>
       <ul
         role="tree"
+        aria-label={ariaLabel}
         className={className}
         style={{
           listStyle: 'none',
@@ -54,7 +67,7 @@ export function FileTree({ children, indent = 16, className, style }: FileTreePr
       >
         {children}
       </ul>
-    </FileTreeContext.Provider>
+    </FileTreeContext>
   )
 }
 
@@ -62,10 +75,16 @@ export function FileTree({ children, indent = 16, className, style }: FileTreePr
 
 export function Folder({ name, defaultOpen = false, children, className }: FolderProps) {
   const [open, setOpen] = useState(defaultOpen)
-  const { indent } = useContext(FileTreeContext)
+  const { indent, level } = useContext(FileTreeContext)
 
   return (
-    <li role="treeitem" aria-expanded={open} className={className} style={{ listStyle: 'none' }}>
+    <li
+      role="treeitem"
+      aria-expanded={open}
+      aria-level={level}
+      className={className}
+      style={{ listStyle: 'none' }}
+    >
       {/* Folder-Header */}
       <button
         type="button"
@@ -95,8 +114,8 @@ export function Folder({ name, defaultOpen = false, children, className }: Folde
         }}
       >
         {open
-          ? <FolderOpen size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
-          : <FolderIcon size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
+          ? <FolderOpen aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
+          : <FolderIcon aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
         }
         <span>{name}</span>
       </button>
@@ -117,7 +136,10 @@ export function Folder({ name, defaultOpen = false, children, className }: Folde
               overflow: 'hidden',
             }}
           >
-            {children}
+            {/* Provide incremented level to nested children */}
+            <FileTreeContext value={{ indent, level: level + 1 }}>
+              {children}
+            </FileTreeContext>
           </motion.ul>
         )}
       </AnimatePresence>
@@ -127,10 +149,22 @@ export function Folder({ name, defaultOpen = false, children, className }: Folde
 
 // ─── File ────────────────────────────────────────────────────────────────────────
 
-export function File({ name, className }: FileProps) {
+export function File({ name, onClick, className }: FileProps) {
+  const { level } = useContext(FileTreeContext)
+  const interactive = !!onClick
+
   return (
     <li
       role="treeitem"
+      aria-level={level}
+      tabIndex={interactive ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={interactive ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      } : undefined}
       className={className}
       style={{
         listStyle: 'none',
@@ -140,9 +174,10 @@ export function File({ name, className }: FileProps) {
         padding: '0.2rem 0.25rem',
         borderRadius: '0.25rem',
         color: 'var(--muted-foreground, rgba(255,255,255,0.6))',
+        cursor: interactive ? 'pointer' : 'default',
       }}
     >
-      <FileText size={14} style={{ flexShrink: 0 }} />
+      <FileText aria-hidden size={14} style={{ flexShrink: 0 }} />
       <span>{name}</span>
     </li>
   )
