@@ -1,14 +1,18 @@
 import { useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useAtelier } from '../atelier';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type AnimatedThemeTogglerMessages } from './messages';
 
-interface AnimatedThemeTogglerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AnimatedThemeTogglerProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'aria-pressed'> {
   /** Animation duration in ms. Default: 400 */
   duration?: number;
   /** Size of the icon in px. Default: 18 */
   iconSize?: number;
   /** Called after theme changes */
   onThemeChange?: (isDark: boolean) => void;
+  /** i18n overrides for the toggle label. */
+  messages?: Partial<AnimatedThemeTogglerMessages>;
 }
 
 /* ── Inline SVG icons with CSS hover animations ── */
@@ -20,6 +24,7 @@ function SunSvg({ size }: { size: number }) {
       viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"
       className="icon-sun"
+      aria-hidden
     >
       <circle cx="12" cy="12" r="4" />
       <g className="icon-sun-rays" style={{ transformOrigin: '12px 12px' }}>
@@ -39,6 +44,7 @@ function MoonSvg({ size }: { size: number }) {
       viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"
       className="icon-moon"
+      aria-hidden
     >
       <path className="icon-moon-body" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" style={{ transformOrigin: '10px 14px' }} />
       <circle className="icon-moon-star1" cx="19" cy="5" r="0.6" fill="currentColor" opacity="0" />
@@ -53,12 +59,16 @@ export function AnimatedThemeToggler({
   duration = 400,
   iconSize = 18,
   onThemeChange,
+  messages,
   style,
   ...props
 }: AnimatedThemeTogglerProps) {
   const { theme, setTheme } = useAtelier();
   const isDark = theme === 'dark';
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const m = useComponentMessages(MESSAGES, messages);
+  // Label describes the next action, matching aria-pressed semantics
+  const label = isDark ? m.switchToLight : m.switchToDark;
 
   function toggleTheme() {
     const button = buttonRef.current;
@@ -127,6 +137,10 @@ export function AnimatedThemeToggler({
         .theme-toggle-btn:hover .icon-moon-star1 { animation: moon-star-twinkle1 0.7s ease forwards; }
         .theme-toggle-btn:hover .icon-moon-star2 { animation: moon-star-twinkle2 0.7s ease 0.1s forwards; }
         .theme-toggle-btn:hover .icon-moon-star3 { animation: moon-star-twinkle3 0.7s ease 0.2s forwards; }
+        .theme-toggle-btn:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 2px;
+        }
         @media (prefers-reduced-motion: reduce) {
           .theme-toggle-btn:hover .icon-sun-rays,
           .theme-toggle-btn:hover .icon-moon-body,
@@ -139,6 +153,9 @@ export function AnimatedThemeToggler({
         type="button"
         ref={buttonRef}
         onClick={toggleTheme}
+        aria-label={label}
+        aria-pressed={isDark}
+        title={label}
         className={`theme-toggle-btn ${className ?? ''}`}
         style={{
           position: 'relative',

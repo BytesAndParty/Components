@@ -93,6 +93,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `checkbox` | n/a | n/a | n/a | ✅ | ✅ |
 | `switch` | n/a | n/a | n/a | ✅ | ✅ |
 | `heart-like` | n/a | ✅ | n/a | ✅ | ✅ |
+| `animated-theme-toggler` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -130,7 +131,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `add-to-cart-button` | ⬜ | ⬜ | ⬜ |
 | `ambient-image` | n/a | ⬜ | ⬜ |
 | `animated-icons` | n/a | ⬜ | ⬜ |
-| `animated-theme-toggler` | ⬜ | ⬜ | ⬜ |
 | `aurora-text` | n/a | n/a | ⬜ |
 | `backlight` | n/a | n/a | ⬜ |
 | `banner` | ✅ | ⬜ | ⬜ |
