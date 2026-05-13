@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useComponentMessages, interpolate } from '../i18n'
+import { MESSAGES, type FloatingCartMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 // Keyframes (fc-show, fc-hide, fc-remove-product, fc-fade-*, fc-item-in, fc-badge-bump)
@@ -34,6 +36,8 @@ export interface FloatingCartProps {
   maxVisible?: number
   /** Custom cart icon (default: built-in SVG) */
   icon?: ReactNode
+  /** i18n overrides for cart/region/remove labels. */
+  messages?: Partial<FloatingCartMessages>
   className?: string
   style?: CSSProperties
 }
@@ -50,9 +54,11 @@ export function FloatingCart({
   fabTextColor = '#fff',
   maxVisible = 4,
   icon,
+  messages,
   className,
   style,
 }: FloatingCartProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const totalCount = items.reduce((sum, item) => sum + (item.count ?? 1), 0)
   const [visible, setVisible] = useState(false)
   const [badgeBump, setBadgeBump] = useState(false)
@@ -120,6 +126,8 @@ export function FloatingCart({
   return (
     <div
       className={className}
+      role="region"
+      aria-label={m.region}
       style={{
         position: 'fixed',
         bottom: '20px',
@@ -238,7 +246,7 @@ export function FloatingCart({
 
             {/* Count badge (Quickbeam: fadeDown/fadeUp on change) */}
             {itemCount > 1 && (
-              <span style={{
+              <span aria-hidden style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
@@ -272,7 +280,7 @@ export function FloatingCart({
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleRemove(item.id) }}
-                aria-label={`${item.label ?? 'Artikel'} entfernen`}
+                aria-label={interpolate(m.removeItem, { label: item.label ?? m.itemFallback })}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -307,7 +315,7 @@ export function FloatingCart({
       <button
         type="button"
         onClick={onClick}
-        aria-label={`Warenkorb – ${totalCount} Artikel`}
+        aria-label={interpolate(m.cartLabel, { count: totalCount })}
         style={{
           position: 'absolute',
           bottom: 0,
@@ -359,6 +367,7 @@ export function FloatingCart({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden
             >
               <circle cx="9" cy="21" r="1" />
               <circle cx="20" cy="21" r="1" />
@@ -367,8 +376,9 @@ export function FloatingCart({
           )}
         </span>
 
-        {/* Total price / count badge */}
+        {/* Total price / count badge — duplicates the FAB aria-label so hide from SR */}
         <span
+          aria-hidden
           style={{
             position: 'absolute',
             bottom: '-6px',
