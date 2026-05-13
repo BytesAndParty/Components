@@ -1,4 +1,6 @@
 import { useEffect, useState, type ReactNode, type CSSProperties } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type StickyBannerMessages } from './messages';
 
 export type StickyBannerVariant = 'accent' | 'neutral' | 'warning' | 'danger';
 export type StickyBannerPosition = 'top' | 'bottom';
@@ -39,6 +41,8 @@ export interface StickyBannerProps {
   /** Hide when scrolled past Y offset (e.g. 200 = only show after 200px scroll) */
   showAfterScrollY?: number;
   zIndex?: number;
+  /** i18n overrides for region landmark and dismiss button. */
+  messages?: Partial<StickyBannerMessages>;
   className?: string;
   style?: CSSProperties;
 }
@@ -73,9 +77,11 @@ export function StickyBanner({
   action,
   showAfterScrollY,
   zIndex = 50,
+  messages,
   className,
   style,
 }: StickyBannerProps) {
+  const m = useComponentMessages(MESSAGES, messages);
   const [dismissed, setDismissed] = useState(false);
   const [scrolledEnough, setScrolledEnough] = useState(showAfterScrollY === undefined);
   const [mounted, setMounted] = useState(false);
@@ -112,7 +118,7 @@ export function StickyBanner({
   return (
     <div
       role="region"
-      aria-label="Banner"
+      aria-label={m.region}
       className={className}
       style={{
         position: 'sticky',
@@ -159,7 +165,7 @@ export function StickyBanner({
           <button
             type="button"
             onClick={handleDismiss}
-            aria-label="Banner schließen"
+            aria-label={m.dismiss}
             style={{
               position: 'absolute',
               right: 10,
