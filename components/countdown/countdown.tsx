@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useComponentMessages, interpolate } from '../i18n';
+import { MESSAGES, type CountdownMessages } from './messages';
 
 const STYLE_ID = '__countdown-styles__';
 
@@ -124,11 +126,11 @@ export interface CountdownProps {
   separator?: React.ReactNode;
   transparent?: boolean;
   onComplete?: () => void;
+  /** i18n overrides for unit labels + SR remaining template. */
+  messages?: Partial<CountdownMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
-
-const defaultLabels = { days: 'Tage', hours: 'Std', minutes: 'Min', seconds: 'Sek' };
 
 export function Countdown({
   target,
@@ -138,9 +140,11 @@ export function Countdown({
   separator,
   transparent = false,
   onComplete,
+  messages,
   className,
   style,
 }: CountdownProps) {
+  const m = useComponentMessages(MESSAGES, messages);
   const targetMs =
     target instanceof Date ? target.getTime() : typeof target === 'string' ? new Date(target).getTime() : target;
 
@@ -176,8 +180,19 @@ export function Countdown({
     return () => window.clearInterval(id);
   }, [targetMs, onComplete]);
 
-  const merged = { ...defaultLabels, ...labels };
+  const merged = {
+    days: labels?.days ?? m.days,
+    hours: labels?.hours ?? m.hours,
+    minutes: labels?.minutes ?? m.minutes,
+    seconds: labels?.seconds ?? m.seconds,
+  };
   const s = sizes[size];
+  const srLabel = interpolate(m.remaining, {
+    d: remaining.days,
+    h: remaining.hours,
+    m: remaining.minutes,
+    s: remaining.seconds,
+  });
 
   const showDays = !hideLeadingZeros || remaining.days > 0;
   const showHours = showDays || !hideLeadingZeros || remaining.hours > 0;
@@ -189,17 +204,20 @@ export function Countdown({
   return (
     <div
       role="timer"
-      aria-live="polite"
+      aria-label={srLabel}
       className={className}
       style={{ display: 'inline-flex', alignItems: 'flex-end', gap: s.gap, ...style }}
     >
-      {showDays && <Block value={remaining.days} label={merged.days} size={size} transparent={transparent} />}
-      {showDays && <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>}
-      {showHours && <Block value={remaining.hours} label={merged.hours} size={size} transparent={transparent} />}
-      {showHours && <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>}
-      <Block value={remaining.minutes} label={merged.minutes} size={size} transparent={transparent} />
-      <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>
-      <Block value={remaining.seconds} label={merged.seconds} size={size} transparent={transparent} />
+      {/* Visual blocks are decorative — the role=timer's aria-label is the SR truth */}
+      <div aria-hidden style={{ display: 'contents' }}>
+        {showDays && <Block value={remaining.days} label={merged.days} size={size} transparent={transparent} />}
+        {showDays && <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>}
+        {showHours && <Block value={remaining.hours} label={merged.hours} size={size} transparent={transparent} />}
+        {showHours && <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>}
+        <Block value={remaining.minutes} label={merged.minutes} size={size} transparent={transparent} />
+        <span style={{ paddingBottom: `calc(${s.label} + 0.375rem)` }}>{sep}</span>
+        <Block value={remaining.seconds} label={merged.seconds} size={size} transparent={transparent} />
+      </div>
     </div>
   );
 }
