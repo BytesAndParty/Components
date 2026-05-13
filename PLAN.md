@@ -114,6 +114,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `banner` | n/a | ✅ | n/a | ✅ | ✅ |
 | `sticky-banner` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `gooey-input` | n/a | ✅ | n/a | ✅ | ✅ |
+| `password-setup` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -161,7 +162,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `paragraph` | n/a | n/a | ⬜ |
 | `particles` | n/a | n/a | ⬜ |
 | `password-confirmation` | ✅ | ✅ | ⬜ |
-| `password-setup` | ✅ | ✅ | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |
 | `pricing-interaction` | ✅ | ✅ | ⬜ |
 | `scroll-progress` | n/a | ⬜ | ⬜ |

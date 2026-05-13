@@ -5,6 +5,8 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type PasswordSetupMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -13,11 +15,11 @@ export interface PasswordSetupProps {
   onMatch?: (password: string) => void
   /** Called when password changes */
   onPasswordChange?: (password: string) => void
-  /** Label for the password field (default: 'Password') */
+  /** Label for the password field (overrides i18n default). */
   passwordLabel?: string
-  /** Label for the confirm field (default: 'Confirm password') */
+  /** Label for the confirm field (overrides i18n default). */
   confirmLabel?: string
-  /** Placeholder for the password field */
+  /** Placeholder for the password field (overrides i18n default). */
   passwordPlaceholder?: string
   /** Show strength meter (default: true) */
   showStrength?: boolean
@@ -33,6 +35,8 @@ export interface PasswordSetupProps {
   matchColor?: string
   /** Mismatch color (default: '#ef4444') */
   mismatchColor?: string
+  /** i18n overrides for all user-facing labels. */
+  messages?: Partial<PasswordSetupMessages>
   className?: string
   style?: CSSProperties
 }
@@ -105,7 +109,7 @@ const labelStyle: CSSProperties = {
 
 function EyeIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
       <circle cx="12" cy="12" r="3" />
     </svg>
@@ -114,7 +118,7 @@ function EyeIcon() {
 
 function EyeOffIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
       <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
       <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
@@ -125,7 +129,7 @@ function EyeOffIcon() {
 
 function RefreshIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
       <path d="M3 3v5h5" />
       <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
@@ -136,7 +140,7 @@ function RefreshIcon() {
 
 function CopyIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
       <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
     </svg>
@@ -145,7 +149,7 @@ function CopyIcon() {
 
 function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M20 6 9 17l-5-5" />
     </svg>
   )
@@ -157,14 +161,17 @@ interface VisibilityToggleProps {
   visible: boolean
   onToggle: () => void
   renderVisibilityIcon?: (visible: boolean) => ReactNode
+  showLabel: string
+  hideLabel: string
 }
 
-function VisibilityToggle({ visible, onToggle, renderVisibilityIcon }: VisibilityToggleProps) {
+function VisibilityToggle({ visible, onToggle, renderVisibilityIcon, showLabel, hideLabel }: VisibilityToggleProps) {
   return (
     <button
       type="button"
       onClick={onToggle}
-      aria-label={visible ? 'Hide password' : 'Show password'}
+      aria-label={visible ? hideLabel : showLabel}
+      aria-pressed={visible}
       style={{
         position: 'absolute',
         right: '10px',
@@ -212,6 +219,8 @@ interface FancyDotInputProps {
   matchColor: string
   mismatchColor: string
   renderVisibilityIcon?: (visible: boolean) => ReactNode
+  showLabel: string
+  hideLabel: string
   autoComplete?: string
 }
 
@@ -232,6 +241,8 @@ function FancyDotInput({
   matchColor,
   mismatchColor,
   renderVisibilityIcon,
+  showLabel,
+  hideLabel,
   autoComplete = 'off',
 }: FancyDotInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -383,10 +394,12 @@ function FancyDotInput({
         )}
       </div>
 
-      <VisibilityToggle 
-        visible={visible} 
-        onToggle={onToggleVisible} 
-        renderVisibilityIcon={renderVisibilityIcon} 
+      <VisibilityToggle
+        visible={visible}
+        onToggle={onToggleVisible}
+        renderVisibilityIcon={renderVisibilityIcon}
+        showLabel={showLabel}
+        hideLabel={hideLabel}
       />
     </div>
   )
@@ -399,19 +412,21 @@ interface Check {
   test: (v: string) => boolean
 }
 
-const defaultChecks: Check[] = [
-  { label: 'Mindestens 8 Zeichen', test: v => v.length >= 8 },
-  { label: 'Ein Großbuchstabe', test: v => /[A-Z]/.test(v) },
-  { label: 'Eine Zahl', test: v => /\d/.test(v) },
-  { label: 'Ein Sonderzeichen', test: v => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(v) },
-]
+function buildChecks(m: PasswordSetupMessages): Check[] {
+  return [
+    { label: m.checkMinLength, test: v => v.length >= 8 },
+    { label: m.checkUppercase, test: v => /[A-Z]/.test(v) },
+    { label: m.checkNumber, test: v => /\d/.test(v) },
+    { label: m.checkSpecial, test: v => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(v) },
+  ]
+}
 
-function getStrength(passed: number, _total: number) {
-  if (passed === 0) return { label: 'Sehr schwach', color: '#ef4444' }
-  if (passed === 1) return { label: 'Schwach', color: '#f97316' }
-  if (passed === 2) return { label: 'Mittel', color: '#eab308' }
-  if (passed === 3) return { label: 'Stark', color: '#3b82f6' }
-  return { label: 'Sehr stark', color: '#22c55e' }
+function getStrength(passed: number, m: PasswordSetupMessages) {
+  if (passed === 0) return { label: m.strengthVeryWeak, color: '#ef4444' }
+  if (passed === 1) return { label: m.strengthWeak, color: '#f97316' }
+  if (passed === 2) return { label: m.strengthMedium, color: '#eab308' }
+  if (passed === 3) return { label: m.strengthStrong, color: '#3b82f6' }
+  return { label: m.strengthVeryStrong, color: '#22c55e' }
 }
 
 function generatePassword(length = 16): string {
@@ -424,9 +439,9 @@ function generatePassword(length = 16): string {
 export function PasswordSetup({
   onMatch,
   onPasswordChange,
-  passwordLabel = 'Password',
-  confirmLabel = 'Confirm password',
-  passwordPlaceholder = 'Enter your password',
+  passwordLabel: _passwordLabel,
+  confirmLabel: _confirmLabel,
+  passwordPlaceholder: _passwordPlaceholder,
   showStrength = true,
   showChecklist = true,
   allowGenerate = true,
@@ -434,9 +449,14 @@ export function PasswordSetup({
   dotSize = 10,
   matchColor = '#22c55e',
   mismatchColor = '#ef4444',
+  messages,
   className,
   style,
 }: PasswordSetupProps) {
+  const m = useComponentMessages(MESSAGES, messages)
+  const passwordLabel = _passwordLabel ?? m.passwordLabel
+  const confirmLabel = _confirmLabel ?? m.confirmLabel
+  const passwordPlaceholder = _passwordPlaceholder ?? m.passwordPlaceholder
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [pwVisible, setPwVisible] = useState(false)
@@ -500,9 +520,10 @@ export function PasswordSetup({
     setTimeout(() => setCopied(false), 1500)
   }
 
-  const checkResults = defaultChecks.map(c => ({ ...c, valid: c.test(password) }))
+  const checks = buildChecks(m)
+  const checkResults = checks.map(c => ({ ...c, valid: c.test(password) }))
   const passed = checkResults.filter(c => c.valid).length
-  const strength = getStrength(passed, defaultChecks.length)
+  const strength = getStrength(passed, m)
 
   return (
     <div
@@ -531,6 +552,8 @@ export function PasswordSetup({
           matchColor={matchColor}
           mismatchColor={mismatchColor}
           renderVisibilityIcon={renderVisibilityIcon}
+          showLabel={m.showPassword}
+          hideLabel={m.hidePassword}
           autoComplete="new-password"
         />
 
@@ -553,7 +576,7 @@ export function PasswordSetup({
                   cursor: 'pointer',
                 }}
               >
-                <RefreshIcon /> Generate
+                <RefreshIcon /> {m.generate}
               </button>
             )}
             {password && (
@@ -573,7 +596,7 @@ export function PasswordSetup({
                   cursor: 'pointer',
                 }}
               >
-                {copied ? <><CheckIcon /> Copied!</> : <><CopyIcon /> Copy</>}
+                {copied ? <><CheckIcon /> {m.copied}</> : <><CopyIcon /> {m.copy}</>}
               </button>
             )}
           </div>
@@ -594,9 +617,9 @@ export function PasswordSetup({
                 {checkResults.map((check, i) => (
                   <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? matchColor : 'var(--muted-foreground, #71717a)', transition: 'color 200ms ease' }}>
                     {check.valid ? (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></svg>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></svg>
                     ) : (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
                     )}
                     {check.label}
                   </li>
@@ -628,10 +651,12 @@ export function PasswordSetup({
             matchColor={matchColor}
             mismatchColor={mismatchColor}
             renderVisibilityIcon={renderVisibilityIcon}
+            showLabel={m.showPassword}
+            hideLabel={m.hidePassword}
           />
           {matched && (
-            <span style={{ fontSize: '12px', color: matchColor, display: 'flex', alignItems: 'center', gap: '5px', animation: 'pws-fade-in 200ms ease' }}>
-              <CheckIcon /> Passwords match
+            <span role="status" style={{ fontSize: '12px', color: matchColor, display: 'flex', alignItems: 'center', gap: '5px', animation: 'pws-fade-in 200ms ease' }}>
+              <CheckIcon /> {m.match}
             </span>
           )}
         </div>
