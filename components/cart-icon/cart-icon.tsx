@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, type CSSProperties } from 'react'
 import { NumberTicker } from '../number-ticker/number-ticker'
+import { useComponentMessages, interpolate } from '../i18n'
+import { MESSAGES, type CartIconMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 // Keyframes: ci-box-add, ci-box-remove, ci-badge-* → showcase/src/styles.css (standalone: see COMPONENT.md)
@@ -17,6 +19,8 @@ export interface CartIconProps {
   badgeTextColor?: string
   /** Click handler */
   onClick?: () => void
+  /** i18n overrides for the cart aria-label. */
+  messages?: Partial<CartIconMessages>
   className?: string
   style?: CSSProperties
 }
@@ -30,9 +34,11 @@ export function CartIcon({
   badgeColor = 'var(--accent, #6366f1)',
   badgeTextColor = '#fff',
   onClick,
+  messages,
   className,
   style,
 }: CartIconProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const [displayCount, setDisplayCount] = useState(count)
   const [anim, setAnim] = useState<'add' | 'remove' | null>(null)
   const [badgeAnim, setBadgeAnim] = useState<'pop' | 'in' | 'out' | null>(null)
@@ -84,7 +90,7 @@ export function CartIcon({
     <button
       type="button"
       onClick={onClick}
-      aria-label={`Warenkorb${displayCount > 0 ? `, ${displayCount} Artikel` : ''}`}
+      aria-label={displayCount > 0 ? interpolate(m.withCount, { count: displayCount }) : m.empty}
       className={className}
       style={{
         position: 'relative',
@@ -111,6 +117,7 @@ export function CartIcon({
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden
       >
         <circle cx="9" cy="21" r="1" />
         <circle cx="20" cy="21" r="1" />
@@ -120,6 +127,7 @@ export function CartIcon({
       {/* Flying box animation */}
       {anim && (
         <span
+          aria-hidden
           style={{
             position: 'absolute',
             width: boxSize,
@@ -140,15 +148,17 @@ export function CartIcon({
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
+            aria-hidden
           >
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
           </svg>
         </span>
       )}
 
-      {/* Badge */}
+      {/* Badge — aria-hidden since the button aria-label already conveys the count */}
       {(displayCount > 0 || badgeAnim === 'out') && (
         <span
+          aria-hidden
           style={{
             position: 'absolute',
             top: 0,
