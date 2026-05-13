@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type GooeyInputMessages } from './messages';
 
 export interface GooeyInputProps {
   placeholder?: string;
@@ -28,6 +30,8 @@ export interface GooeyInputProps {
   iconColor?: string;
   /** 'filled' = solid background (default), 'outline' = transparent with colored border */
   variant?: 'filled' | 'outline';
+  /** i18n overrides for placeholder + open/close labels. */
+  messages?: Partial<GooeyInputMessages>;
   className?: string;
   style?: CSSProperties;
 }
@@ -35,7 +39,7 @@ export interface GooeyInputProps {
 const GOO_MATRIX = '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10';
 
 export function GooeyInput({
-  placeholder = 'Search…',
+  placeholder: _placeholder,
   value: controlled,
   defaultValue = '',
   onChange,
@@ -47,9 +51,12 @@ export function GooeyInput({
   color = 'var(--accent)',
   iconColor = '#fff',
   variant = 'filled',
+  messages,
   className,
   style,
 }: GooeyInputProps) {
+  const m = useComponentMessages(MESSAGES, messages);
+  const placeholder = _placeholder ?? m.placeholder;
   const isOutline = variant === 'outline';
   const filterId = useId().replace(/:/g, '-');
   const [open, setOpen] = useState(false);
@@ -79,7 +86,7 @@ export function GooeyInput({
   }
 
   const defaultIcon = (
-    <svg width={height * 0.4} height={height * 0.4} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={height * 0.4} height={height * 0.4} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.35-4.35" />
     </svg>
@@ -127,7 +134,8 @@ export function GooeyInput({
         {/* Trigger circle (same color, fused) */}
         <button
           type="button"
-          aria-label={open ? 'Suche schließen' : 'Suche öffnen'}
+          aria-label={open ? m.closeLabel : m.openLabel}
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           className={cn(
             "absolute right-0 top-0 rounded-full border-none cursor-pointer p-0 grid place-items-center transition-transform",
@@ -160,9 +168,10 @@ export function GooeyInput({
       {/* Input (outside goo layer so text is crisp) */}
       <input
         ref={inputRef}
-        type="text"
+        type="search"
         value={value}
         placeholder={placeholder}
+        aria-label={m.placeholder}
         onChange={(e) => updateValue(e.target.value)}
         onKeyDown={handleKey}
         tabIndex={open ? 0 : -1}
