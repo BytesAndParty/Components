@@ -1,4 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type ProductTagMessages } from './messages';
 
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -22,6 +24,8 @@ export interface ProductTagProps {
   discount?: number;
   /** Optionaler Label-Override */
   label?: string;
+  /** i18n overrides for variant labels. */
+  messages?: Partial<ProductTagMessages>;
   className?: string;
 }
 
@@ -97,30 +101,32 @@ function injectCssOnce() {
 interface VariantConfig {
   bg: string;
   glow: string;
-  defaultLabel: string;
   shimmer: boolean;
   dot: boolean;
+  /** Key into ProductTagMessages for the default label. */
+  messageKey: keyof ProductTagMessages;
 }
 
 const variantConfig: Record<ProductTagVariant, VariantConfig> = {
-  new:        { bg: '#16a34a', glow: 'rgba(22,163,74,0.55)',   defaultLabel: 'NEU',        shimmer: true,  dot: false },
-  sale:       { bg: '#e11d48', glow: 'rgba(225,29,72,0.55)',   defaultLabel: 'SALE',       shimmer: true,  dot: false },
-  'low-stock':{ bg: '#b45309', glow: 'rgba(180,83,9,0.55)',    defaultLabel: 'Bald weg',   shimmer: false, dot: true  },
-  bestseller: { bg: '#7c3aed', glow: 'rgba(124,58,237,0.55)',  defaultLabel: 'Bestseller', shimmer: true,  dot: false },
-  limited:    { bg: '#ea580c', glow: 'rgba(234,88,12,0.55)',   defaultLabel: 'Limitiert',  shimmer: false, dot: false },
-  organic:    { bg: '#0d9488', glow: 'rgba(13,148,136,0.55)',  defaultLabel: 'Bio',        shimmer: false, dot: false },
-  vegan:      { bg: '#65a30d', glow: 'rgba(101,163,13,0.55)',  defaultLabel: 'Vegan',      shimmer: false, dot: false },
-  award:      { bg: '#ca8a04', glow: 'rgba(202,138,4,0.55)',   defaultLabel: 'Prämiert',   shimmer: true,  dot: false },
+  new:        { bg: '#16a34a', glow: 'rgba(22,163,74,0.55)',  shimmer: true,  dot: false, messageKey: 'new'        },
+  sale:       { bg: '#e11d48', glow: 'rgba(225,29,72,0.55)',  shimmer: true,  dot: false, messageKey: 'sale'       },
+  'low-stock':{ bg: '#b45309', glow: 'rgba(180,83,9,0.55)',   shimmer: false, dot: true,  messageKey: 'lowStock'   },
+  bestseller: { bg: '#7c3aed', glow: 'rgba(124,58,237,0.55)', shimmer: true,  dot: false, messageKey: 'bestseller' },
+  limited:    { bg: '#ea580c', glow: 'rgba(234,88,12,0.55)',  shimmer: false, dot: false, messageKey: 'limited'    },
+  organic:    { bg: '#0d9488', glow: 'rgba(13,148,136,0.55)', shimmer: false, dot: false, messageKey: 'organic'    },
+  vegan:      { bg: '#65a30d', glow: 'rgba(101,163,13,0.55)', shimmer: false, dot: false, messageKey: 'vegan'      },
+  award:      { bg: '#ca8a04', glow: 'rgba(202,138,4,0.55)',  shimmer: true,  dot: false, messageKey: 'award'      },
 };
 
 // ─── Komponenten ──────────────────────────────────────────────────────────────
 
-export function ProductTag({ variant, discount, label, className }: ProductTagProps) {
+export function ProductTag({ variant, discount, label, messages, className }: ProductTagProps) {
   injectCssOnce();
-  const { bg, glow, defaultLabel, shimmer, dot } = variantConfig[variant];
+  const m = useComponentMessages(MESSAGES, messages);
+  const { bg, glow, shimmer, dot, messageKey } = variantConfig[variant];
 
   const displayLabel =
-    label ?? (variant === 'sale' && discount != null ? `−${discount}%` : defaultLabel);
+    label ?? (variant === 'sale' && discount != null ? `−${discount}%` : m[messageKey]);
 
   return (
     <span

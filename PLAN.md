@@ -109,6 +109,8 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `add-to-cart-button` | n/a | ✅ | n/a | ✅ | ✅ |
 | `cart-icon` | n/a | ✅ | n/a | ✅ | ✅ |
 | `floating-cart` | n/a | ✅ | n/a | ✅ | ✅ |
+| `product-tag` | n/a | ✅ | n/a | ✅ | ✅ |
+| `product-badge` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -161,8 +163,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `password-setup` | ✅ | ✅ | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |
 | `pricing-interaction` | ✅ | ✅ | ⬜ |
-| `product-badge` | ⬜ | ⬜ | ⬜ |
-| `product-tag` | ⬜ | ⬜ | ⬜ |
 | `scroll-progress` | n/a | ⬜ | ⬜ |
 | `shiny-text` | n/a | n/a | ⬜ |
 | `sparkles-text` | n/a | n/a | ⬜ |
