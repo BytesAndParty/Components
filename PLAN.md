@@ -119,6 +119,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `use-image-upload` | n/a | ✅ | n/a | ✅ | ✅ |
 | `pricing-interaction` | n/a | ✅ | n/a | ✅ | ✅ |
 | `countdown` | n/a | ✅ | n/a | ✅ | ✅ |
+| `timeline` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -169,7 +170,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `shiny-text` | n/a | n/a | ⬜ |
 | `sparkles-text` | n/a | n/a | ⬜ |
 | `splash-cursor` | n/a | n/a | ⬜ |
-| `timeline` | ⬜ | ⬜ | ⬜ |
 | `view-transition` | n/a | n/a | ⬜ |
 
 ---
@@ -198,6 +198,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 35
+- **Vollständig refactored (✅):** 49
 - **Teilweise refactored (🔶):** 4
-- **Ausstehend (⬜):** 37
+- **Ausstehend (⬜):** 23

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react';
 import { cn } from '../lib/utils';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type TimelineMessages } from './messages';
 
 export interface TimelineItem {
   /** Year or date label — shown left of the dot on desktop, above title on mobile */
@@ -18,6 +20,10 @@ export interface TimelineProps {
   dotColor?: string;
   /** Connecting line color (default: var(--border)) */
   lineColor?: string;
+  /** Custom aria-label for the ordered list. Falls back to i18n default. */
+  'aria-label'?: string;
+  /** i18n overrides for the timeline aria-label. */
+  messages?: Partial<TimelineMessages>;
   className?: string;
   style?: CSSProperties;
 }
@@ -61,9 +67,12 @@ export function Timeline({
   items,
   dotColor = 'var(--accent)',
   lineColor = 'var(--border)',
+  'aria-label': ariaLabel,
+  messages,
   className,
   style,
 }: TimelineProps) {
+  const m = useComponentMessages(MESSAGES, messages);
   const rootRef = useRef<HTMLOListElement>(null);
   const [visible, setVisible] = useState<Set<number>>(() => new Set());
 
@@ -100,6 +109,7 @@ export function Timeline({
   return (
     <ol
       ref={rootRef}
+      aria-label={ariaLabel ?? m.label}
       className={cn("list-none p-0 m-0", className)}
       style={style}
     >
