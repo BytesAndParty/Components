@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type AddToCartButtonMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 // Keyframes: atc-cart → showcase/src/styles.css (standalone: see COMPONENT.md)
@@ -13,6 +15,8 @@ export interface AddToCartButtonProps {
   bgColor?: string
   /** Text / icon color */
   textColor?: string
+  /** i18n overrides for idle label + screen-reader added announcement. */
+  messages?: Partial<AddToCartButtonMessages>
   className?: string
   style?: CSSProperties
 }
@@ -31,16 +35,19 @@ export interface AddToCartButtonProps {
  * 6. Button resets to idle
  */
 export function AddToCartButton({
-  children = 'Add to cart',
+  children,
   onClick,
   duration = 3700,
   bgColor = 'var(--accent, #6366f1)',
   textColor = '#fff',
+  messages,
   className,
   style,
 }: AddToCartButtonProps) {
   const [loading, setLoading] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const m = useComponentMessages(MESSAGES, messages)
+  const label = children ?? m.idle
 
   const handleClick = useCallback(() => {
     if (loading) return
@@ -59,6 +66,8 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleClick}
+      aria-disabled={loading}
+      aria-live="polite"
       className={className}
       style={{
         position: 'relative',
@@ -96,6 +105,7 @@ export function AddToCartButton({
       >
         {/* Plus icon – vertical bar */}
         <span
+          aria-hidden
           style={{
             position: 'absolute',
             width: '2px',
@@ -110,6 +120,7 @@ export function AddToCartButton({
         />
         {/* Plus icon – horizontal bar */}
         <span
+          aria-hidden
           style={{
             position: 'absolute',
             width: '14px',
@@ -122,11 +133,24 @@ export function AddToCartButton({
             transition: 'transform .65s ease .05s',
           }}
         />
-        {children}
+        {label}
+      </span>
+
+      {/* SR-only success announcement that flips when the cart animation completes */}
+      <span
+        style={{
+          position: 'absolute',
+          width: 1, height: 1, padding: 0, margin: -1,
+          overflow: 'hidden', clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap', border: 0,
+        }}
+      >
+        {loading ? m.added : ''}
       </span>
 
       {/* Cart assembly (slides in from outside left, fills, checkmark, slides out right) */}
       <div
+        aria-hidden
         style={{
           position: 'absolute',
           left: '50%',
@@ -171,6 +195,7 @@ export function AddToCartButton({
           width="36"
           height="26"
           viewBox="0 0 36 26"
+          aria-hidden
           style={{
             position: 'relative',
             zIndex: 1,

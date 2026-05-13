@@ -106,6 +106,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `stepper` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `stepper-vertical` | ✅ | ✅ | n/a | ✅ | ✅ |
 | `animated-weather-icons` | ✅ | n/a | n/a | ✅ | ✅ |
+| `add-to-cart-button` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -130,7 +131,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | i18n nötig | A11y-Audit nötig | Status |
 |---|---|---|---|
-| `add-to-cart-button` | ⬜ | ⬜ | ⬜ |
 | `ambient-image` | n/a | ⬜ | ⬜ |
 | `animated-icons` | n/a | ⬜ | ⬜ |
 | `aurora-text` | n/a | n/a | ⬜ |
