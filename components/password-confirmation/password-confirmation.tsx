@@ -6,6 +6,8 @@ import {
   type CSSProperties,
   type ChangeEvent,
 } from 'react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type PasswordConfirmationMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -26,6 +28,8 @@ export interface PasswordConfirmationProps {
   mismatchColor?: string
   /** Neutral dot color (default: 'var(--muted-foreground, #71717a)') */
   neutralColor?: string
+  /** i18n overrides for placeholder, match label and aria-label. */
+  messages?: Partial<PasswordConfirmationMessages>
   className?: string
   style?: CSSProperties
 }
@@ -68,14 +72,17 @@ export function PasswordConfirmation({
   password,
   onChange,
   onMatch,
-  placeholder = 'Confirm password',
+  placeholder: _placeholder,
   dotSize = 10,
   matchColor = '#22c55e',
   mismatchColor = '#ef4444',
   neutralColor = 'var(--muted-foreground, #71717a)',
+  messages,
   className,
   style,
 }: PasswordConfirmationProps) {
+  const m = useComponentMessages(MESSAGES, messages)
+  const placeholder = _placeholder ?? m.placeholder
   const [value, setValue] = useState('')
   const [shake, setShake] = useState(false)
   const [matched, setMatched] = useState(false)
@@ -218,6 +225,7 @@ export function PasswordConfirmation({
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
+          aria-label={m.ariaLabel}
           autoComplete="off"
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -267,9 +275,10 @@ export function PasswordConfirmation({
         </div>
       </div>
 
-      {/* Match indicator */}
+      {/* Match indicator — announced via role=status */}
       {matched && (
         <span
+          role="status"
           style={{
             fontSize: '13px',
             color: matchColor,
@@ -278,10 +287,10 @@ export function PasswordConfirmation({
             gap: '4px',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M20 6 9 17l-5-5" />
           </svg>
-          Passwords match
+          {m.match}
         </span>
       )}
     </div>
