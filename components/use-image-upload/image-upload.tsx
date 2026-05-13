@@ -1,5 +1,7 @@
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type ImageUploadMessages } from './messages';
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
@@ -171,6 +173,8 @@ export interface ImageUploadProps {
   onUpload?: (url: string) => void;
   accept?: string;
   height?: string | number;
+  /** i18n overrides for prompts, alt text and remove button. */
+  messages?: Partial<ImageUploadMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -179,9 +183,11 @@ export function ImageUpload({
   onUpload,
   accept = 'image/*',
   height = 200,
+  messages,
   className,
   style,
 }: ImageUploadProps) {
+  const m = useComponentMessages(MESSAGES, messages);
   useEffect(() => { injectStyles(); }, []);
 
   const { previewUrl, fileName, fileInputRef, handleFile, handleFileChange, handleRemove } =
@@ -220,18 +226,28 @@ export function ImageUpload({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       data-slot="image-upload"
+      role={previewUrl ? undefined : 'button'}
+      tabIndex={previewUrl ? undefined : 0}
+      aria-label={previewUrl ? undefined : m.dropZone}
+      onKeyDown={!previewUrl ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInputRef.current?.click();
+        }
+      } : undefined}
     >
       <input
         ref={fileInputRef}
         type="file"
         accept={accept}
+        aria-label={m.dropZone}
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
 
       {previewUrl ? (
         <>
-          <img src={previewUrl} alt={fileName ?? 'Preview'} className="iu-preview" />
+          <img src={previewUrl} alt={fileName ?? m.previewAlt} className="iu-preview" />
           {fileName && <div className="iu-filename">{fileName}</div>}
           <div className="iu-overlay">
             <button
@@ -239,16 +255,16 @@ export function ImageUpload({
               className="iu-remove"
               onClick={(e) => { e.stopPropagation(); handleRemove(); }}
             >
-              <Trash2 size={14} />
-              Entfernen
+              <Trash2 size={14} aria-hidden />
+              {m.remove}
             </button>
           </div>
         </>
       ) : (
         <div className="iu-empty">
-          <ImagePlus className="iu-empty-icon" size={28} strokeWidth={1.5} />
+          <ImagePlus className="iu-empty-icon" size={28} strokeWidth={1.5} aria-hidden />
           <span style={{ fontSize: '0.875rem' }}>
-            {isDragging ? 'Loslassen zum Hochladen' : 'Klicken oder Bild ablegen'}
+            {isDragging ? m.dragging : m.prompt}
           </span>
         </div>
       )}
