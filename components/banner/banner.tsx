@@ -1,4 +1,6 @@
 import { useState, type ReactNode, type CSSProperties } from 'react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type BannerMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -12,6 +14,8 @@ export interface BannerProps {
   dismissible?: boolean
   /** Callback when dismissed */
   onDismiss?: () => void
+  /** i18n overrides for region landmark and dismiss button. */
+  messages?: Partial<BannerMessages>
   className?: string
   style?: CSSProperties
 }
@@ -48,6 +52,7 @@ export function BannerLink({ children, href, className, style }: BannerLinkProps
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"
+        aria-hidden
         style={{ width: '18px', height: '18px' }}
       >
         <path
@@ -68,17 +73,20 @@ export function Banner({
   textColor = '#ffffff',
   dismissible = true,
   onDismiss,
+  messages,
   className,
   style,
 }: BannerProps) {
   const [visible, setVisible] = useState(true)
+  const m = useComponentMessages(MESSAGES, messages)
 
   if (!visible) return null
 
   return (
     <div
       className={className}
-      role="banner"
+      role="region"
+      aria-label={m.region}
       style={{
         background: bgColor,
         color: textColor,
@@ -107,11 +115,12 @@ export function Banner({
 
         {dismissible && (
           <button
+            type="button"
             onClick={() => {
               setVisible(false)
               onDismiss?.()
             }}
-            aria-label="Banner schließen"
+            aria-label={m.dismiss}
             style={{
               position: 'absolute',
               right: '12px',
@@ -136,6 +145,7 @@ export function Banner({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
+              aria-hidden
               style={{ width: '18px', height: '18px' }}
             >
               <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />

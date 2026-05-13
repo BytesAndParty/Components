@@ -111,6 +111,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `floating-cart` | n/a | ✅ | n/a | ✅ | ✅ |
 | `product-tag` | n/a | ✅ | n/a | ✅ | ✅ |
 | `product-badge` | n/a | ✅ | n/a | ✅ | ✅ |
+| `banner` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -139,7 +140,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `animated-icons` | n/a | ⬜ | ⬜ |
 | `aurora-text` | n/a | n/a | ⬜ |
 | `backlight` | n/a | n/a | ⬜ |
-| `banner` | ✅ | ⬜ | ⬜ |
 | `blur-fade` | n/a | n/a | ⬜ |
 | `bounce-cards` | n/a | ⬜ | ⬜ |
 | `bounce-loader` | n/a | n/a | ⬜ |
