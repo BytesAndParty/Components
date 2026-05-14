@@ -108,6 +108,7 @@ export function fireConfetti(options?: ConfettiOptions) {
  */
 export function fireConfettiRain(options?: ConfettiOptions) {
   const canvas = document.createElement('canvas')
+  canvas.setAttribute('aria-hidden', 'true')
   Object.assign(canvas.style, {
     position: 'fixed',
     inset: '0',
@@ -252,6 +253,7 @@ export function ConfettiRain({
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden
       style={{
         position: 'fixed',
         inset: 0,

@@ -66,6 +66,7 @@ export function ClickSpark({
         const endY = Math.sin(rad) * sparkRadius
 
         const spark = document.createElement('div')
+        spark.setAttribute('aria-hidden', 'true')
         spark.style.cssText = `
           position: absolute;
           left: ${x}px;

@@ -33,6 +33,7 @@ export function RotatingDecoration({ className = '' }: RotatingDecorationProps) 
         viewBox="0 0 120 120"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
         className="text-primary opacity-25"
       >
         <circle

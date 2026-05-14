@@ -94,6 +94,7 @@ export function PixelImage({
       cells.push(
         <div
           key={cellIndex}
+          aria-hidden
           style={{
             position: 'absolute',
             top: `${(row / grid.rows) * 100}%`,

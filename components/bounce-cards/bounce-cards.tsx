@@ -16,6 +16,8 @@ export interface BounceCardsProps {
   animationStagger?: number
   /** Custom CSS transform strings for each card position */
   transformStyles?: string[]
+  /** Optional per-image alt texts. Empty/missing means decorative. */
+  alts?: string[]
   /** Enable hover interaction that pushes siblings apart */
   enableHover?: boolean
   /** Additional CSS class */
@@ -70,6 +72,7 @@ export function BounceCards({
     'rotate(2deg) translate(170px)',
   ],
   enableHover = true,
+  alts,
   className,
   style,
 }: BounceCardsProps) {
@@ -176,7 +179,7 @@ export function BounceCards({
         >
           <img
             src={src}
-            alt={`card-${idx}`}
+            alt={alts?.[idx] ?? ''}
             style={{
               width: '100%',
               height: '100%',

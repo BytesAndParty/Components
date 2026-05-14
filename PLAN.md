@@ -135,14 +135,22 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `velocity-scroll` | ✅ | n/a | n/a | ✅ | ✅ |
 | `aurora-text` | n/a | n/a | n/a | ✅ | ✅ |
 | `morphing-text` | n/a | n/a | n/a | ✅ | ✅ |
+| `backlight` | n/a | n/a | n/a | ✅ | ✅ |
+| `blur-fade` | n/a | n/a | n/a | ✅ | ✅ |
+| `bounce-cards` | n/a | n/a | n/a | ✅ | ✅ |
+| `click-spark` | n/a | n/a | n/a | ✅ | ✅ |
+| `confetti` | n/a | n/a | n/a | ✅ | ✅ |
+| `cursor-glow` | n/a | n/a | n/a | ✅ | ✅ |
+| `glow-card` | n/a | n/a | n/a | ✅ | ✅ |
+| `highlighter` | n/a | n/a | n/a | ✅ | ✅ |
+| `lens` | n/a | n/a | n/a | ✅ | ✅ |
+| `light-rays` | n/a | n/a | n/a | ✅ | ✅ |
+| `particles` | n/a | n/a | n/a | ✅ | ✅ |
+| `pixel-image` | n/a | n/a | n/a | ✅ | ✅ |
+| `splash-cursor` | n/a | n/a | n/a | ✅ | ✅ |
+| `view-transition` | n/a | n/a | n/a | ✅ | ✅ |
+| `scroll-rotate` | ✅ | n/a | n/a | ✅ | ✅ |
 
-### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
-
-> Diese Komponenten wurden auf `motion/react` umgestellt, aber noch nicht für i18n oder A11y überarbeitet.
-
-| Komponente | motion/react | i18n | Hotkeys | A11y | Status |
-|---|---|---|---|---|---|
-| `scroll-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
 
 ### Neu hinzugefügt
 
@@ -156,21 +164,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | i18n nötig | A11y-Audit nötig | Status |
 |---|---|---|---|
-| `backlight` | n/a | n/a | ⬜ |
-| `blur-fade` | n/a | n/a | ⬜ |
-| `bounce-cards` | n/a | ⬜ | ⬜ |
-| `click-spark` | n/a | n/a | ⬜ |
-| `confetti` | n/a | n/a | ⬜ |
-| `cursor-glow` | n/a | n/a | ⬜ |
-| `glow-card` | n/a | ⬜ | ⬜ |
-| `highlighter` | n/a | n/a | ⬜ |
 | `hover-3d-card` | n/a | ⬜ | ⬜ |
-| `lens` | n/a | ⬜ | ⬜ |
-| `light-rays` | n/a | n/a | ⬜ |
-| `particles` | n/a | n/a | ⬜ |
-| `pixel-image` | n/a | ⬜ | ⬜ |
-| `splash-cursor` | n/a | n/a | ⬜ |
-| `view-transition` | n/a | n/a | ⬜ |
 
 ---
 
@@ -198,6 +192,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 49
-- **Teilweise refactored (🔶):** 4
-- **Ausstehend (⬜):** 23
+- **Vollständig refactored (✅):** 75
+- **Teilweise refactored (🔶):** 0
+- **Ausstehend (⬜):** 1

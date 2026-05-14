@@ -190,6 +190,7 @@ export function Particles({
     >
       <canvas
         ref={canvasRef}
+        aria-hidden
         style={{
           position: 'absolute',
           inset: 0,

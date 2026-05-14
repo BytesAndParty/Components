@@ -1070,6 +1070,7 @@ export function SplashCursor({
 
   return (
     <div
+      aria-hidden
       style={{
         position: 'fixed',
         top: 0,

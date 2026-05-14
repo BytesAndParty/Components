@@ -29,7 +29,7 @@ export function ParticlesCard({
       }}
     >
       {/* Particles-Layer: absolut hinter dem Content */}
-      <div style={{ position: 'absolute', inset: 0 }}>
+      <div aria-hidden style={{ position: 'absolute', inset: 0 }}>
         <Particles {...particlesProps} />
       </div>
 

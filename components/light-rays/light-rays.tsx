@@ -393,6 +393,7 @@ export function LightRays({
   return (
     <div
       ref={containerRef}
+      aria-hidden
       className={className}
       style={{
         position: 'absolute',

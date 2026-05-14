@@ -58,6 +58,7 @@ export function GlowCard({
     >
       {/* Glow layer */}
       <div
+        aria-hidden
         style={{
           pointerEvents: 'none',
           position: 'absolute',
