@@ -150,6 +150,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `splash-cursor` | n/a | n/a | n/a | ✅ | ✅ |
 | `view-transition` | n/a | n/a | n/a | ✅ | ✅ |
 | `scroll-rotate` | ✅ | n/a | n/a | ✅ | ✅ |
+| `hover-3d-card` | n/a | n/a | n/a | ✅ | ✅ |
 
 
 ### Neu hinzugefügt
@@ -157,14 +158,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | Komponente | motion/react | i18n | A11y | Status |
 |---|---|---|---|---|
 | `language-switcher` | n/a | ✅ via context | ✅ | ✅ |
-
-### Bestehende Komponenten — Noch nicht angepasst
-
-> Enthalten keine `framer-motion`-Imports. Brauchen ggf. i18n und A11y-Überarbeitung.
-
-| Komponente | i18n nötig | A11y-Audit nötig | Status |
-|---|---|---|---|
-| `hover-3d-card` | n/a | ⬜ | ⬜ |
 
 ---
 
@@ -192,6 +185,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 ## Statistik
 
 - **Komponenten gesamt:** 76
-- **Vollständig refactored (✅):** 75
+- **Vollständig refactored (✅):** 76
 - **Teilweise refactored (🔶):** 0
-- **Ausstehend (⬜):** 1
+- **Ausstehend (⬜):** 0

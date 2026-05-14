@@ -85,6 +85,7 @@ export function Hover3DCard({
       {/* Glare overlay */}
       {glare && (
         <div
+          aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
