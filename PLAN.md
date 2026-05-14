@@ -123,6 +123,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `bounce-loader` | n/a | ✅ | n/a | ✅ | ✅ |
 | `circular-progress` | n/a | ✅ | n/a | ✅ | ✅ |
 | `number-ticker` | n/a | n/a | n/a | ✅ | ✅ |
+| `scroll-progress` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -166,7 +167,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `paragraph` | n/a | n/a | ⬜ |
 | `particles` | n/a | n/a | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |
-| `scroll-progress` | n/a | ⬜ | ⬜ |
 | `shiny-text` | n/a | n/a | ⬜ |
 | `sparkles-text` | n/a | n/a | ⬜ |
 | `splash-cursor` | n/a | n/a | ⬜ |

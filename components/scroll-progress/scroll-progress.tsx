@@ -1,4 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type ScrollProgressMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -11,6 +13,8 @@ export interface ScrollProgressProps {
   top?: string
   /** z-index (default: 50) */
   zIndex?: number
+  /** i18n override for the aria-label. */
+  messages?: Partial<ScrollProgressMessages>
   className?: string
   style?: CSSProperties
 }
@@ -22,9 +26,11 @@ export function ScrollProgress({
   height = 3,
   top = '0',
   zIndex = 50,
+  messages,
   className,
   style,
 }: ScrollProgressProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -47,7 +53,7 @@ export function ScrollProgress({
       aria-valuenow={Math.round(progress * 100)}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label="Scroll progress"
+      aria-label={m.label}
       style={{
         position: 'fixed',
         top,
