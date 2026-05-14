@@ -127,6 +127,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `ambient-image` | n/a | n/a | n/a | ✅ | ✅ |
 | `animated-icons` | ✅ | n/a | n/a | ✅ | ✅ |
 | `images-slider` | n/a | ✅ | n/a | ✅ | ✅ |
+| `paragraph` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -164,7 +165,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `lens` | n/a | ⬜ | ⬜ |
 | `light-rays` | n/a | n/a | ⬜ |
 | `morphing-text` | n/a | n/a | ⬜ |
-| `paragraph` | n/a | n/a | ⬜ |
 | `particles` | n/a | n/a | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |
 | `shiny-text` | n/a | n/a | ⬜ |

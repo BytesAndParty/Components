@@ -1,4 +1,6 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type ParagraphMessages } from './messages';
 
 const cn = (...classes: (string | false | null | undefined)[]) =>
   classes.filter(Boolean).join(' ');
@@ -95,19 +97,26 @@ export interface ParagraphProps {
   style?: React.CSSProperties;
   /** Callback nach Messung: erfährt, ob Truncation tatsächlich greift. */
   onMeasure?: (result: { lineCount: number; truncated: boolean }) => void;
+  /** i18n overrides for the expand/collapse button labels. */
+  messages?: Partial<ParagraphMessages>;
 }
 
 export function Paragraph({
   text,
   clamp,
   expandable = false,
-  expandLabel = 'Mehr lesen',
-  collapseLabel = 'Weniger',
+  expandLabel: _expandLabel,
+  collapseLabel: _collapseLabel,
   wordAnimation = 'fade-up',
   className,
   style,
   onMeasure,
+  messages,
 }: ParagraphProps) {
+  const m = useComponentMessages(MESSAGES, messages);
+  const expandLabel = _expandLabel ?? m.expand;
+  const collapseLabel = _collapseLabel ?? m.collapse;
+  const paragraphId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [overflow, setOverflow] = useState(false);
@@ -193,6 +202,7 @@ export function Paragraph({
       data-word-animation={wordAnimation}
     >
       <p
+        id={paragraphId}
         style={{
           margin: 0,
           display: isClamped ? '-webkit-box' : 'block',
@@ -222,6 +232,7 @@ export function Paragraph({
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
+          aria-controls={paragraphId}
           style={{
             marginTop: '0.25rem',
             background: 'none',
