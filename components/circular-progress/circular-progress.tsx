@@ -1,4 +1,6 @@
 import { type CSSProperties, type ReactNode } from 'react'
+import { useComponentMessages, interpolate } from '../i18n'
+import { MESSAGES, type CircularProgressMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -17,6 +19,10 @@ export interface CircularProgressProps {
   children?: ReactNode
   /** Animationsdauer in ms (default: 600) */
   duration?: number
+  /** Override the aria-label entirely. Default uses i18n template "Progress: X%". */
+  'aria-label'?: string
+  /** i18n overrides for the aria-label template. */
+  messages?: Partial<CircularProgressMessages>
   className?: string
   style?: CSSProperties
 }
@@ -31,10 +37,14 @@ export function CircularProgress({
   trackColor = 'var(--border, rgba(255,255,255,0.12))',
   children,
   duration = 600,
+  'aria-label': ariaLabel,
+  messages,
   className,
   style,
 }: CircularProgressProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const clampedValue = Math.min(100, Math.max(0, value))
+  const label = ariaLabel ?? interpolate(m.label, { value: clampedValue })
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   // strokeDashoffset = circumference wenn 0%, 0 wenn 100%
@@ -50,6 +60,7 @@ export function CircularProgress({
       aria-valuenow={clampedValue}
       aria-valuemin={0}
       aria-valuemax={100}
+      aria-label={label}
       className={className}
       style={{
         display: 'inline-flex',
@@ -66,6 +77,7 @@ export function CircularProgress({
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
+        aria-hidden
         style={{ position: 'absolute', inset: 0 }}
       >
         {/* Hintergrundring */}
@@ -98,9 +110,9 @@ export function CircularProgress({
         />
       </svg>
 
-      {/* Inhalts-Slot (z.B. Prozentzahl, Icon, …) */}
+      {/* Inhalts-Slot (z.B. Prozentzahl, Icon, …) — aria-hidden, value is on the progressbar */}
       {children && (
-        <span style={{ position: 'relative', zIndex: 1 }}>
+        <span aria-hidden style={{ position: 'relative', zIndex: 1 }}>
           {children}
         </span>
       )}
