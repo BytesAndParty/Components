@@ -144,6 +144,7 @@ export function AmbientImage({
         <>
           {/* Top glow */}
           <div
+            aria-hidden
             style={{
               position: 'absolute',
               top: `-${spread}px`,
@@ -161,6 +162,7 @@ export function AmbientImage({
           />
           {/* Bottom glow */}
           <div
+            aria-hidden
             style={{
               position: 'absolute',
               bottom: `-${spread}px`,
@@ -178,6 +180,7 @@ export function AmbientImage({
           />
           {/* Left glow */}
           <div
+            aria-hidden
             style={{
               position: 'absolute',
               left: `-${spread}px`,
@@ -195,6 +198,7 @@ export function AmbientImage({
           />
           {/* Right glow */}
           <div
+            aria-hidden
             style={{
               position: 'absolute',
               right: `-${spread}px`,
