@@ -4,6 +4,8 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { useComponentMessages, interpolate } from '../i18n';
+import { MESSAGES, type ImagesSliderMessages } from './messages';
 
 export type ImagesSliderDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -20,6 +22,10 @@ export interface ImagesSliderProps {
   overlayColor?: string;
   /** Height — any CSS value (e.g. '100vh', 600) */
   height?: string | number;
+  /** Optional per-image accessible labels. Falls back to "Slide X of Y". */
+  imageLabels?: string[];
+  /** i18n overrides for carousel, slide template and loading. */
+  messages?: Partial<ImagesSliderMessages>;
   className?: string;
   style?: CSSProperties;
 }
@@ -67,9 +73,12 @@ export function ImagesSlider({
   overlay = true,
   overlayColor = 'rgba(0, 0, 0, 0.55)',
   height = 560,
+  imageLabels,
+  messages,
   className,
   style,
 }: ImagesSliderProps) {
+  const m = useComponentMessages(MESSAGES, messages);
   const [index, setIndex] = useState(0);
   const [loaded, setLoaded] = useState<Set<number>>(() => new Set());
   const total = images.length;
@@ -119,6 +128,9 @@ export function ImagesSlider({
   return (
     <div
       className={className}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={m.carousel}
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -143,9 +155,13 @@ export function ImagesSlider({
             transform = exitTransform(direction);
             opacity = 1;
           }
+          const slideLabel = imageLabels?.[i] ?? interpolate(m.slide, { current: i + 1, total });
           return (
             <div
               key={i}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={slideLabel}
               aria-hidden={!isCurrent}
               style={{
                 position: 'absolute',
@@ -178,6 +194,7 @@ export function ImagesSlider({
 
       {!allReady && (
         <div
+          role="status"
           style={{
             position: 'absolute',
             inset: 0,
@@ -189,7 +206,7 @@ export function ImagesSlider({
             textTransform: 'uppercase',
           }}
         >
-          Loading…
+          {m.loading}
         </div>
       )}
 
