@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { useComponentMessages } from '../i18n';
+import { MESSAGES, type BounceLoaderMessages } from './messages';
 
 const STYLE_ID = '__bounce-loader-styles__';
 
@@ -39,6 +41,8 @@ export interface BounceLoaderProps {
   squishColor?: string;
   speed?: number;
   label?: string;
+  /** i18n override for the default "Loading" label. */
+  messages?: Partial<BounceLoaderMessages>;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -48,10 +52,13 @@ export function BounceLoader({
   color = 'var(--accent)',
   squishColor = 'var(--muted-foreground)',
   speed = 0.5,
-  label = 'Loading',
+  label: _label,
+  messages,
   className,
   style,
 }: BounceLoaderProps) {
+  const m = useComponentMessages(MESSAGES, messages);
+  const label = _label ?? m.loading;
   const injected = useRef(false);
 
   useEffect(() => {
@@ -110,17 +117,13 @@ export function BounceLoader({
         ...style,
       }}
     >
-      <span style={{ ...circleBase, left: '15%' }} />
-      <span style={{ ...circleBase, left: '45%', animationDelay: `${speed * 0.2}s` }} />
-      <span style={{ ...circleBase, right: '15%', animationDelay: `${speed * 0.4}s` }} />
+      <span aria-hidden style={{ ...circleBase, left: '15%' }} />
+      <span aria-hidden style={{ ...circleBase, left: '45%', animationDelay: `${speed * 0.2}s` }} />
+      <span aria-hidden style={{ ...circleBase, right: '15%', animationDelay: `${speed * 0.4}s` }} />
 
-      <span style={{ ...shadowBase, left: '15%' }} />
-      <span style={{ ...shadowBase, left: '45%', animationDelay: `${speed * 0.2}s` }} />
-      <span style={{ ...shadowBase, right: '15%', animationDelay: `${speed * 0.4}s` }} />
-
-      <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
-        {label}
-      </span>
+      <span aria-hidden style={{ ...shadowBase, left: '15%' }} />
+      <span aria-hidden style={{ ...shadowBase, left: '45%', animationDelay: `${speed * 0.2}s` }} />
+      <span aria-hidden style={{ ...shadowBase, right: '15%', animationDelay: `${speed * 0.4}s` }} />
     </div>
   );
 }

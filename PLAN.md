@@ -120,6 +120,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `pricing-interaction` | n/a | ✅ | n/a | ✅ | ✅ |
 | `countdown` | n/a | ✅ | n/a | ✅ | ✅ |
 | `timeline` | n/a | ✅ | n/a | ✅ | ✅ |
+| `bounce-loader` | n/a | ✅ | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -150,7 +151,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `backlight` | n/a | n/a | ⬜ |
 | `blur-fade` | n/a | n/a | ⬜ |
 | `bounce-cards` | n/a | ⬜ | ⬜ |
-| `bounce-loader` | n/a | n/a | ⬜ |
 | `circular-progress` | ⬜ | ⬜ | ⬜ |
 | `click-spark` | n/a | n/a | ⬜ |
 | `confetti` | n/a | n/a | ⬜ |
