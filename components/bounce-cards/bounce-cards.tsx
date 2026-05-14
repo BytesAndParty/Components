@@ -81,18 +81,20 @@ export function BounceCards({
   // Entrance animation: scale-Property animieren, transform bleibt unangetastet.
   // CSS `scale` und `transform` sind separate Properties — sie komponieren
   // ohne sich gegenseitig zu überschreiben.
+  //
+  // Keyframes [0, 1] statt manueller `style.scale = '0'`-Mutation: wenn
+  // animate() aus irgendeinem Grund nicht feuert (HMR / strict-mode double
+  // mount mit cleanup-Race), bleiben die Karten so nicht permanent unsichtbar.
   useEffect(() => {
     if (!containerRef.current) return
     const cards = Array.from(
       containerRef.current.querySelectorAll<HTMLElement>('[data-bounce-card]')
     )
-
-    // Startzustand setzen, bevor Motion die Animation übernimmt
-    cards.forEach(c => { c.style.scale = '0' })
+    if (cards.length === 0) return
 
     const controls = animate(
       cards,
-      { scale: 1 },
+      { scale: [0, 1] },
       {
         delay: stagger(animationStagger, { startDelay: animationDelay }),
         ...ENTRANCE_SPRING,
