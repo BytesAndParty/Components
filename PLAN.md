@@ -125,6 +125,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `number-ticker` | n/a | n/a | n/a | ✅ | ✅ |
 | `scroll-progress` | n/a | ✅ | n/a | ✅ | ✅ |
 | `ambient-image` | n/a | n/a | n/a | ✅ | ✅ |
+| `animated-icons` | ✅ | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -149,7 +150,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | i18n nötig | A11y-Audit nötig | Status |
 |---|---|---|---|
-| `animated-icons` | n/a | ⬜ | ⬜ |
 | `aurora-text` | n/a | n/a | ⬜ |
 | `backlight` | n/a | n/a | ⬜ |
 | `blur-fade` | n/a | n/a | ⬜ |

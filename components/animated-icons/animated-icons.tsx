@@ -23,6 +23,12 @@ interface AnimatedIconProps {
   color?: string;
   /** Animation trigger. Default: 'hover' */
   trigger?: 'hover' | 'click';
+  /**
+   * Accessible name. When provided the wrapper becomes role=img and is
+   * announced. When omitted the icon is treated as decorative (aria-hidden) —
+   * the default, since these icons usually sit next to text labels.
+   */
+  'aria-label'?: string;
 }
 
 /**
@@ -69,14 +75,18 @@ function useLottieHover() {
 function createLottieIcon(animationData: unknown, displayName: string, options: { loop?: boolean; autoplay?: boolean } = {}) {
   const { loop = false, autoplay = false } = options;
 
-  function Icon({ size = 32, className, color, trigger = 'hover' }: AnimatedIconProps) {
+  function Icon({ size = 32, className, color, trigger = 'hover', 'aria-label': ariaLabel }: AnimatedIconProps) {
     const { setPlayer, onMouseEnter, onMouseLeave, onClick } = useLottieHover();
 
     const isHover = trigger === 'hover' && !loop;
     const isClick = trigger === 'click' && !loop;
+    const a11y = ariaLabel
+      ? { role: 'img' as const, 'aria-label': ariaLabel }
+      : { 'aria-hidden': true };
 
     return (
       <div
+        {...a11y}
         className={cn(
           'inline-flex items-center justify-center cursor-pointer',
           className
@@ -124,6 +134,8 @@ export const TrashIcon = createLottieIcon(trashData, 'TrashIcon');
 interface CssIconProps {
   size?: number;
   className?: string;
+  /** Accessible name. Omit for purely decorative usage (default aria-hidden). */
+  'aria-label'?: string;
 }
 
 const cssIconStyles = `
@@ -254,10 +266,14 @@ function injectCssOnce() {
   cssInjected = true;
 }
 
-function CssIconWrapper({ size = 32, className, children }: CssIconProps & { children: React.ReactNode }) {
+function CssIconWrapper({ size = 32, className, children, 'aria-label': ariaLabel }: CssIconProps & { children: React.ReactNode }) {
   injectCssOnce();
+  const a11y = ariaLabel
+    ? { role: 'img' as const, 'aria-label': ariaLabel }
+    : { 'aria-hidden': true };
   return (
     <div
+      {...a11y}
       className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
       style={{ width: size, height: size, color: 'var(--foreground, currentColor)' }}
     >
@@ -266,9 +282,9 @@ function CssIconWrapper({ size = 32, className, children }: CssIconProps & { chi
   );
 }
 
-export function SunIconCss({ size = 32, className }: CssIconProps) {
+export function SunIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="4" />
         <g className="icon-sun-rays" style={{ transformOrigin: '12px 12px' }}>
@@ -283,9 +299,9 @@ export function SunIconCss({ size = 32, className }: CssIconProps) {
 }
 SunIconCss.displayName = 'SunIconCss';
 
-export function MoonIconCss({ size = 32, className }: CssIconProps) {
+export function MoonIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <path className="icon-moon-body" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" style={{ transformOrigin: '10px 14px' }} />
         <circle className="icon-moon-star1" cx="19" cy="5" r="0.6" fill="currentColor" opacity="0" />
@@ -297,9 +313,9 @@ export function MoonIconCss({ size = 32, className }: CssIconProps) {
 }
 MoonIconCss.displayName = 'MoonIconCss';
 
-export function StarIconCss({ size = 32, className }: CssIconProps) {
+export function StarIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <polygon className="icon-star-shape" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" style={{ transformOrigin: '12px 12px' }} />
       </svg>
@@ -308,9 +324,9 @@ export function StarIconCss({ size = 32, className }: CssIconProps) {
 }
 StarIconCss.displayName = 'StarIconCss';
 
-export function WineIconCss({ size = 32, className }: CssIconProps) {
+export function WineIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="icon-wine-svg">
         <path d="M8 22h8M12 15v7" />
         <path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5z" />
@@ -321,9 +337,9 @@ export function WineIconCss({ size = 32, className }: CssIconProps) {
 }
 WineIconCss.displayName = 'WineIconCss';
 
-export function ChevronDownIconCss({ size = 32, className }: CssIconProps) {
+export function ChevronDownIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <polyline className="icon-chevron-down" points="6 9 12 15 18 9" style={{ transformOrigin: '12px 12px' }} />
       </svg>
@@ -332,9 +348,9 @@ export function ChevronDownIconCss({ size = 32, className }: CssIconProps) {
 }
 ChevronDownIconCss.displayName = 'ChevronDownIconCss';
 
-export function ChevronRightIconCss({ size = 32, className }: CssIconProps) {
+export function ChevronRightIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <polyline className="icon-chevron-right" points="9 6 15 12 9 18" style={{ transformOrigin: '12px 12px' }} />
       </svg>
@@ -343,9 +359,9 @@ export function ChevronRightIconCss({ size = 32, className }: CssIconProps) {
 }
 ChevronRightIconCss.displayName = 'ChevronRightIconCss';
 
-export function UserIconCss({ size = 32, className }: CssIconProps) {
+export function UserIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <g className="icon-user" style={{ transformOrigin: '12px 11px' }}>
           <circle cx="12" cy="8" r="4" />
@@ -357,9 +373,9 @@ export function UserIconCss({ size = 32, className }: CssIconProps) {
 }
 UserIconCss.displayName = 'UserIconCss';
 
-export function PlusIconCss({ size = 32, className }: CssIconProps) {
+export function PlusIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <g className="icon-plus" style={{ transformOrigin: '12px 12px' }}>
           <line x1="12" y1="5" x2="12" y2="19" />
@@ -371,9 +387,9 @@ export function PlusIconCss({ size = 32, className }: CssIconProps) {
 }
 PlusIconCss.displayName = 'PlusIconCss';
 
-export function MinusIconCss({ size = 32, className }: CssIconProps) {
+export function MinusIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <line className="icon-minus" x1="5" y1="12" x2="19" y2="12" style={{ transformOrigin: '12px 12px' }} />
       </svg>
@@ -382,9 +398,9 @@ export function MinusIconCss({ size = 32, className }: CssIconProps) {
 }
 MinusIconCss.displayName = 'MinusIconCss';
 
-export function TruckIconCss({ size = 32, className }: CssIconProps) {
+export function TruckIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
-    <CssIconWrapper size={size} className={className}>
+    <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <g className="icon-truck" style={{ transformOrigin: '12px 12px' }}>
           <rect x="1" y="3" width="15" height="13" rx="1" />
@@ -400,24 +416,27 @@ export function TruckIconCss({ size = 32, className }: CssIconProps) {
 }
 TruckIconCss.displayName = 'TruckIconCss';
 
-export function HeartIconCss({ size = 32, className }: CssIconProps) {
+export function HeartIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   const [liked, setLiked] = useState(false);
   injectCssOnce();
   return (
-    <div
-      className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
+    <button
+      type="button"
+      aria-pressed={liked}
+      aria-label={ariaLabel ?? 'Like'}
+      className={cn('css-icon inline-flex items-center justify-center cursor-pointer bg-transparent border-none p-0', className)}
       style={{ width: size, height: size, overflow: 'visible', color: 'var(--foreground, currentColor)' }}
       onClick={() => setLiked(v => !v)}
     >
-      <svg width={size} height={size} viewBox="-3 -1 30 26" fill={liked ? '#ef4444' : 'none'} stroke={liked ? '#ef4444' : 'currentColor'} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.45))' : 'none', transition: 'filter 300ms ease' }}>
+      <svg width={size} height={size} viewBox="-3 -1 30 26" fill={liked ? '#ef4444' : 'none'} stroke={liked ? '#ef4444' : 'currentColor'} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.45))' : 'none', transition: 'filter 300ms ease' }}>
         <path className="icon-heart" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" style={{ transformOrigin: '12px 13px', transition: 'fill 200ms ease, stroke 200ms ease', animation: liked ? 'heart-pop 0.5s ease' : undefined }} />
       </svg>
-    </div>
+    </button>
   );
 }
 HeartIconCss.displayName = 'HeartIconCss';
 
-export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
+export function Heart3DIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   const [liked, setLiked] = useState(false);
   // useId is the React-native source of stable, unique IDs across mounts;
   // the colons it returns are valid in SVG id refs but stripped here so
@@ -425,12 +444,15 @@ export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
   const id = `heart3d-${useId().replace(/:/g, '')}`;
   injectCssOnce();
   return (
-    <div
-      className={cn('css-icon inline-flex items-center justify-center cursor-pointer', className)}
+    <button
+      type="button"
+      aria-pressed={liked}
+      aria-label={ariaLabel ?? 'Like'}
+      className={cn('css-icon inline-flex items-center justify-center cursor-pointer bg-transparent border-none p-0', className)}
       style={{ width: size, height: size, overflow: 'visible', color: 'var(--foreground, currentColor)' }}
       onClick={() => setLiked(v => !v)}
     >
-      <svg width={size} height={size} viewBox="-3 -1 30 26" fill="none" strokeWidth={0} style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 3px 6px rgba(239, 68, 68, 0.5))' : 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25))', transition: 'filter 300ms ease' }}>
+      <svg width={size} height={size} viewBox="-3 -1 30 26" fill="none" strokeWidth={0} aria-hidden style={{ overflow: 'visible', filter: liked ? 'drop-shadow(0 3px 6px rgba(239, 68, 68, 0.5))' : 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25))', transition: 'filter 300ms ease' }}>
         <defs>
           {/* Idle gradient — subtle metallic grey */}
           <radialGradient id={`${id}-idle`} cx="0.35" cy="0.3" r="0.65">
@@ -473,7 +495,7 @@ export function Heart3DIconCss({ size = 32, className }: CssIconProps) {
           style={{ pointerEvents: 'none' }}
         />
       </svg>
-    </div>
+    </button>
   );
 }
 Heart3DIconCss.displayName = 'Heart3DIconCss';
