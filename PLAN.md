@@ -122,6 +122,7 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `timeline` | n/a | ✅ | n/a | ✅ | ✅ |
 | `bounce-loader` | n/a | ✅ | n/a | ✅ | ✅ |
 | `circular-progress` | n/a | ✅ | n/a | ✅ | ✅ |
+| `number-ticker` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -162,7 +163,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `lens` | n/a | ⬜ | ⬜ |
 | `light-rays` | n/a | n/a | ⬜ |
 | `morphing-text` | n/a | n/a | ⬜ |
-| `number-ticker` | n/a | ⬜ | ⬜ |
 | `paragraph` | n/a | n/a | ⬜ |
 | `particles` | n/a | n/a | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |

@@ -75,18 +75,30 @@ export function NumberTicker({
         ...style,
       }}
     >
-      {isNegative && <span>-</span>}
-      {digits.map((digit, i) => {
-        // Key von rechts für stabile Animationen bei Stellen-Änderungen
-        const posFromRight = digits.length - 1 - i
-        return (
-          <DigitColumn
-            key={`digit-${posFromRight}`}
-            digit={digit}
-            duration={duration}
-          />
-        )
-      })}
+      {/* Screen-reader sees the literal value, not the 0–9 stacked columns */}
+      <span
+        style={{
+          position: 'absolute', width: 1, height: 1, padding: 0, margin: -1,
+          overflow: 'hidden', clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap', border: 0,
+        }}
+      >
+        {value}
+      </span>
+      <span aria-hidden style={{ display: 'inline-flex', alignItems: 'baseline' }}>
+        {isNegative && <span>-</span>}
+        {digits.map((digit, i) => {
+          // Key von rechts für stabile Animationen bei Stellen-Änderungen
+          const posFromRight = digits.length - 1 - i
+          return (
+            <DigitColumn
+              key={`digit-${posFromRight}`}
+              digit={digit}
+              duration={duration}
+            />
+          )
+        })}
+      </span>
     </span>
   )
 }
