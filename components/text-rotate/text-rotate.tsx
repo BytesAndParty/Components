@@ -136,6 +136,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
     return (
       <div
         className={mainClassName}
+        aria-label={currentText}
         style={{
           position: 'relative',
           display: 'inline-flex',
@@ -170,6 +171,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
+            aria-hidden
             style={{
               position: 'absolute',
               top: 0,

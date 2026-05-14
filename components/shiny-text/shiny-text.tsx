@@ -94,6 +94,8 @@ export function ShinyButton({
   children,
   shineColor = 'rgba(255,255,255,0.6)',
   duration = 10,
+  // Default to "button" so it doesn't accidentally submit enclosing forms.
+  type = 'button',
   style,
   ...props
 }: ShinyButtonProps) {
@@ -108,6 +110,7 @@ export function ShinyButton({
   return (
     <button
       {...props}
+      type={type}
       style={{
         position: 'relative',
         display: 'inline-flex',

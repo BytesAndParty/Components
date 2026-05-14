@@ -88,9 +88,10 @@ export function TextScramble({
     <span
       ref={ref}
       className={className}
+      aria-label={text}
       data-complete={isComplete}
     >
-      {displayText}
+      <span aria-hidden>{displayText}</span>
     </span>
   );
 }

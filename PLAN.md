@@ -128,6 +128,13 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `animated-icons` | ✅ | n/a | n/a | ✅ | ✅ |
 | `images-slider` | n/a | ✅ | n/a | ✅ | ✅ |
 | `paragraph` | n/a | ✅ | n/a | ✅ | ✅ |
+| `shiny-text` | n/a | n/a | n/a | ✅ | ✅ |
+| `sparkles-text` | n/a | n/a | n/a | ✅ | ✅ |
+| `text-rotate` | ✅ | n/a | n/a | ✅ | ✅ |
+| `text-scramble` | ✅ | n/a | n/a | ✅ | ✅ |
+| `velocity-scroll` | ✅ | n/a | n/a | ✅ | ✅ |
+| `aurora-text` | n/a | n/a | n/a | ✅ | ✅ |
+| `morphing-text` | n/a | n/a | n/a | ✅ | ✅ |
 
 ### Bestehende Komponenten — Motion-Migration (Phase 1, nur Import)
 
@@ -136,9 +143,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | Komponente | motion/react | i18n | Hotkeys | A11y | Status |
 |---|---|---|---|---|---|
 | `scroll-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
-| `text-rotate` | ✅ | n/a | n/a | ⬜ | 🔶 |
-| `text-scramble` | ✅ | n/a | n/a | ⬜ | 🔶 |
-| `velocity-scroll` | ✅ | n/a | n/a | ⬜ | 🔶 |
 
 ### Neu hinzugefügt
 
@@ -152,7 +156,6 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 
 | Komponente | i18n nötig | A11y-Audit nötig | Status |
 |---|---|---|---|
-| `aurora-text` | n/a | n/a | ⬜ |
 | `backlight` | n/a | n/a | ⬜ |
 | `blur-fade` | n/a | n/a | ⬜ |
 | `bounce-cards` | n/a | ⬜ | ⬜ |
@@ -164,11 +167,8 @@ Legende: ✅ Vollständig · 🔶 Teilweise · ⬜ Ausstehend · 🆕 Neu in die
 | `hover-3d-card` | n/a | ⬜ | ⬜ |
 | `lens` | n/a | ⬜ | ⬜ |
 | `light-rays` | n/a | n/a | ⬜ |
-| `morphing-text` | n/a | n/a | ⬜ |
 | `particles` | n/a | n/a | ⬜ |
 | `pixel-image` | n/a | ⬜ | ⬜ |
-| `shiny-text` | n/a | n/a | ⬜ |
-| `sparkles-text` | n/a | n/a | ⬜ |
 | `splash-cursor` | n/a | n/a | ⬜ |
 | `view-transition` | n/a | n/a | ⬜ |
 

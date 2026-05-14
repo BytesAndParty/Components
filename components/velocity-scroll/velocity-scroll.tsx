@@ -69,6 +69,7 @@ function VelocityRow({ children, baseVelocity, className, gap = '1rem' }: Veloci
   return (
     <div
       ref={containerRef}
+      aria-hidden
       className={cn('w-full overflow-hidden', className)}
     >
       <motion.div

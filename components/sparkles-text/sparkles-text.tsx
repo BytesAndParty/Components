@@ -36,6 +36,7 @@ function SparkleIcon({ size, color, style }: { size: number; color: string; styl
       height={size}
       viewBox="0 0 160 160"
       fill="none"
+      aria-hidden
       style={{
         position: 'absolute',
         pointerEvents: 'none',
