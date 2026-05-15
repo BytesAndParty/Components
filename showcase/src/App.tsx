@@ -1,42 +1,52 @@
-import { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider, ScrollRestoration } from 'react-router'
+import { useEffect } from 'react'
+import { createBrowserRouter, RouterProvider, useLocation, useNavigationType } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HotkeysProvider } from '@components/hotkeys/hotkeys-provider'
 import { AtelierProvider } from '@components/atelier'
 import { Layout } from './layout'
+import { IndexPage } from './pages/index'
+import { CardsPage } from './pages/cards'
+import { TextPage } from './pages/text'
+import { IconsPage } from './pages/icons'
+import { InputsPage } from './pages/inputs'
+import { FeedbackPage } from './pages/feedback'
+import { NavigationPage } from './pages/navigation'
+import { ShopPage } from './pages/shop'
+import { TransitionsPage } from './pages/transitions'
+import { DesignerPage } from './pages/designer'
 
 const queryClient = new QueryClient()
 
-const IndexPage = lazy(() => import('./pages/index').then(m => ({ default: m.IndexPage })))
-const CardsPage = lazy(() => import('./pages/cards').then(m => ({ default: m.CardsPage })))
-const TextPage = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
-const IconsPage = lazy(() => import('./pages/icons').then(m => ({ default: m.IconsPage })))
-const InputsPage = lazy(() => import('./pages/inputs').then(m => ({ default: m.InputsPage })))
-const FeedbackPage = lazy(() => import('./pages/feedback').then(m => ({ default: m.FeedbackPage })))
-const NavigationPage = lazy(() => import('./pages/navigation').then(m => ({ default: m.NavigationPage })))
-const ShopPage = lazy(() => import('./pages/shop').then(m => ({ default: m.ShopPage })))
-const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
-const DesignerPage = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
+// Native scroll restoration (auto) handles refresh + back/forward.
+// Only PUSH navigation needs an explicit reset.
+function ScrollToTopOnPush() {
+  const { pathname } = useLocation()
+  const type = useNavigationType()
+  useEffect(() => {
+    if (type === 'PUSH') window.scrollTo(0, 0)
+  }, [pathname, type])
+  return null
+}
 
 const router = createBrowserRouter([
   {
     element: (
       <>
         <Layout />
-        <ScrollRestoration />
+        <ScrollToTopOnPush />
       </>
     ),
     children: [
-      { index: true, element: <Suspense><IndexPage /></Suspense> },
-      { path: 'cards', element: <Suspense><CardsPage /></Suspense> },
-      { path: 'text', element: <Suspense><TextPage /></Suspense> },
-      { path: 'icons', element: <Suspense><IconsPage /></Suspense> },
-      { path: 'inputs', element: <Suspense><InputsPage /></Suspense> },
-      { path: 'feedback', element: <Suspense><FeedbackPage /></Suspense> },
-      { path: 'navigation', element: <Suspense><NavigationPage /></Suspense> },
-      { path: 'shop', element: <Suspense><ShopPage /></Suspense> },
-      { path: 'transitions', element: <Suspense><TransitionsPage /></Suspense> },
-      { path: 'designer', element: <Suspense><DesignerPage /></Suspense> },
+      { index: true, element: <IndexPage /> },
+      { path: 'cards', element: <CardsPage /> },
+      { path: 'text', element: <TextPage /> },
+      { path: 'icons', element: <IconsPage /> },
+      { path: 'inputs', element: <InputsPage /> },
+      { path: 'feedback', element: <FeedbackPage /> },
+      { path: 'navigation', element: <NavigationPage /> },
+      { path: 'shop', element: <ShopPage /> },
+      { path: 'transitions', element: <TransitionsPage /> },
+      { path: 'designer', element: <DesignerPage /> },
     ],
   },
 ])
