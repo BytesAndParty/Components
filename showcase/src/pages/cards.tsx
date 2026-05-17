@@ -92,11 +92,11 @@ function CursorGlowDemo() {
 export function CardsPage() {
   const [splashOn, setSplashOn] = useState(false)
 
-  const shapeVariants: { shape: CornerShape; label: string; sub: string }[] = [
+  const shapeVariants: { shape: CornerShape; label: string; sub: string; radius?: number }[] = [
     { shape: 'round',    label: 'round',    sub: 'classic ellipse' },
     { shape: 'squircle', label: 'squircle', sub: 'superellipse(2)' },
-    { shape: 'scoop',    label: 'scoop',    sub: 'concave ellipse' },
-    { shape: 'notch',    label: 'notch',    sub: '90° concave' },
+    { shape: 'scoop',    label: 'scoop',    sub: 'concave ellipse', radius: 12 },
+    { shape: 'notch',    label: 'notch',    sub: '90° concave',     radius: 12 },
     { shape: 'bevel',    label: 'bevel',    sub: 'diagonal cut' },
   ]
 
@@ -104,11 +104,11 @@ export function CardsPage() {
     <>
       <Section
         title="ShapeCard – corner-shape variants"
-        description="Was möglich ist: identische Cards, fünf verschiedene Eckengeometrien (radius 48px) — round, squircle, scoop, notch, bevel. Chrome 139+ zeigt die echten Shapes; Firefox/Safari fallen auf border-radius zurück."
+        description="Was möglich ist: identische Cards, fünf verschiedene Eckengeometrien — round, squircle, scoop, notch, bevel. Chrome 139+ zeigt die echten Shapes; Firefox/Safari fallen auf border-radius zurück."
       >
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {shapeVariants.map((v, i) => (
-            <ShapeCard key={v.shape} shape={v.shape} radius={48} hoverLift={false}>
+            <ShapeCard key={v.shape} shape={v.shape} radius={v.radius ?? 48} hoverLift={false}>
               <div
                 style={{
                   position: 'relative',
@@ -168,7 +168,7 @@ export function CardsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ShapeCard
               shape={['round', 'bevel', 'round', 'round']}
-              radius="20px 56px 20px 20px"
+              radius="10px 28px 10px 10px"
             >
               <WineMedia src="/wine-default.png" alt="Barolo Riserva" />
               <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
@@ -176,7 +176,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape={['scoop', 'scoop', 'squircle', 'squircle']}
-              radius="3.25rem 3.25rem 1.25rem 1.25rem"
+              radius="1.625rem 1.625rem 0.625rem 0.625rem"
             >
               <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" />
               <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
@@ -184,7 +184,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape={['scoop', 'round', 'round', 'round']}
-              radius="80px 20px 20px 20px"
+              radius="40px 10px 10px 10px"
             >
               <WineMedia src="/wine-default.png" alt="Brunello di Montalcino" />
               <WineBody name="Brunello di Montalcino" region="Toskana · Italien" vintage={2018} price="€ 64,00" note="Single scoop · Top-Left" />
@@ -195,7 +195,7 @@ export function CardsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ShapeCard
               shape={['round', 'round', 'bevel', 'round']}
-              radius="20px 20px 56px 20px"
+              radius="10px 10px 28px 10px"
             >
               <WineMedia src="/white-wine-default.png" alt="Sauvignon Blanc" />
               <WineBody name="Sauvignon Blanc Réserve" region="Steiermark · Österreich" vintage={2022} price="€ 42,00" note="Single bevel · Bottom-Right" />
@@ -203,7 +203,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape={['round', 'round', 'scoop', 'round']}
-              radius="20px 20px 72px 20px"
+              radius="10px 10px 36px 10px"
             >
               <WineMedia src="/wine-default.png" alt="Chianti Classico" />
               <WineBody name="Chianti Classico" region="Toskana · Italien" vintage={2020} price="€ 26,80" note="Single scoop · Bottom-Right" />
@@ -211,7 +211,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape={['round', 'round', 'notch', 'round']}
-              radius="20px 20px 56px 20px"
+              radius="10px 10px 28px 10px"
             >
               <WineMedia src="/white-wine-default.png" alt="Grüner Veltliner" />
               <WineBody name="Grüner Veltliner" region="Wachau · Österreich" vintage={2023} price="€ 18,90" note="Single notch · Bottom-Right" />
@@ -222,7 +222,7 @@ export function CardsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ShapeCard
               shape="squircle"
-              radius={24}
+              radius={12}
               sideNotch={{ side: 'top', size: 56 }}
             >
               <div style={{ paddingTop: 36 }}>
@@ -233,7 +233,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape="squircle"
-              radius={24}
+              radius={12}
               sideNotch={{ side: 'right', size: 64 }}
             >
               <WineMedia src="/white-wine-default.png" alt="Pinot Grigio" />
@@ -242,7 +242,7 @@ export function CardsPage() {
 
             <ShapeCard
               shape="squircle"
-              radius={24}
+              radius={12}
               sideNotch={{ side: 'bottom', size: 56 }}
             >
               <WineMedia src="/wine-default.png" alt="Cannonau" />
