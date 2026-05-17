@@ -2,38 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useComponentMessages, interpolate } from '../i18n';
 import { MESSAGES, type CountdownMessages } from './messages';
 
-const STYLE_ID = '__countdown-styles__';
-
-function injectStyles() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-    @property --cd-value {
-      syntax: '<integer>';
-      initial-value: 0;
-      inherits: false;
-    }
-    .__cd-digit {
-      display: inline-block;
-      line-height: 1em;
-      height: 1em;
-      overflow-y: clip;
-      vertical-align: bottom;
-    }
-    .__cd-digit::before {
-      content: "00\\A 01\\A 02\\A 03\\A 04\\A 05\\A 06\\A 07\\A 08\\A 09\\A 10\\A 11\\A 12\\A 13\\A 14\\A 15\\A 16\\A 17\\A 18\\A 19\\A 20\\A 21\\A 22\\A 23\\A 24\\A 25\\A 26\\A 27\\A 28\\A 29\\A 30\\A 31\\A 32\\A 33\\A 34\\A 35\\A 36\\A 37\\A 38\\A 39\\A 40\\A 41\\A 42\\A 43\\A 44\\A 45\\A 46\\A 47\\A 48\\A 49\\A 50\\A 51\\A 52\\A 53\\A 54\\A 55\\A 56\\A 57\\A 58\\A 59\\A 60\\A 61\\A 62\\A 63\\A 64\\A 65\\A 66\\A 67\\A 68\\A 69\\A 70\\A 71\\A 72\\A 73\\A 74\\A 75\\A 76\\A 77\\A 78\\A 79\\A 80\\A 81\\A 82\\A 83\\A 84\\A 85\\A 86\\A 87\\A 88\\A 89\\A 90\\A 91\\A 92\\A 93\\A 94\\A 95\\A 96\\A 97\\A 98\\A 99\\A";
-      white-space: pre;
-      text-align: center;
-      display: block;
-      transform: translateY(calc(var(--cd-value) * -1em * 1));
-      transition: transform 0.9s cubic-bezier(0.3, 0.1, 0.2, 1);
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 function calcRemaining(target: number) {
   const diff = Math.max(0, target - Date.now());
   const totalSeconds = Math.floor(diff / 1000);
@@ -52,18 +20,49 @@ const sizes = {
   lg: { font: '3.25rem', label: '0.75rem', gap: '1.25rem', pad: '0.875rem 1.125rem' },
 };
 
-function Digit({ value }: { value: number }) {
-  const clamped = Math.min(99, Math.max(0, value));
+function Digit({ value, size }: { value: number; size: keyof typeof sizes }) {
+  const digits = value.toString().padStart(2, '0').split('');
+  const s = sizes[size];
+  
   return (
-    <span
-      className="__cd-digit"
-      style={
-        {
-          ['--cd-value' as string]: clamped,
-        } as React.CSSProperties
-      }
-      aria-hidden
-    />
+    <div style={{ display: 'flex', gap: '0.02em' }}>
+      {digits.map((d, i) => (
+        <div
+          key={i}
+          style={{
+            height: '1em',
+            overflow: 'hidden',
+            width: `calc(${s.font} * 0.62)`,
+            textAlign: 'center',
+            position: 'relative'
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: `translateY(-${parseInt(d, 10)}em)`,
+            }}
+          >
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+              <span 
+                key={num} 
+                style={{ 
+                  height: '1em', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  lineHeight: 1
+                }}
+              >
+                {num}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -96,9 +95,10 @@ function Block({
           color: 'var(--foreground)',
           minWidth: `calc(${s.font} * 1.6)`,
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          lineHeight: 1,
         }}
       >
-        <Digit value={value} />
+        <Digit value={value} size={size} />
       </div>
       {label && (
         <span
@@ -149,15 +149,7 @@ export function Countdown({
     target instanceof Date ? target.getTime() : typeof target === 'string' ? new Date(target).getTime() : target;
 
   const [remaining, setRemaining] = useState(() => calcRemaining(targetMs));
-  const injected = useRef(false);
   const completedRef = useRef(false);
-
-  useEffect(() => {
-    if (!injected.current) {
-      injectStyles();
-      injected.current = true;
-    }
-  }, []);
 
   // External-source sync: the wall clock. Initial setRemaining writes
   // the freshly computed value before the first interval tick fires

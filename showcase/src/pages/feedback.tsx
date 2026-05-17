@@ -70,9 +70,8 @@ function CircularProgressDemo() {
 
 export function FeedbackPage() {
   const [raining, setRaining] = useState(false)
-  // Pin the demo's countdown target to mount-time so the timer doesn't
-  // visibly jump back to "48h from now" on every parent re-render.
-  const [countdownTarget] = useState(() => Date.now() + 1000 * 60 * 60 * 48)
+  // Urlaub am 14. September 2026
+  const [countdownTarget] = useState(() => new Date('2026-09-14T00:00:00').getTime())
 
   return (
     <>
