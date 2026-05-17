@@ -607,7 +607,7 @@ export function PasswordSetup({
             {showStrength && (
               <div style={{ animation: 'pws-fade-in 200ms ease' }}>
                 <div style={{ height: '4px', width: '100%', background: 'var(--border, #2a2a2e)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
-                  <div style={{ height: '100%', width: `${(passed / defaultChecks.length) * 100}%`, background: strength.color, borderRadius: '2px', transition: 'width 300ms ease, background 300ms ease', animation: 'pws-strength-grow 300ms ease' }} />
+                  <div style={{ height: '100%', width: `${(passed / checks.length) * 100}%`, background: strength.color, borderRadius: '2px', transition: 'width 300ms ease, background 300ms ease', animation: 'pws-strength-grow 300ms ease' }} />
                 </div>
                 <span style={{ fontSize: '12px', color: strength.color, marginTop: '2px', display: 'block' }}>{strength.label}</span>
               </div>

@@ -21,8 +21,9 @@ import { palettes } from '../data'
 
 export function NavigationPage() {
   // Pin the StickyBanner demo's countdown target to mount-time so it
-  // doesn't reset every time NavigationPage re-renders.
-  const [countdownTarget] = useState(() => Date.now() + 1000 * 60 * 60 * 6)
+  // doesn't reset every time NavigationPage re-renders. 10 min — short
+  // enough to demo all three units ticking, long enough to actually watch.
+  const [countdownTarget] = useState(() => Date.now() + 1000 * 60 * 10)
 
   return (
     <>
