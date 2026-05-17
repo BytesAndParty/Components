@@ -1,11 +1,14 @@
-import { useCart } from '@/lib/cart-context'
+import { useAdjustLine, useCart, useRemoveLine } from '@/lib/cart-context'
+import { Providers } from './Providers'
 
 function formatPrice(cents: number): string {
   return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
 }
 
-export function CartPage() {
-  const { order, loading, adjustLine, removeLine, totalPrice } = useCart()
+function CartInner() {
+  const { order, loading, totalPrice } = useCart()
+  const { mutate: adjustLine } = useAdjustLine()
+  const { mutate: removeLine } = useRemoveLine()
   const lines = order?.lines ?? []
 
   if (loading && !order) {
@@ -61,7 +64,11 @@ export function CartPage() {
 
               <div className="flex items-center gap-3 border rounded-lg p-1 bg-muted/50">
                 <button
-                  onClick={() => line.quantity <= 1 ? removeLine(line.id) : adjustLine(line.id, line.quantity - 1)}
+                  onClick={() =>
+                    line.quantity <= 1
+                      ? removeLine(line.id)
+                      : adjustLine({ lineId: line.id, quantity: line.quantity - 1 })
+                  }
                   className="w-8 h-8 flex items-center justify-center hover:bg-background rounded transition-colors"
                 >
                   −
@@ -70,7 +77,7 @@ export function CartPage() {
                   {line.quantity}
                 </span>
                 <button
-                  onClick={() => adjustLine(line.id, line.quantity + 1)}
+                  onClick={() => adjustLine({ lineId: line.id, quantity: line.quantity + 1 })}
                   className="w-8 h-8 flex items-center justify-center hover:bg-background rounded transition-colors"
                 >
                   +
@@ -93,7 +100,7 @@ export function CartPage() {
 
         <div className="bg-card border rounded-2xl p-6 h-fit space-y-6 sticky top-24">
           <h2 className="text-xl font-bold">Zusammenfassung</h2>
-          
+
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Zwischensumme</span>
@@ -118,5 +125,13 @@ export function CartPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export function CartPage() {
+  return (
+    <Providers>
+      <CartInner />
+    </Providers>
   )
 }

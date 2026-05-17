@@ -1,26 +1,20 @@
 import { useState, useEffect } from 'react'
-import { useCart } from '@/lib/cart-context'
+import { useAddToCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCTS } from '@/lib/queries'
 import type { Product } from '@/lib/types'
+import { Providers } from './Providers'
 import { WineCard } from './wine-card'
 
-/**
- * Diese React-Komponente bekommt die 'initialProducts' direkt von Astro (Build-Time).
- * Wenn diese vorhanden sind, zeigt sie diese sofort an, ohne im Browser neu zu laden.
- */
-export function WineListPage({ initialProducts }: { initialProducts?: Product[] }) {
-  // State wird mit den statischen Daten von Astro vor-initialisiert
+function WineListInner({ initialProducts }: { initialProducts?: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts ?? [])
   const [loading, setLoading] = useState(!initialProducts)
   const [error, setError] = useState<string | null>(null)
-  const { addToCart } = useCart()
+  const { mutate: addToCart } = useAddToCart()
 
   useEffect(() => {
-    // Wenn wir bereits Daten von Astro haben, müssen wir im Browser nichts mehr tun.
-    if (initialProducts) return 
-    
-    // Fallback: Falls die Komponente ohne Daten geladen wird, laden wir sie hier nach.
+    if (initialProducts) return
+
     vendureClient.query(GET_PRODUCTS, {}).toPromise().then(result => {
       if (result.error) {
         setError('Vendure Server nicht erreichbar.')
@@ -68,10 +62,18 @@ export function WineListPage({ initialProducts }: { initialProducts?: Product[] 
             product={product}
             variant={idx % 2 === 0 ? 'premium' : 'label'}
             featuredLabel={idx === 0 ? 'Wein des Monats' : undefined}
-            onAddToCart={addToCart}
+            onAddToCart={(variantId) => addToCart({ variantId })}
           />
         ))}
       </div>
     </div>
+  )
+}
+
+export function WineListPage(props: { initialProducts?: Product[] }) {
+  return (
+    <Providers>
+      <WineListInner {...props} />
+    </Providers>
   )
 }

@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
-import { useCart } from '@/lib/cart-context'
+import { useAddToCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCT } from '@/lib/queries'
 import type { Product } from '@/lib/types'
+import { Providers } from './Providers'
 
 function formatPrice(cents: number): string {
   return `€ ${(cents / 100).toFixed(2).replace('.', ',')}`
 }
 
-export function WineDetailPage({ slug, initialProduct }: { slug: string, initialProduct?: Product }) {
+function WineDetailInner({ slug, initialProduct }: { slug: string, initialProduct?: Product }) {
   const [product, setProduct] = useState<Product | null>(initialProduct ?? null)
   const [loading, setLoading] = useState(!initialProduct)
-  const { addToCart } = useCart()
+  const { mutate: addToCart } = useAddToCart()
 
   useEffect(() => {
-    if (initialProduct) return // Skip fetch if we have static data
+    if (initialProduct) return
     if (!slug) return
     vendureClient.query(GET_PRODUCT, { slug }).toPromise().then(result => {
       setProduct(result.data?.product ?? null)
@@ -70,7 +71,7 @@ export function WineDetailPage({ slug, initialProduct }: { slug: string, initial
 
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">{product.name}</h1>
-          
+
           <div className="flex items-baseline gap-4">
             <span className="text-3xl font-bold">
               {variant ? formatPrice(variant.priceWithTax) : '—'}
@@ -83,7 +84,7 @@ export function WineDetailPage({ slug, initialProduct }: { slug: string, initial
           </p>
 
           <button
-            onClick={() => variant && addToCart(variant.id)}
+            onClick={() => variant && addToCart({ variantId: variant.id })}
             disabled={!variant}
             className="w-full py-4 bg-foreground text-background font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
           >
@@ -111,5 +112,13 @@ export function WineDetailPage({ slug, initialProduct }: { slug: string, initial
         </div>
       </div>
     </div>
+  )
+}
+
+export function WineDetailPage(props: { slug: string, initialProduct?: Product }) {
+  return (
+    <Providers>
+      <WineDetailInner {...props} />
+    </Providers>
   )
 }

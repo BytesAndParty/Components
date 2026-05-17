@@ -1,10 +1,9 @@
-import { useContext } from 'react'
-import { CartContext } from '@/lib/cart-context'
+import { useCart } from '@/lib/cart-context'
+import { Providers } from './Providers'
 import { ThemeToggle } from './ThemeToggle'
 
-export function Header() {
-  const cart = useContext(CartContext)
-  const totalQuantity = cart?.totalQuantity ?? 0
+function HeaderInner() {
+  const { totalQuantity } = useCart()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -35,9 +34,15 @@ export function Header() {
   )
 }
 
+export function Header() {
+  return (
+    <Providers>
+      <HeaderInner />
+    </Providers>
+  )
+}
+
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  // In Astro we can't easily use useLocation() from react-router
-  // We could use window.location.pathname on the client
   return (
     <a
       href={href}

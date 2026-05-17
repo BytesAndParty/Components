@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '@/styles.css';
-import { Providers } from '@/components/react/Providers';
 import { Header } from '@/components/react/Header';
 
 interface Props {
@@ -23,9 +22,7 @@ const { title } = Astro.props;
 		<ClientRouter />
 	</head>
 	<body class="min-h-screen bg-background text-foreground font-sans antialiased">
-		<Providers client:load>
-			<Header client:load />
-			<slot />
-		</Providers>
+		<Header client:load />
+		<slot />
 	</body>
 </html>
