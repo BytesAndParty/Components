@@ -7,7 +7,7 @@ import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { NumberInput } from './components/shared'
 import { LayerPanel, type Layer } from '../layer-panel/layer-panel'
 import { WineFieldsPanel } from './components/panels/WineFieldsPanel'
-import { ValidatorBadge } from '../validator-badge/validator-badge'
+import { ValidatorBadge, type ValidationWarning } from '../validator-badge/validator-badge'
 import { validateCompliance } from './wine-fields/validator'
 import { useEffect, useState, useRef } from 'react'
 import { cn } from '../lib/utils'
@@ -72,7 +72,7 @@ export function CellarCanvas({
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const [activeProps, setActiveProps] = useState<FabricObjectProperties | null>(null)
   const [layers, setLayers] = useState<Layer[]>([])
-  const [warnings, setWarnings] = useState<string[]>([])
+  const [warnings, setWarnings] = useState<ValidationWarning[]>([])
   const [rightTab, setRightTab] = useState<'props' | 'fields'>('props')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -110,7 +110,7 @@ export function CellarCanvas({
       setLayers(currentLayers)
       
       // For validation, we need the raw objects with _fieldKey
-      const rawObjects = bridge.current?.canvas.getObjects() || []
+      const rawObjects = (bridge.current?.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
       setWarnings(validateCompliance(rawObjects))
     }
     const canvas = bridge.current?.canvas
@@ -189,6 +189,11 @@ export function CellarCanvas({
         <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
            <LabelCanvas ref={canvasRef} />
         </div>
+
+        {/* Floating Validator Badge — bottom-right of canvas area (per spec) */}
+        <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
+          <ValidatorBadge warnings={warnings} />
+        </div>
       </main>
 
       {/* Right Panel */}
@@ -251,12 +256,7 @@ export function CellarCanvas({
           )}
         </div>
 
-        <div className="p-4 border-t border-border bg-muted/10 relative">
-           {/* Validator Badge floating relative to the layers list */}
-           <div className="absolute -top-6 right-4">
-              <ValidatorBadge warnings={warnings} />
-           </div>
-
+        <div className="p-4 border-t border-border bg-muted/10">
            <div className="flex items-center justify-between mb-2 px-1">
              <span className="text-[10px] font-bold uppercase text-muted-foreground">Layers</span>
              <span className="text-[10px] font-mono text-muted-foreground">{layers.length} total</span>
