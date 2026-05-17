@@ -21,7 +21,12 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { I18nProvider } from '../i18n/provider'
+import { en } from '../i18n/locales/en'
+import { de } from '../i18n/locales/de'
+import { interpolate } from '../i18n/types'
 import type { Locale, GlobalMessages } from '../i18n/types'
+
+const locales: Record<Locale, GlobalMessages> = { en, de }
 
 // ── Storage keys (all under 'atelier-' namespace) ─────────────────────────────
 
@@ -133,12 +138,11 @@ export function AtelierProvider({
 
   // ── Context value ──────────────────────────────────────────────────────────
 
-  // t() is provided by I18nProvider below — we expose a placeholder here
-  // that gets shadowed once children call useI18n().t().
-  // The AtelierContext's own t() is only needed for useAtelier() callers.
-  // We re-read it from I18nProvider via the onLocaleChange bridge.
-  function t(key: keyof GlobalMessages, _vars?: Record<string, string | number>): string {
-    return String(key) // placeholder — real t() lives in I18nProvider below
+  const base = locales[locale]
+
+  function t(key: keyof GlobalMessages, vars?: Record<string, string | number>): string {
+    const str = overrides?.[key] ?? base[key] ?? en[key] ?? key
+    return interpolate(str as string, vars)
   }
 
   const value: AtelierContextValue = {

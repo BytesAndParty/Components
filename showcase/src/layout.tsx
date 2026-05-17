@@ -15,6 +15,7 @@ import { SearchOverlay } from '@components/search-overlay/search-overlay'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { BackToTop } from '@components/back-to-top/back-to-top'
 import { ShortcutOverview } from '@components/hotkeys/shortcut-overview'
+import { useAtelier } from '@components/atelier'
 import { LanguageSwitcher } from '@components/language-switcher/language-switcher'
 import { ErrorBoundary } from './components/error-boundary'
 import { palettes, groups } from './data'
@@ -53,6 +54,7 @@ const mockResults = [
 // ─── Layout ─────────────────────────────────────────────────────────────────────
 
 export function Layout() {
+  const { t } = useAtelier()
   const location = useLocation()
   const navigate = useNavigate()
   const [cartItems, setCartItems] = useState<FloatingCartItem[]>([])
@@ -130,7 +132,7 @@ export function Layout() {
                   active={location.pathname === g.path}
                   onClick={() => navigate(g.path)}
                 >
-                  {g.title}
+                  {t(g.titleKey as any)}
                 </NavbarItem>
               ))}
             </NavbarSection>
@@ -159,7 +161,7 @@ export function Layout() {
                 active={location.pathname === g.path}
                 onClick={() => navigate(g.path)}
               >
-                {g.title}
+                {t(g.titleKey as any)}
               </NavbarItem>
             ))}
           </NavbarMobileMenu>

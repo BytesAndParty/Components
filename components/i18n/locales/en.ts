@@ -65,6 +65,27 @@ export const en = {
   'shortcuts.title':      'Shortcut Overview',
   'shortcuts.subtitle':   'All active shortcuts on this page',
   'shortcuts.openHint':   'to open',
+
+  // Showcase Categories
+  'nav.cards': 'Cards',
+  'nav.text': 'Text',
+  'nav.icons': 'Icons',
+  'nav.inputs': 'Inputs',
+  'nav.feedback': 'Feedback',
+  'nav.navigation': 'Navigation',
+  'nav.shop': 'Shop',
+  'nav.designer': 'Designer',
+  'nav.transitions': 'Transitions',
+
+  'desc.cards': 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
+  'desc.text': 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
+  'desc.icons': 'Lottie-based animated icons and CSS-animated SVG icons.',
+  'desc.inputs': 'Form controls, search interactions, and file uploads.',
+  'desc.feedback': 'Toasts, favorites, pricing, ratings, loaders, and confetti effects.',
+  'desc.navigation': 'Navbar, banner, breadcrumbs, scroll progress, theme controls, and footer.',
+  'desc.shop': 'E-commerce specific components for the wine online shop.',
+  'desc.designer': 'Building blocks for the Wine Label Designer: Color Picker, Text Toolbar and more.',
+  'desc.transitions': 'CSS View Transitions API with 5 presets + 3 wine-themed customs.',
 } as const
 
 export type GlobalMessages = { readonly [K in keyof typeof en]: string }

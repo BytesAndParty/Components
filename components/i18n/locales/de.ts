@@ -67,4 +67,25 @@ export const de: GlobalMessages = {
   'shortcuts.title':      'Tastenkürzel',
   'shortcuts.subtitle':   'Alle aktiven Tastenkürzel auf dieser Seite',
   'shortcuts.openHint':   'zum Öffnen',
+
+  // Showcase Categories
+  'nav.cards': 'Karten',
+  'nav.text': 'Text',
+  'nav.icons': 'Icons',
+  'nav.inputs': 'Inputs',
+  'nav.feedback': 'Feedback',
+  'nav.navigation': 'Navigation',
+  'nav.shop': 'Shop',
+  'nav.designer': 'Designer',
+  'nav.transitions': 'Transitions',
+
+  'desc.cards': 'Glow-Effekte, magnetische Interaktionen, 3D-Hover und Click-Sparks.',
+  'desc.text': 'Textanimationen, Sparkles, Highlights, Scramble und scroll-reaktive Bewegungen.',
+  'desc.icons': 'Lottie-basierte animierte Icons und CSS-animierte SVG-Icons.',
+  'desc.inputs': 'Formular-Steuerungen, Such-Interaktionen und Datei-Uploads.',
+  'desc.feedback': 'Toasts, Favoriten, Preisgestaltung, Bewertungen, Loader und Konfetti-Effekte.',
+  'desc.navigation': 'Navbar, Banner, Breadcrumbs, Scroll-Fortschritt, Theme-Steuerung und Footer.',
+  'desc.shop': 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
+  'desc.designer': 'Bausteine für den Wein-Etiketten-Designer: Color Picker, Text Toolbar und mehr.',
+  'desc.transitions': 'CSS View Transitions API mit 5 Presets + 3 wein-spezifische Customs.',
 } as const

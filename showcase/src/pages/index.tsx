@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { useAtelier } from '@components/atelier'
 import { groups } from '../data'
 
 // Stagger-Delay zwischen den Karten in Millisekunden.
@@ -8,6 +9,7 @@ import { groups } from '../data'
 const STAGGER_MS = 80
 
 export function IndexPage() {
+  const { t } = useAtelier()
   return (
     <div className="grid grid-cols-2 gap-4">
       {groups.map((group, i) => (
@@ -21,10 +23,10 @@ export function IndexPage() {
             className="group border border-border rounded-xl bg-card p-6 shadow-sm transition-all hover:border-accent/50 hover:shadow-md no-underline flex flex-col h-full"
           >
             <h2 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">
-              {group.title}
+              {t(group.titleKey as any)}
             </h2>
             <p className="text-muted-foreground text-sm mt-2">
-              {group.description}
+              {t(group.descKey as any)}
             </p>
             <div className="flex flex-wrap gap-1.5 mt-auto pt-4">
               {group.components.map((c) => (
