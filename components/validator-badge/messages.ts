@@ -13,7 +13,7 @@ export type ValidatorBadgeMessages = {
 export const MESSAGES = {
   de: {
     compliant: 'EU-konform',
-    missingFields: '{count} Feld{count} fehlt',
+    missingFields: '{count} Felder fehlen',
     panelTitle: 'EU Label Compliance',
     footer: 'EU-Verordnung 2023/2977 — Pflichtfelder für Wein in der EU.',
     close: 'Schließen',
@@ -22,7 +22,7 @@ export const MESSAGES = {
   },
   en: {
     compliant: 'EU compliant',
-    missingFields: '{count} missing field{count}',
+    missingFields: '{count} missing fields',
     panelTitle: 'EU Label Compliance',
     footer: 'EU Regulation 2023/2977 — required fields for wine sold in the EU.',
     close: 'Close',

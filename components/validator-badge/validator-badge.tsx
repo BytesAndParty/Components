@@ -5,15 +5,7 @@ import { cn } from '../lib/utils'
 import { useComponentMessages, interpolate, useArkTranslations } from '../i18n'
 import { MESSAGES, type ValidatorBadgeMessages } from './messages'
 
-export type ValidatorBadgeMessages = {
-  compliant: string
-  missingFields: string
-  panelTitle: string
-  footer: string
-  close: string
-  error: string
-  warning: string
-}
+export type { ValidatorBadgeMessages }
 
 export interface ValidationWarning {
   key: string
@@ -29,7 +21,7 @@ export interface ValidatorBadgeProps {
 }
 
 export function ValidatorBadge({ warnings, className, messages }: ValidatorBadgeProps) {
-  const m = useComponentMessages(VALIDATOR_BADGE_MESSAGES, messages)
+  const m = useComponentMessages(MESSAGES, messages)
   const popoverTranslations = useArkTranslations('popover')
   const errors   = warnings.filter(w => w.severity === 'error')
   const hasError = errors.length > 0
