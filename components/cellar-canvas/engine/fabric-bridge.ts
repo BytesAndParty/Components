@@ -54,6 +54,61 @@ export class FabricBridge {
   }
 
   /**
+   * Adds a basic circle to the center of the canvas.
+   */
+  addCircle() {
+    const circle = new fabric.Circle({
+      left: 100,
+      top: 100,
+      fill: '#722f37',
+      radius: mmToPx(10),
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#000000',
+      transparentCorners: false,
+      cornerSize: 8,
+    })
+
+    const meta: FabricObjectMeta = {
+      id: crypto.randomUUID(),
+      _layerName: 'Circle',
+      _type: 'circle',
+    }
+    Object.assign(circle, meta)
+
+    this.canvas.add(circle)
+    this.canvas.setActiveObject(circle)
+    this.canvas.renderAll()
+  }
+
+  /**
+   * Adds a basic line to the canvas.
+   */
+  addLine() {
+    const x = 100
+    const y = 100
+    const length = mmToPx(30)
+    const line = new fabric.Line([x, y, x + length, y], {
+      stroke: '#722f37',
+      strokeWidth: 2,
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#000000',
+      transparentCorners: false,
+      cornerSize: 8,
+    })
+
+    const meta: FabricObjectMeta = {
+      id: crypto.randomUUID(),
+      _layerName: 'Line',
+      _type: 'line',
+    }
+    Object.assign(line, meta)
+
+    this.canvas.add(line)
+    this.canvas.setActiveObject(line)
+    this.canvas.renderAll()
+  }
+
+  /**
    * Adds a text object.
    */
   addText(text = 'New Text', fieldKey?: string) {
@@ -75,6 +130,37 @@ export class FabricBridge {
 
     this.canvas.add(itext)
     this.canvas.setActiveObject(itext)
+    this.canvas.renderAll()
+  }
+
+  /**
+   * Adds a user-supplied image to the canvas. Scales it to fit within
+   * a 40mm bounding box so it never blows past the label dimensions.
+   */
+  async addImage(src: string) {
+    const img = await fabric.FabricImage.fromURL(src)
+    const maxPx = mmToPx(40)
+    const scale = Math.min(maxPx / (img.width ?? maxPx), maxPx / (img.height ?? maxPx), 1)
+    img.set({
+      left: mmToPx(10),
+      top: mmToPx(10),
+      scaleX: scale,
+      scaleY: scale,
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#000000',
+      transparentCorners: false,
+      cornerSize: 8,
+    })
+
+    const meta: FabricObjectMeta = {
+      id: crypto.randomUUID(),
+      _layerName: 'Image',
+      _type: 'image',
+    }
+    Object.assign(img, meta)
+
+    this.canvas.add(img)
+    this.canvas.setActiveObject(img)
     this.canvas.renderAll()
   }
 
@@ -177,10 +263,12 @@ export class FabricBridge {
     }
 
     obj.set(fabricProps)
-    
-    // Special handling for IText to ensure it re-renders correctly
+
     if (obj instanceof fabric.IText) {
       obj.setCoords()
+      if (cleanProps.text !== undefined) {
+        this.canvas.fire('text:changed', { target: obj })
+      }
     }
 
     this.canvas.renderAll()
