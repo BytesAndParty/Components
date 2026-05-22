@@ -1,0 +1,5 @@
+[install]
+# Schutz gegen Brandjacking/Compromised-Releases:
+# Pakete dürfen erst 48 h nach Veröffentlichung installiert werden.
+# Wert in Sekunden (48 * 60 * 60).
+minimumReleaseAge = 172800

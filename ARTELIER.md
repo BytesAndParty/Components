@@ -3,6 +3,7 @@
 
 #### 1. Runtime & Package Management
 - **Bun First:** Nutze primär `bun` für alle Operationen (Installation, Scripts, Runtime).
+- **Security First:** Alle Abhängigkeiten werden via Bun auditiert. Kritische Komponenten (SVG-Handling, User-Input) müssen gegen XSS abgesichert sein. GitHub Actions werden per SHA gepinnt.
 - **Dependency Research:** Prüfe `package.json` auf Updates. Extrahiere Change-Notes neuer Versionen und archiviere sie im zentralen Verzeichnis: `techstack-base`.
 
 #### 2. Engineering Standards
