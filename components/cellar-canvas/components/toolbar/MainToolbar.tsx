@@ -11,6 +11,18 @@ interface MainToolbarProps {
   bridge: React.MutableRefObject<FabricBridge | null>
 }
 
+const TOOLS = [
+  { id: 'select', icon: MousePointer2, label: 'Select (V)' },
+  { id: 'pan',    icon: Hand,          label: 'Pan (Space)' },
+  { id: 'text',   icon: Type,          label: 'Text (T)' },
+  { id: 'image',  icon: ImageIcon,     label: 'Image (I)' },
+  { id: 'rect',   icon: Square,        label: 'Rect (R)' },
+  { id: 'circle', icon: Circle,        label: 'Circle (C)' },
+  { id: 'line',   icon: Minus,         label: 'Line (L)' },
+] as const
+
+type ToolId = typeof TOOLS[number]['id']
+
 export function MainToolbar({ bridge }: MainToolbarProps) {
   const activeTool = useDesignerStore(s => s.activeTool)
   const setActiveTool = useDesignerStore(s => s.setActiveTool)
@@ -20,16 +32,21 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   const [cropSrc, setCropSrc] = useState<string | undefined>()
   const [cropperOpen, setCropperOpen] = useState(false)
 
-  // Revoke object URLs from cropped blobs once the active object is replaced.
   useEffect(() => {
     return () => {
       if (cropSrc?.startsWith('blob:')) URL.revokeObjectURL(cropSrc)
     }
   }, [cropSrc])
 
-  function openFilePicker() {
-    setActiveTool('image' as DesignerState['activeTool'])
-    fileInputRef.current?.click()
+  function handleToolClick(toolId: ToolId) {
+    setActiveTool(toolId as DesignerState['activeTool'])
+    switch (toolId) {
+      case 'text':   bridge.current?.addText();   break
+      case 'image':  fileInputRef.current?.click(); break
+      case 'rect':   bridge.current?.addRect();   break
+      case 'circle': bridge.current?.addCircle(); break
+      case 'line':   bridge.current?.addLine();   break
+    }
   }
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -41,7 +58,6 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       setCropperOpen(true)
     }
     reader.readAsDataURL(file)
-    // Reset so picking the same file twice in a row still fires onChange.
     e.target.value = ''
   }
 
@@ -49,16 +65,6 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
     const url = URL.createObjectURL(blob)
     await bridge.current?.addImage(url)
   }
-
-  const tools = [
-    { id: 'select', icon: MousePointer2, label: 'Select (V)' },
-    { id: 'pan',    icon: Hand,          label: 'Pan (Space)' },
-    { id: 'text',   icon: Type,          label: 'Text (T)',   action: () => bridge.current?.addText() },
-    { id: 'image',  icon: ImageIcon,     label: 'Image (I)',  action: openFilePicker },
-    { id: 'rect',   icon: Square,        label: 'Rect (R)',   action: () => bridge.current?.addRect() },
-    { id: 'circle', icon: Circle,        label: 'Circle (C)', action: () => bridge.current?.addCircle() },
-    { id: 'line',   icon: Minus,         label: 'Line (L)',   action: () => bridge.current?.addLine() },
-  ] as const
 
   return (
     <aside className="border-r border-border flex flex-col items-center py-4 gap-2 bg-card w-16">
@@ -72,13 +78,10 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         tabIndex={-1}
       />
 
-      {tools.map((tool) => (
+      {TOOLS.map((tool) => (
         <Tooltip key={tool.id} content={tool.label} position="right">
           <button
-            onClick={() => {
-              setActiveTool(tool.id as DesignerState['activeTool'])
-              if ('action' in tool) tool.action()
-            }}
+            onClick={() => handleToolClick(tool.id)}
             className={cn(
               "p-2.5 rounded-xl transition-all duration-200",
               activeTool === tool.id
