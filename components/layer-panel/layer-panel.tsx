@@ -207,6 +207,13 @@ function SortableLayerRow(props: {
     transition,
   }
 
+  // isDragging flips back to false the moment the pointer is released, but the
+  // drop transition (transform decay) still runs for a few hundred ms. If the
+  // row drops its z-elevation immediately, it slides UNDER the rows it just
+  // passed — visible especially when moving the bottom row to the very top.
+  // `transform` stays non-null for the whole transition, so use that.
+  const isMoving = isDragging || transform !== null
+
   return (
     <motion.div
       ref={setNodeRef}
@@ -215,8 +222,8 @@ function SortableLayerRow(props: {
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
       className={cn(
-        'relative z-0',
-        isDragging && 'z-10 shadow-lg'
+        'relative',
+        isMoving ? 'z-10 shadow-lg' : 'z-0',
       )}
     >
       <LayerRow
