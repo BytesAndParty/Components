@@ -81,10 +81,10 @@ export function ImageCropperModal({
                   <ImageCropper.Viewport className="w-full h-full">
                     <ImageCropper.Image className="w-full h-full object-contain" />
                     <ImageCropper.Selection className="border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-                      <ImageCropper.Handle position="top-left"     className={handleCls} />
-                      <ImageCropper.Handle position="top-right"    className={handleCls} />
-                      <ImageCropper.Handle position="bottom-left"  className={handleCls} />
-                      <ImageCropper.Handle position="bottom-right" className={handleCls} />
+                      <ImageCropper.Handle position="nw" className={handleCls} />
+                      <ImageCropper.Handle position="ne" className={handleCls} />
+                      <ImageCropper.Handle position="sw" className={handleCls} />
+                      <ImageCropper.Handle position="se" className={handleCls} />
                       <ImageCropper.Grid className="absolute inset-0 pointer-events-none" />
                     </ImageCropper.Selection>
                   </ImageCropper.Viewport>
