@@ -64,6 +64,19 @@ Die alten Aufrufe schlugen daher still fehl (kein Throw, da JS-Property-Access a
 
 Tooltip wechselt im aktiven Zustand auf „Click again to upload". Der Picker öffnet sich nur noch bewusst — Fullscreen bleibt erhalten, bis der User tatsächlich uploaden will.
 
+### #5 — ImageCropper liefert leeres weißes Bild  *(2026-05-23 — gefixt)*
+
+**Symptom:** Nach dem Upload öffnet sich der Cropper, sieht aber leer aus. Auch das Ergebnis nach „Apply" landet auf der Canvas als weißes Bild.
+
+**Root Cause 1:** Wir hatten `image={imageSrc}` auf `<ImageCropper.Root />` gesetzt — `@zag-js/image-cropper` 1.40 hat aber **kein** `image`-Prop. Die Quelle muss direkt am Image-Part als HTML-`src` hängen. Root ignorierte den Prop still, `<ImageCropper.Image />` rendert ein leeres `<img>` ohne `src`.
+
+**Root Cause 2:** `api.getCroppedImage({ format: 'blob' })` — die Option heißt `output`, nicht `format`. Hat (zufällig) funktioniert, weil `output` per Default `'blob'` ist. Der Vollständigkeit halber jetzt korrekt benannt + Typ-Guard via `instanceof Blob`.
+
+**Fix:**
+- `src={imageSrc}` auf `<ImageCropper.Image />` durchgereicht; `image=`-Prop von `Root` entfernt.
+- `crossOrigin="anonymous"` als defensives Tainting-Hedge, falls zukünftig externe URLs gecroppt werden.
+- `getCroppedImage({ output: 'blob' })` + `instanceof Blob` Check.
+
 ### #4 — Layer-Panel Drag-Animation snappt / ruckelt  *(2026-05-22 — gefixt)*
 
 **Symptom:** Drag-Reorder bewegt die Zeile, aber beim Drop „snappt" sie kurz zurück oder die Nachbarn rutschen ohne Animation. Layout wirkt zerrissen.

@@ -68,7 +68,6 @@ export function ImageCropperModal({
             {/* Cropper */}
             {imageSrc ? (
               <ImageCropper.Root
-                image={imageSrc}
                 aspectRatio={aspectRatio}
                 defaultZoom={1}
                 minZoom={0.5}
@@ -79,7 +78,9 @@ export function ImageCropperModal({
                 {/* Canvas */}
                 <div className="relative w-full bg-muted/30" style={{ height: 340 }}>
                   <ImageCropper.Viewport className="w-full h-full">
-                    <ImageCropper.Image className="w-full h-full object-contain" />
+                    {/* Zag's image-cropper does NOT carry the source via the Root prop —
+                        the consumer must set src directly on the Image part. */}
+                    <ImageCropper.Image src={imageSrc} className="w-full h-full object-contain" crossOrigin="anonymous" />
                     <ImageCropper.Selection className="border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
                       <ImageCropper.Handle position="nw" className={handleCls} />
                       <ImageCropper.Handle position="ne" className={handleCls} />
@@ -189,9 +190,9 @@ function ApplyButton({
     if (processingRef.current) return
     processingRef.current = true
     try {
-      const result = await api.getCroppedImage({ format: 'blob' })
-      if (result) {
-        onCrop(result as Blob)
+      const result = await api.getCroppedImage({ output: 'blob' })
+      if (result instanceof Blob) {
+        onCrop(result)
         onClose()
       }
     } finally {
