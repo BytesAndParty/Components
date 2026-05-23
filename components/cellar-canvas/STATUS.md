@@ -64,6 +64,32 @@ Die alten Aufrufe schlugen daher still fehl (kein Throw, da JS-Property-Access a
 
 Tooltip wechselt im aktiven Zustand auf „Click again to upload". Der Picker öffnet sich nur noch bewusst — Fullscreen bleibt erhalten, bis der User tatsächlich uploaden will.
 
+### #8 — Crop liefert zu kleinen Ausschnitt  *(2026-05-23 — gefixt)*
+
+**Symptom:** Im Cropper ausgewählter Bereich landet auf der Canvas, aber kleiner als markiert — der Output zeigt nur einen Teil dessen, was die Selection im Modal eingerahmt hat.
+
+**Root Cause:** `@zag-js/image-cropper`'s `drawCroppedImageToCanvas` rechnet:
+```
+sourceWidth  = crop.width  / zoom
+sourceHeight = crop.height / zoom
+sourceX      = naturalCenterX + (cropCenterX - viewportCenterX - offsetX) / zoom
+```
+Damit setzt Zag voraus: 1 Viewport-Pixel = 1 Natural-Pixel bei `zoom=1`, und das Natural-Size-Bild liegt zentriert im Viewport. Wir hatten `object-contain` + `w-full h-full` auf `<ImageCropper.Image />` — damit wurde das Bild per CSS auf Viewport-Maße runterskaliert, was den 1:1-Verhältnis bricht. Selection-Pixel im Viewport wurden in zu wenige Natural-Pixel übersetzt → der Crop schnitt zu viel weg.
+
+**Fix:**
+- Bild rendert jetzt bei seiner Natural-CSS-Size (kein `object-contain` / `w-full h-full` mehr), `flexShrink: 0` verhindert dass Flexbox dagegen drückt.
+- Viewport bekommt `flex items-center justify-center` → Natural-Size-Box ist zentriert, exakt was Zags Math erwartet.
+- Neuer `FitZoomOnLoad`-Helper liest `api.naturalSize` + `api.viewportRect` und setzt `api.setZoom(min(vp.w/nat.w, vp.h/nat.h))` genau einmal, sobald die Image-Load-Dimensionen verfügbar sind. Damit sieht der User das ganze Bild beim Modal-Open.
+- `minZoom` von 0.5 → 0.05 abgesenkt (sonst kann der Fit-Zoom für große Bilder gar nicht greifen) und der Slider-Min auf 5% nachgezogen.
+
+### #7 — LayerPanel: Row rutscht beim Drop unter andere Zeilen  *(2026-05-23 — gefixt)*
+
+**Symptom:** Beim Verschieben des untersten Layer-Elements ganz nach oben in die Liste flackert die Row visuell durch, als ob sie kurz unter den anderen verschwindet. Bei kleinen Distanzen kaum sichtbar, bei „bottom → top" über mehrere Zeilen deutlich.
+
+**Root Cause:** `isDragging` aus `useSortable()` springt im Moment des Pointer-Release zurück auf `false`. Die Drop-Animation (transform-decay über ~200 ms) läuft aber noch. Solange war die Row per `z-10` über den anderen — danach fällt sie auf `z-0` zurück, während ihr `transform` noch nicht voll abgeklungen ist. Andere Rows mit `z-0` und ohne Transform überlagern sie kurz.
+
+**Fix:** Elevation-Status hängt jetzt an `isDragging || transform !== null`. `transform` bleibt für die volle Dauer der Drop-Transition gesetzt, die Row bleibt damit bis zum echten Animation-Ende oben.
+
 ### #6 — Layer-Reorder snappt nach dem Drop in alte Position zurück  *(2026-05-23 — gefixt)*
 
 **Symptom:** Animation läuft sauber durch, aber sobald die Maus losgelassen wird, springt die Reihenfolge im LayerPanel zurück auf den Ausgangszustand. Canvas-Stacking ändert sich währenddessen tatsächlich (sichtbar an z-order), nur die Panel-Liste verharrt.

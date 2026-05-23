@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Dialog } from '@ark-ui/react/dialog'
 import { ImageCropper, useImageCropperContext } from '@ark-ui/react/image-cropper'
 import { Portal } from '@ark-ui/react/portal'
@@ -70,17 +70,29 @@ export function ImageCropperModal({
               <ImageCropper.Root
                 aspectRatio={aspectRatio}
                 defaultZoom={1}
-                minZoom={0.5}
+                minZoom={0.05}
                 maxZoom={4}
                 zoomStep={0.1}
                 translations={cropperTranslations}
               >
                 {/* Canvas */}
                 <div className="relative w-full bg-muted/30" style={{ height: 340 }}>
-                  <ImageCropper.Viewport className="w-full h-full">
-                    {/* Zag's image-cropper does NOT carry the source via the Root prop —
-                        the consumer must set src directly on the Image part. */}
-                    <ImageCropper.Image src={imageSrc} className="w-full h-full object-contain" crossOrigin="anonymous" />
+                  <ImageCropper.Viewport className="w-full h-full flex items-center justify-center">
+                    {/*
+                      Zag's drawCroppedImageToCanvas assumes 1 viewport-pixel ==
+                      1 natural-pixel at zoom=1, with the natural-size image box
+                      centered in the viewport. So the image must render at its
+                      natural CSS size (no object-fit scaling) and be centered.
+                      Flex on the Viewport handles the centering for arbitrary
+                      natural sizes; flex-shrink:0 prevents flex from squashing
+                      large images. A FitZoomOnLoad helper then sets the zoom so
+                      the whole picture is visible initially.
+                    */}
+                    <ImageCropper.Image
+                      src={imageSrc}
+                      crossOrigin="anonymous"
+                      style={{ flexShrink: 0 }}
+                    />
                     <ImageCropper.Selection className="border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
                       <ImageCropper.Handle position="nw" className={handleCls} />
                       <ImageCropper.Handle position="ne" className={handleCls} />
@@ -89,6 +101,7 @@ export function ImageCropperModal({
                       <ImageCropper.Grid className="absolute inset-0 pointer-events-none" />
                     </ImageCropper.Selection>
                   </ImageCropper.Viewport>
+                  <FitZoomOnLoad />
                 </div>
 
                 {/* Controls */}
@@ -124,6 +137,33 @@ export function ImageCropperModal({
 const handleCls =
   'absolute w-4 h-4 bg-white border-2 border-white rounded-sm shadow-md cursor-nwse-resize'
 
+/**
+ * Sets the zoom so the whole image fits inside the viewport once the natural
+ * dimensions are known. Without this, large source files render at 1:1 inside
+ * the 340px viewport and the user only sees a small corner of the picture.
+ * Runs exactly once per cropper lifetime — further zoom changes are user-driven.
+ */
+function FitZoomOnLoad() {
+  const api = useImageCropperContext()
+  const appliedRef = useRef(false)
+  const { naturalSize, viewportRect, setZoom } = api
+
+  useEffect(() => {
+    if (appliedRef.current) return
+    if (naturalSize.width <= 0 || naturalSize.height <= 0) return
+    if (viewportRect.width <= 0 || viewportRect.height <= 0) return
+
+    const fitZoom = Math.min(
+      viewportRect.width / naturalSize.width,
+      viewportRect.height / naturalSize.height,
+    )
+    setZoom(fitZoom)
+    appliedRef.current = true
+  }, [naturalSize.width, naturalSize.height, viewportRect.width, viewportRect.height, setZoom])
+
+  return null
+}
+
 function CropperControls({ messages }: { messages: ImageCropperMessages }) {
   const api = useImageCropperContext()
 
@@ -138,7 +178,7 @@ function CropperControls({ messages }: { messages: ImageCropperMessages }) {
       <input
         aria-label={messages.zoom}
         type="range"
-        min={50} max={400} step={5}
+        min={5} max={400} step={5}
         value={Math.round(api.zoom * 100)}
         onChange={(e) => api.setZoom(Number(e.target.value) / 100)}
         className="flex-1 h-1 accent-[var(--accent)] cursor-pointer"
