@@ -29,6 +29,10 @@ export class FabricBridge {
    */
   addRect() {
     const rect = new fabric.Rect({
+      // Fabric v7 changed the origin default to 'center'/'center'. Our mm/px
+      // mapping treats left/top as the bounding-box corner, so pin v6 semantics.
+      originX: 'left',
+      originY: 'top',
       left: 100,
       top: 100,
       fill: '#722f37',
@@ -58,6 +62,8 @@ export class FabricBridge {
    */
   addCircle() {
     const circle = new fabric.Circle({
+      originX: 'left',
+      originY: 'top',
       left: 100,
       top: 100,
       fill: '#722f37',
@@ -88,6 +94,8 @@ export class FabricBridge {
     const y = 100
     const length = mmToPx(30)
     const line = new fabric.Line([x, y, x + length, y], {
+      originX: 'left',
+      originY: 'top',
       stroke: '#722f37',
       strokeWidth: 2,
       cornerColor: '#ffffff',
@@ -113,6 +121,8 @@ export class FabricBridge {
    */
   addText(text = 'New Text', fieldKey?: string) {
     const itext = new fabric.IText(text, {
+      originX: 'left',
+      originY: 'top',
       left: 100,
       top: 100,
       fontSize: 24,
@@ -142,6 +152,8 @@ export class FabricBridge {
     const maxPx = mmToPx(40)
     const scale = Math.min(maxPx / (img.width ?? maxPx), maxPx / (img.height ?? maxPx), 1)
     img.set({
+      originX: 'left',
+      originY: 'top',
       left: mmToPx(10),
       top: mmToPx(10),
       scaleX: scale,
@@ -168,26 +180,27 @@ export class FabricBridge {
     const dataUrl = await generateQRCodeDataURL(url)
     if (!dataUrl) return
 
-    fabric.Image.fromURL(dataUrl, (img) => {
-      img.set({
-        left: 100,
-        top: 100,
-        scaleX: 0.2,
-        scaleY: 0.2,
-      })
-
-      const meta: FabricObjectMeta = {
-        id: crypto.randomUUID(),
-        _layerName: 'QR Code',
-        _type: 'qr-code',
-        _fieldKey: 'qrCode'
-      }
-      Object.assign(img, meta)
-
-      this.canvas.add(img)
-      this.canvas.setActiveObject(img)
-      this.canvas.renderAll()
+    const img = await fabric.FabricImage.fromURL(dataUrl)
+    img.set({
+      originX: 'left',
+      originY: 'top',
+      left: 100,
+      top: 100,
+      scaleX: 0.2,
+      scaleY: 0.2,
     })
+
+    const meta: FabricObjectMeta = {
+      id: crypto.randomUUID(),
+      _layerName: 'QR Code',
+      _type: 'qr-code',
+      _fieldKey: 'qrCode',
+    }
+    Object.assign(img, meta)
+
+    this.canvas.add(img)
+    this.canvas.setActiveObject(img)
+    this.canvas.requestRenderAll()
   }
 
   /**
@@ -240,7 +253,7 @@ export class FabricBridge {
   /**
    * Updates properties on the active object.
    */
-  updateActiveObject(props: Partial<FabricObjectProperties & fabric.IObjectOptions>) {
+  updateActiveObject(props: Partial<FabricObjectProperties & fabric.FabricObjectProps>) {
     const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
     if (!obj) return
 
@@ -278,16 +291,16 @@ export class FabricBridge {
   bringToFront() {
     const obj = this.canvas.getActiveObject()
     if (obj) {
-      obj.bringToFront()
-      this.canvas.renderAll()
+      this.canvas.bringObjectToFront(obj)
+      this.canvas.requestRenderAll()
     }
   }
 
   sendToBack() {
     const obj = this.canvas.getActiveObject()
     if (obj) {
-      obj.sendToBack()
-      this.canvas.renderAll()
+      this.canvas.sendObjectToBack(obj)
+      this.canvas.requestRenderAll()
     }
   }
 
@@ -377,15 +390,15 @@ export class FabricBridge {
   }
 
   reorderLayers(ids: string[]) {
-    // ids are top-to-bottom
+    // Panel: top-to-bottom (front first). Fabric stack: bottom-to-top.
     const reversedIds = [...ids].reverse()
     reversedIds.forEach((id, index) => {
       const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
       if (obj) {
-        obj.moveTo(index)
+        this.canvas.moveObjectTo(obj, index)
       }
     })
-    this.canvas.renderAll()
+    this.canvas.requestRenderAll()
   }
 
   /**

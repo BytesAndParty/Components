@@ -272,8 +272,12 @@ export function CellarCanvas({
              layers={layers}
              selectedIds={selectedIds}
              onSelect={(id) => {
-               const obj = bridge.current?.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
-               if (obj) bridge.current?.canvas.setActiveObject(obj).renderAll()
+               const canvas = bridge.current?.canvas
+               const obj = canvas?.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+               if (canvas && obj) {
+                 canvas.setActiveObject(obj)
+                 canvas.requestRenderAll()
+               }
              }}
              onReorder={(newLayers) => bridge.current?.reorderLayers(newLayers.map(l => l.id))}
              onVisibilityToggle={(id) => bridge.current?.setLayerVisibility(id, !layers.find(l => l.id === id)?.visible)}
