@@ -64,6 +64,16 @@ Die alten Aufrufe schlugen daher still fehl (kein Throw, da JS-Property-Access a
 
 Tooltip wechselt im aktiven Zustand auf „Click again to upload". Der Picker öffnet sich nur noch bewusst — Fullscreen bleibt erhalten, bis der User tatsächlich uploaden will.
 
+### #6 — Layer-Reorder snappt nach dem Drop in alte Position zurück  *(2026-05-23 — gefixt)*
+
+**Symptom:** Animation läuft sauber durch, aber sobald die Maus losgelassen wird, springt die Reihenfolge im LayerPanel zurück auf den Ausgangszustand. Canvas-Stacking ändert sich währenddessen tatsächlich (sichtbar an z-order), nur die Panel-Liste verharrt.
+
+**Root Cause:** `canvas.moveObjectTo(obj, idx)` feuert in Fabric v7 **kein** Event, das wir im `update`-Effect abhören (`object:modified`, `object:added/removed` etc. greifen alle nicht für reine Stack-Umstellungen). Damit blieb der lokale `layers`-State in `CellarCanvas` veraltet — das `LayerPanel` bekam beim nächsten Render das alte Array übergeben und renderte die Vor-Drop-Reihenfolge.
+
+Gleiches latentes Problem bei `setLayerVisibility` / `setLayerLocked` / `renameLayer`: `obj.set()` und reine Metadata-Mutationen lösen ebenfalls kein `object:modified` aus.
+
+**Fix:** In `CellarCanvas` direkt nach jedem state-mutierenden Bridge-Call den `layers`-State via `setLayers(bridge.current?.getLayers() || [])` neu aus Fabric ziehen. `deleteLayer` bleibt unangetastet, weil dort `canvas.remove(obj)` `object:removed` feuert und der Effekt das bereits synchronisiert.
+
 ### #5 — ImageCropper liefert leeres weißes Bild  *(2026-05-23 — gefixt)*
 
 **Symptom:** Nach dem Upload öffnet sich der Cropper, sieht aber leer aus. Auch das Ergebnis nach „Apply" landet auf der Canvas als weißes Bild.

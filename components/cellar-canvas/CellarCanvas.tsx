@@ -268,7 +268,7 @@ export function CellarCanvas({
              <span className="text-[10px] font-bold uppercase text-muted-foreground">Layers</span>
              <span className="text-[10px] font-mono text-muted-foreground">{layers.length} total</span>
            </div>
-           <LayerPanel 
+           <LayerPanel
              layers={layers}
              selectedIds={selectedIds}
              onSelect={(id) => {
@@ -279,10 +279,25 @@ export function CellarCanvas({
                  canvas.requestRenderAll()
                }
              }}
-             onReorder={(newLayers) => bridge.current?.reorderLayers(newLayers.map(l => l.id))}
-             onVisibilityToggle={(id) => bridge.current?.setLayerVisibility(id, !layers.find(l => l.id === id)?.visible)}
-             onLockToggle={(id) => bridge.current?.setLayerLocked(id, !layers.find(l => l.id === id)?.locked)}
-             onRename={(id, name) => bridge.current?.renameLayer(id, name)}
+             onReorder={(newLayers) => {
+               // Fabric's moveObjectTo doesn't fire an event our sync-effect listens to,
+               // so we must mirror the new stack into local state ourselves — otherwise
+               // LayerPanel re-renders with the stale array and the row snaps back.
+               bridge.current?.reorderLayers(newLayers.map(l => l.id))
+               setLayers(bridge.current?.getLayers() || [])
+             }}
+             onVisibilityToggle={(id) => {
+               bridge.current?.setLayerVisibility(id, !layers.find(l => l.id === id)?.visible)
+               setLayers(bridge.current?.getLayers() || [])
+             }}
+             onLockToggle={(id) => {
+               bridge.current?.setLayerLocked(id, !layers.find(l => l.id === id)?.locked)
+               setLayers(bridge.current?.getLayers() || [])
+             }}
+             onRename={(id, name) => {
+               bridge.current?.renameLayer(id, name)
+               setLayers(bridge.current?.getLayers() || [])
+             }}
              onDelete={(id) => bridge.current?.deleteLayer(id)}
            />
         </div>
