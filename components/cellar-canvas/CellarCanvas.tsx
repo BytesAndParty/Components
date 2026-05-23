@@ -42,6 +42,9 @@ export interface CellarCanvasProps {
   exportDpi?:           number
   enablePdfExport?:     boolean
 
+  // Validation
+  enableValidator?:     boolean // default: true
+
   // Callbacks
   onChange?:            (state: object) => void
   onSave?:              (state: object) => Promise<void>
@@ -64,6 +67,7 @@ export function CellarCanvas({
     volumeMl: '750ml',
     nutritionalInfoUrl: 'https://wine-info.eu/vignes-2021'
   },
+  enableValidator = true,
   className,
   style,
   height = '80vh',
@@ -108,10 +112,11 @@ export function CellarCanvas({
       setActiveProps(bridge.current?.getActiveObjectProperties())
       const currentLayers = bridge.current?.getLayers() || []
       setLayers(currentLayers)
-      
-      // For validation, we need the raw objects with _fieldKey
-      const rawObjects = (bridge.current?.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
-      setWarnings(validateCompliance(rawObjects))
+
+      if (enableValidator) {
+        const rawObjects = (bridge.current?.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
+        setWarnings(validateCompliance(rawObjects))
+      }
     }
     const canvas = bridge.current?.canvas
     if (canvas) {
@@ -137,7 +142,7 @@ export function CellarCanvas({
       canvas?.off('object:added', update)
       canvas?.off('object:removed', update)
     }
-  }, [bridge, selectedIds])
+  }, [bridge, selectedIds, enableValidator])
 
   return (
     <div 
@@ -191,9 +196,11 @@ export function CellarCanvas({
         </div>
 
         {/* Floating Validator Badge — bottom-right of canvas area (per spec) */}
-        <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
-          <ValidatorBadge warnings={warnings} />
-        </div>
+        {enableValidator && (
+          <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
+            <ValidatorBadge warnings={warnings} />
+          </div>
+        )}
       </main>
 
       {/* Right Panel */}
