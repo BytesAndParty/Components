@@ -199,6 +199,9 @@ function SortableLayerRow(props: {
     isDragging,
   } = useSortable({ id: props.layer.id })
 
+  // dnd-kit owns the position transform + transition during drag/drop.
+  // Framer Motion handles only enter/exit fades — no `layout` prop here,
+  // otherwise the two animation systems fight and the row "snaps back".
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
@@ -208,7 +211,6 @@ function SortableLayerRow(props: {
     <motion.div
       ref={setNodeRef}
       style={style}
-      layout
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
