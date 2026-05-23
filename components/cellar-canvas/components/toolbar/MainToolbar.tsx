@@ -39,21 +39,10 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   }, [cropSrc])
 
   function handleToolClick(toolId: ToolId) {
-    // Image tool is a 2-step interaction: first click activates, second click opens
-    // the native file picker. This prevents the browser from exiting fullscreen on
-    // accidental first-click and makes the upload deliberate.
-    if (toolId === 'image') {
-      if (activeTool === 'image') {
-        fileInputRef.current?.click()
-      } else {
-        setActiveTool('image')
-      }
-      return
-    }
-
     setActiveTool(toolId as DesignerState['activeTool'])
     switch (toolId) {
       case 'text':   bridge.current?.addText();   break
+      case 'image':  fileInputRef.current?.click(); break
       case 'rect':   bridge.current?.addRect();   break
       case 'circle': bridge.current?.addCircle(); break
       case 'line':   bridge.current?.addLine();   break
@@ -89,27 +78,21 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         tabIndex={-1}
       />
 
-      {TOOLS.map((tool) => {
-        const label =
-          tool.id === 'image' && activeTool === 'image'
-            ? 'Click again to upload'
-            : tool.label
-        return (
-          <Tooltip key={tool.id} content={label} position="right">
-            <button
-              onClick={() => handleToolClick(tool.id)}
-              className={cn(
-                "p-2.5 rounded-xl transition-all duration-200",
-                activeTool === tool.id
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <tool.icon size={20} strokeWidth={2.5} />
-            </button>
-          </Tooltip>
-        )
-      })}
+      {TOOLS.map((tool) => (
+        <Tooltip key={tool.id} content={tool.label} position="right">
+          <button
+            onClick={() => handleToolClick(tool.id)}
+            className={cn(
+              "p-2.5 rounded-xl transition-all duration-200",
+              activeTool === tool.id
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            )}
+          >
+            <tool.icon size={20} strokeWidth={2.5} />
+          </button>
+        </Tooltip>
+      ))}
 
       <div className="flex-1" />
 
