@@ -1,6 +1,8 @@
 import { Section } from '../components/section'
 import { DataTable } from '@components/data-table/data-table'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
+import { useSearchParams } from 'react-router'
+import { useMemo } from 'react'
 
 interface WineInventory {
   id: string
@@ -80,86 +82,132 @@ const inventoryData: WineInventory[] = [
   { id: 'f6', name: 'Aktion Weinpaket 6er', year: 2024, type: 'Red', stock: 20, price: 55.00, status: 'In Stock' },
 ]
 
-const columns: ColumnDef<WineInventory>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Name',
-    cell: ({ row }) => <span className="font-medium">{row.getValue('name')}</span>,
-  },
-  {
-    accessorKey: 'year',
-    header: 'Year',
-  },
-  {
-    accessorKey: 'type',
-    header: 'Type',
-    cell: ({ row }) => {
-      const type = row.getValue('type') as string
-      const colors: Record<string, string> = {
-        Red: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-        White: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-        Rosé: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
-        Sparkling: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-      }
-      return (
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${colors[type]}`}>
-          {type}
-        </span>
-      )
-    },
-  },
-  {
-    accessorKey: 'stock',
-    header: 'Stock',
-    cell: ({ row }) => <span className="font-mono">{row.getValue('stock')}</span>,
-  },
-  {
-    accessorKey: 'price',
-    header: 'Price',
-    cell: ({ row }) => {
-      const price = parseFloat(row.getValue('price'))
-      const formatted = new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-      }).format(price)
-      return <span className="font-mono">{formatted}</span>
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => {
-      const status = row.getValue('status') as string
-      const dotColors: Record<string, string> = {
-        'In Stock': 'bg-emerald-500',
-        'Low Stock': 'bg-amber-500',
-        'Out of Stock': 'bg-rose-500',
-      }
-      return (
-        <div className="flex items-center gap-2">
-          <div className={`w-1.5 h-1.5 rounded-full ${dotColors[status]}`} />
-          <span className="text-xs">{status}</span>
-        </div>
-      )
-    },
-  },
-]
-
 export function DataPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Parse sorting from URL: ?sort=name:asc
+  const sorting = useMemo<SortingState>(() => {
+    const sort = searchParams.get('sort')
+    if (!sort) return []
+    const [id, desc] = sort.split(':')
+    return [{ id, desc: desc === 'desc' }]
+  }, [searchParams])
+
+  // Parse pagination from URL: ?page=1
+  const pagination = useMemo<PaginationState>(() => {
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    return {
+      pageIndex: Math.max(0, page - 1),
+      pageSize: 15,
+    }
+  }, [searchParams])
+
+  // Update URL when sorting/pagination changes
+  const handleSortingChange = (newSorting: SortingState) => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (newSorting.length > 0) {
+      const { id, desc } = newSorting[0]
+      nextParams.set('sort', `${id}:${desc ? 'desc' : 'asc'}`)
+    } else {
+      nextParams.delete('sort')
+    }
+    // Reset to page 1 on sort change
+    nextParams.set('page', '1')
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handlePaginationChange = (newPagination: PaginationState) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('page', String(newPagination.pageIndex + 1))
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const columns: ColumnDef<WineInventory>[] = useMemo(() => [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      cell: ({ row }) => <span className="font-medium">{row.getValue('name')}</span>,
+    },
+    {
+      accessorKey: 'year',
+      header: 'Year',
+    },
+    {
+      accessorKey: 'type',
+      header: 'Type',
+      cell: ({ row }) => {
+        const type = row.getValue('type') as string
+        const colors: Record<string, string> = {
+          Red: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+          White: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+          Rosé: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
+          Sparkling: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+        }
+        return (
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${colors[type]}`}>
+            {type}
+          </span>
+        )
+      },
+    },
+    {
+      accessorKey: 'stock',
+      header: 'Stock',
+      cell: ({ row }) => <span className="font-mono">{row.getValue('stock')}</span>,
+    },
+    {
+      accessorKey: 'price',
+      header: 'Price',
+      cell: ({ row }) => {
+        const price = parseFloat(row.getValue('price'))
+        const formatted = new Intl.NumberFormat('de-DE', {
+          style: 'currency',
+          currency: 'EUR',
+        }).format(price)
+        return <span className="font-mono">{formatted}</span>
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const status = row.getValue('status') as string
+        const dotColors: Record<string, string> = {
+          'In Stock': 'bg-emerald-500',
+          'Low Stock': 'bg-amber-500',
+          'Out of Stock': 'bg-rose-500',
+        }
+        return (
+          <div className="flex items-center gap-2">
+            <div className={`w-1.5 h-1.5 rounded-full ${dotColors[status]}`} />
+            <span className="text-xs">{status}</span>
+          </div>
+        )
+      },
+    },
+  ], [])
+
   return (
     <div className="space-y-12">
       <header className="space-y-2">
         <h1 className="text-4xl font-bold -tracking-[0.04em]">Data & Tables</h1>
         <p className="text-muted-foreground">
-          Powerful, sortable tables powered by TanStack Table with smooth spring animations.
+          Powerful, sortable tables powered by TanStack Table with smooth spring animations and full URL synchronization (sort & page).
         </p>
       </header>
 
       <Section 
         title="Wine Inventory" 
-        description="A comprehensive list of our current wine stock with status indicators and sorting."
+        description="A comprehensive list of our current wine stock with status indicators, sorting, and pagination."
       >
-        <DataTable columns={columns} data={inventoryData} />
+        <DataTable 
+          columns={columns} 
+          data={inventoryData} 
+          sorting={sorting} 
+          onSortingChange={handleSortingChange}
+          pagination={pagination}
+          onPaginationChange={handlePaginationChange}
+        />
       </Section>
 
       <Section 
