@@ -13,7 +13,6 @@
   "workspaces": [
     "components",
     "showcase",
-    "vt-showcase",
     "wine-showcase/storefront"
   ],
   "devDependencies": {
