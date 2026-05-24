@@ -138,13 +138,13 @@ export function DataPage() {
       cell: ({ row }) => {
         const type = row.getValue('type') as string
         const colors: Record<string, string> = {
-          Red: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-          White: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-          Rosé: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
-          Sparkling: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+          Red: 'bg-red-500/10 text-red-700 dark:text-red-300 ring-red-500/20',
+          White: 'bg-amber-500/15 text-amber-800 dark:text-amber-200 ring-amber-500/25',
+          Rosé: 'bg-pink-500/10 text-pink-700 dark:text-pink-300 ring-pink-500/20',
+          Sparkling: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 ring-sky-500/20',
         }
         return (
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${colors[type]}`}>
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset ${colors[type]}`}>
             {type}
           </span>
         )
