@@ -8,6 +8,9 @@ Sub-modules and panels live alongside it (`LayerPanel`, `ValidatorBadge`, `Image
 
 - **Fabric v7 canvas** mounted in mm units, with px conversion via `engine/units.ts`. Origin pinned to `left/top` so the mm/px bounding-box math holds.
 - **Tools**: select / pan / text / image (with crop) / rect / circle / line / QR-code.
+- **Undo/Redo System**: Linear history stack (max. 50 steps) using Fabric JSON serialization. Visual controls in the header + keyboard shortcuts.
+- **TanStack Hotkeys**: Global shortcut support (`mod+z`, `mod+shift+z`, `delete`, `backspace`) integrated with the design engine's hotkey registry. Smart focus-handling prevents deleting objects while typing in inputs.
+- **Physical Zoom-to-Fit**: One-click fitting (`Fit to Screen`) that calculates the viewport scale based on the actual physical millimetre dimensions of the label.
 - **Right panel**: properties for the active object (x/y/w/h/rotation/opacity in mm/°/%) + wine-data field inserter.
 - **Layer panel** mirrors the canvas z-order (top of list = front of canvas). Drag-to-reorder, visibility, lock, rename, delete.
 - **EU compliance validator** (Reg. 1308/2013, 2019/33, 1169/2011, 2023/2977): floating badge surfaces missing mandatory fields with the legal basis spelled out per warning. Toggleable via `enableValidator`.
@@ -17,10 +20,12 @@ Sub-modules and panels live alongside it (`LayerPanel`, `ValidatorBadge`, `Image
 ## How It Works
 
 1. **Imperative bridge over Fabric**. `engine/fabric-bridge.ts` is the only place that touches the Fabric API. All add / update / z-order / layer-meta calls flow through it. v7 specifics (Canvas-side `bringObjectToFront` / `moveObjectTo`, `FabricObjectProps`, `await FabricImage.fromURL`) are encapsulated there.
-2. **Zustand store for UI metadata**, Fabric as source of truth for geometry. `store/designer-store.ts` holds `activeTool`, `selectedIds`, `zoom`, `dirty`. The bridge mirrors Fabric selection into the store.
-3. **State sync via events**: Fabric `object:added/removed/modified/moving/scaling/rotating` + `selection:*` events re-pull `getActiveObjectProperties()` + `getLayers()` + `validateCompliance()` into local React state.
-4. **Explicit sync for stack mutations**: `moveObjectTo` and `obj.set('visible'/'lockMovementX')` do **not** fire events Fabric exposes, so `onReorder` / `onVisibilityToggle` / `onLockToggle` / `onRename` call `setLayers(bridge.getLayers())` directly to keep the panel from snapping back to a stale array.
-5. **Validator** scans `_fieldKey` metadata on canvas objects against a mandatory-key list and emits `{ key, label, description, severity }` items. The popover renders each one verbatim — `description` carries the EU regulation citation.
+2. **Zustand store for UI metadata**, Fabric as source of truth for geometry. `store/designer-store.ts` holds `activeTool`, `selectedIds`, `zoom`, `dirty`, and the linear `history` stack. The bridge mirrors Fabric selection into the store.
+3. **History management via serialization**: The bridge captures `canvas.toJSON()` snapshots on every mutation (`saveHistory()`). Undo/Redo operations temporarily disable history-tracking via `isRestoringHistory` to prevent recursion.
+4. **State sync via events**: Fabric `object:added/removed/modified/moving/scaling/rotating` + `selection:*` events re-pull `getActiveObjectProperties()` + `getLayers()` + `validateCompliance()` into local React state. `object:modified` additionally triggers a history snapshot.
+5. **TanStack Hotkeys**: Shortcuts are registered via `useDesignEngineHotkey`, making them discoverable in the global `ShortcutOverview`. The `mod+z` (Undo) and `mod+shift+z` (Redo) mappings handle cross-platform command/control keys automatically.
+6. **Explicit sync for stack mutations**: `moveObjectTo` and `obj.set('visible'/'lockMovementX')` do **not** fire events Fabric exposes, so `onReorder` / `onVisibilityToggle` / `onLockToggle` / `onRename` call `setLayers(bridge.getLayers())` directly to keep the panel from snapping back to a stale array.
+7. **Validator** scans `_fieldKey` metadata on canvas objects against a mandatory-key list and emits `{ key, label, description, severity }` items. The popover renders each one verbatim — `description` carries the EU regulation citation.
 
 ## Props
 
