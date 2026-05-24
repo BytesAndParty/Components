@@ -93,7 +93,7 @@ export function Tooltip({
             className={cn(
               "absolute z-[100] px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap pointer-events-none",
               "bg-[var(--card,#141416)] border border-[var(--border,#2a2a2e)] text-[var(--foreground,#e4e4e7)] shadow-xl",
-              "backdrop-blur-md bg-opacity-90",
+              "backdrop-blur-md",
               positionClasses[position],
               className
             )}
