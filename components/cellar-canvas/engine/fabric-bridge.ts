@@ -10,9 +10,47 @@ import { generateQRCodeDataURL } from './qr-generator'
  */
 export class FabricBridge {
   canvas: fabric.Canvas
+  private isRestoringHistory = false
 
   constructor(canvas: fabric.Canvas) {
     this.canvas = canvas
+    
+    // Initial history snapshot
+    setTimeout(() => this.saveHistory(), 100)
+  }
+
+  /**
+   * Captures the current state and pushes it to the store's history stack.
+   */
+  saveHistory() {
+    if (this.isRestoringHistory) return
+    const json = JSON.stringify(this.canvas.toJSON(['id', '_layerName', '_type', '_fieldKey', 'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation', 'hasControls']))
+    useDesignerStore.getState().pushHistory(json)
+  }
+
+  /**
+   * Restores the state from the history stack based on the current index.
+   */
+  async restoreHistory() {
+    const { history, historyIndex } = useDesignerStore.getState()
+    const state = history[historyIndex]
+    if (!state) return
+
+    this.isRestoringHistory = true
+    await this.canvas.loadFromJSON(state)
+    this.canvas.requestRenderAll()
+    this.updateStoreSelection()
+    this.isRestoringHistory = false
+  }
+
+  undo() {
+    useDesignerStore.getState().undo()
+    this.restoreHistory()
+  }
+
+  redo() {
+    useDesignerStore.getState().redo()
+    this.restoreHistory()
   }
 
   /**
@@ -55,6 +93,7 @@ export class FabricBridge {
     this.canvas.add(rect)
     this.canvas.setActiveObject(rect)
     this.canvas.renderAll()
+    this.saveHistory()
   }
 
   /**
@@ -84,6 +123,7 @@ export class FabricBridge {
     this.canvas.add(circle)
     this.canvas.setActiveObject(circle)
     this.canvas.renderAll()
+    this.saveHistory()
   }
 
   /**
@@ -114,6 +154,7 @@ export class FabricBridge {
     this.canvas.add(line)
     this.canvas.setActiveObject(line)
     this.canvas.renderAll()
+    this.saveHistory()
   }
 
   /**
@@ -141,6 +182,7 @@ export class FabricBridge {
     this.canvas.add(itext)
     this.canvas.setActiveObject(itext)
     this.canvas.renderAll()
+    this.saveHistory()
   }
 
   /**
@@ -174,6 +216,7 @@ export class FabricBridge {
     this.canvas.add(img)
     this.canvas.setActiveObject(img)
     this.canvas.renderAll()
+    this.saveHistory()
   }
 
   async addQRCode(url: string) {
@@ -201,6 +244,7 @@ export class FabricBridge {
     this.canvas.add(img)
     this.canvas.setActiveObject(img)
     this.canvas.requestRenderAll()
+    this.saveHistory()
   }
 
   /**
@@ -214,6 +258,7 @@ export class FabricBridge {
     activeObjects.forEach(obj => this.canvas.remove(obj))
     this.canvas.renderAll()
     this.updateStoreSelection()
+    this.saveHistory()
   }
 
   /**
@@ -286,6 +331,8 @@ export class FabricBridge {
 
     this.canvas.renderAll()
     useDesignerStore.getState().setDirty(true)
+    // We don't save history on EVERY prop change (e.g. while dragging), 
+    // we do it when the change is committed.
   }
 
   bringToFront() {
@@ -293,6 +340,7 @@ export class FabricBridge {
     if (obj) {
       this.canvas.bringObjectToFront(obj)
       this.canvas.requestRenderAll()
+      this.saveHistory()
     }
   }
 
@@ -301,22 +349,20 @@ export class FabricBridge {
     if (obj) {
       this.canvas.sendObjectToBack(obj)
       this.canvas.requestRenderAll()
+      this.saveHistory()
     }
   }
 
   /**
    * Zooms and pans the canvas so that the label area fits within the viewport.
    */
-  zoomToFit() {
+  zoomToFit(widthMm = 90, heightMm = 120) {
     const padding = 80
     const canvasWidth = this.canvas.getWidth()
     const canvasHeight = this.canvas.getHeight()
     
-    // Default area for fitting (the workspace/label boundaries)
-    // We assume the label is roughly in the center or we use the defined canvas size
-    // For now, we fit based on the Fabric Canvas container size vs the viewport
-    const contentWidth = 400 // TODO: Pass actual mmToPx dimensions
-    const contentHeight = 600
+    const contentWidth = mmToPx(widthMm)
+    const contentHeight = mmToPx(heightMm)
 
     const scaleX = (canvasWidth - padding * 2) / contentWidth
     const scaleY = (canvasHeight - padding * 2) / contentHeight
@@ -354,6 +400,7 @@ export class FabricBridge {
     if (obj) {
       obj.set('visible', visible)
       this.canvas.renderAll()
+      this.saveHistory()
     }
   }
 
@@ -369,6 +416,7 @@ export class FabricBridge {
         hasControls: !locked,
       })
       this.canvas.renderAll()
+      this.saveHistory()
     }
   }
 
@@ -378,6 +426,7 @@ export class FabricBridge {
       this.canvas.remove(obj)
       this.canvas.renderAll()
       this.updateStoreSelection()
+      this.saveHistory()
     }
   }
 
@@ -386,6 +435,7 @@ export class FabricBridge {
     if (obj) {
       (obj as fabric.Object & FabricObjectMeta)._layerName = name
       this.canvas.renderAll()
+      this.saveHistory()
     }
   }
 
@@ -399,6 +449,7 @@ export class FabricBridge {
       }
     })
     this.canvas.requestRenderAll()
+    this.saveHistory()
   }
 
   /**

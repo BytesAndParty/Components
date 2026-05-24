@@ -12,6 +12,7 @@ import { validateCompliance } from './wine-fields/validator'
 import { useEffect, useState, useRef } from 'react'
 import { cn } from '../lib/utils'
 import { Maximize2, Minimize2 } from 'lucide-react'
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider'
 import type { FabricObjectProperties, FabricObjectMeta } from './store/types'
 
 export interface WineFieldValues {
@@ -101,48 +102,81 @@ export function CellarCanvas({
   // Initial Zoom to Fit
   useEffect(() => {
     const timeout = setTimeout(() => {
-      bridge.current?.zoomToFit()
+      bridge.current?.zoomToFit(widthMm, heightMm)
     }, 100)
     return () => clearTimeout(timeout)
-  }, [bridge, isFullscreen])
+  }, [bridge, isFullscreen, widthMm, heightMm])
 
   // Sync properties, layers and validation
   useEffect(() => {
+    const bridgeInstance = bridge.current
+    if (!bridgeInstance) return
+
     const update = () => {
-      setActiveProps(bridge.current?.getActiveObjectProperties())
-      const currentLayers = bridge.current?.getLayers() || []
+      setActiveProps(bridgeInstance.getActiveObjectProperties())
+      const currentLayers = bridgeInstance.getLayers() || []
       setLayers(currentLayers)
 
       if (enableValidator) {
-        const rawObjects = (bridge.current?.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
+        const rawObjects = (bridgeInstance.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
         setWarnings(validateCompliance(rawObjects))
       }
     }
-    const canvas = bridge.current?.canvas
-    if (canvas) {
-      canvas.on('selection:created', update)
-      canvas.on('selection:updated', update)
-      canvas.on('selection:cleared', update)
-      canvas.on('object:modified', update)
-      canvas.on('object:moving', update)
-      canvas.on('object:scaling', update)
-      canvas.on('object:rotating', update)
-      canvas.on('object:added', update)
-      canvas.on('object:removed', update)
+
+    const onModified = () => {
+      update()
+      bridgeInstance.saveHistory()
     }
+
+    const canvas = bridgeInstance.canvas
+    canvas.on('selection:created', update)
+    canvas.on('selection:updated', update)
+    canvas.on('selection:cleared', update)
+    canvas.on('object:modified', onModified)
+    canvas.on('object:moving', update)
+    canvas.on('object:scaling', update)
+    canvas.on('object:rotating', update)
+    canvas.on('object:added', update)
+    canvas.on('object:removed', update)
+
     update() // Initial sync
+    
     return () => {
-      canvas?.off('selection:created', update)
-      canvas?.off('selection:updated', update)
-      canvas?.off('selection:cleared', update)
-      canvas?.off('object:modified', update)
-      canvas?.off('object:moving', update)
-      canvas?.off('object:scaling', update)
-      canvas?.off('object:rotating', update)
-      canvas?.off('object:added', update)
-      canvas?.off('object:removed', update)
+      canvas.off('selection:created', update)
+      canvas.off('selection:updated', update)
+      canvas.off('selection:cleared', update)
+      canvas.off('object:modified', onModified)
+      canvas.off('object:moving', update)
+      canvas.off('object:scaling', update)
+      canvas.off('object:rotating', update)
+      canvas.off('object:added', update)
+      canvas.off('object:removed', update)
     }
-  }, [bridge, selectedIds, enableValidator])
+  }, [bridge, enableValidator]) // No longer depends on selectedIds or layers
+
+  // Keyboard Shortcuts via TanStack
+  useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
+    label: 'Undo',
+    category: 'Actions',
+    description: 'Reverse the last change'
+  })
+
+  useDesignEngineHotkey('mod+shift+z', () => bridge.current?.redo(), {
+    label: 'Redo',
+    category: 'Actions',
+    description: 'Reapply a reversed change'
+  })
+
+  useDesignEngineHotkey('delete, backspace', () => {
+    const active = document.activeElement
+    if (active?.tagName !== 'INPUT' && active?.tagName !== 'TEXTAREA') {
+      bridge.current?.deleteSelected()
+    }
+  }, {
+    label: 'Delete',
+    category: 'Actions',
+    description: 'Remove selected object'
+  })
 
   return (
     <div 
@@ -163,6 +197,22 @@ export function CellarCanvas({
         <div className="flex-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
           Standard Label ({widthMm}x{heightMm}mm)
         </div>
+        <div className="flex items-center gap-1 mr-4">
+           <button 
+             onClick={() => bridge.current?.undo()} 
+             className="p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors"
+             title="Undo (Cmd+Z)"
+           >
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+           </button>
+           <button 
+             onClick={() => bridge.current?.redo()} 
+             className="p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors"
+             title="Redo (Cmd+Shift+Z)"
+           >
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+           </button>
+        </div>
         <button 
           onClick={toggleFullscreen}
           className="p-2 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
@@ -176,7 +226,7 @@ export function CellarCanvas({
       <div className="border-b border-border bg-card flex items-center justify-between pr-4" style={{ gridColumn: '2 / -1' }}>
         <ContextToolbar bridge={bridge} />
         <button 
-          onClick={() => bridge.current?.zoomToFit()}
+          onClick={() => bridge.current?.zoomToFit(widthMm, heightMm)}
           className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 hover:bg-muted rounded border border-border transition-colors text-muted-foreground hover:text-foreground"
         >
           Fit to Screen
