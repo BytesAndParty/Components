@@ -7,12 +7,14 @@ import {
   SortingState,
   getPaginationRowModel,
   PaginationState,
+  RowSelectionState,
 } from '@tanstack/react-table'
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
+import { Checkbox } from '../checkbox/checkbox'
 import { MESSAGES, type DataTableMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -22,12 +24,17 @@ export interface DataTableProps<TData, TValue> {
   data: TData[]
   className?: string
   messages?: Partial<DataTableMessages>
+  pageSize?: number
   // Controlled sorting
   sorting?: SortingState
   onSortingChange?: (sorting: SortingState) => void
   // Controlled pagination
   pagination?: PaginationState
   onPaginationChange?: (pagination: PaginationState) => void
+  // Row selection (opt-in)
+  enableRowSelection?: boolean
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: (selection: RowSelectionState) => void
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -37,18 +44,24 @@ export function DataTable<TData, TValue>({
   data,
   className,
   messages,
+  pageSize = 10,
   sorting: controlledSorting,
   onSortingChange,
   pagination: controlledPagination,
   onPaginationChange,
+  enableRowSelection = false,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const [internalPagination, setInternalPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize,
   })
+  const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({})
   const [[page, direction], setPage] = useState([0, 0])
   const m = useComponentMessages(MESSAGES, messages)
+  const shouldReduceMotion = useReducedMotion()
 
   const sorting = controlledSorting ?? internalSorting
   const handleSortingChange = onSortingChange ?? setInternalSorting
@@ -61,10 +74,18 @@ export function DataTable<TData, TValue>({
     else setInternalPagination(next)
   }
 
+  const rowSelection = controlledRowSelection ?? internalRowSelection
+  const handleRowSelectionChange = onRowSelectionChange ?? setInternalRowSelection
+
+  const tableColumns = enableRowSelection
+    ? [buildSelectionColumn<TData, TValue>(m), ...columns]
+    : columns
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection,
     onSortingChange: (updater) => {
       const next = typeof updater === 'function' ? updater(sorting) : updater
       handleSortingChange(next)
@@ -73,11 +94,16 @@ export function DataTable<TData, TValue>({
       const next = typeof updater === 'function' ? updater(pagination) : updater
       handlePaginationChange(next)
     },
+    onRowSelectionChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(rowSelection) : updater
+      handleRowSelectionChange(next)
+    },
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       pagination,
+      rowSelection,
     },
   })
 
@@ -111,39 +137,52 @@ export function DataTable<TData, TValue>({
             <thead className="bg-muted/50 border-b border-border">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="px-4 py-3 font-semibold text-muted-foreground select-none"
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={cn(
-                            'flex items-center gap-2',
-                            header.column.getCanSort() && 'cursor-pointer hover:text-foreground transition-colors'
-                          )}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getCanSort() && (
-                            <div className="w-4 h-4 flex items-center justify-center">
-                              {{
-                                asc: <ChevronUp size={14} />,
-                                desc: <ChevronDown size={14} />,
-                              }[header.column.getIsSorted() as string] ?? (
-                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <ChevronUp size={14} />
-                                </div>
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort()
+                    const sorted = header.column.getIsSorted()
+                    const ariaSort: 'ascending' | 'descending' | 'none' =
+                      sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none'
+                    const nextSortLabel =
+                      sorted === 'asc' ? m.sortDescending : sorted === 'desc' ? m.sortClear : m.sortAscending
+                    return (
+                      <th
+                        key={header.id}
+                        scope="col"
+                        aria-sort={canSort ? ariaSort : undefined}
+                        className="px-4 py-3 font-semibold text-muted-foreground select-none"
+                      >
+                        {header.isPlaceholder ? null : canSort ? (
+                          <button
+                            type="button"
+                            onClick={header.column.getToggleSortingHandler()}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                header.column.getToggleSortingHandler()?.(e)
+                              }
+                            }}
+                            aria-label={nextSortLabel}
+                            className="group flex items-center gap-2 bg-transparent border-0 p-0 font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded-sm"
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            <span className="w-4 h-4 flex items-center justify-center" aria-hidden="true">
+                              {sorted === 'asc' ? (
+                                <ChevronUp size={14} />
+                              ) : sorted === 'desc' ? (
+                                <ChevronDown size={14} />
+                              ) : (
+                                <ChevronsUpDown size={14} className="opacity-40 group-hover:opacity-80 transition-opacity" />
                               )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </th>
-                  ))}
+                            </span>
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </div>
+                        )}
+                      </th>
+                    )
+                  })}
                 </tr>
               ))}
             </thead>
@@ -153,20 +192,19 @@ export function DataTable<TData, TValue>({
                   table.getRowModel().rows.map((row, i) => (
                     <motion.tr
                       key={row.id}
-                      layout
+                      layout={shouldReduceMotion ? false : true}
                       custom={direction}
-                      variants={variants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ 
-                        layout: { type: 'spring', stiffness: 300, damping: 30 },
-                        opacity: { duration: 0.2 },
-                        x: { type: 'spring', stiffness: 300, damping: 30 },
-                        delay: i * 0.01 // Subtle stagger
+                      variants={shouldReduceMotion ? undefined : variants}
+                      initial={shouldReduceMotion ? false : 'enter'}
+                      animate={shouldReduceMotion ? undefined : 'center'}
+                      exit={shouldReduceMotion ? undefined : 'exit'}
+                      transition={{
+                        layout: { type: 'spring', stiffness: 180, damping: 24 },
+                        opacity: { duration: 0.35, delay: i * 0.015 },
+                        x: { type: 'spring', stiffness: 180, damping: 24, delay: i * 0.015 },
                       }}
                       className="hover:bg-muted/30 transition-colors data-[state=selected]:bg-accent/5"
-                      data-state={row.getIsSelected() && 'selected'}
+                      data-state={row.getIsSelected() ? 'selected' : undefined}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-3 text-foreground whitespace-nowrap">
@@ -181,12 +219,12 @@ export function DataTable<TData, TValue>({
                 ) : (
                   <motion.tr
                     key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={shouldReduceMotion ? false : { opacity: 0 }}
+                    animate={shouldReduceMotion ? undefined : { opacity: 1 }}
+                    exit={shouldReduceMotion ? undefined : { opacity: 0 }}
                   >
                     <td
-                      colSpan={columns.length}
+                      colSpan={tableColumns.length}
                       className="h-24 text-center text-muted-foreground"
                     >
                       {m.noResults}
@@ -264,6 +302,30 @@ function PaginationBtn({
       {children}
     </button>
   )
+}
+
+function buildSelectionColumn<TData, TValue>(m: DataTableMessages): ColumnDef<TData, TValue> {
+  return {
+    id: '__select__',
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        size="sm"
+        checked={table.getIsAllPageRowsSelected()}
+        onChange={(checked) => table.toggleAllPageRowsSelected(checked)}
+        aria-label={m.selectAllRows}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        size="sm"
+        checked={row.getIsSelected()}
+        disabled={!row.getCanSelect()}
+        onChange={(checked) => row.toggleSelected(checked)}
+        aria-label={m.selectRow}
+      />
+    ),
+  }
 }
 
 

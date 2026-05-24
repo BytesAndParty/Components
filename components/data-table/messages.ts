@@ -8,6 +8,11 @@ export type DataTableMessages = {
   lastPage: string
   pageOf: string // e.g. "Seite {current} von {total}"
   rowsPerPage: string
+  sortAscending: string
+  sortDescending: string
+  sortClear: string
+  selectRow: string
+  selectAllRows: string
 }
 
 export const MESSAGES = {
@@ -19,6 +24,11 @@ export const MESSAGES = {
     lastPage: 'Letzte Seite',
     pageOf: 'Seite {current} von {total}',
     rowsPerPage: 'Zeilen pro Seite',
+    sortAscending: 'Aufsteigend sortieren',
+    sortDescending: 'Absteigend sortieren',
+    sortClear: 'Sortierung zurücksetzen',
+    selectRow: 'Zeile auswählen',
+    selectAllRows: 'Alle Zeilen auswählen',
   },
   en: {
     noResults: 'No results found.',
@@ -28,5 +38,10 @@ export const MESSAGES = {
     lastPage: 'Last page',
     pageOf: 'Page {current} of {total}',
     rowsPerPage: 'Rows per page',
+    sortAscending: 'Sort ascending',
+    sortDescending: 'Sort descending',
+    sortClear: 'Clear sort',
+    selectRow: 'Select row',
+    selectAllRows: 'Select all rows',
   },
 } as const satisfies ComponentMessages<DataTableMessages>
