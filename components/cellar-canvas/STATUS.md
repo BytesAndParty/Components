@@ -15,8 +15,8 @@
 | History              | ✅ Undo/Redo (50 Steps) via Zustand + Fabric JSON Serialization.        |
 | Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, del, backspace) inkl. Registry. |
 | Zoom                 | ✅ Zoom-to-Fit nutzt echte mm-Maße (widthMm x heightMm).                |
-| Properties Panel     | x / y / w / h / rotation / opacity in mm bzw. % über `NumberInput`.    |
-| Context Toolbar      | Text-Optionen + Bring-to-Front / Send-to-Back, Alignment-Stub.         |
+| Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2). |
+| Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + StackOrderControls + AlignmentBar (live) + Shape-Fill ColorSwatch. |
 | Wine Fields          | 6 Felder + QR-Code, `_fieldKey` Metadata.                              |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle Objekte, Rename / Visibility / Lock / Delete / Reorder.    |
@@ -27,6 +27,28 @@
 ---
 
 ## Bug Log
+
+### #14 — TextToolOptions: charSpacing + lineHeight wurden silently gedroppt *(2026-05-24 — gefixt)*
+
+**Symptom:** Schieben der Letter-Spacing- oder Line-Height-Slider in der Context-Toolbar bewirkt nichts auf der Canvas.
+
+**Root Cause:** `handleTextChange` in `ContextToolbar.tsx` mappte zwar `bold/italic/underline/color/fontFamily/fontSize/textAlign`, aber **nicht** `charSpacing` und `lineHeight`. Die Werte kamen über `TextFormatValues` rein, wurden aber nicht in `fabricProps` übertragen → Bridge bekam einen leeren Prop-Bag, Fabric blieb unverändert.
+
+**Fix:** Beide Felder in `handleTextChange` ergänzt. `FabricObjectProperties` führt sie bereits, der Pass-through reicht.
+
+### #13 — Geometry W/H mappte mm-Werte direkt als Fabric-Pixel *(2026-05-24 — gefixt)*
+
+**Symptom:** Width/Height im Properties-Panel verzerrte die Form (Rect wurde winzig, Skalierung kaputt). X/Y/Rotation/Opacity funktionierten dagegen.
+
+**Root Cause:** `bridge.updateActiveObject` startete den Fabric-Prop-Bag mit `{ ...cleanProps }` und überschrieb dann `left`/`top`/`scaleX`/`scaleY`. Die mm-keyed Felder `width` / `height` blieben damit im Bag — Fabric interpretierte `width: 20` aber als 20 px (nicht mm) und setzte das parallel zum frisch berechneten `scaleX`. Ergebnis: doppelter Effekt, Form verzerrt. Zusätzlich gab's keine Sonderbehandlung für `Circle` (kein echtes `width`-Feld, nur `radius`) und `Line` (Geometrie in `x1/y1/x2/y2`).
+
+**Fix:** Bridge-Prop-Bag wird sauber gebaut: virtuelle mm-Keys (`x`, `y`, `width`, `height`) werden via Destructuring rausgezogen, restliche Props werden 1:1 als Fabric-Props gespreaded. W/H-Mapping pro Objekttyp:
+
+- `Rect` / `Image` / `IText`: `scaleX = mmToPx(target) / obj.width`, analog `scaleY`.
+- `Circle`: `radius = mmToPx(width) / 2 / scaleX`, Height wird ignoriert (uniform).
+- `Line`: `x2 = x1 + mmToPx(width) / scaleX`, Height wird ignoriert.
+
+`setCoords()` wird jetzt für alle Objekttypen aufgerufen (vorher nur IText).
 
 ### #12 — LayerPanel: Shadow erscheint beim Drag auf allen Rows *(2026-05-24 — gefixt)*
 

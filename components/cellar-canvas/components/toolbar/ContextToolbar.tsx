@@ -64,13 +64,15 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
   const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
     const fabricProps: Partial<FabricObjectProperties> = {}
-    if (newFmt.bold       !== undefined) fabricProps.fontWeight = newFmt.bold ? 'bold' : 'normal'
-    if (newFmt.italic     !== undefined) fabricProps.fontStyle  = newFmt.italic ? 'italic' : 'normal'
-    if (newFmt.color      !== undefined) fabricProps.fill       = newFmt.color
-    if (newFmt.fontFamily !== undefined) fabricProps.fontFamily = newFmt.fontFamily
-    if (newFmt.fontSize   !== undefined) fabricProps.fontSize   = newFmt.fontSize
-    if (newFmt.underline  !== undefined) fabricProps.underline  = newFmt.underline
-    if (newFmt.textAlign  !== undefined) fabricProps.textAlign  = newFmt.textAlign
+    if (newFmt.bold        !== undefined) fabricProps.fontWeight  = newFmt.bold ? 'bold' : 'normal'
+    if (newFmt.italic      !== undefined) fabricProps.fontStyle   = newFmt.italic ? 'italic' : 'normal'
+    if (newFmt.color       !== undefined) fabricProps.fill        = newFmt.color
+    if (newFmt.fontFamily  !== undefined) fabricProps.fontFamily  = newFmt.fontFamily
+    if (newFmt.fontSize    !== undefined) fabricProps.fontSize    = newFmt.fontSize
+    if (newFmt.underline   !== undefined) fabricProps.underline   = newFmt.underline
+    if (newFmt.textAlign   !== undefined) fabricProps.textAlign   = newFmt.textAlign
+    if (newFmt.charSpacing !== undefined) fabricProps.charSpacing = newFmt.charSpacing
+    if (newFmt.lineHeight  !== undefined) fabricProps.lineHeight  = newFmt.lineHeight
     bridge.current?.updateActiveObject(fabricProps)
   }
 
