@@ -344,6 +344,24 @@ export class FabricBridge {
     }
   }
 
+  bringForward() {
+    const obj = this.canvas.getActiveObject()
+    if (obj) {
+      this.canvas.bringObjectForward(obj)
+      this.canvas.requestRenderAll()
+      this.saveHistory()
+    }
+  }
+
+  sendBackward() {
+    const obj = this.canvas.getActiveObject()
+    if (obj) {
+      this.canvas.sendObjectBackwards(obj)
+      this.canvas.requestRenderAll()
+      this.saveHistory()
+    }
+  }
+
   sendToBack() {
     const obj = this.canvas.getActiveObject()
     if (obj) {
@@ -351,6 +369,81 @@ export class FabricBridge {
       this.canvas.requestRenderAll()
       this.saveHistory()
     }
+  }
+
+  /**
+   * Aligns or distributes the currently selected objects relative to the
+   * bounding box of the selection. Inside an ActiveSelection the children's
+   * left/top are stored relative to the group's center — so we discard the
+   * group first, mutate in absolute canvas coords, then rebuild the selection.
+   * No-op below 2 selected objects (distribution needs at least 3).
+   */
+  alignSelected(action:
+    | 'align-left' | 'align-center-h' | 'align-right'
+    | 'align-top'  | 'align-center-v' | 'align-bottom'
+    | 'distribute-h' | 'distribute-v'
+  ) {
+    const active = this.canvas.getActiveObject()
+    if (!(active instanceof fabric.ActiveSelection)) return
+
+    const objects = [...active.getObjects()]
+    if (objects.length < 2) return
+    this.canvas.discardActiveObject()
+
+    type Box = { obj: fabric.Object; left: number; top: number; w: number; h: number; cx: number; cy: number }
+    const boxes: Box[] = objects.map(obj => {
+      const left = obj.left ?? 0
+      const top = obj.top ?? 0
+      const w = (obj.width ?? 0) * (obj.scaleX ?? 1)
+      const h = (obj.height ?? 0) * (obj.scaleY ?? 1)
+      return { obj, left, top, w, h, cx: left + w / 2, cy: top + h / 2 }
+    })
+
+    const bbLeft   = Math.min(...boxes.map(b => b.left))
+    const bbTop    = Math.min(...boxes.map(b => b.top))
+    const bbRight  = Math.max(...boxes.map(b => b.left + b.w))
+    const bbBottom = Math.max(...boxes.map(b => b.top + b.h))
+    const bbCenterX = (bbLeft + bbRight) / 2
+    const bbCenterY = (bbTop + bbBottom) / 2
+
+    boxes.forEach(b => {
+      switch (action) {
+        case 'align-left':     b.obj.set('left', bbLeft); break
+        case 'align-center-h': b.obj.set('left', bbCenterX - b.w / 2); break
+        case 'align-right':    b.obj.set('left', bbRight - b.w); break
+        case 'align-top':      b.obj.set('top', bbTop); break
+        case 'align-center-v': b.obj.set('top', bbCenterY - b.h / 2); break
+        case 'align-bottom':   b.obj.set('top', bbBottom - b.h); break
+      }
+    })
+
+    if (action === 'distribute-h' && boxes.length >= 3) {
+      const sorted = [...boxes].sort((a, b) => a.cx - b.cx)
+      const first = sorted[0].cx
+      const last  = sorted[sorted.length - 1].cx
+      const step  = (last - first) / (sorted.length - 1)
+      sorted.forEach((b, i) => {
+        if (i === 0 || i === sorted.length - 1) return
+        b.obj.set('left', first + step * i - b.w / 2)
+      })
+    } else if (action === 'distribute-v' && boxes.length >= 3) {
+      const sorted = [...boxes].sort((a, b) => a.cy - b.cy)
+      const first = sorted[0].cy
+      const last  = sorted[sorted.length - 1].cy
+      const step  = (last - first) / (sorted.length - 1)
+      sorted.forEach((b, i) => {
+        if (i === 0 || i === sorted.length - 1) return
+        b.obj.set('top', first + step * i - b.h / 2)
+      })
+    }
+
+    objects.forEach(o => o.setCoords())
+
+    // Restore the multi-selection so the user can keep manipulating.
+    const restored = new fabric.ActiveSelection(objects, { canvas: this.canvas })
+    this.canvas.setActiveObject(restored)
+    this.canvas.requestRenderAll()
+    this.saveHistory()
   }
 
   /**
