@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table'
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -96,34 +97,49 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-border">
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-muted/30 transition-colors data-[state=selected]:bg-accent/5"
-                    data-state={row.getIsSelected() && 'selected'}
+            <tbody className="divide-y divide-border relative">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <motion.tr
+                      key={row.id}
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ 
+                        layout: { type: 'spring', stiffness: 300, damping: 30 },
+                        opacity: { duration: 0.2 }
+                      }}
+                      className="hover:bg-muted/30 transition-colors data-[state=selected]:bg-accent/5"
+                      data-state={row.getIsSelected() && 'selected'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className="px-4 py-3 text-foreground whitespace-nowrap">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </motion.tr>
+                  ))
+                ) : (
+                  <motion.tr
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-4 py-3 text-foreground">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    {m.noResults}
-                  </td>
-                </tr>
-              )}
+                    <td
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      {m.noResults}
+                    </td>
+                  </motion.tr>
+                )}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>
@@ -195,3 +211,4 @@ function PaginationBtn({
     </button>
   )
 }
+
