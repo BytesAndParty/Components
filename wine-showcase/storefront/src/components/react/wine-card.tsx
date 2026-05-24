@@ -1,5 +1,6 @@
 import type { Product } from '@/lib/types'
 import { wineHref } from '@/lib/utils'
+import { WineText } from '@/lib/wine-text'
 
 type CardVariant = 'premium' | 'label'
 
@@ -57,7 +58,9 @@ export function WineCard({
           </p>
 
           <p className="wine-card__desc">
-            {cf.geschmacksprofil || product.description}
+            <WineText fallback={<WineText>{product.description}</WineText>}>
+              {cf.geschmacksprofil}
+            </WineText>
           </p>
 
           <button

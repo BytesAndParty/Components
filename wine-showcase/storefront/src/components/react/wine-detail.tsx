@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAddToCart } from '@/lib/cart-context'
 import { vendureClient } from '@/lib/vendure-client'
 import { GET_PRODUCT } from '@/lib/queries'
+import { WineText } from '@/lib/wine-text'
 import type { Product } from '@/lib/types'
 import { Providers } from './Providers'
 
@@ -80,7 +81,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string, initialProduc
           </div>
 
           <p className="text-muted-foreground leading-relaxed">
-            {product.description}
+            <WineText>{product.description}</WineText>
           </p>
 
           <button
@@ -103,10 +104,12 @@ function WineDetailInner({ slug, initialProduct }: { slug: string, initialProduc
             ))}
           </div>
 
-          {cf.speiseempfehlung && (
+          {cf.speiseempfehlung?.trim() && (
             <div className="p-4 border rounded-xl space-y-2">
               <h3 className="font-semibold text-sm">🍽️ Speiseempfehlung</h3>
-              <p className="text-sm text-muted-foreground">{cf.speiseempfehlung}</p>
+              <p className="text-sm text-muted-foreground">
+                <WineText>{cf.speiseempfehlung}</WineText>
+              </p>
             </div>
           )}
         </div>

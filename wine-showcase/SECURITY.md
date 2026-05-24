@@ -19,6 +19,12 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 - **Verhindert:** `javascript:` / `data:` URIs, Path Traversal, Unicode-Look-alikes in Vendure-Slugs.
 - **Verteidigung:** Build-time Filter + Render-time Validation (Defense in Depth).
 
+### 2026-05-24 — WineText Render-Seam
+- **Was:** [`WineText`](storefront/src/lib/wine-text.tsx) Komponente — zentraler Render-Punkt für alle Vendure-Custom-Field-Texte.
+- **Wo:** [`wine-card.tsx`](storefront/src/components/react/wine-card.tsx) (geschmacksprofil + description Fallback), [`wine-detail.tsx`](storefront/src/components/react/wine-detail.tsx) (description, speiseempfehlung).
+- **Heutiger Schutz:** React Auto-Escape, trim-Null-Check.
+- **Zweck:** Einzige Anlaufstelle für DOMPurify-Integration, falls Vendure-Admin später Rich-Text/Markdown erlaubt. Statt N Render-Sites umzustellen, wird hier *eine* Sanitize-Branch hinzugefügt.
+
 ### 2026-05-24 — Fabric.js Upgrade auf v7.4
 - **Was:** `fabric: ^7` in Root-package.json, ersetzt v6.x.
 - **Schließt:** GHSA-hfvx-25r5-qc3w (Fabric SVG-Export XSS) + zieht canvas/jsdom als Dependency raus → killt transitiv tar/ws-Vulns.
@@ -29,15 +35,15 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 ## Deferred (bewusst zurückgestellt)
 
 ### XSS-Sanitization für Custom-Field-Beschreibungen (DOMPurify)
-- **Aktueller Schutz:** React escapt alle gerenderten Strings automatisch
-  ([`wine-card.tsx`](storefront/src/components/react/wine-card.tsx), [`wine-detail.tsx`](storefront/src/components/react/wine-detail.tsx)).
+- **Aktueller Schutz:** React Auto-Escape via [`WineText`](storefront/src/lib/wine-text.tsx) Seam.
 - **Warum nicht jetzt:** Alle Custom Fields (`geschmacksprofil`, `speiseempfehlung`, `description`)
   werden als Plaintext gerendert. Solange das Vendure-Admin-UI keine HTML/Rich-Text-Eingabe
   zulässt, ist Auto-Escaping ausreichend und der Sanitizer wäre toter Code.
 - **Trigger zum Reaktivieren:**
   - Sobald irgendein Custom Field Markdown oder HTML enthalten darf,
   - oder sobald `dangerouslySetInnerHTML` für CMS-Inhalte gebraucht wird,
-  - dann DOMPurify einbauen, neueste Version pinnen (CVE-Historie!), via Allow-List
+  - DOMPurify in den Plaintext-Branch von `WineText` einbauen — alle Consumer profitieren ohne weitere Code-Änderung.
+  - Pin auf neueste DOMPurify-Version (CVE-Historie!), Allow-List
     `ALLOWED_TAGS: ['p','strong','em','ul','li','br']`, `ALLOWED_ATTR: []`.
 
 ### Altersverifikation (AT/EU)
