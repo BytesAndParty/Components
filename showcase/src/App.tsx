@@ -14,6 +14,7 @@ import { NavigationPage } from './pages/navigation'
 import { ShopPage } from './pages/shop'
 import { TransitionsPage } from './pages/transitions'
 import { DesignerPage } from './pages/designer'
+import { DataPage } from './pages/data'
 
 const queryClient = new QueryClient()
 
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       { path: 'feedback', element: <FeedbackPage /> },
       { path: 'navigation', element: <NavigationPage /> },
       { path: 'shop', element: <ShopPage /> },
+      { path: 'data', element: <DataPage /> },
       { path: 'transitions', element: <TransitionsPage /> },
       { path: 'designer', element: <DesignerPage /> },
     ],

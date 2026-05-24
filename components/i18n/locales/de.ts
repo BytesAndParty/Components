@@ -78,14 +78,16 @@ export const de: GlobalMessages = {
   'nav.shop': 'Shop',
   'nav.designer': 'Designer',
   'nav.transitions': 'Transitions',
+  'nav.data': 'Daten',
 
   'desc.cards': 'Glow-Effekte, magnetische Interaktionen, 3D-Hover und Click-Sparks.',
   'desc.text': 'Textanimationen, Sparkles, Highlights, Scramble und scroll-reaktive Bewegungen.',
-  'desc.icons': 'Lottie-basierte animierte Icons und CSS-animierte SVG-Icons.',
+  'desc.icons': 'Lottie-basierte animierte Icons und CSS-animated SVG-Icons.',
   'desc.inputs': 'Formular-Steuerungen, Such-Interaktionen und Datei-Uploads.',
   'desc.feedback': 'Toasts, Favoriten, Preisgestaltung, Bewertungen, Loader und Konfetti-Effekte.',
   'desc.navigation': 'Navbar, Banner, Breadcrumbs, Scroll-Fortschritt, Theme-Steuerung und Footer.',
   'desc.shop': 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
   'desc.designer': 'Bausteine für den Wein-Etiketten-Designer: Color Picker, Text Toolbar und mehr.',
   'desc.transitions': 'CSS View Transitions API mit 5 Presets + 3 wein-spezifische Customs.',
-} as const
+  'desc.data': 'Leistungsstarke Tabellen mit TanStack Table Integration, Sortierung und Pagination.',
+  } as const

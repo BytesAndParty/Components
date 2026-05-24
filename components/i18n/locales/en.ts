@@ -76,6 +76,7 @@ export const en = {
   'nav.shop': 'Shop',
   'nav.designer': 'Designer',
   'nav.transitions': 'Transitions',
+  'nav.data': 'Data',
 
   'desc.cards': 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
   'desc.text': 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
@@ -86,6 +87,7 @@ export const en = {
   'desc.shop': 'E-commerce specific components for the wine online shop.',
   'desc.designer': 'Building blocks for the Wine Label Designer: Color Picker, Text Toolbar and more.',
   'desc.transitions': 'CSS View Transitions API with 5 presets + 3 wine-themed customs.',
+  'desc.data': 'Powerful tables with TanStack Table integration, sorting, and pagination.',
 } as const
 
 export type GlobalMessages = { readonly [K in keyof typeof en]: string }

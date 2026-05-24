@@ -64,6 +64,14 @@ export const groups = [
     components: ['ColorPicker'],
   },
   {
+    path: '/data',
+    titleKey: 'nav.data',
+    descKey: 'desc.data',
+    title: 'Data & Tables',
+    description: 'Leistungsstarke Tabellen mit TanStack Table Integration, Sortierung und Pagination.',
+    components: ['DataTable'],
+  },
+  {
     path: '/transitions',
     titleKey: 'nav.transitions',
     descKey: 'desc.transitions',
