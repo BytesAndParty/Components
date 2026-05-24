@@ -49,7 +49,7 @@
         "typescript": "^5.9.3",
       },
     },
-    "showcase": {
+    "components-showcase": {
       "name": "components-showcase",
       "dependencies": {
         "@ark-ui/react": "^5.36.2",
@@ -73,6 +73,27 @@
       "devDependencies": {
         "@tailwindcss/vite": "^4.2.2",
         "@types/canvas-confetti": "^1.9.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^4.7.0",
+        "babel-plugin-react-compiler": "^1.0.0",
+        "tailwindcss": "^4.2.2",
+        "typescript": "^5.9.3",
+        "vite": "^6.4.2",
+      },
+    },
+    "section-showcase": {
+      "name": "section-showcase",
+      "dependencies": {
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.474.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
+        "react-router": "^7.14.1",
+        "tailwind-merge": "^3.5.0",
+      },
+      "devDependencies": {
+        "@tailwindcss/vite": "^4.2.2",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^4.7.0",
@@ -792,7 +813,7 @@
 
     "common-ancestor-path": ["common-ancestor-path@2.0.0", "", {}, "sha512-dnN3ibLeoRf2HNC+OlCiNc5d2zxbLJXOtiZUudNFSXZrNSydxcCsSpRzXwfu7BBWCIfHPw+xTayeBvJCP/D8Ng=="],
 
-    "components-showcase": ["components-showcase@workspace:showcase"],
+    "components-showcase": ["components-showcase@workspace:components-showcase"],
 
     "convert-source-map": ["convert-source-map@2.0.0", "", {}, "sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg=="],
 
@@ -1389,6 +1410,8 @@
     "saxes": ["saxes@6.0.0", "", { "dependencies": { "xmlchars": "^2.2.0" } }, "sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA=="],
 
     "scheduler": ["scheduler@0.27.0", "", {}, "sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q=="],
+
+    "section-showcase": ["section-showcase@workspace:section-showcase"],
 
     "semver": ["semver@7.7.4", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA=="],
 

@@ -12,7 +12,8 @@
   ],
   "workspaces": [
     "components",
-    "showcase",
+    "components-showcase",
+    "section-showcase",
     "wine-showcase/storefront"
   ],
   "devDependencies": {
