@@ -302,37 +302,58 @@ export class FabricBridge {
     const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
     if (!obj) return
 
-    // If it's a wine field, don't allow changing the 'text' property
+    // Wine-field text is bound to wineField data — don't let the UI override it.
     const cleanProps = { ...props }
     if (obj._type === 'wine-field' && cleanProps.text !== undefined) {
       delete cleanProps.text
     }
 
-    // Convert mm props back to px
+    // Build the Fabric prop bag from scratch. Don't spread `cleanProps` blindly:
+    // it carries our mm-keyed virtual props (x, y, width, height) that Fabric
+    // does not understand and would silently mis-set (e.g. obj.width = 20mm
+    // when Fabric expects pixels). Map them through, then merge whatever's
+    // left as native Fabric properties (fill, stroke, opacity, angle, fontSize, …).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const fabricProps: Record<string, any> = { ...cleanProps }
-    if (cleanProps.x !== undefined) fabricProps.left = mmToPx(cleanProps.x)
-    if (cleanProps.y !== undefined) fabricProps.top = mmToPx(cleanProps.y)
-    
-    // Width/Height scaling for non-text objects
-    if (!(obj instanceof fabric.IText)) {
-      if (cleanProps.width !== undefined) fabricProps.scaleX = mmToPx(cleanProps.width) / obj.width!
-      if (cleanProps.height !== undefined) fabricProps.scaleY = mmToPx(cleanProps.height) / obj.height!
+    const { x, y, width, height, ...rest } = cleanProps as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fabricProps: Record<string, any> = { ...rest }
+
+    if (x !== undefined) fabricProps.left = mmToPx(x)
+    if (y !== undefined) fabricProps.top  = mmToPx(y)
+
+    // Width / height are object-type specific. For shapes with intrinsic size
+    // (Rect / Image / IText) we adjust their scale so the rendered bounding
+    // box matches the requested mm value. For Circle we map width → 2*radius
+    // (uniform scale, ignoring height). For Line we set x2 directly.
+    if (width !== undefined) {
+      const targetPx = mmToPx(width)
+      if (obj instanceof fabric.Circle) {
+        const radiusPx = targetPx / 2
+        fabricProps.radius = radiusPx / (obj.scaleX || 1)
+      } else if (obj instanceof fabric.Line) {
+        // Line stores its geometry in x1/x2/y1/y2 — width is x2-x1 (pre-scale).
+        const x1 = obj.get('x1') as number
+        fabricProps.x2 = x1 + targetPx / (obj.scaleX || 1)
+      } else if (obj.width && obj.width > 0) {
+        fabricProps.scaleX = targetPx / obj.width
+      }
+    }
+    if (height !== undefined && !(obj instanceof fabric.Circle) && !(obj instanceof fabric.Line)) {
+      if (obj.height && obj.height > 0) {
+        fabricProps.scaleY = mmToPx(height) / obj.height
+      }
     }
 
     obj.set(fabricProps)
+    obj.setCoords()
 
-    if (obj instanceof fabric.IText) {
-      obj.setCoords()
-      if (cleanProps.text !== undefined) {
-        this.canvas.fire('text:changed', { target: obj })
-      }
+    if (obj instanceof fabric.IText && cleanProps.text !== undefined) {
+      this.canvas.fire('text:changed', { target: obj })
     }
 
     this.canvas.renderAll()
     useDesignerStore.getState().setDirty(true)
-    // We don't save history on EVERY prop change (e.g. while dragging), 
-    // we do it when the change is committed.
+    // History is saved on commit (object:modified), not on every keystroke.
   }
 
   bringToFront() {
