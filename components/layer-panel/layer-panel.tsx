@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode,
@@ -207,12 +207,27 @@ function SortableLayerRow(props: {
     transition,
   }
 
-  // isDragging flips back to false the moment the pointer is released, but the
-  // drop transition (transform decay) still runs for a few hundred ms. If the
-  // row drops its z-elevation immediately, it slides UNDER the rows it just
-  // passed — visible especially when moving the bottom row to the very top.
-  // `transform` stays non-null for the whole transition, so use that.
-  const isMoving = isDragging || transform !== null
+  // `transform !== null` is true for ALL rows during a drag (the non-dragged
+  // ones get a shift transform to make room), so we can't gate elevation on
+  // that alone — every row would get a shadow.
+  //
+  // Shadow stays exclusive to the actively-dragged row (`isDragging`).
+  // Z-elevation extends through the drop-decay window so the just-dropped
+  // row doesn't slide UNDER the rows it crossed while its transform animates
+  // back to 0 (especially noticeable on a bottom-to-top reorder).
+  const [isDropping, setIsDropping] = useState(false)
+  const wasDraggingRef = useRef(false)
+  useEffect(() => {
+    if (wasDraggingRef.current && !isDragging) {
+      setIsDropping(true)
+      const t = setTimeout(() => setIsDropping(false), 300)
+      wasDraggingRef.current = false
+      return () => clearTimeout(t)
+    }
+    if (isDragging) wasDraggingRef.current = true
+  }, [isDragging])
+
+  const isElevated = isDragging || isDropping
 
   return (
     <motion.div
@@ -223,7 +238,8 @@ function SortableLayerRow(props: {
       exit={{ opacity: 0, height: 0 }}
       className={cn(
         'relative',
-        isMoving ? 'z-10 shadow-lg' : 'z-0',
+        isElevated ? 'z-10' : 'z-0',
+        isDragging && 'shadow-lg',
       )}
     >
       <LayerRow
