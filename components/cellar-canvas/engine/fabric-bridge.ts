@@ -24,8 +24,13 @@ export class FabricBridge {
    */
   saveHistory() {
     if (this.isRestoringHistory) return
-    const json = JSON.stringify(this.canvas.toJSON(['id', '_layerName', '_type', '_fieldKey', 'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation', 'hasControls']))
-    useDesignerStore.getState().pushHistory(json)
+    // Fabric v7: toJSON() is arg-less now; propertiesToInclude moved to toObject().
+    const snapshot = this.canvas.toObject([
+      'id', '_layerName', '_type', '_fieldKey',
+      'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
+      'hasControls',
+    ])
+    useDesignerStore.getState().pushHistory(JSON.stringify(snapshot))
   }
 
   /**
@@ -287,7 +292,8 @@ export class FabricBridge {
         fontFamily: obj.fontFamily,
         fontWeight: obj.fontWeight,
         fontStyle: obj.fontStyle,
-        textAlign: obj.textAlign,
+        // Fabric stores textAlign as string; narrow to our literal union.
+        textAlign: obj.textAlign as 'left' | 'center' | 'right' | 'justify',
         underline: obj.underline,
         charSpacing: obj.charSpacing,
         lineHeight: obj.lineHeight,

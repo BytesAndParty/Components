@@ -25,7 +25,7 @@ export interface FabricObjectProperties {
   fontFamily?: string
   fontWeight?: string | number
   fontStyle?: string
-  textAlign?: string
+  textAlign?: 'left' | 'center' | 'right' | 'justify'
   underline?: boolean
   charSpacing?: number
   lineHeight?: number
@@ -39,18 +39,23 @@ export interface DesignerState {
   // Selection state
   selectedIds: string[]
   
-  // History
-  history: Array<Record<LabelArea, string>> // Store as JSON strings
+  // History — linear stack of JSON snapshots (one per committed mutation).
+  history: string[]
   historyIndex: number
-  
+
   // UI State
   isDragging: boolean
   isDirty: boolean
-  
+
   // Actions
   setActiveArea: (area: LabelArea) => void
   setZoom: (zoom: number) => void
   setActiveTool: (tool: DesignerState['activeTool']) => void
   setSelectedIds: (ids: string[]) => void
   setDirty: (dirty: boolean) => void
+
+  // History actions
+  pushHistory: (state: string) => void
+  undo: () => void
+  redo: () => void
 }
