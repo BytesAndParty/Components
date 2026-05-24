@@ -18,6 +18,13 @@
 #### 4. Documentation Lifecycle
 - **Central Storage:** `/Users/robert.stickler/Development/__AI-Workflow__/Skills/techstack-base`
 - **Maintenance:** Wenn Dokumentation fehlt oder veraltet ist, wird sie erstellt und synchron gehalten. Nutze immer die aktuellsten Versionen aus diesem Verzeichnis.
+- **Component Documentation (`COMPONENT.md`):** Jede Komponente im `components/` Verzeichnis muss eine eigene `COMPONENT.md` führen. Diese dient als technischer Vertrag und enthält:
+    - **Features:** Was kann die Komponente?
+    - **How It Works:** Architektur-Entscheidungen (z.B. Fabric-Bridge, Zustand-Store).
+    - **Props:** Tabellarische Übersicht aller Properties mit Default-Werten.
+    - **Usage:** Code-Beispiele für verschiedene Use-Cases (Showcase vs. Integration).
+    - **Dependencies:** Liste der benötigten npm-Pakete.
+- **Status Log (`STATUS.md`):** Optional für komplexe Komponenten, um laufende Bugs, Workarounds und technisches Entscheidungs-Log von der stabilen Dokumentation zu trennen.
 
 #### 5. Linting & Code Quality
 Jedes Frontend-Projekt verwendet ESLint mit folgendem Stack (Flat Config, ESLint 9+):
