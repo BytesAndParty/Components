@@ -7,17 +7,22 @@ import Layout from '@/layouts/Layout.astro';
 import { WineDetailPage } from '@/components/react/wine-detail';
 import { shopApiRequest } from '@/lib/vendure-client';
 import { GET_PRODUCTS, GET_PRODUCT } from '@/lib/queries';
+import { isValidWineSlug } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 
 /**
  * 1. getStaticPaths sagt Astro, welche Seiten generiert werden sollen.
  * Wir fragen Vendure nach allen Produkten und geben deren Slugs zurück.
+ * Slugs werden auf kebab-case gefiltert, damit kein Admin-Tippfehler eine
+ * malformierte Route oder XSS-Vektor in den Build wandert.
  */
 export async function getStaticPaths() {
 	const data = await shopApiRequest<{ products: { items: Product[] } }>(GET_PRODUCTS);
-	return data.products.items.map(product => ({
-		params: { slug: product.slug },
-	}));
+	return data.products.items
+		.filter(product => isValidWineSlug(product.slug))
+		.map(product => ({
+			params: { slug: product.slug },
+		}));
 }
 
 // 2. Den aktuellen Slug aus der URL holen

@@ -1,4 +1,5 @@
 import type { Product } from '@/lib/types'
+import { wineHref } from '@/lib/utils'
 
 type CardVariant = 'premium' | 'label'
 
@@ -44,7 +45,7 @@ export function WineCard({
         <div className="wine-card__body">
           <div className="wine-card__header">
             <h3 className="wine-card__title">
-              <a href={`/wine/${product.slug}`}>{product.name}</a>
+              <a href={wineHref(product.slug)}>{product.name}</a>
             </h3>
             <span className="wine-card__price">
               {v ? formatPrice(v.priceWithTax) : '—'}

@@ -1,4 +1,5 @@
 import { useAdjustLine, useCart, useRemoveLine } from '@/lib/cart-context'
+import { wineHref } from '@/lib/utils'
 import { Providers } from './Providers'
 
 function formatPrice(cents: number): string {
@@ -52,7 +53,7 @@ function CartInner() {
 
               <div className="flex-1 min-w-0">
                 <a
-                  href={`/wine/${line.productVariant.product.slug}`}
+                  href={wineHref(line.productVariant.product.slug)}
                   className="font-bold hover:text-accent transition-colors truncate block"
                 >
                   {line.productVariant.name}
