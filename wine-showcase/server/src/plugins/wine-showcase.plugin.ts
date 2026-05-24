@@ -1,4 +1,5 @@
-import { LanguageCode, PluginCommonModule, VendurePlugin, Args, Mutation, Resolver } from '@vendure/core';
+import { LanguageCode, PluginCommonModule, VendurePlugin } from '@vendure/core';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { gql } from 'graphql-tag';
 
 /**
