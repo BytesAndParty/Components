@@ -42,10 +42,17 @@ export function Tooltip({
   }, []);
 
   const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+    top: 'bottom-full left-1/2 mb-2',
+    bottom: 'top-full left-1/2 mt-2',
+    left: 'right-full top-1/2 mr-2',
+    right: 'left-full top-1/2 ml-2',
+  };
+
+  const origins = {
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
   };
 
   const animationVariants = {
@@ -53,6 +60,13 @@ export function Tooltip({
     bottom: { opacity: 0, y: -4, x: '-50%', scale: 0.95 },
     left: { opacity: 0, x: 4, y: '-50%', scale: 0.95 },
     right: { opacity: 0, x: -4, y: '-50%', scale: 0.95 },
+  };
+
+  const animateValues = {
+    top: { opacity: 1, y: 0, x: '-50%', scale: 1 },
+    bottom: { opacity: 1, y: 0, x: '-50%', scale: 1 },
+    left: { opacity: 1, x: 0, y: '-50%', scale: 1 },
+    right: { opacity: 1, x: 0, y: '-50%', scale: 1 },
   };
 
   return (
@@ -72,12 +86,14 @@ export function Tooltip({
             role="tooltip"
             aria-label={m.ariaLabel}
             initial={animationVariants[position]}
-            animate={{ opacity: 1, y: position === 'top' || position === 'bottom' ? 0 : '-50%', x: position === 'left' || position === 'right' ? 0 : '-50%', scale: 1 }}
+            animate={animateValues[position]}
             exit={animationVariants[position]}
             transition={{ duration: 0.15, ease: 'easeOut' }}
+            style={{ transformOrigin: origins[position] }}
             className={cn(
               "absolute z-[100] px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap pointer-events-none",
               "bg-[var(--card,#141416)] border border-[var(--border,#2a2a2e)] text-[var(--foreground,#e4e4e7)] shadow-xl",
+              "backdrop-blur-md bg-opacity-90",
               positionClasses[position],
               className
             )}
