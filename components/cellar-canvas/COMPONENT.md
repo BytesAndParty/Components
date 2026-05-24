@@ -2,7 +2,7 @@
 
 In-browser wine-label designer. A self-contained editor that drops into any storefront and lets customers compose a print-ready label — text, shapes, uploaded images, wine-data overlays, QR code — with live EU-compliance feedback.
 
-Sub-modules and panels live alongside it (`LayerPanel`, `ValidatorBadge`, `ImageCropperModal`, `WineFieldsPanel`, `MainToolbar`, `ContextToolbar`). The high-level vision is tracked in `/CELLAR-CANVAS.md`; the running bug/decision log lives in `STATUS.md` next to this file.
+Sub-modules and panels live alongside it as standalone components that can be reused outside the canvas: `LayerPanel`, `ValidatorBadge`, `ImageCropperModal`, `StackOrderControls`, `AlignmentBar`, `ColorSwatch`, `TextToolOptions`. Internal-only pieces (`WineFieldsPanel`, `MainToolbar`, `ContextToolbar`) stay in `components/cellar-canvas/components/`. The high-level vision is tracked in `/CELLAR-CANVAS.md`; the running bug/decision log lives in `STATUS.md` next to this file.
 
 ## Features
 

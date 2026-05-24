@@ -1,10 +1,10 @@
 import { useDesignerStore } from '../../store/designer-store'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
-import { Tooltip } from '../shared'
+import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
+import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import { useEffect, useState } from 'react'
-import { BringToFront, SendToBack } from 'lucide-react'
 import type { FabricObjectProperties } from '../../store/types'
 
 interface ContextToolbarProps {
@@ -18,7 +18,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   // Update local state when selection changes or object is modified
   useEffect(() => {
     const update = () => {
-      setProps(bridge.current?.getActiveObjectProperties())
+      setProps(bridge.current?.getActiveObjectProperties() ?? null)
     }
 
     update()
@@ -57,78 +57,73 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
     )
   }
 
-  const isText = props.type === 'text' || props.type === 'wine-field'
+  const isText      = props.type === 'text' || props.type === 'wine-field'
   const isWineField = props.type === 'wine-field'
+  const isShape     = props.type === 'rect' || props.type === 'circle' || props.type === 'line'
+  const isMulti     = selectedIds.length >= 2
 
   const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
     const fabricProps: Partial<FabricObjectProperties> = {}
-    if (newFmt.bold !== undefined) fabricProps.fontWeight = newFmt.bold ? 'bold' : 'normal'
-    if (newFmt.italic !== undefined) fabricProps.fontStyle = newFmt.italic ? 'italic' : 'normal'
-    if (newFmt.color !== undefined) fabricProps.fill = newFmt.color
+    if (newFmt.bold       !== undefined) fabricProps.fontWeight = newFmt.bold ? 'bold' : 'normal'
+    if (newFmt.italic     !== undefined) fabricProps.fontStyle  = newFmt.italic ? 'italic' : 'normal'
+    if (newFmt.color      !== undefined) fabricProps.fill       = newFmt.color
     if (newFmt.fontFamily !== undefined) fabricProps.fontFamily = newFmt.fontFamily
-    if (newFmt.fontSize !== undefined) fabricProps.fontSize = newFmt.fontSize
-    if (newFmt.underline !== undefined) fabricProps.underline = newFmt.underline
-    if (newFmt.textAlign !== undefined) fabricProps.textAlign = newFmt.textAlign
-    
+    if (newFmt.fontSize   !== undefined) fabricProps.fontSize   = newFmt.fontSize
+    if (newFmt.underline  !== undefined) fabricProps.underline  = newFmt.underline
+    if (newFmt.textAlign  !== undefined) fabricProps.textAlign  = newFmt.textAlign
     bridge.current?.updateActiveObject(fabricProps)
   }
 
   return (
-    <div className="h-full flex items-center px-4 gap-6">
+    <div className="h-full flex items-center px-4 gap-4">
       {isText && (
         <div className="flex items-center gap-4">
           {!isWineField && (
-            <input 
-              type="text" 
-              value={props.text || ''} 
+            <input
+              type="text"
+              value={props.text || ''}
               onChange={(e) => bridge.current?.updateActiveObject({ text: e.target.value })}
               className="text-xs font-medium bg-muted/50 border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-32"
               placeholder="Text content..."
             />
           )}
-          <TextToolOptions 
+          <TextToolOptions
             value={{
-              fontFamily: props.fontFamily,
-              fontSize: props.fontSize,
-              bold: props.fontWeight === 'bold',
-              italic: props.fontStyle === 'italic',
-              underline: props.underline,
-              textAlign: props.textAlign,
+              fontFamily:  props.fontFamily,
+              fontSize:    props.fontSize,
+              bold:        props.fontWeight === 'bold',
+              italic:      props.fontStyle === 'italic',
+              underline:   props.underline,
+              textAlign:   props.textAlign,
               charSpacing: props.charSpacing,
-              lineHeight: props.lineHeight,
-              color: props.fill,
+              lineHeight:  props.lineHeight,
+              color:       props.fill,
             }}
             onChange={handleTextChange}
           />
         </div>
       )}
 
-      <div className="flex items-center gap-1 border-l border-border pl-4">
-        <Tooltip content="Bring to Front">
-          <button 
-            onClick={() => bridge.current?.bringToFront()}
-            className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <BringToFront size={16} />
-          </button>
-        </Tooltip>
-        <Tooltip content="Send to Back">
-          <button 
-            onClick={() => bridge.current?.sendToBack()}
-            className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <SendToBack size={16} />
-          </button>
-        </Tooltip>
-      </div>
-
-      {selectedIds.length >= 2 && (
-        <div className="flex items-center gap-2 border-l border-border pl-4">
-          <AlignmentBar onAlign={(action) => {
-            // Alignment logic would go here
-            console.log('Align:', action)
-          }} />
+      {isShape && (
+        <div className="flex items-center h-9 bg-card border border-border rounded-lg">
+          <ColorSwatch
+            value={props.fill ?? '#000000'}
+            onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
+            label="■"
+            title="Fill"
+          />
         </div>
+      )}
+
+      <StackOrderControls
+        onBringToFront={() => bridge.current?.bringToFront()}
+        onBringForward={() => bridge.current?.bringForward()}
+        onSendBackward={() => bridge.current?.sendBackward()}
+        onSendToBack={()   => bridge.current?.sendToBack()}
+      />
+
+      {isMulti && (
+        <AlignmentBar onAlign={(action) => bridge.current?.alignSelected(action)} />
       )}
     </div>
   )
