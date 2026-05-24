@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useId, type ReactNode } from 'react'
-import { Popover } from '@ark-ui/react/popover'
 import { Portal } from '@ark-ui/react/portal'
 import {
   Bold, Italic, Underline,
@@ -7,8 +6,8 @@ import {
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { NumberInput } from '../number-input/number-input'
-import { ColorPickerPanel } from '../color-picker/color-picker'
-import { useComponentMessages, useArkTranslations } from '../i18n'
+import { ColorSwatch } from '../color-swatch/color-swatch'
+import { useComponentMessages } from '../i18n'
 import { MESSAGES, type TextToolOptionsMessages } from './messages'
 
 // ── Font catalogue ────────────────────────────────────────────────────────────
@@ -222,7 +221,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <Divider />
 
       {/* ── Color ─────────────────────────────────────────────── */}
-      <ColorSwatch color={fmt.color} onChange={(v) => set('color', v)} title={m.textColor} />
+      <ColorSwatch value={fmt.color} onChange={(v) => set('color', v)} title={m.textColor} label="A" />
     </div>
   )
 }
@@ -349,42 +348,3 @@ function FontSelect({
   )
 }
 
-function ColorSwatch({ color, onChange, title }: { color: string; onChange: (v: string) => void; title?: string }) {
-  const popoverTranslations = useArkTranslations('popover')
-
-  return (
-    <Popover.Root translations={popoverTranslations}>
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          title={title}
-          className="flex items-center gap-1.5 px-3 h-full hover:bg-muted/50 transition-colors"
-        >
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">A</span>
-          <span
-            className="w-4 h-1.5 rounded-full border border-border/50 shadow-sm"
-            style={{ background: color }}
-          />
-        </button>
-      </Popover.Trigger>
-
-      <Portal>
-      <Popover.Positioner style={{ zIndex: 50 }}>
-        <Popover.Content>
-          <div className="w-72 bg-card border border-border rounded-xl p-3 shadow-xl">
-            <ColorPickerPanel
-              value={color}
-              onChange={onChange}
-              presets={[
-                '#000000', '#ffffff', '#722f37', '#d4af37',
-                '#4a0e1a', '#f5f0e8', '#2c1810', '#c5a028',
-              ]}
-              paletteGroups={[]}
-            />
-          </div>
-        </Popover.Content>
-      </Popover.Positioner>
-      </Portal>
-    </Popover.Root>
-  )
-}
