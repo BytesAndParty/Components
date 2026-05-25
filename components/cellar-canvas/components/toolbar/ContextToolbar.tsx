@@ -3,6 +3,7 @@ import { TextToolOptions, type TextFormatValues } from '../../../text-tool-optio
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
+import { NumberInput } from '../shared'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import { useEffect, useState } from 'react'
 import type { FabricObjectProperties } from '../../store/types'
@@ -32,7 +33,8 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       canvas.on('selection:created', update)
       canvas.on('selection:updated', update)
       canvas.on('selection:cleared', update)
-      canvas.on('text:changed', update)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).on('cellar:property-changed', update)
     }
 
     return () => {
@@ -44,7 +46,8 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
         canvas.off('selection:created', update)
         canvas.off('selection:updated', update)
         canvas.off('selection:cleared', update)
-        canvas.off('text:changed', update)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(canvas as any).off('cellar:property-changed', update)
       }
     }
   }, [selectedIds, bridge])
@@ -81,11 +84,11 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       {isText && (
         <div className="flex items-center gap-4">
           {!isWineField && (
-            <input
-              type="text"
+            <textarea
               value={props.text || ''}
               onChange={(e) => bridge.current?.updateActiveObject({ text: e.target.value })}
-              className="text-xs font-medium bg-muted/50 border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-32"
+              rows={1}
+              className="text-xs font-medium bg-muted/50 border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-32 resize-none leading-tight"
               placeholder="Text content..."
             />
           )}
@@ -108,12 +111,35 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
       {isShape && (
         <div className="flex items-center h-9 bg-card border border-border rounded-lg">
+          {props.type !== 'line' && (
+            <>
+              <ColorSwatch
+                value={props.fill ?? '#000000'}
+                onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
+                label="■"
+                title="Fill"
+                showAlpha
+              />
+              <div className="w-px h-5 bg-border shrink-0" />
+            </>
+          )}
           <ColorSwatch
-            value={props.fill ?? '#000000'}
-            onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
-            label="■"
-            title="Fill"
+            value={(props.stroke as string) ?? '#000000'}
+            onChange={(v) => bridge.current?.updateActiveObject({ stroke: v })}
+            label="◯"
+            title="Stroke"
+            showAlpha
           />
+          <div className="w-px h-5 bg-border shrink-0" />
+          <div className="flex items-center px-2 h-full">
+            <NumberInput
+              label="SW"
+              value={props.strokeWidth ?? 0}
+              onChange={(v) => bridge.current?.updateActiveObject({ strokeWidth: v })}
+              min={0} max={20} step={0.5} decimals={1}
+              unit="px"
+            />
+          </div>
         </div>
       )}
 

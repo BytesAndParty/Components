@@ -1,10 +1,12 @@
 import * as fabric from 'fabric'
 import { useFabricCanvas } from './engine/use-fabric-canvas'
+import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { LabelCanvas } from './components/canvas/LabelCanvas'
 import { useDesignerStore } from './store/designer-store'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { NumberInput } from './components/shared'
+import { ColorSwatch } from '../color-swatch/color-swatch'
 import { LayerPanel, type Layer } from '../layer-panel/layer-panel'
 import { WineFieldsPanel } from './components/panels/WineFieldsPanel'
 import { ValidatorBadge, type ValidationWarning } from '../validator-badge/validator-badge'
@@ -78,7 +80,8 @@ export function CellarCanvas({
   const [activeProps, setActiveProps] = useState<FabricObjectProperties | null>(null)
   const [layers, setLayers] = useState<Layer[]>([])
   const [warnings, setWarnings] = useState<ValidationWarning[]>([])
-  const [rightTab, setRightTab] = useState<'props' | 'fields'>('props')
+  const [rightTab, setRightTab] = useState<'props' | 'fields' | 'background'>('props')
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -102,7 +105,7 @@ export function CellarCanvas({
   // Initial Zoom to Fit
   useEffect(() => {
     const timeout = setTimeout(() => {
-      bridge.current?.zoomToFit(widthMm, heightMm)
+      bridge.current?.zoomToFit()
     }, 100)
     return () => clearTimeout(timeout)
   }, [bridge, isFullscreen, widthMm, heightMm])
@@ -116,6 +119,7 @@ export function CellarCanvas({
       setActiveProps(bridgeInstance.getActiveObjectProperties())
       const currentLayers = bridgeInstance.getLayers() || []
       setLayers(currentLayers)
+      setBackgroundColor(bridgeInstance.getBackground())
 
       if (enableValidator) {
         const rawObjects = (bridgeInstance.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
@@ -138,9 +142,11 @@ export function CellarCanvas({
     canvas.on('object:rotating', update)
     canvas.on('object:added', update)
     canvas.on('object:removed', update)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(canvas as any).on('cellar:property-changed', update)
 
     update() // Initial sync
-    
+
     return () => {
       canvas.off('selection:created', update)
       canvas.off('selection:updated', update)
@@ -151,8 +157,20 @@ export function CellarCanvas({
       canvas.off('object:rotating', update)
       canvas.off('object:added', update)
       canvas.off('object:removed', update)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).off('cellar:property-changed', update)
     }
   }, [bridge, enableValidator]) // No longer depends on selectedIds or layers
+
+  // Clipboard paste — image data on the clipboard lands as a Fabric image.
+  // We revoke the blob URL once Fabric has loaded the image into its cache.
+  useClipboardPaste(async (url) => {
+    try {
+      await bridge.current?.addImage(url)
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  })
 
   // Keyboard Shortcuts via TanStack
   useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
@@ -226,7 +244,7 @@ export function CellarCanvas({
       <div className="border-b border-border bg-card flex items-center justify-between pr-4" style={{ gridColumn: '2 / -1' }}>
         <ContextToolbar bridge={bridge} />
         <button 
-          onClick={() => bridge.current?.zoomToFit(widthMm, heightMm)}
+          onClick={() => bridge.current?.zoomToFit()}
           className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 hover:bg-muted rounded border border-border transition-colors text-muted-foreground hover:text-foreground"
         >
           Fit to Screen
@@ -256,28 +274,35 @@ export function CellarCanvas({
       {/* Right Panel */}
       <aside className="border-l border-border bg-card flex flex-col" style={{ gridRow: '3' }}>
         <div className="flex border-b border-border">
-          <button 
-            onClick={() => setRightTab('props')}
-            className={cn(
-              "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors border-b-2",
-              rightTab === 'props' ? "text-primary border-primary" : "text-muted-foreground hover:text-foreground border-transparent"
-            )}
-          >
-            Properties
-          </button>
-          <button 
-            onClick={() => setRightTab('fields')}
-            className={cn(
-              "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors border-b-2",
-              rightTab === 'fields' ? "text-primary border-primary" : "text-muted-foreground hover:text-foreground border-transparent"
-            )}
-          >
-            Wine Data
-          </button>
+          {(['props', 'fields', 'background'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setRightTab(tab)}
+              className={cn(
+                "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors border-b-2",
+                rightTab === tab ? "text-primary border-primary" : "text-muted-foreground hover:text-foreground border-transparent"
+              )}
+            >
+              {tab === 'props' ? 'Properties' : tab === 'fields' ? 'Wine Data' : 'Background'}
+            </button>
+          ))}
         </div>
         
         <div className="flex-1 overflow-auto p-4">
-          {rightTab === 'props' ? (
+          {rightTab === 'background' ? (
+            <section className="space-y-3">
+              <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">Canvas Background</h4>
+              <div className="flex items-center justify-between bg-card border border-border rounded-lg h-9 px-1">
+                <span className="text-xs pl-2 text-muted-foreground">Fill</span>
+                <ColorSwatch
+                  value={backgroundColor}
+                  onChange={(v) => bridge.current?.setBackground(v)}
+                  label="■"
+                  title="Canvas background"
+                />
+              </div>
+            </section>
+          ) : rightTab === 'props' ? (
             activeProps ? (
               <div className="space-y-6">
                 <section className="space-y-3">

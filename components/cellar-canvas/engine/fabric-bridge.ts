@@ -5,18 +5,111 @@ import { pxToMm, mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 
 /**
- * The FabricBridge provides a set of imperative helpers to interact 
+ * Tag we paint onto the non-interactive label-background rect so the bridge
+ * can filter it out of layer lists / active-object reads after a JSON reload.
+ */
+const LABEL_TAG = '_isLabel'
+
+export interface FabricBridgeOptions {
+  widthMm: number
+  heightMm: number
+  bleedMm: number
+}
+
+/**
+ * The FabricBridge provides a set of imperative helpers to interact
  * with the Fabric.js canvas instance while keeping the Zustand store in sync.
+ *
+ * The HTML canvas is intentionally larger than the printed label so overflow
+ * (text wider than the label, images bleeding past the edge) stays visible
+ * during design. The label itself is a non-interactive Rect inset by
+ * `bleedMm` on every side; user-facing x/y are reported relative to that
+ * inset so the value matches what a printer sees on the finished label.
  */
 export class FabricBridge {
   canvas: fabric.Canvas
+  widthMm: number
+  heightMm: number
+  bleedMm: number
+  labelRect: fabric.Rect
   private isRestoringHistory = false
 
-  constructor(canvas: fabric.Canvas) {
+  constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
     this.canvas = canvas
-    
+    this.widthMm = opts.widthMm
+    this.heightMm = opts.heightMm
+    this.bleedMm = opts.bleedMm
+    this.labelRect = this.createLabelRect()
+    canvas.add(this.labelRect)
+    canvas.sendObjectToBack(this.labelRect)
+
+    // Click-without-drag on a text → enter edit mode + select-all. We measure
+    // pointer travel between mouse:down and mouse:up so that a real drag
+    // (move) is never hijacked. Fabric assigns the active object during
+    // mouse:down, so hooking mouse:down directly would fire on the very first
+    // click and break dragging entirely.
+    let downAt: { x: number; y: number } | null = null
+    canvas.on('mouse:down', (opt) => {
+      const e = opt.e as MouseEvent | TouchEvent | undefined
+      const point =
+        e && 'clientX' in e
+          ? { x: e.clientX, y: e.clientY }
+          : e && 'touches' in e && e.touches[0]
+            ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+            : null
+      downAt = point
+    })
+    canvas.on('mouse:up', (opt) => {
+      const target = opt.target
+      const e = opt.e as MouseEvent | TouchEvent | undefined
+      const up =
+        e && 'clientX' in e
+          ? { x: e.clientX, y: e.clientY }
+          : e && 'changedTouches' in e && e.changedTouches[0]
+            ? { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY }
+            : null
+      if (
+        target instanceof fabric.IText &&
+        !target.isEditing &&
+        downAt && up &&
+        Math.hypot(up.x - downAt.x, up.y - downAt.y) < 4
+      ) {
+        target.enterEditing()
+        target.selectAll()
+      }
+      downAt = null
+    })
+
     // Initial history snapshot
     setTimeout(() => this.saveHistory(), 100)
+  }
+
+  get bleedPx(): number {
+    return mmToPx(this.bleedMm)
+  }
+
+  private createLabelRect(): fabric.Rect {
+    const rect = new fabric.Rect({
+      originX: 'left',
+      originY: 'top',
+      left: this.bleedPx,
+      top: this.bleedPx,
+      width: mmToPx(this.widthMm),
+      height: mmToPx(this.heightMm),
+      fill: '#ffffff',
+      selectable: false,
+      evented: false,
+      hoverCursor: 'default',
+      shadow: new fabric.Shadow({
+        color: 'rgba(0,0,0,0.18)',
+        blur: 24,
+        offsetX: 0,
+        offsetY: 6,
+      }),
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(rect as any)[LABEL_TAG] = true
+    return rect
   }
 
   /**
@@ -26,7 +119,7 @@ export class FabricBridge {
     if (this.isRestoringHistory) return
     // Fabric v7: toJSON() is arg-less now; propertiesToInclude moved to toObject().
     const snapshot = this.canvas.toObject([
-      'id', '_layerName', '_type', '_fieldKey',
+      'id', '_layerName', '_type', '_fieldKey', LABEL_TAG,
       'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
       'hasControls',
     ])
@@ -43,6 +136,20 @@ export class FabricBridge {
 
     this.isRestoringHistory = true
     await this.canvas.loadFromJSON(state)
+    // Fabric doesn't serialize `selectable`/`evented` by default — the loaded
+    // labelRect would become click-stealing scenery. Find it back via the tag
+    // and re-pin its non-interactive flags. Fall back to a fresh rect if the
+    // snapshot is older than this refactor.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const found = this.canvas.getObjects().find((o) => (o as any)[LABEL_TAG]) as fabric.Rect | undefined
+    if (found) {
+      found.set({ selectable: false, evented: false, hoverCursor: 'default' })
+      this.labelRect = found
+    } else {
+      this.labelRect = this.createLabelRect()
+      this.canvas.add(this.labelRect)
+    }
+    this.canvas.sendObjectToBack(this.labelRect)
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
     this.isRestoringHistory = false
@@ -76,8 +183,8 @@ export class FabricBridge {
       // mapping treats left/top as the bounding-box corner, so pin v6 semantics.
       originX: 'left',
       originY: 'top',
-      left: 100,
-      top: 100,
+      left: this.bleedPx + 100,
+      top: this.bleedPx + 100,
       fill: '#722f37',
       width: mmToPx(20),
       height: mmToPx(20),
@@ -108,8 +215,8 @@ export class FabricBridge {
     const circle = new fabric.Circle({
       originX: 'left',
       originY: 'top',
-      left: 100,
-      top: 100,
+      left: this.bleedPx + 100,
+      top: this.bleedPx + 100,
       fill: '#722f37',
       radius: mmToPx(10),
       cornerColor: '#ffffff',
@@ -135,8 +242,8 @@ export class FabricBridge {
    * Adds a basic line to the canvas.
    */
   addLine() {
-    const x = 100
-    const y = 100
+    const x = this.bleedPx + 100
+    const y = this.bleedPx + 100
     const length = mmToPx(30)
     const line = new fabric.Line([x, y, x + length, y], {
       originX: 'left',
@@ -163,14 +270,17 @@ export class FabricBridge {
   }
 
   /**
-   * Adds a text object.
+   * Adds a text object. Uses `Textbox` (not `IText`) so word-wrap is on by
+   * default at a fixed mm-width — wine labels routinely need multi-line
+   * blocks like producer/region. Manual `\n` via Enter still works.
    */
   addText(text = 'New Text', fieldKey?: string) {
-    const itext = new fabric.IText(text, {
+    const textbox = new fabric.Textbox(text, {
       originX: 'left',
       originY: 'top',
-      left: 100,
-      top: 100,
+      left: this.bleedPx + 100,
+      top: this.bleedPx + 100,
+      width: mmToPx(50),
       fontSize: 24,
       fontFamily: 'sans-serif',
       fill: '#000000',
@@ -182,10 +292,10 @@ export class FabricBridge {
       _type: fieldKey ? 'wine-field' : 'text',
       _fieldKey: fieldKey
     }
-    Object.assign(itext, meta)
+    Object.assign(textbox, meta)
 
-    this.canvas.add(itext)
-    this.canvas.setActiveObject(itext)
+    this.canvas.add(textbox)
+    this.canvas.setActiveObject(textbox)
     this.canvas.renderAll()
     this.saveHistory()
   }
@@ -201,8 +311,8 @@ export class FabricBridge {
     img.set({
       originX: 'left',
       originY: 'top',
-      left: mmToPx(10),
-      top: mmToPx(10),
+      left: this.bleedPx + mmToPx(10),
+      top: this.bleedPx + mmToPx(10),
       scaleX: scale,
       scaleY: scale,
       cornerColor: '#ffffff',
@@ -232,8 +342,8 @@ export class FabricBridge {
     img.set({
       originX: 'left',
       originY: 'top',
-      left: 100,
-      top: 100,
+      left: this.bleedPx + 100,
+      top: this.bleedPx + 100,
       scaleX: 0.2,
       scaleY: 0.2,
     })
@@ -271,7 +381,8 @@ export class FabricBridge {
    */
   getActiveObjectProperties(): FabricObjectProperties | null {
     const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
-    if (!obj) return null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!obj || (obj as any)[LABEL_TAG]) return null
 
     return {
       type: obj._type,
@@ -279,9 +390,10 @@ export class FabricBridge {
       stroke: obj.stroke as string,
       strokeWidth: obj.strokeWidth,
       opacity: obj.opacity,
-      // Geometry in mm
-      x: pxToMm(obj.left || 0),
-      y: pxToMm(obj.top || 0),
+      // Geometry in mm — reported relative to the label top-left so users
+      // see the same coordinate the printer will use.
+      x: pxToMm((obj.left || 0) - this.bleedPx),
+      y: pxToMm((obj.top || 0) - this.bleedPx),
       width: pxToMm(obj.width! * (obj.scaleX || 1)),
       height: pxToMm(obj.height! * (obj.scaleY || 1)),
       rotation: obj.angle,
@@ -324,8 +436,8 @@ export class FabricBridge {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricProps: Record<string, any> = { ...rest }
 
-    if (x !== undefined) fabricProps.left = mmToPx(x)
-    if (y !== undefined) fabricProps.top  = mmToPx(y)
+    if (x !== undefined) fabricProps.left = mmToPx(x) + this.bleedPx
+    if (y !== undefined) fabricProps.top  = mmToPx(y) + this.bleedPx
 
     // Width / height are object-type specific. For shapes with intrinsic size
     // (Rect / Image / IText) we adjust their scale so the rendered bounding
@@ -340,11 +452,21 @@ export class FabricBridge {
         // Line stores its geometry in x1/x2/y1/y2 — width is x2-x1 (pre-scale).
         const x1 = obj.get('x1') as number
         fabricProps.x2 = x1 + targetPx / (obj.scaleX || 1)
+      } else if (obj instanceof fabric.Textbox) {
+        // Textbox.width controls the wrap box. Setting scaleX would re-stretch
+        // glyphs instead of re-flowing the text — adjust width directly.
+        fabricProps.width = targetPx / (obj.scaleX || 1)
       } else if (obj.width && obj.width > 0) {
         fabricProps.scaleX = targetPx / obj.width
       }
     }
-    if (height !== undefined && !(obj instanceof fabric.Circle) && !(obj instanceof fabric.Line)) {
+    if (
+      height !== undefined &&
+      !(obj instanceof fabric.Circle) &&
+      !(obj instanceof fabric.Line) &&
+      !(obj instanceof fabric.Textbox)
+    ) {
+      // Textbox height is derived from wrapped lines — ignore explicit height.
       if (obj.height && obj.height > 0) {
         fabricProps.scaleY = mmToPx(height) / obj.height
       }
@@ -353,12 +475,13 @@ export class FabricBridge {
     obj.set(fabricProps)
     obj.setCoords()
 
-    if (obj instanceof fabric.IText && cleanProps.text !== undefined) {
-      this.canvas.fire('text:changed', { target: obj })
-    }
-
     this.canvas.renderAll()
     useDesignerStore.getState().setDirty(true)
+    // obj.set() fires no Fabric events. Notify React listeners so number-input
+    // steppers see fresh values on the next click (otherwise they keep nudging
+    // from a stale prop and silently stall after the first step).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: obj })
     // History is saved on commit (object:modified), not on every keystroke.
   }
 
@@ -473,29 +596,41 @@ export class FabricBridge {
     this.saveHistory()
   }
 
+  getBackground(): string {
+    return (this.labelRect.fill as string) || '#ffffff'
+  }
+
+  setBackground(color: string) {
+    this.labelRect.set('fill', color)
+    this.canvas.renderAll()
+    this.saveHistory()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+  }
+
   /**
-   * Zooms and pans the canvas so that the label area fits within the viewport.
+   * Fits the whole HTML-canvas content into the viewport with a small visual
+   * padding. Because the canvas is larger than the label (bleed margin), this
+   * keeps both the label and any overflowing objects visible at the same time.
    */
-  zoomToFit(widthMm = 90, heightMm = 120) {
-    const padding = 80
+  zoomToFit() {
+    const padding = 24
     const canvasWidth = this.canvas.getWidth()
     const canvasHeight = this.canvas.getHeight()
-    
-    const contentWidth = mmToPx(widthMm)
-    const contentHeight = mmToPx(heightMm)
 
-    const scaleX = (canvasWidth - padding * 2) / contentWidth
-    const scaleY = (canvasHeight - padding * 2) / contentHeight
-    const zoom = Math.min(scaleX, scaleY, 2.0)
+    const scale = Math.min(
+      (canvasWidth - padding * 2) / canvasWidth,
+      (canvasHeight - padding * 2) / canvasHeight,
+      2.0,
+    )
 
-    this.canvas.setZoom(zoom)
-    
+    this.canvas.setZoom(scale)
     const vpt = this.canvas.viewportTransform!
-    vpt[4] = (canvasWidth / 2) - (contentWidth * zoom / 2)
-    vpt[5] = (canvasHeight / 2) - (contentHeight * zoom / 2)
-    
+    vpt[4] = (canvasWidth - canvasWidth * scale) / 2
+    vpt[5] = (canvasHeight - canvasHeight * scale) / 2
+
     this.canvas.requestRenderAll()
-    useDesignerStore.getState().setZoom(zoom)
+    useDesignerStore.getState().setZoom(scale)
   }
 
   /**
@@ -503,16 +638,20 @@ export class FabricBridge {
    * Fabric z-order is bottom-to-top, but Layer Panel is top-to-bottom.
    */
   getLayers() {
-    return this.canvas.getObjects().map((obj) => {
-      const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
-      return {
-        id: o.id,
-        name: o._layerName || o.text || 'Unnamed Layer',
-        type: o._type,
-        visible: o.visible,
-        locked: !!o.lockMovementX, // Basic lock check
-      }
-    }).reverse()
+    return this.canvas.getObjects()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .filter((o) => !(o as any)[LABEL_TAG])
+      .map((obj) => {
+        const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
+        return {
+          id: o.id,
+          name: o._layerName || o.text || 'Unnamed Layer',
+          type: o._type,
+          visible: o.visible,
+          locked: !!o.lockMovementX, // Basic lock check
+        }
+      })
+      .reverse()
   }
 
   setLayerVisibility(id: string, visible: boolean) {

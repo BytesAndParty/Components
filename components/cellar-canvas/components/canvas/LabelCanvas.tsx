@@ -4,7 +4,7 @@ import { cn } from '../../../lib/utils'
 export const LabelCanvas = forwardRef<HTMLCanvasElement, { className?: string }>(
   ({ className }, ref) => {
     return (
-      <div className={cn("relative shadow-2xl bg-white", className)}>
+      <div className={cn("relative", className)}>
         <canvas ref={ref} />
       </div>
     )
