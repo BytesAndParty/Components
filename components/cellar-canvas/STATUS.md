@@ -24,7 +24,7 @@
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
-| Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
+| Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
 | Export               | ❌ noch nicht — kein PNG / PDF.                                         |
 | Multi-Area           | ❌ noch nicht — eine Canvas (Front).                                    |
@@ -64,13 +64,13 @@
 
 ## Bug Log
 
-### Open: ImageCropper Crop weicht ab, wenn man mehrere Bilder hintereinander hochlädt
+### #24 — ImageCropper-Drift bei sequenziellen Uploads *(2026-05-25 — gefixt)*
 
-**Symptom:** Einzelner Upload → Cropper liefert pixel-genau das, was selektiert war (Fix aus #21 hält). Beim zweiten/dritten Upload in derselben Session driftet das Ergebnis wieder leicht ab — verschoben oder falsch skaliert wie vor #21.
+**Symptom:** Erster Upload → Cropper liefert pixel-genau das, was selektiert war (Fix aus #21 hält). Beim zweiten/dritten Upload in derselben Session driftete das Ergebnis leicht ab — verschoben oder falsch skaliert wie vor #21.
 
-**Verdacht:** Pre-Measure-State (`naturalSize`, `viewportSize`) oder der Zag-Machine-State im `ImageCropper.Root` wird zwischen Uploads nicht voll resettet. Beim Re-Open mit neuem `imageSrc` greift der Cropper auf gemessene Werte vom vorherigen Bild zurück (anderer Aspect-Ratio → falscher `defaultZoom`/`initialCrop` → Apply rechnet mit alter Skalierung). Möglich auch ein stale `ResizeObserver`-Callback, der nach `onOpenChange(false)` noch durchläuft.
+**Root Cause:** `naturalSize` (im `ImageCropperModal` pre-gemessen) trug keine Identität — nur `{ width, height }`. Beim Re-Open mit neuem `imageSrc` konnte ein Render-Frame entstehen, in dem `naturalSize` noch von Bild A stand, `imageSrc` aber bereits B war. In diesem Frame galt `ready = true`, `ImageCropper.Root` mountete mit `defaultZoom`/`initialCrop`, die aus den **alten** A-Dimensionen für den **neuen** B-Viewport berechnet waren. Die `cancelled`-Flag im Pre-Decode-Effect verhinderte zwar stale `setNaturalSize`-Calls, aber sie verhinderte nicht, dass eine bereits-gesetzte alte Messung gegen das neue `imageSrc` ausgewertet wurde.
 
-**Nächster Schritt:** Im `ImageCropperModal` checken, ob `naturalSize`/`viewportSize` im `onOpenChange(false)`-Handler explizit auf `undefined` gesetzt werden und ob der Pre-Measure-Effect bei jedem neuen `imageSrc` neu durchläuft. Reproducer: zweimal hintereinander Image-Tool klicken, jeweils ein anderes Foto, dieselbe Crop-Region wählen — Output vergleichen.
+**Fix:** `naturalSize`-State trägt jetzt zusätzlich das `src`-Feld der Messung. Das `ready`-Gate prüft `naturalSize.src === imageSrc`. Stale Messungen werden damit automatisch verworfen — der Cropper bleibt im Loading-Shell, bis das neue Bild komplett gemessen ist. Das alte `setNaturalSize(null)`/`setViewportSize(null)` im `onOpenChange(false)`-Handler ist durch die Identitäts-Bindung obsolet geworden und wurde entfernt. Reproducer aus dem Bug-Log (zwei verschiedene Fotos, dieselbe Crop-Region) liefert jetzt identische Outputs.
 
 ### #23 — Fullscreen schluckte Tastatur-Input in Text-Edit *(2026-05-25 — gefixt)*
 

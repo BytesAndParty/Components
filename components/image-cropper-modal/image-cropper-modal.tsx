@@ -21,6 +21,7 @@ export interface ImageCropperModalProps {
 }
 
 interface Size { width: number; height: number }
+interface MeasuredImage extends Size { src: string }
 
 export function ImageCropperModal({
   open,
@@ -36,18 +37,13 @@ export function ImageCropperModal({
   const cropperTranslations = useArkTranslations('imageCropper')
 
   const measureRef = useRef<HTMLDivElement>(null)
-  const [naturalSize, setNaturalSize] = useState<Size | null>(null)
+  // naturalSize carries the src it was measured for so a sequential upload
+  // with a different imageSrc can't briefly pass the previous image's
+  // dimensions through as `defaultZoom` / `initialCrop` — see the
+  // "ImageCropper drift on sequential uploads" entry in cellar-canvas
+  // STATUS.md for the race this guards against.
+  const [naturalSize, setNaturalSize] = useState<MeasuredImage | null>(null)
   const [viewportSize, setViewportSize] = useState<Size | null>(null)
-
-  // Drop measurements in the close handler instead of an effect — the
-  // effect form would cascade an extra render on every open toggle.
-  function handleOpenChange(next: boolean) {
-    if (!next) {
-      setNaturalSize(null)
-      setViewportSize(null)
-    }
-    onOpenChange(next)
-  }
 
   // Pre-decode the image to read naturalWidth/Height before mounting the
   // cropper. Zag's drawCroppedImageToCanvas hardcodes "1 viewport-px ==
@@ -62,7 +58,7 @@ export function ImageCropperModal({
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       if (cancelled) return
-      setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight })
+      setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight, src: imageSrc })
     }
     img.src = imageSrc
     return () => { cancelled = true }
@@ -88,7 +84,17 @@ export function ImageCropperModal({
     return () => ro.disconnect()
   }, [open])
 
-  const ready = naturalSize !== null && viewportSize !== null
+  // `naturalSize.src === imageSrc` is the actual guard against the
+  // sequential-upload drift bug: a stale measurement from a previous image
+  // (or a slow onload that resolves after the user switched images) is
+  // treated as not-ready, keeping the loading shell up until the new image
+  // is fully measured. Without this gate the cropper could mount with the
+  // previous image's `defaultZoom` / `initialCrop`, baking in a wrong
+  // mapping that the Apply pipeline then propagates to the output.
+  const ready =
+    naturalSize !== null &&
+    naturalSize.src === imageSrc &&
+    viewportSize !== null
   const fitZoom = ready
     ? Math.min(1, Math.min(
         viewportSize.width / naturalSize.width,
@@ -109,7 +115,7 @@ export function ImageCropperModal({
   return (
     <Dialog.Root
       open={open}
-      onOpenChange={(d: { open: boolean }) => handleOpenChange(d.open)}
+      onOpenChange={(d: { open: boolean }) => onOpenChange(d.open)}
       modal
       translations={dialogTranslations}
     >
@@ -192,7 +198,7 @@ export function ImageCropperModal({
                         {m.cancel}
                       </button>
                     </Dialog.CloseTrigger>
-                    <ApplyButton src={imageSrc} onCrop={onCrop} onClose={() => handleOpenChange(false)} label={m.apply} />
+                    <ApplyButton src={imageSrc} onCrop={onCrop} onClose={() => onOpenChange(false)} label={m.apply} />
                   </div>
                 </ImageCropper.Root>
               ) : (
