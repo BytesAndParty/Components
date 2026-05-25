@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
   PaginationState,
   RowSelectionState,
+  ColumnSizingState,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
@@ -43,6 +44,16 @@ export interface DataTableProps<TData, TValue> {
    * in/out of view.
    */
   enableAutoColumnSize?: boolean
+  // Column resizing (opt-in)
+  /**
+   * Allow users to drag the right edge of each column header to resize.
+   * Enforces `table-layout: fixed` so dragged widths actually take effect.
+   * Pairs well with `enableAutoColumnSize`: the measured widths seed the
+   * initial column sizes so dragging starts from a sensible floor.
+   */
+  enableColumnResizing?: boolean
+  columnSizing?: ColumnSizingState
+  onColumnSizingChange?: (sizing: ColumnSizingState) => void
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -61,6 +72,9 @@ export function DataTable<TData, TValue>({
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
   enableAutoColumnSize = false,
+  enableColumnResizing = false,
+  columnSizing: controlledColumnSizing,
+  onColumnSizingChange,
 }: DataTableProps<TData, TValue>) {
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const [internalPagination, setInternalPagination] = useState<PaginationState>({
@@ -68,6 +82,7 @@ export function DataTable<TData, TValue>({
     pageSize,
   })
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({})
+  const [internalColumnSizing, setInternalColumnSizing] = useState<ColumnSizingState>({})
   const [[page, direction], setPage] = useState([0, 0])
   const m = useComponentMessages(MESSAGES, messages)
   const shouldReduceMotion = useReducedMotion()
@@ -86,15 +101,31 @@ export function DataTable<TData, TValue>({
   const rowSelection = controlledRowSelection ?? internalRowSelection
   const handleRowSelectionChange = onRowSelectionChange ?? setInternalRowSelection
 
-  const tableColumns = enableRowSelection
-    ? [buildSelectionColumn<TData, TValue>(m), ...columns]
-    : columns
+  const columnSizing = controlledColumnSizing ?? internalColumnSizing
+  const handleColumnSizingChange = onColumnSizingChange ?? setInternalColumnSizing
+
+  const columnMinWidths = useColumnMinWidths(data, columns, enableAutoColumnSize)
+
+  const tableColumns = useMemo(() => {
+    const base = enableRowSelection
+      ? [buildSelectionColumn<TData, TValue>(m), ...columns]
+      : columns
+    if (!enableAutoColumnSize) return base
+    return base.map((col) => {
+      const accessor = (col as { accessorKey?: string }).accessorKey
+      const id = col.id ?? accessor
+      const w = id ? columnMinWidths[id] : undefined
+      return w ? { ...col, size: w, minSize: Math.max(40, Math.floor(w * 0.5)) } : col
+    })
+  }, [columns, columnMinWidths, enableAutoColumnSize, enableRowSelection, m])
 
   const table = useReactTable({
     data,
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection,
+    enableColumnResizing,
+    columnResizeMode: 'onChange',
     onSortingChange: (updater) => {
       const next = typeof updater === 'function' ? updater(sorting) : updater
       handleSortingChange(next)
@@ -107,12 +138,17 @@ export function DataTable<TData, TValue>({
       const next = typeof updater === 'function' ? updater(rowSelection) : updater
       handleRowSelectionChange(next)
     },
+    onColumnSizingChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(columnSizing) : updater
+      handleColumnSizingChange(next)
+    },
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       pagination,
       rowSelection,
+      columnSizing,
     },
   })
 
@@ -122,8 +158,6 @@ export function DataTable<TData, TValue>({
       setPage([pagination.pageIndex, pagination.pageIndex > page ? 1 : -1])
     }
   }, [pagination.pageIndex])
-
-  const columnMinWidths = useColumnMinWidths(data, columns, enableAutoColumnSize)
 
   const variants = {
     enter: (direction: number) => ({
@@ -144,10 +178,19 @@ export function DataTable<TData, TValue>({
     <div className={cn('flex flex-col gap-4 w-full', className)}>
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            {enableAutoColumnSize && (
+          <table
+            className={cn(
+              'w-full text-sm text-left border-collapse',
+              enableColumnResizing && 'table-fixed'
+            )}
+            style={enableColumnResizing ? { width: table.getTotalSize() } : undefined}
+          >
+            {(enableAutoColumnSize || enableColumnResizing) && (
               <colgroup>
                 {table.getAllLeafColumns().map((col) => {
+                  if (enableColumnResizing) {
+                    return <col key={col.id} style={{ width: `${col.getSize()}px` }} />
+                  }
                   const w = columnMinWidths[col.id]
                   return <col key={col.id} style={w ? { minWidth: `${w}px` } : undefined} />
                 })}
@@ -163,12 +206,13 @@ export function DataTable<TData, TValue>({
                       sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none'
                     const nextSortLabel =
                       sorted === 'asc' ? m.sortDescending : sorted === 'desc' ? m.sortClear : m.sortAscending
+                    const canResize = enableColumnResizing && header.column.getCanResize()
                     return (
                       <th
                         key={header.id}
                         scope="col"
                         aria-sort={canSort ? ariaSort : undefined}
-                        className="px-4 py-3 font-semibold text-muted-foreground select-none"
+                        className="relative px-4 py-3 font-semibold text-muted-foreground select-none"
                       >
                         {header.isPlaceholder ? null : canSort ? (
                           <button
@@ -199,6 +243,30 @@ export function DataTable<TData, TValue>({
                             {flexRender(header.column.columnDef.header, header.getContext())}
                           </div>
                         )}
+                        {canResize && (
+                          <ResizeHandle
+                            label={m.resizeColumn}
+                            isResizing={header.column.getIsResizing()}
+                            onPointerDown={header.getResizeHandler()}
+                            onKeyDown={(e) => {
+                              const STEP = e.shiftKey ? 32 : 8
+                              const current = header.column.getSize()
+                              if (e.key === 'ArrowLeft') {
+                                e.preventDefault()
+                                handleColumnSizingChange({
+                                  ...columnSizing,
+                                  [header.column.id]: Math.max(40, current - STEP),
+                                })
+                              } else if (e.key === 'ArrowRight') {
+                                e.preventDefault()
+                                handleColumnSizingChange({
+                                  ...columnSizing,
+                                  [header.column.id]: current + STEP,
+                                })
+                              }
+                            }}
+                          />
+                        )}
                       </th>
                     )
                   })}
@@ -226,7 +294,13 @@ export function DataTable<TData, TValue>({
                       data-state={row.getIsSelected() ? 'selected' : undefined}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3 text-foreground whitespace-nowrap">
+                        <td
+                          key={cell.id}
+                          className={cn(
+                            'px-4 py-3 text-foreground whitespace-nowrap',
+                            enableColumnResizing && 'overflow-hidden text-ellipsis'
+                          )}
+                        >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
@@ -295,6 +369,44 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
+  )
+}
+
+function ResizeHandle({
+  label,
+  isResizing,
+  onPointerDown,
+  onKeyDown,
+}: {
+  label: string
+  isResizing: boolean
+  onPointerDown: (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void
+  onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
+}) {
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label={label}
+      tabIndex={0}
+      onMouseDown={(e) => {
+        e.stopPropagation()
+        onPointerDown(e)
+      }}
+      onTouchStart={(e) => {
+        e.stopPropagation()
+        onPointerDown(e)
+      }}
+      onKeyDown={onKeyDown}
+      className={cn(
+        'absolute right-0 top-0 h-full w-2 -mr-1 cursor-col-resize touch-none select-none',
+        'after:absolute after:right-1 after:top-2 after:bottom-2 after:w-px',
+        'after:bg-border hover:after:bg-accent focus-visible:after:bg-accent',
+        'after:transition-colors focus-visible:outline-none',
+        isResizing && 'after:bg-accent after:w-0.5'
+      )}
+      style={{ WebkitTapHighlightColor: 'transparent' }}
+    />
   )
 }
 

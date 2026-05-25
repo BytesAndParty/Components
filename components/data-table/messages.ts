@@ -13,6 +13,7 @@ export type DataTableMessages = {
   sortClear: string
   selectRow: string
   selectAllRows: string
+  resizeColumn: string
 }
 
 export const MESSAGES = {
@@ -29,6 +30,7 @@ export const MESSAGES = {
     sortClear: 'Sortierung zurücksetzen',
     selectRow: 'Zeile auswählen',
     selectAllRows: 'Alle Zeilen auswählen',
+    resizeColumn: 'Spaltenbreite ändern',
   },
   en: {
     noResults: 'No results found.',
@@ -43,5 +45,6 @@ export const MESSAGES = {
     sortClear: 'Clear sort',
     selectRow: 'Select row',
     selectAllRows: 'Select all rows',
+    resizeColumn: 'Resize column',
   },
 } as const satisfies ComponentMessages<DataTableMessages>

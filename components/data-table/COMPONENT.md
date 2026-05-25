@@ -12,6 +12,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 - **Empty States**: Integrated "No Results" messaging when data is filtered out or empty.
 - **Row Selection (opt-in)**: Header + per-row checkboxes via the project `Checkbox`. Controllable or uncontrolled; emits `RowSelectionState`.
 - **Auto Column Sizing (opt-in)**: Measures the widest accessor value across the *entire* dataset (not just the visible page) and applies it as `min-width` per column — prevents layout jumps when sorting/paginating moves long values in or out of view.
+- **Column Resizing (opt-in)**: Drag the right edge of any header to resize. Keyboard-accessible (Tab to handle, Arrow Left/Right to nudge, Shift+Arrow for larger steps). Pairs with auto-sizing: measured widths seed the starting sizes.
 - **Accessibility**: Sort headers are real buttons with `aria-sort`, keyboard activation (Enter/Space), focus ring; `prefers-reduced-motion` disables row spring/stagger.
 - **i18n Ready**: Localized pagination labels ("Page X of Y") and button titles.
 
@@ -39,6 +40,9 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 | `rowSelection` | `RowSelectionState` | — | Controlled selection map (`{ [rowId: string]: boolean }`). Omit for internal state. |
 | `onRowSelectionChange` | `(selection: RowSelectionState) => void` | — | Called when selection changes. Required when `rowSelection` is controlled. |
 | `enableAutoColumnSize` | `boolean` | `false` | Opt-in: pre-measures the widest value per column (entire dataset, not just current page) and sets it as `min-width`. Stops layout jumps on sort/paginate. |
+| `enableColumnResizing` | `boolean` | `false` | Opt-in: drag-resizable column widths via right-edge handles. Enforces `table-layout: fixed`; cells truncate when narrower than content. |
+| `columnSizing` | `ColumnSizingState` | — | Controlled column size map (`{ [columnId: string]: number }`). Omit for internal state. |
+| `onColumnSizingChange` | `(sizing: ColumnSizingState) => void` | — | Called when a column is resized. Required when `columnSizing` is controlled. |
 
 ## Usage
 

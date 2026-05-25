@@ -208,6 +208,7 @@ export function DataPage() {
           pagination={pagination}
           onPaginationChange={handlePaginationChange}
           enableAutoColumnSize
+          enableColumnResizing
         />
       </Section>
 
