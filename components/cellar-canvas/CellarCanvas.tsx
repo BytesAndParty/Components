@@ -1,7 +1,8 @@
 import * as fabric from 'fabric'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
 import { useClipboardPaste } from './engine/use-clipboard-paste'
-import { LabelCanvas } from './components/canvas/LabelCanvas'
+import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
+import { mmToPx } from './engine/units'
 import { useDesignerStore } from './store/designer-store'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
@@ -13,9 +14,9 @@ import { ValidatorBadge, type ValidationWarning } from '../validator-badge/valid
 import { validateCompliance } from './wine-fields/validator'
 import { useEffect, useState, useRef } from 'react'
 import { cn } from '../lib/utils'
-import { Maximize2, Minimize2, Eye, EyeOff } from 'lucide-react'
+import { Maximize2, Minimize2, Check, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider'
-import type { FabricObjectProperties, FabricObjectMeta } from './store/types'
+import type { CellarCanvasState, FabricObjectProperties, FabricObjectMeta } from './store/types'
 
 // Bleed dimming around the label. Design view stays semi-transparent so
 // objects bleeding out are still readable; preview goes fully opaque to
@@ -46,7 +47,11 @@ export interface CellarCanvasProps {
 
   // Pre-fill
   initialWineFields?:   WineFieldValues
-  initialState?:        object // Fabric JSON
+  initialState?:        CellarCanvasState | object
+
+  // Persistence
+  /** localStorage key for the debounced autosave draft. Pass `null` to opt out. Default: `'cellar-canvas-draft'`. */
+  storageKey?:          string | null
 
   // Export
   exportDpi?:           number
@@ -56,8 +61,8 @@ export interface CellarCanvasProps {
   enableValidator?:     boolean // default: true
 
   // Callbacks
-  onChange?:            (state: object) => void
-  onSave?:              (state: object) => Promise<void>
+  onChange?:            (state: CellarCanvasState) => void
+  onSave?:              (state: CellarCanvasState) => Promise<void>
   onExport?:            (result: { format: 'png' | 'pdf'; blob: Blob }) => void
   onValidationChange?:  (warnings: string[]) => void
 
@@ -65,6 +70,34 @@ export interface CellarCanvasProps {
   height?:    string | number
   className?: string
   style?:     React.CSSProperties
+}
+
+/**
+ * Maps Fabric's current view (zoom + viewport translation) onto the DOM
+ * coordinates of the CSS-rendered label backdrop. Keeps the white "label
+ * card" pinned to where Fabric is drawing user content.
+ */
+function computeBackdrop({
+  widthMm,
+  heightMm,
+  viewport,
+  color,
+}: {
+  widthMm: number
+  heightMm: number
+  viewport: { zoom: number; tx: number; ty: number }
+  color: string
+}): LabelBackdrop {
+  const bleedPx = mmToPx(BLEED_MM)
+  const labelW  = mmToPx(widthMm)
+  const labelH  = mmToPx(heightMm)
+  return {
+    left:   viewport.tx + bleedPx * viewport.zoom,
+    top:    viewport.ty + bleedPx * viewport.zoom,
+    width:  labelW * viewport.zoom,
+    height: labelH * viewport.zoom,
+    color,
+  }
 }
 
 export function CellarCanvas({
@@ -77,7 +110,11 @@ export function CellarCanvas({
     volumeMl: '750ml',
     nutritionalInfoUrl: 'https://wine-info.eu/vignes-2021'
   },
+  initialState,
+  storageKey = 'cellar-canvas-draft',
   enableValidator = true,
+  onChange,
+  onSave,
   className,
   style,
   height = '80vh',
@@ -89,34 +126,111 @@ export function CellarCanvas({
   const [warnings, setWarnings] = useState<ValidationWarning[]>([])
   const [rightTab, setRightTab] = useState<'props' | 'fields' | 'background'>('props')
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
+  const [viewport, setViewport] = useState({ zoom: 1, tx: 0, ty: 0 })
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
+  const isDirty = useDesignerStore(s => s.isDirty)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen()
-      setIsFullscreen(true)
-    } else {
-      document.exitFullscreen()
-      setIsFullscreen(false)
-    }
+    setIsFullscreen((prev) => !prev)
   }
 
-  // Monitor fullscreen changes (e.g. via Escape key)
+  // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
+  // restricts focus to descendants of the fullscreen element, which Fabric's
+  // hiddenTextarea cannot reliably satisfy across reparenting attempts —
+  // typing into edited text silently drops. Escape exits the visual mode.
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement)
-    document.addEventListener('fullscreenchange', handler)
-    return () => document.removeEventListener('fullscreenchange', handler)
-  }, [])
+    if (!isFullscreen) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullscreen(false)
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [isFullscreen])
 
-  // Initial Zoom to Fit
+  // Restore on mount: explicit initialState wins over the localStorage draft.
+  // Then fit-to-viewport. Bridge construction is async-ish (next tick after
+  // canvas mount), so we wait briefly before talking to it.
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      bridge.current?.zoomToFit()
+    const timeout = setTimeout(async () => {
+      const b = bridge.current
+      if (!b) return
+      if (initialState) {
+        await b.restoreState(initialState)
+      } else if (storageKey) {
+        const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : null
+        if (stored) {
+          try {
+            await b.restoreState(JSON.parse(stored))
+          } catch {
+            // Corrupted draft — start fresh.
+          }
+        }
+      }
+      b.zoomToFit()
+      // Restore is not a user edit — clear dirty flag.
+      useDesignerStore.getState().setDirty(false)
     }, 100)
     return () => clearTimeout(timeout)
-  }, [bridge, isFullscreen, widthMm, heightMm])
+  }, [bridge, isFullscreen, widthMm, heightMm, initialState, storageKey])
+
+  // Debounced autosave + onChange. localStorage holds the draft; onChange is
+  // the embedding app's hook to mirror to its own store / backend.
+  useEffect(() => {
+    const bridgeInstance = bridge.current
+    if (!bridgeInstance) return
+
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const flush = () => {
+      const state = bridgeInstance.serializeState()
+      if (storageKey) {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(state))
+        } catch {
+          // Quota / privacy mode — silent.
+        }
+      }
+      onChange?.(state)
+    }
+    const debounced = () => {
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(flush, 1000)
+    }
+
+    const canvas = bridgeInstance.canvas
+    canvas.on('object:added', debounced)
+    canvas.on('object:removed', debounced)
+    canvas.on('object:modified', debounced)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(canvas as any).on('cellar:property-changed', debounced)
+
+    return () => {
+      if (timer) clearTimeout(timer)
+      canvas.off('object:added', debounced)
+      canvas.off('object:removed', debounced)
+      canvas.off('object:modified', debounced)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).off('cellar:property-changed', debounced)
+    }
+  }, [bridge, storageKey, onChange])
+
+  async function handleSave() {
+    if (!onSave || saveStatus === 'saving') return
+    const state = bridge.current?.serializeState()
+    if (!state) return
+    setSaveStatus('saving')
+    try {
+      await onSave(state)
+      useDesignerStore.getState().setDirty(false)
+      setSaveStatus('success')
+      setTimeout(() => setSaveStatus('idle'), 1500)
+    } catch {
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 2500)
+    }
+  }
 
   // Sync properties, layers and validation
   useEffect(() => {
@@ -128,6 +242,12 @@ export function CellarCanvas({
       const currentLayers = bridgeInstance.getLayers() || []
       setLayers(currentLayers)
       setBackgroundColor(bridgeInstance.getBackground())
+      const vpt = bridgeInstance.canvas.viewportTransform
+      setViewport({
+        zoom: bridgeInstance.canvas.getZoom(),
+        tx: vpt?.[4] ?? 0,
+        ty: vpt?.[5] ?? 0,
+      })
 
       if (enableValidator) {
         const rawObjects = (bridgeInstance.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
@@ -205,11 +325,15 @@ export function CellarCanvas({
   })
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className={cn("bg-background transition-all duration-300", className, isFullscreen && "p-4")}
-      style={{ 
-        ...style, 
+      className={cn(
+        "bg-background transition-all duration-300",
+        className,
+        isFullscreen && "fixed inset-0 z-50 p-4"
+      )}
+      style={{
+        ...style,
         height: isFullscreen ? '100vh' : height,
         display: 'grid',
         gridTemplateColumns: 'auto 1fr 300px',
@@ -224,20 +348,45 @@ export function CellarCanvas({
           Standard Label ({widthMm}x{heightMm}mm)
         </div>
         <div className="flex items-center gap-1 mr-4">
-           <button 
-             onClick={() => bridge.current?.undo()} 
+           <button
+             onClick={() => bridge.current?.undo()}
              className="p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors"
              title="Undo (Cmd+Z)"
            >
              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
            </button>
-           <button 
-             onClick={() => bridge.current?.redo()} 
+           <button
+             onClick={() => bridge.current?.redo()}
              className="p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors"
              title="Redo (Cmd+Shift+Z)"
            >
              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
            </button>
+           {onSave && (
+             <button
+               onClick={handleSave}
+               disabled={saveStatus === 'saving' || (!isDirty && saveStatus === 'idle')}
+               className={cn(
+                 "ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border transition-colors",
+                 saveStatus === 'success'
+                   ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600"
+                   : saveStatus === 'error'
+                     ? "border-destructive/40 bg-destructive/10 text-destructive"
+                     : isDirty
+                       ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                       : "border-border text-muted-foreground opacity-60",
+               )}
+               title={isDirty ? "Save changes" : "All changes saved"}
+             >
+               {saveStatus === 'saving'
+                 ? (<><Loader2 size={12} className="animate-spin" /> Saving…</>)
+                 : saveStatus === 'success'
+                   ? (<><Check size={12} /> Saved</>)
+                   : saveStatus === 'error'
+                     ? 'Retry'
+                     : isDirty ? 'Save' : 'Saved'}
+             </button>
+           )}
         </div>
         <button
           onClick={() => setPreviewMode(p => !p)}
@@ -283,6 +432,7 @@ export function CellarCanvas({
         <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
            <LabelCanvas
              ref={canvasRef}
+             backdrop={computeBackdrop({ widthMm, heightMm, viewport, color: backgroundColor })}
              widthMm={widthMm}
              heightMm={heightMm}
              bleedMm={BLEED_MM}

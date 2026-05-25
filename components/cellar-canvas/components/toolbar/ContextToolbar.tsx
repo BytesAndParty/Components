@@ -61,7 +61,6 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   }
 
   const isText      = props.type === 'text' || props.type === 'wine-field'
-  const isWineField = props.type === 'wine-field'
   const isShape     = props.type === 'rect' || props.type === 'circle' || props.type === 'line'
   const isMulti     = selectedIds.length >= 2
 
@@ -83,15 +82,6 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
     <div className="h-full flex items-center px-4 gap-4">
       {isText && (
         <div className="flex items-center gap-4">
-          {!isWineField && (
-            <textarea
-              value={props.text || ''}
-              onChange={(e) => bridge.current?.updateActiveObject({ text: e.target.value })}
-              rows={1}
-              className="text-xs font-medium bg-muted/50 border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary w-32 resize-none leading-tight"
-              placeholder="Text content..."
-            />
-          )}
           <TextToolOptions
             value={{
               fontFamily:  props.fontFamily,

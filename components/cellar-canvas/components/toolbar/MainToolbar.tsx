@@ -58,6 +58,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       setCropperOpen(true)
     }
     reader.readAsDataURL(file)
+    // Reset so picking the same file twice in a row still fires change.
     e.target.value = ''
   }
 

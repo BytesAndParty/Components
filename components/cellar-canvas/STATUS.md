@@ -10,19 +10,20 @@
 
 | Bereich              | Stand                                                                 |
 |----------------------|------------------------------------------------------------------------|
-| Canvas               | Fabric v7 via `use-fabric-canvas.ts`, mm/px Umrechnung steht. Bleed-Margin (40 mm rechts/unten) damit überlaufende Elemente sichtbar bleiben; Label selbst ist ein nicht-interaktives Rect bei (0,0). |
-| Tools                | Rect / Circle / Line / Text / Image / QR-Code addbar.                  |
-| History              | ✅ Undo/Redo (50 Steps) via Zustand + Fabric JSON Serialization.        |
+| Canvas               | Fabric v7 via `use-fabric-canvas.ts`, mm/px Umrechnung steht. Symmetrische 40 mm Bleed-Margin rundherum; Label-Backdrop wird als CSS-`<div>` in `LabelCanvas` gerendert (NICHT mehr als Fabric-Objekt) und tracking-aligned via Fabric-Zoom + Viewport-Transform. User-facing `x/y` bleibt label-relativ. |
+| Tools                | Rect / Circle / Line / Text (Textbox mit Word-Wrap) / Image / QR-Code addbar. Text-Click-to-Edit per `mouse:up` + Drag-Threshold; `hiddenTextarea` wird in `canvas.wrapperEl` umgehängt damit Edit auch in modalen Subtrees funktioniert. |
+| History              | ✅ Undo/Redo (50 Steps) via Zustand + Fabric JSON Serialization. Bg-Color liegt außerhalb der History (Trade-off — Undo revertet sie nicht). |
 | Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, del, backspace) inkl. Registry. |
-| Zoom                 | ✅ Zoom-to-Fit nutzt echte mm-Maße (widthMm x heightMm).                |
-| Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2). |
+| Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. |
+| Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
+| Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). |
 | Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + StackOrderControls + AlignmentBar (live) + Shape Fill / Stroke ColorSwatch + Stroke-Width. |
-| Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` mit History-Snapshot. |
+| Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` setzt `labelColor` Instance-Prop + `isDirty`. Wird per `serializeState` mitpersistiert (`{ canvas, bg }`). |
 | Wine Fields          | 6 Felder + QR-Code, `_fieldKey` Metadata.                              |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
-| Layer Panel          | Listet alle Objekte, Rename / Visibility / Lock / Delete / Reorder.    |
+| Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
-| Persistence          | ❌ noch nicht — kein localStorage, kein onSave.                         |
+| Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
 | Export               | ❌ noch nicht — kein PNG / PDF.                                         |
@@ -30,7 +31,61 @@
 
 ---
 
+## Offen
+
+### Roadmap-Items (CELLAR-CANVAS.md)
+
+- **Export-Pipeline (PNG + PDF)** — Fabric `toDataURL` bei 300 dpi clipped auf den Label-Bereich (Bleed muss raus); `jspdf` mit 3 mm Crop-Marks (PDF). Braucht `jspdf`-Install und einen `ExportPanel`-Dialog. Wichtigster nächster Schritt — ohne Export ist das Label nicht druckbar.
+- **Multi-Area Tabs (Front / Back / Neck)** — Store von einer Canvas auf `Map<area, state>`, `LabelAreaTabs`-Komponente, History pro Area. Macht erst Sinn nach Export.
+- **Templates** — 5 Built-in (Classic / Modern / Rustic / Minimal / Bold) als Fabric-JSON + `TemplatesPanel`. `customTemplates`-Prop für app-spezifische.
+- **Onboarding Tour** — Ark UI `Tour`, 5 Schritte, `localStorage`-Flag für First-Run-Detect.
+- **i18n** — `i18n/en.ts` + `i18n/de.ts`, Props-`i18n`-Override.
+- **Extras-Panel** — `SignaturePad` + Decorative Dividers / Ornaments (Phase 8, niedrige Prio).
+
+### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
+
+- **3 mm Print-Bleed-Indicator** — gestricheltes Rect am Label-Rand (separat vom 40 mm Workspace-Bleed). Visueller Druck-Sicherheitsabstand laut Decision #3.
+- **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
+- **Snap-to-Grid + Smart Guides** (zeigen sich beim Drag in Nähe anderer Objekte).
+- **Pan-Tool** — aktuell nur Tool-Switch ohne Funktion. Plan: Space+Drag, oder eigenes Pan-Mode.
+- **Background Image** — neben Color auch Image (im `BackgroundPanel`).
+- **Group / Ungroup** für Layer.
+- **Re-Crop von ContextToolbar** — Image selektieren → "Crop"-Button → re-open `ImageCropperModal` mit aktueller Source.
+- **Duplicate** (Layer / Selection).
+- **Strg+A**, **Esc** und andere Standard-Shortcuts.
+
+### Tech-Debt / Known Limitations
+
+- Bg-Color nicht in Undo/Redo-History — User-Change überlebt Reload, aber kein Undo. Lösungswege: Sidecar in `pushHistory` (Tupel `[canvas, bg]`) ODER `setBackground` schiebt einen synthetischen `object:modified`-Snapshot.
+- `cellar:property-changed` feuert teils mehrfach pro logischer Aktion (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
+- `ContextToolbar` mountet noch den Mirror-Textarea-Wegfall ohne Re-Crop-Button — Image-Selection zeigt aktuell nichts an im Context-Bereich.
+
+---
+
 ## Bug Log
+
+### #23 — Fullscreen schluckte Tastatur-Input in Text-Edit *(2026-05-25 — gefixt)*
+
+**Symptom:** Cursor liess sich im Fullscreen-Mode setzen, Enter funktionierte, aber Buchstaben-Tasten kamen nicht im Text an. Im normalen Mode lief Edit sauber.
+
+**Root Cause:** Die Browser-Fullscreen-API (`Element.requestFullscreen`) beschränkt Focus auf Descendants des Fullscreen-Elements. Fabric's `hiddenTextarea` wird per Default an `document.body` angehängt — landet damit *außerhalb* des Fullscreen-Subtrees. Reparenting nach `canvas.wrapperEl` half nur teilweise (Timing + interne Fabric-Focus-Restores).
+
+**Fix:** Migration auf CSS-Fullscreen (`fixed inset-0 z-50 p-4`). Sichtbar identisch (volle Viewport-Fläche), aber ohne Focus-Restriktion. `Escape`-Key-Handler exitet. Browser-API-Code (`requestFullscreen` / `fullscreenchange`) komplett raus. Reparent-Logik für `hiddenTextarea` bleibt drin als belt-and-suspenders falls jemand doch noch die echte API triggert.
+
+### #22 — `sendToBack` versteckte Objekte hinter dem weißen Label *(2026-05-25 — gefixt)*
+
+**Symptom:** "Bring to Back" / Drag-Reorder-an-die-letzte-Position schob das Objekt visuell aus dem Label raus — es lag plötzlich hinter dem weißen Hintergrund-Rect und war unsichtbar.
+
+**Root Cause:** Der Label-Backdrop war als Fabric-`Rect` im Object-Stack (Index 0). `canvas.sendObjectToBack(userObj)` schob den User-Obj auf Index 0 → das Label rutschte auf Index 1 und lag damit *über* dem User-Obj.
+
+**Fix (kurzfristig, dann besser):** Initial mit `pinLabelToBottom()`-Helper nach jeder Stack-Op + `+1`-Offset im `reorderLayers`. Funktionierte, aber roch nach Workaround. **Definitive Lösung:** Label-Backdrop aus dem Fabric-Stack komplett rausgezogen — wird jetzt als CSS-`<div>` in `LabelCanvas` gerendert. Vorteile:
+
+- Stack-Mutationen touchen nur User-Objekte; keine Pin-Logik nötig
+- Layer-Panel zeigt ausschließlich User-Objekte; kein `_isLabel`-Filter
+- `getActiveObjectProperties` braucht keinen Defensive-Skip
+- History serialisiert nur User-Content; kein Re-Pin nach `loadFromJSON`
+
+`labelColor` lebt als private Instance-Prop am Bridge. `LabelCanvas` bekommt ein `backdrop`-Prop mit DOM-Koordinaten + Farbe + Shadow; `CellarCanvas` rechnet die Koords aus Fabric-`zoom` + `viewportTransform` aus und re-rendert via `cellar:property-changed`-Listener bei jedem View-Change. Trade-off: Bg-Color nicht in History (siehe Open-Liste).
 
 ### #21 — ImageCropper schneidet den falschen Bereich aus *(2026-05-25 — gefixt)*
 

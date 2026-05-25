@@ -1,5 +1,15 @@
 export type LabelArea = 'front' | 'back' | 'neck'
 
+/**
+ * Persistable editor state — Fabric scene plus anything that lives outside
+ * the object stack (label-paper colour). Used for `initialState`, the
+ * `onChange`/`onSave` callbacks, and localStorage autosave.
+ */
+export interface CellarCanvasState {
+  canvas: object
+  bg: string
+}
+
 export interface FabricObjectMeta {
   id: string
   _layerName: string

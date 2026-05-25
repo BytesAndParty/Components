@@ -199,13 +199,15 @@ function SortableLayerRow(props: {
     isDragging,
   } = useSortable({ id: props.layer.id })
 
-  // dnd-kit owns the position transform + transition during drag/drop.
-  // Framer Motion handles only enter/exit fades — no `layout` prop here,
-  // otherwise the two animation systems fight and the row "snaps back".
+  // dnd-kit owns the position transform + transition while it's actively
+  // moving a row (i.e. `transform !== null`). Outside that window we let
+  // Framer Motion animate position via `layout` — programmatic reorders
+  // (bring-to-front etc.) glide instead of snapping.
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
   }
+  const isDndPositioning = transform !== null
 
   // `transform !== null` is true for ALL rows during a drag (the non-dragged
   // ones get a shift transform to make room), so we can't gate elevation on
@@ -233,9 +235,11 @@ function SortableLayerRow(props: {
     <motion.div
       ref={setNodeRef}
       style={style}
+      layout={isDndPositioning ? false : 'position'}
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
+      transition={{ layout: { type: 'spring', stiffness: 480, damping: 34 } }}
       className={cn(
         'relative',
         isElevated ? 'z-10' : 'z-0',

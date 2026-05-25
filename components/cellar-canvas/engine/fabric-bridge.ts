@@ -1,14 +1,8 @@
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
-import type { FabricObjectMeta, FabricObjectProperties } from '../store/types'
+import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
 import { pxToMm, mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
-
-/**
- * Tag we paint onto the non-interactive label-background rect so the bridge
- * can filter it out of layer lists / active-object reads after a JSON reload.
- */
-const LABEL_TAG = '_isLabel'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -21,17 +15,20 @@ export interface FabricBridgeOptions {
  * with the Fabric.js canvas instance while keeping the Zustand store in sync.
  *
  * The HTML canvas is intentionally larger than the printed label so overflow
- * (text wider than the label, images bleeding past the edge) stays visible
- * during design. The label itself is a non-interactive Rect inset by
- * `bleedMm` on every side; user-facing x/y are reported relative to that
- * inset so the value matches what a printer sees on the finished label.
+ * (text wider than the label, images bleeding past the edge) stays visible.
+ * The visible "label card" is rendered by the React layer as a positioned
+ * `<div>` outside the Fabric object stack — that way stack mutations
+ * (bring-to-front, send-to-back, drag-reorder in the layer panel) only
+ * touch user objects and never have to dance around a backdrop rect.
+ * User-facing x/y is still reported relative to the label top-left corner
+ * so it matches what a printer sees on the finished label.
  */
 export class FabricBridge {
   canvas: fabric.Canvas
   widthMm: number
   heightMm: number
   bleedMm: number
-  labelRect: fabric.Rect
+  private labelColor = '#ffffff'
   private isRestoringHistory = false
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
@@ -39,9 +36,6 @@ export class FabricBridge {
     this.widthMm = opts.widthMm
     this.heightMm = opts.heightMm
     this.bleedMm = opts.bleedMm
-    this.labelRect = this.createLabelRect()
-    canvas.add(this.labelRect)
-    canvas.sendObjectToBack(this.labelRect)
 
     // Click-without-drag on a text → enter edit mode + select-all. We measure
     // pointer travel between mouse:down and mouse:up so that a real drag
@@ -74,10 +68,52 @@ export class FabricBridge {
         downAt && up &&
         Math.hypot(up.x - downAt.x, up.y - downAt.y) < 4
       ) {
-        target.enterEditing()
-        target.selectAll()
+        // Defer one tick: calling enterEditing() synchronously inside Fabric's
+        // own mouse:up pipeline lets the hidden textarea get created, but
+        // Fabric's follow-up steps reclaim focus and the textarea ends up
+        // unfocused — caret visible, typing dropped. A queueMicrotask hop
+        // runs after Fabric is done and the hiddenTextarea.focus() sticks.
+        const t = target
+        queueMicrotask(() => {
+          if (!t.isEditing) {
+            t.enterEditing()
+            t.selectAll()
+            // Fabric appends `hiddenTextarea` to <body> by default. In
+            // fullscreen mode the browser refuses focus on anything outside
+            // the fullscreen subtree, so typing silently drops. Re-parenting
+            // it under `canvas.wrapperEl` (which is inside the fullscreen
+            // container) restores keyboard input. Harmless outside fullscreen.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const hidden = (t as any).hiddenTextarea as HTMLTextAreaElement | undefined
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const wrapper = (this.canvas as any).wrapperEl as HTMLElement | undefined
+            if (hidden && wrapper && hidden.parentElement !== wrapper) {
+              wrapper.appendChild(hidden)
+            }
+            hidden?.focus()
+          }
+        })
       }
       downAt = null
+    })
+
+    // Cursor-anchored zoom on wheel / pinch. Without preventDefault the
+    // browser would scroll the page or pinch-zoom the whole document; we want
+    // wheel-over-canvas to mean "zoom the canvas". `zoomToPoint` keeps the
+    // pixel under the cursor stationary while the rest scales around it.
+    canvas.on('mouse:wheel', (opt) => {
+      const e = opt.e as WheelEvent
+      const current = canvas.getZoom()
+      // 0.999^delta gives a smooth multiplicative response; delta is roughly
+      // -100..100 per wheel tick, ±10 per pinch frame.
+      let next = current * 0.999 ** e.deltaY
+      next = Math.max(0.05, Math.min(20, next))
+      canvas.zoomToPoint(new fabric.Point(e.offsetX, e.offsetY), next)
+      e.preventDefault()
+      e.stopPropagation()
+      useDesignerStore.getState().setZoom(next)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).fire('cellar:property-changed', { target: null })
     })
 
     // Initial history snapshot
@@ -88,30 +124,6 @@ export class FabricBridge {
     return mmToPx(this.bleedMm)
   }
 
-  private createLabelRect(): fabric.Rect {
-    const rect = new fabric.Rect({
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx,
-      top: this.bleedPx,
-      width: mmToPx(this.widthMm),
-      height: mmToPx(this.heightMm),
-      fill: '#ffffff',
-      selectable: false,
-      evented: false,
-      hoverCursor: 'default',
-      shadow: new fabric.Shadow({
-        color: 'rgba(0,0,0,0.18)',
-        blur: 24,
-        offsetX: 0,
-        offsetY: 6,
-      }),
-    })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(rect as any)[LABEL_TAG] = true
-    return rect
-  }
-
   /**
    * Captures the current state and pushes it to the store's history stack.
    */
@@ -119,7 +131,7 @@ export class FabricBridge {
     if (this.isRestoringHistory) return
     // Fabric v7: toJSON() is arg-less now; propertiesToInclude moved to toObject().
     const snapshot = this.canvas.toObject([
-      'id', '_layerName', '_type', '_fieldKey', LABEL_TAG,
+      'id', '_layerName', '_type', '_fieldKey',
       'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
       'hasControls',
     ])
@@ -128,6 +140,7 @@ export class FabricBridge {
 
   /**
    * Restores the state from the history stack based on the current index.
+   * Label backdrop is rendered by React, so it doesn't need to be re-pinned.
    */
   async restoreHistory() {
     const { history, historyIndex } = useDesignerStore.getState()
@@ -136,20 +149,6 @@ export class FabricBridge {
 
     this.isRestoringHistory = true
     await this.canvas.loadFromJSON(state)
-    // Fabric doesn't serialize `selectable`/`evented` by default — the loaded
-    // labelRect would become click-stealing scenery. Find it back via the tag
-    // and re-pin its non-interactive flags. Fall back to a fresh rect if the
-    // snapshot is older than this refactor.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const found = this.canvas.getObjects().find((o) => (o as any)[LABEL_TAG]) as fabric.Rect | undefined
-    if (found) {
-      found.set({ selectable: false, evented: false, hoverCursor: 'default' })
-      this.labelRect = found
-    } else {
-      this.labelRect = this.createLabelRect()
-      this.canvas.add(this.labelRect)
-    }
-    this.canvas.sendObjectToBack(this.labelRect)
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
     this.isRestoringHistory = false
@@ -163,6 +162,38 @@ export class FabricBridge {
   redo() {
     useDesignerStore.getState().redo()
     this.restoreHistory()
+  }
+
+  /**
+   * Full editor state for persistence. Wraps the Fabric scene plus anything
+   * that lives outside the object stack (the label-paper colour).
+   */
+  serializeState(): CellarCanvasState {
+    const canvas = this.canvas.toObject([
+      'id', '_layerName', '_type', '_fieldKey',
+      'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
+      'hasControls',
+    ])
+    return { canvas, bg: this.labelColor }
+  }
+
+  /**
+   * Restore a previously serialized state. Accepts the wrapped `{ canvas, bg }`
+   * shape; a plain Fabric JSON is treated as canvas-only (bg untouched) for
+   * backward compatibility with older snapshots.
+   */
+  async restoreState(state: CellarCanvasState | object): Promise<void> {
+    const wrapped = (state as CellarCanvasState).canvas !== undefined
+      ? (state as CellarCanvasState)
+      : { canvas: state as object, bg: this.labelColor }
+    this.isRestoringHistory = true
+    await this.canvas.loadFromJSON(wrapped.canvas)
+    this.labelColor = wrapped.bg
+    this.canvas.requestRenderAll()
+    this.updateStoreSelection()
+    this.isRestoringHistory = false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
   }
 
   /**
@@ -381,8 +412,7 @@ export class FabricBridge {
    */
   getActiveObjectProperties(): FabricObjectProperties | null {
     const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!obj || (obj as any)[LABEL_TAG]) return null
+    if (!obj) return null
 
     return {
       type: obj._type,
@@ -491,6 +521,7 @@ export class FabricBridge {
       this.canvas.bringObjectToFront(obj)
       this.canvas.requestRenderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
@@ -500,6 +531,7 @@ export class FabricBridge {
       this.canvas.bringObjectForward(obj)
       this.canvas.requestRenderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
@@ -509,6 +541,7 @@ export class FabricBridge {
       this.canvas.sendObjectBackwards(obj)
       this.canvas.requestRenderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
@@ -518,7 +551,18 @@ export class FabricBridge {
       this.canvas.sendObjectToBack(obj)
       this.canvas.requestRenderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
+  }
+
+  /**
+   * Stack mutations don't fire any built-in Fabric event, so React listeners
+   * never know to refresh `getLayers()`. We piggy-back on the same custom
+   * event the property steppers use.
+   */
+  private notifyStackChanged(target: fabric.Object) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target })
   }
 
   /**
@@ -597,13 +641,12 @@ export class FabricBridge {
   }
 
   getBackground(): string {
-    return (this.labelRect.fill as string) || '#ffffff'
+    return this.labelColor
   }
 
   setBackground(color: string) {
-    this.labelRect.set('fill', color)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.labelColor = color
+    useDesignerStore.getState().setDirty(true)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(this.canvas as any).fire('cellar:property-changed', { target: null })
   }
@@ -631,6 +674,9 @@ export class FabricBridge {
 
     this.canvas.requestRenderAll()
     useDesignerStore.getState().setZoom(scale)
+    // Notify React so the CSS-rendered label backdrop tracks Fabric's view.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
   }
 
   /**
@@ -638,20 +684,16 @@ export class FabricBridge {
    * Fabric z-order is bottom-to-top, but Layer Panel is top-to-bottom.
    */
   getLayers() {
-    return this.canvas.getObjects()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((o) => !(o as any)[LABEL_TAG])
-      .map((obj) => {
-        const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
-        return {
-          id: o.id,
-          name: o._layerName || o.text || 'Unnamed Layer',
-          type: o._type,
-          visible: o.visible,
-          locked: !!o.lockMovementX, // Basic lock check
-        }
-      })
-      .reverse()
+    return this.canvas.getObjects().map((obj) => {
+      const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
+      return {
+        id: o.id,
+        name: o._layerName || o.text || 'Unnamed Layer',
+        type: o._type,
+        visible: o.visible,
+        locked: !!o.lockMovementX, // Basic lock check
+      }
+    }).reverse()
   }
 
   setLayerVisibility(id: string, visible: boolean) {
