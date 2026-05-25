@@ -139,7 +139,7 @@ export function DataPage() {
         const type = row.getValue('type') as string
         const colors: Record<string, string> = {
           Red: 'bg-red-500/10 text-red-700 dark:text-red-300 ring-red-500/20',
-          White: 'bg-amber-500/15 text-amber-800 dark:text-amber-200 ring-amber-500/25',
+          White: 'bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100 ring-amber-500/40',
           Rosé: 'bg-pink-500/10 text-pink-700 dark:text-pink-300 ring-pink-500/20',
           Sparkling: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 ring-sky-500/20',
         }
@@ -200,13 +200,14 @@ export function DataPage() {
         title="Wine Inventory" 
         description="A comprehensive list of our current wine stock with status indicators, sorting, and pagination."
       >
-        <DataTable 
-          columns={columns} 
-          data={inventoryData} 
-          sorting={sorting} 
+        <DataTable
+          columns={columns}
+          data={inventoryData}
+          sorting={sorting}
           onSortingChange={handleSortingChange}
           pagination={pagination}
           onPaginationChange={handlePaginationChange}
+          enableAutoColumnSize
         />
       </Section>
 
