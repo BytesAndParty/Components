@@ -64,6 +64,14 @@
 
 ## Bug Log
 
+### Open: ImageCropper Crop weicht ab, wenn man mehrere Bilder hintereinander hochlädt
+
+**Symptom:** Einzelner Upload → Cropper liefert pixel-genau das, was selektiert war (Fix aus #21 hält). Beim zweiten/dritten Upload in derselben Session driftet das Ergebnis wieder leicht ab — verschoben oder falsch skaliert wie vor #21.
+
+**Verdacht:** Pre-Measure-State (`naturalSize`, `viewportSize`) oder der Zag-Machine-State im `ImageCropper.Root` wird zwischen Uploads nicht voll resettet. Beim Re-Open mit neuem `imageSrc` greift der Cropper auf gemessene Werte vom vorherigen Bild zurück (anderer Aspect-Ratio → falscher `defaultZoom`/`initialCrop` → Apply rechnet mit alter Skalierung). Möglich auch ein stale `ResizeObserver`-Callback, der nach `onOpenChange(false)` noch durchläuft.
+
+**Nächster Schritt:** Im `ImageCropperModal` checken, ob `naturalSize`/`viewportSize` im `onOpenChange(false)`-Handler explizit auf `undefined` gesetzt werden und ob der Pre-Measure-Effect bei jedem neuen `imageSrc` neu durchläuft. Reproducer: zweimal hintereinander Image-Tool klicken, jeweils ein anderes Foto, dieselbe Crop-Region wählen — Output vergleichen.
+
 ### #23 — Fullscreen schluckte Tastatur-Input in Text-Edit *(2026-05-25 — gefixt)*
 
 **Symptom:** Cursor liess sich im Fullscreen-Mode setzen, Enter funktionierte, aber Buchstaben-Tasten kamen nicht im Text an. Im normalen Mode lief Edit sauber.
