@@ -1,8 +1,8 @@
 import { Section } from '../components/section'
 import { DataTable } from '@components/data-table/data-table'
-import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
+import type { ColumnDef, SortingState, PaginationState, RowSelectionState } from '@tanstack/react-table'
 import { useSearchParams } from 'react-router'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 interface WineInventory {
   id: string
@@ -82,8 +82,23 @@ const inventoryData: WineInventory[] = [
   { id: 'f6', name: 'Aktion Weinpaket 6er', year: 2024, type: 'Red', stock: 20, price: 55.00, status: 'In Stock' },
 ]
 
+// Reduced 5-row slice used by the row-selection showcase.
+const selectionSample = inventoryData.slice(0, 5)
+
+const selectionColumns: ColumnDef<WineInventory>[] = [
+  { accessorKey: 'name', header: 'Name' },
+  { accessorKey: 'year', header: 'Year' },
+  { accessorKey: 'type', header: 'Type' },
+  { accessorKey: 'stock', header: 'Stock' },
+]
+
 export function DataPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+  const selectedNames = selectionSample
+    .filter((_, i) => rowSelection[i])
+    .map((w) => w.name)
 
   // Parse sorting from URL: ?sort=name:asc
   const sorting = useMemo<SortingState>(() => {
@@ -135,20 +150,6 @@ export function DataPage() {
     {
       accessorKey: 'type',
       header: 'Type',
-      cell: ({ row }) => {
-        const type = row.getValue('type') as string
-        const colors: Record<string, string> = {
-          Red: 'bg-red-500/10 text-red-700 dark:text-red-300 ring-red-500/20',
-          White: 'bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100 ring-amber-500/40',
-          Rosé: 'bg-pink-500/10 text-pink-700 dark:text-pink-300 ring-pink-500/20',
-          Sparkling: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 ring-sky-500/20',
-        }
-        return (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset ${colors[type]}`}>
-            {type}
-          </span>
-        )
-      },
     },
     {
       accessorKey: 'stock',
@@ -212,8 +213,39 @@ export function DataPage() {
         />
       </Section>
 
-      <Section 
-        title="Empty State" 
+      <Section
+        title="Row Selection"
+        description="Opt-in via enableRowSelection. The header checkbox toggles the current page; per-row checkboxes use the in-house Checkbox component. Selection state is emitted to the consumer, which renders its own bulk-action UI."
+      >
+        <div className="space-y-3">
+          <div className="flex items-center justify-between min-h-8">
+            <span className="text-xs text-muted-foreground">
+              {selectedNames.length === 0
+                ? 'No rows selected.'
+                : `${selectedNames.length} selected: ${selectedNames.join(', ')}`}
+            </span>
+            <button
+              type="button"
+              disabled={selectedNames.length === 0}
+              onClick={() => setRowSelection({})}
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Clear selection
+            </button>
+          </div>
+          <DataTable
+            columns={selectionColumns}
+            data={selectionSample}
+            pageSize={5}
+            enableRowSelection
+            rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="Empty State"
         description="How the table looks when no results are found."
       >
         <DataTable columns={columns} data={[]} />
