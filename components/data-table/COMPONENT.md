@@ -11,6 +11,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 - **Responsive**: Horizontal overflow handling ensures data remains accessible on mobile and small viewports.
 - **Empty States**: Integrated "No Results" messaging when data is filtered out or empty.
 - **Row Selection (opt-in)**: Header + per-row checkboxes via the project `Checkbox`. Controllable or uncontrolled; emits `RowSelectionState`.
+- **Auto Column Sizing (opt-in)**: Measures the widest accessor value across the *entire* dataset (not just the visible page) and applies it as `min-width` per column — prevents layout jumps when sorting/paginating moves long values in or out of view.
 - **Accessibility**: Sort headers are real buttons with `aria-sort`, keyboard activation (Enter/Space), focus ring; `prefers-reduced-motion` disables row spring/stagger.
 - **i18n Ready**: Localized pagination labels ("Page X of Y") and button titles.
 
@@ -37,6 +38,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 | `enableRowSelection` | `boolean` | `false` | Opt-in: prepends a checkbox column with select-all-on-page in the header. |
 | `rowSelection` | `RowSelectionState` | — | Controlled selection map (`{ [rowId: string]: boolean }`). Omit for internal state. |
 | `onRowSelectionChange` | `(selection: RowSelectionState) => void` | — | Called when selection changes. Required when `rowSelection` is controlled. |
+| `enableAutoColumnSize` | `boolean` | `false` | Opt-in: pre-measures the widest value per column (entire dataset, not just current page) and sets it as `min-width`. Stops layout jumps on sort/paginate. |
 
 ## Usage
 

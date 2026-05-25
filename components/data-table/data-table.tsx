@@ -9,7 +9,7 @@ import {
   PaginationState,
   RowSelectionState,
 } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -35,6 +35,14 @@ export interface DataTableProps<TData, TValue> {
   enableRowSelection?: boolean
   rowSelection?: RowSelectionState
   onRowSelectionChange?: (selection: RowSelectionState) => void
+  // Auto column sizing (opt-in)
+  /**
+   * Measure the widest accessor value across the *entire* dataset (not just
+   * the visible page) and apply it as `min-width` to each column. Prevents
+   * the table from jumping when sorting or paginating moves long values
+   * in/out of view.
+   */
+  enableAutoColumnSize?: boolean
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -52,6 +60,7 @@ export function DataTable<TData, TValue>({
   enableRowSelection = false,
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
+  enableAutoColumnSize = false,
 }: DataTableProps<TData, TValue>) {
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const [internalPagination, setInternalPagination] = useState<PaginationState>({
@@ -114,6 +123,8 @@ export function DataTable<TData, TValue>({
     }
   }, [pagination.pageIndex])
 
+  const columnMinWidths = useColumnMinWidths(data, columns, enableAutoColumnSize)
+
   const variants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 20 : -20,
@@ -134,6 +145,14 @@ export function DataTable<TData, TValue>({
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
+            {enableAutoColumnSize && (
+              <colgroup>
+                {table.getAllLeafColumns().map((col) => {
+                  const w = columnMinWidths[col.id]
+                  return <col key={col.id} style={w ? { minWidth: `${w}px` } : undefined} />
+                })}
+              </colgroup>
+            )}
             <thead className="bg-muted/50 border-b border-border">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -302,6 +321,59 @@ function PaginationBtn({
       {children}
     </button>
   )
+}
+
+/**
+ * Measure the widest accessor value across the entire dataset (not just the
+ * visible page) plus the header label, and return a px floor per column.
+ *
+ * Used as `min-width` on a `<colgroup>` so columns stay stable when long
+ * values are sorted/paginated in or out of view. Uses canvas `measureText`
+ * (cheap, no layout flush). Skipped when `enabled === false` or no DOM.
+ */
+function useColumnMinWidths<TData, TValue>(
+  data: TData[],
+  columns: ColumnDef<TData, TValue>[],
+  enabled: boolean,
+): Record<string, number> {
+  return useMemo(() => {
+    if (!enabled || typeof document === 'undefined') return {}
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return {}
+
+    const FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif'
+    const CELL_FONT = `400 14px ${FAMILY}`
+    const HEADER_FONT = `600 14px ${FAMILY}`
+    const CELL_PADDING_X = 32 // matches px-4 + px-4
+    const SORT_ICON_BUFFER = 24 // chevron + gap
+
+    const widths: Record<string, number> = {}
+
+    for (const col of columns) {
+      const accessor = (col as { accessorKey?: keyof TData }).accessorKey
+      const id = col.id ?? (accessor as string | undefined)
+      if (!id) continue
+
+      ctx.font = HEADER_FONT
+      const headerLabel = typeof col.header === 'string' ? col.header : id
+      let max = ctx.measureText(headerLabel).width + SORT_ICON_BUFFER
+
+      if (accessor) {
+        ctx.font = CELL_FONT
+        for (const row of data) {
+          const v = row[accessor]
+          const s = v == null ? '' : String(v)
+          const w = ctx.measureText(s).width
+          if (w > max) max = w
+        }
+      }
+
+      widths[id] = Math.ceil(max + CELL_PADDING_X)
+    }
+
+    return widths
+  }, [data, columns, enabled])
 }
 
 function buildSelectionColumn<TData, TValue>(m: DataTableMessages): ColumnDef<TData, TValue> {
