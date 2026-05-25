@@ -23,6 +23,8 @@
 | Layer Panel          | Listet alle Objekte, Rename / Visibility / Lock / Delete / Reorder.    |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
 | Persistence          | ❌ noch nicht — kein localStorage, kein onSave.                         |
+| Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
+| Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
 | Export               | ❌ noch nicht — kein PNG / PDF.                                         |
 | Multi-Area           | ❌ noch nicht — eine Canvas (Front).                                    |
 
@@ -30,13 +32,20 @@
 
 ## Bug Log
 
-### Open: ImageCropper schneidet den falschen Bereich aus
+### #21 — ImageCropper schneidet den falschen Bereich aus *(2026-05-25 — gefixt)*
 
-**Symptom:** Der ausgewählte Crop-Bereich im `ImageCropperModal` deckt sich nicht mit dem, was nach `addImage` auf der Canvas landet. Verschoben / falsch skaliert.
+**Symptom:** Der ausgewählte Crop-Bereich im `ImageCropperModal` deckt sich nicht mit dem, was nach `addImage` auf der Canvas landet — leicht verschoben, falsch skaliert.
 
-**Verdacht:** Zags `drawCroppedImageToCanvas` rechnet in Viewport-Pixeln, geht von 1 viewport-px = 1 natural-px bei zoom=1 aus (siehe Note in COMPONENT.md). Die `FitZoomOnLoad`-Helper-Logik im Modal könnte falsch initialisieren, oder `object-fit` auf dem Bild im Cropper-Viewport ist nicht 1:1.
+**Root Cause:** Race zwischen `setDefaultCrop` und `setZoom(fit)` im Cropper-Lifecycle:
 
-**Nächster Schritt:** `image-cropper-modal/image-cropper-modal.tsx` plus `getCroppedImage`/`onCrop`-Pipeline in `MainToolbar.tsx` durchspielen, mit einem Test-Bild + bekannter Crop-Region und dem resultierenden Blob die Maße vergleichen.
+1. `ImageCropper.Root` mountete mit `defaultZoom={1}`. Das Bild rendert in Zags Layout-Modell an seiner natürlichen CSS-Größe — bei großen Fotos überläuft die Layout-Box den 600×340-Viewport.
+2. Sobald `viewportRect` gemessen war, rief Zags Machine `setDefaultCrop` und setzte die Selection auf 80 % des Viewports (`computeDefaultCropDimensions` in `@zag-js/image-cropper/dist/image-cropper.utils.js`).
+3. `FitZoomOnLoad` schoss **danach** los und rief `setZoom(fitZoom)` (z. B. 0,085). Das Bild schrumpfte visuell auf Viewport-Größe — die Selection-Rect blieb aber in Viewport-Pixeln stehen und deckte plötzlich mehr als das sichtbare Bild ab.
+4. Bei Apply rechnete `drawCroppedImageToCanvas`: `sourceWidth = crop.width / zoom`. Mit dem geschrumpften Zoom überschritt das `naturalSize.width` → der Browser sampled über die Bildränder hinaus, das Output-Canvas (in Viewport-Pixeln) stretchte das Ergebnis um genau jenen Faktor `crop.width / (naturalSize.width × fitZoom)`. Genau die wahrgenommene Verschiebung + Skalierung.
+
+**Fix:** `naturalSize` per Hidden-`new Image()` und Viewport-Größe per `ResizeObserver` ermittelt **bevor** `ImageCropper.Root` mountet. Dann `defaultZoom={fitZoom}` plus passendes `initialCrop={…}` (95 % der sichtbaren Bildregion, in der Viewport-Mitte) direkt als Props mitgegeben — Zags allererstes `setDefaultCrop` sieht damit bereits die korrekt sichtbare Bildregion. `FitZoomOnLoad` ersatzlos entfernt. Während der Mess-Phase rendert ein dünnes Loading-Skeleton (`m.loading`), die Modal-Höhe bleibt stabil (kein Layout-Shift). Reset der gemessenen Werte läuft im `onOpenChange`-Handler (nicht im Effect), um den React-Compiler `set-state-in-effect`-Lint sauber zu halten.
+
+**Follow-up: Source-Pixel-Output statt Viewport-Pixel-Output.** Zags `getCroppedImage` rendert das Ergebnis-Canvas in `crop.width × crop.height` Viewport-Pixeln — bei einem 6000×4000-Foto im 600×340-Viewport sind das ~570 px für die volle Selection, deutlich unter Print-Auflösung. `ApplyButton` ruft jetzt `renderHighResCrop()` mit denselben Zoom/Crop/Offset/Rotation/Flip/Viewport-Werten auf und zeichnet auf ein Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom × crop.height / zoom`, gecappt bei 4096 px gegen Memory-Blow-ups bei extremem Zoom-out). Math identisch mit Zags `drawCroppedImageToCanvas` — Position/Skalierung bleiben pixelgenau, nur das Output-Canvas ist groß genug für 300 dpi Print.
 
 ### #20 — Text-Drag war blockiert + Bleed nur rechts/unten *(2026-05-24 — gefixt)*
 
@@ -138,6 +147,14 @@
 
 ## Entscheidungs-Log
 
+### 2026-05-25 — Bleed Mask + Preview Mode (CSS-Overlay statt Fabric-Layer)
+
+- Vier absolute-positionierte `<div>`-Stripes (top / bottom / left / right) in `LabelCanvas` decken den Bleed-Bereich um das Label ab. Position via prozentuale Anteile der bekannten `widthMm`/`heightMm`/`bleedMm` — keine pixel-coords, kein Re-Compute bei Zoom/Pan nötig, weil das `<canvas>` DOM-Element seine feste Pixelgröße behält (Fabric skaliert über `viewportTransform` nur den Inhalt).
+- `pointer-events: none` + `z-index: 40` lässt Fabrics Selection/Drag-Handler ungestört, dimmt aber alles visuell außerhalb des Labels.
+- **Design-View:** Opacity 0.55 mit `var(--background)` als Fill — überlaufende Objekte bleiben halb-transparent erkennbar. **Preview-Mode:** Opacity 1.0 → Bleed verschwindet komplett, nur das druckbare Label ist sichtbar (praktischer „Wie sieht das gedruckte Etikett aus?"-Test).
+- Toggle-Button mit Eye/EyeOff-Icon im Header neben Fullscreen. `aria-pressed` für State-Indikation. `transition: opacity 180ms` für sanften Wechsel.
+- Bewusst NICHT als Fabric-Layer implementiert: ein Fabric-Object würde im Object-Stack, History-Snapshots, Layer-Panel auftauchen und die existierenden Filter (`_isLabel`, etc.) duplizieren. Die CSS-Lösung bleibt orthogonal zum Editor-State.
+
 ### 2026-05-24 — Stacking + Color in eigenständige Komponenten extrahiert
 
 - **`components/stack-order-controls/`** — neues Headless-Komponente mit 4 Buttons (Front, Forward, Backward, Back). Eigene Messages (DE/EN), Tooltips, Disabled-State, `visible`-Prop zum Reduzieren auf eine Teilmenge. Reused von `ContextToolbar`.
@@ -163,4 +180,4 @@
 
 ---
 
-*Last updated: 2026-05-24*
+*Last updated: 2026-05-25*

@@ -1,5 +1,5 @@
 import * as fabric from 'fabric'
-import { useFabricCanvas } from './engine/use-fabric-canvas'
+import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
 import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { LabelCanvas } from './components/canvas/LabelCanvas'
 import { useDesignerStore } from './store/designer-store'
@@ -13,9 +13,16 @@ import { ValidatorBadge, type ValidationWarning } from '../validator-badge/valid
 import { validateCompliance } from './wine-fields/validator'
 import { useEffect, useState, useRef } from 'react'
 import { cn } from '../lib/utils'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff } from 'lucide-react'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider'
 import type { FabricObjectProperties, FabricObjectMeta } from './store/types'
+
+// Bleed dimming around the label. Design view stays semi-transparent so
+// objects bleeding out are still readable; preview goes fully opaque to
+// emulate the actual print result (everything outside the printable area
+// is hidden, only the label itself shows through).
+const BLEED_MASK_OPACITY_DESIGN = 0.55
+const BLEED_MASK_OPACITY_PREVIEW = 1
 
 export interface WineFieldValues {
   name?:               string
@@ -83,6 +90,7 @@ export function CellarCanvas({
   const [rightTab, setRightTab] = useState<'props' | 'fields' | 'background'>('props')
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [previewMode, setPreviewMode] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const toggleFullscreen = () => {
@@ -231,7 +239,20 @@ export function CellarCanvas({
              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
            </button>
         </div>
-        <button 
+        <button
+          onClick={() => setPreviewMode(p => !p)}
+          className={cn(
+            "p-2 rounded-md transition-colors mr-1",
+            previewMode
+              ? "bg-primary text-primary-foreground hover:bg-primary/90"
+              : "hover:bg-muted text-muted-foreground hover:text-foreground"
+          )}
+          title={previewMode ? "Exit Preview (show bleed)" : "Preview (hide bleed area)"}
+          aria-pressed={previewMode}
+        >
+          {previewMode ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+        <button
           onClick={toggleFullscreen}
           className="p-2 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
           title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
@@ -260,7 +281,14 @@ export function CellarCanvas({
       <main className="relative overflow-hidden bg-muted/20 flex flex-col" style={{ gridRow: '3' }}>
         {/* Canvas Centerer */}
         <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
-           <LabelCanvas ref={canvasRef} />
+           <LabelCanvas
+             ref={canvasRef}
+             widthMm={widthMm}
+             heightMm={heightMm}
+             bleedMm={BLEED_MM}
+             bleedMaskOpacity={previewMode ? BLEED_MASK_OPACITY_PREVIEW : BLEED_MASK_OPACITY_DESIGN}
+             bleedMaskColor="var(--background)"
+           />
         </div>
 
         {/* Floating Validator Badge — bottom-right of canvas area (per spec) */}

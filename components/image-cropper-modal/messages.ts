@@ -11,6 +11,7 @@ export type ImageCropperMessages = {
   flipH: string
   flipV: string
   noImage: string
+  loading: string
   closeDialog: string
 }
 
@@ -26,6 +27,7 @@ export const MESSAGES = {
     flipH:         'Horizontal spiegeln',
     flipV:         'Vertikal spiegeln',
     noImage:       'Kein Bild ausgewählt.',
+    loading:       'Bild wird geladen …',
     closeDialog:   'Dialog schließen',
   },
   en: {
@@ -39,6 +41,7 @@ export const MESSAGES = {
     flipH:         'Flip horizontal',
     flipV:         'Flip vertical',
     noImage:       'No image selected.',
+    loading:       'Loading image…',
     closeDialog:   'Close dialog',
   },
 } as const satisfies ComponentMessages<ImageCropperMessages>

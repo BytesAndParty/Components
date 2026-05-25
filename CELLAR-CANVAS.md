@@ -44,69 +44,69 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 ## Feature Inventory
 
 ### Canvas & Viewport
-- [ ] Fabric.js canvas — 90×120mm default, configurable per area
-- [ ] Zoom in/out + fit-to-screen (`+`/`-` keys and buttons)
+- [x] Fabric.js canvas — 90×120mm default, configurable per area
+- [x] Zoom in/out + fit-to-screen (`+`/`-` keys and buttons)
 - [ ] Pan (Spacebar + drag)
 - [ ] Snap to grid + smart guide lines (show on drag near other objects)
 - [ ] Ruler overlay (mm units, toggleable)
-- [ ] Print bleed indicator (3mm dashed zone, non-interactive overlay)
+- [x] Bleed area — symmetric 40 mm canvas margin so overflowing objects stay visible; CSS overlay dims the bleed (~55 % opacity) and Preview-Toggle (Eye-Icon, header) ramps to 100 % for a clean label-only view
 - [ ] Multi-area tabs: Front / Back / Neck label (independent canvases)
 
 ### Image Input
-- [ ] File input (click to upload) — JPEG, PNG, WebP, SVG, max 10MB
-- [ ] **Clipboard paste** (`Ctrl/Cmd+V`) — reads `ClipboardEvent.clipboardData.items`, pastes image directly onto canvas at center
+- [x] File input (click to upload) — JPEG, PNG, WebP, SVG, max 10MB
+- [x] **Clipboard paste** (`Ctrl/Cmd+V`) — reads `ClipboardEvent.clipboardData.items`, pastes image directly onto canvas at center (skips cropper)
 - [ ] Drag & drop file onto canvas area
-- [ ] After upload: Ark UI `ImageCropper` modal before placement (aspect ratio, zoom, rotate)
+- [x] After upload: Ark UI `ImageCropper` modal — pre-measured `naturalSize`+`viewportSize` before mount → correct `defaultZoom`/`initialCrop`; Apply renders source-pixel-resolution canvas (no quality loss)
 - [ ] Re-crop: select image on canvas → "Crop" in ContextToolbar → re-open ImageCropper
 
 ### Tools (Main Toolbar)
-- [ ] Select / Move / Transform
-- [ ] Text tool → places `fabric.IText` on canvas
-- [ ] Image tool → upload / paste → crop → place
-- [ ] Shape tool → Rectangle / Circle / Line
+- [x] Select / Move / Transform
+- [x] Text tool — `fabric.Textbox` with word-wrap, click-to-edit
+- [x] Image tool — upload → crop → place
+- [x] Shape tool — Rectangle / Circle / Line
 - [ ] Pan mode
 - [ ] Extras panel (signature, ornaments, decorative dividers) — *low priority*
 
 ### Context Toolbar (changes per selection)
-- [ ] **Text:** font family, size, bold, italic, underline, letter spacing, line height, alignment, color
-- [ ] **Shape:** fill color, stroke color, stroke width, corner radius (rect only)
+- [x] **Text:** font family, size, bold, italic, underline, letter spacing, line height, alignment, color
+- [x] **Shape:** fill color, stroke color, stroke width (corner radius for rect — pending)
 - [ ] **Image:** opacity, replace, re-crop
-- [ ] **Alignment bar:** align L/C/R/Top/Middle/Bottom, distribute evenly — shown when ≥ 2 objects selected
+- [x] **Alignment bar:** align L/C/R/Top/Middle/Bottom, distribute evenly — shown when ≥ 2 objects selected
 
 ### Layer Panel
-- [ ] Layer list — mirrors Fabric.js z-order, reversed (top = front)
-- [ ] Drag-to-reorder (Framer Motion `Reorder.Group`) → updates canvas z-order
-- [ ] Visibility toggle (eye icon) — hides object without deleting
-- [ ] Lock/unlock — locks object against selection/move
-- [ ] Inline rename (double-click on name)
-- [ ] Delete (row button + `Delete`/`Backspace` key)
+- [x] Layer list — mirrors Fabric.js z-order, reversed (top = front)
+- [x] Drag-to-reorder (Framer Motion `Reorder.Group`) → updates canvas z-order
+- [x] Visibility toggle (eye icon) — hides object without deleting
+- [x] Lock/unlock — locks object against selection/move
+- [x] Inline rename (double-click on name)
+- [x] Delete (row button + `Delete`/`Backspace` key)
 - [ ] Group / Ungroup selected objects
 - [ ] Type icons per layer (text / image / shape / wine-field / group)
 
 ### Wine Data Overlays
-- [ ] Insertable field blocks: Name, Vintage, Alcohol %, Volume (ml), Region, Grape Varieties, Producer, Country of Origin, Sugar Content, Energy (kcal), Allergen Note
-- [ ] **QR Code** — generated from `initialWineFields.nutritionalInfoUrl`, inserted as image object, flagged as `_fieldKey: 'qrCode'`
+- [x] Insertable field blocks (6: Name, Vintage, Alcohol %, Volume, Producer, Region — rest pending)
+- [x] **QR Code** — generated from `initialWineFields.nutritionalInfoUrl`, inserted as image object, flagged as `_fieldKey: 'qrCode'`
 - [ ] Pre-styled text presets per field (font, size, weight, position suggestion)
 - [ ] Duplicate prevention (each field once per canvas)
-- [ ] `initialWineFields` prop pre-populates text values
-- [ ] Fields panel shows current value preview
+- [x] `initialWineFields` prop pre-populates text values
+- [x] Fields panel shows current value preview
 
 ### EU Compliance Validator (Regulation 2023/2977)
-- [ ] Required fields: alcohol %, volume, allergen note, country of origin, QR code (or energy + sugar text)
-- [ ] Scans canvas objects for `_fieldKey` metadata
-- [ ] `ValidatorBadge` floats bottom-right — count of missing fields
-- [ ] Popover lists each missing field with description
-- [ ] Badge disappears when all required fields are placed
+- [x] Required fields: alcohol %, volume, allergen note, QR code
+- [x] Scans canvas objects for `_fieldKey` metadata
+- [x] `ValidatorBadge` floats bottom-right — count of missing fields
+- [x] Popover lists each missing field with description
+- [x] Badge disappears when all required fields are placed
 - [ ] `onValidationChange(warnings: string[])` callback
 - [ ] Removing QR code → strong warning (red badge, not just yellow)
 
 ### Persistence & Save
-- [ ] **Auto-save to localStorage** — debounced 1s after every change
-- [ ] localStorage key: `cellar-canvas-draft-${sessionId}`
-- [ ] Restore from localStorage on mount (if `initialState` not provided)
-- [ ] **Manual save button** → triggers `onSave(state)` callback → app saves to DB
-- [ ] Save button shows dirty state (unsaved changes indicator)
-- [ ] `onSave` is async — button shows loading/success state
+- [x] **Auto-save to localStorage** — debounced 1s after every change
+- [x] localStorage key: `cellar-canvas-draft` (configurable via `storageKey` prop, `null` to opt out)
+- [x] Restore from localStorage on mount (if `initialState` not provided)
+- [x] **Manual save button** → triggers `onSave(state)` callback → app saves to DB
+- [x] Save button shows dirty state (unsaved changes indicator)
+- [x] `onSave` is async — button shows loading/success/error state
 
 ### Background Panel
 - [ ] Solid color (via `ColorPickerPanel`)
@@ -121,9 +121,9 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [ ] `hideBuiltInTemplates` prop
 
 ### Undo / Redo
-- [ ] JSON snapshot per area (max 50 states)
-- [ ] `Cmd/Ctrl+Z` / `Cmd/Ctrl+Shift+Z` keyboard shortcuts
-- [ ] Undo/Redo buttons in toolbar
+- [x] JSON snapshot (max 50 states)
+- [x] `Cmd/Ctrl+Z` / `Cmd/Ctrl+Shift+Z` keyboard shortcuts via TanStack Hotkeys
+- [x] Undo/Redo buttons in toolbar
 - [ ] History cleared on template apply or area switch (with confirm)
 
 ### Export Pipeline
@@ -345,7 +345,7 @@ interface CellarCanvasProps {
 
 ## Implementation Phases
 
-### Phase 1 — Atomic Sub-Components ← current
+### Phase 1 — Atomic Sub-Components
 Priorität: Jede Komponente **inhaltlich vollständig + Styling perfektioniert** bevor Phase 2 beginnt.
 Jede Komponente wird in `/designer` als eigene Section showcased.
 
@@ -385,33 +385,33 @@ Jede Komponente wird in `/designer` als eigene Section showcased.
 - `ValidatorBadge` with popover
 - `initialWineFields` prop wiring
 
-### Phase 5 — Image Tool + Shapes + Background
-- Install `@types/qrcode`
-- File upload + drag & drop → `ImageCropperModal` → canvas
-- Re-crop from ContextToolbar
-- Shape tools + `ShapeToolOptions`
-- `BackgroundPanel` (solid, gradient, image)
-- `BleedOverlay` (3mm dashed zone)
-- Snap to grid + smart guides
-- Group / Ungroup
+### Phase 5 — Image Tool + Shapes + Background ← current
+- [x] File upload → `ImageCropperModal` → canvas (pre-measured zoom/initialCrop; source-pixel-resolution output)
+- [ ] Drag & drop file onto canvas area
+- [ ] Re-crop from ContextToolbar
+- [x] Shape tools (Rect / Circle / Line)
+- [x] `BackgroundPanel` — solid colour (gradient + image still pending)
+- [x] Bleed area — symmetric 40 mm canvas + CSS bleed-mask overlay + Preview-Toggle (replaces the originally planned 3 mm dashed zone — the dimming overlay communicates the bleed boundary much more intuitively than a dashed line)
+- [ ] Snap to grid + smart guides
+- [ ] Group / Ungroup
 - **Testing: client-side only** — kein Server-Upload, `onExport` callback wird im Showcase nur geloggt
 
 ### Phase 6 — Templates + Undo/Redo + Multi-Area
-- Install `jspdf`
-- 5 built-in templates as Fabric JSON
-- `TemplatesPanel` with previews
-- Undo/Redo — JSON snapshot history (50 states)
-- `LabelAreaTabs` — Front / Back / Neck
+- [x] Undo/Redo — JSON snapshot history (50 states)
+- [ ] Install `jspdf`
+- [ ] 5 built-in templates as Fabric JSON
+- [ ] `TemplatesPanel` with previews
+- [ ] `LabelAreaTabs` — Front / Back / Neck
 
 ### Phase 7 — Persistence + Export + Tour
-- localStorage autosave + `onSave` callback wiring
-- Save button with dirty state + loading/success
-- `export-pipeline.ts` — PNG + PDF
-- `ExportPanel` — area selector, format, dpi
-- Ark UI `DownloadTrigger`
-- `onExport` callback
-- Ark UI `Tour` — 5-step first-run walkthrough
-- i18n: `i18n/en.ts` + `i18n/de.ts`
+- [x] localStorage autosave + `onSave` callback wiring
+- [x] Save button with dirty state + loading/success/error
+- [ ] `export-pipeline.ts` — PNG + PDF
+- [ ] `ExportPanel` — area selector, format, dpi
+- [ ] Ark UI `DownloadTrigger`
+- [ ] `onExport` callback
+- [ ] Ark UI `Tour` — 5-step first-run walkthrough
+- [ ] i18n: `i18n/en.ts` + `i18n/de.ts`
 
 ### Phase 8 — Polish + Extras + Showcase
 - `FocusTrap` audit across all modals
@@ -440,6 +440,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-04-28*
+*Last updated: 2026-05-25*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*
