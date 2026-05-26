@@ -332,6 +332,39 @@ export class FabricBridge {
   }
 
   /**
+   * Adds an emoji as a Fabric text object. Emojis are rendered by the
+   * browser's emoji font so the result stays vector-clean at any zoom and
+   * stores as a single Unicode codepoint instead of a binary blob. The
+   * default font size is roughly double the regular text default — a
+   * sensible label-sized emoji.
+   */
+  addEmoji(emoji: string) {
+    const textbox = new fabric.Textbox(emoji, {
+      originX: 'left',
+      originY: 'top',
+      left: this.bleedPx + 100,
+      top: this.bleedPx + 100,
+      width: mmToPx(20),
+      fontSize: 48,
+      fontFamily: 'sans-serif',
+      fill: '#000000',
+    })
+
+    const meta: FabricObjectMeta = {
+      id: crypto.randomUUID(),
+      _layerName: `Emoji ${emoji}`,
+      _type: 'text',
+      _extras: true,
+    }
+    Object.assign(textbox, meta)
+
+    this.canvas.add(textbox)
+    this.canvas.setActiveObject(textbox)
+    this.canvas.renderAll()
+    this.saveHistory()
+  }
+
+  /**
    * Adds a user-supplied image to the canvas. Scales it to fit within
    * a 40mm bounding box so it never blows past the label dimensions.
    */

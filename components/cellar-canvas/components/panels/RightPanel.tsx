@@ -6,19 +6,21 @@ import { LayerPanel, type Layer } from '../../../layer-panel/layer-panel'
 import { PropertiesPanel } from './PropertiesPanel'
 import { BackgroundPanel } from './BackgroundPanel'
 import { WineFieldsPanel } from './WineFieldsPanel'
+import { ExtrasPanel } from './ExtrasPanel'
 import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectMeta, FabricObjectProperties } from '../../store/types'
 import type { CellarCanvasMessages } from '../../messages'
 import type { WineFieldValues } from '../../CellarCanvas'
 
-type Tab = 'props' | 'fields' | 'background'
+type Tab = 'props' | 'fields' | 'background' | 'extras'
 
 function buildTabs(m: CellarCanvasMessages): { id: Tab; label: string }[] {
   return [
     { id: 'props',      label: m.tabProperties },
     { id: 'fields',     label: m.tabWineData },
     { id: 'background', label: m.tabBackground },
+    { id: 'extras',     label: m.tabExtras },
   ]
 }
 
@@ -80,6 +82,7 @@ export function RightPanel({
         {tab === 'props'      && <PropertiesPanel bridge={bridge} activeProps={activeProps} />}
         {tab === 'fields'     && <WineFieldsPanel bridge={bridge} values={wineFields} />}
         {tab === 'background' && <BackgroundPanel bridge={bridge} color={backgroundColor} />}
+        {tab === 'extras'     && <ExtrasPanel bridge={bridge} />}
       </div>
 
       <div data-tour="layers-section" className="p-4 border-t border-border bg-muted/10">
