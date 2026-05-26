@@ -33,6 +33,10 @@ export function useFabricCanvas(initialDimensions: CanvasDimensions) {
       height: mmToPx(heightMm + 2 * BLEED_MM),
       backgroundColor: 'transparent',
       preserveObjectStacking: true,
+      // Styling the selection lasso (Canva-style)
+      selectionColor: 'rgba(255, 0, 255, 0.1)',
+      selectionBorderColor: '#ff00ff',
+      selectionLineWidth: 1.5,
     })
 
     const bridge = new FabricBridge(canvas, { widthMm, heightMm, bleedMm: BLEED_MM })

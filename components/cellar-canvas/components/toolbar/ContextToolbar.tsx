@@ -5,9 +5,9 @@ import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
-import { Crop, Replace } from 'lucide-react'
+import { Crop, Trash2 } from 'lucide-react'
 import type { FabricBridge } from '../../engine/fabric-bridge'
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useState } from 'react'
 import type { FabricObjectProperties } from '../../store/types'
 
 interface ContextToolbarProps {
@@ -19,19 +19,6 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const setCropper = useDesignerStore(s => s.setCropper)
   const [props, setProps] = useState<FabricObjectProperties | null>(null)
-  const replaceInputRef = useRef<HTMLInputElement>(null)
-
-  function handleReplaceFile(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    const targetId = selectedIds[0]
-    e.target.value = ''
-    if (!file || !targetId) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      bridge.current?.updateImageSource(targetId, reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
 
   // Update local state when selection changes or object is modified
   useEffect(() => {
@@ -97,18 +84,9 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   }
 
   return (
-    <div className="h-full flex items-center px-4 gap-4">
+    <div className="h-full flex items-center px-4 gap-4 w-full">
       {isImage && (
         <div className="flex items-center gap-2">
-          <input
-            ref={replaceInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
-            onChange={handleReplaceFile}
-            className="sr-only"
-            aria-hidden
-            tabIndex={-1}
-          />
           <button
             onClick={() => {
               const src = bridge.current?.getSelectedImageSrc()
@@ -119,14 +97,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
             className="flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-muted transition-colors"
           >
             <Crop size={14} />
-            {m.toolCrop}
-          </button>
-          <button
-            onClick={() => replaceInputRef.current?.click()}
-            className="flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-muted transition-colors"
-          >
-            <Replace size={14} />
-            {m.toolReplace}
+            {m.toolCrop ?? 'Crop'}
           </button>
           <div className="w-px h-5 bg-border mx-2" />
           <div className="flex items-center h-9 bg-card border border-border rounded-lg px-2">
@@ -204,6 +175,16 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       {isMulti && (
         <AlignmentBar onAlign={(action) => bridge.current?.alignSelected(action)} />
       )}
+
+      <div className="flex-1" />
+
+      <button
+        onClick={() => bridge.current?.deleteSelected()}
+        className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md transition-colors"
+        title={m.toolDelete}
+      >
+        <Trash2 size={16} />
+      </button>
     </div>
   )
 }

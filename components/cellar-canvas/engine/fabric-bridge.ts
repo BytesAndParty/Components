@@ -789,6 +789,7 @@ export class FabricBridge {
         id: o.id,
         name: o._layerName || o.text || 'Unnamed Layer',
         type: o._type,
+        fieldKey: o._fieldKey,
         visible: o.visible,
         locked: !!o.lockMovementX, // Basic lock check
       }

@@ -80,7 +80,7 @@ export function RightPanel({
 
       <div className="flex-1 overflow-auto p-4">
         {tab === 'props'      && <PropertiesPanel bridge={bridge} activeProps={activeProps} />}
-        {tab === 'fields'     && <WineFieldsPanel bridge={bridge} values={wineFields} />}
+        {tab === 'fields'     && <WineFieldsPanel bridge={bridge} values={wineFields} layers={layers} />}
         {tab === 'background' && <BackgroundPanel bridge={bridge} color={backgroundColor} />}
         {tab === 'extras'     && <ExtrasPanel bridge={bridge} />}
       </div>
