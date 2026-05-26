@@ -60,7 +60,7 @@
 ### Tech-Debt / Known Limitations
 
 - ~~Bg-Color nicht in Undo/Redo-History~~ — **gefixt 2026-05-26**: `saveHistory` schreibt jetzt die volle `{ canvas, bg }`-Form, `setBackground` ruft `saveHistory` nach jeder Mutation, `restoreHistory` lädt beide Werte zurück. Backward-Compat für alte plain-canvas-Snapshots in localStorage bleibt.
-- **`cellar:property-changed` feuert teils mehrfach pro logischer Aktion** (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
+- ~~`cellar:property-changed` feuert teils mehrfach pro logischer Aktion~~ — **entschärft 2026-05-26**: `useCanvasSync` debounct den Sync-`update`-Callback per `queueMicrotask`. Mehrere Events im selben Tick (Stack-Op + Selection-Restore, `alignSelected`-Mass-Mutationen, Bridge-Property-Changes) kollabieren zu genau einem `update()`-Aufruf. `saveHistory` bleibt ungedrosselt — jede `object:modified` ist eine diskrete User-Aktion und verdient einen eigenen History-Eintrag.
 - ~~ContextToolbar Image-Branch unvollständig~~ — **gefixt 2026-05-26**: Crop + Replace + Opacity sind verdrahtet. Replace nimmt eine neue Datei aus dem File-Picker und schreibt direkt via `bridge.updateImageSource(targetId, dataUrl)` — kein Cropper-Dialog, ID + Position + Layer-Meta bleiben.
 
 ---
@@ -212,6 +212,13 @@
 ---
 
 ## Entscheidungs-Log
+
+### 2026-05-26 — Event-Dedupe für `cellar:property-changed`
+
+- `useCanvasSync` koalesziert mehrere Sync-Events pro Tick zu einem einzelnen `update()`-Call via `queueMicrotask` + `scheduled`-Flag. Vorher konnte eine Stack-Op die schwere Berechnung (`getLayers`, `validateCompliance`, Viewport-Snapshot) doppelt feuern: einmal über `notifyStackChanged → cellar:property-changed`, ein weiteres Mal über die Selection-Restore-Sequenz (z. B. `alignSelected` discardet + setzt die ActiveSelection neu, was zwei `selection:*`-Events erzeugt).
+- **Bewusst nicht gedrosselt:** `saveHistory()` in `onModified`. Jede `object:modified` ist eine diskrete User-Aktion, die einen eigenen History-Eintrag verdient. Würde man das auch debouncen, gingen Mid-Action-Snapshots verloren.
+- Initial-Render bleibt synchron (`update()` direkt nach Listener-Setup), damit der erste Paint mit korrekten Werten kommt.
+- Cleanup setzt ein `cancelled`-Flag, das der Microtask vor dem `update()`-Aufruf prüft — verhindert State-Schreibe auf eine bereits unmountete Komponente, falls ein Event kurz vor Cleanup noch eingereiht wurde.
 
 ### 2026-05-26 — Bg-Color in Undo/Redo-History
 

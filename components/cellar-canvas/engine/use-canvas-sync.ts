@@ -65,40 +65,66 @@ export function useCanvasSync(
       }
     }
 
+    // Microtask-debounce: stack operations and complex bridge methods can fire
+    // several events in the same synchronous tick (e.g. `bringToFront` triggers
+    // `notifyStackChanged` via `cellar:property-changed` plus the implicit
+    // `object:added`/`object:removed` from Fabric's reorder, and bulk paths
+    // like `alignSelected` mutate every selected object in a row). Coalescing
+    // them into a single `update()` per microtask keeps the React state
+    // changes batched and avoids repeated `getLayers`/`validateCompliance`
+    // work for one logical action.
+    let scheduled = false
+    let cancelled = false
+    const scheduleUpdate = () => {
+      if (scheduled) return
+      scheduled = true
+      queueMicrotask(() => {
+        scheduled = false
+        if (cancelled) return
+        update()
+      })
+    }
+
     const onModified = () => {
-      update()
+      // saveHistory is per-logical-edit and must NOT debounce — each
+      // `object:modified` is a discrete user action that earns its own
+      // history entry. The view sync still rides the microtask queue.
+      scheduleUpdate()
       b.saveHistory()
     }
 
     const canvas = b.canvas
-    canvas.on('selection:created',  update)
-    canvas.on('selection:updated',  update)
-    canvas.on('selection:cleared',  update)
+    canvas.on('selection:created',  scheduleUpdate)
+    canvas.on('selection:updated',  scheduleUpdate)
+    canvas.on('selection:cleared',  scheduleUpdate)
     canvas.on('object:modified',    onModified)
-    canvas.on('object:moving',      update)
-    canvas.on('object:scaling',     update)
-    canvas.on('object:rotating',    update)
-    canvas.on('object:added',       update)
-    canvas.on('object:removed',     update)
+    canvas.on('object:moving',      scheduleUpdate)
+    canvas.on('object:scaling',     scheduleUpdate)
+    canvas.on('object:rotating',    scheduleUpdate)
+    canvas.on('object:added',       scheduleUpdate)
+    canvas.on('object:removed',     scheduleUpdate)
     // Custom property channel — fired by the bridge for non-event-emitting
     // mutations like `obj.set(...)` from NumberInput steppers.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(canvas as any).on('cellar:property-changed', update)
+    ;(canvas as any).on('cellar:property-changed', scheduleUpdate)
 
+    // First paint stays synchronous — viewport transform is already laid
+    // out by the time this effect runs, no batching needed.
     update()
 
     return () => {
-      canvas.off('selection:created',  update)
-      canvas.off('selection:updated',  update)
-      canvas.off('selection:cleared',  update)
+      cancelled = true
+      canvas.off('selection:created',  scheduleUpdate)
+      canvas.off('selection:updated',  scheduleUpdate)
+      canvas.off('selection:cleared',  scheduleUpdate)
       canvas.off('object:modified',    onModified)
-      canvas.off('object:moving',      update)
-      canvas.off('object:scaling',     update)
-      canvas.off('object:rotating',    update)
-      canvas.off('object:added',       update)
-      canvas.off('object:removed',     update)
+      canvas.off('object:moving',      scheduleUpdate)
+      canvas.off('object:scaling',     scheduleUpdate)
+      canvas.off('object:rotating',    scheduleUpdate)
+      canvas.off('object:added',       scheduleUpdate)
+      canvas.off('object:removed',     scheduleUpdate)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).off('cellar:property-changed', update)
+      ;(canvas as any).off('cellar:property-changed', scheduleUpdate)
     }
   }, [bridge, options.enableValidator])
 
