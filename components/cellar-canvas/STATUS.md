@@ -17,7 +17,7 @@
 | Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. |
 | Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
 | Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). |
-| Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + Shape Fill/Stroke/Stroke-Width + Image (Crop-Button → Re-Crop via store-zentrierten Cropper + Opacity) + StackOrderControls + AlignmentBar (live). |
+| Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + Shape Fill/Stroke/Stroke-Width + Image (Crop / Replace / Opacity) + StackOrderControls + AlignmentBar (live). |
 | Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte + Label-Center. Toggle per Header-Button (Magnet) + `S`-Hotkey; Alt unterdrückt Snapping pro Drag. Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
 | Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` setzt `labelColor` Instance-Prop + `isDirty`. Wird per `serializeState` mitpersistiert (`{ canvas, bg }`). |
 | Wine Fields          | 6 Felder + QR-Code, `_fieldKey` Metadata.                              |
@@ -61,7 +61,7 @@
 
 - ~~Bg-Color nicht in Undo/Redo-History~~ — **gefixt 2026-05-26**: `saveHistory` schreibt jetzt die volle `{ canvas, bg }`-Form, `setBackground` ruft `saveHistory` nach jeder Mutation, `restoreHistory` lädt beide Werte zurück. Backward-Compat für alte plain-canvas-Snapshots in localStorage bleibt.
 - **`cellar:property-changed` feuert teils mehrfach pro logischer Aktion** (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
-- **`ContextToolbar` Image-Branch:** Re-Crop + Opacity verdrahtet (2026-05-26). Offen: Replace-Image-Button (komplett neue Source ohne Crop-Dialog).
+- ~~ContextToolbar Image-Branch unvollständig~~ — **gefixt 2026-05-26**: Crop + Replace + Opacity sind verdrahtet. Replace nimmt eine neue Datei aus dem File-Picker und schreibt direkt via `bridge.updateImageSource(targetId, dataUrl)` — kein Cropper-Dialog, ID + Position + Layer-Meta bleiben.
 
 ---
 

@@ -41,6 +41,7 @@ export type CellarCanvasMessages = {
   toolLine:               string
   toolDelete:             string
   toolCrop:               string
+  toolReplace:            string
 
   // Context toolbar
   contextEmpty:           string
@@ -143,6 +144,7 @@ export const MESSAGES = {
     toolLine:                'Linie (L)',
     toolDelete:              'Auswahl löschen (Entf)',
     toolCrop:                'Zuschneiden',
+    toolReplace:             'Ersetzen',
 
     contextEmpty:            'Wähle ein Objekt aus, um Optionen zu sehen',
     contextFill:             'Füllung',
@@ -234,6 +236,7 @@ export const MESSAGES = {
     toolLine:                'Line (L)',
     toolDelete:              'Delete Selected (Del)',
     toolCrop:                'Crop',
+    toolReplace:             'Replace',
 
     contextEmpty:            'Select an object to see options',
     contextFill:             'Fill',
