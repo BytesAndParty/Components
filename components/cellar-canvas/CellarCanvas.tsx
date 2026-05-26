@@ -28,6 +28,11 @@ import type { CanvasViewport } from './engine/use-canvas-sync'
 // is hidden, only the label itself shows through).
 const BLEED_MASK_OPACITY_DESIGN  = 0.55
 const BLEED_MASK_OPACITY_PREVIEW = 1
+// Print-bleed safety zone. The bleed mask extends this far INTO the label
+// edge so designers see a translucent "danger" strip at the boundary —
+// content placed in this strip might get trimmed off by the cutter. 3mm
+// is the standard offset-print safety margin (decision #3 in CELLAR-CANVAS.md).
+const PRINT_BLEED_MM = 3
 
 export interface WineFieldValues {
   name?:               string
@@ -272,6 +277,10 @@ export function CellarCanvas({
             bleedMm={BLEED_MM}
             bleedMaskOpacity={previewMode ? BLEED_MASK_OPACITY_PREVIEW : BLEED_MASK_OPACITY_DESIGN}
             bleedMaskColor="var(--background)"
+            // Preview-Mode versteckt die Safety-Zone, weil das echte Druck-
+            // ergebnis sie nicht zeigt; im Design-Mode zeichnet sie den
+            // 3mm Trim-Risiko-Streifen am Label-Rand.
+            printBleedMm={previewMode ? 0 : PRINT_BLEED_MM}
           />
         </div>
 

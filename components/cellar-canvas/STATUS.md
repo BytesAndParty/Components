@@ -26,7 +26,7 @@
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. **Re-Crop:** Über ContextToolbar für selektierte Bilder möglich; behält ID und Position bei. |
-| Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
+| Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. **3 mm Print-Bleed-Indikator:** Maske reicht im Design-Mode 3 mm INS Label hinein — der entstehende dunklere Randstreifen markiert die Trim-Risiko-Zone (kein wichtiger Inhalt). Preview-Mode unterdrückt das (echter Druck-Look). |
 | i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
 | Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
@@ -48,7 +48,6 @@
 
 ### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
 
-- **3 mm Print-Bleed-Indicator** — gestricheltes Rect am Label-Rand (separat vom 40 mm Workspace-Bleed). Visueller Druck-Sicherheitsabstand laut Decision #3.
 - **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
 - **Pan-Tool** — aktuell nur Tool-Switch ohne Funktion. Plan: Space+Drag, oder eigenes Pan-Mode.
 - **Background Image** — neben Color auch Image (im `BackgroundPanel`).
@@ -212,6 +211,12 @@
 ---
 
 ## Entscheidungs-Log
+
+### 2026-05-26 — 3 mm Print-Bleed-Indikator (Maske überlappt Label-Rand)
+
+- Statt einer separaten gestrichelten Linie (Decision #3 schlug das vor) erweitern wir die bestehende Bleed-Maske um die Print-Bleed-Distanz nach INNEN: `LabelCanvas.printBleedMm`-Prop (default 0, im Editor 3) bumpt die Strip-Breiten/-Höhen in `BleedMask` um diesen mm-Wert. Resultat ist ein leicht abgedunkelter Streifen am Label-Rand, der wie ein "achtung, nicht hierhin"-Hinweis wirkt.
+- **Warum keine Dashed-Line:** Die bestehende Maske kommuniziert "außerhalb der Linie ≈ gefährlicher Bereich" schon. Eine zusätzliche gestrichelte Box wäre visuelles Doppel-Marker für dieselbe Information. Die Mask-Erweiterung integriert sich nahtlos in das vorhandene Preview-System: bei `bleedMaskOpacity = 1` (Preview-Mode) verschwindet die Safety-Zone genauso wie der Bleed-Außenbereich — entspricht dem echten Druckergebnis ohne jede UI-Andeutung.
+- `PRINT_BLEED_MM = 3` als Konstante in `CellarCanvas.tsx`. Im Preview-Mode wird `printBleedMm={0}` durchgereicht.
 
 ### 2026-05-26 — Event-Dedupe für `cellar:property-changed`
 

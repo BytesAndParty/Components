@@ -28,6 +28,15 @@ export interface LabelCanvasProps {
   bleedMaskOpacity?: number
   /** Mask colour. Defaults to the surrounding viewport background. */
   bleedMaskColor?: string
+  /**
+   * Print-bleed safety zone in millimetres. The dimming mask extends this
+   * far INTO the label edge, creating a translucent strip at the label
+   * boundary that visualises the trim-risk zone — designers see at a
+   * glance that content placed in this strip might get clipped off by
+   * the cutter. `0` disables the inward extension (mask sits flush with
+   * the label edge as before).
+   */
+  printBleedMm?: number
 }
 
 /**
@@ -51,6 +60,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
   bleedMm,
   bleedMaskOpacity = 0,
   bleedMaskColor,
+  printBleedMm = 0,
 }, ref) => {
   const showMask =
     bleedMaskOpacity > 0 &&
@@ -83,6 +93,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
           bleedMm={bleedMm}
           opacity={bleedMaskOpacity}
           color={bleedMaskColor}
+          printBleedMm={printBleedMm}
         />
       )}
     </div>
@@ -98,6 +109,13 @@ LabelCanvas.displayName = 'LabelCanvas'
  * wrapper which Fabric sizes to `(widthMm + 2·bleedMm) × (heightMm + 2·bleedMm)`,
  * so the same ratios stay correct regardless of zoom.
  *
+ * `printBleedMm > 0` extends each strip inward by that many millimetres,
+ * so the dim overlay overlaps the label edge by the print-bleed safety
+ * zone. The result is a translucent "danger" strip at the label boundary
+ * — designers can spot at a glance that content placed there might get
+ * trimmed off. Preview mode (`opacity = 1`) hides this strip too, since
+ * the whole bleed area goes fully opaque.
+ *
  * `pointer-events: none` keeps Fabric's selection / drag handlers working
  * underneath. `z-index` is set high enough to sit above Fabric's own
  * stacked lower/upper canvases but below floating UI (validator badge,
@@ -109,18 +127,23 @@ function BleedMask({
   bleedMm,
   opacity,
   color,
+  printBleedMm,
 }: {
   widthMm: number
   heightMm: number
   bleedMm: number
   opacity: number
   color?: string
+  printBleedMm: number
 }) {
   const totalW = widthMm + 2 * bleedMm
   const totalH = heightMm + 2 * bleedMm
-  const leftPct = (bleedMm / totalW) * 100
-  const topPct = (bleedMm / totalH) * 100
-  const midH = 100 - 2 * topPct
+  // Mask reaches `bleedMm` outside the label plus `printBleedMm` inside it,
+  // overlapping the label edge by the print-bleed safety zone.
+  const stripMm = bleedMm + printBleedMm
+  const leftPct = (stripMm / totalW) * 100
+  const topPct  = (stripMm / totalH) * 100
+  const midH    = 100 - 2 * topPct
   const fill = color ?? 'var(--background)'
 
   const base = {
