@@ -1,29 +1,35 @@
 import { useRef, useState, useEffect, type ChangeEvent } from 'react'
 import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2 } from 'lucide-react'
 import { useDesignerStore } from '../../store/designer-store'
+import { useCellarCanvasMessages } from '../../messages-context'
 import { Tooltip } from '../shared'
 import { ImageCropperModal } from '../../../image-cropper-modal/image-cropper-modal'
 import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { DesignerState } from '../../store/types'
+import type { CellarCanvasMessages } from '../../messages'
 
 interface MainToolbarProps {
   bridge: React.MutableRefObject<FabricBridge | null>
 }
 
-const TOOLS = [
-  { id: 'select', icon: MousePointer2, label: 'Select (V)' },
-  { id: 'pan',    icon: Hand,          label: 'Pan (Space)' },
-  { id: 'text',   icon: Type,          label: 'Text (T)' },
-  { id: 'image',  icon: ImageIcon,     label: 'Image (I)' },
-  { id: 'rect',   icon: Square,        label: 'Rect (R)' },
-  { id: 'circle', icon: Circle,        label: 'Circle (C)' },
-  { id: 'line',   icon: Minus,         label: 'Line (L)' },
-] as const
+type ToolId = 'select' | 'pan' | 'text' | 'image' | 'rect' | 'circle' | 'line'
 
-type ToolId = typeof TOOLS[number]['id']
+function buildTools(m: CellarCanvasMessages) {
+  return [
+    { id: 'select', icon: MousePointer2, label: m.toolSelect },
+    { id: 'pan',    icon: Hand,          label: m.toolPan },
+    { id: 'text',   icon: Type,          label: m.toolText },
+    { id: 'image',  icon: ImageIcon,     label: m.toolImage },
+    { id: 'rect',   icon: Square,        label: m.toolRect },
+    { id: 'circle', icon: Circle,        label: m.toolCircle },
+    { id: 'line',   icon: Minus,         label: m.toolLine },
+  ] as const
+}
 
 export function MainToolbar({ bridge }: MainToolbarProps) {
+  const m = useCellarCanvasMessages()
+  const tools = buildTools(m)
   const activeTool = useDesignerStore(s => s.activeTool)
   const setActiveTool = useDesignerStore(s => s.setActiveTool)
   const selectedIds = useDesignerStore(s => s.selectedIds)
@@ -79,7 +85,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         tabIndex={-1}
       />
 
-      {TOOLS.map((tool) => (
+      {tools.map((tool) => (
         <Tooltip key={tool.id} content={tool.label} position="right">
           <button
             onClick={() => handleToolClick(tool.id)}
@@ -97,7 +103,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
 
       <div className="flex-1" />
 
-      <Tooltip content="Delete Selected (Del)" position="right">
+      <Tooltip content={m.toolDelete} position="right">
         <button
           onClick={() => bridge.current?.deleteSelected()}
           disabled={selectedIds.length === 0}

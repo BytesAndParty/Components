@@ -1,5 +1,6 @@
 import { type RefObject } from 'react'
 import { NumberInput } from '../shared'
+import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectProperties } from '../../store/types'
 
@@ -14,11 +15,12 @@ export interface PropertiesPanelProps {
  * 0–100 % for opacity. Empty state when nothing is selected.
  */
 export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
+  const m = useCellarCanvasMessages()
   if (!activeProps) {
     return (
       <div className="h-full flex items-center justify-center text-center p-8">
         <p className="text-xs text-muted-foreground italic">
-          Select an object on the canvas to edit its properties.
+          {m.propsEmpty}
         </p>
       </div>
     )
@@ -30,7 +32,7 @@ export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
-        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">Geometry</h4>
+        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">{m.propsGeometry}</h4>
         <div className="grid grid-cols-2 gap-4">
           <NumberInput label="X" value={activeProps.x}      onChange={(v) => update({ x: v })}      unit="mm" />
           <NumberInput label="Y" value={activeProps.y}      onChange={(v) => update({ y: v })}      unit="mm" />
@@ -48,9 +50,9 @@ export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">Appearance</h4>
+        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">{m.propsAppearance}</h4>
         <div className="flex items-center justify-between">
-          <span className="text-xs">Opacity</span>
+          <span className="text-xs">{m.propsOpacity}</span>
           <NumberInput
             value={Math.round((activeProps.opacity ?? 1) * 100)}
             onChange={(v) => update({ opacity: v / 100 })}

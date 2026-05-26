@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
 import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { useCanvasSync } from './engine/use-canvas-sync'
@@ -14,6 +15,8 @@ import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
 import { ValidatorBadge } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
+import { MESSAGES, type CellarCanvasMessages } from './messages'
+import { MessagesProvider } from './messages-context'
 import type { CellarCanvasState } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
@@ -58,6 +61,10 @@ export interface CellarCanvasProps {
 
   // Validation
   enableValidator?: boolean
+
+  // i18n
+  /** Override individual strings. Locale comes from the global I18nProvider. */
+  messages?: Partial<CellarCanvasMessages>
 
   // Callbacks
   onChange?:           (state: CellarCanvasState) => void
@@ -107,12 +114,14 @@ export function CellarCanvas({
   initialState,
   storageKey        = 'cellar-canvas-draft',
   enableValidator   = true,
+  messages,
   onChange,
   onSave,
   className,
   style,
   height = '80vh',
 }: CellarCanvasProps) {
+  const m = useComponentMessages(MESSAGES, messages)
   const { canvasRef, bridge } = useFabricCanvas({ widthMm, heightMm })
   const selectedIds = useDesignerStore(s => s.selectedIds)
 
@@ -153,15 +162,15 @@ export function CellarCanvas({
   })
 
   useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
-    label:       'Undo',
-    category:    'Actions',
-    description: 'Reverse the last change',
+    label:       m.hotkeyUndoLabel,
+    category:    m.hotkeyCategory,
+    description: m.hotkeyUndoDescription,
   })
 
   useDesignEngineHotkey('mod+shift+z', () => bridge.current?.redo(), {
-    label:       'Redo',
-    category:    'Actions',
-    description: 'Reapply a reversed change',
+    label:       m.hotkeyRedoLabel,
+    category:    m.hotkeyCategory,
+    description: m.hotkeyRedoDescription,
   })
 
   useDesignEngineHotkey('delete, backspace', () => {
@@ -171,12 +180,13 @@ export function CellarCanvas({
       bridge.current?.deleteSelected()
     }
   }, {
-    label:       'Delete',
-    category:    'Actions',
-    description: 'Remove selected object',
+    label:       m.hotkeyDeleteLabel,
+    category:    m.hotkeyCategory,
+    description: m.hotkeyDeleteDescription,
   })
 
   return (
+    <MessagesProvider value={m}>
     <div
       className={cn(
         "bg-background transition-all duration-300",
@@ -211,7 +221,7 @@ export function CellarCanvas({
           onClick={() => bridge.current?.zoomToFit()}
           className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 hover:bg-muted rounded border border-border transition-colors text-muted-foreground hover:text-foreground"
         >
-          Fit to Screen
+          {m.fitToScreen}
         </button>
       </div>
 
@@ -249,5 +259,6 @@ export function CellarCanvas({
         wineFields={initialWineFields}
       />
     </div>
+    </MessagesProvider>
   )
 }

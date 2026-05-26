@@ -26,8 +26,8 @@
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
-| Export               | ❌ noch nicht — kein PNG / PDF.                                         |
-| Multi-Area           | ❌ noch nicht — eine Canvas (Front).                                    |
+| Export               | ⏸ out of scope — kein PNG / PDF im aktuellen Build.                    |
+| Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
 ---
 
@@ -35,12 +35,17 @@
 
 ### Roadmap-Items (CELLAR-CANVAS.md)
 
-- **Export-Pipeline (PNG + PDF)** — Fabric `toDataURL` bei 300 dpi clipped auf den Label-Bereich (Bleed muss raus); `jspdf` mit 3 mm Crop-Marks (PDF). Braucht `jspdf`-Install und einen `ExportPanel`-Dialog. Wichtigster nächster Schritt — ohne Export ist das Label nicht druckbar.
-- **Multi-Area Tabs (Front / Back / Neck)** — Store von einer Canvas auf `Map<area, state>`, `LabelAreaTabs`-Komponente, History pro Area. Macht erst Sinn nach Export.
-- **Templates** — 5 Built-in (Classic / Modern / Rustic / Minimal / Bold) als Fabric-JSON + `TemplatesPanel`. `customTemplates`-Prop für app-spezifische.
+**Aktuelle Arbeit:**
 - **Onboarding Tour** — Ark UI `Tour`, 5 Schritte, `localStorage`-Flag für First-Run-Detect.
 - **i18n** — `i18n/en.ts` + `i18n/de.ts`, Props-`i18n`-Override.
-- **Extras-Panel** — `SignaturePad` + Decorative Dividers / Ornaments (Phase 8, niedrige Prio).
+- **Extras-Panel (Emojis)** — Emoji-Picker als einfügbare Canvas-Objekte (Text/Image-Layer). Library statt eigenem Picker (Scope: nur Emoji-Insert, keine Signature/Ornamente).
+
+**Später / Zum Schluss:**
+- **Templates** — 5 Built-in (Classic / Modern / Rustic / Minimal / Bold) als Fabric-JSON + `TemplatesPanel`. `customTemplates`-Prop für app-spezifische. *Allerletzter Roadmap-Punkt.*
+
+**Out of Scope** (vorerst zurückgestellt):
+- ~~Export-Pipeline (PNG + PDF)~~ — kein druckfertiger Export im aktuellen Scope.
+- ~~Multi-Area Tabs (Front / Back / Neck)~~ — eine Canvas reicht.
 
 ### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
 

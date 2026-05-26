@@ -1,6 +1,8 @@
 import { type RefObject } from 'react'
 import { Maximize2, Minimize2, Eye, EyeOff } from 'lucide-react'
 import { cn } from '../../../lib/utils'
+import { interpolate } from '../../../i18n'
+import { useCellarCanvasMessages } from '../../messages-context'
 import { SaveButton } from './SaveButton'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { CellarCanvasState } from '../../store/types'
@@ -31,22 +33,23 @@ export function CanvasHeader({
   onTogglePreview,
   onSave,
 }: CanvasHeaderProps) {
+  const m = useCellarCanvasMessages()
   return (
     <div
       className="border-b border-border flex items-center px-4 h-12 bg-card/50"
       style={{ gridColumn: '1 / -1' }}
     >
-      <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">Cellar Canvas</h2>
+      <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">{m.brand}</h2>
       <div className="mx-6 h-4 w-px bg-border" />
       <div className="flex-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-        Standard Label ({widthMm}x{heightMm}mm)
+        {interpolate(m.labelDimensions, { w: widthMm, h: heightMm })}
       </div>
 
       <div className="flex items-center gap-1 mr-4">
-        <IconButton onClick={() => bridge.current?.undo()} title="Undo (Cmd+Z)">
+        <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
         </IconButton>
-        <IconButton onClick={() => bridge.current?.redo()} title="Redo (Cmd+Shift+Z)">
+        <IconButton onClick={() => bridge.current?.redo()} title={m.redoTitle}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
         </IconButton>
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
@@ -60,7 +63,7 @@ export function CanvasHeader({
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
             : "hover:bg-muted text-muted-foreground hover:text-foreground"
         )}
-        title={previewMode ? "Exit Preview (show bleed)" : "Preview (hide bleed area)"}
+        title={previewMode ? m.previewExit : m.previewEnter}
         aria-pressed={previewMode}
       >
         {previewMode ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -69,7 +72,7 @@ export function CanvasHeader({
       <button
         onClick={onToggleFullscreen}
         className="p-2 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
-        title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        title={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
       >
         {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
       </button>

@@ -2,6 +2,7 @@ import { useState, type RefObject } from 'react'
 import { Check, Loader2 } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { useDesignerStore } from '../../store/designer-store'
+import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { CellarCanvasState } from '../../store/types'
 
@@ -21,6 +22,7 @@ export interface SaveButtonProps {
  * on a successful save so the button greys back out.
  */
 export function SaveButton({ bridge, onSave }: SaveButtonProps) {
+  const m = useCellarCanvasMessages()
   const [status, setStatus] = useState<Status>('idle')
   const isDirty = useDesignerStore(s => s.isDirty)
 
@@ -57,12 +59,12 @@ export function SaveButton({ bridge, onSave }: SaveButtonProps) {
               ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
               : "border-border text-muted-foreground opacity-60",
       )}
-      title={isDirty ? "Save changes" : "All changes saved"}
+      title={isDirty ? m.saveTitleDirty : m.saveTitleClean}
     >
-      {status === 'saving' && (<><Loader2 size={12} className="animate-spin" /> Saving…</>)}
-      {status === 'success' && (<><Check size={12} /> Saved</>)}
-      {status === 'error' && 'Retry'}
-      {status === 'idle' && (isDirty ? 'Save' : 'Saved')}
+      {status === 'saving' && (<><Loader2 size={12} className="animate-spin" /> {m.saveSaving}</>)}
+      {status === 'success' && (<><Check size={12} /> {m.saveSaved}</>)}
+      {status === 'error' && m.saveRetry}
+      {status === 'idle' && (isDirty ? m.saveIdle : m.saveSaved)}
     </button>
   )
 }

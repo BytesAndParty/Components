@@ -1,21 +1,26 @@
 import { useState, type RefObject } from 'react'
 import * as fabric from 'fabric'
 import { cn } from '../../../lib/utils'
+import { interpolate } from '../../../i18n'
 import { LayerPanel, type Layer } from '../../../layer-panel/layer-panel'
 import { PropertiesPanel } from './PropertiesPanel'
 import { BackgroundPanel } from './BackgroundPanel'
 import { WineFieldsPanel } from './WineFieldsPanel'
+import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectMeta, FabricObjectProperties } from '../../store/types'
+import type { CellarCanvasMessages } from '../../messages'
 import type { WineFieldValues } from '../../CellarCanvas'
 
 type Tab = 'props' | 'fields' | 'background'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'props',      label: 'Properties' },
-  { id: 'fields',     label: 'Wine Data'  },
-  { id: 'background', label: 'Background' },
-]
+function buildTabs(m: CellarCanvasMessages): { id: Tab; label: string }[] {
+  return [
+    { id: 'props',      label: m.tabProperties },
+    { id: 'fields',     label: m.tabWineData },
+    { id: 'background', label: m.tabBackground },
+  ]
+}
 
 export interface RightPanelProps {
   bridge:           RefObject<FabricBridge | null>
@@ -45,6 +50,8 @@ export function RightPanel({
   backgroundColor,
   wineFields,
 }: RightPanelProps) {
+  const m = useCellarCanvasMessages()
+  const tabs = buildTabs(m)
   const [tab, setTab] = useState<Tab>('props')
 
   const refreshLayers = () => setLayers(bridge.current?.getLayers() ?? [])
@@ -52,7 +59,7 @@ export function RightPanel({
   return (
     <aside className="border-l border-border bg-card flex flex-col" style={{ gridRow: '3' }}>
       <div className="flex border-b border-border">
-        {TABS.map(({ id, label }) => (
+        {tabs.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -76,8 +83,8 @@ export function RightPanel({
 
       <div className="p-4 border-t border-border bg-muted/10">
         <div className="flex items-center justify-between mb-2 px-1">
-          <span className="text-[10px] font-bold uppercase text-muted-foreground">Layers</span>
-          <span className="text-[10px] font-mono text-muted-foreground">{layers.length} total</span>
+          <span className="text-[10px] font-bold uppercase text-muted-foreground">{m.layersHeading}</span>
+          <span className="text-[10px] font-mono text-muted-foreground">{interpolate(m.layersCount, { count: layers.length })}</span>
         </div>
         <LayerPanel
           layers={layers}

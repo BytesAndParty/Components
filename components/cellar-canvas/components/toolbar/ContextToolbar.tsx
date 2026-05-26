@@ -1,4 +1,5 @@
 import { useDesignerStore } from '../../store/designer-store'
+import { useCellarCanvasMessages } from '../../messages-context'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
@@ -13,6 +14,7 @@ interface ContextToolbarProps {
 }
 
 export function ContextToolbar({ bridge }: ContextToolbarProps) {
+  const m = useCellarCanvasMessages()
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const [props, setProps] = useState<FabricObjectProperties | null>(null)
 
@@ -55,7 +57,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   if (!props) {
     return (
       <div className="h-full flex items-center px-4 text-xs text-muted-foreground italic">
-        Select an object to see options
+        {m.contextEmpty}
       </div>
     )
   }
@@ -107,7 +109,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
                 value={props.fill ?? '#000000'}
                 onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
                 label="■"
-                title="Fill"
+                title={m.contextFill}
                 showAlpha
               />
               <div className="w-px h-5 bg-border shrink-0" />
@@ -117,7 +119,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
             value={(props.stroke as string) ?? '#000000'}
             onChange={(v) => bridge.current?.updateActiveObject({ stroke: v })}
             label="◯"
-            title="Stroke"
+            title={m.contextStroke}
             showAlpha
           />
           <div className="w-px h-5 bg-border shrink-0" />

@@ -1,6 +1,7 @@
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { WineFieldValues } from '../../CellarCanvas'
 import { Plus, QrCode } from 'lucide-react'
+import { useCellarCanvasMessages } from '../../messages-context'
 
 interface WineFieldsPanelProps {
   bridge: React.MutableRefObject<FabricBridge | null>
@@ -8,13 +9,14 @@ interface WineFieldsPanelProps {
 }
 
 export function WineFieldsPanel({ bridge, values = {} }: WineFieldsPanelProps) {
+  const m = useCellarCanvasMessages()
   const fields = [
-    { key: 'name',           label: 'Wine Name',   value: values.name },
-    { key: 'vintage',        label: 'Vintage',     value: values.vintage },
-    { key: 'alcoholPercent', label: 'Alcohol %',   value: values.alcoholPercent },
-    { key: 'volumeMl',       label: 'Volume (ml)', value: values.volumeMl },
-    { key: 'region',         label: 'Region',      value: values.region },
-    { key: 'producer',       label: 'Producer',    value: values.producer },
+    { key: 'name',           label: m.wineFieldName,     value: values.name },
+    { key: 'vintage',        label: m.wineFieldVintage,  value: values.vintage },
+    { key: 'alcoholPercent', label: m.wineFieldAlcohol,  value: values.alcoholPercent },
+    { key: 'volumeMl',       label: m.wineFieldVolume,   value: values.volumeMl },
+    { key: 'region',         label: m.wineFieldRegion,   value: values.region },
+    { key: 'producer',       label: m.wineFieldProducer, value: values.producer },
   ] as const
 
   const addField = (key: string, label: string, value?: string | number) => {
@@ -36,7 +38,7 @@ export function WineFieldsPanel({ bridge, values = {} }: WineFieldsPanelProps) {
                 {field.label}
               </span>
               <span className="text-xs truncate max-w-[180px]">
-                {field.value || <span className="italic opacity-50">Not set</span>}
+                {field.value || <span className="italic opacity-50">{m.wineFieldNotSet}</span>}
               </span>
             </div>
             <Plus size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -51,8 +53,8 @@ export function WineFieldsPanel({ bridge, values = {} }: WineFieldsPanelProps) {
         >
           <QrCode size={18} />
           <div className="flex flex-col items-start">
-            <span className="text-xs font-bold uppercase tracking-wider">Add QR Code</span>
-            <span className="text-[10px] opacity-70">EU compliance requirement</span>
+            <span className="text-xs font-bold uppercase tracking-wider">{m.wineFieldQrTitle}</span>
+            <span className="text-[10px] opacity-70">{m.wineFieldQrHint}</span>
           </div>
         </button>
       </div>
