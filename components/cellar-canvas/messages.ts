@@ -112,6 +112,11 @@ export type CellarCanvasMessages = {
   // Emoji extras panel
   emojiHeading:           string
   emojiHint:              string
+
+  // Export
+  exportLabel:            string
+  exportTitle:            string
+  exportFilename:         string
 }
 
 export const MESSAGES = {
@@ -206,6 +211,10 @@ export const MESSAGES = {
 
     emojiHeading:            'Emoji einfügen',
     emojiHint:               'Wähle ein Emoji — es landet als Text-Ebene auf der Leinwand.',
+
+    exportLabel:             'PDF',
+    exportTitle:             'Als PDF exportieren (Trim-Größe)',
+    exportFilename:          'weinetikett',
   },
   en: {
     brand:                   'Cellar Canvas',
@@ -298,6 +307,10 @@ export const MESSAGES = {
 
     emojiHeading:            'Insert emoji',
     emojiHint:               'Pick an emoji — it drops onto the canvas as a text layer.',
+
+    exportLabel:             'PDF',
+    exportTitle:             'Export as PDF (trim size)',
+    exportFilename:          'wine-label',
   },
 } as const satisfies ComponentMessages<CellarCanvasMessages>
 

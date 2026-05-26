@@ -30,7 +30,7 @@
 | i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
 | Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
-| Export               | ⏸ out of scope — kein PNG / PDF im aktuellen Build.                    |
+| Export               | ✅ PDF in Label-Trim-Größe (300 dpi via Fabric `toDataURL` + `jspdf`), Download via Header-Button. `onExport({ format: 'pdf', blob })`-Callback für Server-Upload. PNG-Export + Bleed-PDF mit Crop-Marks bleibt offen. |
 | Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
 ---
@@ -43,7 +43,6 @@
 - **Templates** — 5 Built-in (Classic / Modern / Rustic / Minimal / Bold) als Fabric-JSON + `TemplatesPanel`. `customTemplates`-Prop für app-spezifische. *Allerletzter Roadmap-Punkt.*
 
 **Out of Scope** (vorerst zurückgestellt):
-- ~~Export-Pipeline (PNG + PDF)~~ — kein druckfertiger Export im aktuellen Scope.
 - ~~Multi-Area Tabs (Front / Back / Neck)~~ — eine Canvas reicht.
 
 ### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
@@ -211,6 +210,13 @@
 ---
 
 ## Entscheidungs-Log
+
+### 2026-05-26 — PDF-Export in Label-Trim-Größe
+
+- **`engine/export-pipeline.ts`** — `exportLabelPdf(bridge)` rendert die Label-Region via Fabric `toDataURL({ left, top, width, height, multiplier: 3.125 })` als 300 dpi PNG, packt es in ein `jsPDF` mit Custom-Page-Format `[widthMm, heightMm]` und gibt einen Blob zurück. `downloadBlob(blob, filename)` löst den Browser-Download aus (Anchor-Trick mit verzögertem `revokeObjectURL`).
+- **Trim-only, kein Bleed, keine Crop-Marks.** Die Druckerei legt Bleed selbst an wenn nötig — die Variante hält das PDF schlank und das Mental-Model des Users ('was ich sehe, ist was gedruckt wird') intakt.
+- **Background-Color im Export:** Die Fabric-Canvas läuft im Editor mit `backgroundColor: 'transparent'` — die Label-Farbe ist ein CSS-Backdrop. Für den Export setzen wir `canvas.backgroundColor` temporär auf `bridge.getBackground()` und restoren danach. Snap-Guide-Lines tragen `excludeFromExport: true` und fallen automatisch raus.
+- **Header-Button** (Download-Icon, `m.exportLabel = 'PDF'`) neben Save. `onExport({ format: 'pdf', blob })`-Callback für Server-Upload-Wiring; lokaler Download passiert immer, der Callback ist additiv.
 
 ### 2026-05-26 — 3 mm Print-Bleed-Indikator (Maske überlappt Label-Rand)
 

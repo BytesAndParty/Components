@@ -17,6 +17,7 @@ import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
 import { ValidatorBadge } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
+import { exportLabelPdf, downloadBlob } from './engine/export-pipeline'
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
 import type { CellarCanvasState } from './store/types'
@@ -28,10 +29,9 @@ import type { CanvasViewport } from './engine/use-canvas-sync'
 // is hidden, only the label itself shows through).
 const BLEED_MASK_OPACITY_DESIGN  = 0.55
 const BLEED_MASK_OPACITY_PREVIEW = 1
-// Print-bleed safety zone. The bleed mask extends this far INTO the label
-// edge so designers see a translucent "danger" strip at the boundary —
-// content placed in this strip might get trimmed off by the cutter. 3mm
-// is the standard offset-print safety margin (decision #3 in CELLAR-CANVAS.md).
+
+// EU-standard 3mm print-bleed safety margin. Visualised as a translucent strip
+// at the label boundary to warn designers that content placed here might be lost.
 const PRINT_BLEED_MM = 3
 
 export interface WineFieldValues {
@@ -132,6 +132,7 @@ export function CellarCanvas({
   messages,
   onChange,
   onSave,
+  onExport,
   className,
   style,
   height = '80vh',
@@ -165,6 +166,14 @@ export function CellarCanvas({
     } else {
       await bridge.current?.addImage(url)
     }
+  }
+
+  function handleExportPdf() {
+    const b = bridge.current
+    if (!b) return
+    const blob = exportLabelPdf(b)
+    downloadBlob(blob, `${m.exportFilename}.pdf`)
+    onExport?.({ format: 'pdf', blob })
   }
 
   // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
@@ -223,6 +232,24 @@ export function CellarCanvas({
     description: m.hotkeySnappingDescription,
   })
 
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    const file = e.dataTransfer.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        setCropper({ open: true, src: reader.result as string })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <MessagesProvider value={m}>
     <div
@@ -248,6 +275,7 @@ export function CellarCanvas({
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
         onSave={onSave}
+        onExportPdf={handleExportPdf}
       />
 
       <div
@@ -267,7 +295,13 @@ export function CellarCanvas({
         <MainToolbar bridge={bridge} />
       </div>
 
-      <main data-tour="canvas-area" className="relative overflow-hidden bg-muted/20 flex flex-col" style={{ gridRow: '3' }}>
+      <main
+        data-tour="canvas-area"
+        className="relative overflow-hidden bg-muted/20 flex flex-col"
+        style={{ gridRow: '3' }}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
           <LabelCanvas
             ref={canvasRef}

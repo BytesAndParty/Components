@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
@@ -17,6 +17,7 @@ export interface CanvasHeaderProps {
   previewMode:      boolean
   onTogglePreview:  () => void
   onSave?:          (state: CellarCanvasState) => Promise<void>
+  onExportPdf?:     () => void
 }
 
 /**
@@ -33,6 +34,7 @@ export function CanvasHeader({
   previewMode,
   onTogglePreview,
   onSave,
+  onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
   const { snappingEnabled, setSnappingEnabled } = useDesignerStore()
@@ -66,6 +68,16 @@ export function CanvasHeader({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
         </IconButton>
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
+        {onExportPdf && (
+          <button
+            onClick={onExportPdf}
+            className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title={m.exportTitle}
+          >
+            <Download size={12} />
+            {m.exportLabel}
+          </button>
+        )}
       </div>
 
       <button
