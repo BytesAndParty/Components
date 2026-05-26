@@ -26,6 +26,9 @@
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
+| i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
+| Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
+| Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
 | Export               | ⏸ out of scope — kein PNG / PDF im aktuellen Build.                    |
 | Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
@@ -34,11 +37,6 @@
 ## Offen
 
 ### Roadmap-Items (CELLAR-CANVAS.md)
-
-**Aktuelle Arbeit:**
-- **Onboarding Tour** — Ark UI `Tour`, 5 Schritte, `localStorage`-Flag für First-Run-Detect.
-- **i18n** — `i18n/en.ts` + `i18n/de.ts`, Props-`i18n`-Override.
-- **Extras-Panel (Emojis)** — Emoji-Picker als einfügbare Canvas-Objekte (Text/Image-Layer). Library statt eigenem Picker (Scope: nur Emoji-Insert, keine Signature/Ornamente).
 
 **Später / Zum Schluss:**
 - **Templates** — 5 Built-in (Classic / Modern / Rustic / Minimal / Bold) als Fabric-JSON + `TemplatesPanel`. `customTemplates`-Prop für app-spezifische. *Allerletzter Roadmap-Punkt.*
@@ -57,13 +55,14 @@
 - **Group / Ungroup** für Layer.
 - **Re-Crop von ContextToolbar** — Image selektieren → "Crop"-Button → re-open `ImageCropperModal` mit aktueller Source.
 - **Duplicate** (Layer / Selection).
-- **Strg+A**, **Esc** und andere Standard-Shortcuts.
+- **Strg+A** (Select-All) — selektiert alle User-Objekte; mit Active-Selection-Rebuild damit Alignment/Distribute direkt drauf laufen kann.
+- **Esc** — discardet aktive Selection bzw. exitet Text-Edit-Mode; muss mit dem `hiddenTextarea`-Lifecycle abgestimmt sein.
 
 ### Tech-Debt / Known Limitations
 
-- Bg-Color nicht in Undo/Redo-History — User-Change überlebt Reload, aber kein Undo. Lösungswege: Sidecar in `pushHistory` (Tupel `[canvas, bg]`) ODER `setBackground` schiebt einen synthetischen `object:modified`-Snapshot.
-- `cellar:property-changed` feuert teils mehrfach pro logischer Aktion (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
-- `ContextToolbar` mountet noch den Mirror-Textarea-Wegfall ohne Re-Crop-Button — Image-Selection zeigt aktuell nichts an im Context-Bereich.
+- **Bg-Color nicht in Undo/Redo-History** — User-Change überlebt Reload, aber kein Undo. Lösungswege: Sidecar in `pushHistory` (Tupel `[canvas, bg]`) ODER `setBackground` schiebt einen synthetischen `object:modified`-Snapshot.
+- **`cellar:property-changed` feuert teils mehrfach pro logischer Aktion** (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
+- **`ContextToolbar` zeigt nichts bei Image-Selection** — kein Re-Crop-Button, kein Opacity-Slider, kein Replace-Image. Aktuell mountet die Toolbar bei Image-Selection eine leere Hülle. Re-Crop (siehe Spec-Item oben) ist der dringendste Eintrag.
 
 ---
 
@@ -215,6 +214,13 @@
 
 ## Entscheidungs-Log
 
+### 2026-05-26 — Refactor + i18n + Tour + Emoji-Extras
+
+- **CellarCanvas.tsx 560 → 253 LOC.** Split in drei Engine-Hooks (`use-canvas-sync`, `-autosave`, `-restore`) und sub-komponenten (`CanvasHeader` + `SaveButton`, `RightPanel` + `PropertiesPanel` / `BackgroundPanel`). Verhalten unverändert; public API (`CellarCanvas`, `WineFieldValues`, `CellarCanvasProps`) bleibt stabil.
+- **i18n via `messages.ts` + scoped Context.** ~60 Strings in en+de, locale aus dem globalen `I18nProvider` via `useComponentMessages`. Override per `messages?: Partial<CellarCanvasMessages>`-Prop, anschließend durch einen cellar-canvas-lokalen `MessagesProvider` an alle Subcomponents weitergereicht — kein Prop-Drilling. ImageCropperModal hat weiterhin eigene `messages.ts` (kontextfreie Wiederverwendbarkeit).
+- **Onboarding Tour (Ark UI).** 5 Steps, DOM-Anchors via `[data-tour=...]`-Attribute statt Ref-Forwarding. Auto-Start mit 400 ms Delay (Fabric braucht den Layout-Settle, sonst sitzt der Spotlight-Rect auf einer Pre-Layout-Box). `cellar-canvas-tour-completed`-Flag in localStorage; jeder terminale Status (completed / dismissed / skipped) schreibt das Flag. `disableTour`-Prop für Embed-Cases ohne Tour.
+- **Emoji-Extras-Panel via `emoji-picker-react`.** Lib statt Headless gewählt (User-Entscheidung) trotz opinionated Styles. Theme syncen wir via `MutationObserver` auf `data-theme` — die `Theme.AUTO`-Option der Library folgt `prefers-color-scheme`, was vom kontrollierten Atelier-Theme abweichen kann. Insert als `fabric.Textbox` mit fontSize 48 statt PNG-Layer: minimale State-Größe (ein Codepoint), vektor-clean beim Zoom, editierbar wie normaler Text. Layer-Label trägt das Emoji selbst (`Emoji 🍷`), Meta-Flag `_extras: true` für spätere Filter.
+
 ### 2026-05-25 — Bleed Mask + Preview Mode (CSS-Overlay statt Fabric-Layer)
 
 - Vier absolute-positionierte `<div>`-Stripes (top / bottom / left / right) in `LabelCanvas` decken den Bleed-Bereich um das Label ab. Position via prozentuale Anteile der bekannten `widthMm`/`heightMm`/`bleedMm` — keine pixel-coords, kein Re-Compute bei Zoom/Pan nötig, weil das `<canvas>` DOM-Element seine feste Pixelgröße behält (Fabric skaliert über `viewportTransform` nur den Inhalt).
@@ -248,4 +254,4 @@
 
 ---
 
-*Last updated: 2026-05-25*
+*Last updated: 2026-05-26*
