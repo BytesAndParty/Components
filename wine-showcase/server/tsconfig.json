@@ -12,5 +12,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "src/plugins/**/ui/**",
+    "admin-ui"
+  ]
 }

@@ -29,7 +29,12 @@ export class WineReviewResolver {
     /**
      * CUSTOM FIELDS: Erlauben es, neue Spalten zu bestehenden Tabellen
      * (wie Product) hinzuzufügen, ohne das Core-Schema zu ändern.
+     *
+     * Idempotent: bootstrap(config) + bootstrapWorker(config) im selben Process
+     * ruft `configuration` zweimal — ohne den Guard würden Fields doppelt registriert.
      */
+    const existing = new Set(config.customFields.Product.map((f) => f.name));
+    if (existing.has('jahrgang')) return config;
     config.customFields.Product.push(
       {
         name: 'jahrgang',
@@ -43,7 +48,54 @@ export class WineReviewResolver {
         label: [{ languageCode: LanguageCode.de, value: 'Rebsorte' }],
         public: true,
       },
-      // ... weitere Felder (aus Platzgründen hier gekürzt)
+      {
+        name: 'region',
+        type: 'string',
+        label: [{ languageCode: LanguageCode.de, value: 'Region' }],
+        public: true,
+      },
+      {
+        name: 'alkoholgehalt',
+        type: 'float',
+        label: [{ languageCode: LanguageCode.de, value: 'Alkoholgehalt (% vol.)' }],
+        public: true,
+      },
+      {
+        name: 'geschmacksprofil',
+        type: 'string',
+        label: [{ languageCode: LanguageCode.de, value: 'Geschmacksprofil' }],
+        public: true,
+      },
+      {
+        name: 'restzucker',
+        type: 'float',
+        label: [{ languageCode: LanguageCode.de, value: 'Restzucker (g/l)' }],
+        public: true,
+      },
+      {
+        name: 'saeure',
+        type: 'float',
+        label: [{ languageCode: LanguageCode.de, value: 'Säure (g/l)' }],
+        public: true,
+      },
+      {
+        name: 'serviertemperatur',
+        type: 'string',
+        label: [{ languageCode: LanguageCode.de, value: 'Serviertemperatur' }],
+        public: true,
+      },
+      {
+        name: 'speiseempfehlung',
+        type: 'text',
+        label: [{ languageCode: LanguageCode.de, value: 'Speiseempfehlung' }],
+        public: true,
+      },
+      {
+        name: 'auszeichnungen',
+        type: 'string',
+        label: [{ languageCode: LanguageCode.de, value: 'Auszeichnungen' }],
+        public: true,
+      },
     );
     return config;
   },

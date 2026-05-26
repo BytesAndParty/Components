@@ -1,14 +1,16 @@
 /**
  * DER EINSTIEGSPUNKT FÜR DAS BACKEND
- * Hier wird die NestJS Applikation mit der Vendure-Konfiguration gestartet.
+ * Startet API-Server + Worker im selben Prozess (dev-friendly).
+ * In Production sollten Worker und Server getrennt laufen.
  */
-import { bootstrap } from '@vendure/core';
+import { bootstrap, bootstrapWorker } from '@vendure/core';
 import { config } from './vendure-config.js';
 
 bootstrap(config)
+  .then(() => bootstrapWorker(config))
+  .then((worker) => worker.startJobQueue())
   .then(() => {
-    // Diese Konsolenausgaben helfen uns zu wissen, wo wir testen können
-    console.log('🍷 Vendure Wine Server gestartet');
+    console.log('🍷 Vendure Wine Server + Worker gestartet');
     console.log('   Shop API:  http://localhost:3000/shop-api');
     console.log('   Admin API: http://localhost:3000/admin-api');
     console.log('   Admin UI:  http://localhost:3000/admin');
