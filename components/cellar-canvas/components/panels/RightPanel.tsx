@@ -62,6 +62,7 @@ export function RightPanel({
         {tabs.map(({ id, label }) => (
           <button
             key={id}
+            data-tour={id === 'fields' ? 'wine-data-tab' : undefined}
             onClick={() => setTab(id)}
             className={cn(
               "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors border-b-2",
@@ -81,7 +82,7 @@ export function RightPanel({
         {tab === 'background' && <BackgroundPanel bridge={bridge} color={backgroundColor} />}
       </div>
 
-      <div className="p-4 border-t border-border bg-muted/10">
+      <div data-tour="layers-section" className="p-4 border-t border-border bg-muted/10">
         <div className="flex items-center justify-between mb-2 px-1">
           <span className="text-[10px] font-bold uppercase text-muted-foreground">{m.layersHeading}</span>
           <span className="text-[10px] font-mono text-muted-foreground">{interpolate(m.layersCount, { count: layers.length })}</span>

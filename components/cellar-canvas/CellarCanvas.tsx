@@ -13,6 +13,7 @@ import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
+import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ValidatorBadge } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
 import { MESSAGES, type CellarCanvasMessages } from './messages'
@@ -61,6 +62,12 @@ export interface CellarCanvasProps {
 
   // Validation
   enableValidator?: boolean
+
+  // Onboarding
+  /** Skip the first-run guided tour. Default: false (tour auto-starts once). */
+  disableTour?:    boolean
+  /** localStorage key for the "tour seen" flag. Pass `null` to opt out. Default: `'cellar-canvas-tour-completed'`. */
+  tourStorageKey?: string | null
 
   // i18n
   /** Override individual strings. Locale comes from the global I18nProvider. */
@@ -114,6 +121,8 @@ export function CellarCanvas({
   initialState,
   storageKey        = 'cellar-canvas-draft',
   enableValidator   = true,
+  disableTour       = false,
+  tourStorageKey    = 'cellar-canvas-tour-completed',
   messages,
   onChange,
   onSave,
@@ -229,7 +238,7 @@ export function CellarCanvas({
         <MainToolbar bridge={bridge} />
       </div>
 
-      <main className="relative overflow-hidden bg-muted/20 flex flex-col" style={{ gridRow: '3' }}>
+      <main data-tour="canvas-area" className="relative overflow-hidden bg-muted/20 flex flex-col" style={{ gridRow: '3' }}>
         <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
           <LabelCanvas
             ref={canvasRef}
@@ -258,6 +267,8 @@ export function CellarCanvas({
         backgroundColor={backgroundColor}
         wineFields={initialWineFields}
       />
+
+      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} />
     </div>
     </MessagesProvider>
   )
