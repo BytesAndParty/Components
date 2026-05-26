@@ -14,6 +14,7 @@ import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
 import { OnboardingTour } from './components/tour/OnboardingTour'
+import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
 import { ValidatorBadge } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
 import { MESSAGES, type CellarCanvasMessages } from './messages'
@@ -144,8 +145,22 @@ export function CellarCanvas({
   const { activeProps, layers, setLayers, warnings, backgroundColor, viewport } =
     useCanvasSync(bridge, { enableValidator })
 
+  const cropperOpen     = useDesignerStore(s => s.cropperOpen)
+  const cropperSrc      = useDesignerStore(s => s.cropperSrc)
+  const cropperTargetId = useDesignerStore(s => s.cropperTargetId)
+  const setCropper      = useDesignerStore(s => s.setCropper)
+
   useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm, isFullscreen })
   useCanvasAutosave(bridge, storageKey, onChange)
+
+  async function handleCrop(blob: Blob) {
+    const url = URL.createObjectURL(blob)
+    if (cropperTargetId) {
+      await bridge.current?.updateImageSource(cropperTargetId, url)
+    } else {
+      await bridge.current?.addImage(url)
+    }
+  }
 
   // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
   // restricts focus to descendants of the fullscreen element, which Fabric's
@@ -172,13 +187,13 @@ export function CellarCanvas({
 
   useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
     label:       m.hotkeyUndoLabel,
-    category:    m.hotkeyCategory,
+    category:    'Actions',
     description: m.hotkeyUndoDescription,
   })
 
   useDesignEngineHotkey('mod+shift+z', () => bridge.current?.redo(), {
     label:       m.hotkeyRedoLabel,
-    category:    m.hotkeyCategory,
+    category:    'Actions',
     description: m.hotkeyRedoDescription,
   })
 
@@ -190,8 +205,17 @@ export function CellarCanvas({
     }
   }, {
     label:       m.hotkeyDeleteLabel,
-    category:    m.hotkeyCategory,
+    category:    'Actions',
     description: m.hotkeyDeleteDescription,
+  })
+
+  useDesignEngineHotkey('s', () => {
+    const { snappingEnabled, setSnappingEnabled } = useDesignerStore.getState()
+    setSnappingEnabled(!snappingEnabled)
+  }, {
+    label:       m.hotkeySnappingLabel,
+    category:    'Actions',
+    description: m.hotkeySnappingDescription,
   })
 
   return (
@@ -266,6 +290,13 @@ export function CellarCanvas({
         selectedIds={selectedIds}
         backgroundColor={backgroundColor}
         wineFields={initialWineFields}
+      />
+
+      <ImageCropperModal
+        open={cropperOpen}
+        onOpenChange={(open) => setCropper({ open, src: cropperSrc, targetId: cropperTargetId })}
+        imageSrc={cropperSrc}
+        onCrop={handleCrop}
       />
 
       <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} />

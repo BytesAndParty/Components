@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Portal } from '@ark-ui/react/portal'
-import { Tour, useTour } from '@ark-ui/react/tour'
+import { Tour, useTour, type StatusChangeDetails } from '@ark-ui/react/tour'
 import { X } from 'lucide-react'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { cn } from '../../../lib/utils'
@@ -83,7 +83,7 @@ export function OnboardingTour({
   const tour = useTour({
     steps,
     translations,
-    onStatusChange(details) {
+    onStatusChange(details: StatusChangeDetails) {
       // Persist "seen" on any terminal status so the tour stays dismissed
       // across reloads — completed AND skipped/dismissed both count.
       if (

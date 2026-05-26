@@ -1,9 +1,8 @@
-import { useRef, useState, useEffect, type ChangeEvent } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2 } from 'lucide-react'
 import { useDesignerStore } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { Tooltip } from '../shared'
-import { ImageCropperModal } from '../../../image-cropper-modal/image-cropper-modal'
 import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { DesignerState } from '../../store/types'
@@ -33,16 +32,9 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   const activeTool = useDesignerStore(s => s.activeTool)
   const setActiveTool = useDesignerStore(s => s.setActiveTool)
   const selectedIds = useDesignerStore(s => s.selectedIds)
+  const setCropper = useDesignerStore(s => s.setCropper)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [cropSrc, setCropSrc] = useState<string | undefined>()
-  const [cropperOpen, setCropperOpen] = useState(false)
-
-  useEffect(() => {
-    return () => {
-      if (cropSrc?.startsWith('blob:')) URL.revokeObjectURL(cropSrc)
-    }
-  }, [cropSrc])
 
   function handleToolClick(toolId: ToolId) {
     setActiveTool(toolId as DesignerState['activeTool'])
@@ -60,17 +52,11 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-      setCropSrc(reader.result as string)
-      setCropperOpen(true)
+      setCropper({ open: true, src: reader.result as string })
     }
     reader.readAsDataURL(file)
     // Reset so picking the same file twice in a row still fires change.
     e.target.value = ''
-  }
-
-  async function handleCrop(blob: Blob) {
-    const url = URL.createObjectURL(blob)
-    await bridge.current?.addImage(url)
   }
 
   return (
@@ -117,13 +103,6 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
           <Trash2 size={20} />
         </button>
       </Tooltip>
-
-      <ImageCropperModal
-        open={cropperOpen}
-        onOpenChange={setCropperOpen}
-        imageSrc={cropSrc}
-        onCrop={handleCrop}
-      />
     </aside>
   )
 }

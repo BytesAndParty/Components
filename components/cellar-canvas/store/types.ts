@@ -56,6 +56,10 @@ export interface DesignerState {
   // UI State
   isDragging: boolean
   isDirty: boolean
+  snappingEnabled: boolean
+  cropperOpen: boolean
+  cropperSrc?: string
+  cropperTargetId?: string
 
   // Actions
   setActiveArea: (area: LabelArea) => void
@@ -63,6 +67,8 @@ export interface DesignerState {
   setActiveTool: (tool: DesignerState['activeTool']) => void
   setSelectedIds: (ids: string[]) => void
   setDirty: (dirty: boolean) => void
+  setSnappingEnabled: (enabled: boolean) => void
+  setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 
   // History actions
   pushHistory: (state: string) => void

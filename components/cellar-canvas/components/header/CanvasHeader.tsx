@@ -1,8 +1,9 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
+import { useDesignerStore } from '../../store/designer-store'
 import { SaveButton } from './SaveButton'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { CellarCanvasState } from '../../store/types'
@@ -34,6 +35,8 @@ export function CanvasHeader({
   onSave,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
+  const { snappingEnabled, setSnappingEnabled } = useDesignerStore()
+
   return (
     <div
       className="border-b border-border flex items-center px-4 h-12 bg-card/50"
@@ -46,6 +49,16 @@ export function CanvasHeader({
       </div>
 
       <div className="flex items-center gap-1 mr-4">
+        <IconButton
+          onClick={() => setSnappingEnabled(!snappingEnabled)}
+          title={snappingEnabled ? m.snappingTitleEnabled : m.snappingTitleDisabled}
+          className={cn(snappingEnabled && "text-primary")}
+        >
+          <Magnet size={14} className={cn(!snappingEnabled && "opacity-40")} />
+        </IconButton>
+
+        <div className="mx-2 h-4 w-px bg-border/50" />
+
         <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
         </IconButton>
@@ -84,15 +97,20 @@ function IconButton({
   onClick,
   title,
   children,
+  className,
 }: {
   onClick: () => void
   title:   string
   children: React.ReactNode
+  className?: string
 }) {
   return (
     <button
       onClick={onClick}
-      className="p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors"
+      className={cn(
+        "p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors",
+        className
+      )}
       title={title}
     >
       {children}

@@ -12,12 +12,22 @@ export const useDesignerStore = create<DesignerState>()(
     historyIndex: -1,
     isDragging: false,
     isDirty: false,
+    snappingEnabled: true,
+    cropperOpen: false,
+    cropperSrc: undefined,
+    cropperTargetId: undefined,
 
     setActiveArea: (activeArea: LabelArea) => set({ activeArea }),
     setZoom: (zoom: number) => set({ zoom }),
     setActiveTool: (activeTool) => set({ activeTool }),
     setSelectedIds: (selectedIds: string[]) => set({ selectedIds }),
     setDirty: (isDirty: boolean) => set({ isDirty }),
+    setSnappingEnabled: (snappingEnabled: boolean) => set({ snappingEnabled }),
+    setCropper: (cropper) => set({ 
+      cropperOpen: cropper.open, 
+      cropperSrc: cropper.src, 
+      cropperTargetId: cropper.targetId 
+    }),
 
     pushHistory: (state: string) => set((s) => {
       const newHistory = s.history.slice(0, s.historyIndex + 1)

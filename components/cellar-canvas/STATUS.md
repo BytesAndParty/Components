@@ -17,14 +17,15 @@
 | Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. |
 | Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
 | Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). |
-| Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + StackOrderControls + AlignmentBar (live) + Shape Fill / Stroke ColorSwatch + Stroke-Width. |
+| Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + Shape Fill/Stroke/Stroke-Width + Image (Crop-Button → Re-Crop via store-zentrierten Cropper + Opacity) + StackOrderControls + AlignmentBar (live). |
+| Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte + Label-Center. Toggle per Header-Button (Magnet) + `S`-Hotkey; Alt unterdrückt Snapping pro Drag. Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
 | Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` setzt `labelColor` Instance-Prop + `isDirty`. Wird per `serializeState` mitpersistiert (`{ canvas, bg }`). |
 | Wine Fields          | 6 Felder + QR-Code, `_fieldKey` Metadata.                              |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
-| Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. |
+| Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. **Re-Crop:** Über ContextToolbar für selektierte Bilder möglich; behält ID und Position bei. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. |
 | i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
@@ -49,11 +50,9 @@
 
 - **3 mm Print-Bleed-Indicator** — gestricheltes Rect am Label-Rand (separat vom 40 mm Workspace-Bleed). Visueller Druck-Sicherheitsabstand laut Decision #3.
 - **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
-- **Snap-to-Grid + Smart Guides** (zeigen sich beim Drag in Nähe anderer Objekte).
 - **Pan-Tool** — aktuell nur Tool-Switch ohne Funktion. Plan: Space+Drag, oder eigenes Pan-Mode.
 - **Background Image** — neben Color auch Image (im `BackgroundPanel`).
 - **Group / Ungroup** für Layer.
-- **Re-Crop von ContextToolbar** — Image selektieren → "Crop"-Button → re-open `ImageCropperModal` mit aktueller Source.
 - **Duplicate** (Layer / Selection).
 - **Strg+A** (Select-All) — selektiert alle User-Objekte; mit Active-Selection-Rebuild damit Alignment/Distribute direkt drauf laufen kann.
 - **Esc** — discardet aktive Selection bzw. exitet Text-Edit-Mode; muss mit dem `hiddenTextarea`-Lifecycle abgestimmt sein.
@@ -62,7 +61,7 @@
 
 - **Bg-Color nicht in Undo/Redo-History** — User-Change überlebt Reload, aber kein Undo. Lösungswege: Sidecar in `pushHistory` (Tupel `[canvas, bg]`) ODER `setBackground` schiebt einen synthetischen `object:modified`-Snapshot.
 - **`cellar:property-changed` feuert teils mehrfach pro logischer Aktion** (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
-- **`ContextToolbar` zeigt nichts bei Image-Selection** — kein Re-Crop-Button, kein Opacity-Slider, kein Replace-Image. Aktuell mountet die Toolbar bei Image-Selection eine leere Hülle. Re-Crop (siehe Spec-Item oben) ist der dringendste Eintrag.
+- **`ContextToolbar` Image-Branch:** Re-Crop + Opacity verdrahtet (2026-05-26). Offen: Replace-Image-Button (komplett neue Source ohne Crop-Dialog).
 
 ---
 
@@ -213,6 +212,14 @@
 ---
 
 ## Entscheidungs-Log
+
+### 2026-05-26 — Snap-to-Grid + Re-Crop from ContextToolbar
+
+- **`engine/snap-manager.ts`** — eigene Klasse, lebt auf `canvas.on('object:moving')`. Kollektioniert Snap-Targets (Kanten + Mittellinien anderer User-Objekte + Label-Center) und schiebt das Active Object innerhalb eines kleinen Threshold-Korridors auf die nächste Linie. Smart Guides werden als `fabric.Line` mit `excludeFromExport: true` und `selectable: false` gerendert; bei `mouse:up` und `selection:cleared` weggeräumt.
+- **Toggle:** `snappingEnabled` lebt im Zustand-Store (default `true`). Header-Button (Magnet-Icon) + Hotkey `S`. Alt-Key während Drag unterdrückt Snapping pro Event ohne den Toggle zu kippen.
+- **Cropper-Centralisation:** `cropperOpen` / `cropperSrc` / `cropperTargetId` jetzt im Zustand-Store statt im `MainToolbar`-lokalen State. Modal mountet einmalig in `CellarCanvas`. Vorteil: ContextToolbar kann den Cropper für ein bereits platziertes Bild öffnen, ohne dass MainToolbar als Vermittler nötig ist.
+- **Re-Crop-Flow:** Image-Selektion in ContextToolbar → Crop-Button → `bridge.getSelectedImageSrc()` → `setCropper({ open, src, targetId })`. Beim Apply: wenn `targetId` gesetzt, `bridge.updateImageSource(id, newUrl)` statt `addImage` — ID + Position + Layer-Meta bleiben erhalten.
+- **Hotkey-Category bleibt Literal:** Kurzer Versuch, `category: m.hotkeyCategory` durchzureichen, scheiterte am strikten Union-Type des Hotkey-Providers (`'Global' | 'Navigation' | 'Actions' | 'Context'`). Lösung: Category bleibt als Literal `'Actions'` in der Registrierung; Übersetzung müsste display-side in `ShortcutOverview` passieren. `messages.ts` trägt `hotkeyCategory` weiterhin, wird aktuell aber nicht konsumiert.
 
 ### 2026-05-26 — Refactor + i18n + Tour + Emoji-Extras
 

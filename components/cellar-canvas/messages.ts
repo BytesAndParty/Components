@@ -20,6 +20,8 @@ export type CellarCanvasMessages = {
   previewExit:            string
   fullscreenEnter:        string
   fullscreenExit:         string
+  snappingTitleEnabled:   string
+  snappingTitleDisabled:  string
 
   // Save button
   saveIdle:               string
@@ -38,6 +40,7 @@ export type CellarCanvasMessages = {
   toolCircle:             string
   toolLine:               string
   toolDelete:             string
+  toolCrop:               string
 
   // Context toolbar
   contextEmpty:           string
@@ -83,6 +86,8 @@ export type CellarCanvasMessages = {
   hotkeyRedoDescription:  string
   hotkeyDeleteLabel:      string
   hotkeyDeleteDescription: string
+  hotkeySnappingLabel:    string
+  hotkeySnappingDescription: string
   hotkeyCategory:         string
 
   // Onboarding Tour
@@ -119,6 +124,8 @@ export const MESSAGES = {
     previewExit:             'Vorschau beenden (Bleed anzeigen)',
     fullscreenEnter:         'Vollbild',
     fullscreenExit:          'Vollbild beenden',
+    snappingTitleEnabled:    'Snapping aktiv (S)',
+    snappingTitleDisabled:   'Snapping aus (S)',
 
     saveIdle:                'Speichern',
     saveSaved:               'Gespeichert',
@@ -135,6 +142,7 @@ export const MESSAGES = {
     toolCircle:              'Kreis (C)',
     toolLine:                'Linie (L)',
     toolDelete:              'Auswahl löschen (Entf)',
+    toolCrop:                'Zuschneiden',
 
     contextEmpty:            'Wähle ein Objekt aus, um Optionen zu sehen',
     contextFill:             'Füllung',
@@ -173,6 +181,8 @@ export const MESSAGES = {
     hotkeyRedoDescription:   'Rückgängig gemachte Änderung wiederherstellen',
     hotkeyDeleteLabel:       'Löschen',
     hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
+    hotkeySnappingLabel:     'Snapping umschalten',
+    hotkeySnappingDescription: 'Drag-Snapping zu Kanten und Mittellinien an- oder ausschalten',
     hotkeyCategory:          'Aktionen',
 
     tourSkip:                'Überspringen',
@@ -205,6 +215,8 @@ export const MESSAGES = {
     previewExit:             'Exit Preview (show bleed)',
     fullscreenEnter:         'Enter Fullscreen',
     fullscreenExit:          'Exit Fullscreen',
+    snappingTitleEnabled:    'Snapping enabled (S)',
+    snappingTitleDisabled:   'Snapping disabled (S)',
 
     saveIdle:                'Save',
     saveSaved:               'Saved',
@@ -221,6 +233,7 @@ export const MESSAGES = {
     toolCircle:              'Circle (C)',
     toolLine:                'Line (L)',
     toolDelete:              'Delete Selected (Del)',
+    toolCrop:                'Crop',
 
     contextEmpty:            'Select an object to see options',
     contextFill:             'Fill',
@@ -259,6 +272,8 @@ export const MESSAGES = {
     hotkeyRedoDescription:   'Reapply a reversed change',
     hotkeyDeleteLabel:       'Delete',
     hotkeyDeleteDescription: 'Remove selected object',
+    hotkeySnappingLabel:     'Toggle snapping',
+    hotkeySnappingDescription: 'Turn drag-snapping to edges and center lines on or off',
     hotkeyCategory:          'Actions',
 
     tourSkip:                'Skip',
@@ -282,3 +297,4 @@ export const MESSAGES = {
     emojiHint:               'Pick an emoji — it drops onto the canvas as a text layer.',
   },
 } as const satisfies ComponentMessages<CellarCanvasMessages>
+

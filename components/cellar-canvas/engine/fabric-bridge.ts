@@ -3,6 +3,7 @@ import { useDesignerStore } from '../store/designer-store'
 import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
 import { pxToMm, mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
+import { SnapManager } from './snap-manager'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -30,12 +31,14 @@ export class FabricBridge {
   bleedMm: number
   private labelColor = '#ffffff'
   private isRestoringHistory = false
+  private snapManager: SnapManager
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
     this.canvas = canvas
     this.widthMm = opts.widthMm
     this.heightMm = opts.heightMm
     this.bleedMm = opts.bleedMm
+    this.snapManager = new SnapManager(canvas, opts.widthMm, opts.heightMm, opts.bleedMm)
 
     // Click-without-drag on a text → enter edit mode + select-all. We measure
     // pointer travel between mouse:down and mouse:up so that a real drag
@@ -54,6 +57,7 @@ export class FabricBridge {
       downAt = point
     })
     canvas.on('mouse:up', (opt) => {
+      this.snapManager.clearGuides()
       const target = opt.target
       const e = opt.e as MouseEvent | TouchEvent | undefined
       const up =
@@ -114,6 +118,23 @@ export class FabricBridge {
       useDesignerStore.getState().setZoom(next)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(canvas as any).fire('cellar:property-changed', { target: null })
+    })
+
+    canvas.on('object:moving', (opt) => {
+      const { snappingEnabled } = useDesignerStore.getState()
+      if (!snappingEnabled) return
+      
+      const e = opt.e as MouseEvent | TouchEvent | undefined
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const isAltPressed = e && (e as any).altKey
+      
+      if (opt.target) {
+        this.snapManager.handleMoving(opt.target, isAltPressed)
+      }
+    })
+
+    canvas.on('selection:cleared', () => {
+      this.snapManager.clearGuides()
     })
 
     // Initial history snapshot
@@ -396,6 +417,36 @@ export class FabricBridge {
     this.canvas.setActiveObject(img)
     this.canvas.renderAll()
     this.saveHistory()
+  }
+
+  /**
+   * Updates an existing image object with a new source while preserving
+   * its geometry and metadata.
+   */
+  async updateImageSource(id: string, src: string) {
+    const obj = this.canvas
+      .getObjects()
+      .find((o) => (o as fabric.Object & FabricObjectMeta).id === id) as
+        | (fabric.FabricImage & FabricObjectMeta)
+        | undefined
+    if (!obj || obj._type !== 'image') return
+
+    await obj.setSrc(src)
+    this.canvas.requestRenderAll()
+    this.saveHistory()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: obj })
+  }
+
+  /**
+   * Returns the original source URL/DataURL of the currently selected image.
+   */
+  getSelectedImageSrc(): string | null {
+    const obj = this.canvas.getActiveObject() as
+      | (fabric.FabricImage & FabricObjectMeta)
+      | undefined
+    if (!obj || obj._type !== 'image') return null
+    return obj.getSrc()
   }
 
   async addQRCode(url: string) {

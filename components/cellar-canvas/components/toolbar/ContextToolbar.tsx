@@ -5,6 +5,7 @@ import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
+import { Crop } from 'lucide-react'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import { useEffect, useState } from 'react'
 import type { FabricObjectProperties } from '../../store/types'
@@ -16,6 +17,7 @@ interface ContextToolbarProps {
 export function ContextToolbar({ bridge }: ContextToolbarProps) {
   const m = useCellarCanvasMessages()
   const selectedIds = useDesignerStore(s => s.selectedIds)
+  const setCropper = useDesignerStore(s => s.setCropper)
   const [props, setProps] = useState<FabricObjectProperties | null>(null)
 
   // Update local state when selection changes or object is modified
@@ -64,6 +66,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
   const isText      = props.type === 'text' || props.type === 'wine-field'
   const isShape     = props.type === 'rect' || props.type === 'circle' || props.type === 'line'
+  const isImage     = props.type === 'image'
   const isMulti     = selectedIds.length >= 2
 
   const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
@@ -82,6 +85,33 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
   return (
     <div className="h-full flex items-center px-4 gap-4">
+      {isImage && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const src = bridge.current?.getSelectedImageSrc()
+              if (src) {
+                setCropper({ open: true, src, targetId: selectedIds[0] })
+              }
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-muted transition-colors"
+          >
+            <Crop size={14} />
+            {m.toolCrop ?? 'Crop'}
+          </button>
+          <div className="w-px h-5 bg-border mx-2" />
+          <div className="flex items-center h-9 bg-card border border-border rounded-lg px-2">
+             <NumberInput
+                label="OP"
+                value={(props.opacity ?? 1) * 100}
+                onChange={(v) => bridge.current?.updateActiveObject({ opacity: v / 100 })}
+                min={0} max={100} step={5} decimals={0}
+                unit="%"
+              />
+          </div>
+        </div>
+      )}
+
       {isText && (
         <div className="flex items-center gap-4">
           <TextToolOptions
