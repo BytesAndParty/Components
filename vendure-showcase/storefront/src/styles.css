@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4 only auto-scans the Vite root; pull in monorepo components
+   so utility classes used inside `components/**` (e.g. atelier) are emitted. */
+@source "../../../components/**/*.{ts,tsx}";
+
 @theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 
