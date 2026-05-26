@@ -12,7 +12,7 @@
 |----------------------|------------------------------------------------------------------------|
 | Canvas               | Fabric v7 via `use-fabric-canvas.ts`, mm/px Umrechnung steht. Symmetrische 40 mm Bleed-Margin rundherum; Label-Backdrop wird als CSS-`<div>` in `LabelCanvas` gerendert (NICHT mehr als Fabric-Objekt) und tracking-aligned via Fabric-Zoom + Viewport-Transform. User-facing `x/y` bleibt label-relativ. |
 | Tools                | Rect / Circle / Line / Text (Textbox mit Word-Wrap) / Image / QR-Code addbar. Text-Click-to-Edit per `mouse:up` + Drag-Threshold; `hiddenTextarea` wird in `canvas.wrapperEl` umgehängt damit Edit auch in modalen Subtrees funktioniert. |
-| History              | ✅ Undo/Redo (50 Steps) via Zustand + Fabric JSON Serialization. Bg-Color liegt außerhalb der History (Trade-off — Undo revertet sie nicht). |
+| History              | ✅ Undo/Redo (50 Steps) via Zustand. Snapshot ist die volle `serializeState`-Form `{ canvas, bg }` — Bg-Color partizipiert seit 2026-05-26 an Undo/Redo. Alte plain-canvas-Snapshots aus localStorage werden weiterhin akzeptiert (Backward-Compat). |
 | Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, del, backspace) inkl. Registry. |
 | Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. |
 | Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
@@ -59,7 +59,7 @@
 
 ### Tech-Debt / Known Limitations
 
-- **Bg-Color nicht in Undo/Redo-History** — User-Change überlebt Reload, aber kein Undo. Lösungswege: Sidecar in `pushHistory` (Tupel `[canvas, bg]`) ODER `setBackground` schiebt einen synthetischen `object:modified`-Snapshot.
+- ~~Bg-Color nicht in Undo/Redo-History~~ — **gefixt 2026-05-26**: `saveHistory` schreibt jetzt die volle `{ canvas, bg }`-Form, `setBackground` ruft `saveHistory` nach jeder Mutation, `restoreHistory` lädt beide Werte zurück. Backward-Compat für alte plain-canvas-Snapshots in localStorage bleibt.
 - **`cellar:property-changed` feuert teils mehrfach pro logischer Aktion** (Stack-Op = `notifyStackChanged` + `update` via `object:added/removed` Trigger). React batched in der Regel, aber nicht garantiert wenn aus Fabric-Events. Mittelfristig konsolidieren.
 - **`ContextToolbar` Image-Branch:** Re-Crop + Opacity verdrahtet (2026-05-26). Offen: Replace-Image-Button (komplett neue Source ohne Crop-Dialog).
 
@@ -212,6 +212,13 @@
 ---
 
 ## Entscheidungs-Log
+
+### 2026-05-26 — Bg-Color in Undo/Redo-History
+
+- `saveHistory` serialisiert nicht länger nur den Fabric-`canvas.toObject(...)`, sondern direkt die volle `serializeState()`-Form `{ canvas, bg }`. Damit wandert die Label-Paper-Farbe als gleichberechtigte Property in jeden Snapshot.
+- `setBackground` ruft jetzt `saveHistory()` nach der Mutation; vorher passierte das nie und Bg-Changes blieben außerhalb der History. Idempotenz-Guard: gleicher Color → No-Op (verhindert sinnlose Snapshots beim Picker-Hover).
+- `restoreHistory` parst das Snapshot, lädt `canvas` via `loadFromJSON` und schreibt `labelColor` zurück. Anschließend `cellar:property-changed` ausgelöst, damit der React-Sync-Hook `getBackground()` neu pullt und der CSS-Backdrop die alte Farbe wieder rendert.
+- **Backward-Compat:** Wenn ein Snapshot keinen `bg`-Key trägt (alte localStorage-Drafts, plain Fabric JSON), bleibt `labelColor` unverändert — kein Reset auf Weiß, kein Crash.
 
 ### 2026-05-26 — Snap-to-Grid + Re-Crop from ContextToolbar
 

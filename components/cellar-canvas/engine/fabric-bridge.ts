@@ -147,32 +147,42 @@ export class FabricBridge {
 
   /**
    * Captures the current state and pushes it to the store's history stack.
+   * Snapshot is the same shape as `serializeState` (`{ canvas, bg }`) so the
+   * label-paper colour participates in Undo/Redo. Old plain-canvas snapshots
+   * from before this change are still accepted by `restoreHistory`.
    */
   saveHistory() {
     if (this.isRestoringHistory) return
-    // Fabric v7: toJSON() is arg-less now; propertiesToInclude moved to toObject().
-    const snapshot = this.canvas.toObject([
-      'id', '_layerName', '_type', '_fieldKey',
-      'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
-      'hasControls',
-    ])
-    useDesignerStore.getState().pushHistory(JSON.stringify(snapshot))
+    useDesignerStore.getState().pushHistory(JSON.stringify(this.serializeState()))
   }
 
   /**
    * Restores the state from the history stack based on the current index.
    * Label backdrop is rendered by React, so it doesn't need to be re-pinned.
+   * Bg-colour is included in the snapshot since the introduction of full-
+   * state history; older snapshots without a `bg` field leave the current
+   * colour untouched.
    */
   async restoreHistory() {
     const { history, historyIndex } = useDesignerStore.getState()
     const state = history[historyIndex]
     if (!state) return
 
+    const parsed = JSON.parse(state) as Partial<CellarCanvasState>
+    const canvasState = parsed.canvas ?? parsed
+    const nextBg      = parsed.bg
+
     this.isRestoringHistory = true
-    await this.canvas.loadFromJSON(state)
+    await this.canvas.loadFromJSON(canvasState)
+    if (typeof nextBg === 'string') this.labelColor = nextBg
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
     this.isRestoringHistory = false
+    // Bg-Color lives outside the Fabric object stack; React mirrors it from
+    // `getBackground()` via the property-changed channel, so the backdrop
+    // re-renders with the restored colour even though no Fabric event fired.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
   }
 
   undo() {
@@ -729,10 +739,15 @@ export class FabricBridge {
   }
 
   setBackground(color: string) {
+    if (this.labelColor === color) return
     this.labelColor = color
     useDesignerStore.getState().setDirty(true)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+    // Bg-colour now participates in Undo/Redo (the snapshot includes it).
+    // Without this call setBackground would mutate the live state but leave
+    // the history untouched, so Undo couldn't reverse it.
+    this.saveHistory()
   }
 
   /**
