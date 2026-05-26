@@ -6,7 +6,7 @@ Supply-Chain-Härtung wird zentral im Components-Repo abgedeckt:
 [`/.github/SECURITY.md`](../.github/SECURITY.md), [`/bunfig.toml`](../bunfig.toml),
 [`/.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
-Dieses Dokument trackt, was im wine-showcase **konkret umgesetzt** wurde
+Dieses Dokument trackt, was im vendure-showcase **konkret umgesetzt** wurde
 und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wird.
 
 ---

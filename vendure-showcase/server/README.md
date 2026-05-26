@@ -35,7 +35,7 @@ DB_TYPE=postgres → PostgreSQL (für Podman / Produktion)
 
 ```bash
 # In dieses Verzeichnis wechseln
-cd wine-showcase/server
+cd vendure-showcase/server
 
 # Abhängigkeiten installieren
 bun install
@@ -90,7 +90,7 @@ podman machine start
 ### Starten
 
 ```bash
-cd wine-showcase/server
+cd vendure-showcase/server
 
 # Container bauen und starten (DB + Server)
 podman compose up --build
@@ -197,14 +197,14 @@ Alle Custom Fields sind auf dem `Product`-Typ definiert:
 
 ## Storefront-Verbindung
 
-Der Vite-Dev-Server des Storefronts (`wine-showcase/storefront`) proxied `/shop-api` automatisch auf `localhost:3000`. Kein CORS-Problem im Dev-Modus.
+Der Vite-Dev-Server des Storefronts (`vendure-showcase/storefront`) proxied `/shop-api` automatisch auf `localhost:3000`. Kein CORS-Problem im Dev-Modus.
 
 ```bash
 # Server starten
-cd wine-showcase/server && bun run dev
+cd vendure-showcase/server && bun run dev
 
 # Storefront starten (neues Terminal)
-cd wine-showcase/storefront && bun run dev
+cd vendure-showcase/storefront && bun run dev
 ```
 
 Storefront läuft auf `http://localhost:5173`.

@@ -16,10 +16,10 @@ export default defineConfig(
       '**/.vite/**',
       '**/_public_/**',
       '**/_resources_/**',
-      // TODO: re-enable once the wine-showcase Vendure server cleanup
+      // TODO: re-enable once the vendure-showcase server cleanup
       // (seed.ts brace mismatch, redeclared wines, prefer-const lets)
       // is done. Tracked in ESLINT-MIGRATION.md §7.
-      '**/wine-showcase/server/**',
+      '**/vendure-showcase/server/**',
     ],
   },
 

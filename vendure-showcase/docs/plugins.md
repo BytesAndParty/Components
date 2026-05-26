@@ -8,7 +8,7 @@
 
 ## Aktuell installiert
 
-Stand laut [wine-showcase/server/package.json](../server/package.json):
+Stand laut [vendure-showcase/server/package.json](../server/package.json):
 
 - `@vendure/core` — Basis
 - `@vendure/admin-ui-plugin` — Admin-Interface

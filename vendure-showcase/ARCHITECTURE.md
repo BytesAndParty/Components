@@ -251,7 +251,7 @@ prefetch: { prefetchAll: true, defaultStrategy: 'hover' }
 
 ## Offene Themen / TODOs
 
-- [ ] Astro-Migration der wine-showcase Storefront
+- [ ] Astro-Migration der vendure-showcase Storefront
 - [ ] `<Image>` / `<Picture>` + Vendure-Bild-Pipeline (statt Emoji-Platzhalter)
 - [x] Paragraph-Komponente mit Pretext
 - [ ] Container Queries-Refactor für GlowCard, Cart-Layout, Detail-Page

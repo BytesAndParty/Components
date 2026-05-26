@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "wine-showcase-storefront",
+      "name": "vendure-showcase-storefront",
       "dependencies": {
         "@urql/core": "^5.1.1",
         "framer-motion": "^12.38.0",

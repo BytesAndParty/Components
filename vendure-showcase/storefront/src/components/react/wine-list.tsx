@@ -40,7 +40,7 @@ function WineListInner({ initialProducts }: { initialProducts?: Product[] }) {
         <h2 className="text-2xl font-bold mb-4">Fehler</h2>
         <p className="text-muted-foreground mb-6">{error}</p>
         <div className="p-4 bg-muted rounded-lg text-left text-sm font-mono">
-          cd wine-showcase/server && bun run dev
+          cd vendure-showcase/server && bun run dev
         </div>
       </div>
     )

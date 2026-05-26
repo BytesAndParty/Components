@@ -38,6 +38,9 @@ export const config: VendureConfig = {
       password: process.env.SUPERADMIN_PASSWORD ?? 'superadmin',
     },
   },
+  paymentOptions: {
+    paymentMethodHandlers: [],
+  },
   dbConnectionOptions: isPostgres
     ? {
         type: 'postgres',

@@ -13,7 +13,7 @@ interface WineTextProps {
  *
  * If rich-text/Markdown is ever enabled in the admin UI, swap the plaintext
  * branch below for DOMPurify-sanitized HTML — every consumer benefits at once.
- * See wine-showcase/SECURITY.md → "XSS-Sanitization für Custom-Field-Beschreibungen".
+ * See vendure-showcase/SECURITY.md → "XSS-Sanitization für Custom-Field-Beschreibungen".
  */
 export function WineText({ children, fallback = null }: WineTextProps) {
   const text = children?.trim()

@@ -4,7 +4,7 @@
 
 Tailwind CSS ist konfiguriert (`@tailwindcss/vite`), wird aber gemischt mit Inline-Styles verwendet.
 Komponenten die aus `components/` übernommen wurden bringen ihre Inline-Styles mit,
-im wine-showcase selbst kommen vereinzelt Tailwind-Klassen dazu.
+im vendure-showcase selbst kommen vereinzelt Tailwind-Klassen dazu.
 
 ## Geplante Umstellung
 

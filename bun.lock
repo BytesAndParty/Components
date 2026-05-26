@@ -104,8 +104,8 @@
         "vite": "^6.4.2",
       },
     },
-    "wine-showcase/storefront": {
-      "name": "wine-showcase-storefront",
+    "vendure-showcase/storefront": {
+      "name": "vendure-showcase-storefront",
       "version": "1.0.0",
       "dependencies": {
         "@astrojs/react": "^5.0.4",
@@ -1576,7 +1576,7 @@
 
     "which-pm-runs": ["which-pm-runs@1.1.0", "", {}, "sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA=="],
 
-    "wine-showcase-storefront": ["wine-showcase-storefront@workspace:wine-showcase/storefront"],
+    "vendure-showcase-storefront": ["vendure-showcase-storefront@workspace:vendure-showcase/storefront"],
 
     "wonka": ["wonka@6.3.6", "", {}, "sha512-MXH+6mDHAZ2GuMpgKS055FR6v0xVP3XwquxIMYXgiW+FejHQlMGlvVRZT4qMCxR+bEo/FCtIdKxwej9WV3YQag=="],
 

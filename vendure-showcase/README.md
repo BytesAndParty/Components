@@ -13,16 +13,16 @@ Die Storefront verwendet kopierte Komponenten aus der `components/` Library (sha
 
 ```bash
 # 1. Server starten
-cd wine-showcase/server
+cd vendure-showcase/server
 bun install
 bun run dev
 
 # 2. In neuem Terminal: Testdaten anlegen
-cd wine-showcase/server
+cd vendure-showcase/server
 bun run seed
 
 # 3. In neuem Terminal: Storefront starten
-cd wine-showcase/storefront
+cd vendure-showcase/storefront
 bun install
 bun run dev
 ```
