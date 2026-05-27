@@ -25,6 +25,24 @@ export interface Asset {
   preview: string;
 }
 
+export interface FacetValueRef {
+  id: string;
+  name: string;
+  code: string;
+  facet: {
+    id: string;
+    code: string;
+    name: string;
+  };
+}
+
+export interface Facet {
+  id: string;
+  code: string;
+  name: string;
+  values: Array<{ id: string; code: string; name: string }>;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -32,6 +50,7 @@ export interface Product {
   description: string;
   featuredAsset: Asset | null;
   customFields: WineCustomFields;
+  facetValues: FacetValueRef[];
   variants: ProductVariant[];
 }
 

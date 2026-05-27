@@ -23,6 +23,16 @@ export const GET_PRODUCTS = `
           speiseempfehlung
           auszeichnungen
         }
+        facetValues {
+          id
+          name
+          code
+          facet {
+            id
+            code
+            name
+          }
+        }
         variants {
           id
           name
@@ -32,6 +42,23 @@ export const GET_PRODUCTS = `
         }
       }
       totalItems
+    }
+  }
+`;
+
+export const GET_FACETS = `
+  query GetFacets {
+    facets {
+      items {
+        id
+        code
+        name
+        values {
+          id
+          code
+          name
+        }
+      }
     }
   }
 `;
