@@ -15,7 +15,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { vendureClient } from './vendure-client';
-import { GET_FACETS, GET_PRODUCTS } from './queries';
+import { GET_FACETS, GET_PRODUCT, GET_PRODUCTS } from './queries';
 import type { Facet, Product } from './types';
 
 // ── URL state ────────────────────────────────────────────────────────────────
@@ -191,6 +191,20 @@ export function useProducts(initial?: Product[]) {
     },
     initialData: initial,
     staleTime: 60 * 1000,
+  });
+}
+
+export function useProduct(slug: string, initial?: Product | null) {
+  return useQuery({
+    queryKey: ['product', slug],
+    queryFn: async () => {
+      const result = await vendureClient.query(GET_PRODUCT, { slug }).toPromise();
+      if (result.error) throw new Error(result.error.message);
+      return (result.data?.product ?? null) as Product | null;
+    },
+    initialData: initial ?? undefined,
+    staleTime: 60 * 1000,
+    enabled: Boolean(slug),
   });
 }
 
