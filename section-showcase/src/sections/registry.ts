@@ -1,4 +1,9 @@
 import { heroSection } from './hero/manifest'
+import { featuresSection } from './features/manifest'
+import { showcaseSection } from './showcase/manifest'
+import { ctaSection } from './cta/manifest'
+import { pricingSection } from './pricing/manifest'
+import { timelineSection } from './timeline/manifest'
 import type { SectionDef } from './types'
 
 /**
@@ -7,6 +12,11 @@ import type { SectionDef } from './types'
  */
 export const sections: SectionDef[] = [
   heroSection,
+  featuresSection,
+  showcaseSection,
+  ctaSection,
+  pricingSection,
+  timelineSection,
 ]
 
 export function findSection(id: string): SectionDef | undefined {

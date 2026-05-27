@@ -1,6 +1,7 @@
 import type { SectionDef } from '../types'
 import { HeroV1 } from './HeroV1'
 import { HeroV2 } from './HeroV2'
+import { HeroV3 } from './HeroV3'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -18,6 +19,12 @@ export const heroSection: SectionDef = {
       label: 'Centered Statement',
       description: 'Großformatige zentrierte Aussage mit weichem Akzent-Glow.',
       Component: HeroV2,
+    },
+    {
+      id: 'v3',
+      label: 'Cinematic Atmosphere',
+      description: 'Full-screen mit atmosphärischen Partikeln und Shiny Text.',
+      Component: HeroV3,
     },
   ],
 }
