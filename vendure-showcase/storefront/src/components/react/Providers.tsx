@@ -5,7 +5,7 @@ import { queryClient } from '@/lib/query-client';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <AtelierProvider defaultTheme="dark" defaultAccent="indigo" defaultLocale="de">
+    <AtelierProvider defaultTheme="dark" defaultAccent="bordeaux" defaultLocale="de">
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </AtelierProvider>
   );

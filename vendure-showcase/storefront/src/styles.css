@@ -28,7 +28,7 @@
   --radius-xl: calc(var(--radius) + 8px);
 }
 
-/* Dark Mode (default) */
+/* ── Dark Mode (default) ─────────────────────────────────────── */
 :root {
   --background:             oklch(0.062 0.004 285);
   --foreground:             oklch(0.905 0.004 285);
@@ -38,16 +38,18 @@
   --muted-foreground:       oklch(0.491 0.010 285);
   --border:                 oklch(0.188 0.006 285);
   --input:                  oklch(0.188 0.006 285);
-  --accent:                 oklch(0.555 0.146 49);
   --primary:                var(--accent);
   --primary-foreground:     oklch(1 0 0);
   --ring:                   var(--accent);
   --destructive:            oklch(0.577 0.245 27);
   --destructive-foreground: oklch(1 0 0);
   --radius:                 0.75rem;
+
+  /* Default accent (matches AtelierProvider defaultAccent="bordeaux"). */
+  --accent:                 oklch(0.45 0.16 25);
 }
 
-/* Light Mode */
+/* ── Light Mode ───────────────────────────────────────────────── */
 [data-theme="light"] {
   --background:             oklch(0.979 0.002 285);
   --foreground:             oklch(0.141 0.004 285);
@@ -58,6 +60,15 @@
   --border:                 oklch(0.870 0.004 285);
   --input:                  oklch(0.870 0.004 285);
 }
+
+/* ── Accent palette ──────────────────────────────────────────────
+   AtelierProvider writes `data-accent="<name>"` on <html>. Each
+   selector overrides `--accent`; --primary/--ring/etc. inherit. */
+[data-accent="bordeaux"]  { --accent: oklch(0.45 0.16 25);  }  /* deep wine red */
+[data-accent="gold"]      { --accent: oklch(0.72 0.13 75);  }  /* warm gold */
+[data-accent="forest"]    { --accent: oklch(0.50 0.10 145); }  /* sage forest */
+[data-accent="aubergine"] { --accent: oklch(0.45 0.13 320); }  /* plum */
+[data-accent="indigo"]    { --accent: oklch(0.55 0.18 270); }  /* atelier default */
 
 @layer base {
   body {
