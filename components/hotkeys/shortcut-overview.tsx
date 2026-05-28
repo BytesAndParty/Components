@@ -5,6 +5,11 @@ import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type ShortcutOverviewMessages } from './messages'
 
+export interface ShortcutOverviewProps {
+  className?: string;
+  messages?: Partial<ShortcutOverviewMessages>;
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function ShortcutOverview({

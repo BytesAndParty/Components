@@ -10,5 +10,11 @@ export const showcaseSection: SectionDef = {
       label: 'Interactive Detail Page',
       Component: ProductV1,
     },
+    {
+      id: 'v2',
+      label: 'Artisanal Detail',
+      description: 'Fokus auf das reine Produkt, extreme Typografie und offenes Layout.',
+      Component: ProductV2,
+    },
   ],
 }

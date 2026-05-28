@@ -26,5 +26,11 @@ export const heroSection: SectionDef = {
       description: 'Full-screen mit atmosphärischen Partikeln und Shiny Text.',
       Component: HeroV3,
     },
+    {
+      id: 'v4',
+      label: 'Artisanal Minimal',
+      description: 'Extremer Whitespace, Serif-Typografie und asymmetrischer Fokus (Buchart Style).',
+      Component: HeroV4,
+    },
   ],
 }

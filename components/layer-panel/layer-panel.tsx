@@ -36,6 +36,7 @@ export interface Layer {
   id: string
   name: string
   type: LayerType
+  fieldKey?: string
   visible: boolean
   locked: boolean
 }

@@ -1,38 +1,6 @@
-/**
- * Empty / error / loading states for the store page.
- *
- * Same shape ("EmptyState"): an icon, a title, a body, and an optional action.
- * Keeps the layout calm even when data is missing instead of slamming the
- * page with a centered string.
- */
 import { CloudOff, Filter, Grape, Loader2 } from 'lucide-react';
 import { useT } from '@/lib/i18n';
-
-interface EmptyStateProps {
-  icon: React.ReactNode;
-  title: string;
-  body?: string;
-  cmd?: string;
-  action?: React.ReactNode;
-}
-
-function EmptyState({ icon, title, body, cmd, action }: EmptyStateProps) {
-  return (
-    <div className="py-20 px-6 flex flex-col items-center text-center max-w-lg mx-auto">
-      <div className="w-16 h-16 mb-6 grid place-items-center rounded-full bg-muted text-muted-foreground">
-        {icon}
-      </div>
-      <h2 className="text-2xl font-bold mb-3">{title}</h2>
-      {body && <p className="text-muted-foreground leading-relaxed mb-6">{body}</p>}
-      {cmd && (
-        <pre className="w-full mb-6 px-4 py-3 rounded-lg bg-muted text-left text-sm font-mono overflow-x-auto">
-          {cmd}
-        </pre>
-      )}
-      {action}
-    </div>
-  );
-}
+import { EmptyState } from '../EmptyState';
 
 export function StoreLoading() {
   const t = useT();
