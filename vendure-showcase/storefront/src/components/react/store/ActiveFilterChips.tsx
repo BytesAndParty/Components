@@ -1,5 +1,6 @@
 import type { Facet } from '@/lib/types';
 import { useStoreFilters } from '@/lib/store-filters';
+import { useT, format } from '@/lib/i18n';
 
 interface Props {
   facets: Facet[];
@@ -12,6 +13,7 @@ interface Props {
  */
 export function ActiveFilterChips({ facets }: Props) {
   const { state, removeValue, clearAll, activeCount } = useStoreFilters();
+  const t = useT();
 
   if (activeCount === 0) return null;
 
@@ -37,7 +39,7 @@ export function ActiveFilterChips({ facets }: Props) {
           type="button"
           onClick={() => removeValue(chip.facetCode, chip.valueCode)}
           className="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full text-sm bg-muted text-foreground border border-border hover:border-accent hover:text-accent transition-colors"
-          aria-label={`Filter ${chip.label} entfernen`}
+          aria-label={format(t.filterChipRemove, { name: chip.label })}
         >
           <span>{chip.label}</span>
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
@@ -56,7 +58,7 @@ export function ActiveFilterChips({ facets }: Props) {
           onClick={clearAll}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors ml-2 underline-offset-4 hover:underline"
         >
-          Zurücksetzen
+          {t.filterReset}
         </button>
       )}
     </div>

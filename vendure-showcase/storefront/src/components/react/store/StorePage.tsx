@@ -6,11 +6,13 @@ import {
   applyFilters,
   useHydrateOnMount,
 } from '@/lib/store-filters';
+import { useT } from '@/lib/i18n';
 import type { Facet, Product } from '@/lib/types';
 import { Providers } from '../Providers';
 import { WineCard } from '../wine-card';
 import { StoreToolbar } from './StoreToolbar';
 import { ActiveFilterChips } from './ActiveFilterChips';
+import { StoreEmpty, StoreError, StoreLoading } from './StoreStates';
 
 interface StorePageProps {
   initialProducts?: Product[];
@@ -23,38 +25,20 @@ function StoreInner({ initialProducts, initialFacets }: StorePageProps) {
   const productsQuery = useProducts(initialProducts);
   const facetsQuery = useFacets(initialFacets);
   const { mutate: addToCart } = useAddToCart();
+  const t = useT();
 
   const products = productsQuery.data ?? [];
   const facets = facetsQuery.data ?? [];
   const filtered = applyFilters(products, state);
 
-  if (productsQuery.isLoading && !initialProducts) {
-    return (
-      <div className="py-20 text-center">
-        <p className="text-muted-foreground text-lg">Lade Weine...</p>
-      </div>
-    );
-  }
-
-  if (productsQuery.error) {
-    return (
-      <div className="py-20 text-center max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4">Fehler</h2>
-        <p className="text-muted-foreground mb-6">Vendure Server nicht erreichbar.</p>
-        <div className="p-4 bg-muted rounded-lg text-left text-sm font-mono">
-          cd vendure-showcase/server && bun run dev
-        </div>
-      </div>
-    );
-  }
+  if (productsQuery.isLoading && !initialProducts) return <StoreLoading />;
+  if (productsQuery.error) return <StoreError />;
 
   return (
     <div className="space-y-6">
       <section className="text-center py-10">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">Unsere Weine</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Handverlesen aus den besten Lagen Österreichs.
-        </p>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-4">{t.storeTitle}</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t.storeSubtitle}</p>
       </section>
 
       <div className="border-b">
@@ -63,20 +47,7 @@ function StoreInner({ initialProducts, initialFacets }: StorePageProps) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="text-muted-foreground mb-4">
-            Keine Weine entsprechen den ausgewählten Filtern.
-          </p>
-          {activeCount > 0 && (
-            <button
-              type="button"
-              onClick={clearAll}
-              className="text-accent hover:underline underline-offset-4"
-            >
-              Filter zurücksetzen
-            </button>
-          )}
-        </div>
+        <StoreEmpty hasFilters={activeCount > 0} onReset={clearAll} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map((product, idx) => (

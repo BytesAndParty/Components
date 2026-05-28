@@ -1,3 +1,4 @@
+import { Grape, Loader2 } from 'lucide-react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +11,7 @@ import { ShapeCard } from '@components/shape-card/shape-card';
 import { useAddToCart } from '@/lib/cart-context';
 import { useProduct } from '@/lib/store-filters';
 import { WineText } from '@/lib/wine-text';
+import { useT } from '@/lib/i18n';
 import type { Product, FacetValueRef } from '@/lib/types';
 import { Providers } from './Providers';
 
@@ -61,21 +63,32 @@ function DetailGrid({ rows }: { rows: DetailRow[] }) {
 function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduct?: Product }) {
   const { data: product, isLoading } = useProduct(slug, initialProduct);
   const { mutate: addToCart } = useAddToCart();
+  const t = useT();
 
   if (isLoading && !initialProduct) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-muted-foreground">Lade Produkt...</p>
+      <div className="py-20 px-6 flex flex-col items-center text-center max-w-lg mx-auto">
+        <div className="w-16 h-16 mb-6 grid place-items-center rounded-full bg-muted text-muted-foreground">
+          <Loader2 size={28} className="animate-spin" aria-hidden="true" />
+        </div>
+        <p className="text-muted-foreground">{t.detailLoading}</p>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">Wein nicht gefunden</h2>
-        <a href="/" className="text-accent hover:underline">
-          ← Zurück zur Übersicht
+      <div className="py-20 px-6 flex flex-col items-center text-center max-w-lg mx-auto">
+        <div className="w-16 h-16 mb-6 grid place-items-center rounded-full bg-muted text-muted-foreground">
+          <Grape size={28} aria-hidden="true" />
+        </div>
+        <h2 className="text-2xl font-bold mb-3">{t.detailNotFoundTitle}</h2>
+        <p className="text-muted-foreground mb-6">{t.detailNotFoundBody}</p>
+        <a
+          href="/"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent hover:text-primary-foreground transition-colors"
+        >
+          {t.detailBackToStore}
         </a>
       </div>
     );
@@ -85,16 +98,16 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
   const cf = product.customFields;
 
   const productionRows: DetailRow[] = [
-    { label: 'Rebsorte', value: cf.rebsorte ?? '' },
-    { label: 'Region', value: cf.region ?? '' },
-    { label: 'Jahrgang', value: cf.jahrgang?.toString() ?? '' },
-    { label: 'Alkohol', value: cf.alkoholgehalt ? `${cf.alkoholgehalt} % vol.` : '' },
+    { label: t.fieldGrape, value: cf.rebsorte ?? '' },
+    { label: t.fieldRegion, value: cf.region ?? '' },
+    { label: t.fieldVintage, value: cf.jahrgang?.toString() ?? '' },
+    { label: t.fieldAlcohol, value: cf.alkoholgehalt ? `${cf.alkoholgehalt} % vol.` : '' },
   ].filter((r) => r.value);
 
   const analyticRows: DetailRow[] = [
-    { label: 'Restzucker', value: cf.restzucker ? `${cf.restzucker} g/l` : '' },
-    { label: 'Säure', value: cf.saeure ? `${cf.saeure} g/l` : '' },
-    { label: 'Serviertemperatur', value: cf.serviertemperatur ?? '' },
+    { label: t.fieldResidualSugar, value: cf.restzucker ? `${cf.restzucker} g/l` : '' },
+    { label: t.fieldAcidity, value: cf.saeure ? `${cf.saeure} g/l` : '' },
+    { label: t.fieldServingTemp, value: cf.serviertemperatur ?? '' },
   ].filter((r) => r.value);
 
   return (
@@ -102,7 +115,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Weine</BreadcrumbLink>
+            <BreadcrumbLink href="/">{t.navWines}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -140,7 +153,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
             <span className="text-3xl font-bold tabular-nums text-accent">
               {variant ? formatPrice(variant.priceWithTax) : '—'}
             </span>
-            <span className="text-sm text-muted-foreground">inkl. MwSt.</span>
+            <span className="text-sm text-muted-foreground">{t.inclVat}</span>
           </div>
 
           <p className="text-lg text-muted-foreground leading-relaxed max-w-prose">
@@ -153,13 +166,13 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
             disabled={!variant}
             className="w-full sm:w-auto px-8 py-4 rounded-xl bg-foreground text-background font-bold text-base hover:bg-accent hover:text-primary-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
-            In den Warenkorb
+            {t.addToCart}
           </button>
 
           {cf.geschmacksprofil && (
             <section className="space-y-3">
               <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
-                Geschmacksprofil
+                {t.detailSectionTaste}
               </h2>
               <p className="text-base leading-relaxed">
                 <WineText>{cf.geschmacksprofil}</WineText>
@@ -170,7 +183,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
           {productionRows.length > 0 && (
             <section className="space-y-4">
               <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
-                Herkunft & Produktion
+                {t.detailSectionOrigin}
               </h2>
               <DetailGrid rows={productionRows} />
             </section>
@@ -179,7 +192,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
           {analyticRows.length > 0 && (
             <section className="space-y-4">
               <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
-                Analyse & Service
+                {t.detailSectionAnalysis}
               </h2>
               <DetailGrid rows={analyticRows} />
             </section>
@@ -189,7 +202,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
             <section className="rounded-xl border border-border bg-card p-5 space-y-2">
               <h2 className="font-semibold text-sm flex items-center gap-2">
                 <span aria-hidden="true">🍽️</span>
-                Speiseempfehlung
+                {t.detailSectionPairing}
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 <WineText>{cf.speiseempfehlung}</WineText>
@@ -201,7 +214,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
             <section className="rounded-xl border border-border bg-card p-5 space-y-2">
               <h2 className="font-semibold text-sm flex items-center gap-2">
                 <span aria-hidden="true">🏆</span>
-                Auszeichnungen
+                {t.detailSectionAwards}
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 <WineText>{cf.auszeichnungen}</WineText>

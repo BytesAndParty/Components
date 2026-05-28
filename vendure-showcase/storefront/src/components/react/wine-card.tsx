@@ -2,6 +2,7 @@ import { ShapeCard } from '@components/shape-card/shape-card';
 import type { Product } from '@/lib/types';
 import { wineHref } from '@/lib/utils';
 import { WineText } from '@/lib/wine-text';
+import { useT } from '@/lib/i18n';
 
 interface WineCardProps {
   product: Product;
@@ -26,6 +27,7 @@ function emoji(rebsorte: string | null): string {
 export function WineCard({ product, onAddToCart }: WineCardProps) {
   const v = product.variants[0];
   const cf = product.customFields;
+  const t = useT();
 
   return (
     <ShapeCard
@@ -71,7 +73,7 @@ export function WineCard({ product, onAddToCart }: WineCardProps) {
           disabled={!v}
           className="mt-3 px-4 py-2.5 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent hover:text-primary-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          In den Warenkorb
+          {t.addToCart}
         </button>
       </div>
     </ShapeCard>

@@ -4,6 +4,7 @@ import { Portal } from '@ark-ui/react/portal';
 import { Filter, X } from 'lucide-react';
 import { Checkbox } from '@components/checkbox/checkbox';
 import { useStoreFilters } from '@/lib/store-filters';
+import { useT } from '@/lib/i18n';
 import type { Facet } from '@/lib/types';
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 export function FilterDrawer({ facets }: Props) {
   const [open, setOpen] = useState(false);
   const { activeCount, clearAll } = useStoreFilters();
+  const t = useT();
 
   return (
     <Dialog.Root open={open} onOpenChange={(d) => setOpen(d.open)}>
@@ -28,7 +30,7 @@ export function FilterDrawer({ facets }: Props) {
           className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border border-border bg-card text-foreground hover:border-accent hover:text-accent transition-colors text-sm font-medium"
         >
           <Filter size={16} aria-hidden="true" />
-          <span>Filtern</span>
+          <span>{t.filterButton}</span>
           {activeCount > 0 && (
             <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-primary-foreground text-xs font-bold tabular-nums">
               {activeCount}
@@ -41,12 +43,12 @@ export function FilterDrawer({ facets }: Props) {
         <Dialog.Positioner className="fixed inset-0 z-50 flex justify-end pointer-events-none">
           <Dialog.Content className="pointer-events-auto w-full max-w-md h-full bg-background border-l border-border shadow-2xl flex flex-col data-[state=open]:animate-in data-[state=open]:slide-in-from-right data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right">
             <header className="flex items-center justify-between px-6 h-16 border-b border-border shrink-0">
-              <Dialog.Title className="text-lg font-bold">Filter</Dialog.Title>
+              <Dialog.Title className="text-lg font-bold">{t.filterTitle}</Dialog.Title>
               <Dialog.CloseTrigger asChild>
                 <button
                   type="button"
                   className="w-9 h-9 grid place-items-center rounded-lg hover:bg-muted transition-colors"
-                  aria-label="Schließen"
+                  aria-label={t.filterClose}
                 >
                   <X size={18} />
                 </button>
@@ -55,7 +57,7 @@ export function FilterDrawer({ facets }: Props) {
 
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-7">
               {facets.length === 0 ? (
-                <p className="text-muted-foreground text-sm">Keine Filter verfügbar.</p>
+                <p className="text-muted-foreground text-sm">{t.filterEmpty}</p>
               ) : (
                 facets.map((facet) => <FacetGroup key={facet.id} facet={facet} />)
               )}
@@ -68,14 +70,14 @@ export function FilterDrawer({ facets }: Props) {
                 disabled={activeCount === 0}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline disabled:opacity-50 disabled:no-underline disabled:hover:text-muted-foreground"
               >
-                Zurücksetzen
+                {t.filterReset}
               </button>
               <Dialog.CloseTrigger asChild>
                 <button
                   type="button"
                   className="px-5 py-2.5 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent hover:text-primary-foreground transition-colors"
                 >
-                  Schließen
+                  {t.filterClose}
                 </button>
               </Dialog.CloseTrigger>
             </footer>
