@@ -2,6 +2,7 @@ import type { SectionDef } from '../types'
 import { HeroV1 } from './HeroV1'
 import { HeroV2 } from './HeroV2'
 import { HeroV3 } from './HeroV3'
+import { HeroV4 } from './HeroV4'
 
 export const heroSection: SectionDef = {
   id: 'hero',

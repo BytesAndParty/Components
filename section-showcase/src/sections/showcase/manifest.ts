@@ -1,4 +1,5 @@
 import { ProductV1 } from './ProductV1'
+import { ProductV2 } from './ProductV2'
 import type { SectionDef } from '../types'
 
 export const showcaseSection: SectionDef = {
