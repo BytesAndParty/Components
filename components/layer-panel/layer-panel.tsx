@@ -41,16 +41,6 @@ export interface Layer {
   locked: boolean
 }
 
-export type LayerPanelMessages = {
-  deleteLayer: string
-  renameLayer: string
-  dragHandle: string
-  visibility: string
-  lock: string
-  layersHeader: string
-  noObjects: string
-}
-
 export interface LayerPanelProps {
   layers: Layer[]
   selectedIds?: string[]

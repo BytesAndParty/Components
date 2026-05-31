@@ -14,10 +14,6 @@ import { MESSAGES, type FormInputMessages } from './messages';
 
 export type FormInputType = 'text' | 'email' | 'tel' | 'number' | 'password' | 'url';
 
-export type FormInputMessages = {
-  requiredLabel: string;
-};
-
 export interface FormInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'prefix'> {
   type?: FormInputType;
