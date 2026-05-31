@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react'
 import { Portal } from '@ark-ui/react/portal'
-import { Tour, useTour, type StatusChangeDetails } from '@ark-ui/react/tour'
+import { Tour, useTour } from '@ark-ui/react/tour'
+
+// Ark UI v5 doesn't re-export StatusChangeDetails; inline the shape (sourced from @zag-js/tour 1.40.0).
+type StatusChangeDetails = { status: 'idle' | 'started' | 'skipped' | 'completed' | 'dismissed' | 'not-found' }
 import { X } from 'lucide-react'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { cn } from '../../../lib/utils'
@@ -157,13 +160,23 @@ export function OnboardingTour({
                     {m.tourBack}
                   </button>
                 )}
-                <button
-                  type="button"
-                  onClick={() => (tour.lastStep ? tour.dismiss() : tour.next())}
-                  className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                >
-                  {tour.lastStep ? m.tourDone : m.tourNext}
-                </button>
+                {tour.lastStep ? (
+                  <button
+                    type="button"
+                    {...tour.getActionTriggerProps({ action: { label: m.tourDone, action: 'dismiss' } })}
+                    className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    {m.tourDone}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => tour.next()}
+                    className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    {m.tourNext}
+                  </button>
+                )}
               </div>
             </div>
             <Tour.Arrow className="fill-card stroke-border">
