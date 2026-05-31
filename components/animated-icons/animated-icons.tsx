@@ -1,4 +1,4 @@
-import { useId, useRef, useCallback, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -40,23 +40,23 @@ interface AnimatedIconProps {
  */
 function useLottieHover() {
   const playerRef = useRef<DotLottie | null>(null);
-  const setPlayer = useCallback((d: DotLottie | null) => { playerRef.current = d; }, []);
+  function setPlayer(d: DotLottie | null) { playerRef.current = d; }
 
-  const onMouseEnter = useCallback(() => {
+  function onMouseEnter() {
     const p = playerRef.current;
     if (!p) return;
     p.setMode('forward');
     p.play();
-  }, []);
+  }
 
-  const onMouseLeave = useCallback(() => {
+  function onMouseLeave() {
     const p = playerRef.current;
     if (!p) return;
     p.setMode('reverse');
     p.play();
-  }, []);
+  }
 
-  const onClick = useCallback(() => {
+  function onClick() {
     const p = playerRef.current;
     if (!p) return;
     p.setMode('forward');
@@ -67,7 +67,7 @@ function useLottieHover() {
       p.setMode('reverse');
       p.play();
     }, 1000);
-  }, []);
+  }
 
   return { setPlayer, onMouseEnter, onMouseLeave, onClick };
 }
@@ -84,16 +84,25 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
       ? { role: 'img' as const, 'aria-label': ariaLabel }
       : { 'aria-hidden': true };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if ((e.key === 'Enter' || e.key === ' ') && isClick) {
+        e.preventDefault();
+        onClick();
+      }
+    };
+
     return (
       <div
         {...a11y}
+        {...(isClick ? { role: 'button', tabIndex: 0 } : {})}
         className={cn(
-          'inline-flex items-center justify-center cursor-pointer',
+          'inline-flex items-center justify-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent,#6366f1)] rounded-sm',
           className
         )}
         onMouseEnter={isHover ? onMouseEnter : undefined}
         onMouseLeave={isHover ? onMouseLeave : undefined}
         onClick={isClick ? onClick : undefined}
+        onKeyDown={isClick ? handleKeyDown : undefined}
         style={{
           width: size,
           height: size,
@@ -499,31 +508,3 @@ export function Heart3DIconCss({ size = 32, className, 'aria-label': ariaLabel }
   );
 }
 Heart3DIconCss.displayName = 'Heart3DIconCss';
-
-export const animatedIcons = {
-  HomeIcon,
-  SearchToXIcon,
-  MenuIcon,
-  MenuAltIcon,
-  FilterIcon,
-  NotificationIcon,
-  VisibilityIcon,
-  CheckmarkIcon,
-  CopyIcon,
-  LoadingIcon,
-  MaximizeMinimizeIcon,
-  ShareIcon,
-  TrashIcon,
-  SunIconCss,
-  MoonIconCss,
-  StarIconCss,
-  WineIconCss,
-  ChevronDownIconCss,
-  ChevronRightIconCss,
-  UserIconCss,
-  PlusIconCss,
-  MinusIconCss,
-  TruckIconCss,
-  HeartIconCss,
-  Heart3DIconCss,
-} as const;

@@ -1,11 +1,8 @@
 import { useState, useRef } from 'react'
 import { Section } from '../components/section'
-import {
-  runViewTransition,
-  TransitionStage,
-  VT_PRESETS,
-  type VtPreset,
-} from '@components/view-transition/view-transition'
+import { runViewTransition } from '@components/view-transition/run-view-transition'
+import { TransitionStage } from '@components/view-transition/transition-stage'
+import { VT_PRESETS, type VtPreset } from '@components/view-transition/vt-utils'
 
 const SCENES = [
   {
@@ -270,7 +267,7 @@ export function TransitionsPage() {
   return (
     <>
       <header className="mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight mb-2">View Transitions</h1>
+        <h1 className="mb-2 text-3xl font-semibold tracking-tight">View Transitions</h1>
         <p className="text-muted-foreground text-sm">
           <strong>May 2026 Edition:</strong> Nutzt die neueste View Transition API (Baseline 2026) mit 5 Standard-Presets
           + 3 custom wein-inspirierten: <em>Wine Pour</em>, <em>Cork Pop</em>, <em>Grape Burst</em>.

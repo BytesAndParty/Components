@@ -1,4 +1,4 @@
-import { ATELIER_KEYS } from './provider'
+import { ATELIER_KEYS } from './atelier-context'
 
 /**
  * AtelierInitScript — FOUC prevention for SSR frameworks (Astro, Next.js).

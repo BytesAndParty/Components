@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
@@ -19,28 +19,7 @@ import { useAtelier } from '@components/atelier'
 import { LanguageSwitcher } from '@components/language-switcher/language-switcher'
 import { ErrorBoundary } from './components/error-boundary'
 import { palettes, groups } from './data'
-
-// ─── Cart Context (showcase-only) ───────────────────────────────────────────────
-
-interface CartContextValue {
-  count: number
-  items: FloatingCartItem[]
-  add: (item?: { id: string; label?: string; image?: string }) => void
-  remove: (id?: string) => void
-  reset: () => void
-}
-
-const CartContext = createContext<CartContextValue>({
-  count: 0,
-  items: [],
-  add: () => {},
-  remove: () => {},
-  reset: () => {},
-})
-
-export function useCart() {
-  return useContext(CartContext)
-}
+import { CartContext, type CartContextValue } from './cart-context'
 
 // ─── Mock Search Results ────────────────────────────────────────────────────────
 
@@ -118,7 +97,7 @@ export function Layout() {
             <Link
               to="/"
               viewTransition
-              className="no-underline text-foreground font-bold text-lg -tracking-[0.02em] py-2"
+              className="text-foreground py-2 text-lg font-bold -tracking-[0.02em] no-underline"
             >
               Components
             </Link>
@@ -132,7 +111,7 @@ export function Layout() {
                   active={location.pathname === g.path}
                   onClick={() => navigate(g.path)}
                 >
-                  {t(g.titleKey as any)}
+                  {t(g.titleKey)}
                 </NavbarItem>
               ))}
             </NavbarSection>
@@ -161,14 +140,14 @@ export function Layout() {
                 active={location.pathname === g.path}
                 onClick={() => navigate(g.path)}
               >
-                {t(g.titleKey as any)}
+                {t(g.titleKey)}
               </NavbarItem>
             ))}
           </NavbarMobileMenu>
         </Navbar>
         <ScrollProgress top="56px" />
 
-        <div className="max-w-3xl mx-auto pt-6 pb-12 px-6">
+        <div className="mx-auto max-w-3xl px-6 pt-6 pb-12">
           <main className="[view-transition-name:page-content]">
             <ErrorBoundary>
               <Outlet />

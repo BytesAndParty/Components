@@ -204,8 +204,3 @@ export function HeavyRainIcon({ size = 48, 'aria-label': label, className, style
     </svg>
   );
 }
-
-export const weatherIcons = {
-  SunIcon, MoonIcon, CloudIcon, RainIcon, HeavyRainIcon, SnowIcon,
-  ThunderIcon, WindIcon, FogIcon, PartlyCloudyIcon, SunriseIcon, RainbowIcon,
-};

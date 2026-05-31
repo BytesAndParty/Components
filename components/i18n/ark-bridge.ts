@@ -1,4 +1,4 @@
-import { useI18n } from './provider'
+import { useI18n } from './i18n-context'
 
 // Ark UI v5 / Zag 1.40 translation shapes. Keys verified against
 // @zag-js/popover/dist/popover.types.d.ts and @zag-js/image-cropper/dist/image-cropper.types.d.ts.

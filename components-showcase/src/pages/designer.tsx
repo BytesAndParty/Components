@@ -1,12 +1,13 @@
 import { useState, useEffect, type ChangeEvent } from 'react'
 import { Section } from '../components/section'
 import { ColorPickerPanel } from '@components/color-picker/color-picker'
-import { TextToolOptions, type TextFormatValues, defaultTextFormat } from '@components/text-tool-options/text-tool-options'
+import { TextToolOptions } from '@components/text-tool-options/text-tool-options'
+import { defaultTextFormat, type TextFormatValues } from '@components/text-tool-options/types'
 import { AlignmentBar, type AlignAction } from '@components/alignment-bar/alignment-bar'
 import { ValidatorBadge, type ValidationWarning } from '@components/validator-badge/validator-badge'
 import { LayerPanel, type Layer } from '@components/layer-panel/layer-panel'
 import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper-modal'
-import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-provider'
+import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-context'
 import { NumberInput } from '@components/number-input/number-input'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
@@ -17,18 +18,18 @@ function ColorPickerDemo() {
   const [color, setColor] = useState('#722f37')
 
   return (
-    <div className="flex flex-col gap-3 max-w-sm">
+    <div className="flex max-w-sm flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h4 className="text-sm font-semibold text-foreground">Color Picker</h4>
-          <p className="text-xs text-muted-foreground">Hex / RGB / HSL inkl. Alpha-Kanal & Eye Dropper.</p>
+          <h4 className="text-foreground text-sm font-semibold">Color Picker</h4>
+          <p className="text-muted-foreground text-xs">Hex / RGB / HSL inkl. Alpha-Kanal & Eye Dropper.</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ background: color }} />
-          <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{color}</code>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="border-border h-7 w-7 rounded-md border shadow-sm" style={{ background: color }} />
+          <code className="bg-muted rounded px-2 py-1 font-mono text-xs">{color}</code>
         </div>
       </div>
-      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+      <div className="bg-card border-border rounded-xl border p-4 shadow-sm">
         <ColorPickerPanel value={color} onChange={setColor} showAlpha />
       </div>
     </div>
@@ -44,7 +45,7 @@ function TextToolOptionsDemo() {
       <div className="overflow-x-auto pb-1">
         <TextToolOptions value={fmt} onChange={(p: Partial<TextFormatValues>) => setFmt((prev: TextFormatValues) => ({ ...prev, ...p }))} />
       </div>
-      <div className="p-6 bg-card border border-border rounded-xl">
+      <div className="bg-card border-border rounded-xl border p-6">
         <p
           style={{
             fontFamily: fmt.fontFamily, fontSize: fmt.fontSize,
@@ -71,11 +72,11 @@ function AlignmentBarDemo() {
         <AlignmentBar onAlign={setLast} />
       </div>
       {last && (
-        <p className="text-xs font-mono text-muted-foreground">
+        <p className="text-muted-foreground font-mono text-xs">
           Last action: <span className="text-foreground">{last}</span>
         </p>
       )}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         In Cellar Canvas wird diese Toolbar eingeblendet wenn ≥ 2 Objekte selektiert sind.
       </p>
     </div>
@@ -92,14 +93,14 @@ function NumberInputDemo() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-8 items-center p-4 bg-card border border-border rounded-xl shadow-sm">
+      <div className="bg-card border-border flex flex-wrap items-center gap-8 rounded-xl border p-4 shadow-sm">
         <NumberInput label="X" value={x} onChange={setX} unit="mm" />
         <NumberInput label="Y" value={y} onChange={setY} unit="mm" />
         <NumberInput label="Rot" value={rot} onChange={setRot} unit="°" min={0} max={360} />
         <NumberInput label="Opac" value={opacity} onChange={setOpacity} unit="%" min={0} max={100} />
       </div>
-      <p className="text-xs text-muted-foreground">
-        Hochpräzise Steuerung für Geometrie. <kbd className="text-[10px] bg-muted px-1 rounded">Double-Click</kbd> zum Editieren · <kbd className="text-[10px] bg-muted px-1 rounded">Mouse Wheel</kbd> zum nudgen.
+      <p className="text-muted-foreground text-xs">
+        Hochpräzise Steuerung für Geometrie. <kbd className="bg-muted rounded px-1 text-[10px]">Double-Click</kbd> zum Editieren · <kbd className="bg-muted rounded px-1 text-[10px]">Mouse Wheel</kbd> zum nudgen.
       </p>
     </div>
   )
@@ -117,27 +118,27 @@ function ValidatorBadgeDemo() {
   const [warnings, setWarnings] = useState<ValidationWarning[]>(MOCK_WARNINGS)
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className="flex flex-wrap items-center gap-3">
         <ValidatorBadge warnings={warnings} />
         <ValidatorBadge warnings={[MOCK_WARNINGS[0]]} />
         <ValidatorBadge warnings={[]} />
       </div>
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setWarnings(MOCK_WARNINGS)}
-          className="text-xs px-3 py-1.5 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-foreground"
+          className="bg-muted hover:bg-muted/80 text-foreground rounded-lg px-3 py-1.5 text-xs transition-colors"
         >
           3 Warnungen
         </button>
         <button
           onClick={() => setWarnings(MOCK_WARNINGS.slice(0, 1))}
-          className="text-xs px-3 py-1.5 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-foreground"
+          className="bg-muted hover:bg-muted/80 text-foreground rounded-lg px-3 py-1.5 text-xs transition-colors"
         >
           1 Error
         </button>
         <button
           onClick={() => setWarnings([])}
-          className="text-xs px-3 py-1.5 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-foreground"
+          className="bg-muted hover:bg-muted/80 text-foreground rounded-lg px-3 py-1.5 text-xs transition-colors"
         >
           Compliant
         </button>
@@ -182,7 +183,7 @@ function LayerPanelDemo() {
   )
 
   return (
-    <div className="flex flex-col gap-2 max-w-xs">
+    <div className="flex max-w-xs flex-col gap-2">
       <LayerPanel
         layers={layers}
         selectedIds={selected}
@@ -193,8 +194,8 @@ function LayerPanelDemo() {
         onRename={(id, name) => setLayers((prev: Layer[]) => prev.map((l: Layer) => l.id === id ? { ...l, name } : l))}
         onDelete={(id) => setLayers((prev: Layer[]) => prev.filter((l: Layer) => l.id !== id))}
       />
-      <p className="text-xs text-muted-foreground">
-        Doppelklick zum Umbenennen · Drag am Grip zum Sortieren · <kbd className="text-[10px] bg-muted px-1 rounded">Delete</kbd> löscht Auswahl
+      <p className="text-muted-foreground text-xs">
+        Doppelklick zum Umbenennen · Drag am Grip zum Sortieren · <kbd className="bg-muted rounded px-1 text-[10px]">Delete</kbd> löscht Auswahl
       </p>
     </div>
   )
@@ -236,15 +237,15 @@ function ImageCropperDemo() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-3 flex-wrap">
-        <label className="cursor-pointer px-4 py-2 text-sm font-medium bg-accent text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="bg-accent text-primary-foreground cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90">
           Upload & Crop
           <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
         </label>
         {imageSrc && (
           <button
             onClick={() => setOpen(true)}
-            className="px-4 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors text-foreground"
+            className="bg-muted hover:bg-muted/80 text-foreground rounded-lg px-4 py-2 text-sm transition-colors"
           >
             Re-open Cropper
           </button>
@@ -253,8 +254,8 @@ function ImageCropperDemo() {
 
       {cropped && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs text-muted-foreground font-mono">Cropped result:</p>
-          <img src={cropped} alt="Cropped" className="max-w-xs rounded-lg border border-border shadow-sm" />
+          <p className="text-muted-foreground font-mono text-xs">Cropped result:</p>
+          <img src={cropped} alt="Cropped" className="border-border max-w-xs rounded-lg border shadow-sm" />
         </div>
       )}
 
@@ -273,27 +274,27 @@ function ImageCropperDemo() {
 
 function TooltipDemo() {
   return (
-    <div className="flex flex-wrap gap-10 items-center p-8 bg-card border border-border rounded-xl">
+    <div className="bg-card border-border flex flex-wrap items-center gap-10 rounded-xl border p-8">
       <Tooltip content="Speichern (Strg+S)">
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium">
+        <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium">
           Hover me
         </button>
       </Tooltip>
       
       <Tooltip content="Ebene löschen" position="bottom">
-        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
           Bottom
         </button>
       </Tooltip>
 
       <Tooltip content="Hilfe anzeigen" position="left">
-        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
           Left
         </button>
       </Tooltip>
 
       <Tooltip content="Eigenschaften" position="right">
-        <button className="p-2 bg-muted hover:bg-muted/80 rounded-lg text-foreground transition-colors">
+        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
           Right
         </button>
       </Tooltip>
@@ -328,19 +329,19 @@ export function DesignerPage() {
   })
 
   return (
-    <div className="pb-20 space-y-12">
+    <div className="space-y-12 pb-20">
       <div className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Cellar Canvas</h1>
         <p className="text-muted-foreground">
           The full integrated Wine Label Designer. Build labels, export print-ready files.
         </p>
-        <div className="border border-border rounded-2xl overflow-hidden shadow-2xl bg-card w-full">
+        <div className="border-border bg-card w-full overflow-hidden rounded-2xl border shadow-2xl">
           <CellarCanvas />
         </div>
       </div>
 
-      <div className="pt-12 border-t border-border">
-        <h2 className="text-2xl font-bold mb-2">Atomic Components</h2>
+      <div className="border-border border-t pt-12">
+        <h2 className="mb-2 text-2xl font-bold">Atomic Components</h2>
         <p className="text-muted-foreground mb-10">
           Die Bausteine des Designers zum einzeln Testen und Stylen.
         </p>

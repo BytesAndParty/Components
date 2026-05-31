@@ -10,8 +10,8 @@ import { FieldHint } from '@components/field-hint/field-hint'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
-import { useImageUpload } from '@components/use-image-upload/image-upload'
-import { useToast } from '@components/toast/toast'
+import { useImageUpload } from '@components/use-image-upload/use-image-upload'
+import { useToast } from '@components/toast/toast-context'
 import { PasswordSetup } from '@components/password-setup/password-setup'
 import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.json'
 import { suggestions } from '../data'
@@ -96,7 +96,7 @@ function FormInputDemo() {
     <form
       onSubmit={submit}
       noValidate
-      className="border border-border rounded-xl bg-card p-6 shadow-sm max-w-xl flex flex-col gap-4"
+      className="border-border bg-card flex max-w-xl flex-col gap-4 rounded-xl border p-6 shadow-sm"
     >
       <FormInput
         type="text"
@@ -168,14 +168,14 @@ function FormInputDemo() {
       <div className="flex items-center gap-3 pt-2">
         <button
           type="submit"
-          className="px-4 py-2 rounded-md bg-accent text-white text-sm font-medium cursor-pointer transition-opacity active:scale-95 hover:opacity-90"
+          className="bg-accent cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 active:scale-95"
         >
           Absenden
         </button>
         <button
           type="button"
           onClick={() => { setForm({ name: '', email: '', phone: '', age: '', website: '' }); setErrors({}) }}
-          className="px-4 py-2 rounded-md border border-border bg-transparent text-foreground text-sm cursor-pointer transition-colors hover:bg-white/5"
+          className="border-border text-foreground cursor-pointer rounded-md border bg-transparent px-4 py-2 text-sm transition-colors hover:bg-white/5"
         >
           Zurücksetzen
         </button>
@@ -195,10 +195,10 @@ function ImageUploadDemo() {
   } = useImageUpload()
 
   return (
-    <div className="border border-border rounded-xl bg-card overflow-hidden max-w-96 shadow-sm">
+    <div className="border-border bg-card max-w-96 overflow-hidden rounded-xl border shadow-sm">
       <div
         onClick={!previewUrl ? handleThumbnailClick : undefined}
-        className={`h-48 flex items-center justify-center relative transition-colors ${
+        className={`relative flex h-48 items-center justify-center transition-colors ${
           previewUrl ? 'cursor-default' : 'cursor-pointer bg-white/2 hover:bg-white/4'
         }`}
       >
@@ -206,10 +206,10 @@ function ImageUploadDemo() {
           <img
             src={previewUrl}
             alt={fileName ?? 'Preview'}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="text-center text-muted-foreground">
+          <div className="text-muted-foreground text-center">
             <svg
               width="40" height="40" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
@@ -230,23 +230,23 @@ function ImageUploadDemo() {
           className="hidden"
         />
       </div>
-      <div className="border-t border-border p-3 px-4 flex items-center justify-between text-[0.8125rem]">
-        <span className={`truncate max-w-[70%] ${fileName ? 'text-foreground' : 'text-muted-foreground'}`}>
+      <div className="border-border flex items-center justify-between border-t p-3 px-4 text-[0.8125rem]">
+        <span className={`max-w-[70%] truncate ${fileName ? 'text-foreground' : 'text-muted-foreground'}`}>
           {fileName ?? 'No file selected'}
         </span>
         <div className="flex gap-2">
           {previewUrl && (
             <button
               onClick={handleRemove}
-              className="bg-transparent border border-border rounded-md text-red-500 px-2.5 py-1 text-xs cursor-pointer transition-colors hover:bg-red-500/10"
+              className="border-border cursor-pointer rounded-md border bg-transparent px-2.5 py-1 text-xs text-red-500 transition-colors hover:bg-red-500/10"
             >
               Remove
             </button>
           )}
           <button
             onClick={handleThumbnailClick}
-            className={`rounded-md px-2.5 py-1 text-xs cursor-pointer transition-opacity active:scale-95 ${
-              previewUrl ? 'bg-transparent border border-border text-foreground' : 'bg-accent text-white'
+            className={`cursor-pointer rounded-md px-2.5 py-1 text-xs transition-opacity active:scale-95 ${
+              previewUrl ? 'border-border text-foreground border bg-transparent' : 'bg-accent text-white'
             }`}
           >
             {previewUrl ? 'Replace' : 'Browse'}
@@ -283,12 +283,12 @@ export function InputsPage() {
       </Section>
 
       <Section title="FieldHint" description="Info-Icon mit Tooltip für Labels. Per Tab fokussierbar, sr-only-Text zusätzlich im A11y-Tree.">
-        <div className="border border-border rounded-xl bg-card p-6 shadow-sm max-w-xl flex flex-col gap-5">
+        <div className="border-border bg-card flex max-w-xl flex-col gap-5 rounded-xl border p-6 shadow-sm">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5">
               <label
                 htmlFor="fieldhint-demo-tax"
-                className="block font-medium uppercase tracking-wider text-muted-foreground text-[12px]"
+                className="text-muted-foreground block text-[12px] font-medium tracking-wider uppercase"
               >
                 Steuer-ID
               </label>
@@ -301,7 +301,7 @@ export function InputsPage() {
               id="fieldhint-demo-tax"
               aria-describedby="fieldhint-demo-tax-hint"
               placeholder="12 345 678 901"
-              className="h-11 rounded-xl bg-card border border-border px-3 text-foreground outline-none focus:border-accent transition-colors text-sm"
+              className="bg-card border-border text-foreground focus:border-accent h-11 rounded-xl border px-3 text-sm transition-colors outline-none"
             />
           </div>
 
@@ -309,7 +309,7 @@ export function InputsPage() {
             <div className="flex items-center gap-1.5">
               <label
                 htmlFor="fieldhint-demo-iban"
-                className="block font-medium uppercase tracking-wider text-muted-foreground text-[12px]"
+                className="text-muted-foreground block text-[12px] font-medium tracking-wider uppercase"
               >
                 IBAN
               </label>
@@ -323,17 +323,17 @@ export function InputsPage() {
               id="fieldhint-demo-iban"
               aria-describedby="fieldhint-demo-iban-hint"
               placeholder="DE00 0000 0000 0000 0000 00"
-              className="h-11 rounded-xl bg-card border border-border px-3 text-foreground outline-none focus:border-accent transition-colors text-sm font-mono"
+              className="bg-card border-border text-foreground focus:border-accent h-11 rounded-xl border px-3 font-mono text-sm transition-colors outline-none"
             />
           </div>
 
-          <p className="text-[12px] text-muted-foreground pt-1 border-t border-border">
-            Tipp: Mit <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-border text-[10px]">Tab</kbd> auf das Icon fokussieren — der Tooltip öffnet auch via Keyboard.
+          <p className="text-muted-foreground border-border border-t pt-1 text-[12px]">
+            Tipp: Mit <kbd className="border-border rounded border bg-white/5 px-1.5 py-0.5 text-[10px]">Tab</kbd> auf das Icon fokussieren — der Tooltip öffnet auch via Keyboard.
           </p>
         </div>
       </Section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <Section title="Checkbox" description="Animated checkmark with scale-from-center fill.">
           <Checkbox label="Accept terms and conditions" defaultChecked />
         </Section>
@@ -366,22 +366,22 @@ export function InputsPage() {
       </Section>
 
       <Section title="GooeyInput" description="Icon-only circle that morphs into a full input via SVG-goo filter.">
-        <div className="border border-border rounded-xl bg-card p-10 flex flex-col gap-6">
+        <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-10">
           <GooeyInput
             placeholder="Weine durchsuchen..."
             onSubmit={(v) => add({ title: 'Suche gestartet', description: `Suchen nach: "${v}"`, variant: 'default' })}
           />
-          <p className="text-[0.7rem] text-muted-foreground">Esc zum Schließen · Enter zum Absenden</p>
+          <p className="text-muted-foreground text-[0.7rem]">Esc zum Schließen · Enter zum Absenden</p>
         </div>
       </Section>
 
       <Section title="AnimatedSearch" description="Search icon that morphs into an expanding input field.">
-        <div className="border border-border rounded-xl bg-card p-10 flex flex-col items-center gap-6">
+        <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
           <AnimatedSearch
             placeholder="Search components..."
             onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
           />
-          <p className="text-[0.7rem] text-muted-foreground">Spring physics powered icon morph</p>
+          <p className="text-muted-foreground text-[0.7rem]">Spring physics powered icon morph</p>
         </div>
       </Section>
 

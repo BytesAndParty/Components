@@ -1,18 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, ReactNode } from 'react'
 import { en } from './locales/en'
 import { de } from './locales/de'
 import type { Locale, GlobalMessages } from './types'
 import { interpolate } from './types'
+import { I18nContext } from './i18n-context'
 
 const STORAGE_KEY = 'design-engine-locale'
-
-// ── Context ───────────────────────────────────────────────────────────────────
-
-interface I18nContextValue {
-  locale: Locale
-  t: (key: keyof GlobalMessages, vars?: Record<string, string | number>) => string
-  setLocale: (locale: Locale) => void
-}
 
 const locales: Record<Locale, GlobalMessages> = { en, de }
 
@@ -21,12 +14,6 @@ function readStoredLocale(): Locale {
   const stored = localStorage.getItem(STORAGE_KEY)
   return stored === 'en' || stored === 'de' ? stored : 'de'
 }
-
-const I18nContext = createContext<I18nContextValue>({
-  locale: 'de',
-  t: (key, vars) => interpolate(de[key] ?? en[key] ?? key, vars),
-  setLocale: () => {},
-})
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
@@ -94,20 +81,4 @@ export function I18nProvider({
       {children}
     </I18nContext>
   )
-}
-
-// ── Hooks ─────────────────────────────────────────────────────────────────────
-
-export function useI18n() {
-  return useContext(I18nContext)
-}
-
-export function useComponentMessages<T extends object>(
-  defaults: Record<Locale, T>,
-  override?: Partial<T>
-): T {
-  const { locale } = useI18n()
-  const base = defaults[locale] ?? defaults['en']
-  if (!override) return base
-  return { ...base, ...override } as T
 }

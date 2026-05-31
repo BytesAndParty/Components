@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useHotkey } from '@tanstack/react-hotkeys'
-import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-provider'
+import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-context'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type ShortcutOverviewMessages } from './messages'
@@ -33,7 +33,7 @@ export function ShortcutOverview({
   )
 
   // Escape closes when open — not in registry since it's implicit
-  useHotkey('Escape', closeOverview)
+  useHotkey('Escape', closeOverview, { enabled: isVisible })
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -74,50 +74,50 @@ export function ShortcutOverview({
           if (event.target === event.currentTarget) closeOverview()
         }}
       >
-        <div className="relative bg-card/95 border border-border rounded-3xl shadow-2xl p-8 overflow-y-auto backdrop-blur-xl max-h-[calc(100dvh-3rem)]">
-          <div className="flex items-start justify-between gap-6 mb-8">
+        <div className="bg-card/95 border-border relative max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-3xl border p-8 shadow-2xl backdrop-blur-xl">
+          <div className="mb-8 flex items-start justify-between gap-6">
             <div>
-              <h2 className="text-3xl font-bold text-foreground tracking-tight">{m.title}</h2>
+              <h2 className="text-foreground text-3xl font-bold tracking-tight">{m.title}</h2>
               <p className="text-muted-foreground mt-1">
                 {m.subtitle}
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-wrap justify-end">
-              <span className="px-3 py-1.5 bg-muted border border-border rounded-full text-xs text-muted-foreground font-medium">
-                <kbd className="font-bold text-foreground">?</kbd> {m.openHint}
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <span className="bg-muted border-border text-muted-foreground rounded-full border px-3 py-1.5 text-xs font-medium">
+                <kbd className="text-foreground font-bold">?</kbd> {m.openHint}
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {categories.map(category => {
               const items = groupedHotkeys[category]
               if (!items || items.length === 0) return null
 
               return (
                 <div key={category} className="space-y-4">
-                  <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-accent opacity-80">
+                  <h3 className="text-accent text-xs font-bold tracking-[0.2em] uppercase opacity-80">
                     {category}
                   </h3>
                   <div className="space-y-2">
                     {items.map((item, idx) => (
                       <div
                         key={`${item.key}-${idx}`}
-                        className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/50 hover:bg-muted/60 hover:border-border transition-all duration-150"
+                        className="bg-muted/30 border-border/50 hover:bg-muted/60 hover:border-border flex items-center justify-between rounded-xl border p-3 transition-all duration-150"
                       >
                         <div className="min-w-0 pr-4">
-                          <div className="text-sm font-semibold text-foreground truncate">{item.label}</div>
+                          <div className="text-foreground truncate text-sm font-semibold">{item.label}</div>
                           {item.description && (
-                            <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                            <div className="text-muted-foreground mt-0.5 truncate text-xs">
                               {item.description}
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-1 shrink-0">
+                        <div className="flex shrink-0 gap-1">
                           {item.key.split('+').map((k, i) => (
                             <kbd
                               key={i}
-                              className="min-w-[24px] h-6 px-1.5 flex items-center justify-center bg-muted border border-border rounded-md text-[10px] font-bold text-foreground"
+                              className="bg-muted border-border text-foreground flex h-6 min-w-[24px] items-center justify-center rounded-md border px-1.5 text-[10px] font-bold"
                             >
                               {k === 'Mod' ? '⌘' : k}
                             </kbd>

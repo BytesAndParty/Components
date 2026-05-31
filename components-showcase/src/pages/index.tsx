@@ -20,19 +20,19 @@ export function IndexPage() {
           <Link
             to={group.path}
             viewTransition
-            className="group border border-border rounded-xl bg-card p-6 shadow-sm transition-all hover:border-accent/50 hover:shadow-md no-underline flex flex-col h-full"
+            className="group border-border bg-card hover:border-accent/50 flex h-full flex-col rounded-xl border p-6 no-underline shadow-sm transition-all hover:shadow-md"
           >
-            <h2 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">
-              {t(group.titleKey as any)}
+            <h2 className="text-foreground group-hover:text-accent text-lg font-semibold transition-colors">
+              {t(group.titleKey)}
             </h2>
-            <p className="text-muted-foreground text-sm mt-2">
-              {t(group.descKey as any)}
+            <p className="text-muted-foreground mt-2 text-sm">
+              {t(group.descKey)}
             </p>
-            <div className="flex flex-wrap gap-1.5 mt-auto pt-4">
+            <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
               {group.components.map((c) => (
                 <span
                   key={c}
-                  className="text-[0.6875rem] px-2 py-0.5 rounded-full bg-white/5 border border-border text-muted-foreground"
+                  className="border-border text-muted-foreground rounded-full border bg-white/5 px-2 py-0.5 text-[0.6875rem]"
                 >
                   {c}
                 </span>

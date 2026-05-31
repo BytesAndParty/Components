@@ -1,3 +1,8 @@
-export { AtelierProvider, useAtelier, ATELIER_KEYS } from './provider'
+export { AtelierProvider, type AtelierProviderProps } from './provider'
 export { AtelierInitScript } from './init-script'
-export type { AtelierContextValue, AtelierProviderProps, Theme } from './provider'
+export {
+  useAtelier,
+  ATELIER_KEYS,
+  type AtelierContextValue,
+  type Theme,
+} from './atelier-context'

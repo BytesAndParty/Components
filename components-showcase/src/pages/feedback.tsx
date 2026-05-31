@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
-import { useToast } from '@components/toast/toast'
+import { useToast } from '@components/toast/toast-context'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
 import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
@@ -16,7 +16,7 @@ function ToastDemoButtons() {
     <div className="flex flex-wrap gap-2">
       <button
         onClick={() => add({ title: 'Success', description: 'Action completed successfully.', variant: 'success' })}
-        className="px-3.5 py-1.5 rounded-md border border-border bg-card text-foreground text-[0.8125rem] cursor-pointer transition-colors hover:bg-white/5 active:scale-95"
+        className="border-border bg-card text-foreground cursor-pointer rounded-md border px-3.5 py-1.5 text-[0.8125rem] transition-colors hover:bg-white/5 active:scale-95"
       >
         Show Toast
       </button>
@@ -28,19 +28,19 @@ function NumberTickerDemo() {
   const [count, setCount] = useState(128)
   return (
     <div className="flex items-center gap-8">
-      <span className="text-5xl font-bold tabular-nums text-foreground">
+      <span className="text-foreground text-5xl font-bold tabular-nums">
         <NumberTicker value={count} duration={700} />
       </span>
       <div className="flex gap-2">
         <button
           onClick={() => setCount(v => v + 1)}
-          className="w-9 h-9 rounded-lg border border-border bg-card text-foreground text-lg font-medium hover:bg-white/5 transition flex items-center justify-center"
+          className="border-border bg-card text-foreground flex h-9 w-9 items-center justify-center rounded-lg border text-lg font-medium transition hover:bg-white/5"
         >
           +
         </button>
         <button
           onClick={() => setCount(Math.floor(Math.random() * 999) + 1)}
-          className="px-3 h-9 rounded-lg border border-border bg-card text-foreground text-sm hover:bg-white/5 transition"
+          className="border-border bg-card text-foreground h-9 rounded-lg border px-3 text-sm transition hover:bg-white/5"
         >
           Random
         </button>
@@ -54,7 +54,7 @@ function CircularProgressDemo() {
   return (
     <div className="flex items-center gap-8">
       <CircularProgress value={progress} size={100} strokeWidth={8}>
-        <span className="text-sm font-semibold text-foreground">{progress}%</span>
+        <span className="text-foreground text-sm font-semibold">{progress}%</span>
       </CircularProgress>
       <input
         type="range"

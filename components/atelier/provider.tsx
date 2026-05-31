@@ -19,46 +19,20 @@
  *   <AtelierProvider defaultTheme="light" defaultAccent="amber" defaultLocale="en">
  */
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, ReactNode } from 'react'
 import { I18nProvider } from '../i18n/provider'
 import { en } from '../i18n/locales/en'
 import { de } from '../i18n/locales/de'
 import { interpolate } from '../i18n/types'
 import type { Locale, GlobalMessages } from '../i18n/types'
+import {
+  AtelierContext,
+  ATELIER_KEYS,
+  type AtelierContextValue,
+  type Theme,
+} from './atelier-context'
 
 const locales: Record<Locale, GlobalMessages> = { en, de }
-
-// ── Storage keys (all under 'atelier-' namespace) ─────────────────────────────
-
-export const ATELIER_KEYS = {
-  theme:  'atelier-theme',
-  accent: 'atelier-accent',
-  locale: 'atelier-locale',
-} as const
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-export type Theme = 'dark' | 'light'
-
-export interface AtelierContextValue {
-  theme:       Theme
-  accent:      string
-  locale:      Locale
-  setTheme:    (t: Theme)   => void
-  toggleTheme: ()           => void
-  setAccent:   (a: string)  => void
-  setLocale:   (l: Locale)  => void
-  /** Global translation — same string as useI18n().t() */
-  t: (key: keyof GlobalMessages, vars?: Record<string, string | number>) => string
-}
-
-// ── Context ───────────────────────────────────────────────────────────────────
-
-const AtelierContext = createContext<AtelierContextValue>({
-  theme: 'dark', accent: 'indigo', locale: 'de',
-  setTheme: () => {}, toggleTheme: () => {}, setAccent: () => {}, setLocale: () => {},
-  t: (k) => String(k),
-})
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -159,10 +133,4 @@ export function AtelierProvider({
       </I18nProvider>
     </AtelierContext.Provider>
   )
-}
-
-// ── Hook ──────────────────────────────────────────────────────────────────────
-
-export function useAtelier(): AtelierContextValue {
-  return useContext(AtelierContext)
 }

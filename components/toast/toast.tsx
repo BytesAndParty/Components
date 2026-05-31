@@ -1,8 +1,5 @@
 import {
-  createContext,
-  useContext,
   useState,
-  useCallback,
   useRef,
   useEffect,
 } from 'react';
@@ -10,43 +7,13 @@ import { motion, AnimatePresence, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type ToastMessages } from './messages';
-
-/* ---------- Types ---------- */
-
-type ToastVariant = 'default' | 'success' | 'warning' | 'danger';
-type Placement = 'top-right' | 'top-center' | 'bottom-right' | 'bottom-center';
-
-interface ToastData {
-  id: string;
-  title: string;
-  description?: string;
-  variant?: ToastVariant;
-  duration?: number;
-}
-
-interface ToastContextValue {
-  toasts: ToastData[];
-  add: (t: Omit<ToastData, 'id'>) => string;
-  dismiss: (id: string) => void;
-}
-
-/* ---------- Context ---------- */
-
-const ToastContext = createContext<ToastContextValue | null>(null);
-
-export function useToast() {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used within <ToastProvider>');
-  return ctx;
-}
-
-/* Convenience function — requires ToastProvider to be mounted */
-let globalAdd: ToastContextValue['add'] | null = null;
-
-export function toast(opts: Omit<ToastData, 'id'>) {
-  if (!globalAdd) throw new Error('toast() called before <ToastProvider> mounted');
-  return globalAdd(opts);
-}
+import {
+  ToastContext,
+  toastBridge,
+  type ToastData,
+  type ToastVariant,
+  type Placement,
+} from './toast-context';
 
 /* ---------- Provider ---------- */
 
@@ -67,21 +34,25 @@ export function ToastProvider({
   const counter = useRef(0);
   const m = useComponentMessages(MESSAGES, messages);
 
-  const add = useCallback((opts: Omit<ToastData, 'id'>) => {
+  const add = (opts: Omit<ToastData, 'id'>) => {
     const id = `toast-${++counter.current}`;
     setToasts((prev: ToastData[]) => [...prev, { ...opts, id, duration: opts.duration ?? 4000 }]);
     return id;
-  }, []);
+  };
 
-  const dismiss = useCallback((id: string) => {
+  const dismiss = (id: string) => {
     setToasts((prev: ToastData[]) => prev.filter((t) => t.id !== id));
-  }, []);
+  };
 
   // Expose global `toast()`
   useEffect(() => {
-    globalAdd = add;
-    return () => { globalAdd = null; };
-  }, [add]);
+    toastBridge.add = (opts: Omit<ToastData, 'id'>) => {
+      const id = `toast-${++counter.current}`;
+      setToasts((prev: ToastData[]) => [...prev, { ...opts, id, duration: opts.duration ?? 4000 }]);
+      return id;
+    };
+    return () => { toastBridge.add = null; };
+  }, []);
 
   const isTop = placement.startsWith('top');
   const isCenter = placement.endsWith('center');

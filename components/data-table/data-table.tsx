@@ -10,7 +10,7 @@ import {
   RowSelectionState,
   ColumnSizingState,
 } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -119,6 +119,7 @@ export function DataTable<TData, TValue>({
     })
   }, [columns, columnMinWidths, enableAutoColumnSize, enableRowSelection, m])
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table's API is intentionally non-memoizable
   const table = useReactTable({
     data,
     columns: tableColumns,
@@ -152,11 +153,14 @@ export function DataTable<TData, TValue>({
     },
   })
 
-  // Sync internal page state if pagination prop changes from outside
+  // Sync internal page state if pagination prop changes from outside.
+  // `page` is intentionally omitted: it is set inside this effect, so
+  // including it would create a feedback loop.
   useEffect(() => {
     if (pagination.pageIndex !== page) {
       setPage([pagination.pageIndex, pagination.pageIndex > page ? 1 : -1])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.pageIndex])
 
   const variants = {
@@ -176,7 +180,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className={cn('flex flex-col gap-4 w-full', className)}>
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="border-border bg-card overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
           <table
             className={cn(
@@ -196,7 +200,7 @@ export function DataTable<TData, TValue>({
                 })}
               </colgroup>
             )}
-            <thead className="bg-muted/50 border-b border-border">
+            <thead className="bg-muted/50 border-border border-b">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -212,7 +216,7 @@ export function DataTable<TData, TValue>({
                         key={header.id}
                         scope="col"
                         aria-sort={canSort ? ariaSort : undefined}
-                        className="relative px-4 py-3 font-semibold text-muted-foreground select-none"
+                        className="text-muted-foreground relative px-4 py-3 font-semibold select-none"
                       >
                         {header.isPlaceholder ? null : canSort ? (
                           <button
@@ -225,16 +229,16 @@ export function DataTable<TData, TValue>({
                               }
                             }}
                             aria-label={nextSortLabel}
-                            className="group flex items-center gap-2 bg-transparent border-0 p-0 font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded-sm"
+                            className="group text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 focus-visible:ring-offset-card flex cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent p-0 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                           >
                             {flexRender(header.column.columnDef.header, header.getContext())}
-                            <span className="w-4 h-4 flex items-center justify-center" aria-hidden="true">
+                            <span className="flex h-4 w-4 items-center justify-center" aria-hidden="true">
                               {sorted === 'asc' ? (
                                 <ChevronUp size={14} />
                               ) : sorted === 'desc' ? (
                                 <ChevronDown size={14} />
                               ) : (
-                                <ChevronsUpDown size={14} className="opacity-40 group-hover:opacity-80 transition-opacity" />
+                                <ChevronsUpDown size={14} className="opacity-40 transition-opacity group-hover:opacity-80" />
                               )}
                             </span>
                           </button>
@@ -273,7 +277,7 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-border relative">
+            <tbody className="divide-border relative divide-y">
               <AnimatePresence mode="popLayout" initial={false} custom={direction}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row, i) => (
@@ -290,7 +294,7 @@ export function DataTable<TData, TValue>({
                         opacity: { duration: 0.35, delay: i * 0.015 },
                         x: { type: 'spring', stiffness: 180, damping: 24, delay: i * 0.015 },
                       }}
-                      className="hover:bg-muted/30 transition-colors data-[state=selected]:bg-accent/5"
+                      className="hover:bg-muted/30 data-[state=selected]:bg-accent/5 transition-colors"
                       data-state={row.getIsSelected() ? 'selected' : undefined}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -318,7 +322,7 @@ export function DataTable<TData, TValue>({
                   >
                     <td
                       colSpan={tableColumns.length}
-                      className="h-24 text-center text-muted-foreground"
+                      className="text-muted-foreground h-24 text-center"
                     >
                       {m.noResults}
                     </td>
@@ -332,7 +336,7 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <div className="flex items-center justify-between px-2 py-1">
-        <div className="flex-1 text-xs text-muted-foreground">
+        <div className="text-muted-foreground flex-1 text-xs">
           {m.pageOf
             .replace('{current}', String(table.getState().pagination.pageIndex + 1))
             .replace('{total}', String(table.getPageCount()))}
@@ -428,7 +432,7 @@ function PaginationBtn({
       disabled={disabled}
       title={title}
       aria-label={title}
-      className="flex items-center justify-center w-8 h-8 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+      className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50 flex h-8 w-8 items-center justify-center rounded-lg border transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {children}
     </button>

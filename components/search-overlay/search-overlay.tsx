@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
-import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type SearchOverlayMessages } from './messages';
@@ -70,7 +70,7 @@ export function SearchOverlay({
 
   // TanStack Query Integration for Search
   const { data: results = [], isLoading } = useQuery({
-    queryKey: ['search', query],
+    queryKey: ['search', query, fetchResults],
     queryFn: () => fetchResults ? fetchResults(query) : Promise.resolve([]),
     enabled: query.length > 0,
     staleTime: 1000 * 60, // 1 minute cache
@@ -130,9 +130,9 @@ export function SearchOverlay({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-2xl bg-[var(--card,#141416)] border border-[var(--border,#2a2a2e)] rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] shadow-2xl"
           >
-            <div className="flex items-center px-4 py-4 border-b border-[var(--border,#2a2a2e)]">
+            <div className="flex items-center border-b border-[var(--border,#2a2a2e)] px-4 py-4">
               <svg
                 width="20"
                 height="20"
@@ -160,9 +160,9 @@ export function SearchOverlay({
                   setSelectedIndex(0);
                 }}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-transparent border-none outline-none text-lg text-[var(--foreground,#e4e4e7)] placeholder:text-[var(--muted-foreground,#71717a)]"
+                className="w-full border-none bg-transparent text-lg text-[var(--foreground,#e4e4e7)] outline-none placeholder:text-[var(--muted-foreground,#71717a)]"
               />
-              <div className="flex items-center gap-1 ml-2 px-1.5 py-0.5 border border-[var(--border,#2a2a2e)] rounded bg-[var(--background,#0a0a0b)] text-[10px] text-[var(--muted-foreground,#71717a)] font-medium" aria-hidden="true">
+              <div className="ml-2 flex items-center gap-1 rounded border border-[var(--border,#2a2a2e)] bg-[var(--background,#0a0a0b)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted-foreground,#71717a)]" aria-hidden="true">
                 ESC
               </div>
             </div>
@@ -170,11 +170,11 @@ export function SearchOverlay({
             <div
               id="search-results"
               role="listbox"
-              className="max-h-[60vh] overflow-y-auto custom-scrollbar p-2"
+              className="custom-scrollbar max-h-[60vh] overflow-y-auto p-2"
             >
               {query.length === 0 && initialSuggestions.length === 0 ? (
                 <div className="px-4 py-8 text-center">
-                  <p className="text-[var(--muted-foreground,#71717a)] text-sm">{m.emptyState}</p>
+                  <p className="text-sm text-[var(--muted-foreground,#71717a)]">{m.emptyState}</p>
                 </div>
               ) : displayResults.length > 0 ? (
                 <div className="space-y-1">
@@ -206,9 +206,9 @@ export function SearchOverlay({
                           </svg>
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold truncate">{result.title}</span>
+                          <span className="truncate font-semibold">{result.title}</span>
                           <span className={cn(
                             "text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded",
                             index === selectedIndex ? "bg-white/20 text-white" : "bg-[var(--border,#2a2a2e)] text-[var(--muted-foreground,#71717a)]"
@@ -235,14 +235,14 @@ export function SearchOverlay({
               )}
             </div>
 
-            <div className="px-4 py-3 border-t border-[var(--border,#2a2a2e)] bg-[var(--background,#0a0a0b)]/50 flex items-center justify-between text-[11px] text-[var(--muted-foreground,#71717a)]">
+            <div className="flex items-center justify-between border-t border-[var(--border,#2a2a2e)] bg-[var(--background,#0a0a0b)]/50 px-4 py-3 text-[11px] text-[var(--muted-foreground,#71717a)]">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1 py-0.5 border border-[var(--border,#2a2a2e)] rounded bg-[var(--card,#141416)] text-[9px]" aria-hidden="true">ENTER</kbd>
+                  <kbd className="rounded border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] px-1 py-0.5 text-[9px]" aria-hidden="true">ENTER</kbd>
                   {m.selectionHelp}
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="px-1 py-0.5 border border-[var(--border,#2a2a2e)] rounded bg-[var(--card,#141416)] text-[9px]" aria-hidden="true">↑↓</kbd>
+                  <kbd className="rounded border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] px-1 py-0.5 text-[9px]" aria-hidden="true">↑↓</kbd>
                   {m.navigationHelp}
                 </span>
               </div>

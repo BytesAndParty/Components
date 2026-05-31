@@ -17,6 +17,8 @@ import {
   type TextToolOptionsMessages,
 } from './types'
 
+export type { TextFormatValues } from './types'
+
 export interface TextToolOptionsProps {
   value?: Partial<TextFormatValues>
   onChange?: (patch: Partial<TextFormatValues>) => void
@@ -68,7 +70,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <Divider />
 
       {/* ── Font Size ─────────────────────────────────────────── */}
-      <div className="flex items-center px-2 h-full hover:bg-muted/50 transition-colors">
+      <div className="hover:bg-muted/50 flex h-full items-center px-2 transition-colors">
         <NumberInput
           value={fmt.fontSize}
           onChange={(v) => set('fontSize', v)}
@@ -80,7 +82,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <Divider />
 
       {/* ── Bold / Italic / Underline ─────────────────────────── */}
-      <div className="flex items-center h-full">
+      <div className="flex h-full items-center">
         <ToggleBtn
           active={fmt.bold}
           onClick={() => set('bold', !fmt.bold)}
@@ -107,7 +109,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <Divider />
 
       {/* ── Alignment ─────────────────────────────────────────── */}
-      <div className="flex items-center h-full">
+      <div className="flex h-full items-center">
         {(['left', 'center', 'right', 'justify'] as const).map((align) => {
           const Icon = { left: AlignLeft, center: AlignCenter, right: AlignRight, justify: AlignJustify }[align]
           return (
@@ -126,7 +128,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <Divider />
 
       {/* ── Letter Spacing ────────────────────────────────────── */}
-      <div className="flex items-center px-2 h-full hover:bg-muted/50 transition-colors">
+      <div className="hover:bg-muted/50 flex h-full items-center px-2 transition-colors">
         <NumberInput
           value={fmt.charSpacing}
           onChange={(v) => set('charSpacing', v)}
@@ -136,7 +138,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       </div>
 
       {/* ── Line Height ───────────────────────────────────────── */}
-      <div className="flex items-center px-2 h-full hover:bg-muted/50 transition-colors border-l border-border">
+      <div className="hover:bg-muted/50 border-border flex h-full items-center border-l px-2 transition-colors">
         <NumberInput
           value={fmt.lineHeight}
           onChange={(v) => set('lineHeight', v)}
@@ -156,7 +158,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function Divider() {
-  return <div className="w-px h-5 bg-border shrink-0 mx-0.5" />
+  return <div className="bg-border mx-0.5 h-5 w-px shrink-0" />
 }
 
 function ToggleBtn({
@@ -218,10 +220,10 @@ function FontSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        className="flex items-center gap-1.5 px-3 h-full hover:bg-muted/50 transition-colors min-w-[160px] max-w-[200px]"
+        className="hover:bg-muted/50 flex h-full max-w-[200px] min-w-[160px] items-center gap-1.5 px-3 transition-colors"
         style={{ fontFamily: current.family }}
       >
-        <span className="text-sm text-foreground truncate flex-1 text-left">
+        <span className="text-foreground flex-1 truncate text-left text-sm">
           {current.family}
         </span>
         <svg
@@ -238,7 +240,7 @@ function FontSelect({
           <div
             id={listboxId}
             role="listbox"
-            className="fixed z-50 bg-card border border-border rounded-lg shadow-xl overflow-hidden min-w-[200px]"
+            className="bg-card border-border fixed z-50 min-w-[200px] overflow-hidden rounded-lg border shadow-xl"
             style={{ top: pos.top, left: pos.left }}
           >
             {(['Serif', 'Display', 'Script', 'Sans-serif'] as const).map(cat => {
@@ -246,7 +248,7 @@ function FontSelect({
               if (!fontsInCat.length) return null
               return (
                 <div key={cat} role="presentation">
-                  <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground bg-muted/30">
+                  <div className="text-muted-foreground bg-muted/30 px-3 py-1 text-[10px] font-semibold tracking-widest uppercase">
                     {cat}
                   </div>
                   {fontsInCat.map(font => (

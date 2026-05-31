@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MagneticButton } from '../magnetic-button/magnetic-button';
-import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider';
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type BackToTopMessages } from './messages';
@@ -60,7 +60,7 @@ export function BackToTop({
           <MagneticButton
             onClick={scrollToTop}
             variant="default"
-            className="w-12 h-12 flex items-center justify-center !p-0 rounded-full shadow-2xl"
+            className="flex h-12 w-12 items-center justify-center rounded-full !p-0 shadow-2xl"
             aria-label={m.ariaLabel}
           >
             <svg

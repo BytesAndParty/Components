@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
@@ -6,7 +7,7 @@ import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { useCanvasSync } from './engine/use-canvas-sync'
 import { useCanvasAutosave } from './engine/use-canvas-autosave'
 import { useCanvasRestore } from './engine/use-canvas-restore'
-import { useDesignEngineHotkey } from '../hotkeys/hotkeys-provider'
+import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
 import { useDesignerStore } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
 import { MainToolbar } from './components/toolbar/MainToolbar'
@@ -250,13 +251,12 @@ export function CellarCanvas({
     }
   }
 
-  return (
-    <MessagesProvider value={m}>
+  const shell = (
     <div
       className={cn(
         "bg-background transition-all duration-300",
         className,
-        isFullscreen && "fixed inset-0 z-50 p-4",
+        isFullscreen && "fixed inset-0 p-4",
       )}
       style={{
         ...style,
@@ -264,6 +264,7 @@ export function CellarCanvas({
         display: 'grid',
         gridTemplateColumns: 'auto 1fr 300px',
         gridTemplateRows:    '48px 48px 1fr',
+        ...(isFullscreen && { zIndex: 9999 }),
       }}
     >
       <CanvasHeader
@@ -279,13 +280,13 @@ export function CellarCanvas({
       />
 
       <div
-        className="border-b border-border bg-card flex items-center justify-between pr-4"
+        className="border-border bg-card flex items-center justify-between border-b pr-4"
         style={{ gridColumn: '2 / -1' }}
       >
         <ContextToolbar bridge={bridge} />
         <button
           onClick={() => bridge.current?.zoomToFit()}
-          className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 hover:bg-muted rounded border border-border transition-colors text-muted-foreground hover:text-foreground"
+          className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
         >
           {m.fitToScreen}
         </button>
@@ -297,12 +298,18 @@ export function CellarCanvas({
 
       <main
         data-tour="canvas-area"
-        className="relative overflow-hidden bg-muted/20 flex flex-col"
-        style={{ gridRow: '3' }}
+        className="bg-muted/20 relative flex flex-col overflow-hidden"
+        style={{
+          gridRow: '3',
+          // Optical centring: RightPanel (300px) vs MainToolbar (64px) = 236px
+          // asymmetry. Without compensation the label sits left of viewport
+          // centre in fullscreen.
+          ...(isFullscreen && { paddingLeft: 236 }),
+        }}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        <div className="flex-1 flex items-center justify-center p-12 overflow-auto">
+        <div className="flex flex-1 items-center justify-center overflow-auto p-12">
           <LabelCanvas
             ref={canvasRef}
             backdrop={computeBackdrop(widthMm, heightMm, viewport, backgroundColor)}
@@ -319,7 +326,7 @@ export function CellarCanvas({
         </div>
 
         {enableValidator && (
-          <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
+          <div className="pointer-events-auto absolute right-4 bottom-4 z-10">
             <ValidatorBadge warnings={warnings} />
           </div>
         )}
@@ -344,6 +351,13 @@ export function CellarCanvas({
 
       <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} />
     </div>
+  )
+
+  return (
+    <MessagesProvider value={m}>
+      {isFullscreen && typeof document !== 'undefined'
+        ? createPortal(shell, document.body)
+        : shell}
     </MessagesProvider>
   )
 }

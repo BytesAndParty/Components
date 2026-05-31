@@ -4,8 +4,8 @@ import { Stepper, Step } from '@components/stepper/stepper'
 import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
 import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { useToast } from '@components/toast/toast'
-import { useCart } from '../layout'
+import { useToast } from '@components/toast/toast-context'
+import { useCart } from '../cart-context'
 
 export function ShopPage() {
   const [selectedLabel, setSelectedLabel] = useState('')
@@ -29,22 +29,22 @@ export function ShopPage() {
   return (
     <>
       <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
-        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
           <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
             {bottles.map((bottle) => (
               <div
                 key={bottle.id}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border"
+                className="border-border flex flex-col items-center gap-2 rounded-xl border p-4"
               >
-                <span className="text-sm font-medium text-foreground">{bottle.name}</span>
-                <span className="text-xs text-muted-foreground">{bottle.price}</span>
+                <span className="text-foreground text-sm font-medium">{bottle.name}</span>
+                <span className="text-muted-foreground text-xs">{bottle.price}</span>
                 <AddToCartButton onClick={() => cart.add({ id: bottle.id, label: bottle.name })}>
                   Add to cart
                 </AddToCartButton>
               </div>
             ))}
           </div>
-          <div className="border-t border-border mt-6 pt-3 px-2 flex justify-between text-[0.7rem] text-muted-foreground">
+          <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
             <span>AddToCartButton · CSS keyframes · ~3.7s cycle</span>
             <span>No dependencies</span>
           </div>
@@ -52,7 +52,7 @@ export function ShopPage() {
       </Section>
 
       <Section title="Cart Icon" description="Shopping cart icon with animated badge bounce and flying-box effect on count change.">
-        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
           <div className="flex flex-col items-center gap-6">
             <div className="flex items-center gap-8">
               <CartIcon count={demoCount} size={32} />
@@ -60,17 +60,17 @@ export function ShopPage() {
                 <button
                   type="button"
                   onClick={() => setDemoCount(c => Math.max(0, c - 1))}
-                  className="w-9 h-9 rounded-lg border border-border bg-transparent text-foreground cursor-pointer text-lg flex items-center justify-center font-sans"
+                  className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
                 >
                   −
                 </button>
-                <span className="text-sm text-foreground tabular-nums min-w-[24px] text-center">
+                <span className="text-foreground min-w-[24px] text-center text-sm tabular-nums">
                   {demoCount}
                 </span>
                 <button
                   type="button"
                   onClick={() => setDemoCount(c => c + 1)}
-                  className="w-9 h-9 rounded-lg border border-border bg-transparent text-foreground cursor-pointer text-lg flex items-center justify-center font-sans"
+                  className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
                 >
                   +
                 </button>
@@ -79,12 +79,12 @@ export function ShopPage() {
             <button
               type="button"
               onClick={() => { setDemoCount(0); cart.reset() }}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none cursor-pointer font-sans"
+              className="text-muted-foreground hover:text-foreground cursor-pointer border-none bg-transparent font-sans text-xs transition-colors"
             >
               Reset
             </button>
           </div>
-          <div className="border-t border-border mt-6 pt-3 px-2 flex justify-between text-[0.7rem] text-muted-foreground">
+          <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
             <span>CartIcon · Badge bounce + box arc animation</span>
             <span>No dependencies</span>
           </div>
@@ -92,7 +92,7 @@ export function ShopPage() {
       </Section>
 
       <Section title="Stepper" description="Multi-step flow for the wine label personalization order process.">
-        <div className="border border-border rounded-xl bg-card p-8 shadow-sm max-w-xl mx-auto">
+        <div className="border-border bg-card mx-auto max-w-xl rounded-xl border p-8 shadow-sm">
           <Stepper
             initialStep={1}
             onStepChange={(step) => console.log('Step:', step)}
@@ -106,8 +106,8 @@ export function ShopPage() {
           >
             <Step title="Etikett">
               <div className="pb-2">
-                <h3 className="text-lg font-semibold text-foreground mb-2">Etikett auswählen</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h3 className="text-foreground mb-2 text-lg font-semibold">Etikett auswählen</h3>
+                <p className="text-muted-foreground mb-4 text-sm">
                   Wähle ein Design für dein personalisiertes Weinetikett.
                 </p>
                 <div className="flex flex-col gap-2">
@@ -117,12 +117,12 @@ export function ShopPage() {
                       type="button"
                       onClick={() => setSelectedLabel(label.id)}
                       className={`
-                        text-left p-3 px-4 rounded-lg border-2 cursor-pointer transition-all duration-200 font-sans
+                        cursor-pointer rounded-lg border-2 p-3 px-4 text-left font-sans transition-all duration-200
                         ${selectedLabel === label.id ? 'border-accent bg-accent/5' : 'border-border bg-transparent'}
                       `}
                     >
-                      <div className="text-sm font-medium text-foreground">{label.name}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{label.description}</div>
+                      <div className="text-foreground text-sm font-medium">{label.name}</div>
+                      <div className="text-muted-foreground mt-0.5 text-xs">{label.description}</div>
                     </button>
                   ))}
                 </div>
@@ -131,8 +131,8 @@ export function ShopPage() {
 
             <Step title="Flasche">
               <div className="pb-2">
-                <h3 className="text-lg font-semibold text-foreground mb-2">Flasche zuordnen</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h3 className="text-foreground mb-2 text-lg font-semibold">Flasche zuordnen</h3>
+                <p className="text-muted-foreground mb-4 text-sm">
                   Wähle die Flasche, auf die das Etikett aufgebracht werden soll.
                 </p>
                 <div className="flex flex-col gap-2">
@@ -142,14 +142,14 @@ export function ShopPage() {
                       type="button"
                       onClick={() => setSelectedBottle(bottle.id)}
                       className={`
-                        text-left p-3 px-4 rounded-lg border-2 flex justify-between items-center cursor-pointer transition-all duration-200 font-sans
+                        flex cursor-pointer items-center justify-between rounded-lg border-2 p-3 px-4 text-left font-sans transition-all duration-200
                         ${selectedBottle === bottle.id ? 'border-accent bg-accent/5' : 'border-border bg-transparent'}
                       `}
                     >
                       <div>
-                        <div className="text-sm font-medium text-foreground">{bottle.name}</div>
+                        <div className="text-foreground text-sm font-medium">{bottle.name}</div>
                       </div>
-                      <div className="text-sm text-muted-foreground">{bottle.price}</div>
+                      <div className="text-muted-foreground text-sm">{bottle.price}</div>
                     </button>
                   ))}
                 </div>
@@ -158,18 +158,18 @@ export function ShopPage() {
 
             <Step title="Bestätigung">
               <div className="pb-2">
-                <h3 className="text-lg font-semibold text-foreground mb-2">Zusammenfassung</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h3 className="text-foreground mb-2 text-lg font-semibold">Zusammenfassung</h3>
+                <p className="text-muted-foreground mb-4 text-sm">
                   Prüfe deine Auswahl und schließe die Bestellung ab.
                 </p>
-                <div className="rounded-lg border border-border overflow-hidden">
-                  <div className="p-4 flex justify-between text-sm border-b border-border">
+                <div className="border-border overflow-hidden rounded-lg border">
+                  <div className="border-border flex justify-between border-b p-4 text-sm">
                     <span className="text-muted-foreground">Etikett</span>
                     <span className="text-foreground font-medium">
                       {labels.find(l => l.id === selectedLabel)?.name || '—'}
                     </span>
                   </div>
-                  <div className="p-4 flex justify-between text-sm">
+                  <div className="flex justify-between p-4 text-sm">
                     <span className="text-muted-foreground">Flasche</span>
                     <span className="text-foreground font-medium">
                       {bottles.find(b => b.id === selectedBottle)?.name || '—'}
@@ -183,7 +183,7 @@ export function ShopPage() {
       </Section>
 
       <Section title="Vertical Stepper" description="Vertikale Variante – alle Schritte sichtbar, aktiver Schritt expandiert. Connector-Linie füllt sich bei Fortschritt.">
-        <div className="max-w-md mx-auto">
+        <div className="mx-auto max-w-md">
           <VerticalStepper
             initialStep={1}
             onStepChange={(step) => console.log('Vertical Step:', step)}
