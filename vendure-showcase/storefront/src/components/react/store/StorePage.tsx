@@ -36,9 +36,9 @@ function StoreInner({ initialProducts, initialFacets }: StorePageProps) {
 
   return (
     <div className="space-y-6">
-      <section className="text-center py-10">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">{t.storeTitle}</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t.storeSubtitle}</p>
+      <section className="py-10 text-center">
+        <h1 className="mb-4 text-4xl font-extrabold tracking-tight">{t.storeTitle}</h1>
+        <p className="text-muted-foreground mx-auto max-w-2xl text-xl">{t.storeSubtitle}</p>
       </section>
 
       <div className="border-b">
@@ -49,7 +49,7 @@ function StoreInner({ initialProducts, initialFacets }: StorePageProps) {
       {filtered.length === 0 ? (
         <StoreEmpty hasFilters={activeCount > 0} onReset={clearAll} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((product, idx) => (
             <WineCard
               key={product.id}

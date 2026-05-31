@@ -1,6 +1,5 @@
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
-import * as React from 'react';
-import { useEffect, createContext, useContext } from 'react';
+import { useEffect, createContext, useContext, type ReactNode, type CSSProperties, type ComponentProps } from 'react';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type BreadcrumbMessages } from './messages';
 
@@ -52,7 +51,7 @@ function useBreadcrumb() {
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-export interface BreadcrumbProps extends React.ComponentProps<'nav'> {
+export interface BreadcrumbProps extends ComponentProps<'nav'> {
   messages?: Partial<BreadcrumbMessages>;
 }
 
@@ -60,7 +59,7 @@ export function Breadcrumb({
   style,
   messages,
   ...props
-}: BreadcrumbProps): React.ReactElement {
+}: BreadcrumbProps): ReactNode {
   const m = useComponentMessages(MESSAGES, messages);
 
   return (
@@ -73,7 +72,7 @@ export function Breadcrumb({
 export function BreadcrumbList({
   style,
   ...props
-}: React.ComponentProps<'ol'>): React.ReactElement {
+}: ComponentProps<'ol'>): ReactNode {
   return (
     <ol
       style={{
@@ -97,7 +96,7 @@ export function BreadcrumbList({
 export function BreadcrumbItem({
   style,
   ...props
-}: React.ComponentProps<'li'>): React.ReactElement {
+}: ComponentProps<'li'>): ReactNode {
   return (
     <li
       style={{
@@ -115,7 +114,7 @@ export function BreadcrumbItem({
 export function BreadcrumbLink({
   style,
   ...props
-}: React.ComponentProps<'a'>): React.ReactElement {
+}: ComponentProps<'a'>): ReactNode {
   useEffect(() => { injectStyles(); }, []);
 
   return (
@@ -136,7 +135,7 @@ export function BreadcrumbLink({
 export function BreadcrumbPage({
   style,
   ...props
-}: React.ComponentProps<'span'>): React.ReactElement {
+}: ComponentProps<'span'>): ReactNode {
   return (
     <span
       aria-current="page"
@@ -155,7 +154,7 @@ export function BreadcrumbSeparator({
   children,
   style,
   ...props
-}: React.ComponentProps<'li'>): React.ReactElement {
+}: ComponentProps<'li'>): ReactNode {
   return (
     <li
       aria-hidden="true"
@@ -177,7 +176,7 @@ export function BreadcrumbSeparator({
 export function BreadcrumbEllipsis({
   style,
   ...props
-}: React.ComponentProps<'span'>): React.ReactElement {
+}: ComponentProps<'span'>): ReactNode {
   const { messages: m } = useBreadcrumb();
 
   return (

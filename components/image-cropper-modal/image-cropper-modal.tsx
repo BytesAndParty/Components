@@ -118,7 +118,7 @@ export function ImageCropperModal({
       modal
     >
       <Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <Dialog.Backdrop className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <Dialog.Content
             className={cn(
@@ -130,8 +130,8 @@ export function ImageCropperModal({
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <Dialog.Title className="text-sm font-semibold text-foreground">
+            <div className="border-border flex items-center justify-between border-b px-5 py-4">
+              <Dialog.Title className="text-foreground text-sm font-semibold">
                 {m.title}
               </Dialog.Title>
               <Dialog.CloseTrigger asChild>
@@ -157,8 +157,8 @@ export function ImageCropperModal({
                   zoomStep={0.1}
                   translations={cropperTranslations}
                 >
-                  <div className="relative w-full bg-muted/30" style={{ height: VIEWPORT_HEIGHT }}>
-                    <ImageCropper.Viewport className="w-full h-full flex items-center justify-center">
+                  <div className="bg-muted/30 relative w-full" style={{ height: VIEWPORT_HEIGHT }}>
+                    <ImageCropper.Viewport className="flex h-full w-full items-center justify-center">
                       {/*
                         Image renders at its natural CSS size and is centered
                         by flex; Zag applies the user-controlled zoom as a
@@ -176,23 +176,23 @@ export function ImageCropperModal({
                         <ImageCropper.Handle position="ne" className={handleCls} />
                         <ImageCropper.Handle position="sw" className={handleCls} />
                         <ImageCropper.Handle position="se" className={handleCls} />
-                        <ImageCropper.Grid axis="horizontal" className="absolute inset-0 pointer-events-none" />
-                        <ImageCropper.Grid axis="vertical" className="absolute inset-0 pointer-events-none" />
+                        <ImageCropper.Grid axis="horizontal" className="pointer-events-none absolute inset-0" />
+                        <ImageCropper.Grid axis="vertical" className="pointer-events-none absolute inset-0" />
                       </ImageCropper.Selection>
                     </ImageCropper.Viewport>
                   </div>
 
                   {/* Controls */}
-                  <div className="flex items-center gap-3 px-5 py-3 border-t border-border">
+                  <div className="border-border flex items-center gap-3 border-t px-5 py-3">
                     <CropperControls messages={m} />
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border">
+                  <div className="border-border flex items-center justify-end gap-2 border-t px-5 py-4">
                     <Dialog.CloseTrigger asChild>
                       <button
                         type="button"
-                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors"
                       >
                         {m.cancel}
                       </button>
@@ -206,16 +206,16 @@ export function ImageCropperModal({
                 <>
                   <div
                     ref={measureRef}
-                    className="relative w-full bg-muted/30 flex items-center justify-center text-muted-foreground text-xs"
+                    className="bg-muted/30 text-muted-foreground relative flex w-full items-center justify-center text-xs"
                     style={{ height: VIEWPORT_HEIGHT }}
                   >
                     {m.loading}
                   </div>
-                  <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border">
+                  <div className="border-border flex items-center justify-end gap-2 border-t px-5 py-4">
                     <Dialog.CloseTrigger asChild>
                       <button
                         type="button"
-                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors"
                       >
                         {m.cancel}
                       </button>
@@ -224,7 +224,7 @@ export function ImageCropperModal({
                 </>
               )
             ) : (
-              <div className="flex items-center justify-center h-48 text-muted-foreground text-sm">
+              <div className="text-muted-foreground flex h-48 items-center justify-center text-sm">
                 {m.noImage}
               </div>
             )}
@@ -242,7 +242,7 @@ function CropperControls({ messages }: { messages: ImageCropperMessages }) {
   const api = useImageCropperContext()
 
   return (
-    <div className="flex items-center gap-1 flex-1">
+    <div className="flex flex-1 items-center gap-1">
       {/* Zoom */}
       <button type="button" title={messages.zoomOut} onClick={() => api.setZoom(api.zoom - 0.1)}
         className={iconBtnCls}>
@@ -255,7 +255,7 @@ function CropperControls({ messages }: { messages: ImageCropperMessages }) {
         min={5} max={400} step={5}
         value={Math.round(api.zoom * 100)}
         onChange={(e) => api.setZoom(Number(e.target.value) / 100)}
-        className="flex-1 h-1 accent-accent cursor-pointer"
+        className="accent-accent h-1 flex-1 cursor-pointer"
       />
 
       <button type="button" title={messages.zoomIn} onClick={() => api.setZoom(api.zoom + 0.1)}
@@ -264,7 +264,7 @@ function CropperControls({ messages }: { messages: ImageCropperMessages }) {
       </button>
 
       {/* Divider */}
-      <div className="w-px h-4 bg-border mx-1" />
+      <div className="bg-border mx-1 h-4 w-px" />
 
       {/* Rotation reset */}
       <button type="button" title={messages.resetRotation}
@@ -335,7 +335,7 @@ function ApplyButton({
     <button
       type="button"
       onClick={handleApply}
-      className="px-4 py-2 text-sm font-medium bg-accent text-primary-foreground rounded-lg hover:opacity-90 active:scale-[0.98] transition-all"
+      className="bg-accent text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium transition-all hover:opacity-90 active:scale-[0.98]"
     >
       {label}
     </button>

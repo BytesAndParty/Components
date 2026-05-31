@@ -41,16 +41,16 @@ export function CanvasHeader({
 
   return (
     <div
-      className="border-b border-border flex items-center px-4 h-12 bg-card/50"
+      className="border-border bg-card/50 flex h-12 items-center border-b px-4"
       style={{ gridColumn: '1 / -1' }}
     >
       <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">{m.brand}</h2>
-      <div className="mx-6 h-4 w-px bg-border" />
-      <div className="flex-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+      <div className="bg-border mx-6 h-4 w-px" />
+      <div className="text-muted-foreground flex-1 text-[10px] font-bold tracking-wider uppercase">
         {interpolate(m.labelDimensions, { w: widthMm, h: heightMm })}
       </div>
 
-      <div className="flex items-center gap-1 mr-4">
+      <div className="mr-4 flex items-center gap-1">
         <IconButton
           onClick={() => setSnappingEnabled(!snappingEnabled)}
           title={snappingEnabled ? m.snappingTitleEnabled : m.snappingTitleDisabled}
@@ -59,7 +59,7 @@ export function CanvasHeader({
           <Magnet size={14} className={cn(!snappingEnabled && "opacity-40")} />
         </IconButton>
 
-        <div className="mx-2 h-4 w-px bg-border/50" />
+        <div className="bg-border/50 mx-2 h-4 w-px" />
 
         <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
@@ -71,7 +71,7 @@ export function CanvasHeader({
         {onExportPdf && (
           <button
             onClick={onExportPdf}
-            className="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
             title={m.exportTitle}
           >
             <Download size={12} />
@@ -96,7 +96,7 @@ export function CanvasHeader({
 
       <button
         onClick={onToggleFullscreen}
-        className="p-2 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
+        className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
         title={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
       >
         {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}

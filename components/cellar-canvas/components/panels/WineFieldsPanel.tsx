@@ -64,14 +64,14 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
               {isPlaced ? (
                 <Check size={14} className="text-primary" />
               ) : (
-                <Plus size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Plus size={14} className="text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
               )}
             </button>
           )
         })}
       </div>
 
-      <div className="pt-4 border-t border-border">
+      <div className="border-border border-t pt-4">
         {(() => {
           const isQrPlaced = placedFieldKeys.has('qrCode')
           return (
@@ -87,7 +87,7 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
               <div className="flex items-center gap-3">
                 <QrCode size={18} />
                 <div className="flex flex-col items-start text-left">
-                  <span className="text-xs font-bold uppercase tracking-wider">{m.wineFieldQrTitle}</span>
+                  <span className="text-xs font-bold tracking-wider uppercase">{m.wineFieldQrTitle}</span>
                   <span className="text-[10px] opacity-70">{m.wineFieldQrHint}</span>
                 </div>
               </div>

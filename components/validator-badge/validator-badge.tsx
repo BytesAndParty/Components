@@ -63,15 +63,15 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
       <Portal>
         <Popover.Positioner style={{ zIndex: 50 }}>
           <Popover.Content>
-            <div className="w-72 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+            <div className="bg-card border-border w-72 overflow-hidden rounded-xl border shadow-xl">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="border-border flex items-center justify-between border-b px-4 py-3">
                 <div className="flex items-center gap-2">
                   {hasError
                     ? <AlertCircle size={14} className="text-destructive" />
                     : <AlertTriangle size={14} className="text-amber-500" />
                   }
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className="text-foreground text-sm font-semibold">
                     {m.panelTitle}
                   </span>
                 </div>
@@ -87,7 +87,7 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
               </div>
 
               {/* Warning list */}
-              <ul className="divide-y divide-border">
+              <ul className="divide-border divide-y">
                 {warnings.map(w => (
                   <li key={w.key} className="flex items-start gap-3 px-4 py-3">
                     <div className={cn(
@@ -103,9 +103,9 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
                       }
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">{w.label}</p>
+                      <p className="text-foreground text-sm font-medium">{w.label}</p>
                       {w.description && (
-                        <p className="text-xs text-muted-foreground mt-0.5">{w.description}</p>
+                        <p className="text-muted-foreground mt-0.5 text-xs">{w.description}</p>
                       )}
                     </div>
                   </li>
@@ -113,8 +113,8 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
               </ul>
 
               {/* Footer */}
-              <div className="px-4 py-2.5 bg-muted/30 border-t border-border">
-                <p className="text-[11px] text-muted-foreground">
+              <div className="bg-muted/30 border-border border-t px-4 py-2.5">
+                <p className="text-muted-foreground text-[11px]">
                   {m.footer}
                 </p>
               </div>

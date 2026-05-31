@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, type CSSProperties } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -55,8 +55,17 @@ export function Particles({
   const mouseRef = useRef({ x: -9999, y: -9999 })
   const animRef = useRef<number>(0)
 
-  const createParticles = useCallback(
-    (width: number, height: number): Particle[] => {
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const parent = canvas.parentElement ?? canvas
+    const dpr = window.devicePixelRatio || 1
+
+    function createParticles(width: number, height: number): Particle[] {
       const particles: Particle[] = []
 
       for (let i = 0; i < particleCount; i++) {
@@ -78,19 +87,7 @@ export function Particles({
         })
       }
       return particles
-    },
-    [particleCount, speed, particleBaseSize, particleColors]
-  )
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const parent = canvas.parentElement ?? canvas
-    const dpr = window.devicePixelRatio || 1
+    }
 
     function resize() {
       const rect = parent.getBoundingClientRect()
@@ -175,7 +172,7 @@ export function Particles({
         canvas.removeEventListener('mouseleave', handleMouseLeave)
       }
     }
-  }, [createParticles, moveParticlesOnHover, hoverRadius])
+  }, [moveParticlesOnHover, hoverRadius, particleBaseSize, particleColors, particleCount, speed])
 
   return (
     <div

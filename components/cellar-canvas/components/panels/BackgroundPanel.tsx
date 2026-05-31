@@ -16,9 +16,9 @@ export function BackgroundPanel({ bridge, color }: BackgroundPanelProps) {
   const m = useCellarCanvasMessages()
   return (
     <section className="space-y-3">
-      <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">{m.bgHeading}</h4>
-      <div className="flex items-center justify-between bg-card border border-border rounded-lg h-9 px-1">
-        <span className="text-xs pl-2 text-muted-foreground">{m.bgFill}</span>
+      <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.bgHeading}</h4>
+      <div className="bg-card border-border flex h-9 items-center justify-between rounded-lg border px-1">
+        <span className="text-muted-foreground pl-2 text-xs">{m.bgFill}</span>
         <ColorSwatch
           value={color}
           onChange={(v) => bridge.current?.setBackground(v)}

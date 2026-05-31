@@ -63,12 +63,12 @@ export function ColorSwatch({
           )}
         >
           {label && (
-            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               {label}
             </span>
           )}
           <span
-            className="w-4 h-1.5 rounded-full border border-border/50 shadow-sm"
+            className="border-border/50 h-1.5 w-4 rounded-full border shadow-sm"
             style={{ background: value }}
           />
         </button>
@@ -77,7 +77,7 @@ export function ColorSwatch({
       <Portal>
         <Popover.Positioner style={{ zIndex: 50 }}>
           <Popover.Content>
-            <div className="w-72 bg-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="bg-card border-border w-72 rounded-xl border p-3 shadow-xl">
               <ColorPickerPanel
                 value={value}
                 onChange={onChange}

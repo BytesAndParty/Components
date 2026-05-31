@@ -2,7 +2,7 @@ import { Section } from '../components/section'
 import { DataTable } from '@components/data-table/data-table'
 import type { ColumnDef, SortingState, PaginationState, RowSelectionState } from '@tanstack/react-table'
 import { useSearchParams } from 'react-router'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 interface WineInventory {
   id: string
@@ -101,21 +101,19 @@ export function DataPage() {
     .map((w) => w.name)
 
   // Parse sorting from URL: ?sort=name:asc
-  const sorting = useMemo<SortingState>(() => {
-    const sort = searchParams.get('sort')
+  const sort = searchParams.get('sort')
+  const sorting: SortingState = (() => {
     if (!sort) return []
     const [id, desc] = sort.split(':')
     return [{ id, desc: desc === 'desc' }]
-  }, [searchParams])
+  })()
 
   // Parse pagination from URL: ?page=1
-  const pagination = useMemo<PaginationState>(() => {
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    return {
-      pageIndex: Math.max(0, page - 1),
-      pageSize: 15,
-    }
-  }, [searchParams])
+  const page = parseInt(searchParams.get('page') || '1', 10)
+  const pagination: PaginationState = {
+    pageIndex: Math.max(0, page - 1),
+    pageSize: 15,
+  }
 
   // Update URL when sorting/pagination changes
   const handleSortingChange = (newSorting: SortingState) => {
@@ -137,7 +135,7 @@ export function DataPage() {
     setSearchParams(nextParams, { replace: true })
   }
 
-  const columns: ColumnDef<WineInventory>[] = useMemo(() => [
+  const columns: ColumnDef<WineInventory>[] = [
     {
       accessorKey: 'name',
       header: 'Name',
@@ -180,13 +178,13 @@ export function DataPage() {
         }
         return (
           <div className="flex items-center gap-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${dotColors[status]}`} />
+            <div className={`h-1.5 w-1.5 rounded-full ${dotColors[status]}`} />
             <span className="text-xs">{status}</span>
           </div>
         )
       },
     },
-  ], [])
+  ]
 
   return (
     <div className="space-y-12">
@@ -218,8 +216,8 @@ export function DataPage() {
         description="Opt-in via enableRowSelection. The header checkbox toggles the current page; per-row checkboxes use the in-house Checkbox component. Selection state is emitted to the consumer, which renders its own bulk-action UI."
       >
         <div className="space-y-3">
-          <div className="flex items-center justify-between min-h-8">
-            <span className="text-xs text-muted-foreground">
+          <div className="flex min-h-8 items-center justify-between">
+            <span className="text-muted-foreground text-xs">
               {selectedNames.length === 0
                 ? 'No rows selected.'
                 : `${selectedNames.length} selected: ${selectedNames.join(', ')}`}
@@ -228,7 +226,7 @@ export function DataPage() {
               type="button"
               disabled={selectedNames.length === 0}
               onClick={() => setRowSelection({})}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md border px-3 py-1.5 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40"
             >
               Clear selection
             </button>

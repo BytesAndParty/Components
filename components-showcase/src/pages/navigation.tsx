@@ -41,7 +41,7 @@ export function NavigationPage() {
 
       <Section title="StickyBanner" description="Sticky, dismissable banner with gradient variants, localStorage persistence, and an action slot (e.g. for an inline Countdown).">
         <div className="flex flex-col gap-6">
-          <div className="rounded-xl border border-border overflow-hidden bg-card">
+          <div className="border-border bg-card overflow-hidden rounded-xl border">
             <div className="max-h-80 overflow-y-auto">
               <StickyBanner
                 variant="accent"
@@ -57,9 +57,9 @@ export function NavigationPage() {
               >
                 <strong>Flash Sale:</strong> -20 % auf alle Rotweine — endet in
               </StickyBanner>
-              <div className="p-8 space-y-4">
+              <div className="space-y-4 p-8">
                 {[...Array(12)].map((_, i) => (
-                  <p key={i} className="text-sm text-muted-foreground">
+                  <p key={i} className="text-muted-foreground text-sm">
                     Scroll-Content Zeile {i + 1} — der Banner bleibt oben kleben, während dieser Container scrollt.
                   </p>
                 ))}
@@ -67,29 +67,29 @@ export function NavigationPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded-xl border border-border overflow-hidden bg-card">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="border-border bg-card overflow-hidden rounded-xl border">
               <div className="max-h-40 overflow-y-auto">
                 <StickyBanner variant="neutral" dismissible={false}>
                   Neutraler Hinweis – passt sich Theme an
                 </StickyBanner>
-                <div className="p-4 h-64" />
+                <div className="h-64 p-4" />
               </div>
             </div>
-            <div className="rounded-xl border border-border overflow-hidden bg-card">
+            <div className="border-border bg-card overflow-hidden rounded-xl border">
               <div className="max-h-40 overflow-y-auto">
                 <StickyBanner variant="warning" dismissible={false}>
                   Wartungsfenster: Heute 22:00 Uhr
                 </StickyBanner>
-                <div className="p-4 h-64" />
+                <div className="h-64 p-4" />
               </div>
             </div>
-            <div className="rounded-xl border border-border overflow-hidden bg-card">
+            <div className="border-border bg-card overflow-hidden rounded-xl border">
               <div className="max-h-40 overflow-y-auto">
                 <StickyBanner variant="danger" dismissible={false}>
                   Störung: Checkout derzeit nicht verfügbar
                 </StickyBanner>
-                <div className="p-4 h-64" />
+                <div className="h-64 p-4" />
               </div>
             </div>
           </div>
@@ -102,19 +102,19 @@ export function NavigationPage() {
       </Section>
 
       <Section title="ScrollProgress" description="Scroll position indicator bar, typically placed below a navbar.">
-        <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
-          <div className="border-b border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
+        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
+          <div className="border-border text-muted-foreground flex justify-between border-b bg-white/1 p-3 px-8 text-[0.7rem]">
             <span>ScrollProgress · position: fixed · top: 56px · scaleX transform</span>
             <span>Scroll this page to see it fill ↑</span>
           </div>
-          <div className="p-8 text-sm text-muted-foreground">
-            The accent bar directly below the navbar is the <code className="text-xs bg-muted px-1 py-0.5 rounded">ScrollProgress</code> component — active on every page of this showcase.
+          <div className="text-muted-foreground p-8 text-sm">
+            The accent bar directly below the navbar is the <code className="bg-muted rounded px-1 py-0.5 text-xs">ScrollProgress</code> component — active on every page of this showcase.
           </div>
         </div>
       </Section>
 
       <Section title="Navbar" description="Composable navbar with dropdowns, mega-menu, icon buttons, and mobile drawer.">
-        <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
+        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
           {/* Inline navbar demo – UIkit-inspired: transparent, minimal, uppercase */}
           <NavbarComponent
             sticky={false}
@@ -172,7 +172,7 @@ export function NavigationPage() {
             </NavbarSection>
           </NavbarComponent>
 
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
+          <div className="border-border text-muted-foreground flex justify-between border-t bg-white/1 p-3 px-8 text-[0.7rem]">
             <span>Navbar · transparent · uppercase · minimal UIkit-style</span>
             <span>Hover "Weine" for mega-menu</span>
           </div>
@@ -225,7 +225,7 @@ export function NavigationPage() {
 
       <Section title="AccentSwitcher" description="Accent color picker dropdown with colored dots on hover.">
         <div className="flex items-center gap-6">
-          <div className="border border-border rounded-lg p-4 bg-card">
+          <div className="border-border bg-card rounded-lg border p-4">
             <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
           </div>
           <p className="text-muted-foreground text-sm">
@@ -272,7 +272,7 @@ export function NavigationPage() {
               href="#"
             />
           </Dock>
-          <p className="text-xs text-muted-foreground">Hover langsam über die Icons, um die Magnification zu sehen</p>
+          <p className="text-muted-foreground text-xs">Hover langsam über die Icons, um die Magnification zu sehen</p>
         </div>
       </Section>
 
@@ -286,7 +286,7 @@ export function NavigationPage() {
               padding: '20px',
             }}
           >
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4">Component Library</p>
+            <p className="text-muted-foreground mb-4 text-xs tracking-widest uppercase">Component Library</p>
             <FileTree>
               <Folder name="components" defaultOpen>
                 <Folder name="magnetic-button" defaultOpen>
@@ -319,7 +319,7 @@ export function NavigationPage() {
               padding: '20px',
             }}
           >
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4">Weinshop Struktur</p>
+            <p className="text-muted-foreground mb-4 text-xs tracking-widest uppercase">Weinshop Struktur</p>
             <FileTree indent={14}>
               <Folder name="src" defaultOpen>
                 <Folder name="pages" defaultOpen>

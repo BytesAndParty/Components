@@ -124,16 +124,16 @@ export function LayerPanel({
   return (
     <div className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className="border-border flex items-center justify-between border-b px-3 py-2">
+        <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
           {m.layersHeader}
         </span>
-        <span className="text-xs text-muted-foreground">{layers.length}</span>
+        <span className="text-muted-foreground text-xs">{layers.length}</span>
       </div>
 
       {/* Layer list */}
       {layers.length === 0 ? (
-        <div className="flex items-center justify-center py-8 px-4 text-xs text-muted-foreground text-center">
+        <div className="text-muted-foreground flex items-center justify-center px-4 py-8 text-center text-xs">
           {m.noObjects}
         </div>
       ) : (
@@ -143,7 +143,7 @@ export function LayerPanel({
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={layers.map(l => l.id)} strategy={verticalListSortingStrategy}>
-            <div className="flex flex-col divide-y divide-border" role="listbox" aria-label="Layer list">
+            <div className="divide-border flex flex-col divide-y" role="listbox" aria-label="Layer list">
               <AnimatePresence initial={false}>
                 {layers.map((layer) => (
                   <SortableLayerRow
@@ -316,7 +316,7 @@ function LayerRow({
         type="button"
         aria-label={messages.dragHandle}
         title={messages.dragHandle}
-        className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity touch-none focus-visible:opacity-100 focus-visible:text-accent focus:outline-none"
+        className="text-muted-foreground focus-visible:text-accent shrink-0 cursor-grab touch-none opacity-0 transition-opacity group-hover:opacity-100 focus:outline-none focus-visible:opacity-100 active:cursor-grabbing"
         {...dragAttributes}
         {...dragListeners}
         onClick={(e) => e.stopPropagation()}
@@ -332,14 +332,14 @@ function LayerRow({
       />
 
       {/* Name */}
-      <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div className="min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
         {editing ? (
           <input
             type="text"
             value={draft}
             autoFocus
             aria-label={messages.renameLayer}
-            className="w-full text-xs bg-input border border-ring rounded px-1 py-0.5 text-foreground focus:outline-none"
+            className="bg-input border-ring text-foreground w-full rounded border px-1 py-0.5 text-xs focus:outline-none"
             onChange={(e) => setDraft(e.target.value)}
             onBlur={commitRename}
             onKeyDown={(e) => {
@@ -350,7 +350,7 @@ function LayerRow({
           />
         ) : (
           <span
-            className="block text-xs text-foreground truncate"
+            className="text-foreground block truncate text-xs"
             onDoubleClick={() => { setDraft(layer.name); setEditing(true) }}
             title={layer.name}
           >
@@ -361,7 +361,7 @@ function LayerRow({
 
       {/* Controls — visible on hover or active */}
       <div
-        className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100"
+        className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         <RowBtn onClick={onVisibilityToggle} title={messages.visibility}>

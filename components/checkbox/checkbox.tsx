@@ -1,4 +1,4 @@
-import { useState, useCallback, useId } from 'react';
+import { useState, useId } from 'react';
 
 interface CheckboxProps {
   checked?: boolean;
@@ -42,12 +42,12 @@ export function Checkbox({
   const isControlled = controlledChecked !== undefined;
   const checked = isControlled ? controlledChecked : internalChecked;
 
-  const toggle = useCallback(() => {
+  function toggle() {
     if (disabled) return;
     const next = !checked;
     if (!isControlled) setInternalChecked(next);
     onChange?.(next);
-  }, [checked, disabled, isControlled, onChange]);
+  }
 
   const s = sizes[size];
 

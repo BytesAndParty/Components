@@ -36,7 +36,7 @@ export function StoreEmpty({ hasFilters, onReset }: { hasFilters: boolean; onRes
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent hover:text-primary-foreground transition-colors"
+            className="bg-foreground text-background hover:bg-accent hover:text-primary-foreground inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
           >
             <Filter size={16} aria-hidden="true" />
             {t.storeNoResultsReset}

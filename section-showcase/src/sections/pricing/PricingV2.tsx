@@ -23,22 +23,22 @@ const wineClubOptions = [
 
 export function PricingV2() {
   return (
-    <section className="bg-[#fdfcf9] py-32 px-6">
+    <section className="bg-[#fdfcf9] px-6 py-32">
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.7fr] gap-24 items-center">
+        <div className="grid grid-cols-1 items-center gap-24 lg:grid-cols-[1fr_0.7fr]">
           
           <div className="flex flex-col gap-12">
             <BlurFade delay={100}>
-              <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-zinc-400">Le Club</span>
+              <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Le Club</span>
             </BlurFade>
             <BlurFade delay={200}>
-              <h2 className="font-display text-7xl font-light text-zinc-900 tracking-tight leading-tight">
+              <h2 className="font-display text-7xl leading-tight font-light tracking-tight text-zinc-900">
                 Ein Abo für <br />
                 <span className="italic">Kenner.</span>
               </h2>
             </BlurFade>
             <BlurFade delay={300}>
-              <p className="max-w-md text-xl leading-relaxed text-zinc-500 font-light">
+              <p className="max-w-md text-xl leading-relaxed font-light text-zinc-500">
                 Erhalten Sie jeden Monat eine kuratierte Auswahl unserer besten Jahrgänge, direkt aus dem Keller zu Ihnen nach Hause.
               </p>
             </BlurFade>
@@ -64,7 +64,7 @@ export function PricingV2() {
           </div>
         </div>
 
-        <BlurFade delay={600} className="mt-24 text-center border-t border-zinc-100 pt-12">
+        <BlurFade delay={600} className="mt-24 border-t border-zinc-100 pt-12 text-center">
           <p className="font-display text-2xl text-zinc-400 italic">
             <ShinyText duration={15} shineColor="rgba(0,0,0,0.2)">
               "Qualität ist keine Entscheidung, sondern eine Lebenseinstellung."

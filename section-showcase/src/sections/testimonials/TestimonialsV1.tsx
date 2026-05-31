@@ -29,10 +29,10 @@ export function TestimonialsV1() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <BlurFade delay={100}>
-            <h2 className="text-base font-semibold leading-7 text-accent uppercase tracking-widest">Le Verdict</h2>
+            <h2 className="text-accent text-base leading-7 font-semibold tracking-widest uppercase">Le Verdict</h2>
           </BlurFade>
           <BlurFade delay={200}>
-            <p className="mt-2 text-4xl font-display font-medium tracking-tight text-foreground sm:text-5xl">
+            <p className="font-display text-foreground mt-2 text-4xl font-medium tracking-tight sm:text-5xl">
               Stimmen der Experten
             </p>
           </BlurFade>
@@ -41,20 +41,20 @@ export function TestimonialsV1() {
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {testimonials.map((t, i) => (
             <BlurFade key={t.name} delay={300 + i * 100}>
-              <GlowCard className="flex flex-col justify-between p-8 h-full">
+              <GlowCard className="flex h-full flex-col justify-between p-8">
                 <div>
-                  <div className="flex gap-1 text-accent mb-6">
+                  <div className="text-accent mb-6 flex gap-1">
                     {[...Array(t.rating)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-current" />
                     ))}
                   </div>
-                  <p className="text-lg italic leading-relaxed text-foreground">
+                  <p className="text-foreground text-lg leading-relaxed italic">
                     "{t.content}"
                   </p>
                 </div>
-                <div className="mt-8 flex flex-col gap-1 border-t border-border pt-6">
-                  <span className="font-display font-medium text-foreground">{t.name}</span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider">{t.role}</span>
+                <div className="border-border mt-8 flex flex-col gap-1 border-t pt-6">
+                  <span className="font-display text-foreground font-medium">{t.name}</span>
+                  <span className="text-muted-foreground text-xs tracking-wider uppercase">{t.role}</span>
                 </div>
               </GlowCard>
             </BlurFade>

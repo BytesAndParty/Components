@@ -1,4 +1,4 @@
-import { useState, useCallback, type CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { useComponentMessages, interpolate } from '../i18n'
 import { MESSAGES, type RatingMessages } from './messages'
 
@@ -73,17 +73,14 @@ export function Rating({
   const currentValue = isControlled ? controlledValue : internalValue
   const displayValue = hoverValue ?? currentValue
 
-  const handleClick = useCallback(
-    (index: number) => {
+  const handleClick = (index: number) => {
       if (readOnly) return
       const newValue = index + 1
       if (!isControlled) setInternalValue(newValue)
       setAnimatingIndex(index)
       setTimeout(() => setAnimatingIndex(null), 300)
       onChange?.(newValue)
-    },
-    [readOnly, isControlled, onChange]
-  )
+    }
 
   return (
     <div

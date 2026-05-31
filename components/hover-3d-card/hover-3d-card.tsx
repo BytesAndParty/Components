@@ -1,64 +1,64 @@
-import { useRef, useState, useCallback, type ReactNode, type CSSProperties } from 'react'
-
-// ─── Types ──────────────────────────────────────────────────────────────────────
+import { useState, useRef, type ReactNode, type CSSProperties } from 'react'
 
 export interface Hover3DCardProps {
   children: ReactNode
-  /** Max tilt angle in degrees (default: 15) */
-  maxTilt?: number
-  /** Glare effect intensity 0-1 (default: 0.2) */
-  glareIntensity?: number
-  /** Whether to show the glare overlay (default: true) */
-  glare?: boolean
-  /** Transition speed in ms (default: 300) */
+  /** Maximum rotation angle in degrees (default: 15) */
+  maxRotate?: number
+  /** Perspective distance in px (default: 1000) */
+  perspective?: number
+  /** Smoothness of the return animation in ms (default: 400) */
   transitionSpeed?: number
-  /** Border radius in px (default: 16) */
-  borderRadius?: number
+  /** Show a glare/shine effect (default: true) */
+  glare?: boolean
+  /** Glare opacity/intensity (0-1, default: 0.15) */
+  glareIntensity?: number
   className?: string
   style?: CSSProperties
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────────
-
 export function Hover3DCard({
   children,
-  maxTilt = 15,
-  glareIntensity = 0.2,
+  maxRotate = 15,
+  perspective = 1000,
+  transitionSpeed = 400,
   glare = true,
-  transitionSpeed = 300,
-  borderRadius = 16,
+  glareIntensity = 0.15,
   className,
   style,
 }: Hover3DCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const [transform, setTransform] = useState('perspective(800px) rotateX(0deg) rotateY(0deg)')
+  const [rotate, setRotate] = useState({ x: 0, y: 0 })
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50 })
   const [isHovering, setIsHovering] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!cardRef.current) return
-      const rect = cardRef.current.getBoundingClientRect()
-      const x = (e.clientX - rect.left) / rect.width
-      const y = (e.clientY - rect.top) / rect.height
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!cardRef.current) return
 
-      const rotateX = (y - 0.5) * -maxTilt * 2
-      const rotateY = (x - 0.5) * maxTilt * 2
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
 
-      setTransform(`perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`)
-      setGlarePos({ x: x * 100, y: y * 100 })
-    },
-    [maxTilt]
-  )
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
 
-  const handleMouseEnter = useCallback(() => {
+    const rotateX = ((y - centerY) / centerY) * -maxRotate
+    const rotateY = ((x - centerX) / centerX) * maxRotate
+
+    setRotate({ x: rotateX, y: rotateY })
+    setGlarePos({
+      x: (x / rect.width) * 100,
+      y: (y / rect.height) * 100,
+    })
+  }
+
+  function handleMouseEnter() {
     setIsHovering(true)
-  }, [])
+  }
 
-  const handleMouseLeave = useCallback(() => {
+  function handleMouseLeave() {
     setIsHovering(false)
-    setTransform('perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)')
-  }, [])
+    setRotate({ x: 0, y: 0 })
+  }
 
   return (
     <div
@@ -69,14 +69,13 @@ export function Hover3DCard({
       onMouseLeave={handleMouseLeave}
       style={{
         position: 'relative',
-        overflow: 'hidden',
-        borderRadius: `${borderRadius}px`,
-        transform,
-        transition: isHovering
-          ? 'transform 50ms ease-out'
-          : `transform ${transitionSpeed}ms ease`,
         transformStyle: 'preserve-3d',
-        willChange: 'transform',
+        perspective: `${perspective}px`,
+        transition: isHovering
+          ? 'none'
+          : `transform ${transitionSpeed}ms ease-out`,
+        transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
+        cursor: 'pointer',
         ...style,
       }}
     >

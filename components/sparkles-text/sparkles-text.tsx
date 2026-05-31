@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, type ReactNode, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, type ReactNode, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -104,29 +104,25 @@ export function SparklesText({
     injectKeyframes()
   }, [])
 
-  const tick = useCallback(() => {
-    const now = Date.now()
-    setSparkles((prev: Sparkle[]) => {
-      const alive = prev.filter(s => now - s.createdAt < 700)
-      if (alive.length < sparkleCount) {
-        return [...alive, generateSparkle(sparkleColor, minSize, maxSize)]
-      }
-      return alive
-    })
-  }, [sparkleColor, sparkleCount, minSize, maxSize])
-
   useEffect(() => {
-    if (!enabled) {
-      // Drop existing sparkles when feature is disabled mid-life.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSparkles([])
-      return
+    if (!enabled) return
+
+    const tick = () => {
+      const now = Date.now()
+      setSparkles((prev: Sparkle[]) => {
+        const alive = prev.filter(s => now - s.createdAt < 700)
+        if (alive.length < sparkleCount) {
+          return [...alive, generateSparkle(sparkleColor, minSize, maxSize)]
+        }
+        return alive
+      })
     }
+
     intervalRef.current = setInterval(tick, 350)
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [enabled, tick])
+  }, [enabled, sparkleColor, minSize, maxSize, sparkleCount])
 
   return (
     <span

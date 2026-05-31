@@ -121,7 +121,7 @@ export function GooeyInput({
       >
         {/* Pill background */}
         <div
-          className="absolute right-0 top-0 transition-[width] cubic-bezier(0.77, 0, 0.18, 1)"
+          className="cubic-bezier(0.77, 0, 0.18, 1) absolute top-0 right-0 transition-[width]"
           style={{
             height,
             width: open ? width : height,

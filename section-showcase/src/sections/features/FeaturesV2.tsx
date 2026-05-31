@@ -9,20 +9,20 @@ export function FeaturesV2() {
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
           <div className="flex flex-col gap-10">
             <BlurFade direction="left" delay={100}>
-              <span className="text-sm font-medium tracking-[0.2em] uppercase text-muted-foreground">
+              <span className="text-muted-foreground text-sm font-medium tracking-[0.2em] uppercase">
                 Craftsmanship
               </span>
             </BlurFade>
             
             <BlurFade direction="left" delay={200}>
-              <h2 className="text-5xl font-display font-medium leading-[1.1] tracking-tight text-foreground sm:text-7xl">
+              <h2 className="font-display text-foreground text-5xl leading-[1.1] font-medium tracking-tight sm:text-7xl">
                 The Art of <br />
                 <AuroraText variant="aurora">Winemaking</AuroraText>
               </h2>
             </BlurFade>
 
             <BlurFade direction="left" delay={300}>
-              <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground max-w-xl text-lg leading-relaxed">
                 Vom ersten Trieb im Frühjahr bis zur Abfüllung — jeder Schritt ist ein Akt der Präzision. Unsere Winzer vereinen ökologische Verantwortung mit einer Leidenschaft für Perfektion.
               </p>
             </BlurFade>
@@ -30,14 +30,14 @@ export function FeaturesV2() {
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
               <BlurFade direction="up" delay={400}>
                 <div className="flex flex-col gap-2">
-                  <span className="text-2xl font-display text-foreground">Biologische Vielfalt</span>
-                  <p className="text-sm text-muted-foreground">Minimal invasive Bewirtschaftung für lebendige Böden.</p>
+                  <span className="font-display text-foreground text-2xl">Biologische Vielfalt</span>
+                  <p className="text-muted-foreground text-sm">Minimal invasive Bewirtschaftung für lebendige Böden.</p>
                 </div>
               </BlurFade>
               <BlurFade direction="up" delay={500}>
                 <div className="flex flex-col gap-2">
-                  <span className="text-2xl font-display text-foreground">Zeitlose Reifung</span>
-                  <p className="text-sm text-muted-foreground">Geduld als wichtigste Zutat in unseren historischen Kellern.</p>
+                  <span className="font-display text-foreground text-2xl">Zeitlose Reifung</span>
+                  <p className="text-muted-foreground text-sm">Geduld als wichtigste Zutat in unseren historischen Kellern.</p>
                 </div>
               </BlurFade>
             </div>
@@ -56,10 +56,10 @@ export function FeaturesV2() {
             
             {/* Float badge */}
             <BlurFade delay={800} className="absolute -bottom-8 -left-8 z-20 hidden sm:block">
-              <div className="rounded-2xl border border-border bg-card/80 p-6 backdrop-blur-xl">
+              <div className="border-border bg-card/80 rounded-2xl border p-6 backdrop-blur-xl">
                 <div className="flex flex-col gap-1">
-                  <span className="text-3xl font-display text-accent">98+</span>
-                  <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Points Average</span>
+                  <span className="font-display text-accent text-3xl">98+</span>
+                  <span className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">Points Average</span>
                 </div>
               </div>
             </BlurFade>

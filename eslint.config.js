@@ -4,6 +4,11 @@ import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import eslintPluginAstro from 'eslint-plugin-astro'
+import tanstackQuery from '@tanstack/eslint-plugin-query'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import tailwind from 'eslint-plugin-tailwindcss'
+import unusedImports from 'eslint-plugin-unused-imports'
+import { fixupPluginRules } from '@eslint/compat'
 import globals from 'globals'
 
 export default defineConfig(
@@ -24,9 +29,11 @@ export default defineConfig(
   },
 
   js.configs.recommended,
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
   eslintPluginAstro.configs.recommended,
+  ...tanstackQuery.configs['flat/recommended'],
+  jsxA11y.flatConfigs.recommended,
 
   {
     files: ['**/*.astro'],
@@ -51,21 +58,44 @@ export default defineConfig(
     },
     plugins: {
       'react-refresh': reactRefresh,
+      'tailwindcss': fixupPluginRules(tailwind),
+      'unused-imports': unusedImports,
     },
     rules: {
       'react-refresh/only-export-components': ['warn', {
         allowConstantExport: true,
-        // Factories that wrap a component and return one — fast refresh
-        // can treat the result as a component for HMR purposes.
         extraHOCs: ['createLottieIcon'],
       }],
 
-      // typescript-eslint tweaks: prefer warnings for surface noise, errors for real bugs.
-      '@typescript-eslint/no-unused-vars': ['warn', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      }],
+      // Tailwind CSS rules
+      'tailwindcss/classnames-order': 'warn',
+      'tailwindcss/no-custom-classname': 'off', // Allow custom classes since we use them for variants
+      'tailwindcss/enforces-shorthand': 'warn',
+
+      // Unused imports cleanup
+      'unused-imports/no-unused-imports': 'warn',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+
+      // React 19 / Compiler focus: discourage manual memoization
+      'no-restricted-imports': [
+        'warn',
+        {
+          name: 'react',
+          importNames: ['useMemo', 'useCallback'],
+          message: 'AtelierUI uses the React Compiler. Manual memoization (useMemo/useCallback) is discouraged unless required by external libraries.',
+        },
+      ],
+
+      // typescript-eslint tweaks
+      '@typescript-eslint/no-unused-vars': 'off', // Handled by unused-imports
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },

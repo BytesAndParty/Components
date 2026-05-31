@@ -27,31 +27,31 @@ const galleryImages = [
 
 export function GalleryV2() {
   return (
-    <section className="relative bg-[#fdfcf9] py-32 px-6 overflow-hidden">
+    <section className="relative overflow-hidden bg-[#fdfcf9] px-6 py-32">
       {/* Background Watermark */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none whitespace-nowrap">
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap opacity-[0.02]">
         <AuroraText 
           colors={['#000', '#333', '#666']} 
           speed={0.3} 
-          className="text-[25rem] font-display italic font-bold"
+          className="font-display text-[25rem] font-bold italic"
         >
           L'ATMOSPHÈRE
         </AuroraText>
       </div>
 
-      <div className="mx-auto max-w-7xl relative z-10">
-        <div className="flex flex-col gap-6 mb-24 items-center text-center">
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="mb-24 flex flex-col items-center gap-6 text-center">
           <BlurFade delay={100}>
-            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-zinc-400">Impressionen</span>
+            <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Impressionen</span>
           </BlurFade>
           <BlurFade delay={200}>
-            <h2 className="font-display text-6xl font-light text-zinc-900 tracking-tight italic">
+            <h2 className="font-display text-6xl font-light tracking-tight text-zinc-900 italic">
               Ein Blick in unsere Welt
             </h2>
           </BlurFade>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-5 gap-8 lg:gap-12 min-h-[1000px]">
+        <div className="grid min-h-[1000px] grid-cols-1 gap-8 lg:grid-cols-6 lg:grid-rows-5 lg:gap-12">
           {galleryImages.map((img, i) => (
             <BlurFade
               key={i}
@@ -65,7 +65,7 @@ export function GalleryV2() {
                 borderRadius="0"
                 intensity={0.1}
                 blur={100}
-                className="h-full w-full grayscale-[20%] hover:grayscale-0 transition-all duration-[1.5s]"
+                className="h-full w-full grayscale-[20%] transition-all duration-[1.5s] hover:grayscale-0"
               />
             </BlurFade>
           ))}

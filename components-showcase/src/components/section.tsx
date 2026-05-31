@@ -10,12 +10,12 @@ export function Section({ title, description, children, canReload = false }: {
 
   return (
     <section className="mb-16">
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <h2 className="text-xl font-semibold">{title}</h2>
         {canReload && (
           <button
             onClick={() => setReloads(r => r + 1)}
-            className="p-2 rounded-md hover:bg-white/5 transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-md p-2 transition-colors hover:bg-white/5"
             title="Animation neu starten"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -28,7 +28,7 @@ export function Section({ title, description, children, canReload = false }: {
         )}
       </div>
       {description && (
-        <p className="text-muted-foreground text-sm mb-6">{description}</p>
+        <p className="text-muted-foreground mb-6 text-sm">{description}</p>
       )}
       <div key={reloads}>
         {children}

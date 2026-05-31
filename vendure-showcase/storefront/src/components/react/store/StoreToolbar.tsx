@@ -35,7 +35,7 @@ export function StoreToolbar({ facets, totalCount, filteredCount }: Props) {
           <select
             value={state.sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="h-10 px-3 pr-8 rounded-lg border border-border bg-card text-foreground text-sm hover:border-accent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="border-border bg-card text-foreground hover:border-accent focus-visible:outline-ring h-10 rounded-lg border px-3 pr-8 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {sortOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>

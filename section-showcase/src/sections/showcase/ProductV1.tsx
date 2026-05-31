@@ -28,32 +28,32 @@ export function ProductV1() {
           {/* Content Side */}
           <div className="flex w-full flex-col lg:w-1/2">
             <BlurFade delay={200}>
-              <div className="flex items-center gap-1 text-accent">
+              <div className="text-accent flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-current" />
                 ))}
-                <span className="ml-2 text-xs font-bold tracking-widest uppercase text-muted-foreground">
+                <span className="text-muted-foreground ml-2 text-xs font-bold tracking-widest uppercase">
                   Excellent · 4.9/5
                 </span>
               </div>
             </BlurFade>
 
             <BlurFade delay={300}>
-              <h2 className="mt-4 font-display text-5xl font-medium tracking-tight text-foreground sm:text-6xl">
+              <h2 className="font-display text-foreground mt-4 text-5xl font-medium tracking-tight sm:text-6xl">
                 Réserve Particulière <br />
                 <span className="text-accent italic">Vintage 2018</span>
               </h2>
             </BlurFade>
 
             <BlurFade delay={400}>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-6 text-lg leading-relaxed">
                 Ein kraftvoller Körper trifft auf seidige Tannine. Noten von dunkler Kirsche, Tabak und einem Hauch Vanille. Achtzehn Monate in französischen Eichenfässern gereift.
               </p>
             </BlurFade>
 
             <BlurFade delay={500} className="mt-10">
               <div className="flex flex-col gap-4">
-                <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">Format wählen</span>
+                <span className="text-muted-foreground text-xs font-bold tracking-widest uppercase">Format wählen</span>
                 <div className="flex gap-3">
                   {['375ml', '750ml', '1.5L'].map((size) => (
                     <button
@@ -62,7 +62,7 @@ export function ProductV1() {
                       className={`rounded-full border px-6 py-2 text-sm font-medium transition-all ${
                         selectedSize === size
                           ? 'border-accent bg-accent/5 text-accent'
-                          : 'border-border bg-transparent text-muted-foreground hover:border-foreground'
+                          : 'border-border text-muted-foreground hover:border-foreground bg-transparent'
                       }`}
                     >
                       {size}
@@ -74,24 +74,24 @@ export function ProductV1() {
 
             <BlurFade delay={600} className="mt-12 flex items-center gap-8">
               <div className="flex flex-col">
-                <span className="text-sm text-muted-foreground line-through">129.00 €</span>
-                <span className="text-3xl font-display font-medium text-foreground">89.00 €</span>
+                <span className="text-muted-foreground text-sm line-through">129.00 €</span>
+                <span className="font-display text-foreground text-3xl font-medium">89.00 €</span>
               </div>
               
               <AddToCartButton 
                 onClick={() => console.log('Added to cart')} 
-                className="!py-4 !px-10 !text-base"
+                className="!px-10 !py-4 !text-base"
               />
             </BlurFade>
             
-            <BlurFade delay={700} className="mt-12 border-t border-border pt-8">
+            <BlurFade delay={700} className="border-border mt-12 border-t pt-8">
               <div className="grid grid-cols-2 gap-8 text-sm">
                 <div>
-                  <span className="font-bold text-foreground">Region:</span>
+                  <span className="text-foreground font-bold">Region:</span>
                   <p className="text-muted-foreground">Bordeaux, Frankreich</p>
                 </div>
                 <div>
-                  <span className="font-bold text-foreground">Alkohol:</span>
+                  <span className="text-foreground font-bold">Alkohol:</span>
                   <p className="text-muted-foreground">14.5% Vol.</p>
                 </div>
               </div>

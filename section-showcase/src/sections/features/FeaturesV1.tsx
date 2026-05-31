@@ -32,15 +32,15 @@ export function FeaturesV1() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <BlurFade delay={100}>
-            <h2 className="text-base font-semibold leading-7 text-accent">Exzellenz im Detail</h2>
+            <h2 className="text-accent text-base leading-7 font-semibold">Exzellenz im Detail</h2>
           </BlurFade>
           <BlurFade delay={200}>
-            <p className="mt-2 text-4xl font-display font-medium tracking-tight text-foreground sm:text-5xl">
+            <p className="font-display text-foreground mt-2 text-4xl font-medium tracking-tight sm:text-5xl">
               <ShinyText duration={8}>Mehr als nur ein Online-Shop</ShinyText>
             </p>
           </BlurFade>
           <BlurFade delay={300}>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+            <p className="text-muted-foreground mt-6 text-lg leading-8">
               Wir verbinden jahrhundertealte Tradition mit modernster Technologie, um Ihnen ein unvergleichliches Erlebnis zu bieten.
             </p>
           </BlurFade>
@@ -51,13 +51,13 @@ export function FeaturesV1() {
             {features.map((feature, i) => (
               <BlurFade key={feature.title} delay={400 + i * 100}>
                 <GlowCard className="h-full p-8 transition-all hover:scale-[1.02]">
-                  <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                    <feature.icon className="h-6 w-6 text-accent" aria-hidden="true" />
+                  <div className="bg-accent/10 mb-6 flex h-10 w-10 items-center justify-center rounded-lg">
+                    <feature.icon className="text-accent h-6 w-6" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-display font-medium leading-7 text-foreground">
+                  <h3 className="font-display text-foreground text-lg leading-7 font-medium">
                     {feature.title}
                   </h3>
-                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
                     {feature.description}
                   </p>
                 </GlowCard>

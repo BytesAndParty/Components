@@ -2,7 +2,6 @@ import {
   useState,
   useEffect,
   useRef,
-  useCallback,
   type CSSProperties,
   type ChangeEvent,
 } from 'react'
@@ -98,8 +97,7 @@ export function PasswordConfirmation({
     }
   }, [])
 
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       const newVal = e.target.value
 
       // Shake if exceeding password length
@@ -121,9 +119,7 @@ export function PasswordConfirmation({
         matchedRef.current = false
         setMatched(false)
       }
-    },
-    [password, onChange, onMatch]
-  )
+    }
 
   // Reset confirmation state when the password prop changes (e.g. user
   // edits the password field above). Local resets stay here so callers

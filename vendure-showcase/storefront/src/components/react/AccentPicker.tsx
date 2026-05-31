@@ -28,12 +28,12 @@ export function AccentPicker() {
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="w-10 h-10 border border-border rounded-lg flex items-center justify-center hover:bg-muted transition-colors"
+          className="border-border hover:bg-muted flex h-10 w-10 items-center justify-center rounded-lg border transition-colors"
           aria-label={t.accentToggle}
           title={t.accentToggle}
         >
           <span
-            className="w-5 h-5 rounded-full border border-border/60"
+            className="border-border/60 h-5 w-5 rounded-full border"
             style={{ background: 'var(--accent)' }}
             aria-hidden="true"
           />
@@ -41,8 +41,8 @@ export function AccentPicker() {
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner style={{ zIndex: 50 }}>
-          <Popover.Content className="bg-card border border-border rounded-xl shadow-xl p-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
-            <ul className="flex flex-col gap-0.5 min-w-44" role="listbox" aria-label={t.accentToggle}>
+          <Popover.Content className="bg-card border-border data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 rounded-xl border p-2 shadow-xl">
+            <ul className="flex min-w-44 flex-col gap-0.5" role="listbox" aria-label={t.accentToggle}>
               {ACCENTS.map((opt) => {
                 const isActive = opt.key === accent;
                 return (
@@ -52,10 +52,10 @@ export function AccentPicker() {
                       role="option"
                       aria-selected={isActive}
                       onClick={() => setAccent(opt.key)}
-                      className="w-full flex items-center gap-3 px-2 py-1.5 rounded-md text-sm hover:bg-muted transition-colors"
+                      className="hover:bg-muted flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-sm transition-colors"
                     >
                       <span
-                        className="w-5 h-5 rounded-full border border-border/60 shrink-0"
+                        className="border-border/60 h-5 w-5 shrink-0 rounded-full border"
                         style={{ background: opt.swatch }}
                         aria-hidden="true"
                       />

@@ -6,7 +6,7 @@
  * to bypass the SVG fill oklch limitation.
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 type Oklch = [l: number, c: number, h: number];
 
@@ -133,40 +133,39 @@ export function AccentSwitcherDualSvg({
 		return () => document.removeEventListener('mousedown', handleClick);
 	}, [open]);
 
-	const selectAccent = useCallback(
-		(key: string) => {
-			const target = palettes[key];
-			if (!target) return;
-			const toOklch = parseOklch(target.oklch);
-			const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
-			setAccent(key);
-			setOpen(false);
-			onAccentChange?.(key);
+	const selectAccent = (key: string) => {
+		const target = palettes[key];
+		if (!target) return;
+		const toOklch = parseOklch(target.oklch);
+		const fromOklch = currentOklchRef.current ?? parseOklch(palettes[currentAccent]?.oklch ?? '');
+		setAccent(key);
+		setOpen(false);
+		onAccentChange?.(key);
 
-			if (!toOklch || !fromOklch || granularity <= 0) {
-				if (styleRef.current) styleRef.current.textContent = '';
-				document.documentElement.setAttribute(accentAttribute, key);
-				if (toOklch) currentOklchRef.current = toOklch;
-				return;
-			}
-
-			if (animRef.current) cancelAnimationFrame(animRef.current);
-			const writeAccent = (value: string) => {
-				if (styleRef.current) styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
-			};
-			writeAccent(lerpOklch(fromOklch, toOklch, 0));
+		if (!toOklch || !fromOklch || granularity <= 0) {
+			if (styleRef.current) styleRef.current.textContent = '';
 			document.documentElement.setAttribute(accentAttribute, key);
-			const start = performance.now();
-			const step = (now: number) => {
-				const t = Math.min((now - start) / granularity, 1);
-				writeAccent(lerpOklch(fromOklch, toOklch, easeInOutCubic(t)));
-				if (t < 1) { animRef.current = requestAnimationFrame(step); }
-				else { if (styleRef.current) styleRef.current.textContent = ''; currentOklchRef.current = toOklch; animRef.current = 0; }
-			};
-			animRef.current = requestAnimationFrame(step);
-		},
-		[palettes, currentAccent, accentAttribute, granularity, onAccentChange]
-	);
+			if (toOklch) currentOklchRef.current = toOklch;
+			return;
+		}
+
+		if (animRef.current) cancelAnimationFrame(animRef.current);
+		const writeAccent = (value: string) => {
+			if (styleRef.current) styleRef.current.textContent = `:root { --accent: ${value} !important; }`;
+		};
+		writeAccent(lerpOklch(fromOklch, toOklch, 0));
+		document.documentElement.setAttribute(accentAttribute, key);
+
+		let start: number | null = null;
+		const step = (now: number) => {
+			if (start === null) start = now;
+			const t = Math.min((now - start) / granularity, 1);
+			writeAccent(lerpOklch(fromOklch, toOklch, easeInOutCubic(t)));
+			if (t < 1) { animRef.current = requestAnimationFrame(step); }
+			else { if (styleRef.current) styleRef.current.textContent = ''; currentOklchRef.current = toOklch; animRef.current = 0; }
+		};
+		animRef.current = requestAnimationFrame(step);
+	};
 
 	const dotColors = paletteKeys.slice(0, 4).map((key) => palettes[key]?.oklch ?? 'currentColor');
 

@@ -58,7 +58,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
   if (!props) {
     return (
-      <div className="h-full flex items-center px-4 text-xs text-muted-foreground italic">
+      <div className="text-muted-foreground flex h-full items-center px-4 text-xs italic">
         {m.contextEmpty}
       </div>
     )
@@ -84,7 +84,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
   }
 
   return (
-    <div className="h-full flex items-center px-4 gap-4 w-full">
+    <div className="flex h-full w-full items-center gap-4 px-4">
       {isImage && (
         <div className="flex items-center gap-2">
           <button
@@ -94,13 +94,13 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
                 setCropper({ open: true, src, targetId: selectedIds[0] })
               }
             }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-muted transition-colors"
+            className="bg-card border-border hover:bg-muted flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
           >
             <Crop size={14} />
             {m.toolCrop ?? 'Crop'}
           </button>
-          <div className="w-px h-5 bg-border mx-2" />
-          <div className="flex items-center h-9 bg-card border border-border rounded-lg px-2">
+          <div className="bg-border mx-2 h-5 w-px" />
+          <div className="bg-card border-border flex h-9 items-center rounded-lg border px-2">
              <NumberInput
                 label="OP"
                 value={(props.opacity ?? 1) * 100}
@@ -132,7 +132,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
       )}
 
       {isShape && (
-        <div className="flex items-center h-9 bg-card border border-border rounded-lg">
+        <div className="bg-card border-border flex h-9 items-center rounded-lg border">
           {props.type !== 'line' && (
             <>
               <ColorSwatch
@@ -142,7 +142,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
                 title={m.contextFill}
                 showAlpha
               />
-              <div className="w-px h-5 bg-border shrink-0" />
+              <div className="bg-border h-5 w-px shrink-0" />
             </>
           )}
           <ColorSwatch
@@ -152,8 +152,8 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
             title={m.contextStroke}
             showAlpha
           />
-          <div className="w-px h-5 bg-border shrink-0" />
-          <div className="flex items-center px-2 h-full">
+          <div className="bg-border h-5 w-px shrink-0" />
+          <div className="flex h-full items-center px-2">
             <NumberInput
               label="SW"
               value={props.strokeWidth ?? 0}
@@ -180,7 +180,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
       <button
         onClick={() => bridge.current?.deleteSelected()}
-        className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md transition-colors"
+        className="hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md p-2 transition-colors"
         title={m.toolDelete}
       >
         <Trash2 size={16} />

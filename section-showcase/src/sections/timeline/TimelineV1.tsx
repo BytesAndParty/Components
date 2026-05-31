@@ -31,28 +31,28 @@ export function TimelineV1() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <div>
             <BlurFade delay={100}>
-              <h2 className="text-sm font-bold tracking-widest uppercase text-accent">L'Héritage</h2>
+              <h2 className="text-accent text-sm font-bold tracking-widest uppercase">L'Héritage</h2>
             </BlurFade>
             <BlurFade delay={200}>
-              <p className="mt-4 text-4xl font-display font-medium tracking-tight text-foreground sm:text-6xl">
+              <p className="font-display text-foreground mt-4 text-4xl font-medium tracking-tight sm:text-6xl">
                 Generationen von <br />
-                <span className="italic text-accent">Leidenschaft.</span>
+                <span className="text-accent italic">Leidenschaft.</span>
               </p>
             </BlurFade>
             <BlurFade delay={300}>
-              <p className="mt-8 text-lg leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-8 text-lg leading-relaxed">
                 Seit über einem Jahrhundert pflegen wir unsere Reben mit derselben Hingabe. Entdecken Sie die Meilensteine, die uns zu dem gemacht haben, was wir heute sind.
               </p>
             </BlurFade>
             
             <BlurFade delay={400} className="mt-12">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-border">
+              <div className="border-border relative aspect-video overflow-hidden rounded-2xl border">
                 <img 
                   src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1200&q=80" 
                   alt="Historisches Weingut" 
-                  className="h-full w-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
+                  className="h-full w-full object-cover opacity-60 grayscale transition-all duration-700 hover:grayscale-0"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                <div className="from-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
               </div>
             </BlurFade>
           </div>

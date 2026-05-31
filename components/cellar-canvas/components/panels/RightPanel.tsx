@@ -59,8 +59,8 @@ export function RightPanel({
   const refreshLayers = () => setLayers(bridge.current?.getLayers() ?? [])
 
   return (
-    <aside className="border-l border-border bg-card flex flex-col" style={{ gridRow: '3' }}>
-      <div className="flex border-b border-border">
+    <aside className="border-border bg-card flex flex-col border-l" style={{ gridRow: '3' }}>
+      <div className="border-border flex border-b">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
@@ -85,10 +85,10 @@ export function RightPanel({
         {tab === 'extras'     && <ExtrasPanel bridge={bridge} />}
       </div>
 
-      <div data-tour="layers-section" className="p-4 border-t border-border bg-muted/10">
-        <div className="flex items-center justify-between mb-2 px-1">
-          <span className="text-[10px] font-bold uppercase text-muted-foreground">{m.layersHeading}</span>
-          <span className="text-[10px] font-mono text-muted-foreground">{interpolate(m.layersCount, { count: layers.length })}</span>
+      <div data-tour="layers-section" className="border-border bg-muted/10 border-t p-4">
+        <div className="mb-2 flex items-center justify-between px-1">
+          <span className="text-muted-foreground text-[10px] font-bold uppercase">{m.layersHeading}</span>
+          <span className="text-muted-foreground font-mono text-[10px]">{interpolate(m.layersCount, { count: layers.length })}</span>
         </div>
         <LayerPanel
           layers={layers}

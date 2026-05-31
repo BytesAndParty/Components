@@ -5,7 +5,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 
 export function HeroV3() {
   return (
-    <section className="relative h-screen min-h-[700px] w-full overflow-hidden flex items-center justify-center bg-zinc-950">
+    <section className="relative flex h-screen min-h-[700px] w-full items-center justify-center overflow-hidden bg-zinc-950">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -22,42 +22,42 @@ export function HeroV3() {
         particleCount={150} 
         speed={0.15} 
         moveParticlesOnHover
-        className="absolute inset-0 z-10 pointer-events-none" 
+        className="pointer-events-none absolute inset-0 z-10" 
       />
 
       <div className="relative z-20 mx-auto max-w-4xl px-6 text-center">
         <BlurFade delay={100}>
-          <span className="inline-block text-[10px] font-bold tracking-[0.4em] uppercase text-accent mb-6">
+          <span className="text-accent mb-6 inline-block text-[10px] font-bold tracking-[0.4em] uppercase">
             Ethereal Wine Experience
           </span>
         </BlurFade>
 
         <BlurFade delay={200}>
-          <h1 className="font-display text-[clamp(3rem,8vw,6rem)] font-medium leading-[1] tracking-tight text-white">
+          <h1 className="font-display text-[clamp(3rem,8vw,6rem)] leading-[1] font-medium tracking-tight text-white">
             <ShinyText duration={6}>The Soul of the Grape</ShinyText>
           </h1>
         </BlurFade>
 
         <BlurFade delay={300}>
-          <p className="mx-auto mt-8 max-w-xl text-lg text-zinc-400 leading-relaxed">
+          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-zinc-400">
             Eintauchen in eine Welt, in der jeder Schluck eine Geschichte erzählt. Unsere Kollektion ist eine Hommage an die Natur und die Zeit.
           </p>
         </BlurFade>
 
-        <BlurFade delay={400} className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
+        <BlurFade delay={400} className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
           <MagneticButton variant="primary" className="!px-12 !py-5 !text-base">
             Kollektion entdecken
           </MagneticButton>
-          <MagneticButton variant="ghost" className="!text-white hover:!text-accent">
+          <MagneticButton variant="ghost" className="hover:!text-accent !text-white">
             Unsere Vision
           </MagneticButton>
         </BlurFade>
       </div>
 
       {/* Scroll indicator */}
-      <BlurFade delay={1000} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-        <span className="text-[9px] uppercase tracking-[0.3em] text-zinc-500 font-bold">Scroll</span>
-        <div className="h-12 w-px bg-gradient-to-b from-accent to-transparent" />
+      <BlurFade delay={1000} className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
+        <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-500 uppercase">Scroll</span>
+        <div className="from-accent h-12 w-px bg-gradient-to-b to-transparent" />
       </BlurFade>
     </section>
   )

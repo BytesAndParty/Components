@@ -14,7 +14,7 @@
  * Dependencies: none (lucide-react removed)
  */
 
-import { useState, useRef, useEffect, useId, useCallback } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import { useAtelier } from '../atelier';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type AccentSwitcherMessages } from './messages';
@@ -153,10 +153,10 @@ export function AccentSwitcher({
 		target?.focus();
 	}, [open, currentAccent, paletteKeys]);
 
-	const closeAndRestoreFocus = useCallback(() => {
+	const closeAndRestoreFocus = () => {
 		setOpen(false);
 		triggerRef.current?.focus();
-	}, []);
+	};
 
 	function selectAccent(key: string) {
 		const target = palettes[key];

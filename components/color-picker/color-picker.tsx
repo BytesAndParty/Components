@@ -111,8 +111,8 @@ export function ColorPickerPanel({
   return (
     <div className={cn('flex flex-col gap-3', className)}>
       {/* Current Value */}
-      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/25 p-2">
-        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-border shadow-sm">
+      <div className="border-border bg-muted/25 flex items-center gap-3 rounded-lg border p-2">
+        <div className="border-border relative h-9 w-9 shrink-0 overflow-hidden rounded-md border shadow-sm">
           <div className="absolute inset-0" style={TRANSPARENCY_GRID_BG} />
           <div
             className="absolute inset-0"
@@ -120,10 +120,10 @@ export function ColorPickerPanel({
           />
         </div>
         <div className="min-w-0">
-          <div className="block truncate font-mono text-sm font-semibold text-foreground">
+          <div className="text-foreground block truncate font-mono text-sm font-semibold">
             {currentHex.toUpperCase()}
           </div>
-          <div className="block truncate font-mono text-[11px] text-muted-foreground">
+          <div className="text-muted-foreground block truncate font-mono text-[11px]">
             rgb({rgb.r}, {rgb.g}, {rgb.b}){showAlpha ? `, ${hsba.a.toFixed(2)}` : ''}
           </div>
         </div>
@@ -137,9 +137,9 @@ export function ColorPickerPanel({
             type="button"
             onClick={pickFromScreen}
             aria-label={m.eyedropper}
-            className="flex items-center justify-center w-9 h-9 shrink-0 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+            className="border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted focus:ring-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors focus:ring-2 focus:outline-none"
           >
-            <Pipette className="w-3.5 h-3.5" />
+            <Pipette className="h-3.5 w-3.5" />
           </button>
         )}
 
@@ -174,9 +174,9 @@ export function ColorPickerPanel({
               }}
               onBlur={() => setHexDraft(currentHex)}
               spellCheck={false}
-              className="w-full px-1.5 py-1.5 text-xs font-mono text-center bg-input border border-border rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-ring uppercase"
+              className="bg-input border-border text-foreground focus:ring-ring w-full rounded-md border px-1.5 py-1.5 text-center font-mono text-xs uppercase focus:ring-1 focus:outline-none"
             />
-            <span className="text-[10px] font-medium text-muted-foreground text-center">{m.formatHex}</span>
+            <span className="text-muted-foreground text-center text-[10px] font-medium">{m.formatHex}</span>
           </div>
           {showAlpha && (
             <NumericChannelField
@@ -276,7 +276,7 @@ function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (nex
       aria-label={messages.saturationBrightness}
       aria-roledescription="2d slider"
       aria-valuetext={`saturation ${hsba.s}, brightness ${hsba.b}`}
-      className="relative h-52 w-full touch-none rounded-xl cursor-crosshair overflow-hidden border border-border/70 shadow-inner focus:outline-none focus:ring-2 focus:ring-ring"
+      className="border-border/70 focus:ring-ring relative h-52 w-full cursor-crosshair touch-none overflow-hidden rounded-xl border shadow-inner focus:ring-2 focus:outline-none"
       style={getSaturationBrightnessBackground(hsba.h)}
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
@@ -295,7 +295,7 @@ function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (nex
       }}
     >
       <div
-        className="absolute z-10 h-5 w-5 rounded-full border-2 border-white pointer-events-none shadow-[0_0_0_1px_rgba(0,0,0,0.45),0_2px_8px_rgba(0,0,0,0.35)]"
+        className="pointer-events-none absolute z-10 h-5 w-5 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.45),0_2px_8px_rgba(0,0,0,0.35)]"
         style={{
           left: `${hsba.s}%`,
           top: `${100 - hsba.b}%`,
@@ -328,7 +328,7 @@ function CustomHueSlider({ hue, onChange, messages }: { hue: number; onChange: (
       aria-valuemin={0}
       aria-valuemax={360}
       aria-valuenow={Math.round(hue)}
-      className="relative h-4 w-full touch-none rounded-full focus:outline-none focus:ring-2 focus:ring-ring"
+      className="focus:ring-ring relative h-4 w-full touch-none rounded-full focus:ring-2 focus:outline-none"
       style={{ background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' }}
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
@@ -345,7 +345,7 @@ function CustomHueSlider({ hue, onChange, messages }: { hue: number; onChange: (
       }}
     >
       <div
-        className="absolute top-1/2 h-4 w-4 rounded-full border-2 border-white pointer-events-none shadow-[0_0_0_1px_rgba(0,0,0,0.35),0_1px_5px_rgba(0,0,0,0.3)]"
+        className="pointer-events-none absolute top-1/2 h-4 w-4 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35),0_1px_5px_rgba(0,0,0,0.3)]"
         style={{ left: `${(hue / 360) * 100}%`, translate: '-50% -50%' }}
       />
     </div>
@@ -381,7 +381,7 @@ function CustomAlphaSlider({
       aria-valuemin={0}
       aria-valuemax={1}
       aria-valuenow={Number(alpha.toFixed(2))}
-      className="relative h-4 w-full touch-none rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-ring"
+      className="focus:ring-ring relative h-4 w-full touch-none overflow-hidden rounded-full focus:ring-2 focus:outline-none"
       style={TRANSPARENCY_GRID_BG}
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
@@ -404,7 +404,7 @@ function CustomAlphaSlider({
         }}
       />
       <div
-        className="absolute top-1/2 h-4 w-4 rounded-full border-2 border-white pointer-events-none shadow-[0_0_0_1px_rgba(0,0,0,0.35),0_1px_5px_rgba(0,0,0,0.3)]"
+        className="pointer-events-none absolute top-1/2 h-4 w-4 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35),0_1px_5px_rgba(0,0,0,0.3)]"
         style={{ left: `${alpha * 100}%`, translate: '-50% -50%' }}
       />
     </div>
@@ -437,9 +437,9 @@ function NumericChannelField({
           const parsed = parseInt(event.target.value, 10)
           if (!Number.isNaN(parsed)) onChange(clamp(parsed, 0, max))
         }}
-        className="w-full px-1.5 py-1.5 text-xs font-mono text-center bg-input border border-border rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        className="bg-input border-border text-foreground focus:ring-ring w-full [appearance:textfield] rounded-md border px-1.5 py-1.5 text-center font-mono text-xs focus:ring-1 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
-      <span className="text-[10px] font-medium text-muted-foreground text-center">{label}</span>
+      <span className="text-muted-foreground text-center text-[10px] font-medium">{label}</span>
     </div>
   )
 }
@@ -460,7 +460,7 @@ function PureFormatToggle({
   }
 
   return (
-    <div className="flex gap-0.5 p-0.5 bg-muted rounded-md">
+    <div className="bg-muted flex gap-0.5 rounded-md p-0.5">
       {(['hex', 'rgb', 'hsl'] as ColorFormat[]).map((f) => (
         <button
           key={f}
@@ -497,17 +497,17 @@ function CustomSwatches({
   return (
     <>
       {presets.length > 0 && (
-        <div className="flex flex-wrap gap-1 pt-1 border-t border-border">
+        <div className="border-border flex flex-wrap gap-1 border-t pt-1">
           {presets.map((color) => (
             <SwatchButton key={color} color={color} active={color.toLowerCase() === currentHex} onPick={onPick} />
           ))}
         </div>
       )}
       {paletteGroups.length > 0 && (
-        <div className="flex flex-col gap-3 pt-2 border-t border-border">
+        <div className="border-border flex flex-col gap-3 border-t pt-2">
           {paletteGroups.map((group) => (
             <div key={group.label} className="flex flex-col gap-1">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+              <p className="text-muted-foreground/70 text-[10px] font-semibold tracking-widest uppercase">
                 {group.label}
               </p>
               <div className="flex flex-wrap gap-1">

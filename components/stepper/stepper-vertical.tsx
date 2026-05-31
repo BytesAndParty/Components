@@ -1,6 +1,5 @@
 import {
   useState,
-  useCallback,
   type ReactNode,
   type CSSProperties,
   Children,
@@ -141,7 +140,7 @@ export function VerticalStepper({
 
   const totalSteps = steps.length
 
-  const goNext = useCallback(() => {
+  const goNext = () => {
     if (currentStep >= totalSteps) {
       onFinalStepCompleted?.()
       return
@@ -149,14 +148,14 @@ export function VerticalStepper({
     const next = currentStep + 1
     setCurrentStep(next)
     onStepChange?.(next)
-  }, [currentStep, totalSteps, onStepChange, onFinalStepCompleted])
+  }
 
-  const goBack = useCallback(() => {
+  const goBack = () => {
     if (currentStep <= 1) return
     const prev = currentStep - 1
     setCurrentStep(prev)
     onStepChange?.(prev)
-  }, [currentStep, onStepChange])
+  }
 
   const isFirstStep = currentStep === 1
   const isLastStep = currentStep === totalSteps

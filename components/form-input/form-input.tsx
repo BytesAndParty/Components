@@ -114,11 +114,11 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   return (
     <div className={cn("w-full flex flex-col items-start", wrapperClassName)}>
       {(label || hint) && (
-        <div className="flex items-center gap-1.5 mb-1.5">
+        <div className="mb-1.5 flex items-center gap-1.5">
           {label && (
             <label
               htmlFor={id}
-              className="block font-medium uppercase tracking-wider text-[var(--muted-foreground)]"
+              className="block font-medium tracking-wider text-[var(--muted-foreground)] uppercase"
               style={{ fontSize: sz.labelSize }}
             >
               {label}
@@ -160,7 +160,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
         }}
       >
         {leftIcon && (
-          <span className="inline-flex text-[var(--muted-foreground)] mr-2 shrink-0">
+          <span className="mr-2 inline-flex shrink-0 text-[var(--muted-foreground)]">
             {leftIcon}
           </span>
         )}
@@ -226,14 +226,14 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           </svg>
         )}
         {rightIcon && (
-          <span className="inline-flex text-[var(--muted-foreground)] ml-2 shrink-0">
+          <span className="ml-2 inline-flex shrink-0 text-[var(--muted-foreground)]">
             {rightIcon}
           </span>
         )}
       </motion.div>
       
       {/* Footer Area: Errors & Description */}
-      <div className="min-h-[20px] mt-1.5 w-full">
+      <div className="mt-1.5 min-h-[20px] w-full">
         <AnimatePresence mode="wait">
           {error ? (
             <motion.p
@@ -243,7 +243,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              className="text-[12px] text-[#ef4444] font-medium"
+              className="text-[12px] font-medium text-[#ef4444]"
             >
               {error}
             </motion.p>

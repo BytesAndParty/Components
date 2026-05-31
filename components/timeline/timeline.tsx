@@ -122,11 +122,11 @@ export function Timeline({
             key={i}
             data-timeline-item
             data-index={i}
-            className="grid grid-cols-[36px_1fr] sm:grid-cols-[72px_44px_1fr] gap-x-4"
+            className="grid grid-cols-[36px_1fr] gap-x-4 sm:grid-cols-[72px_44px_1fr]"
           >
             {/* ── Year (Desktop) ───────────────────────────── */}
             <div
-              className="hidden sm:block text-right"
+              className="hidden text-right sm:block"
               style={{
                 paddingTop: (DOT_SIZE - 18) / 2,
                 opacity: show ? 1 : 0,
@@ -137,7 +137,7 @@ export function Timeline({
             >
               {it.year && (
                 <span
-                  className="block text-[13px] font-semibold tracking-wide tabular-nums leading-[18px]"
+                  className="block text-[13px] leading-[18px] font-semibold tracking-wide tabular-nums"
                   style={{ color: dotColor }}
                 >
                   {it.year}
@@ -155,7 +155,7 @@ export function Timeline({
                 {/* Dot */}
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 rounded-full border-[3px] border-[var(--background)] grid place-items-center text-white text-[13px] font-bold"
+                  className="absolute inset-0 grid place-items-center rounded-full border-[3px] border-[var(--background)] text-[13px] font-bold text-white"
                   style={{
                     background: dotColor,
                     boxShadow: `0 0 0 2px ${dotColor}, 0 0 14px color-mix(in oklch, ${dotColor} 30%, transparent)`,
@@ -171,7 +171,7 @@ export function Timeline({
                 {show && (
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 rounded-full pointer-events-none"
+                    className="pointer-events-none absolute inset-0 rounded-full"
                     style={{
                       border: `2px solid ${dotColor}`,
                       animation: 'timeline-dot-pulse 0.65s ease-out both',
@@ -185,7 +185,7 @@ export function Timeline({
               {!isLast && (
                 <div
                   aria-hidden="true"
-                  className="flex-1 w-[2px] min-h-[24px] mt-1 rounded-sm origin-top"
+                  className="mt-1 min-h-[24px] w-[2px] flex-1 origin-top rounded-sm"
                   style={{
                     background: lineColor,
                     animation: show
@@ -212,7 +212,7 @@ export function Timeline({
               {/* Year (Mobile only) */}
               {it.year && (
                 <span
-                  className="sm:hidden block text-xs font-semibold mb-1"
+                  className="mb-1 block text-xs font-semibold sm:hidden"
                   style={{ color: dotColor, paddingTop: (DOT_SIZE - 22) / 2 }}
                 >
                   {it.year}
@@ -220,14 +220,14 @@ export function Timeline({
               )}
               
               <h3
-                className="m-0 text-base font-semibold text-[var(--foreground)] leading-[1.35]"
+                className="m-0 text-base leading-[1.35] font-semibold text-[var(--foreground)]"
                 style={{
                   paddingTop: it.year ? 0 : (DOT_SIZE - 22) / 2,
                 }}
               >
                 {it.title}
               </h3>
-              <div className="mt-2 text-[var(--muted-foreground)] text-sm leading-[1.65]">
+              <div className="mt-2 text-sm leading-[1.65] text-[var(--muted-foreground)]">
                 {it.content}
               </div>
             </div>

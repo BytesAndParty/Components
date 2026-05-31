@@ -1,4 +1,4 @@
-import { useRef, useCallback, type ReactNode, type CSSProperties } from 'react'
+import { useRef, type ReactNode, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -50,65 +50,80 @@ export function ClickSpark({
 }: ClickSparkProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!containerRef.current) return
-      injectKeyframes()
+  function handleClick(e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) {
+    if (!containerRef.current) return
+    injectKeyframes()
 
-      const rect = containerRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
+    const rect = containerRef.current.getBoundingClientRect()
+    let x: number, y: number
 
-      for (let i = 0; i < sparkCount; i++) {
-        const angle = (360 / sparkCount) * i
-        const rad = (angle * Math.PI) / 180
-        const endX = Math.cos(rad) * sparkRadius
-        const endY = Math.sin(rad) * sparkRadius
+    if ('clientX' in e) {
+      x = e.clientX - rect.left
+      y = e.clientY - rect.top
+    } else {
+      // For keyboard events, spark from center
+      x = rect.width / 2
+      y = rect.height / 2
+    }
 
-        const spark = document.createElement('div')
-        spark.setAttribute('aria-hidden', 'true')
-        spark.style.cssText = `
-          position: absolute;
-          left: ${x}px;
-          top: ${y}px;
-          width: ${sparkSize}px;
-          height: ${sparkSize}px;
-          pointer-events: none;
-          z-index: 10;
-          --spark-x: 0px;
-          --spark-y: 0px;
-          --spark-end-x: ${endX}px;
-          --spark-end-y: ${endY}px;
-          animation: click-spark-fly ${duration}ms ease-out forwards;
-        `
+    for (let i = 0; i < sparkCount; i++) {
+      const angle = (360 / sparkCount) * i
+      const rad = (angle * Math.PI) / 180
+      const endX = Math.cos(rad) * sparkRadius
+      const endY = Math.sin(rad) * sparkRadius
 
-        // Create SVG spark shape via DOM API (avoids innerHTML XSS risk)
-        const svgNS = 'http://www.w3.org/2000/svg'
-        const svg = document.createElementNS(svgNS, 'svg')
-        svg.setAttribute('viewBox', '0 0 10 10')
-        svg.setAttribute('width', String(sparkSize))
-        svg.setAttribute('height', String(sparkSize))
-        svg.style.display = 'block'
-        const circle = document.createElementNS(svgNS, 'circle')
-        circle.setAttribute('cx', '5')
-        circle.setAttribute('cy', '5')
-        circle.setAttribute('r', '3')
-        circle.setAttribute('fill', sparkColor)
-        svg.appendChild(circle)
-        spark.appendChild(svg)
+      const spark = document.createElement('div')
+      spark.setAttribute('aria-hidden', 'true')
+      spark.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: ${sparkSize}px;
+        height: ${sparkSize}px;
+        pointer-events: none;
+        z-index: 10;
+        --spark-x: 0px;
+        --spark-y: 0px;
+        --spark-end-x: ${endX}px;
+        --spark-end-y: ${endY}px;
+        animation: click-spark-fly ${duration}ms ease-out forwards;
+      `
 
-        containerRef.current.appendChild(spark)
-        setTimeout(() => spark.remove(), duration)
-      }
-    },
-    [sparkColor, sparkSize, sparkRadius, sparkCount, duration]
-  )
+      // Create SVG spark shape via DOM API (avoids innerHTML XSS risk)
+      const svgNS = 'http://www.w3.org/2000/svg'
+      const svg = document.createElementNS(svgNS, 'svg')
+      svg.setAttribute('viewBox', '0 0 10 10')
+      svg.setAttribute('width', String(sparkSize))
+      svg.setAttribute('height', String(sparkSize))
+      svg.style.display = 'block'
+      const circle = document.createElementNS(svgNS, 'circle')
+      circle.setAttribute('cx', '5')
+      circle.setAttribute('cy', '5')
+      circle.setAttribute('r', '3')
+      circle.setAttribute('fill', sparkColor)
+      svg.appendChild(circle)
+      spark.appendChild(svg)
+
+      containerRef.current.appendChild(spark)
+      setTimeout(() => spark.remove(), duration)
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick(e)
+    }
+  }
 
   return (
     <div
       ref={containerRef}
       className={className}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
       style={{
         position: 'relative',
         overflow: 'hidden',

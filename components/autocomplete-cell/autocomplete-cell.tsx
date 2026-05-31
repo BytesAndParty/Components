@@ -133,8 +133,8 @@ export function AutocompleteCell({
 
   return (
     <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 transition-all duration-200 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent/20">
-        <span className="shrink-0 text-muted-foreground transition-colors group-focus-within:text-accent">
+      <div className="border-border bg-card focus-within:border-accent focus-within:ring-accent/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
+        <span className="text-muted-foreground group-focus-within:text-accent shrink-0 transition-colors">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
@@ -165,7 +165,7 @@ export function AutocompleteCell({
           }}
           onBlur={onBlur}
           placeholder={placeholder}
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
+          className="text-foreground placeholder:text-muted-foreground/40 min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none"
         />
 
         <AnimatePresence>
@@ -177,7 +177,7 @@ export function AutocompleteCell({
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={() => { onChange(''); inputRef.current?.focus() }}
               aria-label={m.clearLabel}
-              className="shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground shrink-0 rounded-full p-1 transition-colors hover:bg-white/5"
             >
               <X className="h-3.5 w-3.5" />
             </motion.button>
@@ -195,7 +195,7 @@ export function AutocompleteCell({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 top-full mt-1.5 w-full bg-card border border-accent/50 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-accent/20 hover:scrollbar-thumb-accent/40"
+            className="bg-card border-accent/50 scrollbar-thumb-accent/20 hover:scrollbar-thumb-accent/40 absolute top-full left-0 z-50 mt-1.5 max-h-60 w-full scrollbar-thin overflow-y-auto rounded-lg border shadow-2xl"
           >
             <div className="py-1">
               {filtered.map((item, i) => (
@@ -217,7 +217,7 @@ export function AutocompleteCell({
                   onMouseEnter={() => setHighlightIndex(i)}
                 >
                   <div className="flex flex-col overflow-hidden">
-                    <span className="font-medium truncate">{item.label}</span>
+                    <span className="truncate font-medium">{item.label}</span>
                     {item.subLabel && (
                       <span className={cn(
                         'text-[10px] truncate transition-opacity',

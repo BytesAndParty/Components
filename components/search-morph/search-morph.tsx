@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type SearchMorphMessages } from './messages';
@@ -30,11 +30,11 @@ export function SearchMorph({
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const close = useCallback(() => {
+  const close = () => {
     setIsOpen(false);
     setValue('');
     onChange?.('');
-  }, [onChange]);
+  };
 
   useEffect(() => {
     if (isOpen) {

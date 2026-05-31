@@ -28,18 +28,18 @@ export function GalleryV1() {
   return (
     <section className="bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-16">
+        <div className="mx-auto mb-16 max-w-2xl text-center">
           <BlurFade delay={100}>
-            <h2 className="text-base font-semibold leading-7 text-accent uppercase tracking-widest">L'Atmosphère</h2>
+            <h2 className="text-accent text-base leading-7 font-semibold tracking-widest uppercase">L'Atmosphère</h2>
           </BlurFade>
           <BlurFade delay={200}>
-            <p className="mt-2 text-4xl font-display font-medium tracking-tight text-foreground sm:text-5xl">
+            <p className="font-display text-foreground mt-2 text-4xl font-medium tracking-tight sm:text-5xl">
               Ein Blick in unsere Welt
             </p>
           </BlurFade>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:grid-rows-3 h-[800px]">
+        <div className="grid h-[800px] grid-cols-1 gap-4 sm:grid-cols-3 sm:grid-rows-3">
           {images.map((img, i) => (
             <BlurFade
               key={i}

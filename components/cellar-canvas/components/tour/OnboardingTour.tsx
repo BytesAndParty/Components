@@ -123,8 +123,8 @@ export function OnboardingTour({
   return (
     <Tour.Root tour={tour}>
       <Portal>
-        <Tour.Backdrop className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Tour.Spotlight className="rounded-xl ring-2 ring-primary/60 ring-offset-2 ring-offset-background" />
+        <Tour.Backdrop className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]" />
+        <Tour.Spotlight className="ring-primary/60 ring-offset-background rounded-xl ring-2 ring-offset-2" />
         <Tour.Positioner className="z-50">
           <Tour.Content
             className={cn(
@@ -135,27 +135,27 @@ export function OnboardingTour({
             )}
           >
             <div className="flex items-start justify-between gap-3">
-              <Tour.Title className="text-sm font-semibold text-foreground">
+              <Tour.Title className="text-foreground text-sm font-semibold">
                 {tour.step?.title}
               </Tour.Title>
               <Tour.CloseTrigger
-                className="text-muted-foreground hover:text-foreground transition-colors -mt-1 -mr-1 p-1 rounded"
+                className="text-muted-foreground hover:text-foreground -mt-1 -mr-1 rounded p-1 transition-colors"
                 aria-label={m.tourSkip}
               >
                 <X size={14} />
               </Tour.CloseTrigger>
             </div>
-            <Tour.Description className="text-xs leading-relaxed text-muted-foreground">
+            <Tour.Description className="text-muted-foreground text-xs leading-relaxed">
               {tour.step?.description}
             </Tour.Description>
             <div className="flex items-center justify-between pt-2">
-              <Tour.ProgressText className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground" />
+              <Tour.ProgressText className="text-muted-foreground font-mono text-[10px] tracking-wider uppercase" />
               <div className="flex items-center gap-2">
                 {!tour.firstStep && (
                   <button
                     type="button"
                     onClick={() => tour.prev()}
-                    className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground px-3 py-1.5 text-xs transition-colors"
                   >
                     {m.tourBack}
                   </button>
@@ -164,7 +164,7 @@ export function OnboardingTour({
                   <button
                     type="button"
                     {...tour.getActionTriggerProps({ action: { label: m.tourDone, action: 'dismiss' } })}
-                    className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                    className="bg-primary text-primary-foreground rounded-lg px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-90"
                   >
                     {m.tourDone}
                   </button>
@@ -172,7 +172,7 @@ export function OnboardingTour({
                   <button
                     type="button"
                     onClick={() => tour.next()}
-                    className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                    className="bg-primary text-primary-foreground rounded-lg px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-90"
                   >
                     {m.tourNext}
                   </button>

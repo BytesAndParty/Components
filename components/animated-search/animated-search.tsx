@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
@@ -47,15 +47,15 @@ export function AnimatedSearch({
   const iconSize = 42;
   const hasContent = value.length > 0;
 
-  const open = useCallback(() => {
+  function open() {
     setIsOpen(true);
-  }, []);
+  }
 
-  const close = useCallback(() => {
+  function close() {
     setIsOpen(false);
     setValue('');
     onChange?.('');
-  }, [onChange]);
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -72,12 +72,12 @@ export function AnimatedSearch({
       if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
       if ((e.key === '/' || (e.metaKey && e.key === 'k')) && !isOpen) {
         e.preventDefault();
-        open();
+        setIsOpen(true);
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isOpen, open]);
+  }, [isOpen]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && value.trim()) {
@@ -117,7 +117,7 @@ export function AnimatedSearch({
       {/* Border pulse overlay — visible while typing */}
       {hasContent && isOpen && (
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="pointer-events-none absolute inset-0"
           style={{
             borderRadius: iconSize / 2,
             animation: 'as-border-pulse 2s ease-in-out infinite',
@@ -161,7 +161,7 @@ export function AnimatedSearch({
             animate={{ opacity: 1, width: expandedWidth - iconSize - iconSize }}
             exit={{ opacity: 0, width: 0 }}
             transition={{ type: 'spring', damping: 22, stiffness: 170 }}
-            className="relative z-10 overflow-hidden h-full flex items-center"
+            className="relative z-10 flex h-full items-center overflow-hidden"
           >
             <input
               ref={inputRef}
@@ -171,7 +171,7 @@ export function AnimatedSearch({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               aria-label={m.placeholder}
-              className="w-full h-full bg-transparent border-none outline-none text-[var(--foreground)] text-sm font-inherit caret-[var(--accent)]"
+              className="font-inherit h-full w-full border-none bg-transparent text-sm text-[var(--foreground)] caret-[var(--accent)] outline-none"
             />
           </motion.div>
         )}
@@ -187,7 +187,7 @@ export function AnimatedSearch({
             exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
             transition={{ type: 'spring', damping: 18, stiffness: 170 }}
             onClick={close}
-            className="relative z-10 w-[42px] h-[42px] flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 text-[var(--muted-foreground)]"
+            className="relative z-10 flex h-[42px] w-[42px] shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-[var(--muted-foreground)]"
             whileHover={{ scale: 1.1, color: 'var(--foreground)' }}
             whileTap={{ scale: 0.95 }}
             aria-label={m.closeLabel}

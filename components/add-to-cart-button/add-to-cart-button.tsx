@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type AddToCartButtonMessages } from './messages'
 
@@ -49,12 +49,12 @@ export function AddToCartButton({
   const m = useComponentMessages(MESSAGES, messages)
   const label = children ?? m.idle
 
-  const handleClick = useCallback(() => {
+  function handleClick() {
     if (loading) return
     setLoading(true)
     onClick?.()
     timerRef.current = setTimeout(() => setLoading(false), duration)
-  }, [loading, onClick, duration])
+  }
 
   useEffect(() => {
     return () => {

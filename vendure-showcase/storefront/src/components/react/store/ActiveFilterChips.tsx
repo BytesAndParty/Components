@@ -38,7 +38,7 @@ export function ActiveFilterChips({ facets }: Props) {
           key={`${chip.facetCode}:${chip.valueCode}`}
           type="button"
           onClick={() => removeValue(chip.facetCode, chip.valueCode)}
-          className="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full text-sm bg-muted text-foreground border border-border hover:border-accent hover:text-accent transition-colors"
+          className="bg-muted text-foreground border-border hover:border-accent hover:text-accent inline-flex items-center gap-1.5 rounded-full border py-1 pr-2 pl-3 text-sm transition-colors"
           aria-label={format(t.filterChipRemove, { name: chip.label })}
         >
           <span>{chip.label}</span>
@@ -56,7 +56,7 @@ export function ActiveFilterChips({ facets }: Props) {
         <button
           type="button"
           onClick={clearAll}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors ml-2 underline-offset-4 hover:underline"
+          className="text-muted-foreground hover:text-foreground ml-2 text-sm underline-offset-4 transition-colors hover:underline"
         >
           {t.filterReset}
         </button>

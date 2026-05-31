@@ -73,7 +73,7 @@ export function NumberInput({
       {label && (
         <label 
           htmlFor={inputId}
-          className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mr-1 select-none cursor-pointer"
+          className="text-muted-foreground mr-1 cursor-pointer text-[10px] font-medium tracking-wider uppercase select-none"
         >
           {label}
         </label>
@@ -85,7 +85,7 @@ export function NumberInput({
           type="button"
           tabIndex={-1}
           onPointerDown={(e) => { e.preventDefault(); nudge(-1) }}
-          className="flex items-center justify-center w-5 h-full text-muted-foreground hover:text-foreground transition-colors opacity-0 group-hover:opacity-100 select-none"
+          className="text-muted-foreground hover:text-foreground flex h-full w-5 items-center justify-center opacity-0 transition-colors select-none group-hover:opacity-100"
         >
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
             <path d="M4 5.5L1 2.5h6L4 5.5z" />
@@ -102,7 +102,7 @@ export function NumberInput({
             onChange={(e) => setDraft(e.target.value)}
             onBlur={(e) => commit(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-10 text-center text-xs font-mono bg-transparent text-foreground focus:outline-none"
+            className="text-foreground w-10 bg-transparent text-center font-mono text-xs focus:outline-none"
             autoFocus
             onFocus={(e) => e.target.select()}
           />
@@ -117,7 +117,7 @@ export function NumberInput({
               if (e.key === 'ArrowUp')   { e.preventDefault(); nudge(1) }
               if (e.key === 'ArrowDown') { e.preventDefault(); nudge(-1) }
             }}
-            className="w-10 text-center text-xs font-mono text-foreground cursor-ns-resize select-none hover:text-foreground transition-colors"
+            className="text-foreground hover:text-foreground w-10 cursor-ns-resize text-center font-mono text-xs transition-colors select-none"
           >
             {display}{unit && <span className="text-muted-foreground">{unit}</span>}
           </button>
@@ -128,7 +128,7 @@ export function NumberInput({
           type="button"
           tabIndex={-1}
           onPointerDown={(e) => { e.preventDefault(); nudge(1) }}
-          className="flex items-center justify-center w-5 h-full text-muted-foreground hover:text-foreground transition-colors opacity-0 group-hover:opacity-100 select-none"
+          className="text-muted-foreground hover:text-foreground flex h-full w-5 items-center justify-center opacity-0 transition-colors select-none group-hover:opacity-100"
         >
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
             <path d="M4 2.5L7 5.5H1L4 2.5z" />

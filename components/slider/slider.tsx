@@ -180,14 +180,14 @@ export function Slider({
       style={{ opacity: disabled ? 0.5 : 1, ...style }}
     >
       {(label || showValue) && (
-        <div className="flex justify-between items-baseline gap-4">
+        <div className="flex items-baseline justify-between gap-4">
           {label && (
-            <label htmlFor={id} className="text-[13px] text-[var(--foreground)] font-medium">
+            <label htmlFor={id} className="text-[13px] font-medium text-[var(--foreground)]">
               {label}
             </label>
           )}
           {showValue && (
-            <span className="text-[13px] text-[var(--muted-foreground)] font-mono tabular-nums">
+            <span className="font-mono text-[13px] text-[var(--muted-foreground)] tabular-nums">
               {displayValue}
             </span>
           )}
@@ -216,7 +216,7 @@ export function Slider({
       >
         {/* Track (off portion) */}
         <div
-          className="absolute left-0 right-0 border border-[var(--border)] bg-[var(--muted)]"
+          className="absolute right-0 left-0 border border-[var(--border)] bg-[var(--muted)]"
           style={{
             height: s.trackH,
             borderRadius: s.trackH,

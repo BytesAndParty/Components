@@ -2,7 +2,6 @@ import {
   useState,
   useEffect,
   useRef,
-  useCallback,
   createContext,
   useContext,
   type ReactNode,
@@ -311,16 +310,16 @@ export function NavbarDropdown({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const open = useCallback(() => {
+  const open = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     setActiveDropdown(id)
-  }, [id, setActiveDropdown])
+  }
 
-  const close = useCallback(() => {
+  const close = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveDropdown(null)
     }, 150)
-  }, [setActiveDropdown])
+  }
 
   // Clean up timeout
   useEffect(() => {

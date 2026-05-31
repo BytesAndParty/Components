@@ -20,8 +20,8 @@ export function CardsPage() {
     <>
       <Section title="GlowCard" description="Card with a cursor-following glow border effect.">
         <GlowCard className="p-8">
-          <p className="font-medium text-foreground">Hover over this card</p>
-          <p className="text-muted-foreground text-sm mt-2">
+          <p className="text-foreground font-medium">Hover over this card</p>
+          <p className="text-muted-foreground mt-2 text-sm">
             The border glows and follows your cursor.
           </p>
         </GlowCard>
@@ -29,21 +29,21 @@ export function CardsPage() {
 
       <Section title="RotatingGlowCard" description="Card with an animated rotating glow border.">
         <RotatingGlowCard>
-          <p className="font-medium text-foreground">Full gradient (3s)</p>
-          <p className="text-muted-foreground text-sm mt-2">
+          <p className="text-foreground font-medium">Full gradient (3s)</p>
+          <p className="text-muted-foreground mt-2 text-sm">
             A conic-gradient rotates behind the card — only the border glow is visible.
           </p>
         </RotatingGlowCard>
 
-        <div className="flex gap-4 mt-4">
+        <div className="mt-4 flex gap-4">
           <RotatingGlowCard duration={1.5} className="flex-1">
-            <p className="text-[0.8125rem] font-medium text-foreground">Fast (1.5s)</p>
+            <p className="text-foreground text-[0.8125rem] font-medium">Fast (1.5s)</p>
           </RotatingGlowCard>
           <RotatingGlowCard duration={6} className="flex-1">
-            <p className="text-[0.8125rem] font-medium text-foreground">Slow (6s)</p>
+            <p className="text-foreground text-[0.8125rem] font-medium">Slow (6s)</p>
           </RotatingGlowCard>
           <RotatingGlowCard duration={14} className="flex-1">
-            <p className="text-[0.8125rem] font-medium text-foreground">Very slow (14s)</p>
+            <p className="text-foreground text-[0.8125rem] font-medium">Very slow (14s)</p>
           </RotatingGlowCard>
         </div>
 
@@ -52,8 +52,8 @@ export function CardsPage() {
       <Section title="MagneticButton" description="Button that magnetically follows the cursor on hover.">
         <div className="space-y-6">
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Variants</p>
-            <div className="flex flex-wrap gap-4 items-center">
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Variants</p>
+            <div className="flex flex-wrap items-center gap-4">
               <MagneticButton variant="primary">Primary</MagneticButton>
               <MagneticButton variant="secondary">Secondary</MagneticButton>
               <MagneticButton variant="outline">Outline</MagneticButton>
@@ -64,16 +64,16 @@ export function CardsPage() {
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Call to Action</p>
-            <div className="flex flex-wrap gap-4 items-center">
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Call to Action</p>
+            <div className="flex flex-wrap items-center gap-4">
               <MagneticButton variant="cta">Get started</MagneticButton>
               <MagneticButton variant="cta" strength={0.5}>Strong pull (0.5)</MagneticButton>
             </div>
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Magnetic strength</p>
-            <div className="flex flex-wrap gap-4 items-center">
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
+            <div className="flex flex-wrap items-center gap-4">
               <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
               <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
               <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
@@ -97,8 +97,8 @@ export function CardsPage() {
             }}
           >
             <div style={{ position: 'absolute', inset: 0, opacity: 0.03, backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 20h40M20 0v40\' stroke=\'%23fff\' stroke-width=\'.5\' fill=\'none\'/%3E%3C/svg%3E")', borderRadius: 'inherit' }} />
-            <p className="font-medium text-foreground">Default tilt</p>
-            <p className="text-muted-foreground text-sm mt-1">15° max, glare on</p>
+            <p className="text-foreground font-medium">Default tilt</p>
+            <p className="text-muted-foreground mt-1 text-sm">15° max, glare on</p>
           </Hover3DCard>
           <Hover3DCard
             maxTilt={25}
@@ -115,8 +115,8 @@ export function CardsPage() {
             }}
           >
             <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'1\' cy=\'1\' r=\'.7\' fill=\'%23fff\'/%3E%3C/svg%3E")', borderRadius: 'inherit' }} />
-            <p className="font-medium text-foreground">Strong tilt</p>
-            <p className="text-muted-foreground text-sm mt-1">25° max, bright glare</p>
+            <p className="text-foreground font-medium">Strong tilt</p>
+            <p className="text-muted-foreground mt-1 text-sm">25° max, bright glare</p>
           </Hover3DCard>
           <Hover3DCard
             maxTilt={8}
@@ -133,8 +133,8 @@ export function CardsPage() {
             }}
           >
             <div style={{ position: 'absolute', inset: 0, opacity: 0.025, backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'16\' height=\'16\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 8h16M8 0v16\' stroke=\'%23fff\' stroke-width=\'.3\' fill=\'none\' stroke-dasharray=\'2 2\'/%3E%3C/svg%3E")', borderRadius: 'inherit' }} />
-            <p className="font-medium text-foreground">Subtle, no glare</p>
-            <p className="text-muted-foreground text-sm mt-1">8° max, glare off</p>
+            <p className="text-foreground font-medium">Subtle, no glare</p>
+            <p className="text-muted-foreground mt-1 text-sm">8° max, glare off</p>
           </Hover3DCard>
         </div>
       </Section>
@@ -154,7 +154,7 @@ export function CardsPage() {
             justifyContent: 'center',
           }}
         >
-          <p className="text-foreground font-medium pointer-events-none select-none">
+          <p className="text-foreground pointer-events-none font-medium select-none">
             Click anywhere in this box
           </p>
         </ClickSpark>
@@ -165,7 +165,7 @@ export function CardsPage() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card"
+              className="group border-border bg-card relative overflow-hidden rounded-xl border"
               style={{ aspectRatio: '3/4' }}
             >
               {/* WebGL light rays — hidden until hover */}
@@ -198,7 +198,7 @@ export function CardsPage() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card"
+              className="group border-border bg-card relative overflow-hidden rounded-xl border"
               style={{ aspectRatio: '3/4' }}
             >
               {/* WebGL light rays — hidden until hover */}
@@ -233,11 +233,11 @@ export function CardsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSplashOn((v) => !v)}
-            className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition"
+            className="border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground rounded-md border px-4 py-2 text-sm font-medium transition"
           >
             {splashOn ? 'Stop splash cursor' : 'Start splash cursor'}
           </button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {splashOn
               ? 'Move the cursor anywhere on the page — the fluid reacts globally.'
               : 'Click to activate the fullscreen fluid simulation overlay.'}
@@ -269,7 +269,7 @@ export function CardsPage() {
                 justifyContent: 'center',
               }}
             >
-              <p className="font-medium text-foreground">Accent glow (auto)</p>
+              <p className="text-foreground font-medium">Accent glow (auto)</p>
             </div>
           </Backlight>
           <Backlight color="#f43f5e" blobs={4} intensity={0.35} blur={40}>
@@ -285,7 +285,7 @@ export function CardsPage() {
                 justifyContent: 'center',
               }}
             >
-              <p className="font-medium text-foreground">Rose, 4 blobs</p>
+              <p className="text-foreground font-medium">Rose, 4 blobs</p>
             </div>
           </Backlight>
         </div>
@@ -495,7 +495,7 @@ export function CardsPage() {
               pointerEvents: 'none',
             }}
           >
-            <p className="text-foreground font-medium text-lg">Move your cursor over the particles</p>
+            <p className="text-foreground text-lg font-medium">Move your cursor over the particles</p>
           </div>
         </div>
       </Section>

@@ -18,8 +18,8 @@ export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
   const m = useCellarCanvasMessages()
   if (!activeProps) {
     return (
-      <div className="h-full flex items-center justify-center text-center p-8">
-        <p className="text-xs text-muted-foreground italic">
+      <div className="flex h-full items-center justify-center p-8 text-center">
+        <p className="text-muted-foreground text-xs italic">
           {m.propsEmpty}
         </p>
       </div>
@@ -32,7 +32,7 @@ export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
-        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">{m.propsGeometry}</h4>
+        <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.propsGeometry}</h4>
         <div className="grid grid-cols-2 gap-4">
           <NumberInput label="X" value={activeProps.x}      onChange={(v) => update({ x: v })}      unit="mm" />
           <NumberInput label="Y" value={activeProps.y}      onChange={(v) => update({ y: v })}      unit="mm" />
@@ -50,7 +50,7 @@ export function PropertiesPanel({ bridge, activeProps }: PropertiesPanelProps) {
       </section>
 
       <section className="space-y-3">
-        <h4 className="text-[10px] font-bold uppercase text-muted-foreground/60">{m.propsAppearance}</h4>
+        <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.propsAppearance}</h4>
         <div className="flex items-center justify-between">
           <span className="text-xs">{m.propsOpacity}</span>
           <NumberInput

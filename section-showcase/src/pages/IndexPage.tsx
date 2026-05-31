@@ -8,7 +8,7 @@ export function IndexPage() {
         <h1 className="font-display text-4xl font-medium tracking-tight">
           Sections für die Webseite
         </h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">
+        <p className="text-muted-foreground mt-3 max-w-xl">
           Jede Section ist in mehreren Varianten ausgearbeitet. Klick auf eine
           Section, vergleich die Varianten nebeneinander und such die aus, die
           am besten passt.
@@ -20,24 +20,24 @@ export function IndexPage() {
           <li key={s.id}>
             <Link
               to={`/${s.id}`}
-              className="group block rounded-xl border border-border bg-card p-6 transition-colors hover:border-accent/60"
+              className="group border-border bg-card hover:border-accent/60 block rounded-xl border p-6 transition-colors"
             >
               <div className="flex items-baseline justify-between">
                 <h2 className="font-display text-2xl font-medium tracking-tight">
                   {s.label}
                 </h2>
-                <span className="text-xs tabular-nums text-muted-foreground">
+                <span className="text-muted-foreground text-xs tabular-nums">
                   {s.variants.length}&nbsp;Varianten
                 </span>
               </div>
               {s.description && (
-                <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>
+                <p className="text-muted-foreground mt-2 text-sm">{s.description}</p>
               )}
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {s.variants.map(v => (
                   <span
                     key={v.id}
-                    className="rounded-full border border-border px-2 py-0.5 text-[11px] uppercase tracking-wider text-muted-foreground group-hover:border-accent/40"
+                    className="border-border text-muted-foreground group-hover:border-accent/40 rounded-full border px-2 py-0.5 text-[11px] tracking-wider uppercase"
                   >
                     {v.label}
                   </span>

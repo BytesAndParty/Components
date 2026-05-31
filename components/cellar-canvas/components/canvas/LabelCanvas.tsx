@@ -74,7 +74,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
       {backdrop && (
         <div
           aria-hidden
-          className="absolute pointer-events-none"
+          className="pointer-events-none absolute"
           style={{
             left:            backdrop.left,
             top:             backdrop.top,

@@ -1,6 +1,5 @@
 import {
   useState,
-  useCallback,
   type ReactNode,
   type CSSProperties,
   Children,
@@ -53,7 +52,7 @@ function StepIndicator({
   completedLabel: string
 }) {
   return (
-    <ol className="flex flex-wrap items-center justify-center gap-x-0 gap-y-4 mb-8 list-none p-0 m-0">
+    <ol className="m-0 mb-8 flex list-none flex-wrap items-center justify-center gap-x-0 gap-y-4 p-0">
       {Array.from({ length: totalSteps }, (_, i) => {
         const stepNum = i + 1
         const isCompleted = stepNum < currentStep
@@ -198,7 +197,7 @@ export function Stepper({
 
       {/* Step content with animation */}
       <div
-        className="relative overflow-hidden min-h-[120px]"
+        className="relative min-h-[120px] overflow-hidden"
         role="group"
         aria-label={interpolate(m.stepOfTotal, { current: currentStep, total: totalSteps })}
         aria-live="polite"
@@ -219,7 +218,7 @@ export function Stepper({
       </div>
 
       {/* Navigation buttons */}
-      <div className="flex justify-between mt-6 gap-3">
+      <div className="mt-6 flex justify-between gap-3">
         <button
           type="button"
           onClick={goBack}
@@ -237,7 +236,7 @@ export function Stepper({
         <button
           type="button"
           onClick={goNext}
-          className="px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 bg-[var(--accent,#6366f1)] text-white border-none cursor-pointer hover:opacity-90 active:scale-95"
+          className="cursor-pointer rounded-lg border-none bg-[var(--accent,#6366f1)] px-6 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-95"
         >
           {isLastStep ? m.finalize : m.next}
         </button>

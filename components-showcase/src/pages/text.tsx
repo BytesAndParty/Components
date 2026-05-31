@@ -34,8 +34,8 @@ export function TextPage() {
       </Section>
 
       <Section title="Highlighter" description="Text highlighting and underline effects that animate on scroll-into-view.">
-        <div className="border border-border rounded-xl bg-card p-8 shadow-sm space-y-6">
-          <p className="text-lg leading-relaxed text-foreground">
+        <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
+          <p className="text-foreground text-lg leading-relaxed">
             Unser
             {' '}<Highlighter action="highlight" color="#6366f1">Barolo Riserva 2018</Highlighter>{' '}
             stammt aus den besten Lagen des Piemonte. Er überzeugt durch
@@ -44,12 +44,12 @@ export function TextPage() {
             {' '}<Highlighter action="highlight" color="#10b981" delay={600}>bemerkenswerte Komplexität</Highlighter>.
           </p>
           <div className="flex gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="inline-block w-3 h-3 rounded" style={{ background: '#6366f133' }} />
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <span className="inline-block h-3 w-3 rounded" style={{ background: '#6366f133' }} />
               Highlight
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="inline-block w-3 h-1 rounded" style={{ background: '#f43f5e' }} />
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <span className="inline-block h-1 w-3 rounded" style={{ background: '#f43f5e' }} />
               Underline
             </div>
           </div>
@@ -60,13 +60,13 @@ export function TextPage() {
         title="Paragraph"
         description="Truncating paragraph with optional 'Show more' toggle. Uses @chenglou/pretext for font-engine line measurement — no getBoundingClientRect reflow. Button only appears when text actually overflows."
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Long text → button SHOULD appear */}
-          <div className="border border-border rounded-xl bg-card p-5 shadow-sm">
-            <p className="text-[0.7rem] uppercase tracking-[0.15em] text-muted-foreground mb-3">
+          <div className="border-border bg-card rounded-xl border p-5 shadow-sm">
+            <p className="text-muted-foreground mb-3 text-[0.7rem] tracking-[0.15em] uppercase">
               Long · clamp 3 · expandable
             </p>
-            <h3 className="text-base font-semibold text-foreground mb-2">
+            <h3 className="text-foreground mb-2 text-base font-semibold">
               Barolo Riserva 2018
             </h3>
             <Paragraph
@@ -78,11 +78,11 @@ export function TextPage() {
           </div>
 
           {/* Short text → button should NOT appear (key feature) */}
-          <div className="border border-border rounded-xl bg-card p-5 shadow-sm">
-            <p className="text-[0.7rem] uppercase tracking-[0.15em] text-muted-foreground mb-3">
+          <div className="border-border bg-card rounded-xl border p-5 shadow-sm">
+            <p className="text-muted-foreground mb-3 text-[0.7rem] tracking-[0.15em] uppercase">
               Short · clamp 3 · expandable
             </p>
-            <h3 className="text-base font-semibold text-foreground mb-2">
+            <h3 className="text-foreground mb-2 text-base font-semibold">
               Grüner Veltliner 2023
             </h3>
             <Paragraph
@@ -91,17 +91,17 @@ export function TextPage() {
               expandable
               style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--muted-foreground)' }}
             />
-            <p className="text-[0.7rem] text-muted-foreground mt-3 italic">
+            <p className="text-muted-foreground mt-3 text-[0.7rem] italic">
               No button rendered — Pretext detected the text fits.
             </p>
           </div>
 
           {/* Silent clamp, no button */}
-          <div className="border border-border rounded-xl bg-card p-5 shadow-sm">
-            <p className="text-[0.7rem] uppercase tracking-[0.15em] text-muted-foreground mb-3">
+          <div className="border-border bg-card rounded-xl border p-5 shadow-sm">
+            <p className="text-muted-foreground mb-3 text-[0.7rem] tracking-[0.15em] uppercase">
               Long · clamp 2 · silent
             </p>
-            <h3 className="text-base font-semibold text-foreground mb-2">
+            <h3 className="text-foreground mb-2 text-base font-semibold">
               Amarone Classico 2019
             </h3>
             <Paragraph
@@ -109,7 +109,7 @@ export function TextPage() {
               clamp={2}
               style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--muted-foreground)' }}
             />
-            <p className="text-[0.7rem] text-muted-foreground mt-3 italic">
+            <p className="text-muted-foreground mt-3 text-[0.7rem] italic">
               Silent truncation — no toggle, just CSS clamp.
             </p>
           </div>
@@ -117,25 +117,25 @@ export function TextPage() {
 
         <ParagraphMeasureDemo />
 
-        <div className="border-t border-border mt-6 pt-3 flex justify-between text-[0.7rem] text-muted-foreground">
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>Paragraph · @chenglou/pretext · ResizeObserver</span>
           <span>Container-Query-friendly · zero reflow measurement</span>
         </div>
       </Section>
 
       <Section title="TextScramble" description="Text reveal with randomized character scramble animation." canReload>
-        <div className="text-2xl font-semibold font-mono text-foreground">
+        <div className="text-foreground font-mono text-2xl font-semibold">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />
         </div>
       </Section>
 
       <Section title="TextRotate" description="Animated text rotation with staggered character transitions." canReload>
-        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
-          <div className="p-12 px-8 flex flex-col items-center text-center gap-4">
-            <p className="text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
+          <div className="flex flex-col items-center gap-4 p-12 px-8 text-center">
+            <p className="text-muted-foreground text-[0.7rem] tracking-[0.2em] uppercase">
               Curated Selection
             </p>
-            <div className="text-4xl font-bold leading-tight tracking-tight">
+            <div className="text-4xl leading-tight font-bold tracking-tight">
               <span className="text-foreground">Discover </span>
               <TextRotate
                 texts={['Barolo', 'Amarone', 'Brunello', 'Chianti', 'Sassicaia', 'Barbaresco']}
@@ -146,11 +146,11 @@ export function TextPage() {
                 elementLevelStyle={{ color: 'var(--accent)' }}
               />
             </div>
-            <p className="max-w-md text-sm text-muted-foreground leading-relaxed mt-2">
+            <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
               Handverlesene Weine aus den besten Lagen Italiens.
               Jeder Jahrgang erzählt eine Geschichte.
             </p>
-            <div className="flex gap-4 mt-6 w-full justify-center">
+            <div className="mt-6 flex w-full justify-center gap-4">
               {[
                 { name: 'Barolo Riserva', year: '2018', region: 'Piemonte' },
                 { name: 'Amarone Classico', year: '2019', region: 'Veneto' },
@@ -158,16 +158,16 @@ export function TextPage() {
               ].map((wine) => (
                 <div
                   key={wine.name}
-                  className="flex-1 max-w-40 p-4 rounded-lg border border-border bg-background text-left shadow-sm"
+                  className="border-border bg-background max-w-40 flex-1 rounded-lg border p-4 text-left shadow-sm"
                 >
-                  <div className="w-8 h-8 rounded-full bg-accent mb-3 opacity-70" />
-                  <p className="text-[0.8125rem] font-semibold text-foreground">{wine.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{wine.region} · {wine.year}</p>
+                  <div className="bg-accent mb-3 h-8 w-8 rounded-full opacity-70" />
+                  <p className="text-foreground text-[0.8125rem] font-semibold">{wine.name}</p>
+                  <p className="text-muted-foreground mt-1 text-xs">{wine.region} · {wine.year}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
+          <div className="border-border text-muted-foreground flex justify-between border-t bg-white/1 p-3 px-8 text-[0.7rem]">
             <span>TextRotate · splitBy: characters · staggerFrom: first</span>
             <span>rotationInterval: 4000ms</span>
           </div>
@@ -177,22 +177,22 @@ export function TextPage() {
       <Section title="AuroraText" description="Gradient text with animated color shifting. variant='aurora' (default) sanft wechselnd, variant='gradient' stetiger Loop für CTAs." canReload>
         <div className="space-y-4">
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="aurora" (default)</p>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">variant="aurora" (default)</p>
             <div className="text-4xl font-bold tracking-tight">
               <AuroraText speed={0.8}>Premium Quality</AuroraText>
             </div>
-            <div className="text-xl font-semibold mt-3">
+            <div className="mt-3 text-xl font-semibold">
               <AuroraText colors={['var(--accent)', '#7928CA', '#FF0080', 'var(--accent)']} speed={0.5}>
                 Uses your accent color
               </AuroraText>
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">variant="gradient" – stetiger Loop, knallig für CTAs</p>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">variant="gradient" – stetiger Loop, knallig für CTAs</p>
             <div className="text-4xl font-bold tracking-tight">
               <AuroraText variant="gradient" speed={0.8}>Jetzt entdecken</AuroraText>
             </div>
-            <div className="text-xl font-semibold mt-3">
+            <div className="mt-3 text-xl font-semibold">
               <AuroraText variant="gradient" colors={['#f43f5e', '#f97316', '#fbbf24', '#10b981']} speed={0.5}>
                 Weinkollektion 2024
               </AuroraText>
@@ -203,7 +203,7 @@ export function TextPage() {
 
       <Section title="MorphingText" description="CSS-Blur-Überblend zwischen mehreren Texten – kein Framer Motion.">
         <div className="space-y-6">
-          <div className="text-4xl font-bold tracking-tight text-foreground">
+          <div className="text-foreground text-4xl font-bold tracking-tight">
             Entdecke{' '}
             <MorphingText
               texts={['Barolo', 'Amarone', 'Brunello', 'Riesling', 'Champagner']}
@@ -211,7 +211,7 @@ export function TextPage() {
               style={{ color: 'var(--accent)' }}
             />
           </div>
-          <div className="text-xl text-muted-foreground">
+          <div className="text-muted-foreground text-xl">
             <MorphingText
               texts={['Frisch. Fruchtig. Fein.', 'Tief. Komplex. Unvergesslich.', 'Wild. Elegant. Pur.']}
               duration={5000}
@@ -223,8 +223,8 @@ export function TextPage() {
       <Section title="ShinyText + ShinyButton" description="Animierter Shine-Effekt auf Text und Button. Kein Framer Motion.">
         <div className="space-y-6">
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyText</p>
-            <div className="flex flex-wrap gap-6 items-center">
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">ShinyText</p>
+            <div className="flex flex-wrap items-center gap-6">
               <span className="text-2xl font-bold">
                 <ShinyText duration={6}>Premium Weinkollektion</ShinyText>
               </span>
@@ -234,8 +234,8 @@ export function TextPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">ShinyButton</p>
-            <div className="flex flex-wrap gap-4 items-center">
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">ShinyButton</p>
+            <div className="flex flex-wrap items-center gap-4">
               <ShinyButton>In den Warenkorb</ShinyButton>
               <ShinyButton shineColor="rgba(251,191,36,0.7)" style={{ backgroundColor: '#92400e' }}>
                 Gold Collection
@@ -247,7 +247,7 @@ export function TextPage() {
 
       <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver." canReload>
         <div className="space-y-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest">direction="up" (default) – Elemente scrollen in den Viewport</p>
+          <p className="text-muted-foreground text-xs tracking-widest uppercase">direction="up" (default) – Elemente scrollen in den Viewport</p>
           <div className="grid grid-cols-3 gap-4">
             {['Barolo Riserva', 'Amarone Classico', 'Brunello DOCG'].map((name, i) => (
               <BlurFade key={name} delay={i * 120} duration={700}>
@@ -259,14 +259,14 @@ export function TextPage() {
                     padding: '20px',
                   }}
                 >
-                  <div className="w-8 h-8 rounded-full mb-3" style={{ background: 'var(--accent)', opacity: 0.7 }} />
-                  <p className="font-semibold text-foreground text-sm">{name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Scroll-triggered fade</p>
+                  <div className="mb-3 h-8 w-8 rounded-full" style={{ background: 'var(--accent)', opacity: 0.7 }} />
+                  <p className="text-foreground text-sm font-semibold">{name}</p>
+                  <p className="text-muted-foreground mt-1 text-xs">Scroll-triggered fade</p>
                 </div>
               </BlurFade>
             ))}
           </div>
-          <div className="flex gap-4 flex-wrap mt-4">
+          <div className="mt-4 flex flex-wrap gap-4">
             {(['up', 'down', 'left', 'right'] as const).map(dir => (
               <BlurFade key={dir} direction={dir} delay={100} duration={500}>
                 <span
@@ -289,7 +289,7 @@ export function TextPage() {
       </Section>
 
       <Section title="VelocityScroll" description="Scroll-reactive testimonial rows that accelerate with page scroll velocity.">
-        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
           <div className="py-8">
             <VelocityScroll baseVelocity={-30} rows={2} gap="1rem">
               {testimonials.map((t) => (
@@ -297,7 +297,7 @@ export function TextPage() {
               ))}
             </VelocityScroll>
           </div>
-          <div className="border-t border-border p-3 px-8 flex justify-between text-[0.7rem] text-muted-foreground bg-white/1">
+          <div className="border-border text-muted-foreground flex justify-between border-t bg-white/1 p-3 px-8 text-[0.7rem]">
             <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
             <span>Scroll the page to accelerate</span>
           </div>
@@ -305,7 +305,7 @@ export function TextPage() {
       </Section>
 
       <Section title="Timeline" description="Vertical timeline with scroll-reveal dots and content. Pure IntersectionObserver + CSS keyframes.">
-        <div className="border border-border rounded-xl bg-card p-8 shadow-sm">
+        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
           <Timeline
             items={[
               {
@@ -363,11 +363,11 @@ function ParagraphMeasureDemo() {
   const [info, setInfo] = useState<{ lineCount: number; truncated: boolean } | null>(null)
 
   return (
-    <div className="border border-border rounded-xl bg-card p-5 shadow-sm mt-4">
-      <p className="text-[0.7rem] uppercase tracking-[0.15em] text-muted-foreground mb-3">
+    <div className="border-border bg-card mt-4 rounded-xl border p-5 shadow-sm">
+      <p className="text-muted-foreground mb-3 text-[0.7rem] tracking-[0.15em] uppercase">
         Live measurement · drag the slider to resize
       </p>
-      <div className="flex items-center gap-4 mb-4">
+      <div className="mb-4 flex items-center gap-4">
         <input
           type="range"
           min={180}
@@ -375,9 +375,9 @@ function ParagraphMeasureDemo() {
           step={10}
           value={width}
           onChange={(e) => setWidth(Number(e.target.value))}
-          className="flex-1 accent-accent"
+          className="accent-accent flex-1"
         />
-        <span className="text-xs tabular-nums text-muted-foreground" style={{ minWidth: '60px' }}>
+        <span className="text-muted-foreground text-xs tabular-nums" style={{ minWidth: '60px' }}>
           {width}px
         </span>
       </div>
@@ -400,7 +400,7 @@ function ParagraphMeasureDemo() {
         />
       </div>
       {info && (
-        <p className="text-xs text-muted-foreground mt-3 tabular-nums">
+        <p className="text-muted-foreground mt-3 text-xs tabular-nums">
           measured: <span className="text-foreground font-medium">{info.lineCount} lines</span>
           {' · '}
           truncated:{' '}

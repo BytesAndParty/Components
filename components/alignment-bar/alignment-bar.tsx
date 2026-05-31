@@ -85,7 +85,7 @@ export function AlignmentBar({ onAlign, disabled = false, className, messages }:
       {BUTTONS.map(({ action, Icon }, i) => (
         <div key={action} className="flex items-center">
           {/* Divider between align group and distribute group */}
-          {i === 6 && <div className="w-px h-5 bg-border mx-0.5" />}
+          {i === 6 && <div className="bg-border mx-0.5 h-5 w-px" />}
           <button
             ref={el => { buttonRefs.current[i] = el }}
             type="button"
@@ -95,7 +95,7 @@ export function AlignmentBar({ onAlign, disabled = false, className, messages }:
               setFocusIndex(i)
               onAlign(action)
             }}
-            className="flex items-center justify-center w-8 h-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:bg-muted focus-visible:text-foreground outline-none"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/50 focus-visible:bg-muted focus-visible:text-foreground flex h-full w-8 items-center justify-center transition-colors outline-none"
           >
             <Icon size={13} strokeWidth={1.75} />
           </button>

@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -206,7 +206,7 @@ export function MagneticButton({
     }
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
     setPosition({
@@ -214,13 +214,13 @@ export function MagneticButton({
       y: (e.clientY - (rect.top  + rect.height / 2)) * strength,
     });
     onMouseMove?.(e);
-  }, [strength, onMouseMove]);
+  };
 
-  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
     setPosition({ x: 0, y: 0 });
     setHovered(false);
     onMouseLeave?.(e);
-  }, [onMouseLeave]);
+  };
 
   const isShimmer = variant === 'shimmer' || variant === 'cta';
   const isBeam = variant === 'beam';

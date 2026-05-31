@@ -1,4 +1,4 @@
-import { useState, useCallback, useId } from 'react';
+import { useState, useId } from 'react';
 
 interface SwitchProps {
   checked?: boolean;
@@ -40,12 +40,12 @@ export function Switch({
   const isControlled = controlledChecked !== undefined;
   const checked = isControlled ? controlledChecked : internalChecked;
 
-  const toggle = useCallback(() => {
+  const toggle = () => {
     if (disabled) return;
     const next = !checked;
     if (!isControlled) setInternalChecked(next);
     onChange?.(next);
-  }, [checked, disabled, isControlled, onChange]);
+  };
 
   const c = config[size];
   const thumbW = pressed ? c.thumbActive : c.thumb;

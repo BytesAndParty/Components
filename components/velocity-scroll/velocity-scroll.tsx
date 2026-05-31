@@ -147,27 +147,27 @@ export function TestimonialCard({ testimonial, className }: TestimonialCardProps
       'flex-shrink-0 w-52 p-4 rounded-xl border border-border bg-card flex flex-col gap-2.5 whitespace-normal shadow-sm',
       className
     )}>
-      <p className="text-sm leading-relaxed text-muted-foreground m-0 italic">
+      <p className="text-muted-foreground m-0 text-sm leading-relaxed italic">
         &ldquo;{content}&rdquo;
       </p>
-      <div className="flex items-center gap-2.5 mt-auto">
+      <div className="mt-auto flex items-center gap-2.5">
         {avatar ? (
           <img
             src={avatar}
             alt={name}
-            className="w-8 h-8 rounded-full object-cover border border-border"
+            className="border-border h-8 w-8 rounded-full border object-cover"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-accent/70 flex items-center justify-center text-[0.75rem] font-semibold text-white">
+          <div className="bg-accent/70 flex h-8 w-8 items-center justify-center rounded-full text-[0.75rem] font-semibold text-white">
             {name.charAt(0).toUpperCase()}
           </div>
         )}
         <div className="leading-tight">
-          <p className="text-[0.8125rem] font-semibold text-foreground m-0">
+          <p className="text-foreground m-0 text-[0.8125rem] font-semibold">
             {name}
           </p>
           {role && (
-            <p className="text-[0.7rem] text-muted-foreground m-0">
+            <p className="text-muted-foreground m-0 text-[0.7rem]">
               {role}
             </p>
           )}

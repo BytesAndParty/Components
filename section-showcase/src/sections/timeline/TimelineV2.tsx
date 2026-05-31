@@ -27,16 +27,16 @@ const heritageItems = [
 
 export function TimelineV2() {
   return (
-    <section className="bg-[#fdfcf9] py-32 px-6">
+    <section className="bg-[#fdfcf9] px-6 py-32">
       <div className="mx-auto max-w-5xl">
-        <div className="flex flex-col gap-12 mb-32 items-center text-center">
+        <div className="mb-32 flex flex-col items-center gap-12 text-center">
           <BlurFade delay={100}>
-            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-zinc-400">Chronik</span>
+            <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Chronik</span>
           </BlurFade>
           <BlurFade delay={200}>
-            <h2 className="font-display text-7xl font-light text-zinc-900 tracking-tight leading-tight">
+            <h2 className="font-display text-7xl leading-tight font-light tracking-tight text-zinc-900">
               Geschichte <br />
-              <span className="italic pl-[0.1em]">geschrieben</span> in Wein.
+              <span className="pl-[0.1em] italic">geschrieben</span> in Wein.
             </h2>
           </BlurFade>
         </div>

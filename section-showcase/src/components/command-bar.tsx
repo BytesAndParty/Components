@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import {
   ChevronDown, ChevronLeft, ChevronRight,
@@ -19,8 +19,23 @@ export function CommandBar() {
 
   const [offset, setOffset] = useState<DragOffset>({ x: 0, y: 0 })
   const [sectionMenuOpen, setSectionMenuOpen] = useState(false)
+  const [sectionMenuDirection, setSectionMenuDirection] = useState<'up' | 'down'>('up')
   const sectionMenuRef = useRef<HTMLDivElement>(null)
+  const sectionTriggerRef = useRef<HTMLButtonElement>(null)
   const dragStateRef = useRef<{ startX: number; startY: number; base: DragOffset } | null>(null)
+
+  // Flip the section menu to open downward when there isn't enough space above
+  // the trigger (e.g. user dragged the bar near the top of the viewport).
+  // Estimated height covers index entry + divider + N section rows + padding.
+  useLayoutEffect(() => {
+    if (!sectionMenuOpen) return
+    const trigger = sectionTriggerRef.current
+    if (!trigger) return
+    const rect = trigger.getBoundingClientRect()
+    const estimatedHeight = (sections.length + 1) * 32 + 24
+    const margin = 16
+    setSectionMenuDirection(rect.top - margin < estimatedHeight ? 'down' : 'up')
+  }, [sectionMenuOpen])
 
   // Close section menu on outside click
   useEffect(() => {
@@ -152,6 +167,7 @@ export function CommandBar() {
         <div className="flex flex-wrap items-center gap-2 px-3 pb-3 sm:flex-nowrap">
           <div ref={sectionMenuRef} className="relative">
             <button
+              ref={sectionTriggerRef}
               type="button"
               onClick={() => setSectionMenuOpen(o => !o)}
               aria-expanded={sectionMenuOpen}
@@ -164,7 +180,9 @@ export function CommandBar() {
             {sectionMenuOpen && (
               <div
                 role="menu"
-                className="border-border bg-card/95 absolute bottom-full left-0 mb-2 w-60 overflow-hidden rounded-xl border p-1.5 shadow-xl backdrop-blur-xl"
+                className={`border-border bg-card/95 absolute left-0 w-60 overflow-hidden rounded-xl border p-1.5 shadow-xl backdrop-blur-xl ${
+                  sectionMenuDirection === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
+                }`}
               >
                 <Link
                   to="/"

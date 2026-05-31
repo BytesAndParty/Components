@@ -7,7 +7,7 @@ export function FooterV1() {
         <Footer 
           companyName="Lacombe & Fils" 
           logo={<span className="text-2xl font-bold tracking-tighter">🍷 Lacombe</span>}
-          className="!max-w-none border-t border-border"
+          className="border-border !max-w-none border-t"
         />
       </div>
     </section>

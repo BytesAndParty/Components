@@ -32,8 +32,8 @@ function FacetTag({ value }: { value: FacetValueRef }) {
     <span
       className={
         isAward
-          ? 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent text-primary-foreground'
-          : 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-muted text-foreground border border-border'
+          ? 'bg-accent text-primary-foreground inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold'
+          : 'bg-muted text-foreground border-border inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium'
       }
     >
       {isAward && <span aria-hidden="true">🏆</span>}
@@ -49,11 +49,11 @@ interface DetailRow {
 
 function DetailGrid({ rows }: { rows: DetailRow[] }) {
   return (
-    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+    <dl className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
       {rows.map((r) => (
-        <div key={r.label} className="flex justify-between gap-4 py-2 border-b border-border last:border-b-0 sm:border-b">
+        <div key={r.label} className="border-border flex justify-between gap-4 border-b py-2 last:border-b-0 sm:border-b">
           <dt className="text-muted-foreground">{r.label}</dt>
-          <dd className="font-medium text-right">{r.value}</dd>
+          <dd className="text-right font-medium">{r.value}</dd>
         </div>
       ))}
     </dl>
@@ -67,8 +67,8 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
 
   if (isLoading && !initialProduct) {
     return (
-      <div className="py-20 px-6 flex flex-col items-center text-center max-w-lg mx-auto">
-        <div className="w-16 h-16 mb-6 grid place-items-center rounded-full bg-muted text-muted-foreground">
+      <div className="mx-auto flex max-w-lg flex-col items-center px-6 py-20 text-center">
+        <div className="bg-muted text-muted-foreground mb-6 grid h-16 w-16 place-items-center rounded-full">
           <Loader2 size={28} className="animate-spin" aria-hidden="true" />
         </div>
         <p className="text-muted-foreground">{t.detailLoading}</p>
@@ -78,15 +78,15 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
 
   if (!product) {
     return (
-      <div className="py-20 px-6 flex flex-col items-center text-center max-w-lg mx-auto">
-        <div className="w-16 h-16 mb-6 grid place-items-center rounded-full bg-muted text-muted-foreground">
+      <div className="mx-auto flex max-w-lg flex-col items-center px-6 py-20 text-center">
+        <div className="bg-muted text-muted-foreground mb-6 grid h-16 w-16 place-items-center rounded-full">
           <Grape size={28} aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-bold mb-3">{t.detailNotFoundTitle}</h2>
+        <h2 className="mb-3 text-2xl font-bold">{t.detailNotFoundTitle}</h2>
         <p className="text-muted-foreground mb-6">{t.detailNotFoundBody}</p>
         <a
           href="/"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent hover:text-primary-foreground transition-colors"
+          className="bg-foreground text-background hover:bg-accent hover:text-primary-foreground inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
         >
           {t.detailBackToStore}
         </a>
@@ -124,13 +124,13 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16 items-start">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <ShapeCard
           shape="round"
           radius={24}
           hoverLift={false}
           hoverAccent={false}
-          className="bg-muted aspect-square grid place-items-center text-[clamp(6rem,18vw,12rem)] sticky top-24"
+          className="bg-muted sticky top-24 grid aspect-square place-items-center text-[clamp(6rem,18vw,12rem)]"
         >
           <span aria-hidden="true">{heroEmoji(cf.rebsorte)}</span>
         </ShapeCard>
@@ -144,19 +144,19 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
                 ))}
               </div>
             )}
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
+            <h1 className="text-4xl leading-[1.05] font-extrabold tracking-tight md:text-5xl">
               {product.name}
             </h1>
           </header>
 
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold tabular-nums text-accent">
+            <span className="text-accent text-3xl font-bold tabular-nums">
               {variant ? formatPrice(variant.priceWithTax) : '—'}
             </span>
-            <span className="text-sm text-muted-foreground">{t.inclVat}</span>
+            <span className="text-muted-foreground text-sm">{t.inclVat}</span>
           </div>
 
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-prose">
+          <p className="text-muted-foreground max-w-prose text-lg leading-relaxed">
             <WineText>{product.description}</WineText>
           </p>
 
@@ -164,14 +164,14 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
             type="button"
             onClick={() => variant && addToCart({ variantId: variant.id })}
             disabled={!variant}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-foreground text-background font-bold text-base hover:bg-accent hover:text-primary-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="bg-foreground text-background hover:bg-accent hover:text-primary-foreground focus-visible:outline-ring w-full rounded-xl px-8 py-4 text-base font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {t.addToCart}
           </button>
 
           {cf.geschmacksprofil && (
             <section className="space-y-3">
-              <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+              <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 {t.detailSectionTaste}
               </h2>
               <p className="text-base leading-relaxed">
@@ -182,7 +182,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
 
           {productionRows.length > 0 && (
             <section className="space-y-4">
-              <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+              <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 {t.detailSectionOrigin}
               </h2>
               <DetailGrid rows={productionRows} />
@@ -191,7 +191,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
 
           {analyticRows.length > 0 && (
             <section className="space-y-4">
-              <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+              <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 {t.detailSectionAnalysis}
               </h2>
               <DetailGrid rows={analyticRows} />
@@ -199,24 +199,24 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
           )}
 
           {cf.speiseempfehlung?.trim() && (
-            <section className="rounded-xl border border-border bg-card p-5 space-y-2">
-              <h2 className="font-semibold text-sm flex items-center gap-2">
+            <section className="border-border bg-card space-y-2 rounded-xl border p-5">
+              <h2 className="flex items-center gap-2 text-sm font-semibold">
                 <span aria-hidden="true">🍽️</span>
                 {t.detailSectionPairing}
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 <WineText>{cf.speiseempfehlung}</WineText>
               </p>
             </section>
           )}
 
           {cf.auszeichnungen?.trim() && (
-            <section className="rounded-xl border border-border bg-card p-5 space-y-2">
-              <h2 className="font-semibold text-sm flex items-center gap-2">
+            <section className="border-border bg-card space-y-2 rounded-xl border p-5">
+              <h2 className="flex items-center gap-2 text-sm font-semibold">
                 <span aria-hidden="true">🏆</span>
                 {t.detailSectionAwards}
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 <WineText>{cf.auszeichnungen}</WineText>
               </p>
             </section>

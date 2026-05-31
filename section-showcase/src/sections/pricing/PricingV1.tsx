@@ -25,17 +25,17 @@ export function PricingV1() {
   return (
     <section className="bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-16">
+        <div className="mx-auto mb-16 max-w-2xl text-center">
           <BlurFade delay={100}>
-            <h2 className="text-base font-semibold leading-7 text-accent uppercase tracking-widest">Le Club</h2>
+            <h2 className="text-accent text-base leading-7 font-semibold tracking-widest uppercase">Le Club</h2>
           </BlurFade>
           <BlurFade delay={200}>
-            <p className="mt-2 text-4xl font-display font-medium tracking-tight text-foreground sm:text-5xl">
+            <p className="font-display text-foreground mt-2 text-4xl font-medium tracking-tight sm:text-5xl">
               <ShinyText duration={8}>Ihr Abo für Exzellenz</ShinyText>
             </p>
           </BlurFade>
           <BlurFade delay={300}>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+            <p className="text-muted-foreground mt-6 text-lg leading-8">
               Wählen Sie Ihre Stufe und tauchen Sie ein in die Welt der feinsten Weine — flexibel kündbar, maximaler Genuss.
             </p>
           </BlurFade>
@@ -59,7 +59,7 @@ export function PricingV1() {
         </div>
         
         <BlurFade delay={500} className="mt-16 text-center">
-          <p className="text-sm text-muted-foreground italic">
+          <p className="text-muted-foreground text-sm italic">
             * 20% Ersparnis bei jährlicher Zahlung. Versandkostenfrei in ganz Europa.
           </p>
         </BlurFade>

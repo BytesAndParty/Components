@@ -60,7 +60,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   }
 
   return (
-    <aside className="border-r border-border flex flex-col items-center py-4 gap-2 bg-card w-16">
+    <aside className="border-border bg-card flex w-16 flex-col items-center gap-2 border-r py-4">
       <input
         ref={fileInputRef}
         type="file"

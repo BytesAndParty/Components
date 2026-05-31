@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -106,7 +106,7 @@ export function AmbientImage({
   const [loaded, setLoaded] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
 
-  const handleLoad = useCallback(() => {
+  const handleLoad = () => {
     const img = imgRef.current
     if (!img) return
     setLoaded(true)
@@ -116,7 +116,7 @@ export function AmbientImage({
       const edgeColors = extractEdgeColors(img)
       setColors(edgeColors)
     })
-  }, [])
+  }
 
   // Re-extract when src changes — reset derived state from new prop.
   // Canonical alternative would be `key={src}` at the parent; keeping

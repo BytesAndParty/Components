@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, type CSSProperties } from 'react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -73,7 +73,7 @@ export function PixelImage({
   // Math.random is the feature here: a deterministic shuffle would
   // give every PixelImage instance the same reveal pattern, which
   // defeats the visual effect.
-  const revealOrder = useMemo(() => {
+  const revealOrder = (() => {
     const order = Array.from({ length: cellCount }, (_, i) => i)
     // Fisher-Yates shuffle
     for (let i = cellCount - 1; i > 0; i--) {
@@ -82,7 +82,7 @@ export function PixelImage({
       ;[order[i], order[j]] = [order[j], order[i]]
     }
     return order
-  }, [cellCount])
+  })()
 
   const cells: React.ReactNode[] = []
   for (let row = 0; row < grid.rows; row++) {
