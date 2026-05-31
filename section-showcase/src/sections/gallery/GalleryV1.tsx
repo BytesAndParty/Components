@@ -20,7 +20,7 @@ const images = [
   {
     src: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
     alt: 'Bottle Pour',
-    className: 'col-span-1 row-span-1',
+    className: 'col-span-2 row-span-1',
   },
 ]
 
