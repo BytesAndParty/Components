@@ -2,8 +2,6 @@ import {
   forwardRef,
   useState,
   useEffect,
-  useCallback,
-  useMemo,
   useImperativeHandle,
 } from 'react';
 import { motion, AnimatePresence, type Transition, type TargetAndTransition, type VariantLabels } from 'motion/react';
@@ -90,21 +88,18 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
   ) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const advance = useCallback(
-      (direction: 1 | -1) => {
-        setCurrentIndex((prev: number) => {
-          let next = prev + direction;
-          if (loop) {
-            next = ((next % texts.length) + texts.length) % texts.length;
-          } else {
-            next = Math.max(0, Math.min(texts.length - 1, next));
-          }
-          onNext?.(next);
-          return next;
-        });
-      },
-      [texts.length, loop, onNext]
-    );
+    function advance(direction: 1 | -1) {
+      setCurrentIndex((prev: number) => {
+        let next = prev + direction;
+        if (loop) {
+          next = ((next % texts.length) + texts.length) % texts.length;
+        } else {
+          next = Math.max(0, Math.min(texts.length - 1, next));
+        }
+        onNext?.(next);
+        return next;
+      });
+    }
 
     useImperativeHandle(ref, () => ({
       next: () => advance(1),
@@ -119,13 +114,13 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
       if (!auto) return;
       const id = setInterval(() => advance(1), rotationInterval);
       return () => clearInterval(id);
-    }, [auto, rotationInterval, advance]);
+      // `advance` is a stable closure for the lifetime of this interval —
+      // we deliberately don't re-create the interval when it changes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auto, rotationInterval]);
 
     const currentText = texts[currentIndex];
-    const elements = useMemo(
-      () => splitText(currentText, splitBy),
-      [currentText, splitBy]
-    );
+    const elements = splitText(currentText, splitBy);
 
     const defaultTransition = {
       type: 'spring' as const,

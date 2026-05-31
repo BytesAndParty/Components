@@ -103,6 +103,9 @@ export function NumberInput({
             onBlur={(e) => commit(e.target.value)}
             onKeyDown={handleKeyDown}
             className="text-foreground w-10 bg-transparent text-center font-mono text-xs focus:outline-none"
+            // Inline editor that opens on double-click; autoFocus is the
+            // expected behaviour when the input is conditionally mounted.
+            // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
             onFocus={(e) => e.target.select()}
           />

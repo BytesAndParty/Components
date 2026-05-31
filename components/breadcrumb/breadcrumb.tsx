@@ -1,5 +1,5 @@
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
-import { useEffect, createContext, useContext, type ReactNode, type CSSProperties, type ComponentProps } from 'react';
+import { useEffect, createContext, useContext, type ReactNode, type ComponentProps } from 'react';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type BreadcrumbMessages } from './messages';
 
@@ -117,6 +117,7 @@ export function BreadcrumbLink({
 }: ComponentProps<'a'>): ReactNode {
   useEffect(() => { injectStyles(); }, []);
 
+  const { children, ...rest } = props;
   return (
     <a
       className="bc-link"
@@ -127,8 +128,10 @@ export function BreadcrumbLink({
         ...style,
       }}
       data-slot="breadcrumb-link"
-      {...props}
-    />
+      {...rest}
+    >
+      {children}
+    </a>
   );
 }
 

@@ -87,6 +87,10 @@ export function Lens({
   }
 
   return (
+    // Lens is a pointer-driven magnifier overlay; making it a button would
+    // mis-describe its role. Touch + keyboard users see the unmagnified
+    // image, which is the underlying content.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       ref={containerRef}
       className={className}

@@ -332,11 +332,15 @@ function LayerRow({
       />
 
       {/* Name */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div className="min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
         {editing ? (
           <input
             type="text"
             value={draft}
+            // Rename input opens on demand; autoFocus is the expected
+            // behaviour for an inline editor that just appeared.
+            // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
             aria-label={messages.renameLayer}
             className="bg-input border-ring text-foreground w-full rounded border px-1 py-0.5 text-xs focus:outline-none"
@@ -360,6 +364,7 @@ function LayerRow({
       </div>
 
       {/* Controls — visible on hover or active */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"
         onClick={(e) => e.stopPropagation()}

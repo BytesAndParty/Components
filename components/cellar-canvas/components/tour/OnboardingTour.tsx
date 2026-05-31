@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { Portal } from '@ark-ui/react/portal'
 import { Tour, useTour } from '@ark-ui/react/tour'
 
@@ -35,7 +35,7 @@ export function OnboardingTour({
 }: OnboardingTourProps) {
   const m = useCellarCanvasMessages()
 
-  const steps = useMemo(() => ([
+  const steps = [
     {
       id:          'welcome',
       type:        'dialog' as const,
@@ -74,14 +74,14 @@ export function OnboardingTour({
       title:       m.tourSaveTitle,
       description: m.tourSaveBody,
     },
-  ]), [m])
+  ]
 
-  const translations = useMemo(() => ({
+  const translations = {
     nextStep: m.tourNext,
     prevStep: m.tourBack,
     skip:     m.tourSkip,
     close:    m.tourSkip,
-  }), [m])
+  }
 
   const tour = useTour({
     steps,

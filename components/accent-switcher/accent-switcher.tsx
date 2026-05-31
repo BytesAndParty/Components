@@ -324,6 +324,7 @@ export function AccentSwitcher({
 					ref={menuRef}
 					id={menuId}
 					role="menu"
+					tabIndex={-1}
 					aria-label={m.label}
 					onKeyDown={handleMenuKeyDown}
 					style={{

@@ -82,6 +82,7 @@ export function Folder({ name, defaultOpen = false, children, className }: Folde
       role="treeitem"
       aria-expanded={open}
       aria-level={level}
+      aria-selected={false}
       className={className}
       style={{ listStyle: 'none' }}
     >
@@ -157,6 +158,7 @@ export function File({ name, onClick, className }: FileProps) {
     <li
       role="treeitem"
       aria-level={level}
+      aria-selected={false}
       tabIndex={interactive ? 0 : undefined}
       onClick={onClick}
       onKeyDown={interactive ? (e) => {

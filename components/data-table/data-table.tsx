@@ -388,6 +388,9 @@ function ResizeHandle({
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
 }) {
   return (
+    /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex --
+       Column resize handle: role="separator" with tabIndex follows the
+       WAI-ARIA splitter pattern. Arrow keys drive resize via onKeyDown. */
     <div
       role="separator"
       aria-orientation="vertical"
@@ -411,6 +414,7 @@ function ResizeHandle({
       )}
       style={{ WebkitTapHighlightColor: 'transparent' }}
     />
+    /* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
   )
 }
 

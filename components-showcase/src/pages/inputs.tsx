@@ -196,6 +196,9 @@ function ImageUploadDemo() {
 
   return (
     <div className="border-border bg-card max-w-96 overflow-hidden rounded-xl border shadow-sm">
+      {/* Demo zone: clicking the empty state forwards to the file picker
+          inside useImageUpload. Keyboard users tab to the hidden file input. */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
       <div
         onClick={!previewUrl ? handleThumbnailClick : undefined}
         className={`relative flex h-48 items-center justify-center transition-colors ${

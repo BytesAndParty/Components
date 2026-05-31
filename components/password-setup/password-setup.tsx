@@ -303,6 +303,9 @@ function FancyDotInput({
   }
 
   return (
+    // Wrapper forwards click into the underlying input; keyboard users tab
+    // directly to the input itself.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       onClick={() => inputRef.current?.focus()}
       style={{

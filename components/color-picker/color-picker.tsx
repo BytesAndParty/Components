@@ -269,13 +269,17 @@ function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (nex
   }
 
   return (
+    /* eslint-disable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions --
+       2D saturation/brightness selector — fully keyboard-driven via arrow keys
+       (onKeyDown below). role="application" is the WAI-ARIA pattern for custom
+       widgets that intercept all keys; aria-valuetext belongs to slider/spinbutton
+       roles, so it lives in aria-label instead. */
     <div
       ref={ref}
       role="application"
       tabIndex={0}
-      aria-label={messages.saturationBrightness}
+      aria-label={`${messages.saturationBrightness} — saturation ${hsba.s}, brightness ${hsba.b}`}
       aria-roledescription="2d slider"
-      aria-valuetext={`saturation ${hsba.s}, brightness ${hsba.b}`}
       className="border-border/70 focus:ring-ring relative h-52 w-full cursor-crosshair touch-none overflow-hidden rounded-xl border shadow-inner focus:ring-2 focus:outline-none"
       style={getSaturationBrightnessBackground(hsba.h)}
       onPointerDown={(event) => {
@@ -304,6 +308,7 @@ function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (nex
         }}
       />
     </div>
+    /* eslint-enable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */
   )
 }
 

@@ -162,8 +162,10 @@ export function FloatingCart({
             onMouseLeave={() => setHoveredId(null)}
           >
             {/* Product circle (60×60, image fills) */}
-            <div
+            <button
+              type="button"
               onClick={() => onItemClick?.(item.id)}
+              aria-label={item.label ?? 'Produkt'}
               style={{
                 width: '60px',
                 height: '60px',
@@ -173,6 +175,9 @@ export function FloatingCart({
                 cursor: 'pointer',
                 position: 'relative',
                 transition: 'all 1s ease-in-out',
+                padding: 0,
+                border: 'none',
+                background: 'transparent',
               }}
             >
               {item.image ? (
@@ -242,7 +247,7 @@ export function FloatingCart({
                   {item.count && item.count > 1 ? `×${item.count}` : item.label ?? ''}
                 </span>
               )}
-            </div>
+            </button>
 
             {/* Count badge (Quickbeam: fadeDown/fadeUp on change) */}
             {itemCount > 1 && (

@@ -200,8 +200,15 @@ function TransitionsDemo() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div
         onClick={swapAtPoint}
+        onKeyDown={needsOrigin ? (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            swapAtPoint(e as unknown as React.MouseEvent)
+          }
+        } : undefined}
         style={{ cursor: needsOrigin ? 'crosshair' : 'default' }}
         role={needsOrigin ? 'button' : undefined}
+        tabIndex={needsOrigin ? 0 : undefined}
         aria-label={needsOrigin ? 'Klicke irgendwo um Transition ab Klickpunkt zu triggern' : undefined}
       >
         <TransitionStage ref={stageRef}>

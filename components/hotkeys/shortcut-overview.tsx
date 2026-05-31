@@ -65,6 +65,9 @@ export function ShortcutOverview({
   return (
     <>
       <ShortcutOverviewDialogStyles />
+      {/* Click-on-backdrop close: keyboard users dismiss via Escape (native
+          dialog) — no additional key handler needed on the wrapper. */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
       <dialog
         ref={dialogRef}
         aria-label={m.title}

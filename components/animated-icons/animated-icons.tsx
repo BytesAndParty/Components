@@ -92,6 +92,9 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
     };
 
     return (
+      // Hover-trigger icons are decorative animations on a static element;
+      // click-trigger variants get role="button" + tabIndex + keyDown below.
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         {...a11y}
         {...(isClick ? { role: 'button', tabIndex: 0 } : {})}

@@ -203,6 +203,7 @@ export function AutocompleteCell({
                   key={item.id}
                   id={`${optionIdPrefix}-${i}`}
                   role="option"
+                  tabIndex={-1}
                   aria-selected={i === highlightIndex}
                   className={cn(
                     'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors cursor-pointer',

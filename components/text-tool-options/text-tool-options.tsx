@@ -236,6 +236,9 @@ function FontSelect({
 
       {open && (
         <Portal>
+          {/* Backdrop closes the popover on outside click; keyboard users
+              close via Escape on the listbox trigger. */}
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
             id={listboxId}
