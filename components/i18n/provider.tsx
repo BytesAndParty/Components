@@ -102,7 +102,7 @@ export function useI18n() {
   return useContext(I18nContext)
 }
 
-export function useComponentMessages<T extends Record<string, string>>(
+export function useComponentMessages<T extends object>(
   defaults: Record<Locale, T>,
   override?: Partial<T>
 ): T {
