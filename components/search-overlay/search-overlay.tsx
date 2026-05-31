@@ -60,15 +60,13 @@ export function SearchOverlay({
   });
 
   useDesignEngineHotkey('Escape', (e: KeyboardEvent | React.KeyboardEvent) => {
-    if (isOpen) {
-      e.preventDefault();
-      close();
-    }
+    e.preventDefault();
+    close();
   }, {
     label: m.closeLabel,
     description: m.closeDescription,
-    category: 'Actions'
-  });
+    category: 'Actions',
+  }, { enabled: isOpen });
 
   // TanStack Query Integration for Search
   const { data: results = [], isLoading } = useQuery({
