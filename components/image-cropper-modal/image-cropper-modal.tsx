@@ -33,7 +33,6 @@ export function ImageCropperModal({
   messages,
 }: ImageCropperModalProps) {
   const m = useComponentMessages(MESSAGES, messages)
-  const dialogTranslations = useArkTranslations('dialog')
   const cropperTranslations = useArkTranslations('imageCropper')
 
   const measureRef = useRef<HTMLDivElement>(null)
@@ -117,7 +116,6 @@ export function ImageCropperModal({
       open={open}
       onOpenChange={(d: { open: boolean }) => onOpenChange(d.open)}
       modal
-      translations={dialogTranslations}
     >
       <Portal>
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
@@ -178,7 +176,8 @@ export function ImageCropperModal({
                         <ImageCropper.Handle position="ne" className={handleCls} />
                         <ImageCropper.Handle position="sw" className={handleCls} />
                         <ImageCropper.Handle position="se" className={handleCls} />
-                        <ImageCropper.Grid className="absolute inset-0 pointer-events-none" />
+                        <ImageCropper.Grid axis="horizontal" className="absolute inset-0 pointer-events-none" />
+                        <ImageCropper.Grid axis="vertical" className="absolute inset-0 pointer-events-none" />
                       </ImageCropper.Selection>
                     </ImageCropper.Viewport>
                   </div>

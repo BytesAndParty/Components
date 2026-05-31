@@ -1,38 +1,46 @@
 import { useI18n } from './provider'
 
+// Ark UI v5 / Zag 1.40 translation shapes. Keys verified against
+// @zag-js/popover/dist/popover.types.d.ts and @zag-js/image-cropper/dist/image-cropper.types.d.ts.
+// Dialog has no translations prop in v5 — set aria-label on Dialog.Root or per-element instead.
+
+interface Rect { x: number; y: number; width: number; height: number }
+interface CropperShapeDetails { shape: 'rectangle' | 'circle' }
+type SelectionValueTextDetails = Rect & CropperShapeDetails
+
 const ARK_DE = {
-  dialog: {
-    closeTrigger: 'Dialog schließen',
-  },
   popover: {
-    closeTrigger: 'Popover schließen',
+    closeTriggerLabel: 'Popover schließen',
   },
   imageCropper: {
-    rotateLeft: 'Nach links drehen',
-    rotateRight: 'Nach rechts drehen',
-    zoomIn: 'Vergrößern',
-    zoomOut: 'Verkleinern',
-    reset: 'Zurücksetzen',
-    cropArea: 'Ausschnitt',
-    handle: (side: string) => `Anfasser ${side} zum Ändern der Größe`,
+    rootLabel: 'Bildausschnitt-Editor',
+    rootRoleDescription: 'Bildausschnitt-Editor',
+    previewLoading: 'Vorschau wird geladen',
+    previewDescription: () => 'Vorschau des Bildausschnitts',
+    selectionLabel: ({ shape }: CropperShapeDetails) =>
+      shape === 'circle' ? 'Kreis-Auswahlbereich' : 'Rechteckiger Auswahlbereich',
+    selectionRoleDescription: 'Auswahlbereich',
+    selectionInstructions: 'Mit den Pfeiltasten verschieben, mit den Anfassern die Größe ändern.',
+    selectionValueText: ({ width, height }: SelectionValueTextDetails) =>
+      `${Math.round(width)} mal ${Math.round(height)} Pixel`,
   },
 } as const
 
 const ARK_EN = {
-  dialog: {
-    closeTrigger: 'Close dialog',
-  },
   popover: {
-    closeTrigger: 'Close popover',
+    closeTriggerLabel: 'Close popover',
   },
   imageCropper: {
-    rotateLeft: 'Rotate left',
-    rotateRight: 'Rotate right',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
-    reset: 'Reset',
-    cropArea: 'Crop area',
-    handle: (side: string) => `Resize ${side} handle`,
+    rootLabel: 'Image cropper',
+    rootRoleDescription: 'Image cropper',
+    previewLoading: 'Loading preview',
+    previewDescription: () => 'Cropped image preview',
+    selectionLabel: ({ shape }: CropperShapeDetails) =>
+      shape === 'circle' ? 'Circular selection area' : 'Rectangular selection area',
+    selectionRoleDescription: 'Selection area',
+    selectionInstructions: 'Use arrow keys to move, drag the handles to resize.',
+    selectionValueText: ({ width, height }: SelectionValueTextDetails) =>
+      `${Math.round(width)} by ${Math.round(height)} pixels`,
   },
 } as const
 
