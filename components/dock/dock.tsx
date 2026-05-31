@@ -57,7 +57,7 @@ function DockItemInternal({
   distance,
   className,
 }: DockItemInternalProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement | null>(null)
 
   // Distanz der Maus-X zum Mittelpunkt des Items
   const distFromCenter = useTransform(mouseX, (val: number) => {
@@ -162,7 +162,7 @@ function DockItemInternal({
 
   return (
     <motion.div
-      ref={ref}
+      ref={ref as React.RefObject<HTMLDivElement>}
       className={className}
       style={{ ...innerStyle, scale }}
     >
