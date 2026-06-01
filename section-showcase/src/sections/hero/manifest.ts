@@ -3,6 +3,7 @@ import { HeroV1 } from './HeroV1'
 import { HeroV2 } from './HeroV2'
 import { HeroV3 } from './HeroV3'
 import { HeroV4 } from './HeroV4'
+import { HeroV5 } from './HeroV5'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -32,6 +33,12 @@ export const heroSection: SectionDef = {
       label: 'Artisanal Minimal',
       description: 'Extremer Whitespace, Serif-Typografie und asymmetrischer Fokus (Buchart Style).',
       Component: HeroV4,
+    },
+    {
+      id: 'v5',
+      label: 'Modern Tech',
+      description: 'Dunkles Design mit Aurora-Text, Partikeln und magnetischen Interaktionen.',
+      Component: HeroV5,
     },
   ],
 }

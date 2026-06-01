@@ -1,6 +1,7 @@
 import { FeaturesV1 } from './FeaturesV1'
 import { FeaturesV2 } from './FeaturesV2'
 import { FeaturesV3 } from './FeaturesV3'
+import { FeaturesV4 } from './FeaturesV4'
 import type { SectionDef } from '../types'
 
 export const featuresSection: SectionDef = {
@@ -22,6 +23,12 @@ export const featuresSection: SectionDef = {
       label: 'Vintage Index',
       description: 'Editorial Hairline-Tabelle mit Index-Nummern und Serif-Headlines (Cream / Buchart Style).',
       Component: FeaturesV3,
+    },
+    {
+      id: 'v4',
+      label: 'Interactive Grid',
+      description: 'Modernes Grid mit Glow-Karten und Hover-Effekten.',
+      Component: FeaturesV4,
     },
   ],
 }

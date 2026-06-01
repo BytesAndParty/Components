@@ -1,5 +1,6 @@
 import { PricingV1 } from './PricingV1'
 import { PricingV2 } from './PricingV2'
+import { PricingV3 } from './PricingV3'
 import type { SectionDef } from '../types'
 
 export const pricingSection: SectionDef = {
@@ -16,6 +17,12 @@ export const pricingSection: SectionDef = {
       label: 'Artisanal Card',
       description: 'Gepolsterte weiße Fläche, Serif-Typografie und dezenter Schatten.',
       Component: PricingV2,
+    },
+    {
+      id: 'v3',
+      label: 'Glow Tiers',
+      description: 'Drei statische Stufen mit Glow-Karten und Hover-Effekten.',
+      Component: PricingV3,
     },
   ],
 }
