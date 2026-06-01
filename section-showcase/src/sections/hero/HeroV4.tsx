@@ -40,7 +40,7 @@ export function HeroV4() {
             <MagneticButton variant="default" className="!rounded-none !bg-zinc-900 !px-12 !py-5 !text-base !text-white transition-colors hover:!bg-zinc-800">
               Sortiment entdecken
             </MagneticButton>
-            <a href="#" className="border-b border-zinc-200 pb-1 text-sm font-bold tracking-widest uppercase transition-colors hover:border-zinc-900">
+            <a href="/weingut" className="border-b border-zinc-200 pb-1 text-sm font-bold tracking-widest uppercase transition-colors hover:border-zinc-900">
               Das Weingut
             </a>
           </BlurFade>

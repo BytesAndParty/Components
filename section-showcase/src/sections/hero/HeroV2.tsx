@@ -33,14 +33,14 @@ export function HeroV2() {
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
           <a
-            href="#"
+            href="/probierset"
             className="group bg-accent text-accent-foreground inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium transition-all hover:gap-3"
           >
             Probierset bestellen
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </a>
           <a
-            href="#"
+            href="/abo"
             className="text-muted-foreground hover:text-foreground text-sm font-medium"
           >
             oder als Abo →

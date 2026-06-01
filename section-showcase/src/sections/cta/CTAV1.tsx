@@ -25,7 +25,7 @@ export function CTAV1() {
               <MagneticButton variant="primary" strength={0.2} className="!px-10 !py-4 !text-base">
                 Jetzt Mitglied werden
               </MagneticButton>
-              <a href="#" className="text-foreground hover:text-accent text-sm leading-6 font-semibold transition-colors">
+              <a href="/mehr-erfahren" className="text-foreground hover:text-accent text-sm leading-6 font-semibold transition-colors">
                 Mehr erfahren <span aria-hidden="true">→</span>
               </a>
             </BlurFade>

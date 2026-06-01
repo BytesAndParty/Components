@@ -23,14 +23,14 @@ export function HeroV1() {
 
           <div className="flex flex-wrap items-center gap-4">
             <a
-              href="#"
+              href="/kollektion"
               className="bg-accent text-accent-foreground inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm font-medium transition-transform hover:-translate-y-0.5"
             >
               Kollektion entdecken
               <ArrowRight className="h-4 w-4" />
             </a>
             <a
-              href="#"
+              href="/winzer"
               className="text-foreground decoration-border hover:decoration-foreground text-sm font-medium underline underline-offset-4"
             >
               Unsere Winzer kennenlernen

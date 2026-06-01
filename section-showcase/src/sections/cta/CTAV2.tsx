@@ -43,7 +43,7 @@ export function CTAV2() {
           >
             Jetzt Registrieren
           </MagneticButton>
-          <a href="#" className="border-b border-zinc-200 pb-1 text-sm font-bold tracking-[0.2em] uppercase transition-colors hover:border-zinc-900">
+          <a href="/versprechen" className="border-b border-zinc-200 pb-1 text-sm font-bold tracking-[0.2em] uppercase transition-colors hover:border-zinc-900">
             Unser Versprechen
           </a>
         </BlurFade>
