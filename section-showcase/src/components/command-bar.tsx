@@ -4,6 +4,7 @@ import {
   ChevronDown, ChevronLeft, ChevronRight,
   Eye, EyeOff, GripHorizontal, Layers, Moon, Square, Sun,
 } from 'lucide-react'
+import { useAtelier } from '@components/atelier'
 import { sections, findSection } from '../sections/registry'
 import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
@@ -16,6 +17,7 @@ export function CommandBar() {
   const section = sectionId ? findSection(sectionId) : null
   const navigate = useNavigate()
   const showcase = useShowcase()
+  const atelier = useAtelier()
 
   const [offset, setOffset] = useState<DragOffset>({ x: 0, y: 0 })
   const [sectionMenuOpen, setSectionMenuOpen] = useState(false)
@@ -281,12 +283,12 @@ export function CommandBar() {
 
           <div className="border-border flex items-center gap-1 rounded-full border p-1">
             {SHOWCASE_ACCENTS.map(a => {
-              const active = showcase.accent === a
+              const active = atelier.accent === a
               return (
                 <button
                   key={a}
                   type="button"
-                  onClick={() => showcase.setAccent(a)}
+                  onClick={() => atelier.setAccent(a)}
                   aria-label={`Akzent ${a}`}
                   aria-pressed={active}
                   className={`focus-visible:ring-accent/60 h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none ${
@@ -300,12 +302,12 @@ export function CommandBar() {
 
           <button
             type="button"
-            onClick={() => showcase.setTheme(showcase.theme === 'dark' ? 'light' : 'dark')}
+            onClick={atelier.toggleTheme}
             aria-label="Theme umschalten"
             title="Theme"
             className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
-            {showcase.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            {atelier.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
           <button
