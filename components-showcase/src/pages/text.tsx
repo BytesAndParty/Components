@@ -6,6 +6,7 @@ import { AuroraText } from '@components/aurora-text/aurora-text'
 import { SparklesText } from '@components/sparkles-text/sparkles-text'
 import { Highlighter } from '@components/highlighter/highlighter'
 import { Paragraph } from '@components/paragraph/paragraph'
+import { PullQuote } from '@components/pull-quote/pull-quote'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -120,6 +121,77 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>Paragraph · @chenglou/pretext · ResizeObserver</span>
           <span>Container-Query-friendly · zero reflow measurement</span>
+        </div>
+      </Section>
+
+      <Section
+        title="PullQuote"
+        description="Editorial blockquote primitive — serif body, hairline rule, all-caps attribution. Three variants (editorial · plate · cellar), three sizes (sm/md/lg), three alignments. Uses semantic tokens; light/dark/accent aware."
+      >
+        <div className="flex flex-col gap-12">
+          {/* Variant: editorial (default) */}
+          <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="editorial" · align="left" · size="md"
+            </p>
+            <PullQuote
+              attribution="Marc-André Leclerc"
+              byline="Chef Sommelier, Le Bristol"
+            >
+              Ein Paradebeispiel für Terroir-Treue. Ein Muss für jeden
+              Keller, der auf Qualität statt Masse setzt.
+            </PullQuote>
+          </div>
+
+          {/* Variant: plate, centered, lg */}
+          <div className="bg-muted/40 rounded-xl p-10">
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="plate" · align="center" · size="lg"
+            </p>
+            <PullQuote
+              variant="plate"
+              align="center"
+              size="lg"
+              attribution="Elena Rossi"
+              byline="Weinkritikerin · Decanter"
+            >
+              Selten habe ich eine so konsistente Qualität über
+              verschiedene Jahrgänge hinweg erlebt.
+            </PullQuote>
+          </div>
+
+          {/* Variant: cellar (dark), right, sm, no mark */}
+          <div className="rounded-xl bg-zinc-950 p-10">
+            <p className="mb-6 text-[0.7rem] tracking-[0.15em] text-zinc-500 uppercase">
+              variant="cellar" · align="right" · size="sm" · showMark={'{false}'}
+            </p>
+            <PullQuote
+              variant="cellar"
+              align="right"
+              size="sm"
+              showMark={false}
+              attribution="Aus dem Hofbuch"
+              byline="Eintrag · MMXXIV"
+            >
+              Der Wein erinnert sich an alles — den Hang, das Jahr, die
+              Hand, die ihn gelesen hat.
+            </PullQuote>
+          </div>
+
+          {/* Edge case: no attribution */}
+          <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · no attribution · no role
+            </p>
+            <PullQuote size="md">
+              Weniger Eingriffe. Mehr Antworten aus dem Boden.
+            </PullQuote>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>PullQuote · semantic tokens · no animation</span>
+          <span>Compose with BlurFade for entrance · light/dark/accent aware</span>
         </div>
       </Section>
 
