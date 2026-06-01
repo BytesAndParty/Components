@@ -62,6 +62,10 @@ export default defineConfig({
     },
   },
   build: {
+    // The Designer route (fabric + cellar-canvas) and the PDF vendor bundle
+    // each clear the default 500 kB warning; both are lazy-loaded and only
+    // landed when the user opens /designer or clicks "Export PDF".
+    chunkSizeWarningLimit: 700,
     rollupOptions: {
       output: {
         // Manual vendor chunks: stable libraries land in long-lived files
@@ -80,6 +84,11 @@ export default defineConfig({
           if (id.includes('/motion/') || id.includes('/framer-motion/')) return 'vendor-motion'
           if (id.includes('/@tanstack/')) return 'vendor-tanstack'
           if (id.includes('/@ark-ui/') || id.includes('/@zag-js/')) return 'vendor-ui'
+          // Heavy designer-only deps — co-located so the designer route loads
+          // them on demand alongside its page chunk, not on first paint.
+          if (id.includes('/fabric/'))                               return 'vendor-fabric'
+          if (id.includes('/jspdf/') || id.includes('/html2canvas/')) return 'vendor-pdf'
+          if (id.includes('/qrcode/'))                                return 'vendor-qrcode'
         },
       },
     },

@@ -18,7 +18,8 @@ import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
 import { ValidatorBadge } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
-import { exportLabelPdf, downloadBlob } from './engine/export-pipeline'
+// PDF export is dynamically imported on click — keeps jspdf + html2canvas
+// out of the initial designer chunk (≈590 kB of vendor code).
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
 import type { CellarCanvasState } from './store/types'
@@ -169,9 +170,10 @@ export function CellarCanvas({
     }
   }
 
-  function handleExportPdf() {
+  async function handleExportPdf() {
     const b = bridge.current
     if (!b) return
+    const { exportLabelPdf, downloadBlob } = await import('./engine/export-pipeline')
     const blob = exportLabelPdf(b)
     downloadBlob(blob, `${m.exportFilename}.pdf`)
     onExport?.({ format: 'pdf', blob })
