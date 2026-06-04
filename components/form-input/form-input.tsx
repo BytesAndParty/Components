@@ -118,7 +118,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           {label && (
             <label
               htmlFor={id}
-              className="block font-medium tracking-wider text-[var(--muted-foreground)] uppercase"
+              className="block font-medium tracking-wider text-muted-foreground uppercase"
               style={{ fontSize: sz.labelSize }}
             >
               {label}
@@ -142,7 +142,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
       <motion.div
         key={shakeKey}
         className={cn(
-          "relative flex items-center w-full rounded-xl bg-[var(--card)] transition-all duration-200",
+          "relative flex items-center w-full rounded-xl bg-card transition-all duration-200",
           state === 'error' && "animate-[form-input-shake_360ms_cubic-bezier(.36,.07,.19,.97)]"
         )}
         style={{
@@ -160,7 +160,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
         }}
       >
         {leftIcon && (
-          <span className="mr-2 inline-flex shrink-0 text-[var(--muted-foreground)]">
+          <span className="mr-2 inline-flex shrink-0 text-muted-foreground">
             {leftIcon}
           </span>
         )}
@@ -172,7 +172,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           disabled={disabled}
           required={required}
           className={cn(
-            "flex-1 min-w-0 h-full bg-transparent border-none outline-none text-[var(--foreground)] font-inherit placeholder:text-[var(--muted-foreground)]/50",
+            "flex-1 min-w-0 h-full bg-transparent border-none outline-none text-foreground font-inherit placeholder:text-muted-foreground/50",
             className
           )}
           style={{ fontSize: sz.fontSize }}
@@ -226,7 +226,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
           </svg>
         )}
         {rightIcon && (
-          <span className="ml-2 inline-flex shrink-0 text-[var(--muted-foreground)]">
+          <span className="ml-2 inline-flex shrink-0 text-muted-foreground">
             {rightIcon}
           </span>
         )}
@@ -253,7 +253,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
               id={`${id}-desc`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[12px] text-[var(--muted-foreground)]"
+              className="text-[12px] text-muted-foreground"
             >
               {description}
             </motion.p>

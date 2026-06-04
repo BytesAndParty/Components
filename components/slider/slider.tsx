@@ -182,12 +182,12 @@ export function Slider({
       {(label || showValue) && (
         <div className="flex items-baseline justify-between gap-4">
           {label && (
-            <label htmlFor={id} className="text-[13px] font-medium text-[var(--foreground)]">
+            <label htmlFor={id} className="text-[13px] font-medium text-foreground">
               {label}
             </label>
           )}
           {showValue && (
-            <span className="font-mono text-[13px] text-[var(--muted-foreground)] tabular-nums">
+            <span className="font-mono text-[13px] text-muted-foreground tabular-nums">
               {displayValue}
             </span>
           )}
@@ -216,7 +216,7 @@ export function Slider({
       >
         {/* Track (off portion) */}
         <div
-          className="absolute right-0 left-0 border border-[var(--border)] bg-[var(--muted)]"
+          className="absolute right-0 left-0 border border-border bg-muted"
           style={{
             height: s.trackH,
             borderRadius: s.trackH,
@@ -224,7 +224,7 @@ export function Slider({
         />
         {/* Filled portion */}
         <div
-          className="absolute left-0 bg-[var(--accent)]"
+          className="absolute left-0 bg-accent"
           style={{
             width: `${pct}%`,
             height: s.trackH,
@@ -241,7 +241,7 @@ export function Slider({
         <div
           aria-hidden="true"
           className={cn(
-            "absolute bottom-[calc(100%+8px)] bg-[var(--foreground)] text-[var(--background)] text-[11px] font-mono font-bold px-[7px] py-[2px] rounded-[6px] whitespace-nowrap pointer-events-none z-10 transition-opacity duration-150",
+            "absolute bottom-[calc(100%+8px)] bg-foreground text-background text-[11px] font-mono font-bold px-1.75 py-0.5 rounded-1.5 whitespace-nowrap pointer-events-none z-10 transition-opacity duration-150",
             dragging ? "opacity-100" : "opacity-0"
           )}
           style={{

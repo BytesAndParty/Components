@@ -139,7 +139,7 @@ export function GooeyInput({
           onClick={() => setOpen((v) => !v)}
           className={cn(
             "absolute right-0 top-0 rounded-full border-none cursor-pointer p-0 grid place-items-center transition-transform",
-            isOutline ? "bg-[var(--card)]" : "bg-[var(--accent)]"
+            isOutline ? "bg-card" : "bg-accent"
           )}
           style={{
             width: height,

@@ -189,7 +189,7 @@ export function DataPage() {
   return (
     <div className="space-y-12">
       <header className="space-y-2">
-        <h1 className="text-4xl font-bold -tracking-[0.04em]">Data & Tables</h1>
+        <h1 className="text-4xl font-bold tracking-[-0.04em]">Data & Tables</h1>
         <p className="text-muted-foreground">
           Powerful, sortable tables powered by TanStack Table with smooth spring animations and full URL synchronization (sort & page).
         </p>

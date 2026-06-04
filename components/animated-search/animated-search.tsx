@@ -95,7 +95,7 @@ export function AnimatedSearch({
 
   return (
     <motion.div
-      className={cn("relative inline-flex items-center h-[42px]", className)}
+      className={cn("relative inline-flex items-center h-10.5", className)}
       style={{ ...style }}
       animate={{ width: isOpen ? expandedWidth : iconSize }}
       transition={{ type: 'spring', damping: 22, stiffness: 170 }}
@@ -103,8 +103,8 @@ export function AnimatedSearch({
       {/* Background pill */}
       <motion.div
         className={cn(
-          "absolute inset-0 border-[2.5px] bg-[var(--card)] transition-colors duration-300",
-          isOpen ? "border-[var(--accent)] cursor-default" : "border-[var(--border)] cursor-pointer"
+          "absolute inset-0 border-[2.5px] bg-card transition-colors duration-300",
+          isOpen ? "border-accent cursor-default" : "border-border cursor-pointer"
         )}
         style={{ borderRadius: iconSize / 2 }}
         animate={{
@@ -130,8 +130,8 @@ export function AnimatedSearch({
         type="button"
         onClick={isOpen ? () => { if (value.trim()) onSearch?.(value.trim()); else close(); } : open}
         className={cn(
-          "relative z-10 w-[42px] h-[42px] flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 transition-colors duration-250",
-          hasContent && isOpen ? "text-[var(--accent)]" : "text-[var(--foreground)]"
+          "relative z-10 w-10.5 h-10.5 flex items-center justify-center bg-transparent border-none cursor-pointer p-0 shrink-0 transition-colors duration-250",
+          hasContent && isOpen ? "text-accent" : "text-foreground"
         )}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
@@ -171,7 +171,7 @@ export function AnimatedSearch({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               aria-label={m.placeholder}
-              className="font-inherit h-full w-full border-none bg-transparent text-sm text-[var(--foreground)] caret-[var(--accent)] outline-none"
+              className="font-inherit h-full w-full border-none bg-transparent text-sm text-foreground caret-accent outline-none"
             />
           </motion.div>
         )}
@@ -187,7 +187,7 @@ export function AnimatedSearch({
             exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
             transition={{ type: 'spring', damping: 18, stiffness: 170 }}
             onClick={close}
-            className="relative z-10 flex h-[42px] w-[42px] shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-[var(--muted-foreground)]"
+            className="relative z-10 flex h-10.5 w-10.5 shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-muted-foreground"
             whileHover={{ scale: 1.1, color: 'var(--foreground)' }}
             whileTap={{ scale: 0.95 }}
             aria-label={m.closeLabel}

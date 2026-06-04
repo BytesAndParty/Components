@@ -55,10 +55,10 @@ export function FieldHint({
           aria-describedby={hintId}
           className={cn(
             'inline-flex items-center justify-center rounded-full',
-            'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
+            'text-muted-foreground hover:text-foreground',
             'transition-colors duration-150 cursor-help',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
-            'focus-visible:ring-[var(--accent)] focus-visible:ring-offset-[var(--background)]',
+            'focus-visible:ring-accent focus-visible:ring-offset-background',
             className,
           )}
           style={{ width: size + 4, height: size + 4 }}

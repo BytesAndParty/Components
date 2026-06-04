@@ -154,8 +154,8 @@ export function Timeline({
               >
                 {/* Dot */}
                 <div
-                  aria-hidden="true"
-                  className="absolute inset-0 grid place-items-center rounded-full border-[3px] border-[var(--background)] text-[13px] font-bold text-white"
+                  aria-hidden
+                  className="absolute inset-0 grid place-items-center rounded-full border-[3px] border-background text-[13px] font-bold text-white"
                   style={{
                     background: dotColor,
                     boxShadow: `0 0 0 2px ${dotColor}, 0 0 14px color-mix(in oklch, ${dotColor} 30%, transparent)`,
@@ -220,14 +220,14 @@ export function Timeline({
               )}
               
               <h3
-                className="m-0 text-base leading-[1.35] font-semibold text-[var(--foreground)]"
+                className="m-0 text-base leading-[1.35] font-semibold text-foreground"
                 style={{
                   paddingTop: it.year ? 0 : (DOT_SIZE - 22) / 2,
                 }}
               >
                 {it.title}
               </h3>
-              <div className="mt-2 text-sm leading-[1.65] text-[var(--muted-foreground)]">
+              <div className="mt-2 text-sm leading-[1.65] text-muted-foreground">
                 {it.content}
               </div>
             </div>

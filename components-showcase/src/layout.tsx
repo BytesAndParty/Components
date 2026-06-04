@@ -97,7 +97,7 @@ export function Layout() {
             <Link
               to="/"
               viewTransition
-              className="text-foreground py-2 text-lg font-bold -tracking-[0.02em] no-underline"
+              className="text-foreground py-2 text-lg font-bold tracking-[-0.02em] no-underline"
             >
               Components
             </Link>

@@ -91,8 +91,8 @@ export function Tooltip({
             transition={{ duration: 0.15, ease: 'easeOut' }}
             style={{ transformOrigin: origins[position] }}
             className={cn(
-              "absolute z-[100] px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap pointer-events-none",
-              "bg-[var(--card,#141416)] border border-[var(--border,#2a2a2e)] text-[var(--foreground,#e4e4e7)] shadow-xl",
+              "absolute z-100 px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap pointer-events-none",
+              "bg-(--card,#141416) border border-(--border,#2a2a2e) text-(--foreground,#e4e4e7) shadow-xl",
               "backdrop-blur-md",
               positionClasses[position],
               className
@@ -102,7 +102,7 @@ export function Tooltip({
             {/* Arrow */}
             <div 
               className={cn(
-                "absolute w-2 h-2 rotate-45 bg-[var(--card,#141416)] border-[var(--border,#2a2a2e)]",
+                "absolute w-2 h-2 rotate-45 bg-(--card,#141416) border-(--border,#2a2a2e)",
                 position === 'top' && "bottom-[-5px] left-1/2 -translate-x-1/2 border-r border-b",
                 position === 'bottom' && "top-[-5px] left-1/2 -translate-x-1/2 border-l border-t",
                 position === 'left' && "right-[-5px] top-1/2 -translate-y-1/2 border-r border-t",

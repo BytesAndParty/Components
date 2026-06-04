@@ -109,7 +109,7 @@ export function SearchOverlay({
     <AnimatePresence>
       {isOpen && (
         <div
-          className={cn("fixed inset-0 z-[999] flex items-start justify-center pt-[15vh] px-4", className)}
+          className={cn("fixed inset-0 z-999 flex items-start justify-center pt-[15vh] px-4", className)}
           role="dialog"
           aria-modal="true"
           aria-label={m.ariaLabel}
@@ -130,9 +130,9 @@ export function SearchOverlay({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] shadow-2xl"
+            className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-(--border,#2a2a2e) bg-(--card,#141416) shadow-2xl"
           >
-            <div className="flex items-center border-b border-[var(--border,#2a2a2e)] px-4 py-4">
+            <div className="flex items-center border-b border-(--border,#2a2a2e) px-4 py-4">
               <svg
                 width="20"
                 height="20"
@@ -140,7 +140,7 @@ export function SearchOverlay({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                className={cn("mr-3", isLoading ? "animate-pulse text-[var(--accent)]" : "text-[var(--muted-foreground,#71717a)]")}
+                className={cn("mr-3", isLoading ? "animate-pulse text-accent" : "text-(--muted-foreground,#71717a)")}
                 aria-hidden="true"
               >
                 <circle cx="11" cy="11" r="8" />
@@ -160,9 +160,9 @@ export function SearchOverlay({
                   setSelectedIndex(0);
                 }}
                 onKeyDown={handleKeyDown}
-                className="w-full border-none bg-transparent text-lg text-[var(--foreground,#e4e4e7)] outline-none placeholder:text-[var(--muted-foreground,#71717a)]"
+                className="w-full border-none bg-transparent text-lg text-(--foreground,#e4e4e7) outline-none placeholder:text-(--muted-foreground,#71717a)"
               />
-              <div className="ml-2 flex items-center gap-1 rounded border border-[var(--border,#2a2a2e)] bg-[var(--background,#0a0a0b)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted-foreground,#71717a)]" aria-hidden="true">
+              <div className="ml-2 flex items-center gap-1 rounded border border-(--border,#2a2a2e) bg-(--background,#0a0a0b) px-1.5 py-0.5 text-[10px] font-medium text-(--muted-foreground,#71717a)" aria-hidden="true">
                 ESC
               </div>
             </div>
@@ -174,7 +174,7 @@ export function SearchOverlay({
             >
               {query.length === 0 && initialSuggestions.length === 0 ? (
                 <div className="px-4 py-8 text-center">
-                  <p className="text-sm text-[var(--muted-foreground,#71717a)]">{m.emptyState}</p>
+                  <p className="text-sm text-(--muted-foreground,#71717a)">{m.emptyState}</p>
                 </div>
               ) : displayResults.length > 0 ? (
                 <div className="space-y-1">
@@ -192,13 +192,13 @@ export function SearchOverlay({
                       className={cn(
                         "w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left outline-none",
                         index === selectedIndex
-                          ? "bg-[var(--accent,#6366f1)] text-white shadow-lg shadow-[var(--accent)]/20"
-                          : "hover:bg-[var(--border,#2a2a2e)] text-[var(--foreground,#e4e4e7)]"
+                          ? "bg-(--accent,#6366f1) text-white shadow-lg shadow-accent/20"
+                          : "hover:bg-(--border,#2a2a2e) text-(--foreground,#e4e4e7)"
                       )}
                     >
                       <div className={cn(
                         "w-10 h-10 rounded-lg flex items-center justify-center mr-4 shrink-0",
-                        index === selectedIndex ? "bg-white/20" : "bg-[var(--background,#0a0a0b)]"
+                        index === selectedIndex ? "bg-white/20" : "bg-(--background,#0a0a0b)"
                       )} aria-hidden="true">
                         {result.icon || (
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -211,7 +211,7 @@ export function SearchOverlay({
                           <span className="truncate font-semibold">{result.title}</span>
                           <span className={cn(
                             "text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded",
-                            index === selectedIndex ? "bg-white/20 text-white" : "bg-[var(--border,#2a2a2e)] text-[var(--muted-foreground,#71717a)]"
+                            index === selectedIndex ? "bg-white/20 text-white" : "bg-(--border,#2a2a2e) text-(--muted-foreground,#71717a)"
                           )}>
                             {result.category}
                           </span>
@@ -219,7 +219,7 @@ export function SearchOverlay({
                         {result.description && (
                           <p className={cn(
                             "text-sm line-clamp-1",
-                            index === selectedIndex ? "text-white/80" : "text-[var(--muted-foreground,#71717a)]"
+                            index === selectedIndex ? "text-white/80" : "text-(--muted-foreground,#71717a)"
                           )}>
                             {result.description}
                           </p>
@@ -230,19 +230,19 @@ export function SearchOverlay({
                 </div>
               ) : (
                 <div className="px-4 py-12 text-center">
-                  <p className="text-[var(--muted-foreground,#71717a)]">{m.noResults}</p>
+                  <p className="text-(--muted-foreground,#71717a)">{m.noResults}</p>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-between border-t border-[var(--border,#2a2a2e)] bg-[var(--background,#0a0a0b)]/50 px-4 py-3 text-[11px] text-[var(--muted-foreground,#71717a)]">
+            <div className="flex items-center justify-between border-t border-(--border,#2a2a2e) bg-(--background,#0a0a0b)/50 px-4 py-3 text-[11px] text-(--muted-foreground,#71717a)">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
-                  <kbd className="rounded border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] px-1 py-0.5 text-[9px]" aria-hidden="true">ENTER</kbd>
+                  <kbd className="rounded border border-(--border,#2a2a2e) bg-(--card,#141416) px-1 py-0.5 text-[9px]" aria-hidden="true">ENTER</kbd>
                   {m.selectionHelp}
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="rounded border border-[var(--border,#2a2a2e)] bg-[var(--card,#141416)] px-1 py-0.5 text-[9px]" aria-hidden="true">↑↓</kbd>
+                  <kbd className="rounded border border-(--border,#2a2a2e) bg-(--card,#141416) px-1 py-0.5 text-[9px]" aria-hidden="true">↑↓</kbd>
                   {m.navigationHelp}
                 </span>
               </div>
