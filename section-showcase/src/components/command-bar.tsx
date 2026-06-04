@@ -5,6 +5,7 @@ import {
   Eye, EyeOff, GripHorizontal, Layers, Moon, Square, Sun,
 } from 'lucide-react'
 import { useAtelier } from '@components/atelier'
+import { runViewTransition } from '@components/view-transition/run-view-transition'
 import { sections, findSection } from '../sections/registry'
 import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
@@ -63,11 +64,25 @@ export function CommandBar() {
 
   const variants = section?.variants ?? []
   const variantIdx = variants.findIndex(v => v.id === showcase.variantId)
+
+  // Direction-aware view transition for variant swaps.
+  // delta < 0 → previous variant: new slides in from the LEFT (vt-slide-right).
+  // delta > 0 → next variant: new slides in from the RIGHT (vt-slide-left).
+  // Stack mode shows all variants at once, so the slide is unnecessary.
+  function switchVariant(nextId: string, delta: number) {
+    if (delta === 0 || showcase.mode === 'stack') {
+      showcase.setVariantId(nextId)
+      return
+    }
+    const preset = delta < 0 ? 'vt-slide-right' : 'vt-slide-left'
+    runViewTransition(preset, () => showcase.setVariantId(nextId))
+  }
+
   function gotoVariant(delta: 1 | -1) {
     if (variants.length === 0) return
     const next = variantIdx + delta
     if (next < 0 || next >= variants.length) return
-    showcase.setVariantId(variants[next].id)
+    switchVariant(variants[next].id, delta)
   }
 
   // Global hotkeys — defined as named handler so the effect's deps stay honest.
