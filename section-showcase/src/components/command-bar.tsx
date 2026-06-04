@@ -8,7 +8,7 @@ import { useAtelier } from '@components/atelier'
 import { sections, findSection } from '../sections/registry'
 import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
-} from '../showcase-context'
+} from '../showcase-state'
 
 interface DragOffset { x: number; y: number }
 

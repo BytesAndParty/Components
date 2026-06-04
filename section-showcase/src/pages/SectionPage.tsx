@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { findSection } from '../sections/registry'
-import { useShowcase } from '../showcase-context'
+import { useShowcase } from '../showcase-state'
 
 export function SectionPage() {
   const { sectionId } = useParams()
