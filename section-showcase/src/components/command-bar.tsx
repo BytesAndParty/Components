@@ -11,6 +11,11 @@ import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
 } from '../showcase-state'
 
+// Reserved view-transition-names keep the floating bar (and its hidden-state
+// toggle) out of the document-level root crossfade when a variant slide runs.
+const PIN_BAR_STYLE = { viewTransitionName: 'showcase-command-bar' } as CSSProperties
+const PIN_HIDDEN_TOGGLE_STYLE = { viewTransitionName: 'showcase-command-bar-toggle' } as CSSProperties
+
 interface DragOffset { x: number; y: number }
 
 export function CommandBar() {
@@ -160,6 +165,7 @@ export function CommandBar() {
         onClick={() => showcase.setBarHidden(false)}
         aria-label="Showcase-Steuerung einblenden (H)"
         title="Einblenden (H)"
+        style={PIN_HIDDEN_TOGGLE_STYLE}
         className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <Eye size={14} />
@@ -169,7 +175,10 @@ export function CommandBar() {
 
   return (
     <div
-      style={{ transform: `translate3d(calc(-50% + ${offset.x}px), ${offset.y}px, 0)` } satisfies CSSProperties}
+      style={{
+        transform: `translate3d(calc(-50% + ${offset.x}px), ${offset.y}px, 0)`,
+        ...PIN_BAR_STYLE,
+      } satisfies CSSProperties}
       className="fixed bottom-6 left-1/2 z-50 select-none"
     >
       <div className="border-border bg-card/85 flex w-[min(94vw,760px)] flex-col rounded-2xl border shadow-2xl shadow-black/30 backdrop-blur-xl">
@@ -247,13 +256,13 @@ export function CommandBar() {
                   <ChevronLeft size={14} />
                 </button>
                 <div className="flex flex-wrap items-center gap-1">
-                  {section.variants.map(v => {
+                  {section.variants.map((v, idx) => {
                     const active = showcase.variantId === v.id
                     return (
                       <button
                         key={v.id}
                         type="button"
-                        onClick={() => showcase.setVariantId(v.id)}
+                        onClick={() => switchVariant(v.id, idx - variantIdx)}
                         aria-pressed={active}
                         title={v.description ?? v.label}
                         className={`focus-visible:ring-accent/60 rounded-md px-2.5 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none ${
