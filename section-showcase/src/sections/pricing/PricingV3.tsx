@@ -58,7 +58,7 @@ export function PricingV3() {
                     <span className="text-foreground text-4xl font-bold tracking-tight">{tier.price}€</span>
                     <span className="text-muted-foreground text-sm font-semibold leading-6">/Monat</span>
                   </p>
-                  <ul role="list" className="text-muted-foreground mt-8 space-y-3 text-sm leading-6">
+                  <ul className="text-muted-foreground mt-8 space-y-3 text-sm leading-6">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex gap-x-3">
                         <Check className="text-accent h-6 w-5 flex-none" aria-hidden="true" />

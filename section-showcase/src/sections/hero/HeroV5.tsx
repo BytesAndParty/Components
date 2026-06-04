@@ -9,9 +9,9 @@ export function HeroV5() {
       {/* Background Particles */}
       <Particles
         className="absolute inset-0 z-0"
-        quantity={80}
-        staticity={50}
-        color="#ffffff"
+        particleCount={80}
+        speed={0.5}
+        particleColors={['#ffffff']}
       />
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">

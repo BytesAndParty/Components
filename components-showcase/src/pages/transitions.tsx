@@ -203,7 +203,7 @@ function TransitionsDemo() {
         onKeyDown={needsOrigin ? (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            swapAtPoint(e as unknown as React.MouseEvent)
+            swapAtPoint(e as unknown as React.MouseEvent<HTMLDivElement>)
           }
         } : undefined}
         style={{ cursor: needsOrigin ? 'crosshair' : 'default' }}

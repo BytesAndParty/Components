@@ -101,7 +101,7 @@ export function CardsPage() {
             <p className="text-muted-foreground mt-1 text-sm">15° max, glare on</p>
           </Hover3DCard>
           <Hover3DCard
-            maxTilt={25}
+            maxRotate={25}
             glareIntensity={0.4}
             style={{
               background: 'linear-gradient(135deg, var(--card) 0%, rgba(99,102,241,0.08) 100%)',
@@ -119,7 +119,7 @@ export function CardsPage() {
             <p className="text-muted-foreground mt-1 text-sm">25° max, bright glare</p>
           </Hover3DCard>
           <Hover3DCard
-            maxTilt={8}
+            maxRotate={8}
             glare={false}
             style={{
               background: 'var(--card)',
@@ -456,11 +456,6 @@ export function CardsPage() {
               'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=400&q=80',
               'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80',
             ]}
-            containerWidth={500}
-            containerHeight={350}
-            animationDelay={0.5}
-            animationStagger={0.08}
-            enableHover
           />
         </div>
       </Section>

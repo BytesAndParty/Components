@@ -18,10 +18,11 @@ import { CursorGlow } from '@components/cursor-glow/cursor-glow'
 import { Lens } from '@components/lens/lens'
 import { ImagesSlider } from '@components/images-slider/images-slider'
 import { useState } from 'react'
+import { Link } from 'react-router'
 
 /* ── ShapeCard helpers ──────────────────────────────────── */
 
-function WineMedia({ src, alt }: { src: string; alt: string }) {
+function WineMedia({ src, alt, vtName }: { src: string; alt: string; vtName?: string }) {
   return (
     <div
       style={{
@@ -35,10 +36,12 @@ function WineMedia({ src, alt }: { src: string; alt: string }) {
       <img
         src={src}
         alt={alt}
+        className={vtName ? 'vt-wine' : undefined}
         style={{
           height: '88%',
           objectFit: 'contain',
           filter: 'drop-shadow(0 8px 16px oklch(0 0 0 / 0.25))',
+          ...(vtName ? { viewTransitionName: vtName } : null),
         }}
       />
     </div>
@@ -166,21 +169,25 @@ export function CardsPage() {
 
           {/* Reihe 1: Akzent oben */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <ShapeCard
-              shape={['round', 'bevel', 'round', 'round']}
-              radius="10px 28px 10px 10px"
-            >
-              <WineMedia src="/wine-default.png" alt="Barolo Riserva" />
-              <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
-            </ShapeCard>
+            <Link to="/wine/barolo-riserva-2016" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
+              <ShapeCard
+                shape={['round', 'bevel', 'round', 'round']}
+                radius="10px 28px 10px 10px"
+              >
+                <WineMedia src="/wine-default.png" alt="Barolo Riserva" vtName="wine-barolo-riserva-2016" />
+                <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
+              </ShapeCard>
+            </Link>
 
-            <ShapeCard
-              shape={['scoop', 'scoop', 'squircle', 'squircle']}
-              radius="1.625rem 1.625rem 0.625rem 0.625rem"
-            >
-              <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" />
-              <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
-            </ShapeCard>
+            <Link to="/wine/riesling-smaragd-2022" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
+              <ShapeCard
+                shape={['scoop', 'scoop', 'squircle', 'squircle']}
+                radius="1.625rem 1.625rem 0.625rem 0.625rem"
+              >
+                <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" vtName="wine-riesling-smaragd-2022" />
+                <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
+              </ShapeCard>
+            </Link>
 
             <ShapeCard
               shape={['scoop', 'round', 'round', 'round']}
@@ -363,7 +370,7 @@ export function CardsPage() {
             <p className="text-muted-foreground mt-1 text-sm">15° max, glare on</p>
           </Hover3DCard>
           <Hover3DCard
-            maxTilt={25}
+            maxRotate={25}
             glareIntensity={0.4}
             style={{
               background: 'linear-gradient(135deg, var(--card) 0%, rgba(99,102,241,0.08) 100%)',
@@ -381,7 +388,7 @@ export function CardsPage() {
             <p className="text-muted-foreground mt-1 text-sm">25° max, bright glare</p>
           </Hover3DCard>
           <Hover3DCard
-            maxTilt={8}
+            maxRotate={8}
             glare={false}
             style={{
               background: 'var(--card)',
@@ -731,11 +738,6 @@ export function CardsPage() {
               'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=400&q=80',
               'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80',
             ]}
-            containerWidth={500}
-            containerHeight={350}
-            animationDelay={0.5}
-            animationStagger={0.08}
-            enableHover
           />
         </div>
       </Section>
