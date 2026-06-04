@@ -27,7 +27,7 @@ export function TestimonialsV2() {
           {expertQuotes.map((q, i) => (
             <BlurFade key={q.name} delay={100 + i * 150} direction="up">
               <div className={`flex flex-col ${i % 2 === 0 ? 'items-start text-left' : 'ml-auto items-end text-right'} max-w-3xl gap-8`}>
-                <span className="font-display block h-8 text-[6rem] leading-[0] text-zinc-200">“</span>
+                <span className="font-display block h-8 text-[6rem] leading-0 text-zinc-200">“</span>
                 <p className="font-display text-4xl leading-tight font-light text-zinc-900 lg:text-5xl">
                   {q.content}
                 </p>

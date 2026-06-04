@@ -13,7 +13,7 @@ export function HeroV3() {
           alt="Atmospheric Vineyard" 
           className="h-full w-full object-cover opacity-30 grayscale"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-zinc-950" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-zinc-950/60 to-zinc-950" />
       </div>
 
       {/* Atmospheric Particles */}
@@ -33,7 +33,7 @@ export function HeroV3() {
         </BlurFade>
 
         <BlurFade delay={200}>
-          <h1 className="font-display text-[clamp(3rem,8vw,6rem)] leading-[1] font-medium tracking-tight text-white">
+          <h1 className="font-display text-[clamp(3rem,8vw,6rem)] leading-none font-medium tracking-tight text-white">
             <ShinyText duration={6}>The Soul of the Grape</ShinyText>
           </h1>
         </BlurFade>
@@ -45,10 +45,10 @@ export function HeroV3() {
         </BlurFade>
 
         <BlurFade delay={400} className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
-          <MagneticButton variant="primary" className="!px-12 !py-5 !text-base">
+          <MagneticButton variant="primary" className="px-12! py-5! text-base!">
             Kollektion entdecken
           </MagneticButton>
-          <MagneticButton variant="ghost" className="hover:!text-accent !text-white">
+          <MagneticButton variant="ghost" className="hover:text-accent! text-white!">
             Unsere Vision
           </MagneticButton>
         </BlurFade>
@@ -57,7 +57,7 @@ export function HeroV3() {
       {/* Scroll indicator */}
       <BlurFade delay={1000} className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
         <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-500 uppercase">Scroll</span>
-        <div className="from-accent h-12 w-px bg-gradient-to-b to-transparent" />
+        <div className="from-accent h-12 w-px bg-linear-to-b to-transparent" />
       </BlurFade>
     </section>
   )

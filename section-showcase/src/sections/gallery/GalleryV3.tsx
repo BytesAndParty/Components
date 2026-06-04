@@ -32,7 +32,7 @@ const plates: Plate[] = [
     location: 'Ried Schiefer, Dürnstein',
     season: 'September · MMXXIV',
     cell: 'lg:col-span-7 lg:col-start-1 lg:row-start-1',
-    aspect: 'aspect-[4/3]',
+    aspect: 'aspect-4/3',
   },
   {
     numeral: 'II',
@@ -42,7 +42,7 @@ const plates: Plate[] = [
     location: 'Tonnenkeller, Untergeschoss',
     season: 'Februar · MMXXV',
     cell: 'lg:col-span-4 lg:col-start-9 lg:row-start-1 lg:mt-24',
-    aspect: 'aspect-[3/4]',
+    aspect: 'aspect-3/4',
   },
   {
     numeral: 'III',
@@ -52,7 +52,7 @@ const plates: Plate[] = [
     location: 'Rebzeile 12, Süd­hang',
     season: 'Oktober · MMXXIV',
     cell: 'lg:col-span-5 lg:col-start-2 lg:row-start-2 lg:-mt-12',
-    aspect: 'aspect-[3/4]',
+    aspect: 'aspect-3/4',
   },
   {
     numeral: 'IV',
@@ -62,7 +62,7 @@ const plates: Plate[] = [
     location: 'Probierraum, Hofzimmer',
     season: 'März · MMXXVI',
     cell: 'lg:col-span-6 lg:col-start-7 lg:row-start-2 lg:mt-12',
-    aspect: 'aspect-[4/3]',
+    aspect: 'aspect-4/3',
   },
 ]
 
@@ -122,7 +122,7 @@ export function GalleryV3() {
                     src={plate.src}
                     alt={plate.alt}
                     loading="lazy"
-                    className="h-full w-full object-cover grayscale-[15%] transition-all duration-[1200ms] hover:scale-[1.02] hover:grayscale-0"
+                    className="h-full w-full object-cover grayscale-15 transition-all duration-1200 hover:scale-[1.02] hover:grayscale-0"
                   />
                 </div>
 

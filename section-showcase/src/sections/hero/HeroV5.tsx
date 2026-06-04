@@ -42,7 +42,7 @@ export function HeroV5() {
 
         <BlurFade delay={400} className="flex flex-col items-center justify-center gap-8 sm:flex-row">
           <MagneticButton 
-            className="!rounded-full !bg-white !px-12 !py-5 !text-base !font-bold !text-black transition-transform hover:!scale-105"
+            className="rounded-full! bg-white! px-12! py-5! text-base! font-bold! text-black! transition-transform hover:scale-105!"
           >
             Explore Collection
           </MagneticButton>
@@ -58,8 +58,8 @@ export function HeroV5() {
       </div>
 
       {/* Decorative Grid Overlays */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-20 [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-20 mask-[radial-gradient(ellipse_at_center,black,transparent_80%)]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[40px_40px]" />
       </div>
     </section>
   )

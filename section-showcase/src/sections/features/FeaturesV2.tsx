@@ -50,7 +50,7 @@ export function FeaturesV2() {
                 alt="Vineyard at sunset"
                 borderRadius="2rem"
                 intensity={0.4}
-                className="aspect-[4/5] w-full"
+                className="aspect-4/5 w-full"
               />
             </BlurFade>
             

@@ -55,12 +55,12 @@ export function BackToTop({
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          className={cn("fixed bottom-8 right-8 z-[90]", className)}
+          className={cn("fixed bottom-8 right-8 z-90", className)}
         >
           <MagneticButton
             onClick={scrollToTop}
             variant="default"
-            className="flex h-12 w-12 items-center justify-center rounded-full !p-0 shadow-2xl"
+            className="flex h-12 w-12 items-center justify-center rounded-full p-0! shadow-2xl"
             aria-label={m.ariaLabel}
           >
             <svg

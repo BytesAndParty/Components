@@ -52,7 +52,7 @@ export function TimelineV1() {
                   alt="Historisches Weingut" 
                   className="h-full w-full object-cover opacity-60 grayscale transition-all duration-700 hover:grayscale-0"
                 />
-                <div className="from-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
+                <div className="from-background/80 absolute inset-0 bg-linear-to-t to-transparent" />
               </div>
             </BlurFade>
           </div>

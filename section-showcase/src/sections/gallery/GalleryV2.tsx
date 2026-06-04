@@ -65,7 +65,7 @@ export function GalleryV2() {
                 borderRadius="0"
                 intensity={0.1}
                 blur={100}
-                className="h-full w-full grayscale-[20%] transition-all duration-[1.5s] hover:grayscale-0"
+                className="h-full w-full grayscale-20 transition-all duration-[1.5s] hover:grayscale-0"
               />
             </BlurFade>
           ))}

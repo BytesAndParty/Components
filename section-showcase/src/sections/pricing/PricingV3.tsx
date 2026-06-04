@@ -70,7 +70,7 @@ export function PricingV3() {
                 <div className="mt-8">
                   <MagneticButton 
                     variant={tier.featured ? 'default' : 'outline'}
-                    className="w-full !rounded-xl !py-4"
+                    className="w-full rounded-xl! py-4!"
                   >
                     Jetzt starten
                   </MagneticButton>

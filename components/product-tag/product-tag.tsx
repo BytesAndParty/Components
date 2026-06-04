@@ -77,7 +77,7 @@ const tagCss = `
   border-radius: 50%;
   background: currentColor;
   animation: ptag-dot-pulse 1.4s ease-in-out infinite;
-  flex-shrink: 0;
+  shrink: 0;
 }
 @media (prefers-reduced-motion: reduce) {
   .product-tag               { animation: none; opacity: 1; }

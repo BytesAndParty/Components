@@ -24,7 +24,7 @@ export function CTAV2() {
         </BlurFade>
         
         <BlurFade delay={200}>
-          <h2 className="font-display mb-12 text-7xl leading-[1] font-light tracking-tight text-zinc-900 lg:text-8xl">
+          <h2 className="font-display mb-12 text-7xl leading-none font-light tracking-tight text-zinc-900 lg:text-8xl">
             Werde Teil der <br />
             <span className="italic">Familie.</span>
           </h2>
@@ -39,7 +39,7 @@ export function CTAV2() {
         <BlurFade delay={400} className="flex flex-col items-center justify-center gap-10 sm:flex-row">
           <MagneticButton 
             variant="default" 
-            className="!rounded-none !bg-zinc-900 !px-16 !py-6 !text-lg !text-white shadow-2xl transition-all hover:!bg-zinc-800"
+            className="rounded-none! bg-zinc-900! px-16! py-6! text-lg! text-white! shadow-2xl transition-all hover:bg-zinc-800!"
           >
             Jetzt Registrieren
           </MagneticButton>

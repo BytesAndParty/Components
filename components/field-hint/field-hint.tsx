@@ -47,7 +47,7 @@ export function FieldHint({
         content={content}
         position={position}
         delay={delay}
-        className="max-w-xs text-[12px] leading-relaxed !whitespace-normal"
+        className="max-w-xs text-[12px] leading-relaxed whitespace-normal!"
       >
         <button
           type="button"

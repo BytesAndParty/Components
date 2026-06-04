@@ -19,7 +19,7 @@ export function HeroV2() {
           Frühjahrs­selektion 2026
         </span>
 
-        <h1 className="font-display text-foreground text-[clamp(2.8rem,8vw,6rem)] leading-[0.98] font-medium tracking-[-0.025em]">
+        <h1 className="font-display text-foreground text-[clamp(2.8rem,8vw,6rem)] leading-[0.98] font-medium tracking-tight">
           Jeder Schluck ein
           <br />
           <span className="text-accent italic">Ortswechsel.</span>

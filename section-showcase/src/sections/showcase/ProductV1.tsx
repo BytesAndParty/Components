@@ -20,7 +20,7 @@ export function ProductV1() {
                 borderRadius="1.5rem"
                 intensity={0.5}
                 blur={60}
-                className="mx-auto aspect-[3/4] max-w-md shadow-2xl"
+                className="mx-auto aspect-3/4 max-w-md shadow-2xl"
               />
             </BlurFade>
           </div>
@@ -80,7 +80,7 @@ export function ProductV1() {
               
               <AddToCartButton 
                 onClick={() => console.log('Added to cart')} 
-                className="!px-10 !py-4 !text-base"
+                className="px-10! py-4! text-base!"
               />
             </BlurFade>
             

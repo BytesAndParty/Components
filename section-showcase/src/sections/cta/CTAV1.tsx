@@ -22,7 +22,7 @@ export function CTAV1() {
             </BlurFade>
 
             <BlurFade delay={300} className="mt-10 flex items-center justify-center gap-x-6">
-              <MagneticButton variant="primary" strength={0.2} className="!px-10 !py-4 !text-base">
+              <MagneticButton variant="primary" strength={0.2} className="px-10! py-4! text-base!">
                 Jetzt Mitglied werden
               </MagneticButton>
               <a href="/mehr-erfahren" className="text-foreground hover:text-accent text-sm leading-6 font-semibold transition-colors">
@@ -34,7 +34,7 @@ export function CTAV1() {
           {/* Background circles */}
           <svg
             viewBox="0 0 1024 1024"
-            className="absolute top-1/2 left-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"
+            className="absolute top-1/2 left-1/2 -z-10 h-256 w-5xl -translate-x-1/2 mask-[radial-gradient(closest-side,white,transparent)]"
             aria-hidden="true"
           >
             <circle cx={512} cy={512} r={512} fill="url(#gradient)" fillOpacity="0.1" />

@@ -52,7 +52,7 @@ export function ProductV2() {
                     <ShinyText 
                       duration={10} 
                       shineColor="oklch(0.85 0.03 90 / 0.4)" 
-                      className="!inline-block"
+                      className="inline-block!"
                     >
                       Vintage 2018
                     </ShinyText>
@@ -97,7 +97,7 @@ export function ProductV2() {
               <AddToCartButton 
                 onClick={() => console.log('Added to cart')}
                 bgColor="#18181b" 
-                className="!rounded-none !px-12 !py-6 !text-base"
+                className="rounded-none! px-12! py-6! text-base!"
               />
             </BlurFade>
 

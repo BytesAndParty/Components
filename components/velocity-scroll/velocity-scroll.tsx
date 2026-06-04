@@ -80,7 +80,7 @@ function VelocityRow({ children, baseVelocity, className, gap = '1rem' }: Veloci
           <div
             key={i}
             ref={i === 0 ? innerRef : undefined}
-            className="flex flex-shrink-0"
+            className="flex shrink-0"
             style={{ gap }}
           >
             {children}
@@ -144,7 +144,7 @@ export function TestimonialCard({ testimonial, className }: TestimonialCardProps
 
   return (
     <div className={cn(
-      'flex-shrink-0 w-52 p-4 rounded-xl border border-border bg-card flex flex-col gap-2.5 whitespace-normal shadow-sm',
+      'shrink-0 w-52 p-4 rounded-xl border border-border bg-card flex flex-col gap-2.5 whitespace-normal shadow-sm',
       className
     )}>
       <p className="text-muted-foreground m-0 text-sm leading-relaxed italic">

@@ -23,7 +23,7 @@ export function HeroV4() {
               <ShinyText 
                 duration={12} 
                 shineColor="oklch(0.85 0.03 90 / 0.5)" 
-                className="!inline-block"
+                className="inline-block!"
               >
                 Hingabe.
               </ShinyText>
@@ -37,7 +37,7 @@ export function HeroV4() {
           </BlurFade>
 
           <BlurFade delay={400} direction="up" className="flex items-center gap-10">
-            <MagneticButton variant="default" className="!rounded-none !bg-zinc-900 !px-12 !py-5 !text-base !text-white transition-colors hover:!bg-zinc-800">
+            <MagneticButton variant="default" className="rounded-none! bg-zinc-900! px-12! py-5! text-base! text-white! transition-colors hover:bg-zinc-800!">
               Sortiment entdecken
             </MagneticButton>
             <a href="/weingut" className="border-b border-zinc-200 pb-1 text-sm font-bold tracking-widest uppercase transition-colors hover:border-zinc-900">
@@ -55,7 +55,7 @@ export function HeroV4() {
               borderRadius="0"
               intensity={0.15}
               blur={80}
-              className="aspect-[4/5] w-full max-w-[500px] shadow-[40px_40px_80px_-20px_rgba(0,0,0,0.1)]"
+              className="aspect-4/5 w-full max-w-[500px] shadow-[40px_40px_80px_-20px_rgba(0,0,0,0.1)]"
             />
           </BlurFade>
           

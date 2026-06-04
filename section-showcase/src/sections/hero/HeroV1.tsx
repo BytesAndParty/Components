@@ -59,7 +59,7 @@ export function HeroV1() {
             <img
               src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80"
               alt="Weinkeller mit Eichenfässern"
-              className="aspect-[4/5] w-full object-cover"
+              className="aspect-4/5 w-full object-cover"
             />
           </div>
           <figcaption className="text-muted-foreground mt-3 flex items-center justify-between text-xs">
