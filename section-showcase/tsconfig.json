@@ -17,5 +17,6 @@
       "@components/*": ["../components/*"]
     }
   },
-  "include": ["src", "../components/**/*.tsx", "../components/**/*.ts"]
+  "include": ["src", "../components/**/*.tsx", "../components/**/*.ts"],
+  "exclude": ["../components/**/*.test.ts", "../components/**/*.test.tsx"]
 }
