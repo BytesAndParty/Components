@@ -1,4 +1,5 @@
-import React, { useState, ReactNode } from 'react'
+// eslint-disable-next-line no-restricted-imports -- useCallback gives stable register/unregister identities consumers rely on.
+import React, { useCallback, useState, ReactNode } from 'react'
 import {
   HotkeysRegistryContext,
   HotkeysActionsContext,

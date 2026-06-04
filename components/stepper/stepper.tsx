@@ -1,10 +1,13 @@
+/* eslint-disable no-restricted-imports -- useCallback keeps step-navigation handlers stable across renders. */
 import {
+  useCallback,
   useState,
   type ReactNode,
   type CSSProperties,
   Children,
   isValidElement,
 } from 'react'
+/* eslint-enable no-restricted-imports */
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from '../lib/utils'
 import { useComponentMessages, interpolate } from '../i18n'
@@ -69,8 +72,8 @@ function StepIndicator({
                 className={cn(
                   "w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 border-2",
                   isCompleted || isActive
-                    ? "bg-[var(--accent,#6366f1)] text-white border-[var(--accent,#6366f1)]"
-                    : "bg-transparent text-[var(--muted-foreground,#71717a)] border-[var(--border,#2a2a2e)]"
+                    ? "bg-(--accent,#6366f1) text-white border-(--accent,#6366f1)"
+                    : "bg-transparent text-(--muted-foreground,#71717a) border-(--border,#2a2a2e)"
                 )}
                 aria-label={isCompleted ? `${titles[i] ?? stepNum} ${completedLabel}` : undefined}
               >
@@ -95,10 +98,10 @@ function StepIndicator({
               {titles[i] && (
                 <span
                   className={cn(
-                    "text-[10px] md:text-xs transition-colors duration-300 whitespace-nowrap",
+                    "text-2.5 md:text-xs transition-colors duration-300 whitespace-nowrap",
                     isActive
-                      ? "text-[var(--foreground,#e4e4e7)] font-semibold"
-                      : "text-[var(--muted-foreground,#71717a)] font-normal"
+                      ? "text-(--foreground,#e4e4e7) font-semibold"
+                      : "text-(--muted-foreground,#71717a) font-normal"
                   )}
                 >
                   {titles[i]}
@@ -111,12 +114,12 @@ function StepIndicator({
               <div
                 aria-hidden
                 className={cn(
-                  "w-8 md:w-12 h-[2px] mx-1 md:mx-2 bg-[var(--border,#2a2a2e)] rounded-sm overflow-hidden",
-                  titles[i] ? "mb-[18px] md:mb-[22px]" : "mb-0"
+                  "w-8 md:w-12 h-0.5 mx-1 md:mx-2 bg-(--border,#2a2a2e) rounded-sm overflow-hidden",
+                  titles[i] ? "mb-4.5 md:mb-5.5" : "mb-0"
                 )}
               >
                 <div
-                  className="h-full bg-[var(--accent,#6366f1)] transition-[width] duration-450 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                  className="h-full bg-(--accent,#6366f1) transition-[width] duration-450 ease-in-out"
                   style={{ width: stepNum < currentStep ? '100%' : '0%' }}
                 />
               </div>
@@ -197,7 +200,7 @@ export function Stepper({
 
       {/* Step content with animation */}
       <div
-        className="relative min-h-[120px] overflow-hidden"
+        className="relative min-h-30 overflow-hidden"
         role="group"
         aria-label={interpolate(m.stepOfTotal, { current: currentStep, total: totalSteps })}
         aria-live="polite"
@@ -226,8 +229,8 @@ export function Stepper({
           className={cn(
             "px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border cursor-pointer",
             isFirstStep
-              ? "bg-transparent text-[var(--muted-foreground,#71717a)] border-[var(--border,#2a2a2e)] opacity-50 cursor-not-allowed"
-              : "bg-transparent text-[var(--foreground,#e4e4e7)] border-[var(--border,#2a2a2e)] hover:bg-white/5"
+              ? "bg-transparent text-(--muted-foreground,#71717a) border-(--border,#2a2a2e) opacity-50 cursor-not-allowed"
+              : "bg-transparent text-(--foreground,#e4e4e7) border-(--border,#2a2a2e) hover:bg-white/5"
           )}
         >
           {m.back}
@@ -236,7 +239,7 @@ export function Stepper({
         <button
           type="button"
           onClick={goNext}
-          className="cursor-pointer rounded-lg border-none bg-[var(--accent,#6366f1)] px-6 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-95"
+          className="cursor-pointer rounded-lg border-none bg-(--accent,#6366f1) px-6 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-95"
         >
           {isLastStep ? m.finalize : m.next}
         </button>

@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+// eslint-disable-next-line no-restricted-imports -- useMemo caches the radial-gradient style string per accent change.
+import { useMemo, useRef, useState } from 'react';
 
 interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

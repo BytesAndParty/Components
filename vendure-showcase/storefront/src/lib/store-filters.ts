@@ -12,6 +12,7 @@
  * Round-Trip pro Filter-Toggle. Ab ~hunderten Produkten auf Vendure `search`
  * mit `facetValueFilters` umsteigen.
  */
+// eslint-disable-next-line no-restricted-imports -- useCallback needed for stable store subscribe identity (useSyncExternalStore contract).
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { vendureClient } from './vendure-client';

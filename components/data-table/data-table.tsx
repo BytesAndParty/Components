@@ -10,7 +10,8 @@ import {
   RowSelectionState,
   ColumnSizingState,
 } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
+// eslint-disable-next-line no-restricted-imports -- useMemo is load-bearing for stable column defs/data refs that drive TanStack Table memo.
+import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
