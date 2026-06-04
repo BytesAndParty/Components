@@ -6,9 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import eslintPluginAstro from 'eslint-plugin-astro'
 import tanstackQuery from '@tanstack/eslint-plugin-query'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
-import tailwind from 'eslint-plugin-tailwindcss'
 import unusedImports from 'eslint-plugin-unused-imports'
-import { fixupPluginRules } from '@eslint/compat'
 import globals from 'globals'
 
 export default defineConfig(
@@ -58,7 +56,6 @@ export default defineConfig(
     },
     plugins: {
       'react-refresh': reactRefresh,
-      'tailwindcss': fixupPluginRules(tailwind),
       'unused-imports': unusedImports,
     },
     rules: {
@@ -66,11 +63,6 @@ export default defineConfig(
         allowConstantExport: true,
         extraHOCs: ['createLottieIcon'],
       }],
-
-      // Tailwind CSS rules
-      'tailwindcss/classnames-order': 'warn',
-      'tailwindcss/no-custom-classname': 'off', // Allow custom classes since we use them for variants
-      'tailwindcss/enforces-shorthand': 'warn',
 
       // Unused imports cleanup
       'unused-imports/no-unused-imports': 'warn',
