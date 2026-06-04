@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, useParams } from 'react-router'
+import { TransitionStage } from '@components/view-transition/transition-stage'
 import { findSection } from '../sections/registry'
 import { useShowcase } from '../showcase-state'
 
@@ -45,7 +46,9 @@ export function SectionPage() {
 
   return (
     <div className="pb-32">
-      <active.Component />
+      <TransitionStage name="vt-stage" nesting="nearest">
+        <active.Component />
+      </TransitionStage>
     </div>
   )
 }

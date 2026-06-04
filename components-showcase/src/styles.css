@@ -137,6 +137,25 @@
   animation: 200ms ease-in both vt-slide-in;
 }
 
+/* Shared element morph: wine bottle image card → detail.
+   The morph target uses `view-transition-class: wine` so we don't need
+   one selector per bottle. Chrome 125+ / Safari 18.2+. */
+.vt-wine { view-transition-class: wine; }
+
+::view-transition-group(.wine) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 50; /* above the cross-fading page-content */
+}
+::view-transition-old(.wine),
+::view-transition-new(.wine) {
+  /* No cross-fade — the morph alone reads as continuous motion. */
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* Navbar stays above page-content during any view transition */
 ::view-transition-group(nav-bar) {
   z-index: 200;

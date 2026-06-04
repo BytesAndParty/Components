@@ -99,7 +99,7 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
         {...a11y}
         {...(isClick ? { role: 'button', tabIndex: 0 } : {})}
         className={cn(
-          'inline-flex items-center justify-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent,#6366f1)] rounded-sm',
+          'inline-flex items-center justify-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-(--accent,#6366f1) rounded-sm',
           className
         )}
         onMouseEnter={isHover ? onMouseEnter : undefined}

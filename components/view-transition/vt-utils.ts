@@ -1,6 +1,7 @@
 export type VtPreset =
   | 'vt-fade'
   | 'vt-slide-left'
+  | 'vt-slide-right'
   | 'vt-slide-up'
   | 'vt-scale'
   | 'vt-circular-reveal'
@@ -19,6 +20,7 @@ export interface VtPresetMeta {
 export const VT_PRESETS: VtPresetMeta[] = [
   { id: 'vt-fade', label: 'Fade', hint: 'Klassischer Crossfade zwischen Old- und New-Snapshot.' },
   { id: 'vt-slide-left', label: 'Slide Left', hint: 'Old rutscht nach links raus, New von rechts rein.' },
+  { id: 'vt-slide-right', label: 'Slide Right', hint: 'Old rutscht nach rechts raus, New von links rein.' },
   { id: 'vt-slide-up', label: 'Slide Up', hint: 'Vertikales Scrollen zwischen den States.' },
   { id: 'vt-scale', label: 'Scale', hint: 'Zoom-out + Zoom-in mit leichtem Spring-Overshoot.' },
   { id: 'vt-circular-reveal', label: 'Circular Reveal', hint: 'Kreisförmige Clip-Path-Expansion ab Klickpunkt.', needsOrigin: true },
@@ -51,6 +53,11 @@ export function injectStyles(stageName: string) {
     @keyframes vt-slide-in-r  { from { transform: translateX(30%); opacity: 0 } }
     :is(html:active-view-transition-type(vt-slide-left), [data-vt="vt-slide-left"])::view-transition-old(${s}) { animation: vt-slide-out-l .45s cubic-bezier(.4,0,.2,1) both; }
     :is(html:active-view-transition-type(vt-slide-left), [data-vt="vt-slide-left"])::view-transition-new(${s}) { animation: vt-slide-in-r .45s cubic-bezier(.4,0,.2,1) both; }
+
+    @keyframes vt-slide-out-r { to { transform: translateX(30%); opacity: 0 } }
+    @keyframes vt-slide-in-l  { from { transform: translateX(-30%); opacity: 0 } }
+    :is(html:active-view-transition-type(vt-slide-right), [data-vt="vt-slide-right"])::view-transition-old(${s}) { animation: vt-slide-out-r .45s cubic-bezier(.4,0,.2,1) both; }
+    :is(html:active-view-transition-type(vt-slide-right), [data-vt="vt-slide-right"])::view-transition-new(${s}) { animation: vt-slide-in-l .45s cubic-bezier(.4,0,.2,1) both; }
 
     @keyframes vt-slide-up-out { to { transform: translateY(-20%); opacity: 0 } }
     @keyframes vt-slide-up-in  { from { transform: translateY(20%); opacity: 0 } }
