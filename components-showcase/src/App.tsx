@@ -7,8 +7,11 @@ import { Layout } from './layout'
 
 // Route-level code splitting: each page lands in its own chunk so the
 // initial bundle only carries the index page + provider chain.
-const IndexPage       = lazy(() => import('./pages/index').then(m => ({ default: m.IndexPage })))
-const CardsPage       = lazy(() => import('./pages/cards').then(m => ({ default: m.CardsPage })))
+import { IndexPage } from './pages/index'
+import { CardsPage } from './pages/cards'
+import { WineDetailPage } from './pages/wine-detail'
+
+// Route-level code splitting for non-critical pages
 const TextPage        = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
 const IconsPage       = lazy(() => import('./pages/icons').then(m => ({ default: m.IconsPage })))
 const InputsPage      = lazy(() => import('./pages/inputs').then(m => ({ default: m.InputsPage })))
@@ -18,7 +21,6 @@ const ShopPage        = lazy(() => import('./pages/shop').then(m => ({ default: 
 const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
 const DesignerPage    = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
 const DataPage        = lazy(() => import('./pages/data').then(m => ({ default: m.DataPage })))
-const WineDetailPage  = lazy(() => import('./pages/wine-detail').then(m => ({ default: m.WineDetailPage })))
 
 const queryClient = new QueryClient()
 
@@ -58,8 +60,8 @@ const router = createBrowserRouter([
       </>
     ),
     children: [
-      { index: true,           element: withSuspense(<IndexPage />) },
-      { path: 'cards',         element: withSuspense(<CardsPage />) },
+      { index: true,           element: <IndexPage /> },
+      { path: 'cards',         element: <CardsPage /> },
       { path: 'text',          element: withSuspense(<TextPage />) },
       { path: 'icons',         element: withSuspense(<IconsPage />) },
       { path: 'inputs',        element: withSuspense(<InputsPage />) },
@@ -69,10 +71,14 @@ const router = createBrowserRouter([
       { path: 'data',          element: withSuspense(<DataPage />) },
       { path: 'transitions',   element: withSuspense(<TransitionsPage />) },
       { path: 'designer',      element: withSuspense(<DesignerPage />) },
-      { path: 'wine/:slug',    element: withSuspense(<WineDetailPage />) },
+      { path: 'wine/:slug',    element: <WineDetailPage /> },
     ],
   },
-])
+], {
+  // Vite's `base` only rewrites assets; the router needs the subpath too so
+  // <Link>/navigate stay under /components/ in the combined deploy. Dev: '/'.
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || undefined,
+})
 
 export function App() {
   return (
