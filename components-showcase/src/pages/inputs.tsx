@@ -10,9 +10,12 @@ import { FieldHint } from '@components/field-hint/field-hint'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
 import { GooeyInput } from '@components/gooey-input/gooey-input'
+import { SearchMorph } from '@components/search-morph/search-morph'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
+import { ImageUpload } from '@components/use-image-upload/image-upload'
 import { useToast } from '@components/toast/toast-context'
 import { PasswordSetup } from '@components/password-setup/password-setup'
+import { PasswordConfirmation } from '@components/password-confirmation/password-confirmation'
 import visibilityData from '../../../_resources_/Visibility V3/visibility-V3.json'
 import { suggestions } from '../data'
 
@@ -260,6 +263,38 @@ function ImageUploadDemo() {
   )
 }
 
+function PasswordConfirmationDemo() {
+  const [password, setPassword] = useState('')
+  const { add } = useToast()
+
+  return (
+    <div className="border-border bg-card flex max-w-96 flex-col gap-4 rounded-xl border p-6 shadow-sm">
+      <FormInput
+        type="password"
+        label="Passwort"
+        hint="Tippe oben ein Passwort — die Dots unten leuchten grün, sobald die Bestätigung Zeichen für Zeichen passt."
+        placeholder="Passwort wählen…"
+        value={password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+      />
+      <div className="flex flex-col gap-1.5">
+        <span className="text-muted-foreground block text-[12px] font-medium tracking-wider uppercase">
+          Bestätigen
+        </span>
+        <PasswordConfirmation
+          password={password || 'demo1234'}
+          onMatch={() => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
+        />
+      </div>
+      {!password && (
+        <p className="text-muted-foreground text-[12px]">
+          Kein Passwort gesetzt — Demo prüft gegen <code className="rounded bg-white/5 px-1">demo1234</code>.
+        </p>
+      )}
+    </div>
+  )
+}
+
 export function InputsPage() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
   const [volume, setVolume] = useState(60)
@@ -279,6 +314,10 @@ export function InputsPage() {
             onMatch={(_pw) => add({ title: 'Match!', description: 'Passwörter stimmen überein.', variant: 'success' })}
           />
         </div>
+      </Section>
+
+      <Section title="PasswordConfirmation" description="Per-character dot match against a target password — green on match, red mismatch, shake on overflow. role=status announces the match.">
+        <PasswordConfirmationDemo />
       </Section>
 
       <Section title="FormInput + Zod" description="Schema-driven inputs with real-time validation and error shake. Hier mit hint-Prop bei Name und Alter — Tooltip + aria-describedby.">
@@ -388,8 +427,25 @@ export function InputsPage() {
         </div>
       </Section>
 
+      <Section title="SearchMorph" description="Magnifying-glass stroke that unrolls into an underline as the field expands; the handle rotates into a close-X. Enter searches, Esc closes.">
+        <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
+          <SearchMorph
+            onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
+          />
+          <p className="text-muted-foreground text-[0.7rem]">SVG stroke-dashoffset morph · keyboard accessible</p>
+        </div>
+      </Section>
+
       <Section title="useImageUpload" description="Hook for image upload with preview and removal logic.">
         <ImageUploadDemo />
+      </Section>
+
+      <Section title="ImageUpload" description="Drop-in component built on the hook — dashed drop zone, drag & drop, hover-overlay remove. Fully keyboard operable (Enter/Space opens the picker).">
+        <div className="max-w-96">
+          <ImageUpload
+            onUpload={() => add({ title: 'Bild geladen', description: 'Vorschau wird angezeigt.', variant: 'success' })}
+          />
+        </div>
       </Section>
     </>
   )

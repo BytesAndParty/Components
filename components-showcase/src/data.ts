@@ -29,7 +29,7 @@ export const groups = [
     descKey: 'desc.inputs',
     title: 'Inputs & Forms',
     description: 'Form controls, search interactions, and file uploads.',
-    components: ['Checkbox', 'Switch', 'Slider', 'FormInput', 'FieldHint', 'AutocompleteCell', 'AnimatedSearch', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
+    components: ['Checkbox', 'Switch', 'Slider', 'FormInput', 'FieldHint', 'AutocompleteCell', 'AnimatedSearch', 'SearchMorph', 'GooeyInput', 'ImageUpload', 'PasswordConfirmation', 'PasswordSetup'],
   },
   {
     path: '/feedback',
@@ -53,7 +53,7 @@ export const groups = [
     descKey: 'desc.shop',
     title: 'Shop Components',
     description: 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
-    components: ['CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
+    components: ['ProductTag', 'CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
   },
   {
     path: '/designer',

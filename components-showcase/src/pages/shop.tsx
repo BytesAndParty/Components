@@ -4,6 +4,7 @@ import { Stepper, Step } from '@components/stepper/stepper'
 import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
 import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
+import { ProductTag, ProductTagGroup, type ProductTagVariant } from '@components/product-tag/product-tag'
 import { useToast } from '@components/toast/toast-context'
 import { useCart } from '../cart-context'
 
@@ -26,8 +27,31 @@ export function ShopPage() {
     { id: 'brunello', name: 'Brunello DOCG 2017', price: '€ 55,00' },
   ]
 
+  const tagVariants: ProductTagVariant[] = ['new', 'sale', 'low-stock', 'bestseller', 'limited', 'organic', 'vegan', 'award']
+
   return (
     <>
+      <Section title="Product Tag" description="Pill-Badges für Produktkarten: Entrance-Pop, Shimmer-Sweep beim Hover, Puls-Dot bei knappem Bestand. 8 Varianten, i18n-Labels, reduced-motion-safe.">
+        <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8 shadow-sm">
+          <ProductTagGroup>
+            {tagVariants.map((v) => (
+              <ProductTag key={v} variant={v} />
+            ))}
+          </ProductTagGroup>
+          <div className="border-border flex flex-wrap items-center gap-4 border-t pt-5">
+            <span className="text-muted-foreground text-xs">Sale mit Rabatt-Override:</span>
+            <ProductTag variant="sale" discount={20} />
+            <ProductTag variant="sale" discount={33} />
+            <span className="text-muted-foreground ml-4 text-xs">Custom Label:</span>
+            <ProductTag variant="award" label="Falstaff 95" />
+          </div>
+          <div className="border-border text-muted-foreground flex justify-between border-t pt-3 text-[0.7rem]">
+            <span>ProductTag · injected keyframes · prefers-reduced-motion aware</span>
+            <span>No dependencies</span>
+          </div>
+        </div>
+      </Section>
+
       <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
         <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
           <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
