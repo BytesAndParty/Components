@@ -131,29 +131,33 @@
 
 /* Page navigation view transitions */
 ::view-transition-old(page-content) {
-  animation: 150ms ease-out both vt-slide-out;
+  animation: 250ms ease-out both vt-fade-out;
 }
 ::view-transition-new(page-content) {
-  animation: 200ms ease-in both vt-slide-in;
+  animation: 500ms ease-in-out both vt-fade-in;
 }
 
-/* Shared element morph: wine bottle image card → detail.
-   The morph target uses `view-transition-class: wine` so we don't need
-   one selector per bottle. Chrome 125+ / Safari 18.2+. */
+/* Shared element morph: wine bottle image card → detail. */
 .vt-wine { view-transition-class: wine; }
 
-::view-transition-group(.wine) {
-  animation-duration: 520ms;
-  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
-  z-index: 50; /* above the cross-fading page-content */
+/* Target by class (Chrome 125+) and by specific names (fallback) */
+::view-transition-group(.wine),
+::view-transition-group(wine-barolo-riserva-2016),
+::view-transition-group(wine-riesling-smaragd-2022) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100; /* Bottle always on top */
 }
+
 ::view-transition-old(.wine),
-::view-transition-new(.wine) {
-  /* No cross-fade — the morph alone reads as continuous motion. */
-  animation: none;
+::view-transition-new(.wine),
+::view-transition-old(wine-barolo-riserva-2016),
+::view-transition-new(wine-barolo-riserva-2016),
+::view-transition-old(wine-riesling-smaragd-2022),
+::view-transition-new(wine-riesling-smaragd-2022) {
+  /* Ensure the container content (the image) is captured and blended correctly. */
   mix-blend-mode: normal;
   height: 100%;
-  object-fit: contain;
 }
 
 /* Navbar stays above page-content during any view transition */
@@ -166,11 +170,11 @@
   mix-blend-mode: normal;
 }
 
-@keyframes vt-slide-in {
-  from { opacity: 0; transform: translateY(6px); }
+@keyframes vt-fade-in {
+  from { opacity: 0; }
 }
-@keyframes vt-slide-out {
-  to { opacity: 0; transform: translateY(-6px); }
+@keyframes vt-fade-out {
+  to { opacity: 0; }
 }
 
 /* Custom Component Utilities (that are hard to do in pure Tailwind classes) */

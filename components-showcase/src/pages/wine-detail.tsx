@@ -147,13 +147,13 @@ export function WineDetailPage() {
         <Breadcrumb>
           <BreadcrumbList style={{ color: 'var(--muted-foreground)', fontSize: '0.75rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cards" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Link to="/cards" viewTransition style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                 <ChevronLeft size={12} /> Sortiment
-              </BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cards">{wine.country}</BreadcrumbLink>
+              <Link to="/cards" viewTransition style={{ color: 'inherit', textDecoration: 'none' }}>{wine.country}</Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -170,8 +170,13 @@ export function WineDetailPage() {
         <div className="relative">
           <Backlight intensity={0.42} blur={70} blobs={3} interactive>
             <div
-              className="border-border bg-card relative overflow-hidden"
-              style={{ borderRadius: '20px', border: '1px solid var(--border)', aspectRatio: '3 / 4' }}
+              className="vt-wine border-border bg-card relative overflow-hidden"
+              style={{
+                borderRadius: '20px',
+                border: '1px solid var(--border)',
+                aspectRatio: '3 / 4',
+                viewTransitionName: `wine-${wine.slug}`,
+              }}
             >
               <Lens
                 zoom={2.2}
@@ -183,15 +188,12 @@ export function WineDetailPage() {
                 <img
                   src={bottleSrc(wine.variant)}
                   alt={`${wine.name} ${wine.vintage}`}
-                  className="vt-wine"
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain',
                     display: 'block',
-                    padding: '36px',
-                    filter: 'drop-shadow(0 30px 40px oklch(0 0 0 / 0.45))',
-                    viewTransitionName: `wine-${wine.slug}`,
+                    padding: '10%',
                   }}
                   draggable={false}
                 />
@@ -226,7 +228,12 @@ export function WineDetailPage() {
             {/* Headline (serif) */}
             <h1
               className="text-foreground m-0"
-              style={{ ...serif, fontSize: 'clamp(2.25rem, 5vw, 3.25rem)', lineHeight: 1.05, fontWeight: 500 }}
+              style={{
+                ...serif,
+                fontSize: 'clamp(2.25rem, 5vw, 3.25rem)',
+                lineHeight: 1.05,
+                fontWeight: 500,
+              }}
             >
               {wine.name}
               <br />
@@ -396,6 +403,7 @@ export function WineDetailPage() {
                   }}
                 >
                   <div
+                    className={rel.slug in wines ? 'vt-wine' : undefined}
                     style={{
                       flex: 1,
                       display: 'grid',
@@ -403,18 +411,17 @@ export function WineDetailPage() {
                       padding: '20px 16px 0',
                       background:
                         'radial-gradient(circle at 50% 25%, color-mix(in oklch, var(--accent) 10%, transparent), transparent 65%)',
+                      ...(rel.slug in wines ? { viewTransitionName: `wine-${rel.slug}` } : null),
                     }}
                   >
                     <img
                       src={bottleSrc(rel.variant)}
                       alt={rel.name}
-                      className={rel.slug in wines ? 'vt-wine' : undefined}
                       style={{
-                        maxHeight: '100%',
-                        maxWidth: '65%',
+                        width: '100%',
+                        height: '100%',
+                        padding: '10%',
                         objectFit: 'contain',
-                        filter: 'drop-shadow(0 12px 18px oklch(0 0 0 / 0.35))',
-                        ...(rel.slug in wines ? { viewTransitionName: `wine-${rel.slug}` } : null),
                       }}
                     />
                   </div>

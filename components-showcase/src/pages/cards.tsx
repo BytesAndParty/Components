@@ -25,23 +25,24 @@ import { Link } from 'react-router'
 function WineMedia({ src, alt, vtName }: { src: string; alt: string; vtName?: string }) {
   return (
     <div
+      className={vtName ? 'vt-wine' : undefined}
       style={{
-        aspectRatio: '4 / 3',
+        aspectRatio: '3 / 4',
         display: 'grid',
         placeItems: 'center',
         background:
           'radial-gradient(circle at 30% 20%, color-mix(in oklch, var(--accent) 14%, transparent), transparent 60%), var(--muted)',
+        ...(vtName ? { viewTransitionName: vtName } : null),
       }}
     >
       <img
         src={src}
         alt={alt}
-        className={vtName ? 'vt-wine' : undefined}
         style={{
-          height: '88%',
+          width: '100%',
+          height: '100%',
+          padding: '10%',
           objectFit: 'contain',
-          filter: 'drop-shadow(0 8px 16px oklch(0 0 0 / 0.25))',
-          ...(vtName ? { viewTransitionName: vtName } : null),
         }}
       />
     </div>
@@ -64,7 +65,9 @@ function WineBody({
   return (
     <div style={{ padding: '1.25rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
       <p className="text-muted-foreground text-[0.625rem] tracking-[0.18em] uppercase">{region}</p>
-      <h3 className="text-foreground m-0 text-base leading-tight font-bold">{name}</h3>
+      <h3 className="text-foreground m-0 text-base leading-tight font-bold">
+        {name}
+      </h3>
       <p className="text-muted-foreground m-0 text-xs">Jahrgang {vintage}</p>
       {note && <p className="text-muted-foreground m-0 mt-1 text-xs italic">{note}</p>}
       <p className="m-0 mt-2 text-base font-bold" style={{ color: 'var(--accent)' }}>{price}</p>

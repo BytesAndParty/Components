@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { Link, Outlet, useLocation, useNavigate, ScrollRestoration } from 'react-router'
 import { ToastProvider } from '@components/toast/toast'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
@@ -84,6 +84,7 @@ export function Layout() {
   return (
     <CartContext.Provider value={cartValue}>
       <ToastProvider placement="bottom-right">
+        <ScrollRestoration />
         {/* UI Essentials */}
         <SearchOverlay 
           fetchResults={async (q) => mockResults.filter(r => r.title.toLowerCase().includes(q.toLowerCase()))} 
