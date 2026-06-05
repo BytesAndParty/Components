@@ -9,7 +9,10 @@ const nm = (pkg: string) => {
   return fs.existsSync(p) ? p : pkg
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Build-only base: dev serves at '/', the combined Netlify build nests this
+  // app under /sections/ in the shared publish dir.
+  base: command === 'build' ? '/sections/' : '/',
   server: { port: 5174 },
   plugins: [
     react({
@@ -29,4 +32,4 @@ export default defineConfig({
       'tailwind-merge': nm('tailwind-merge'),
     },
   },
-})
+}))

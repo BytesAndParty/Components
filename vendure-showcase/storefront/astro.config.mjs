@@ -6,8 +6,13 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('./src', import.meta.url));
 const monorepoComponents = fileURLToPath(new URL('../../components', import.meta.url));
 
+// In the combined Netlify build the storefront is nested under /shop; the build
+// command sets DEPLOY_SUBPATH. Local `astro dev` leaves base at '/'.
+const base = process.env.DEPLOY_SUBPATH || undefined;
+
 // https://astro.build/config
 export default defineConfig({
+  base,
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

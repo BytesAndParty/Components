@@ -13,7 +13,12 @@ const arkui = (name: string) => {
   return p
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Build-only base: dev serves at '/', the combined Netlify build nests this
+  // app under /components/ in the shared publish dir. Explicit port ends the
+  // 5173 collision with the Vendure storefront.
+  base: command === 'build' ? '/components/' : '/',
+  server: { port: 5171 },
   plugins: [
     react({
       babel: {
@@ -93,4 +98,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

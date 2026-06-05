@@ -1,11 +1,27 @@
 [build]
-  command = "bun install --frozen-lockfile && bun run --cwd showcase build"
-  publish = "showcase/dist"
+  command = "bun install --frozen-lockfile && bun run build:all"
+  publish = "dist"
 
 [build.environment]
   BUN_VERSION  = "1.3.12"
   NODE_VERSION = "20"
 
+# ── SPA client-routing fallbacks ────────────────────────────────────────────
+# The two Vite SPAs use history routing, so deep links must fall back to their
+# own index.html. Rules are evaluated top-down; subpaths must come BEFORE the
+# launcher catch-all. The Vendure storefront is static (real files) — no rule.
+
+[[redirects]]
+  from   = "/components/*"
+  to     = "/components/index.html"
+  status = 200
+
+[[redirects]]
+  from   = "/sections/*"
+  to     = "/sections/index.html"
+  status = 200
+
+# Launcher is a single page; fall back to its index for anything else.
 [[redirects]]
   from   = "/*"
   to     = "/index.html"

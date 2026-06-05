@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { @slot; }
+  }
+}
+
+/* Theme follows the shared data-theme attribute (set by the inline init
+   script), not the OS preference — keep dark: utilities in sync with it. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --font-sans:    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+
+  --color-background:        var(--background);
+  --color-foreground:        var(--foreground);
+  --color-card:              var(--card);
+  --color-card-foreground:   var(--card-foreground);
+  --color-muted:             var(--muted);
+  --color-muted-foreground:  var(--muted-foreground);
+  --color-border:            var(--border);
+  --color-accent:            var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+/* ── Dark Mode (default) ─────────────────────────────── */
+:root {
+  --background:        oklch(0.062 0.004 285);
+  --foreground:        oklch(0.905 0.004 285);
+  --card:              oklch(0.082 0.004 285);
+  --card-foreground:   oklch(0.905 0.004 285);
+  --muted:             oklch(0.118 0.004 285);
+  --muted-foreground:  oklch(0.611 0.012 285);
+  --border:            oklch(0.188 0.006 285);
+  --accent:            oklch(0.585 0.233 277);
+  --accent-foreground: oklch(1 0 0);
+  --radius:            0.5rem;
+}
+
+/* ── Light Mode ──────────────────────────────────────── */
+[data-theme="light"] {
+  --background:       oklch(0.979 0.002 285);
+  --foreground:       oklch(0.141 0.004 285);
+  --card:             oklch(1 0 0);
+  --card-foreground:  oklch(0.141 0.004 285);
+  --muted:            oklch(0.961 0.002 285);
+  --muted-foreground: oklch(0.491 0.010 285);
+  --border:           oklch(0.870 0.004 285);
+}
+
+/* Accent overrides via data-accent attribute */
+[data-accent="indigo"]  { --accent: oklch(0.585 0.233 277); }
+[data-accent="amber"]   { --accent: oklch(0.555 0.146 49); }
+[data-accent="emerald"] { --accent: oklch(0.511 0.086 186.4); }
+[data-accent="rose"]    { --accent: oklch(0.585 0.22 5); }
+[data-accent="bordeaux"]{ --accent: oklch(0.42 0.15 18); }
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__Components__ · Launcher</title>
+    <!-- FOUC-Schutz + geteiltes Theme: liest dieselben atelier-* Keys wie die
+         Showcases, damit ein im Showcase gesetztes Theme auch hier sofort gilt. -->
+    <script>
+      (function () {
+        try {
+          var s = window.localStorage;
+          var t = s.getItem('atelier-theme')  || 'dark';
+          var a = s.getItem('atelier-accent') || 'indigo';
+          var l = s.getItem('atelier-locale') || 'de';
+          var d = document.documentElement;
+          d.setAttribute('data-theme',  t);
+          d.setAttribute('data-accent', a);
+          d.setAttribute('data-locale', l);
+          d.lang = l;
+          d.classList.toggle('dark', t === 'dark');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

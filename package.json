@@ -6,7 +6,8 @@
     "lint": "eslint .",
     "security:audit": "bun audit --audit-level=critical",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:all": "bun run scripts/build-all.mjs"
   },
   "trustedDependencies": [
     "sharp",
@@ -14,6 +15,7 @@
   ],
   "workspaces": [
     "components",
+    "launcher",
     "components-showcase",
     "section-showcase",
     "vendure-showcase/storefront"
@@ -40,12 +42,6 @@
     "typescript-eslint": "^8.60.1",
     "vite": "^8.0.16",
     "vitest": "^4.1.8"
-  },
-  "dependencies": {
-    "@types/qrcode": "^1.5.6",
-    "fabric": "^7.4.0",
-    "qrcode": "^1.5.4",
-    "zustand": "^5.0.14"
   },
   "overrides": {
     "devalue": "^5.8.1"
