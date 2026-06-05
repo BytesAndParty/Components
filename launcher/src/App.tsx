@@ -13,6 +13,8 @@ interface Target {
   description: string
   href: string
   icon: LucideIcon
+  // local-only apps aren't part of the deploy — shown but disabled in prod.
+  localOnly?: boolean
 }
 
 const DEV = import.meta.env.DEV
@@ -38,9 +40,10 @@ const TARGETS: Target[] = [
     id: 'vendure',
     label: 'Vendure Shop',
     tech: 'Astro · Storefront',
-    description: 'Der Wein-Storefront auf Vendure — Katalog, Produktdetail, Checkout. Das Ganze in echt.',
-    href: DEV ? 'http://localhost:5173' : '/shop/',
+    description: 'Der Wein-Storefront auf Vendure — Katalog, Produktdetail, Checkout. Läuft nur lokal.',
+    href: 'http://localhost:5173',
     icon: ShoppingBag,
+    localOnly: true,
   },
 ]
 
@@ -91,26 +94,46 @@ export function App() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {TARGETS.map(t => {
             const Icon = t.icon
+            // local-only targets are reachable in dev but disabled once deployed.
+            const disabled = t.localOnly && !DEV
+
+            const inner = (
+              <>
+                <div className="mb-5 flex items-center justify-between">
+                  <Icon size={22} className={disabled ? 'text-muted-foreground/50' : 'text-muted-foreground group-hover:text-accent transition-colors'} />
+                  {disabled
+                    ? <span className="border-border text-muted-foreground/60 rounded-full border px-2 py-0.5 text-[9px] tracking-[0.16em] uppercase">nur lokal</span>
+                    : <ArrowUpRight size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />}
+                </div>
+                <h2 className="font-display text-2xl font-medium tracking-tight">
+                  {t.label}
+                </h2>
+                <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">
+                  {t.tech}
+                </p>
+                <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+                  {t.description}
+                </p>
+              </>
+            )
+
             return (
               <li key={t.id}>
-                <a
-                  href={t.href}
-                  className="group border-border bg-card hover:border-accent/60 focus-visible:ring-accent/60 flex h-full flex-col rounded-2xl border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-                >
-                  <div className="mb-5 flex items-center justify-between">
-                    <Icon size={22} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                    <ArrowUpRight size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+                {disabled ? (
+                  <div
+                    aria-disabled="true"
+                    className="border-border bg-card flex h-full cursor-not-allowed flex-col rounded-2xl border p-6 opacity-55"
+                  >
+                    {inner}
                   </div>
-                  <h2 className="font-display text-2xl font-medium tracking-tight">
-                    {t.label}
-                  </h2>
-                  <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">
-                    {t.tech}
-                  </p>
-                  <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-                    {t.description}
-                  </p>
-                </a>
+                ) : (
+                  <a
+                    href={t.href}
+                    className="group border-border bg-card hover:border-accent/60 focus-visible:ring-accent/60 flex h-full flex-col rounded-2xl border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  >
+                    {inner}
+                  </a>
+                )}
               </li>
             )
           })}

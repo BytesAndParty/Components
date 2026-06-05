@@ -6,7 +6,9 @@
 //   dist/            ← launcher  (base '/')            → /
 //   dist/components/ ← components-showcase (base /components/)
 //   dist/sections/   ← section-showcase  (base /sections/)
-//   dist/shop/       ← vendure storefront (Astro base /shop via DEPLOY_SUBPATH)
+//
+// The Vendure storefront is intentionally NOT part of the deploy — it runs
+// local-only (the launcher links to it in dev, disables the card in prod).
 //
 // The base paths live in each app's own config; this script only orchestrates
 // and copies. Run via `bun run build:all`.
@@ -21,10 +23,9 @@ const out = path.join(root, 'dist')
 
 /** @type {{ name: string, cwd: string, dist: string, dest: string, env?: Record<string,string> }[]} */
 const apps = [
-  { name: 'launcher',            cwd: 'launcher',                     dist: 'dist', dest: '.' },
-  { name: 'components-showcase', cwd: 'components-showcase',          dist: 'dist', dest: 'components' },
-  { name: 'section-showcase',    cwd: 'section-showcase',             dist: 'dist', dest: 'sections' },
-  { name: 'vendure-storefront',  cwd: 'vendure-showcase/storefront',  dist: 'dist', dest: 'shop', env: { DEPLOY_SUBPATH: '/shop' } },
+  { name: 'launcher',            cwd: 'launcher',            dist: 'dist', dest: '.' },
+  { name: 'components-showcase', cwd: 'components-showcase',  dist: 'dist', dest: 'components' },
+  { name: 'section-showcase',    cwd: 'section-showcase',    dist: 'dist', dest: 'sections' },
 ]
 
 console.log('▸ cleaning', out)
