@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Section Showcase</title>
+    <!-- FOUC-Schutz: setzt Theme/Accent/Locale synchron VOR dem ersten Paint,
+         bevor React + AtelierProvider mounten. Muss mit den Defaults in
+         layout.tsx und ATELIER_KEYS in components/atelier übereinstimmen. -->
+    <script>
+      (function () {
+        try {
+          var s = window.localStorage;
+          var t = s.getItem('atelier-theme')  || 'dark';
+          var a = s.getItem('atelier-accent') || 'indigo';
+          var l = s.getItem('atelier-locale') || 'de';
+          var d = document.documentElement;
+          d.setAttribute('data-theme',  t);
+          d.setAttribute('data-accent', a);
+          d.setAttribute('data-locale', l);
+          d.lang = l;
+          d.classList.toggle('dark', t === 'dark');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
