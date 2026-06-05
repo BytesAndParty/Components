@@ -109,4 +109,4 @@ SVG ist grundsätzlich mehrfarbig — jedes Element kann eine eigene Farbe haben
 </g>
 ```
 
-CSS `color` unterstützt oklch, und `currentColor` bridgt den Wert zum SVG `fill`. Implementiert in `accent-switcher.tsx` (JS Hover mit `useState`). Alternative Variante (Dual SVG mit opacity swap) archiviert in `accent-switcher-v-dualsvg.tsx`.
+CSS `color` unterstützt oklch, und `currentColor` bridgt den Wert zum SVG `fill`. Implementiert in `accent-switcher.tsx` (JS Hover mit `useState`).

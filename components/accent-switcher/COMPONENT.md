@@ -38,4 +38,3 @@ None (React only).
 ## Variants
 
 - `accent-switcher.tsx` — Main component with oklch interpolation
-- `accent-switcher-v-dualsvg.tsx` — Alternate version with dual SVG icons
