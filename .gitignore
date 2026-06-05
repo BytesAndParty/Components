@@ -3,5 +3,6 @@ dist
 .vite
 *.local
 
-# Vendure data (SQLite DB + uploaded assets)
-wine-showcase/server/data/
+# Playwright
+playwright-report/
+test-results/
