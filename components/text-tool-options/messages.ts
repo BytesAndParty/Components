@@ -1,15 +1,5 @@
 import type { ComponentMessages } from '../i18n'
-
-export type TextToolOptionsMessages = {
-  bold: string
-  italic: string
-  underline: string
-  alignLeft: string
-  alignCenter: string
-  alignRight: string
-  alignJustify: string
-  textColor: string
-}
+import type { TextToolOptionsMessages } from './types'
 
 export const MESSAGES = {
   de: {

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://docs.fallow.tools/schema/fallow.schema.json",
+
+  // The Vendure backend lives in vendure-showcase/server but is installed and
+  // run on its own (tsx watch src/index.ts) — it is intentionally NOT part of
+  // the frontend bun workspace install. Declare its real entry points so its
+  // files aren't reported as unreachable dead code.
+  "workspaces": {
+    "patterns": ["vendure-showcase/server"]
+  },
+  "entry": [
+    "vendure-showcase/server/src/index.ts",
+    "vendure-showcase/server/src/seed.ts",
+    // Vendure Admin-UI extensions are loaded by file path via
+    // compileUiExtensions(), not by a traceable import — treat them as entries.
+    "vendure-showcase/server/src/plugins/**/ui/**/*.{ts,tsx}"
+  ],
+
+  "ignoreDependencies": [
+    // --- Separately-managed Vendure backend (vendure-showcase/server) ---
+    // Imported only in the server, which installs on its own. Some are direct
+    // deps of server/package.json, others resolve transitively via @vendure/core
+    // and @vendure/ui-devkit. The frontend monorepo neither installs nor polices them.
+    "@vendure/core",
+    "@vendure/admin-ui",
+    "@vendure/admin-ui-plugin",
+    "@vendure/asset-server-plugin",
+    "@vendure/ui-devkit",
+    "@nestjs/graphql",
+    "@angular/core",
+    "graphql-tag",
+
+    // --- urql peer dependency (vendure-showcase/storefront) ---
+    // Required at runtime by urql / @urql/core but never imported directly.
+    "graphql",
+
+    // --- vite single-instance pins (components-showcase / section-showcase) ---
+    // Declared in the showcase package.json on purpose: vite.config.ts pins them
+    // to one copy via the nm() alias helper (single-copy resolution for React
+    // context libs). Consumed through the @components workspace alias, so fallow
+    // sees no direct import and wrongly flags them as unused. Not dead — load-bearing.
+    "@ark-ui/react",
+    "@chenglou/pretext",
+    "@number-flow/react",
+    "@tanstack/react-form",
+    "@tanstack/react-hotkeys",
+    "canvas-confetti",
+    "clsx",
+    "motion",
+    "tailwind-merge"
+  ]
+}
