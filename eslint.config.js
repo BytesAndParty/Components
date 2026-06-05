@@ -97,4 +97,10 @@ export default defineConfig(
     files: ['**/*.config.{js,ts,mjs,cjs}', '**/vite.config.*'],
     languageOptions: { globals: globals.node },
   },
+
+  // Standalone Node scripts (build orchestration etc.) — Node globals.
+  {
+    files: ['scripts/**/*.{js,mjs,cjs}'],
+    languageOptions: { globals: globals.node },
+  },
 )

@@ -2,7 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { useParams, Link } from 'react-router'
 import { ChevronLeft, Award, Grape, Thermometer, Wine } from 'lucide-react'
 
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '@components/breadcrumb/breadcrumb'
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbSeparator } from '@components/breadcrumb/breadcrumb'
 import { Backlight } from '@components/backlight/backlight'
 import { Lens } from '@components/lens/lens'
 import { BlurFade } from '@components/blur-fade/blur-fade'

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { DataTable } from './data-table'
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -9,7 +9,7 @@ interface TestData {
   age: number
 }
 
-const columns: ColumnDef<TestData, any>[] = [
+const columns: ColumnDef<TestData>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
