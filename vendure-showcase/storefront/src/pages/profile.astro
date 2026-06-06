@@ -1,0 +1,10 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { ProfileDashboard } from '@/components/react/profile/profile-dashboard';
+---
+
+<Layout title="Mein Profil">
+	<main class="max-w-6xl mx-auto px-6 py-10">
+		<ProfileDashboard client:only="react" />
+	</main>
+</Layout>
