@@ -73,106 +73,102 @@ const variantClasses: Record<MagneticButtonVariant, string> = {
 
 // ─── Alle visuellen Stile als inline styles ───────────────────────────────────────
 
+// Variant → style mapping as data. Each entry is a pure (hovered) → CSSProperties
+// builder; `getVariantStyle` is a thin lookup so no single function carries the
+// branching weight (mirrors the variantConfig pattern in product-tag).
+const variantStyle: Record<MagneticButtonVariant, (hovered: boolean) => React.CSSProperties> = {
+  default: (hovered) => ({
+    backgroundColor: hovered
+      ? 'color-mix(in oklch, var(--border) 60%, var(--card))'
+      : 'var(--card)',
+    borderWidth:  '1px',
+    borderStyle:  'solid',
+    borderColor:  'var(--border)',
+    color:        'var(--foreground)',
+  }),
+
+  primary: (hovered) => ({
+    backgroundColor: 'var(--accent)',
+    color: 'white',
+    boxShadow: hovered
+      ? '0 4px 20px color-mix(in oklch, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)'
+      : '0 2px 10px color-mix(in oklch, var(--accent) 30%, transparent), inset 0 1px 0 rgba(255,255,255,0.12)',
+  }),
+
+  secondary: (hovered) => ({
+    backgroundColor: hovered
+      ? 'color-mix(in oklch, var(--accent) 20%, transparent)'
+      : 'color-mix(in oklch, var(--accent) 10%, transparent)',
+    borderWidth:  '1px',
+    borderStyle:  'solid',
+    borderColor:  hovered
+      ? 'color-mix(in oklch, var(--accent) 60%, transparent)'
+      : 'color-mix(in oklch, var(--accent) 35%, transparent)',
+    color: 'var(--accent)',
+  }),
+
+  outline: (hovered) => ({
+    backgroundColor: hovered ? 'var(--accent)' : 'transparent',
+    borderWidth:  '2px',
+    borderStyle:  'solid',
+    borderColor:  'var(--accent)',
+    color:        hovered ? 'white' : 'var(--accent)',
+    boxShadow:    hovered
+      ? '0 0 0 3px color-mix(in oklch, var(--accent) 20%, transparent)'
+      : 'none',
+  }),
+
+  ghost: (hovered) => ({
+    backgroundColor: hovered
+      ? 'color-mix(in oklch, var(--accent) 8%, transparent)'
+      : 'transparent',
+    color: hovered ? 'var(--foreground)' : 'var(--muted-foreground)',
+  }),
+
+  destructive: (hovered) => ({
+    backgroundColor: '#e11d48',
+    color: 'white',
+    boxShadow: hovered
+      ? '0 4px 18px rgba(225, 29, 72, 0.55), inset 0 1px 0 rgba(255,255,255,0.15)'
+      : '0 2px 10px rgba(225, 29, 72, 0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+  }),
+
+  shimmer: () => ({
+    backgroundColor: 'var(--accent)',
+    color: 'white',
+    boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
+  }),
+  cta: () => ({
+    backgroundColor: 'var(--accent)',
+    color: 'white',
+    boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
+  }),
+
+  glow: () => ({
+    backgroundColor: 'var(--accent)',
+    color: 'white',
+    animation: 'mb-glow-pulse 2.2s ease-in-out infinite',
+  }),
+
+  gradient: () => ({
+    backgroundImage: 'linear-gradient(90deg, var(--accent), color-mix(in oklch, var(--accent) 55%, white) 50%, var(--accent))',
+    backgroundSize: '200% auto',
+    color: 'white',
+    animation: 'mb-gradient 2.8s linear infinite',
+    boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 40%, transparent)',
+  }),
+
+  beam: () => ({
+    backgroundColor: 'var(--card)',
+    color: 'var(--foreground)',
+  }),
+};
+
 function getVariantStyle(
   variant: MagneticButtonVariant,
   hovered: boolean
 ): React.CSSProperties {
-  switch (variant) {
-    case 'default':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--border) 60%, var(--card))'
-          : 'var(--card)',
-        borderWidth:  '1px',
-        borderStyle:  'solid',
-        borderColor:  'var(--border)',
-        color:        'var(--foreground)',
-      };
-
-    case 'primary':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        boxShadow: hovered
-          ? '0 4px 20px color-mix(in oklch, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)'
-          : '0 2px 10px color-mix(in oklch, var(--accent) 30%, transparent), inset 0 1px 0 rgba(255,255,255,0.12)',
-      };
-
-    case 'secondary':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--accent) 20%, transparent)'
-          : 'color-mix(in oklch, var(--accent) 10%, transparent)',
-        borderWidth:  '1px',
-        borderStyle:  'solid',
-        borderColor:  hovered
-          ? 'color-mix(in oklch, var(--accent) 60%, transparent)'
-          : 'color-mix(in oklch, var(--accent) 35%, transparent)',
-        color: 'var(--accent)',
-      };
-
-    case 'outline':
-      return {
-        backgroundColor: hovered ? 'var(--accent)' : 'transparent',
-        borderWidth:  '2px',
-        borderStyle:  'solid',
-        borderColor:  'var(--accent)',
-        color:        hovered ? 'white' : 'var(--accent)',
-        boxShadow:    hovered
-          ? '0 0 0 3px color-mix(in oklch, var(--accent) 20%, transparent)'
-          : 'none',
-      };
-
-    case 'ghost':
-      return {
-        backgroundColor: hovered
-          ? 'color-mix(in oklch, var(--accent) 8%, transparent)'
-          : 'transparent',
-        color: hovered ? 'var(--foreground)' : 'var(--muted-foreground)',
-      };
-
-    case 'destructive':
-      return {
-        backgroundColor: '#e11d48',
-        color: 'white',
-        boxShadow: hovered
-          ? '0 4px 18px rgba(225, 29, 72, 0.55), inset 0 1px 0 rgba(255,255,255,0.15)'
-          : '0 2px 10px rgba(225, 29, 72, 0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
-      };
-
-    case 'shimmer':
-    case 'cta':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 45%, transparent)',
-      };
-
-    case 'glow':
-      return {
-        backgroundColor: 'var(--accent)',
-        color: 'white',
-        animation: 'mb-glow-pulse 2.2s ease-in-out infinite',
-      };
-
-    case 'gradient':
-      return {
-        backgroundImage: 'linear-gradient(90deg, var(--accent), color-mix(in oklch, var(--accent) 55%, white) 50%, var(--accent))',
-        backgroundSize: '200% auto',
-        color: 'white',
-        animation: 'mb-gradient 2.8s linear infinite',
-        boxShadow: '0 4px 18px color-mix(in oklch, var(--accent) 40%, transparent)',
-      };
-
-    case 'beam':
-      return {
-        backgroundColor: 'var(--card)',
-        color: 'var(--foreground)',
-      };
-
-    default:
-      return {};
-  }
+  return variantStyle[variant]?.(hovered) ?? {};
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────────
