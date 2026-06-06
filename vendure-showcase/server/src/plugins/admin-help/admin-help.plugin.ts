@@ -1,3 +1,5 @@
+// fallow-ignore-file security-sink — path.join(__dirname, 'ui') uses only literal
+// segments (no external input).
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { PluginCommonModule, VendurePlugin } from '@vendure/core';

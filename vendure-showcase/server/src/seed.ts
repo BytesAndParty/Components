@@ -1,3 +1,6 @@
+// fallow-ignore-file security-sink — local dev seed: fetch() only ever targets the
+// hardcoded localhost ADMIN_URL constant, never an attacker-controlled URL.
+
 /**
  * SEED-SKRIPT
  * Befüllt eine leere (oder bestehende) Vendure-Datenbank über die Admin-API mit Demodaten.

@@ -1,3 +1,6 @@
+// fallow-ignore-file security-sink — build orchestration: every path.join arg is
+// a hardcoded literal or an entry from the fixed `apps` list (no external input).
+//
 // Combined build for the single Netlify deploy.
 //
 // Each app is built independently, then its output is assembled into ONE

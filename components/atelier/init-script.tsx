@@ -1,3 +1,6 @@
+// fallow-ignore-file security-sink — inline FOUC script: only JSON.stringify'd
+// internal constants / dev-supplied props are interpolated (no user input), and
+// any "</script>" breakout is neutralized before render (see below).
 import { ATELIER_KEYS } from './atelier-context'
 
 /**
@@ -49,5 +52,9 @@ export function AtelierInitScript({
     } catch(e) {}
   })();`
 
-  return <script dangerouslySetInnerHTML={{ __html: script }} />
+  // Defense-in-depth: even though only dev-controlled defaults are interpolated,
+  // neutralize any "</script>" so a value can never break out of the tag.
+  const inline = script.replace(/<\/(script)/gi, '<\\/$1')
+
+  return <script dangerouslySetInnerHTML={{ __html: inline }} />
 }
