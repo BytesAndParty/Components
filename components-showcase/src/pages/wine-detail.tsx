@@ -233,8 +233,8 @@ export function WineDetailPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-4" />
-              <CarouselNext className="right-4" />
+              <CarouselPrevious hide />
+              <CarouselNext hide />
             </div>
           </Backlight>
 

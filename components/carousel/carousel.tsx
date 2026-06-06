@@ -164,8 +164,10 @@ export function CarouselItem({ className, ...props }: React.ComponentProps<'div'
   )
 }
 
-export function CarouselPrevious({ className, ...props }: React.ComponentProps<'button'>) {
+export function CarouselPrevious({ className, hide, ...props }: React.ComponentProps<'button'> & { hide?: boolean }) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel()
+
+  if (hide) return null
 
   return (
     <button
@@ -186,8 +188,10 @@ export function CarouselPrevious({ className, ...props }: React.ComponentProps<'
   )
 }
 
-export function CarouselNext({ className, ...props }: React.ComponentProps<'button'>) {
+export function CarouselNext({ className, hide, ...props }: React.ComponentProps<'button'> & { hide?: boolean }) {
   const { orientation, scrollNext, canScrollNext } = useCarousel()
+
+  if (hide) return null
 
   return (
     <button
