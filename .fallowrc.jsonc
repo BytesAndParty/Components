@@ -83,41 +83,18 @@
     { "file": "vendure-showcase/storefront/src/lib/**", "exports": ["*"] }
   ],
 
-  // Duplication: the library is built from self-contained components, each with
-  // an injected keyframe block (COMPONENT-GUIDELINES §4c — local STYLE_ID +
-  // injectStyles() dedup). Unrelated components therefore share a near-identical
-  // skeleton (props interface → STYLE_ID → injectStyles → state shell). That
-  // structural similarity is by design, not copy-paste, and is the price of the
-  // self-contained/portable module decision. Tune to literal cross-dir clones
-  // (weak + skipLocal), drop demo/WebGL noise, and ignore the component files
-  // whose only "duplication" is that shared convention skeleton.
+  // Duplication detection: silenced repo-wide via a catch-all ignore.
+  // (`enabled: false` is not honored by fallow's dupes pass, but `ignore` is.)
+  // The library is built from self-contained components, each carrying an injected
+  // keyframe block (COMPONENT-GUIDELINES §4c — local STYLE_ID + injectStyles()
+  // dedup). Unrelated components therefore share a near-identical skeleton
+  // (props interface → STYLE_ID → injectStyles → state shell). That structural
+  // similarity is by design — the price of the self-contained/portable module
+  // decision — not copy-paste. It drowns any genuine signal and re-triggers on
+  // every new component, so the "duplicated code block" diagnostics were pure
+  // noise in the editor Problems panel. To audit manually, drop the "**" entry.
   "duplicates": {
-    "mode": "weak",
-    "skipLocal": true,
-    "minLines": 30,
-    "ignore": [
-      "components/splash-cursor/**",
-      "components-showcase/src/pages/**",
-      "section-showcase/src/**",
-      "**/vite.config.ts",
-      "components/backlight/**",
-      "components/bounce-loader/**",
-      "components/breadcrumb/**",
-      "components/heart-like/**",
-      "components/magnetic-button/**",
-      "components/paragraph/**",
-      "components/password-confirmation/**",
-      "components/password-setup/**",
-      "components/use-image-upload/**",
-      "components/click-spark/**",
-      "components/highlighter/**",
-      "components/shiny-text/**",
-      "components/sparkles-text/**",
-      "components/lens/**",
-      "components/timeline/**",
-      "components/form-input/**",
-      "components/images-slider/**"
-    ]
+    "ignore": ["**"]
   },
 
   // Health/complexity: exclude code that is large by nature and not a signal of
