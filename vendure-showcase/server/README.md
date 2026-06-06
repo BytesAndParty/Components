@@ -8,7 +8,7 @@ Vendure-basierter E-Commerce-Backend für den Wine Showcase. Stellt Shop-API und
 
 | Komponente | Details |
 |---|---|
-| Framework | [Vendure](https://vendure.io) v3 (NestJS-basiert) |
+| Framework | [Vendure](https://vendure.io) v3.6.4 (NestJS-basiert) |
 | Datenbank (Lokal) | SQLite via `better-sqlite3` — kein Setup nötig |
 | Datenbank (Produktion) | PostgreSQL 16 |
 | Container | Podman (`podman compose`) |
@@ -50,11 +50,21 @@ bun run dev
 Server läuft auf:
 - **Shop API** → `http://localhost:3000/shop-api`
 - **Admin API** → `http://localhost:3000/admin-api`
-- **Admin UI** → `http://localhost:3002/admin` (Login: `superadmin` / `superadmin`)
+
+### React Dashboard starten (separater Vite Dev Server)
+
+```bash
+# Terminal 2 (parallel zum Server)
+bun run dashboard
+```
+
+Dashboard erreichbar unter `http://localhost:5173/dashboard/` — Login: `superadmin` / `superadmin`
+
+> Im Dev-Modus läuft das Dashboard als eigenständiger Vite-Prozess mit HMR. Im Production-Build (`bun run dashboard:build`) wird es statisch von Vendure unter `/dashboard/` serviert.
 
 ### Weine anlegen (Seed)
 
-Der Seed läuft gegen die laufende Admin API. Der Server muss also zuerst gestartet sein:
+Der Seed läuft gegen die laufende Admin API — der Server muss also zuerst gestartet sein:
 
 ```bash
 # Terminal 1
@@ -63,6 +73,8 @@ bun run dev
 # Terminal 2
 bun run seed
 ```
+
+> Bei einem Vendure-Major-Upgrade (z.B. 3.2 → 3.6): SQLite-DB löschen (`data/vendure.sqlite`) und Seed neu durchlaufen, da Schema-Migrationen nicht automatisch auf bestehenden Daten ausgeführt werden.
 
 Das Skript legt beim ersten Aufruf automatisch an:
 - Land (Österreich) + Zone (Europe)
@@ -224,7 +236,6 @@ Alle verfügbaren Variablen — siehe [.env.example](.env.example).
 | `DB_USER` | `vendure` | Datenbank-User |
 | `DB_PASSWORD` | `vendure_pw` | Datenbank-Passwort |
 | `PORT` | `3000` | Server-Port |
-| `ADMIN_PORT` | `3002` | Admin-UI-Port |
 | `CORS_ORIGINS` | `localhost:5173,...` | Erlaubte Origins (kommagetrennt) |
 | `SUPERADMIN_USERNAME` | `superadmin` | Admin-Login |
 | `SUPERADMIN_PASSWORD` | `superadmin` | Admin-Passwort |

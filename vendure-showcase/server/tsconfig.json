@@ -15,7 +15,11 @@
   "include": ["src"],
   "exclude": [
     "node_modules",
-    "src/plugins/**/ui/**",
-    "admin-ui"
+    "src/plugins/**/dashboard/*",
+    "src/gql/*",
+    "vite.config.mts"
+  ],
+  "references": [
+    { "path": "./tsconfig.dashboard.json" }
   ]
 }
