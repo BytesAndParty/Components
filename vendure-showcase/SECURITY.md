@@ -63,7 +63,7 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 - **Trigger:** beim Bau von `WineFilter` / `WineSort` / Suche — URL-Params per Zod-Schema parsen, niemals direkt in GraphQL-Variablen oder DOM-Attribute durchreichen.
 
 ### Auth-Token-Storage (httpOnly Cookies statt localStorage)
-- **Status:** Vendure-Auth läuft aktuell mit Bearer-Token im `Authorization` Header via urql.
+- **Status:** Vendure-Auth läuft aktuell über die anonyme Session-Cookie (`credentials: 'include'`, cookie tokenMethod), Requests via `graphql-request`.
 - **Warum nicht jetzt:** Kein Login-Flow live, anonyme Cart-Session reicht.
 - **Trigger:** sobald Login-Flow gebaut wird. Token-Cookie auf `httpOnly`, `Secure`, `SameSite=Lax`. CSRF-Token zusätzlich für state-changing Mutations (siehe Buchart58 §CSRF).
 

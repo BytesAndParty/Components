@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-import type { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel-react'
+import type { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -21,6 +21,8 @@ type CarouselContextProps = {
   selectedIndex: number
   scrollSnaps: number[]
   scrollTo: (index: number) => void
+  opts?: EmblaOptionsType
+  orientation?: 'horizontal' | 'vertical'
 }
 
 const CarouselContext = createContext<CarouselContextProps | null>(null)

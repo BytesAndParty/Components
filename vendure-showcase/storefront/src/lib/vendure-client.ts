@@ -1,34 +1,20 @@
-import { Client, cacheExchange, fetchExchange } from 'urql';
+import { GraphQLClient, type Variables } from 'graphql-request';
+
+const SHOP_API_URL = 'http://localhost:3000/shop-api';
 
 /**
- * Der URQL-Client wird für die clientseitige Interaktion (z.B. Warenkorb) genutzt.
- * Er läuft im Browser und schickt Anfragen an /shop-api (geproxied durch Astro).
+ * Ein einziger Fetcher für Shop-API-Requests — Build-Time (Node, SSG) und
+ * Browser (Cart-Islands) gleichermaßen. Kein eigener Cache: das Caching macht
+ * ausschließlich TanStack Query in den Hooks (cart-context, store-filters).
+ *
+ * `credentials: 'include'` trägt die anonyme Vendure-Session-Cookie mit, damit
+ * der ActiveOrder-Warenkorb über Requests hinweg erhalten bleibt.
  */
-export const vendureClient = new Client({
-  url: 'http://localhost:3000/shop-api', 
-  exchanges: [cacheExchange, fetchExchange],
-  fetchOptions: () => ({
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  }),
-});
+const client = new GraphQLClient(SHOP_API_URL, { credentials: 'include' });
 
-/**
- * shopApiRequest ist eine einfache Helper-Funktion für serverseitige Requests.
- * Sie wird während des Astro-Builds (Node.js) aufgerufen, um Daten statisch
- * in die HTML-Seiten einzubetten.
- */
-export async function shopApiRequest<T>(query: string, variables = {}): Promise<T> {
-  const res = await fetch('http://localhost:3000/shop-api', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables }),
-  });
-  const json = await res.json();
-  if (json.errors) {
-    throw new Error(JSON.stringify(json.errors));
-  }
-  return json.data;
+export async function shopApiRequest<T>(
+  query: string,
+  variables: Variables = {},
+): Promise<T> {
+  return client.request<T>(query, variables);
 }

@@ -41,3 +41,14 @@ Standardisiert: jedes Projekt hat ein `eslint.config.js` mit diesen drei Plugins
 - **Dead-Code-Audit:** Bei jedem Touch eines Workspaces `package.json` gegen `grep`-Imports prüfen — ungenutzte Deps konsequent entfernen (führt regelmäßig zu Funden wie `framer-motion` ohne Imports oder Wrapper-Files ohne Consumer).
 - **Docs-Cache:** Vor einer Migration die offizielle Doku der Ziel-Lib in `__AI-Workflow__/Skills/UpToDateDocs/<lib>.md` ablegen (mit `verified`-Datum + Source-URL). Beim späteren Coden gegen diesen Cache arbeiten — nicht gegen veraltete Trainings-Daten.
 - **Stack-Consolidation:** Wenn ein Workspace bereits eine Headless-Lib (z. B. Ark UI) hat, neue Anforderungen dort lösen statt eine zweite Lib (Radix, Headless UI, …) parallel zu installieren.
+- **Capability-Overlap-Audit:** Das gefährlichere Geschwister des Dead-Code-Audits. Dead-Code findet *ungenutzte* Deps; hier geht es um *zwei genutzte* Deps, die **dieselbe Verantwortung** besetzen (z. B. urql `cacheExchange` + TanStack Query — beide cachen). `grep` findet das nicht, weil beide importiert sind. Regel: **eine Capability → genau eine Lib.** Bei jedem `package.json`-Diff prüfen, ob die neue Dep eine bereits vergebene Verantwortung doppelt — wenn ja, ersetzen statt hinzufügen.
+
+| Capability | Gewählt | Abgelöst / verboten |
+|---|---|---|
+| Server-State + Caching | TanStack Query | urql, @urql/*, swr, apollo-client |
+| GraphQL-Transport | graphql-request | (eingebauter Cache von urql/apollo nicht nutzen) |
+| Headless UI | Ark UI (`@ark-ui/react`) | @radix-ui/*, @headlessui/*, shadcn |
+| Animation | motion/react | framer-motion, gsap |
+| Memoization | React Compiler | manuelles `useMemo`/`useCallback` |
+
+- **Durchsetzung:** Die „verboten"-Spalte ist in [`eslint.config.js`](./eslint.config.js) als `no-restricted-imports` hinterlegt — ein erneuter Import schlägt im Lint fehl, nicht erst im Review. Neue Ablösungen hier **und** dort eintragen.

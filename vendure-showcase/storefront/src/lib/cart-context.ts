@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Order } from './types';
-import { vendureClient } from './vendure-client';
+import { shopApiRequest } from './vendure-client';
 import {
   ADD_TO_ORDER,
   ADJUST_ORDER_LINE,
@@ -10,35 +10,38 @@ import {
 
 export const CART_KEY = ['cart'] as const;
 
+// addItemToOrder/adjustOrderLine/removeOrderLine sind Union-Results:
+// Order bei Erfolg, sonst ein ErrorResult mit errorCode.
+type OrderResult = Order | { errorCode: string };
+
 async function fetchCart(): Promise<Order | null> {
-  const result = await vendureClient.query(GET_ACTIVE_ORDER, {}).toPromise();
-  return result.data?.activeOrder ?? null;
+  const data = await shopApiRequest<{ activeOrder: Order | null }>(GET_ACTIVE_ORDER);
+  return data.activeOrder ?? null;
 }
 
 type AddVars = { variantId: string; quantity?: number };
 async function addItem({ variantId, quantity = 1 }: AddVars): Promise<Order | null> {
-  const result = await vendureClient
-    .mutation(ADD_TO_ORDER, { variantId, quantity })
-    .toPromise();
-  const data = result.data?.addItemToOrder;
-  return data && 'id' in data ? (data as Order) : null;
+  const data = await shopApiRequest<{ addItemToOrder: OrderResult }>(ADD_TO_ORDER, {
+    variantId,
+    quantity,
+  });
+  return 'id' in data.addItemToOrder ? data.addItemToOrder : null;
 }
 
 type AdjustVars = { lineId: string; quantity: number };
 async function adjustOrderLine({ lineId, quantity }: AdjustVars): Promise<Order | null> {
-  const result = await vendureClient
-    .mutation(ADJUST_ORDER_LINE, { lineId, quantity })
-    .toPromise();
-  const data = result.data?.adjustOrderLine;
-  return data && 'id' in data ? (data as Order) : null;
+  const data = await shopApiRequest<{ adjustOrderLine: OrderResult }>(ADJUST_ORDER_LINE, {
+    lineId,
+    quantity,
+  });
+  return 'id' in data.adjustOrderLine ? data.adjustOrderLine : null;
 }
 
 async function removeOrderLine(lineId: string): Promise<Order | null> {
-  const result = await vendureClient
-    .mutation(REMOVE_ORDER_LINE, { lineId })
-    .toPromise();
-  const data = result.data?.removeOrderLine;
-  return data && 'id' in data ? (data as Order) : null;
+  const data = await shopApiRequest<{ removeOrderLine: OrderResult }>(REMOVE_ORDER_LINE, {
+    lineId,
+  });
+  return 'id' in data.removeOrderLine ? data.removeOrderLine : null;
 }
 
 function totalsOf(lines: Order['lines']) {
@@ -62,72 +65,76 @@ export function useCart() {
 }
 
 export function useAddToCart() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addItem,
-    onMutate: async ({ quantity = 1 }, ctx) => {
-      await ctx.client.cancelQueries({ queryKey: CART_KEY });
-      const previous = ctx.client.getQueryData<Order | null>(CART_KEY);
+    onMutate: async ({ quantity = 1 }) => {
+      await queryClient.cancelQueries({ queryKey: CART_KEY });
+      const previous = queryClient.getQueryData<Order | null>(CART_KEY);
       // We don't have product details in the mutation vars, so only bump the
       // badge count optimistically — the cart-page list refills on invalidate.
       if (previous) {
-        ctx.client.setQueryData<Order>(CART_KEY, {
+        queryClient.setQueryData<Order>(CART_KEY, {
           ...previous,
           totalQuantity: previous.totalQuantity + quantity,
         });
       }
       return { previous };
     },
-    onError: (_err, _vars, onMutateResult, ctx) => {
-      if (onMutateResult) ctx.client.setQueryData(CART_KEY, onMutateResult.previous);
+    onError: (_err, _vars, context) => {
+      if (context) queryClient.setQueryData(CART_KEY, context.previous);
     },
-    onSettled: (_d, _e, _v, _r, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: CART_KEY });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: CART_KEY });
     },
   });
 }
 
 export function useAdjustLine() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: adjustOrderLine,
-    onMutate: async ({ lineId, quantity }, ctx) => {
-      await ctx.client.cancelQueries({ queryKey: CART_KEY });
-      const previous = ctx.client.getQueryData<Order | null>(CART_KEY);
+    onMutate: async ({ lineId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: CART_KEY });
+      const previous = queryClient.getQueryData<Order | null>(CART_KEY);
       if (previous) {
         const lines = previous.lines.map((l) =>
           l.id === lineId
             ? { ...l, quantity, linePriceWithTax: l.productVariant.priceWithTax * quantity }
             : l,
         );
-        ctx.client.setQueryData<Order>(CART_KEY, { ...previous, lines, ...totalsOf(lines) });
+        queryClient.setQueryData<Order>(CART_KEY, { ...previous, lines, ...totalsOf(lines) });
       }
       return { previous };
     },
-    onError: (_err, _vars, onMutateResult, ctx) => {
-      if (onMutateResult) ctx.client.setQueryData(CART_KEY, onMutateResult.previous);
+    onError: (_err, _vars, context) => {
+      if (context) queryClient.setQueryData(CART_KEY, context.previous);
     },
-    onSettled: (_d, _e, _v, _r, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: CART_KEY });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: CART_KEY });
     },
   });
 }
 
 export function useRemoveLine() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removeOrderLine,
-    onMutate: async (lineId, ctx) => {
-      await ctx.client.cancelQueries({ queryKey: CART_KEY });
-      const previous = ctx.client.getQueryData<Order | null>(CART_KEY);
+    onMutate: async (lineId) => {
+      await queryClient.cancelQueries({ queryKey: CART_KEY });
+      const previous = queryClient.getQueryData<Order | null>(CART_KEY);
       if (previous) {
         const lines = previous.lines.filter((l) => l.id !== lineId);
-        ctx.client.setQueryData<Order>(CART_KEY, { ...previous, lines, ...totalsOf(lines) });
+        queryClient.setQueryData<Order>(CART_KEY, { ...previous, lines, ...totalsOf(lines) });
       }
       return { previous };
     },
-    onError: (_err, _vars, onMutateResult, ctx) => {
-      if (onMutateResult) ctx.client.setQueryData(CART_KEY, onMutateResult.previous);
+    onError: (_err, _vars, context) => {
+      if (context) queryClient.setQueryData(CART_KEY, context.previous);
     },
-    onSettled: (_d, _e, _v, _r, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: CART_KEY });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: CART_KEY });
     },
   });
 }
+

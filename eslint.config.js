@@ -76,13 +76,36 @@ export default defineConfig(
         },
       ],
 
-      // React 19 / Compiler focus: discourage manual memoization
+      // One capability → one library. Prevents two deps owning the same job
+      // (e.g. urql + TanStack Query both caching). See ARTELIER.md §6.
       'no-restricted-imports': [
         'warn',
         {
-          name: 'react',
-          importNames: ['useMemo', 'useCallback'],
-          message: 'AtelierUI uses the React Compiler. Manual memoization (useMemo/useCallback) is discouraged unless required by external libraries.',
+          paths: [
+            {
+              name: 'react',
+              importNames: ['useMemo', 'useCallback'],
+              message: 'AtelierUI uses the React Compiler. Manual memoization (useMemo/useCallback) is discouraged unless required by external libraries.',
+            },
+            {
+              name: 'urql',
+              message: 'Server-state caching belongs to TanStack Query; GraphQL transport via graphql-request. No second cache layer.',
+            },
+            {
+              name: '@urql/core',
+              message: 'See urql — use TanStack Query (cache) + graphql-request (transport).',
+            },
+            {
+              name: 'framer-motion',
+              message: 'Use motion/react (framer-motion was renamed in v12).',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@radix-ui/*', '@headlessui/*'],
+              message: 'Headless UI foundation is Ark UI (@ark-ui/react). Do not add a second headless library.',
+            },
+          ],
         },
       ],
 

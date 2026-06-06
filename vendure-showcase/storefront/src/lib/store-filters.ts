@@ -15,7 +15,7 @@
 // eslint-disable-next-line no-restricted-imports -- useCallback needed for stable store subscribe identity (useSyncExternalStore contract).
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { vendureClient } from './vendure-client';
+import { shopApiRequest } from './vendure-client';
 import { GET_FACETS, GET_PRODUCT, GET_PRODUCTS } from './queries';
 import type { Facet, Product } from './types';
 
@@ -173,9 +173,8 @@ export function useFacets(initial?: Facet[]) {
   return useQuery({
     queryKey: ['facets'],
     queryFn: async () => {
-      const result = await vendureClient.query(GET_FACETS, {}).toPromise();
-      if (result.error) throw new Error(result.error.message);
-      return (result.data?.facets?.items ?? []) as Facet[];
+      const data = await shopApiRequest<{ facets: { items: Facet[] } }>(GET_FACETS);
+      return data.facets?.items ?? [];
     },
     initialData: initial,
     staleTime: 5 * 60 * 1000, // facets ändern sich selten
@@ -186,9 +185,8 @@ export function useProducts(initial?: Product[]) {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const result = await vendureClient.query(GET_PRODUCTS, {}).toPromise();
-      if (result.error) throw new Error(result.error.message);
-      return (result.data?.products?.items ?? []) as Product[];
+      const data = await shopApiRequest<{ products: { items: Product[] } }>(GET_PRODUCTS);
+      return data.products?.items ?? [];
     },
     initialData: initial,
     staleTime: 60 * 1000,
@@ -199,9 +197,8 @@ export function useProduct(slug: string, initial?: Product | null) {
   return useQuery({
     queryKey: ['product', slug],
     queryFn: async () => {
-      const result = await vendureClient.query(GET_PRODUCT, { slug }).toPromise();
-      if (result.error) throw new Error(result.error.message);
-      return (result.data?.product ?? null) as Product | null;
+      const data = await shopApiRequest<{ product: Product | null }>(GET_PRODUCT, { slug });
+      return data.product ?? null;
     },
     initialData: initial ?? undefined,
     staleTime: 60 * 1000,
