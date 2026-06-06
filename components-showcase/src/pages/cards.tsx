@@ -25,24 +25,24 @@ import { Link } from 'react-router'
 function WineMedia({ src, alt, vtName }: { src: string; alt: string; vtName?: string }) {
   return (
     <div
-      className={vtName ? 'vt-wine' : undefined}
       style={{
         aspectRatio: '3 / 4',
         display: 'grid',
         placeItems: 'center',
         background:
           'radial-gradient(circle at 30% 20%, color-mix(in oklch, var(--accent) 14%, transparent), transparent 60%), var(--muted)',
-        ...(vtName ? { viewTransitionName: vtName } : null),
       }}
     >
       <img
         src={src}
         alt={alt}
+        className={vtName ? 'vt-wine' : undefined}
         style={{
           width: '100%',
           height: '100%',
           padding: '10%',
           objectFit: 'contain',
+          ...(vtName ? { viewTransitionName: vtName } : null),
         }}
       />
     </div>

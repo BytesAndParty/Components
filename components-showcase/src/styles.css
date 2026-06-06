@@ -155,9 +155,11 @@
 ::view-transition-new(wine-barolo-riserva-2016),
 ::view-transition-old(wine-riesling-smaragd-2022),
 ::view-transition-new(wine-riesling-smaragd-2022) {
-  /* Ensure the container content (the image) is captured and blended correctly. */
+  /* Restore image-specific properties for the bottle-only morph. */
   mix-blend-mode: normal;
   height: 100%;
+  width: 100%;
+  object-fit: contain;
 }
 
 /* Navbar stays above page-content during any view transition */
