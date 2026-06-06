@@ -14,6 +14,16 @@ import { PullQuote } from '@components/pull-quote/pull-quote'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { useToast } from '@components/toast/toast-context'
+import { type EmblaCarouselType } from 'embla-carousel-react'
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext,
+  CarouselThumbs,
+  CarouselThumb
+} from '@components/carousel/carousel'
 
 import { useCart } from '../cart-context'
 
@@ -35,6 +45,7 @@ type WineRecord = {
   sommelier: string
   sommelierRole: string
   pairings: string[]
+  images?: string[]
   facts: {
     grape: string
     abv: string
@@ -55,6 +66,7 @@ const wines: Record<string, WineRecord> = {
     rating: 4.8,
     reviewCount: 47,
     variant: 'red',
+    images: ['/wine-default.png', '/wine-with-extra.png', '/wine-default.png'],
     tagline: 'Aus den Steillagen über Serralunga d’Alba — fünf Jahre Holz, zehn Jahre Geduld.',
     intro:
       'Ein Wein, der sich Zeit nimmt. In der Nase Rosenblüten, Teerblatt und Trüffel; am Gaumen samtig, mit einer Tanninstruktur, die nach Jahren noch trägt. Handlese, Spontangärung, Reifung im großen slawonischen Holzfass.',
@@ -85,6 +97,7 @@ const wines: Record<string, WineRecord> = {
     rating: 4.6,
     reviewCount: 32,
     variant: 'white',
+    images: ['/white-wine-default.png', '/white-wine-with-extra.png', '/white-wine-default.png'],
     tagline: 'Vom Urgesteinsterrassen über der Donau — kristallin, mineralisch, kompromisslos.',
     intro:
       'Aprikosenblüte, weißer Pfirsich und ein Hauch Feuerstein. Am Gaumen straff, druckvoll, mit einer Säurespur, die den ganzen Nachmittag trägt. Handlese, Naturhefen, Stahltank.',
@@ -129,6 +142,25 @@ export function WineDetailPage() {
   const { add } = useToast()
   const cart = useCart()
   const [qty, setQty] = useState(1)
+  const [api, setApi] = useState<EmblaCarouselType>()
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  useEffect(() => {
+    if (!api) return
+
+    const onSelect = () => {
+      setSelectedIndex(api.selectedScrollSnap())
+    }
+
+    onSelect()
+    api.on('select', onSelect)
+
+    return () => {
+      api.off('select', onSelect)
+    }
+  }, [api])
+
+  const gallery = wine.images || [bottleSrc(wine.variant)]
 
   function handleAddToCart() {
     for (let i = 0; i < qty; i++) cart.add({ id: wine.slug, label: wine.name })
@@ -166,46 +198,68 @@ export function WineDetailPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="grid grid-cols-1 gap-12 md:grid-cols-[1.05fr_1fr] md:gap-16 md:items-center">
 
-        {/* Bottle — no BlurFade wrapper: the View Transition morph IS the enter animation. */}
-        <div className="relative">
+        {/* Gallery Carousel */}
+        <div className="flex flex-col gap-4">
           <Backlight intensity={0.42} blur={70} blobs={3} interactive>
             <div
-              className="vt-wine border-border bg-card relative overflow-hidden"
-              style={{
-                borderRadius: '20px',
-                border: '1px solid var(--border)',
-                aspectRatio: '3 / 4',
-                viewTransitionName: `wine-${wine.slug}`,
-              }}
+              className="border-border bg-card relative overflow-hidden"
+              style={{ borderRadius: '20px', border: '1px solid var(--border)', aspectRatio: '3 / 4' }}
             >
-              <Lens
-                zoom={2.2}
-                lensSize={180}
-                ringWidth={1}
-                ringColor="var(--accent)"
-                style={{ borderRadius: 'inherit', width: '100%', height: '100%' }}
-              >
-                <img
-                  src={bottleSrc(wine.variant)}
-                  alt={`${wine.name} ${wine.vintage}`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    display: 'block',
-                    padding: '10%',
-                  }}
-                  draggable={false}
-                />
-              </Lens>
+              <Carousel setApi={setApi} className="h-full w-full">
+                <CarouselContent className="h-full">
+                  {gallery.map((src, index) => (
+                    <CarouselItem key={index} className="h-full">
+                      <Lens
+                        zoom={2.2}
+                        lensSize={180}
+                        ringWidth={1}
+                        ringColor="var(--accent)"
+                        style={{ borderRadius: 'inherit', width: '100%', height: '100%' }}
+                      >
+                        <img
+                          src={src}
+                          alt={`${wine.name} gallery ${index}`}
+                          className="vt-wine"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            display: 'block',
+                            padding: '10%',
+                            ...(selectedIndex === index ? { viewTransitionName: `wine-${wine.slug}` } : null),
+                          }}
+                          draggable={false}
+                        />
+                      </Lens>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </Carousel>
             </div>
           </Backlight>
 
+          {/* Thumbnails */}
+          <div className="flex justify-center px-4">
+            <CarouselThumbs className="py-0">
+              {gallery.map((src, index) => (
+                <CarouselThumb key={index} index={index} className="h-14 w-14 rounded-lg">
+                  <img
+                    src={src}
+                    alt="Thumb"
+                    className="h-full w-full object-contain p-1"
+                  />
+                </CarouselThumb>
+              ))}
+            </CarouselThumbs>
+          </div>
+
           <BlurFade delay={400} duration={400}>
             <p
-              className="text-muted-foreground mt-4 text-center text-[0.625rem] tracking-[0.18em] uppercase"
+              className="text-muted-foreground text-center text-[0.625rem] tracking-[0.18em] uppercase"
             >
-              Hover für Etikett-Zoom
+              Swipe für Galerie · Hover für Zoom
             </p>
           </BlurFade>
         </div>
@@ -403,7 +457,6 @@ export function WineDetailPage() {
                   }}
                 >
                   <div
-                    className={rel.slug in wines ? 'vt-wine' : undefined}
                     style={{
                       flex: 1,
                       display: 'grid',
@@ -411,17 +464,18 @@ export function WineDetailPage() {
                       padding: '20px 16px 0',
                       background:
                         'radial-gradient(circle at 50% 25%, color-mix(in oklch, var(--accent) 10%, transparent), transparent 65%)',
-                      ...(rel.slug in wines ? { viewTransitionName: `wine-${rel.slug}` } : null),
                     }}
                   >
                     <img
                       src={bottleSrc(rel.variant)}
                       alt={rel.name}
+                      className={rel.slug in wines ? 'vt-wine' : undefined}
                       style={{
                         width: '100%',
                         height: '100%',
                         padding: '10%',
                         objectFit: 'contain',
+                        ...(rel.slug in wines ? { viewTransitionName: `wine-${rel.slug}` } : null),
                       }}
                     />
                   </div>
