@@ -199,44 +199,42 @@ export function WineDetailPage() {
       <section className="grid grid-cols-1 gap-12 md:grid-cols-[1.05fr_1fr] md:gap-16 md:items-center">
 
         {/* Gallery Carousel */}
-        <div className="flex flex-col gap-4">
+        <Carousel setApi={setApi} className="flex flex-col gap-4">
           <Backlight intensity={0.42} blur={70} blobs={3} interactive>
             <div
               className="border-border bg-card relative overflow-hidden"
               style={{ borderRadius: '20px', border: '1px solid var(--border)', aspectRatio: '3 / 4' }}
             >
-              <Carousel setApi={setApi} className="h-full w-full">
-                <CarouselContent className="h-full">
-                  {gallery.map((src, index) => (
-                    <CarouselItem key={index} className="h-full">
-                      <Lens
-                        zoom={2.2}
-                        lensSize={180}
-                        ringWidth={1}
-                        ringColor="var(--accent)"
-                        style={{ borderRadius: 'inherit', width: '100%', height: '100%' }}
-                      >
-                        <img
-                          src={src}
-                          alt={`${wine.name} gallery ${index}`}
-                          className="vt-wine"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain',
-                            display: 'block',
-                            padding: '10%',
-                            ...(selectedIndex === index ? { viewTransitionName: `wine-${wine.slug}` } : null),
-                          }}
-                          draggable={false}
-                        />
-                      </Lens>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
-              </Carousel>
+              <CarouselContent className="h-full">
+                {gallery.map((src, index) => (
+                  <CarouselItem key={index} className="h-full">
+                    <Lens
+                      zoom={2.2}
+                      lensSize={180}
+                      ringWidth={1}
+                      ringColor="var(--accent)"
+                      style={{ borderRadius: 'inherit', width: '100%', height: '100%' }}
+                    >
+                      <img
+                        src={src}
+                        alt={`${wine.name} gallery ${index}`}
+                        className="vt-wine"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                          display: 'block',
+                          padding: '10%',
+                          ...(selectedIndex === index ? { viewTransitionName: `wine-${wine.slug}` } : null),
+                        }}
+                        draggable={false}
+                      />
+                    </Lens>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
             </div>
           </Backlight>
 
@@ -262,7 +260,7 @@ export function WineDetailPage() {
               Swipe für Galerie · Hover für Zoom
             </p>
           </BlurFade>
-        </div>
+        </Carousel>
 
         {/* Info column */}
         <BlurFade delay={220} duration={700}>
