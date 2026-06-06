@@ -1,5 +1,6 @@
 import { useCart } from '@/lib/cart-context'
 import { useT } from '@/lib/i18n'
+import { useActiveCustomer } from '@/lib/use-auth'
 import { Providers } from './Providers'
 import { ThemeToggle } from './ThemeToggle'
 import { LocaleToggle } from './LocaleToggle'
@@ -7,6 +8,7 @@ import { AccentPicker } from './AccentPicker'
 
 function HeaderInner() {
   const { totalQuantity } = useCart()
+  const { data: customer } = useActiveCustomer()
   const t = useT()
 
   return (
@@ -20,6 +22,11 @@ function HeaderInner() {
           <NavLink href="/">{t.navWines}</NavLink>
           <NavLink href="/cart">{t.navCart}</NavLink>
           <NavLink href="/admin-info">{t.navAdmin}</NavLink>
+          {customer ? (
+            <NavLink href="/profile">{t.navProfile}</NavLink>
+          ) : (
+            <NavLink href="/login">{t.navLogin}</NavLink>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">

@@ -1,54 +1,34 @@
-# Artelier Workflow Guidelines
-**Reference Date for "Latest Standards": Saturday, May 9, 2026**
+# Artelier — Project-Specific Guidelines
 
-#### 1. Runtime & Package Management
-- **Bun First:** Nutze primär `bun` für alle Operationen (Installation, Scripts, Runtime).
-- **Security First:** Alle Abhängigkeiten werden via Bun auditiert. Kritische Komponenten (SVG-Handling, User-Input) müssen gegen XSS abgesichert sein. GitHub Actions werden per SHA gepinnt.
-- **Dependency Research:** Prüfe `package.json` auf Updates. Extrahiere Change-Notes neuer Versionen und archiviere sie im zentralen Verzeichnis: `techstack-base`.
+> Global guidelines (bun, karpathy, AI stealth, ESLint stack) live in AI-Workflow/shared/guidelines/.
+> This file contains only __Components__-specific rules.
 
-#### 2. Engineering Standards
-- **Karpathy-Rules:** Alle Implementierungen folgen strikt den Prinzipien in der `KARPATHY.md` (Think Before Coding, Simplicity, Surgical Changes, Goal-Driven).
-- **Surgical Execution:** Ändere nur, was absolut notwendig ist. Keine ungefragten Refactorings ("Drive-by").
-- **Iterative Refactoring:** Wenn ein technischer Ansatz fehlschlägt, darf nicht einfach "darüber gepatcht" werden. Der bisherige (fehlgeschlagene) Code muss sauber refactored oder zurückgesetzt werden, bevor ein neuer Lösungsversuch implementiert wird.
+## Documentation Lifecycle
 
-#### 3. Repository Integrity (AI Stealth)
-- **Zero AI Footprint:** Committe niemals KI-Referenzen, Prompts oder Tool-Metadaten in Repositories.
-- **Global Protection:** Nutze eine globale `.gitignore` für AI-Verzeichnisse (`.agents/`, `.gemini/`, `.claude/`, etc.).
+- **Component Documentation (`COMPONENT.md`):** Jede Komponente im `components/` Verzeichnis führt eine eigene `COMPONENT.md`:
+  - **Features:** Was kann die Komponente?
+  - **How It Works:** Architektur-Entscheidungen (z.B. Fabric-Bridge, Zustand-Store).
+  - **Props:** Tabellarische Übersicht aller Properties mit Default-Werten.
+  - **Usage:** Code-Beispiele für verschiedene Use-Cases (Showcase vs. Integration).
+  - **Dependencies:** Liste der benötigten npm-Pakete.
+- **Status Log (`STATUS.md`):** Optional für komplexe Komponenten — laufende Bugs, Workarounds, technisches Entscheidungs-Log getrennt von stabiler Doku.
 
-#### 4. Documentation Lifecycle
-- **Central Storage:** `/Users/robert.stickler/Development/__AI-Workflow__/Skills/techstack-base`
-- **Maintenance:** Wenn Dokumentation fehlt oder veraltet ist, wird sie erstellt und synchron gehalten. Nutze immer die aktuellsten Versionen aus diesem Verzeichnis.
-- **Component Documentation (`COMPONENT.md`):** Jede Komponente im `components/` Verzeichnis muss eine eigene `COMPONENT.md` führen. Diese dient als technischer Vertrag und enthält:
-    - **Features:** Was kann die Komponente?
-    - **How It Works:** Architektur-Entscheidungen (z.B. Fabric-Bridge, Zustand-Store).
-    - **Props:** Tabellarische Übersicht aller Properties mit Default-Werten.
-    - **Usage:** Code-Beispiele für verschiedene Use-Cases (Showcase vs. Integration).
-    - **Dependencies:** Liste der benötigten npm-Pakete.
-- **Status Log (`STATUS.md`):** Optional für komplexe Komponenten, um laufende Bugs, Workarounds und technisches Entscheidungs-Log von der stabilen Dokumentation zu trennen.
+## Dependency Modernization
 
-#### 5. Linting & Code Quality
-Jedes Frontend-Projekt verwendet ESLint mit folgendem Stack (Flat Config, ESLint 9+):
+- **Newest-First:** Bei jeder Lib-Adoption die aktiv gepflegte Variante wählen (z.B. `motion` statt `framer-motion`, `@lottiefiles/dotlottie-react` statt `lottie-web`).
+- **Replace, don't patch:** Stagnierende Libs mit Eval-Use, CSP-Inkompatibilität oder Single-Maintainer-Risk werden ersetzt.
+- **Dead-Code-Audit:** Bei jedem Touch eines Workspaces `package.json` gegen `grep`-Imports prüfen — ungenutzte Deps entfernen.
+- **Docs-Cache:** Vor einer Migration offizielle Doku der Ziel-Lib in `live-docs-collection/<lib>/` ablegen (mit `verified`-Datum + Source-URL). Beim Coden gegen diesen Cache arbeiten.
+- **Capability-Overlap-Audit:** Zwei genutzte Deps dürfen nicht dieselbe Verantwortung doppelt besetzen. Regel: **eine Capability → genau eine Lib.**
 
-- **`eslint-plugin-react-hooks`** — erzwingt Rules of Hooks und enthält die `react-compiler` Rule, die Code aufdeckt, den der React Compiler nicht optimieren kann (Mutationen im Render, Side-Effects außerhalb von Effects, Ref-Zugriffe im Render).
-- **`eslint-plugin-react-refresh`** — sichert HMR ab, indem nur Components/Hooks aus Component-Dateien exportiert werden dürfen. Verhindert Fast-Refresh-Reloads beim Editieren.
-- **`typescript-eslint`** — TypeScript-aware Rules (Type-Imports, ungenutzte Vars, `any`-Eskalation, exhaustive switch, etc.).
+### Capability Table
 
-Standardisiert: jedes Projekt hat ein `eslint.config.js` mit diesen drei Plugins, ein `bun lint` Script und CI-Integration. Pre-commit-Hook über `lint-staged` empfohlen.
-
-#### 6. Dependency Modernization
-- **Newest-First:** Bei jeder neuen Lib-Adoption oder Migration zur **aktuell vom Format-/Spec-Owner empfohlenen** Variante greifen — nicht zur populärsten Google-Hit-Lib, sondern zur **aktiv gepflegten** Version (z. B. `motion` statt `framer-motion`, `@lottiefiles/dotlottie-react` statt `lottie-react`/`lottie-web`).
-- **Replace, don't patch:** Stagnierende Libs mit Eval-Use, CSP-Inkompatibilität oder Single-Maintainer-Risk werden ersetzt, nicht umschifft.
-- **Dead-Code-Audit:** Bei jedem Touch eines Workspaces `package.json` gegen `grep`-Imports prüfen — ungenutzte Deps konsequent entfernen (führt regelmäßig zu Funden wie `framer-motion` ohne Imports oder Wrapper-Files ohne Consumer).
-- **Docs-Cache:** Vor einer Migration die offizielle Doku der Ziel-Lib in `__AI-Workflow__/Skills/UpToDateDocs/<lib>.md` ablegen (mit `verified`-Datum + Source-URL). Beim späteren Coden gegen diesen Cache arbeiten — nicht gegen veraltete Trainings-Daten.
-- **Stack-Consolidation:** Wenn ein Workspace bereits eine Headless-Lib (z. B. Ark UI) hat, neue Anforderungen dort lösen statt eine zweite Lib (Radix, Headless UI, …) parallel zu installieren.
-- **Capability-Overlap-Audit:** Das gefährlichere Geschwister des Dead-Code-Audits. Dead-Code findet *ungenutzte* Deps; hier geht es um *zwei genutzte* Deps, die **dieselbe Verantwortung** besetzen (z. B. urql `cacheExchange` + TanStack Query — beide cachen). `grep` findet das nicht, weil beide importiert sind. Regel: **eine Capability → genau eine Lib.** Bei jedem `package.json`-Diff prüfen, ob die neue Dep eine bereits vergebene Verantwortung doppelt — wenn ja, ersetzen statt hinzufügen.
-
-| Capability | Gewählt | Abgelöst / verboten |
+| Capability | Gewählt | Verboten |
 |---|---|---|
 | Server-State + Caching | TanStack Query | urql, @urql/*, swr, apollo-client |
-| GraphQL-Transport | graphql-request | (eingebauter Cache von urql/apollo nicht nutzen) |
+| GraphQL-Transport | graphql-request | — |
 | Headless UI | Ark UI (`@ark-ui/react`) | @radix-ui/*, @headlessui/*, shadcn |
 | Animation | motion/react | framer-motion, gsap |
 | Memoization | React Compiler | manuelles `useMemo`/`useCallback` |
 
-- **Durchsetzung:** Die „verboten"-Spalte ist in [`eslint.config.js`](./eslint.config.js) als `no-restricted-imports` hinterlegt — ein erneuter Import schlägt im Lint fehl, nicht erst im Review. Neue Ablösungen hier **und** dort eintragen.
+Die „verboten"-Spalte ist in `eslint.config.js` als `no-restricted-imports` hinterlegt.

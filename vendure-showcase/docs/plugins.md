@@ -2,7 +2,9 @@
 
 Übersicht nützlicher Vendure Plugins für den Wine Shop, gruppiert nach Priorität und Einsatzzweck.
 
-> ⚠️ **Caveat:** Das Vendure-Ecosystem bewegt sich schnell. Aktuell nutzen wir Vendure `3.2.2`. Vor jeder Installation Kompatibilität im jeweiligen GitHub-Repo prüfen und exakten Paketnamen per `bun info <paket>` gegenchecken.
+> ⚠️ **Caveat:** Das Vendure-Ecosystem bewegt sich schnell. Aktuell nutzen wir Vendure `3.6.4`. Vor jeder Installation Kompatibilität im jeweiligen GitHub-Repo prüfen und exakten Paketnamen per `bun info <paket>` gegenchecken.
+>
+> **Hinweis v3.6.0:** Community Plugins für Stripe, Mollie, Braintree, Elasticsearch, Sentry wurden aus `@vendure/payments-plugin` / `@vendure/elasticsearch-plugin` in die neue `@vendure-community/*` Org mit eigener Versionierung ausgelagert. Korrekte Paketnamen per Marketplace prüfen.
 
 ---
 
@@ -10,9 +12,9 @@
 
 Stand laut [vendure-showcase/server/package.json](../server/package.json):
 
-- `@vendure/core` — Basis
-- `@vendure/admin-ui-plugin` — Admin-Interface
-- `@vendure/asset-server-plugin` — Image-Handling + Thumbnails
+- `@vendure/core` `3.6.4` — Basis
+- `@vendure/dashboard` `3.6.4` — React Dashboard (ersetzt `@vendure/admin-ui-plugin`)
+- `@vendure/asset-server-plugin` `3.6.4` — Image-Handling + Thumbnails
 
 ---
 
@@ -21,11 +23,11 @@ Stand laut [vendure-showcase/server/package.json](../server/package.json):
 | Plugin | Zweck | Wine-Shop Empfehlung |
 |---|---|---|
 | `email-plugin` | Transaktionsmails (Bestellbestätigung, Versand, Passwort-Reset) via Handlebars-Templates | **Pflicht** |
-| `payments-plugin` | Fertige Integrationen für Stripe / Mollie / Braintree | **Pflicht** — Mollie für AT/DE |
+| `@vendure-community/stripe-plugin` / `mollie-plugin` | Zahlungs-Integrationen (seit 3.6 aus `@vendure/payments-plugin` ausgelagert) | **Pflicht** — Mollie für AT/DE |
 | `job-queue-plugin` | BullMQ/Redis-basierte Job Queue (Default ist nur In-Memory) | **Pflicht für Prod** |
 | `harden-plugin` | Production-Härtung der GraphQL API: Query-Complexity, Introspection off | **Pflicht für Prod** |
-| `elasticsearch-plugin` | Volltext-Suche + Facet-Aggregation | Optional (ab ~1000 Produkten) |
-| `sentry-plugin` | Error-Tracking | Empfehlenswert |
+| `@vendure-community/elasticsearch-plugin` | Volltext-Suche + Facet-Aggregation (seit 3.6 ausgelagert) | Optional (ab ~1000 Produkten) |
+| `@vendure-community/sentry-plugin` | Error-Tracking (seit 3.6 ausgelagert) | Empfehlenswert |
 | `graphiql-plugin` | GraphQL Playground direkt im Admin | Nice-to-have für Dev |
 | `scheduler-plugin` | Cron-basierte Tasks (braucht es für Geburtstagsgutscheine) | Prüfen ob in 3.2 verfügbar |
 | `telemetry-plugin` | Usage-Metriken | Optional |
@@ -79,14 +81,14 @@ Für Wein-spezifisches gibt es keine Standard-Plugins. Das bauen wir selbst:
 ## Empfohlene Installations-Reihenfolge
 
 ```
-1. @vendure/email-plugin              → Transaktionsmails
-2. @vendure/payments-plugin           → Mollie-Integration
-3. @vendure/job-queue-plugin          → Redis-backed Queue
-4. @vendure/harden-plugin             → Security
-5. @pinelab/.../invoices              → PDF-Rechnungen
-6. @pinelab/.../stock-monitoring      → Back-in-stock
-7. Custom AgeVerificationPlugin       → (selbst gebaut)
-8. Custom BirthdayPromotionPlugin     → (selbst gebaut)
+1. @vendure/email-plugin                      → Transaktionsmails
+2. @vendure-community/mollie-plugin           → Mollie-Integration (AT/DE)
+3. @vendure/job-queue-plugin                  → Redis-backed Queue
+4. @vendure/harden-plugin                     → Security
+5. @pinelab/vendure-plugin-invoices           → PDF-Rechnungen (UStG AT)
+6. @pinelab/vendure-plugin-stock-monitoring   → Back-in-stock
+7. Custom AgeVerificationPlugin               → (selbst gebaut)
+8. Custom BirthdayPromotionPlugin             → (selbst gebaut)
 ```
 
 **Grundsatz:** Plugins nur installieren, wenn der konkrete Bedarf auftaucht — nicht vorsorglich. Das Einbinden ist billig, aber jedes installierte Plugin ist Wartungs-Overhead.

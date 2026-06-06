@@ -4,7 +4,7 @@ Testprojekt um **Vendure.js** als Headless-Commerce-Backend für den geplanten W
 
 ## Was ist das?
 
-- **`server/`** — Vendure.js Backend mit 10 weinspezifischen Custom Fields, SQLite DB, Admin UI
+- **`server/`** — Vendure.js Backend mit 10 weinspezifischen Custom Fields, SQLite DB, React Dashboard (`@vendure/dashboard` v3.6.4)
 - **`storefront/`** — React 19 + Vite Storefront das über GraphQL mit Vendure kommuniziert
 
 Die Storefront verwendet kopierte Komponenten aus der `components/` Library (shadcn-Style).
@@ -17,11 +17,15 @@ cd vendure-showcase/server
 bun install
 bun run dev
 
-# 2. In neuem Terminal: Testdaten anlegen
+# 2. In neuem Terminal: Testdaten anlegen (Server muss laufen)
 cd vendure-showcase/server
 bun run seed
 
-# 3. In neuem Terminal: Storefront starten
+# 3. In neuem Terminal: React Dashboard (Vite Dev Server)
+cd vendure-showcase/server
+bun run dashboard
+
+# 4. In neuem Terminal: Storefront starten
 cd vendure-showcase/storefront
 bun install
 bun run dev
@@ -29,12 +33,14 @@ bun run dev
 
 ## URLs
 
-| Service           | URL                              |
-|-------------------|----------------------------------|
-| Storefront        | http://localhost:5173            |
-| Vendure Admin UI  | http://localhost:3000/admin      |
-| Shop GraphQL API  | http://localhost:3000/shop-api   |
-| Admin GraphQL API | http://localhost:3000/admin-api  |
+| Service              | URL                                      |
+|----------------------|------------------------------------------|
+| Storefront           | http://localhost:5173                    |
+| React Dashboard      | http://localhost:5173/dashboard/ (dev)   |
+| Shop GraphQL API     | http://localhost:3000/shop-api           |
+| Admin GraphQL API    | http://localhost:3000/admin-api          |
+
+> **Dashboard im Dev-Modus:** Der Vite-Dev-Server des Dashboards läuft standardmäßig auf Port 5173 (gleicher Port wie Storefront-Dev, aber separates Projekt). Beide gleichzeitig: Dashboard-Vite startet auf dem nächstverfügbaren Port (5174 o.Ä.).
 
 **Admin Login:** `superadmin` / `superadmin`
 
@@ -83,7 +89,7 @@ speiseempfehlung (text) · auszeichnungen (text)
 
 - **Custom Fields** funktionieren nahtlos — werden automatisch im Admin UI sichtbar
 - **GraphQL API** liefert Custom Fields über `customFields { ... }` mit
-- **Admin UI** ist sofort nutzbar für Produktverwaltung
+- **React Dashboard** (`@vendure/dashboard`) ist sofort nutzbar für Produktverwaltung — React 19 + TanStack-basiert
 - **Plugin-System** (NestJS) ermöglicht saubere Trennung von Custom-Features
 - **SQLite** für Entwicklung, PostgreSQL für Produktion (nur Config-Wechsel)
 - **ActiveOrder API** für Warenkorb — kein zusätzlicher State nötig

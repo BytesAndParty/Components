@@ -3,6 +3,9 @@ dist
 .vite
 *.local
 
+# Override global gitignore — intentionally versioned
+!AGENTS.md
+
 # Playwright
 playwright-report/
 test-results/

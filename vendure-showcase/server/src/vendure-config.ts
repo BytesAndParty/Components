@@ -9,15 +9,12 @@ import {
   VendureConfig,
   DefaultSearchPlugin,
   DefaultJobQueuePlugin,
-  LanguageCode,
 } from '@vendure/core';
-import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
+import { DashboardPlugin } from '@vendure/dashboard/plugin';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
-import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { WineShowcasePlugin } from './plugins/wine-showcase.plugin.js';
-import { AdminHelpPlugin } from './plugins/admin-help/admin-help.plugin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -36,6 +33,7 @@ export const config: VendureConfig = {
   },
   authOptions: {
     tokenMethod: ['bearer', 'cookie'],
+    requireVerification: false,
     superadminCredentials: {
       identifier: process.env.SUPERADMIN_USERNAME ?? 'superadmin',
       password: process.env.SUPERADMIN_PASSWORD ?? 'superadmin',
@@ -71,22 +69,12 @@ export const config: VendureConfig = {
     }),
     DefaultSearchPlugin.init({ bufferUpdates: false }),
     DefaultJobQueuePlugin.init({}),
-    // Die Admin UI (das Dashboard)
-    AdminUiPlugin.init({
-      route: 'admin',
-      port: 3002,
-      app: compileUiExtensions({
-        outputPath: path.join(__dirname, '..', 'admin-ui'),
-        extensions: [AdminHelpPlugin.ui],
-        devMode: true,
-      }),
-      adminUiConfig: {
-        defaultLanguage: LanguageCode.de,
-        availableLanguages: [LanguageCode.de, LanguageCode.en],
-      },
+    // React Dashboard
+    DashboardPlugin.init({
+      route: 'dashboard',
+      appDir: path.join(__dirname, '..', 'dist', 'dashboard'),
     }),
     // DEIN CUSTOM PLUGIN
     WineShowcasePlugin,
-    AdminHelpPlugin,
   ],
 };
