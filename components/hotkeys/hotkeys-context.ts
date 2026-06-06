@@ -9,11 +9,11 @@ export interface HotkeyMetadata {
   category: 'Global' | 'Navigation' | 'Actions' | 'Context'
 }
 
-export interface HotkeysRegistryContextValue {
+interface HotkeysRegistryContextValue {
   registry: Map<string, HotkeyMetadata>
 }
 
-export interface HotkeysActionsContextValue {
+interface HotkeysActionsContextValue {
   register: (id: string, metadata: HotkeyMetadata) => void
   unregister: (id: string) => void
 }
@@ -29,7 +29,7 @@ export function useHotkeysRegistry() {
   return context
 }
 
-export function useHotkeysActions() {
+function useHotkeysActions() {
   const context = useContext(HotkeysActionsContext)
   if (!context) {
     throw new Error('useHotkeysActions must be used within a HotkeysProvider')

@@ -4,7 +4,7 @@ import { de } from './locales/de'
 import type { Locale, GlobalMessages } from './types'
 import { interpolate } from './types'
 
-export interface I18nContextValue {
+interface I18nContextValue {
   locale: Locale
   t: (key: keyof GlobalMessages, vars?: Record<string, string | number>) => string
   setLocale: (locale: Locale) => void

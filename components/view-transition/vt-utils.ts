@@ -29,7 +29,7 @@ export const VT_PRESETS: VtPresetMeta[] = [
   { id: 'vt-grape-burst', label: 'Grape Burst', hint: 'Radial-Bloom mit Trauben lila-Tint ab Klickpunkt.', needsOrigin: true, wine: true },
 ]
 
-export const STYLE_ID = '__view-transition-preset-styles__'
+const STYLE_ID = '__view-transition-preset-styles__'
 export const DEFAULT_STAGE = 'vt-stage'
 
 export function injectStyles(stageName: string) {

@@ -48,5 +48,88 @@
     "clsx",
     "motion",
     "tailwind-merge"
-  ]
+  ],
+
+  // Exports/types fallow can't see a consumer for, but which are intentional.
+  // Genuinely-internal leaked `export`s were instead un-exported in code; what
+  // remains here is real public surface / framework-loaded / WIP.
+  "ignoreExports": [
+    // --- Public deep-import library API ---
+    // Component props/option/ref types and component variants ARE the product;
+    // the in-repo showcase doesn't import every one. Not dead.
+    { "file": "components/animated-icons/animated-icons.tsx", "exports": ["ChevronDownIconCss", "ChevronRightIconCss", "UserIconCss", "PlusIconCss", "MinusIconCss", "TruckIconCss"] },
+    { "file": "components/navbar/navbar.tsx", "exports": ["NavbarMobileOnly"] },
+    { "file": "components/scroll-rotate/scroll-rotate.tsx", "exports": ["ScrollRotate"] },
+    { "file": "components/toast/toast-context.ts", "exports": ["toast"] },
+    { "file": "components/confetti/fire.ts", "exports": ["fireConfettiRain"] },
+    { "file": "components/aurora-text/aurora-text.tsx", "exports": ["AuroraTextProps"] },
+    { "file": "components/form-input/form-input.tsx", "exports": ["FormInputProps"] },
+    { "file": "components/text-rotate/text-rotate.tsx", "exports": ["TextRotateRef", "TextRotateProps"] },
+    { "file": "components/velocity-scroll/velocity-scroll.tsx", "exports": ["Testimonial"] },
+    { "file": "components/view-transition/run-view-transition.ts", "exports": ["StartViewTransitionOptions"] },
+    { "file": "components/view-transition/transition-stage.tsx", "exports": ["TransitionStageProps"] },
+
+    // --- Public entry barrels (documented import paths: @components/atelier, @components/i18n) ---
+    { "file": "components/atelier/index.ts", "exports": ["*"] },
+    { "file": "components/i18n/index.ts", "exports": ["*"] },
+
+    // --- cellar-canvas: WIP domain-app engine/types, consumed in later phases ---
+    { "file": "components/cellar-canvas/**", "exports": ["*"] },
+
+    // --- Vendure backend: NestJS DI-registered resolver, not a traceable import ---
+    { "file": "vendure-showcase/server/**", "exports": ["*"] },
+
+    // --- Storefront lib consumed by .astro islands fallow doesn't fully parse ---
+    { "file": "vendure-showcase/storefront/src/lib/**", "exports": ["*"] }
+  ],
+
+  // Duplication: the library is built from self-contained components, each with
+  // an injected keyframe block (COMPONENT-GUIDELINES §4c — local STYLE_ID +
+  // injectStyles() dedup). Unrelated components therefore share a near-identical
+  // skeleton (props interface → STYLE_ID → injectStyles → state shell). That
+  // structural similarity is by design, not copy-paste, and is the price of the
+  // self-contained/portable module decision. Tune to literal cross-dir clones
+  // (weak + skipLocal), drop demo/WebGL noise, and ignore the component files
+  // whose only "duplication" is that shared convention skeleton.
+  "duplicates": {
+    "mode": "weak",
+    "skipLocal": true,
+    "minLines": 30,
+    "ignore": [
+      "components/splash-cursor/**",
+      "components-showcase/src/pages/**",
+      "section-showcase/src/**",
+      "**/vite.config.ts",
+      "components/backlight/**",
+      "components/bounce-loader/**",
+      "components/breadcrumb/**",
+      "components/heart-like/**",
+      "components/magnetic-button/**",
+      "components/paragraph/**",
+      "components/password-confirmation/**",
+      "components/password-setup/**",
+      "components/use-image-upload/**",
+      "components/click-spark/**",
+      "components/highlighter/**",
+      "components/shiny-text/**",
+      "components/sparkles-text/**",
+      "components/lens/**",
+      "components/timeline/**",
+      "components/form-input/**",
+      "components/images-slider/**"
+    ]
+  },
+
+  // Health/complexity: exclude code that is large by nature and not a signal of
+  // library quality — the ported WebGL fluid sim, showcase demo pages, Vendure
+  // seed data, and build configs. Real components keep the default gates.
+  "health": {
+    "ignore": [
+      "components/splash-cursor/**",
+      "components-showcase/src/pages/**",
+      "section-showcase/src/**",
+      "vendure-showcase/server/src/seed.ts",
+      "**/vite.config.ts"
+    ]
+  }
 }
