@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { useParams, Link } from 'react-router'
 import { ChevronLeft, Award, Grape, Thermometer, Wine } from 'lucide-react'
 
