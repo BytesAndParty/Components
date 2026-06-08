@@ -60,10 +60,16 @@
 - ~~Bg-Color nicht in Undo/Redo-History~~ — **gefixt 2026-05-26**: `saveHistory` schreibt jetzt die volle `{ canvas, bg }`-Form, `setBackground` ruft `saveHistory` nach jeder Mutation, `restoreHistory` lädt beide Werte zurück. Backward-Compat für alte plain-canvas-Snapshots in localStorage bleibt.
 - ~~`cellar:property-changed` feuert teils mehrfach pro logischer Aktion~~ — **entschärft 2026-05-26**: `useCanvasSync` debounct den Sync-`update`-Callback per `queueMicrotask`. Mehrere Events im selben Tick (Stack-Op + Selection-Restore, `alignSelected`-Mass-Mutationen, Bridge-Property-Changes) kollabieren zu genau einem `update()`-Aufruf. `saveHistory` bleibt ungedrosselt — jede `object:modified` ist eine diskrete User-Aktion und verdient einen eigenen History-Eintrag.
 - ~~ContextToolbar Image-Branch unvollständig~~ — **gefixt 2026-05-26**: Crop + Replace + Opacity sind verdrahtet. Replace nimmt eine neue Datei aus dem File-Picker und schreibt direkt via `bridge.updateImageSource(targetId, dataUrl)` — kein Cropper-Dialog, ID + Position + Layer-Meta bleiben.
+- ~~`updateActiveObject` / NumberInputs triggern keine History~~ — **gefixt 2026-06-08**: `bridge.updateActiveObject` ruft nun `saveHistory()` auf. Damit sind manuelle Geometrie-Eingaben über Undo/Redo abgedeckt.
+- ~~Layer Panel zeigt Snap-Guides~~ — **gefixt 2026-06-08**: `bridge.getLayers` filtert jetzt Objekte ohne `_type` Meta-Property (wie interne Hilfslinien) aus.
+- ~~Performance-Lag bei Canvas-Events~~ — **gefixt 2026-06-08**: `useCanvasSync` nutzt nun verschiedene Update-Modi (`full`, `geometry`, `viewport`) und überspringt teure Operationen (Ebenen-Re-Snapshot, Validation) während flüssiger Bewegungen wie Dragging oder Zooming.
+- ~~ContextToolbar Redundanz~~ — **gefixt 2026-06-08**: `ContextToolbar` erhält `activeProps` direkt vom optimierten Parent-Hook; eigene Listener und interner State entfernt.
+- ~~Veraltete Weindaten auf Canvas~~ — **gefixt 2026-06-08**: `CellarCanvas` synchronisiert Text-Inhalte von `wine-field` Objekten nun automatisch mit der `initialWineFields`-Prop.
+- ~~Doppelte Wein-Felder möglich~~ — **gefixt 2026-06-08**: `WineFieldsPanel` deaktiviert Buttons für bereits platzierte Felder.
 
 ---
 
-## Bug Log
+## Entscheidungs-Log
 
 ### #24 — ImageCropper-Drift bei sequenziellen Uploads *(2026-05-25 — gefixt)*
 

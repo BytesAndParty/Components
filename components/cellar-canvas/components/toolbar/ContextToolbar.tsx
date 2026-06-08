@@ -7,7 +7,6 @@ import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
 import { Crop, Trash2 } from 'lucide-react'
 import type { FabricBridge } from '../../engine/fabric-bridge'
-import { useEffect, useState } from 'react'
 import type { FabricObjectProperties } from '../../store/types'
 
 export interface ContextToolbarProps {
