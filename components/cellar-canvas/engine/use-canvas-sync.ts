@@ -48,83 +48,100 @@ export function useCanvasSync(
     const b = bridge.current
     if (!b) return
 
-    const update = () => {
-      setActiveProps(b.getActiveObjectProperties())
-      setLayers(b.getLayers() ?? [])
-      setBackgroundColor(b.getBackground())
-      const vpt = b.canvas.viewportTransform
-      setViewport({
-        zoom: b.canvas.getZoom(),
-        tx:   vpt?.[4] ?? 0,
-        ty:   vpt?.[5] ?? 0,
-      })
+    const update = (mode: 'full' | 'geometry' | 'viewport' = 'full') => {
+      // Geometry updates (dragging/scaling) only need activeProps to refresh
+      // the Properties Panel live. Everything else stays stable.
+      if (mode === 'full' || mode === 'geometry') {
+        setActiveProps(b.getActiveObjectProperties())
+      }
 
-      if (options.enableValidator) {
-        const objects = (b.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
-        setWarnings(validateCompliance(objects))
+      // Layers and warnings are expensive (DOM snapshots + iteration).
+      // We skip them during smooth operations like drag or viewport pan.
+      if (mode === 'full') {
+        setLayers(b.getLayers() ?? [])
+        if (options.enableValidator) {
+          const objects = (b.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
+          setWarnings(validateCompliance(objects))
+        }
+      }
+
+      if (mode === 'full' || mode === 'viewport') {
+        setBackgroundColor(b.getBackground())
+        const vpt = b.canvas.viewportTransform
+        setViewport(prev => {
+          const nextZoom = b.canvas.getZoom()
+          const nextTx = vpt?.[4] ?? 0
+          const nextTy = vpt?.[5] ?? 0
+          if (prev.zoom === nextZoom && prev.tx === nextTx && prev.ty === nextTy) return prev
+          return { zoom: nextZoom, tx: nextTx, ty: nextTy }
+        })
       }
     }
 
     // Microtask-debounce: stack operations and complex bridge methods can fire
-    // several events in the same synchronous tick (e.g. `bringToFront` triggers
-    // `notifyStackChanged` via `cellar:property-changed` plus the implicit
-    // `object:added`/`object:removed` from Fabric's reorder, and bulk paths
-    // like `alignSelected` mutate every selected object in a row). Coalescing
-    // them into a single `update()` per microtask keeps the React state
-    // changes batched and avoids repeated `getLayers`/`validateCompliance`
-    // work for one logical action.
-    let scheduled = false
+    // several events in the same synchronous tick. Coalescing them into a single
+    // update per microtask keeps React state changes batched.
+    let scheduledMode: 'full' | 'geometry' | 'viewport' | null = null
     let cancelled = false
-    const scheduleUpdate = () => {
-      if (scheduled) return
-      scheduled = true
+    
+    const scheduleUpdate = (mode: 'full' | 'geometry' | 'viewport' = 'full') => {
+      // If a full update is already pending, it covers any partial update.
+      if (scheduledMode === 'full') return
+      if (scheduledMode === mode) return
+      
+      // Upgrade pending mode if a more comprehensive update arrives.
+      if (mode === 'full') scheduledMode = 'full'
+      else if (scheduledMode === null) scheduledMode = mode
+
       queueMicrotask(() => {
-        scheduled = false
-        if (cancelled) return
-        update()
+        if (cancelled || scheduledMode === null) return
+        const currentMode = scheduledMode
+        scheduledMode = null
+        update(currentMode)
       })
     }
 
     const onModified = () => {
-      // saveHistory is per-logical-edit and must NOT debounce — each
-      // `object:modified` is a discrete user action that earns its own
-      // history entry. The view sync still rides the microtask queue.
-      scheduleUpdate()
+      scheduleUpdate('full')
       b.saveHistory()
     }
 
     const canvas = b.canvas
-    canvas.on('selection:created',  scheduleUpdate)
-    canvas.on('selection:updated',  scheduleUpdate)
-    canvas.on('selection:cleared',  scheduleUpdate)
+    canvas.on('selection:created',  () => scheduleUpdate('full'))
+    canvas.on('selection:updated',  () => scheduleUpdate('full'))
+    canvas.on('selection:cleared',  () => scheduleUpdate('full'))
     canvas.on('object:modified',    onModified)
-    canvas.on('object:moving',      scheduleUpdate)
-    canvas.on('object:scaling',     scheduleUpdate)
-    canvas.on('object:rotating',    scheduleUpdate)
-    canvas.on('object:added',       scheduleUpdate)
-    canvas.on('object:removed',     scheduleUpdate)
+    canvas.on('object:moving',      () => scheduleUpdate('geometry'))
+    canvas.on('object:scaling',     () => scheduleUpdate('geometry'))
+    canvas.on('object:rotating',    () => scheduleUpdate('geometry'))
+    canvas.on('object:added',       () => scheduleUpdate('full'))
+    canvas.on('object:removed',     () => scheduleUpdate('full'))
+    
     // Custom property channel — fired by the bridge for non-event-emitting
-    // mutations like `obj.set(...)` from NumberInput steppers.
+    // mutations. Usually full because they might touch z-order or visibility.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(canvas as any).on('cellar:property-changed', scheduleUpdate)
+    ;(canvas as any).on('cellar:property-changed', () => scheduleUpdate('full'))
 
-    // First paint stays synchronous — viewport transform is already laid
-    // out by the time this effect runs, no batching needed.
-    update()
+    // Pan/Zoom updates
+    canvas.on('mouse:wheel', () => scheduleUpdate('viewport'))
+
+    // First paint stays synchronous.
+    update('full')
 
     return () => {
       cancelled = true
-      canvas.off('selection:created',  scheduleUpdate)
-      canvas.off('selection:updated',  scheduleUpdate)
-      canvas.off('selection:cleared',  scheduleUpdate)
+      canvas.off('selection:created')
+      canvas.off('selection:updated')
+      canvas.off('selection:cleared')
       canvas.off('object:modified',    onModified)
-      canvas.off('object:moving',      scheduleUpdate)
-      canvas.off('object:scaling',     scheduleUpdate)
-      canvas.off('object:rotating',    scheduleUpdate)
-      canvas.off('object:added',       scheduleUpdate)
-      canvas.off('object:removed',     scheduleUpdate)
+      canvas.off('object:moving')
+      canvas.off('object:scaling')
+      canvas.off('object:rotating')
+      canvas.off('object:added')
+      canvas.off('object:removed')
+      canvas.off('mouse:wheel')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).off('cellar:property-changed', scheduleUpdate)
+      ;(canvas as any).off('cellar:property-changed')
     }
   }, [bridge, options.enableValidator])
 

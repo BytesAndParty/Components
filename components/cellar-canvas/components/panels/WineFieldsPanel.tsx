@@ -39,11 +39,12 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
           return (
             <button
               key={field.key}
+              disabled={isPlaced}
               onClick={() => addField(field.key, field.label, field.value)}
               className={cn(
                 "group flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-left",
                 isPlaced 
-                  ? "bg-primary/5 border-primary/20 hover:bg-primary/10" 
+                  ? "bg-primary/5 border-primary/20 opacity-80 cursor-not-allowed" 
                   : "bg-muted/50 hover:bg-muted border-transparent hover:border-border"
               )}
             >
@@ -76,11 +77,12 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
           const isQrPlaced = placedFieldKeys.has('qrCode')
           return (
             <button
+              disabled={isQrPlaced}
               onClick={() => bridge.current?.addQRCode(values.nutritionalInfoUrl || 'https://example.com')}
               className={cn(
                 "w-full flex items-center justify-between px-3 py-3 rounded-xl border transition-all",
                 isQrPlaced
-                  ? "bg-primary/10 border-primary/30 text-primary"
+                  ? "bg-primary/10 border-primary/30 text-primary opacity-80 cursor-not-allowed"
                   : "bg-primary/5 hover:bg-primary/10 text-primary border-primary/10 hover:border-primary/20"
               )}
             >

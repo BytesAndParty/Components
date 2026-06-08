@@ -161,6 +161,34 @@ export function CellarCanvas({
   useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm, isFullscreen })
   useCanvasAutosave(bridge, storageKey, onChange)
 
+  // Sync wine field text on the canvas when the incoming prop changes (e.g.
+  // winemaker updated the vintage in the DB while the editor was open).
+  // This ensures the label doesn't go stale without manual deletion/re-insertion.
+  useEffect(() => {
+    const b = bridge.current
+    if (!b || !initialWineFields) return
+
+    const objects = b.canvas.getObjects()
+    let changed = false
+
+    objects.forEach(obj => {
+      const o = obj as any
+      if (o._type === 'wine-field' && o._fieldKey && o instanceof (fabric as any).Textbox) {
+        const newValue = (initialWineFields as any)[o._fieldKey]
+        if (newValue !== undefined && o.text !== String(newValue)) {
+          o.set('text', String(newValue))
+          changed = true
+        }
+      }
+    })
+
+    if (changed) {
+      b.canvas.requestRenderAll()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(b.canvas as any).fire('cellar:property-changed', { target: null })
+    }
+  }, [bridge, initialWineFields])
+
   async function handleCrop(blob: Blob) {
     const url = URL.createObjectURL(blob)
     if (cropperTargetId) {

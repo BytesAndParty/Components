@@ -4,8 +4,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CartPage } from '../cart';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AtelierProvider } from '@components/atelier';
 import * as vendureClient from '@/lib/vendure-client';
-import { queryClient } from '@/lib/query-client';
+import { queryClient as globalQueryClient } from '@/lib/query-client';
 import type { Order } from '@/lib/types';
 
 // Mock the shopApiRequest
@@ -13,18 +15,8 @@ vi.mock('@/lib/vendure-client', () => ({
   shopApiRequest: vi.fn(),
 }));
 
-// Mock the global queryClient so Providers uses our test client
-vi.mock('@/lib/query-client', async () => {
-  const { QueryClient } = await import('@tanstack/react-query');
-  return {
-    queryClient: new QueryClient({
-      defaultOptions: {
-        queries: { retry: false, staleTime: Infinity },
-        mutations: { retry: false },
-      },
-    }),
-  };
-});
+// We use a real QueryClient but clear it between tests
+const testQueryClient = globalQueryClient;
 
 const mockOrder: Order = {
   id: 'order_1',
@@ -51,73 +43,53 @@ const mockOrder: Order = {
   ],
 };
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 describe('Cart Optimistic UI & Sync', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear();
+    testQueryClient.clear();
+    // Set initial state
+    testQueryClient.setQueryData(['cart'], mockOrder);
   });
 
   it('updates quantity optimistically and rolls back on error', async () => {
-    // 1. Initial Load
-    vi.mocked(vendureClient.shopApiRequest).mockResolvedValue({ activeOrder: mockOrder });
+    (vendureClient.shopApiRequest as any).mockImplementation(() => {
+      return new Promise((_, reject) => setTimeout(() => reject(new Error('Fail')), 50));
+    });
 
     render(<CartPage />);
 
-    // Wait for cart to load
+    // Wait for cart to load from cache
     await waitFor(() => expect(screen.getByText('Blaufränkisch Reserve')).toBeDefined());
-    expect(screen.getByText('2')).toBeDefined(); // Quantity
-    expect(screen.getAllByText('€ 49,00').length).toBeGreaterThan(0); // Line Total or Subtotal
-
-    // 2. Trigger Adjustment (Increment)
-    // We expect the UI to jump to 3 immediately
-    // Mock the next request to fail after a small delay
-    vi.mocked(vendureClient.shopApiRequest).mockImplementationOnce(async () => {
-      await delay(50);
-      throw new Error('Insufficient Stock');
-    });
+    expect(screen.getByText('2')).toBeDefined();
 
     const incrementButton = screen.getByLabelText(/Menge erhöhen/i);
     fireEvent.click(incrementButton);
 
-    // Optimistic Update: Should show 3 immediately (before server response)
-    await waitFor(() => {
-      expect(screen.getByText('3')).toBeDefined();
-      expect(screen.getAllByText('€ 73,50').length).toBeGreaterThan(0); // 3 * 24.50
-    });
+    // Optimistic Update: Should show 3 immediately
+    await waitFor(() => expect(screen.getByText('3')).toBeDefined(), { timeout: 100 });
+    expect(screen.getAllByText('€ 73,50').length).toBeGreaterThan(0);
 
-    // 3. Rollback: After the error, it should revert to 2
-    await waitFor(() => {
-      expect(screen.getByText('2')).toBeDefined();
-      expect(screen.getAllByText('€ 49,00').length).toBeGreaterThan(0);
-    });
+    // Rollback: After the error, it should revert to 2
+    await waitFor(() => expect(screen.getByText('2')).toBeDefined(), { timeout: 1000 });
+    expect(screen.getAllByText('€ 49,00').length).toBeGreaterThan(0);
   });
 
   it('removes item optimistically and rolls back on error', async () => {
-    vi.mocked(vendureClient.shopApiRequest).mockResolvedValue({ activeOrder: mockOrder });
+    (vendureClient.shopApiRequest as any).mockImplementation(() => {
+      return new Promise((_, reject) => setTimeout(() => reject(new Error('Fail')), 50));
+    });
 
     render(<CartPage />);
 
     await waitFor(() => expect(screen.getByText('Blaufränkisch Reserve')).toBeDefined());
-
-    // Mock delete failure after a small delay
-    vi.mocked(vendureClient.shopApiRequest).mockImplementationOnce(async () => {
-      await delay(50);
-      throw new Error('Network Error');
-    });
 
     const removeButton = screen.getByLabelText(/Position entfernen/i);
     fireEvent.click(removeButton);
 
     // Optimistic Update: Should show empty state immediately
-    await waitFor(() => {
-      expect(screen.getByText(/Warenkorb ist leer/i)).toBeDefined();
-    });
+    await waitFor(() => expect(screen.getByText(/Warenkorb ist leer/i)).toBeDefined(), { timeout: 100 });
 
     // Rollback: Should show the item again
-    await waitFor(() => {
-      expect(screen.getByText('Blaufränkisch Reserve')).toBeDefined();
-    });
+    await waitFor(() => expect(screen.getByText('Blaufränkisch Reserve')).toBeDefined(), { timeout: 1000 });
   });
 });

@@ -606,7 +606,9 @@ export class FabricBridge {
     // from a stale prop and silently stall after the first step).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(this.canvas as any).fire('cellar:property-changed', { target: obj })
-    // History is saved on commit (object:modified), not on every keystroke.
+    
+    // Programmatic updates (Properties Panel) deserve a history entry.
+    this.saveHistory()
   }
 
   bringToFront() {
@@ -732,6 +734,7 @@ export class FabricBridge {
     this.canvas.setActiveObject(restored)
     this.canvas.requestRenderAll()
     this.saveHistory()
+    this.notifyStackChanged(restored)
   }
 
   getBackground(): string {
@@ -781,19 +784,23 @@ export class FabricBridge {
   /**
    * Returns all objects as a Layer array for the UI.
    * Fabric z-order is bottom-to-top, but Layer Panel is top-to-bottom.
+   * We filter out internal helper objects (like snap guides) which don't carry
+   * our custom `_type` metadata.
    */
   getLayers() {
-    return this.canvas.getObjects().map((obj) => {
-      const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
-      return {
-        id: o.id,
-        name: o._layerName || o.text || 'Unnamed Layer',
-        type: o._type,
-        fieldKey: o._fieldKey,
-        visible: o.visible,
-        locked: !!o.lockMovementX, // Basic lock check
-      }
-    }).reverse()
+    return this.canvas.getObjects()
+      .filter(obj => (obj as unknown as FabricObjectMeta)._type !== undefined)
+      .map((obj) => {
+        const o = obj as fabric.Object & FabricObjectMeta & { text?: string }
+        return {
+          id: o.id,
+          name: o._layerName || o.text || 'Unnamed Layer',
+          type: o._type,
+          fieldKey: o._fieldKey,
+          visible: o.visible,
+          locked: !!o.lockMovementX, // Basic lock check
+        }
+      }).reverse()
   }
 
   setLayerVisibility(id: string, visible: boolean) {
@@ -802,6 +809,7 @@ export class FabricBridge {
       obj.set('visible', visible)
       this.canvas.renderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
@@ -818,6 +826,7 @@ export class FabricBridge {
       })
       this.canvas.renderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
@@ -828,6 +837,7 @@ export class FabricBridge {
       this.canvas.renderAll()
       this.updateStoreSelection()
       this.saveHistory()
+      // No notifyStackChanged needed; canvas.remove fires object:removed
     }
   }
 
@@ -837,20 +847,24 @@ export class FabricBridge {
       (obj as fabric.Object & FabricObjectMeta)._layerName = name
       this.canvas.renderAll()
       this.saveHistory()
+      this.notifyStackChanged(obj)
     }
   }
 
   reorderLayers(ids: string[]) {
     // Panel: top-to-bottom (front first). Fabric stack: bottom-to-top.
     const reversedIds = [...ids].reverse()
+    let lastObj: fabric.Object | null = null
     reversedIds.forEach((id, index) => {
       const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
       if (obj) {
         this.canvas.moveObjectTo(obj, index)
+        lastObj = obj
       }
     })
     this.canvas.requestRenderAll()
     this.saveHistory()
+    if (lastObj) this.notifyStackChanged(lastObj)
   }
 
   /**

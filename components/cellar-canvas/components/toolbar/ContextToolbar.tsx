@@ -10,53 +10,17 @@ import type { FabricBridge } from '../../engine/fabric-bridge'
 import { useEffect, useState } from 'react'
 import type { FabricObjectProperties } from '../../store/types'
 
-interface ContextToolbarProps {
-  bridge: React.MutableRefObject<FabricBridge | null>
+export interface ContextToolbarProps {
+  bridge:      React.MutableRefObject<FabricBridge | null>
+  activeProps: FabricObjectProperties | null
 }
 
-export function ContextToolbar({ bridge }: ContextToolbarProps) {
+export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
   const m = useCellarCanvasMessages()
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const setCropper = useDesignerStore(s => s.setCropper)
-  const [props, setProps] = useState<FabricObjectProperties | null>(null)
 
-  // Update local state when selection changes or object is modified
-  useEffect(() => {
-    const update = () => {
-      setProps(bridge.current?.getActiveObjectProperties() ?? null)
-    }
-
-    update()
-
-    const canvas = bridge.current?.canvas
-    if (canvas) {
-      canvas.on('object:moving', update)
-      canvas.on('object:scaling', update)
-      canvas.on('object:resizing', update)
-      canvas.on('object:rotating', update)
-      canvas.on('selection:created', update)
-      canvas.on('selection:updated', update)
-      canvas.on('selection:cleared', update)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).on('cellar:property-changed', update)
-    }
-
-    return () => {
-      if (canvas) {
-        canvas.off('object:moving', update)
-        canvas.off('object:scaling', update)
-        canvas.off('object:resizing', update)
-        canvas.off('object:rotating', update)
-        canvas.off('selection:created', update)
-        canvas.off('selection:updated', update)
-        canvas.off('selection:cleared', update)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(canvas as any).off('cellar:property-changed', update)
-      }
-    }
-  }, [selectedIds, bridge])
-
-  if (!props) {
+  if (!activeProps) {
     return (
       <div className="text-muted-foreground flex h-full items-center px-4 text-xs italic">
         {m.contextEmpty}
@@ -64,9 +28,9 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
     )
   }
 
-  const isText      = props.type === 'text' || props.type === 'wine-field'
-  const isShape     = props.type === 'rect' || props.type === 'circle' || props.type === 'line'
-  const isImage     = props.type === 'image'
+  const isText      = activeProps.type === 'text' || activeProps.type === 'wine-field'
+  const isShape     = activeProps.type === 'rect' || activeProps.type === 'circle' || activeProps.type === 'line'
+  const isImage     = activeProps.type === 'image'
   const isMulti     = selectedIds.length >= 2
 
   const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
@@ -103,7 +67,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
           <div className="bg-card border-border flex h-9 items-center rounded-lg border px-2">
              <NumberInput
                 label="OP"
-                value={(props.opacity ?? 1) * 100}
+                value={(activeProps.opacity ?? 1) * 100}
                 onChange={(v) => bridge.current?.updateActiveObject({ opacity: v / 100 })}
                 min={0} max={100} step={5} decimals={0}
                 unit="%"
@@ -116,15 +80,15 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
         <div className="flex items-center gap-4">
           <TextToolOptions
             value={{
-              fontFamily:  props.fontFamily,
-              fontSize:    props.fontSize,
-              bold:        props.fontWeight === 'bold',
-              italic:      props.fontStyle === 'italic',
-              underline:   props.underline,
-              textAlign:   props.textAlign,
-              charSpacing: props.charSpacing,
-              lineHeight:  props.lineHeight,
-              color:       props.fill,
+              fontFamily:  activeProps.fontFamily,
+              fontSize:    activeProps.fontSize,
+              bold:        activeProps.fontWeight === 'bold',
+              italic:      activeProps.fontStyle === 'italic',
+              underline:   activeProps.underline,
+              textAlign:   activeProps.textAlign,
+              charSpacing: activeProps.charSpacing,
+              lineHeight:  activeProps.lineHeight,
+              color:       activeProps.fill,
             }}
             onChange={handleTextChange}
           />
@@ -133,10 +97,10 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
 
       {isShape && (
         <div className="bg-card border-border flex h-9 items-center rounded-lg border">
-          {props.type !== 'line' && (
+          {activeProps.type !== 'line' && (
             <>
               <ColorSwatch
-                value={props.fill ?? '#000000'}
+                value={activeProps.fill ?? '#000000'}
                 onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
                 label="■"
                 title={m.contextFill}
@@ -146,7 +110,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
             </>
           )}
           <ColorSwatch
-            value={(props.stroke as string) ?? '#000000'}
+            value={(activeProps.stroke as string) ?? '#000000'}
             onChange={(v) => bridge.current?.updateActiveObject({ stroke: v })}
             label="◯"
             title={m.contextStroke}
@@ -156,7 +120,7 @@ export function ContextToolbar({ bridge }: ContextToolbarProps) {
           <div className="flex h-full items-center px-2">
             <NumberInput
               label="SW"
-              value={props.strokeWidth ?? 0}
+              value={activeProps.strokeWidth ?? 0}
               onChange={(v) => bridge.current?.updateActiveObject({ strokeWidth: v })}
               min={0} max={20} step={0.5} decimals={1}
               unit="px"
