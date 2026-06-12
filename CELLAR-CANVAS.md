@@ -75,7 +75,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 
 ### Layer Panel
 - [x] Layer list — mirrors Fabric.js z-order, reversed (top = front)
-- [x] Drag-to-reorder (Framer Motion `Reorder.Group`) → updates canvas z-order
+- [x] Drag-to-reorder (@dnd-kit/sortable) → updates canvas z-order
 - [x] Visibility toggle (eye icon) — hides object without deleting
 - [x] Lock/unlock — locks object against selection/move
 - [x] Inline rename (double-click on name)
@@ -141,10 +141,10 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [ ] Skippable at any step
 
 ### i18n
-- [ ] `i18n` prop — all UI strings overridable
-- [ ] Default: English strings (`cellarCanvasEN`)
-- [ ] German export: `cellarCanvasDE` object shipped alongside component
-- [ ] No coupling to any i18n library
+- [x] `i18n` prop — all UI strings overridable
+- [x] Default: English strings (`cellarCanvasEN` in `messages.ts`)
+- [x] German export: `cellarCanvasDE` object shipped alongside component
+- [x] No coupling to any i18n library
 
 ### Extras Panel (Low Priority — Phase 8)
 - [ ] Ark UI `SignaturePad` → capture brush strokes → insert as SVG path on canvas
@@ -208,9 +208,8 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 components/cellar-canvas/
 ├── index.ts
 ├── CellarCanvas.tsx                   ← Root, public props API
-├── i18n/
-│   ├── en.ts                          ← Default English strings
-│   └── de.ts                          ← German strings (shipped with component)
+├── messages.ts                        ← Default English + German strings
+├── messages-context.ts                ← Context provider for strings
 ├── store/
 │   ├── types.ts
 │   └── designer-store.ts              ← Zustand store
@@ -331,15 +330,14 @@ interface CellarCanvasProps {
 | Package | Purpose | Status |
 |---|---|---|
 | `@ark-ui/react@^5.x` | Color Picker, ImageCropper, SignaturePad, Tour, DownloadTrigger, FocusTrap | ✅ installed |
-| `fabric@^6.5.0` | Canvas engine | ⬜ to install |
-| `zustand@^5.0.0` | Designer state store | ⬜ to install |
-| `jspdf@^2.5.2` | PDF export with crop marks | ⬜ to install |
-| `qrcode@^1.5.x` | QR code generation (EU nutritional info) | ⬜ to install |
-| `framer-motion` | Layer drag-reorder, panel animations | ✅ present |
+| `fabric@^7.4.0` | Canvas engine | ✅ installed |
+| `zustand@^5.0.0` | Designer state store | ✅ installed |
+| `jspdf@^4.2.x` | PDF export with crop marks | ✅ installed |
+| `qrcode@^1.5.x` | QR code generation (EU nutritional info) | ✅ installed |
+| `motion@^12.x` | Panel animations, micro-interactions | ✅ installed |
+| `@dnd-kit/*@^6.x` | Layer drag-reorder, sortable logic | ✅ installed |
 | `lucide-react` | Toolbar icons | ✅ present |
 | `clsx` + `tailwind-merge` | `cn()` utility | ✅ present |
-
-**4 packages to install: `fabric`, `zustand`, `jspdf`, `qrcode`**
 
 ---
 
@@ -378,12 +376,12 @@ Jede Komponente wird in `/designer` als eigene Section showcased.
 - `PropertiesPanel` — x/y/w/h/rotation `NumberInput` fields
 
 ### Phase 4 — Wine Fields + QR + Validator
-- `wine-fields/field-definitions.ts` + `overlay-presets.ts`
-- `WineFieldsPanel` — insert buttons, value preview
-- `qr-generator.ts` — `qrcode` → data URL → `fabric.Image`
-- `validator.ts` — scan `_fieldKey` on canvas objects
-- `ValidatorBadge` with popover
-- `initialWineFields` prop wiring
+- [x] `wine-fields/field-definitions.ts` + `overlay-presets.ts`
+- [x] `WineFieldsPanel` — insert buttons, value preview
+- [x] `qr-generator.ts` — `qrcode` → data URL → `fabric.Image`
+- [x] `validator.ts` — scan `_fieldKey` on canvas objects
+- [x] `ValidatorBadge` with popover
+- [x] `initialWineFields` prop wiring
 
 ### Phase 5 — Image Tool + Shapes + Background ← current
 - [x] File upload → `ImageCropperModal` → canvas (pre-measured zoom/initialCrop; source-pixel-resolution output)
@@ -398,7 +396,7 @@ Jede Komponente wird in `/designer` als eigene Section showcased.
 
 ### Phase 6 — Templates + Undo/Redo + Multi-Area
 - [x] Undo/Redo — JSON snapshot history (50 states)
-- [ ] Install `jspdf`
+- [x] Install `jspdf`
 - [ ] 5 built-in templates as Fabric JSON
 - [ ] `TemplatesPanel` with previews
 - [ ] `LabelAreaTabs` — Front / Back / Neck
@@ -406,12 +404,12 @@ Jede Komponente wird in `/designer` als eigene Section showcased.
 ### Phase 7 — Persistence + Export + Tour
 - [x] localStorage autosave + `onSave` callback wiring
 - [x] Save button with dirty state + loading/success/error
-- [ ] `export-pipeline.ts` — PNG + PDF
+- [x] `export-pipeline.ts` — PNG + PDF
 - [ ] `ExportPanel` — area selector, format, dpi
 - [ ] Ark UI `DownloadTrigger`
 - [ ] `onExport` callback
-- [ ] Ark UI `Tour` — 5-step first-run walkthrough
-- [ ] i18n: `i18n/en.ts` + `i18n/de.ts`
+- [x] Ark UI `Tour` — 5-step first-run walkthrough
+- [x] i18n: `i18n/en.ts` + `i18n/de.ts` (implemented via `messages.ts`)
 
 ### Phase 8 — Polish + Extras + Showcase
 - `FocusTrap` audit across all modals
@@ -440,6 +438,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-05-25*
+*Last updated: 2026-06-12*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*

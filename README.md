@@ -227,7 +227,7 @@ export function Root({ children }) {
 
 ## Komponenten
 
-76 Komponenten. Vollständiger Status inkl. Refactoring-Fortschritt in [PLAN.md](./PLAN.md).
+~84 Komponenten. Vollständiger Status inkl. Refactoring-Fortschritt in [components/COMPONENTS-OVERVIEW.md](./components/COMPONENTS-OVERVIEW.md).
 
 ### Design Engine (Cellar Canvas)
 `alignment-bar` · `color-picker` · `image-cropper-modal` · `layer-panel` · `number-input` · `text-tool-options` · `validator-badge`

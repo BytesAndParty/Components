@@ -29,6 +29,7 @@
 | GraphQL-Transport | graphql-request | — |
 | Headless UI | Ark UI (`@ark-ui/react`) | @radix-ui/*, @headlessui/*, shadcn |
 | Animation | motion/react | framer-motion, gsap |
+| Drag & Drop / Sortable | @dnd-kit | motion Reorder.Group, react-dnd |
 | Memoization | React Compiler | manuelles `useMemo`/`useCallback` |
 
 Die „verboten"-Spalte ist in `eslint.config.js` als `no-restricted-imports` hinterlegt.
