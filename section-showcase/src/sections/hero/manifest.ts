@@ -4,6 +4,7 @@ import { HeroV2 } from './HeroV2'
 import { HeroV3 } from './HeroV3'
 import { HeroV4 } from './HeroV4'
 import { HeroV5 } from './HeroV5'
+import { HeroV6 } from './HeroV6'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -39,6 +40,12 @@ export const heroSection: SectionDef = {
       label: 'Modern Tech',
       description: 'Dunkles Design mit Aurora-Text, Partikeln und magnetischen Interaktionen.',
       Component: HeroV5,
+    },
+    {
+      id: 'v6',
+      label: 'Maison Editorial',
+      description: 'Geschichtete Magazin-Komposition: Headline überlappt die Fotografie, vertikale Meta-Leiste, Curtain-Reveals.',
+      Component: HeroV6,
     },
   ],
 }
