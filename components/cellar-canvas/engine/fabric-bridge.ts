@@ -451,6 +451,7 @@ export class FabricBridge {
   /**
    * Returns the original source URL/DataURL of the currently selected image.
    */
+  // fallow-ignore-next-line unused-class-members
   getSelectedImageSrc(): string | null {
     const obj = this.canvas.getActiveObject() as
       | (fabric.FabricImage & FabricObjectMeta)

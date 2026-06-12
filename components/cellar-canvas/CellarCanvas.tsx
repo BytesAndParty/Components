@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
@@ -22,7 +23,7 @@ import { mmToPx } from './engine/units'
 // out of the initial designer chunk (≈590 kB of vendor code).
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
-import type { CellarCanvasState } from './store/types'
+import type { CellarCanvasState, FabricObjectMeta } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
 // Bleed dimming around the label. Design view stays semi-transparent so
@@ -172,11 +173,11 @@ export function CellarCanvas({
     let changed = false
 
     objects.forEach(obj => {
-      const o = obj as any
-      if (o._type === 'wine-field' && o._fieldKey && o instanceof (fabric as any).Textbox) {
-        const newValue = (initialWineFields as any)[o._fieldKey]
-        if (newValue !== undefined && o.text !== String(newValue)) {
-          o.set('text', String(newValue))
+      const meta = obj as fabric.Object & FabricObjectMeta
+      if (meta._type === 'wine-field' && meta._fieldKey && obj instanceof fabric.Textbox) {
+        const newValue = (initialWineFields as Record<string, unknown>)[meta._fieldKey]
+        if (newValue !== undefined && obj.text !== String(newValue)) {
+          obj.set('text', String(newValue))
           changed = true
         }
       }
@@ -313,7 +314,7 @@ export function CellarCanvas({
         className="border-border bg-card flex items-center justify-between border-b pr-4"
         style={{ gridColumn: '2 / -1' }}
       >
-        <ContextToolbar bridge={bridge} />
+        <ContextToolbar bridge={bridge} activeProps={activeProps} />
         <button
           onClick={() => bridge.current?.zoomToFit()}
           className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
@@ -339,9 +340,10 @@ export function CellarCanvas({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        <div className="flex flex-1 items-center justify-center overflow-auto p-12">
+        <div className="relative flex-1">
           <LabelCanvas
             ref={canvasRef}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             backdrop={computeBackdrop(widthMm, heightMm, viewport, backgroundColor)}
             widthMm={widthMm}
             heightMm={heightMm}
