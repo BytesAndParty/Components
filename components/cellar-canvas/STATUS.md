@@ -69,6 +69,84 @@
 
 ---
 
+## Refactoring-Analyse (2026-06-12)
+
+> Basis: fallow health/dead-code + manuelle Sichtung aller Engine-/Store-Dateien.
+> Umfang: ~3.700 LOC · Testabdeckung: nur `wine-fields/validator.test.ts`.
+
+### Einschätzung
+
+Die Architektur-Idee trägt (Fabric = Geometrie-Wahrheit, Zustand = UI-Metadaten,
+Sync nur in Effekten; `use-canvas-sync` mit Microtask-Debounce und Update-Modi ist
+durchdacht). Drei Dinge sind ihr aber entwachsen: `fabric-bridge.ts` ist ein
+877-LOC-God-Object, die History hat zwei Halb-Besitzer, und die Bild-Quellen sind
+inkonsistent (Reload-Bug, F1). Refactoring lohnt — als gezielte Modul-Extraktion
+mit Tests dort, wo fallow CRAP > 200 meldet, nicht als Rewrite.
+
+### fallow-Evidenz
+
+| Fundstelle | Metrik |
+|---|---|
+| `fabric-bridge.ts updateActiveObject` (:544) | cyclomatic 21 · cognitive 20 · **CRAP 462** |
+| `snap-manager.ts handleMoving` (:45) | cyclomatic 15 · cognitive 22 · CRAP 240 |
+| `ContextToolbar.tsx` (:17) | cyclomatic 15 · 137 Zeilen · CRAP 240 |
+| `CellarCanvas.tsx CellarCanvas` (:126) | 270 Zeilen Komponentenfunktion |
+| `designer-store.ts` | 54 LOC, 7 Dependents — klein & sauber, **kein** Ziel |
+
+CRAP > 200 = hohe Komplexität × null Tests. Hebel: komplexe Pfade in pure
+Functions ziehen und testen.
+
+### Befunde
+
+- **F1 — Bug, Datenverlust:** Crop-Apply (`CellarCanvas.tsx:194`) und
+  Clipboard-Paste (`use-clipboard-paste.ts:36`) erzeugen `blob:`-URLs;
+  Toolbar-Upload und Drag&Drop nutzen Data-URLs. Fabric serialisiert `src`
+  wörtlich in Autosave + History → gecroppte/gepastete Bilder sind nach Reload
+  tote Referenzen. Zudem fehlt `revokeObjectURL` (Leak).
+- **F2 — God-Object:** Bridge bündelt History, Serialisierung, 7 Objekt-Fabriken,
+  Property-Mapping mm↔px (beide Richtungen), Stack-Ops, Alignment, Background,
+  Viewport, Layer-Ops. Die `add*`-Fabriken wiederholen je ~30 Zeilen Boilerplate
+  (Corner-Style, Origin-Pinning, Meta-Assign, add→activate→render→saveHistory)
+  ≈ 150 LOC Dopplung.
+- **F3 — History, zwei Halb-Besitzer:** Store besitzt Stack/Index
+  (`designer-store.ts:32`), Bridge besitzt Save/Restore/Lock
+  (`fabric-bridge.ts:154`); `undo()` koppelt beide via `getState()`.
+  `restoreHistory` ist async ohne Reentrancy-Guard — schnelles Cmd+Z-Hammering
+  startet überlappende `loadFromJSON`-Läufe.
+- **F4 — Snapshot-Gewicht:** Jeder History-Step ist eine Vollkopie inkl.
+  Base64-Bilder. 2-MB-Foto × 50 Steps ⇒ bis ~100 MB Heap nur für Undo —
+  plausibelste Wurzel der Performance-Lags aus `b0f78da`.
+- **F5 — Drei Benachrichtigungswege:** native Fabric-Events, Custom-Channel
+  `cellar:property-changed` (8× `as any`), manuelles `setLayers`-Spiegeln durch
+  Aufrufer (`use-canvas-sync.ts:17`, „panel snap-back"). Wer eine Bridge-Methode
+  ergänzt, muss raten, welcher Weg greift.
+- **F6 — Teardown-Falle:** `canvas.off('selection:created')` ohne Handler-Ref
+  (`use-canvas-sync.ts:133`) entfernt **alle** Listener dieses Events — aktuell
+  verdeckt, weil Teardown ≈ Dispose, aber fragil.
+- **F7 — Root zu fett:** Wine-Field-Sync, Crop, PDF-Export, Drag&Drop, Hotkeys,
+  Fullscreen-Escape, Portal in einer 270-Zeilen-Komponente.
+
+### Plan (commit pro Schritt, jeweils mit Verify)
+
+| # | Schritt | Verify | Aufwand |
+|---|---|---|---|
+| 1 | **F1-Fix:** `imageSourceFromBlob(blob)`-Helper (Data-URL), alle 4 Upload-Pfade darüber | croppen/pasten → Reload → Bild da; Unit-Test | S |
+| 2 | Objekt-Fabriken → `engine/object-factory.ts` (gemeinsames `CORNER_STYLE` + `attach(meta)`), Bridge delegiert | Tests grün + alle 7 Insert-Wege im Showcase | S |
+| 3 | mm↔px-Mapping aus `get/updateActiveObject` → pure Functions in `object-properties.ts`, **Unit-Tests pro Objekttyp** | CRAP 462 ⇒ < 50 | M |
+| 4 | History → `engine/history-manager.ts` (Stack + Index + Reentrancy-Lock); Store behält nur `canUndo/canRedo/isDirty` | Tests: push/undo/redo/Limit/Reentrancy; Cmd+Z-Hammering | M |
+| 5 | Snapshot-Diät: Bild-Registry (`id → src`), Snapshots referenzieren statt kopieren | Heap-Vergleich: 3 Fotos × 30 Steps | M |
+| 6 | Benachrichtigung vereinheitlichen: Custom-Channel für alle non-emitting Mutationen, `setLayers`-Hatch raus, typisierte Events, Teardown mit Handler-Refs | Layer-Panel: reorder/lock/hide/rename ohne Snap-back | M |
+| 7 | Root entschlacken: `use-wine-field-sync` / `use-canvas-hotkeys` / `use-image-drop` | tsc + Showcase-Smoke | S |
+| 8 | snap-manager: Guide-Kandidaten als pure Function + Tests | CRAP 240 ⇒ < 50 | S |
+
+Reihenfolge bewusst: 1 ist User-facing Bugfix, 2–3 mechanisch (senken Risiko für
+4–5, die Operation am offenen Herzen), 6–8 Aufräumen mit Eigenwert.
+**Nicht anfassen:** `designer-store.ts` und die `use-canvas-sync`-Update-Modi
+(nur Teardown ändert sich in Schritt 6). Neue Features (Templates, Background-Image,
+Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besitz auf.
+
+---
+
 ## Entscheidungs-Log
 
 ### #24 — ImageCropper-Drift bei sequenziellen Uploads *(2026-05-25 — gefixt)*
@@ -292,4 +370,4 @@
 
 ---
 
-*Last updated: 2026-05-26*
+*Last updated: 2026-06-12*
