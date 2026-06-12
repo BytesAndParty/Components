@@ -1,14 +1,15 @@
 import { useEffect, useRef } from 'react'
+import { imageSourceFromBlob } from './image-source'
 
 /**
  * Document-level `paste` handler that intercepts image clipboard data and
- * forwards a blob URL to the caller. Skips when focus is inside a text input
+ * forwards a data URL to the caller. Skips when focus is inside a text input
  * so plain text paste keeps working.
  *
- * The caller is responsible for revoking the blob URL once the image is
- * loaded into the canvas (see `URL.revokeObjectURL`).
+ * Data URL (not blob:) so the source survives history restore, autosave
+ * round-trips and page reloads — see `imageSourceFromBlob`.
  */
-export function useClipboardPaste(onImage: (blobUrl: string) => void | Promise<void>) {
+export function useClipboardPaste(onImage: (dataUrl: string) => void | Promise<void>) {
   const cbRef = useRef(onImage)
   useEffect(() => {
     cbRef.current = onImage
@@ -33,7 +34,7 @@ export function useClipboardPaste(onImage: (blobUrl: string) => void | Promise<v
           const file = item.getAsFile()
           if (file) {
             e.preventDefault()
-            void cbRef.current(URL.createObjectURL(file))
+            void imageSourceFromBlob(file).then(url => cbRef.current(url))
             return
           }
         }

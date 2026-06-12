@@ -2,6 +2,7 @@ import { useRef, type ChangeEvent } from 'react'
 import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2 } from 'lucide-react'
 import { useDesignerStore } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
+import { imageSourceFromBlob } from '../../engine/image-source'
 import { Tooltip } from '../shared'
 import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
@@ -50,11 +51,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      setCropper({ open: true, src: reader.result as string })
-    }
-    reader.readAsDataURL(file)
+    void imageSourceFromBlob(file).then(src => setCropper({ open: true, src }))
     // Reset so picking the same file twice in a row still fires change.
     e.target.value = ''
   }

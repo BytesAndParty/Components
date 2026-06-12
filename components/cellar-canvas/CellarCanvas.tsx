@@ -4,6 +4,7 @@ import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
+import { imageSourceFromBlob } from './engine/image-source'
 import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { useCanvasSync } from './engine/use-canvas-sync'
 import { useCanvasAutosave } from './engine/use-canvas-autosave'
@@ -191,7 +192,9 @@ export function CellarCanvas({
   }, [bridge, initialWineFields])
 
   async function handleCrop(blob: Blob) {
-    const url = URL.createObjectURL(blob)
+    // Data URL, not createObjectURL: Fabric serializes `src` into history and
+    // autosave and re-fetches it on loadFromJSON — blob: URLs would die there.
+    const url = await imageSourceFromBlob(blob)
     if (cropperTargetId) {
       await bridge.current?.updateImageSource(cropperTargetId, url)
     } else {
@@ -222,13 +225,8 @@ export function CellarCanvas({
   }, [isFullscreen])
 
   // Clipboard paste — image data on the clipboard lands as a Fabric image.
-  // We revoke the blob URL once Fabric has loaded the image into its cache.
   useClipboardPaste(async (url) => {
-    try {
-      await bridge.current?.addImage(url)
-    } finally {
-      URL.revokeObjectURL(url)
-    }
+    await bridge.current?.addImage(url)
   })
 
   useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
@@ -274,11 +272,7 @@ export function CellarCanvas({
     e.stopPropagation()
     const file = e.dataTransfer.files?.[0]
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        setCropper({ open: true, src: reader.result as string })
-      }
-      reader.readAsDataURL(file)
+      void imageSourceFromBlob(file).then(src => setCropper({ open: true, src }))
     }
   }
 
