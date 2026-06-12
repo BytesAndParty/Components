@@ -11,6 +11,7 @@ import { SplashCursor } from '@components/splash-cursor/splash-cursor'
 import { PixelImage } from '@components/pixel-image/pixel-image'
 import { Backlight } from '@components/backlight/backlight'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
+import { RevealImage } from '@components/reveal-image/reveal-image'
 import { BounceCards } from '@components/bounce-cards/bounce-cards'
 import { Particles } from '@components/particles/particles'
 import { ParticlesCard } from '@components/particles/particles-card'
@@ -696,6 +697,53 @@ export function CardsPage() {
               border: '1px solid var(--border)',
             }}
           />
+        </div>
+      </Section>
+
+      <Section title="RevealImage" description="Editorial curtain reveal — clip-path wipe mit Gegen-Zoom beim Scroll-In. Vier Wipe-Richtungen." canReload>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="flex flex-col gap-2">
+            <RevealImage
+              src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&q=80"
+              alt="Rotweinglas im Streiflicht"
+              direction="up"
+              className="aspect-3/4 rounded-xl"
+            />
+            <span className="text-muted-foreground text-xs">direction=&quot;up&quot;</span>
+          </div>
+          <div className="flex flex-col gap-2">
+            <RevealImage
+              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80"
+              alt="Weinflaschen im Regal"
+              direction="right"
+              delay={150}
+              className="aspect-3/4 rounded-xl"
+            />
+            <span className="text-muted-foreground text-xs">direction=&quot;right&quot; · delay 150</span>
+          </div>
+          <div className="flex flex-col gap-2">
+            <RevealImage
+              src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80"
+              alt="Weinberg am Hang"
+              direction="down"
+              delay={300}
+              duration={1600}
+              className="aspect-3/4 rounded-xl"
+            />
+            <span className="text-muted-foreground text-xs">direction=&quot;down&quot; · 1600ms</span>
+          </div>
+          <div className="flex flex-col gap-2">
+            <RevealImage
+              src="https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=600&q=80"
+              alt="Reife Trauben am Stock"
+              direction="left"
+              delay={450}
+              zoom={1.25}
+              once={false}
+              className="aspect-3/4 rounded-xl"
+            />
+            <span className="text-muted-foreground text-xs">direction=&quot;left&quot; · zoom 1.25 · once=false</span>
+          </div>
         </div>
       </Section>
 

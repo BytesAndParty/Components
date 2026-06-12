@@ -27,6 +27,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **morphing-text / text-rotate / text-scramble:** Dynamische Typografie.
 - **particles / light-rays:** Atmosphärische Hintergrundeffekte.
 - **pixel-image:** Kunstvoller Lade-Effekt für Bilder.
+- **reveal-image:** Editorial Curtain-Reveal — Clip-Path-Wipe mit Gegen-Zoom beim Scroll-In.
 
 ## 3. E-Commerce & Conversion
 *Direkter Fokus auf Verkauf und Warenkorb.*
