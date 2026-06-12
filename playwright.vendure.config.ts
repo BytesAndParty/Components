@@ -1,10 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './e2e/vendure',
   fullyParallel: true,
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:4321',
   },
   projects: [
     {
@@ -13,8 +13,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'cd vendure-showcase/storefront && bun run dev --port 5173',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
+    command: 'bun run --cwd vendure-showcase/storefront dev --port 4321',
+    url: 'http://localhost:4321',
+    reuseExistingServer: !process.env.CI,
   },
 });

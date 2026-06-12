@@ -4,8 +4,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CartPage } from '../cart';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AtelierProvider } from '@components/atelier';
 import * as vendureClient from '@/lib/vendure-client';
 import { queryClient as globalQueryClient } from '@/lib/query-client';
 import type { Order } from '@/lib/types';
