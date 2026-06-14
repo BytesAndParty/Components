@@ -1,3 +1,8 @@
+// fallow-ignore-file unused-class-member
+// Every public method on FabricBridge is invoked through a `bridge.current?.x()`
+// React ref (CellarCanvas, toolbars, panels, hotkeys). fallow's static analysis
+// cannot trace calls across the ref boundary and reports them all as unused —
+// verified false: each flagged member has at least one external caller.
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
 import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
@@ -451,7 +456,6 @@ export class FabricBridge {
   /**
    * Returns the original source URL/DataURL of the currently selected image.
    */
-  // fallow-ignore-next-line unused-class-members
   getSelectedImageSrc(): string | null {
     const obj = this.canvas.getActiveObject() as
       | (fabric.FabricImage & FabricObjectMeta)

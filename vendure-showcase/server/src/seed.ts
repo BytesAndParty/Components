@@ -1,5 +1,6 @@
-// fallow-ignore-file security-sink — local dev seed: fetch() only ever targets the
-// hardcoded localhost ADMIN_URL constant, never an attacker-controlled URL.
+// fallow-ignore-file security-sink
+// Reason: local dev seed — fetch() only ever targets the hardcoded localhost
+// ADMIN_URL constant, never an attacker-controlled URL.
 
 /**
  * SEED-SKRIPT

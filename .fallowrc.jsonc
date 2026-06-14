@@ -25,6 +25,7 @@
     "@vendure/admin-ui",
     "@vendure/admin-ui-plugin",
     "@vendure/asset-server-plugin",
+    "@vendure/dashboard",
     "@vendure/ui-devkit",
     "@nestjs/graphql",
     "@angular/core",

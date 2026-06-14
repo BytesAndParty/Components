@@ -1,5 +1,6 @@
-// fallow-ignore-file security-sink — every path.join uses only __dirname + literal
-// segments (no external input); paths are not attacker-controllable.
+// fallow-ignore-file security-sink
+// Reason: every path.join uses only __dirname + literal segments (no external
+// input); paths are not attacker-controllable.
 
 /**
  * DIE ZENTRALE KONFIGURATION
