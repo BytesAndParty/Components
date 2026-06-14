@@ -1,13 +1,14 @@
 import { useEffect } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { TransitionStage } from '@components/view-transition/transition-stage'
+import { HeartLike } from '@components/heart-like/heart-like'
 import { findSection } from '../sections/registry'
 import { useShowcase } from '../showcase-state'
 
 export function SectionPage() {
   const { sectionId } = useParams()
   const section = sectionId ? findSection(sectionId) : undefined
-  const { mode, variantId, setVariantId } = useShowcase()
+  const { mode, variantId, setVariantId, isFavorite, toggleFavorite } = useShowcase()
 
   // Reset variant to the section's first when the URL section changes (or when
   // the current variantId is foreign to this section's variant list).
@@ -28,14 +29,21 @@ export function SectionPage() {
       <div className="pb-32">
         {section.variants.map(v => (
           <article key={v.id} className="border-border border-b">
-            <header className="mx-auto max-w-7xl px-6 pt-10 pb-3">
-              <p className="text-muted-foreground text-[11px] tracking-[0.18em] uppercase">
-                Variante
-              </p>
-              <h3 className="font-display text-xl">{v.label}</h3>
-              {v.description && (
-                <p className="text-muted-foreground mt-1 max-w-xl text-sm">{v.description}</p>
-              )}
+            <header className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-6 pt-10 pb-3">
+              <div>
+                <p className="text-muted-foreground text-[11px] tracking-[0.18em] uppercase">
+                  Variante
+                </p>
+                <h3 className="font-display text-xl">{v.label}</h3>
+                {v.description && (
+                  <p className="text-muted-foreground mt-1 max-w-xl text-sm">{v.description}</p>
+                )}
+              </div>
+              <HeartLike
+                size={24}
+                checked={isFavorite(section.id, v.id)}
+                onChange={() => toggleFavorite(section.id, v.id)}
+              />
             </header>
             <v.Component />
           </article>

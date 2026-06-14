@@ -1,15 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import {
   ChevronDown, ChevronLeft, ChevronRight,
-  Eye, EyeOff, GripHorizontal, Layers, Moon, Square, Sun,
+  Eye, EyeOff, GripHorizontal, Heart, Layers, Moon, Square, Sun,
 } from 'lucide-react'
 import { useAtelier } from '@components/atelier'
+import { HeartLike } from '@components/heart-like/heart-like'
 import { runViewTransition } from '@components/view-transition/run-view-transition'
 import { sections, findSection } from '../sections/registry'
 import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
 } from '../showcase-state'
+import { CompositionTray } from './composition-tray'
 
 // Reserved view-transition-names keep the floating bar (and its hidden-state
 // toggle) out of the document-level root crossfade when a variant slide runs.
@@ -25,12 +27,21 @@ export function CommandBar() {
   const showcase = useShowcase()
   const atelier = useAtelier()
 
+  const location = useLocation()
+  const isPreview = location.pathname === '/preview'
+
   const [offset, setOffset] = useState<DragOffset>({ x: 0, y: 0 })
   const [sectionMenuOpen, setSectionMenuOpen] = useState(false)
   const [sectionMenuDirection, setSectionMenuDirection] = useState<'up' | 'down'>('up')
+  const [trayOpen, setTrayOpen] = useState(false)
   const sectionMenuRef = useRef<HTMLDivElement>(null)
   const sectionTriggerRef = useRef<HTMLButtonElement>(null)
+  const trayRef = useRef<HTMLDivElement>(null)
   const dragStateRef = useRef<{ startX: number; startY: number; base: DragOffset } | null>(null)
+
+  // Active variant the heart toggles — the one on screen in single mode.
+  const activeVariantId = showcase.variantId ?? section?.variants[0]?.id ?? null
+  const favoriteCount = showcase.composition.order.length
 
   // Flip the section menu to open downward when there isn't enough space above
   // the trigger (e.g. user dragged the bar near the top of the viewport).
@@ -57,6 +68,19 @@ export function CommandBar() {
     document.addEventListener('pointerdown', onDocPointerDown)
     return () => document.removeEventListener('pointerdown', onDocPointerDown)
   }, [sectionMenuOpen])
+
+  // Close favorites tray on outside click
+  useEffect(() => {
+    if (!trayOpen) return
+    function onDocPointerDown(e: PointerEvent) {
+      if (!trayRef.current) return
+      if (!trayRef.current.contains(e.target as Node)) {
+        setTrayOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', onDocPointerDown)
+    return () => document.removeEventListener('pointerdown', onDocPointerDown)
+  }, [trayOpen])
 
   // Section + variant navigation helpers
   const sectionIdx = section ? sections.findIndex(s => s.id === section.id) : -1
@@ -157,6 +181,10 @@ export function CommandBar() {
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
   }
+
+  // The preview route renders the composed page chrome-free; it carries its
+  // own "back to edit" control, so the command bar steps aside entirely.
+  if (isPreview) return null
 
   if (showcase.barHidden) {
     return (
@@ -300,10 +328,41 @@ export function CommandBar() {
               >
                 {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
               </button>
+
+              <div className="bg-border hidden h-5 w-px sm:block" />
+
+              {activeVariantId && (
+                <HeartLike
+                  size={22}
+                  checked={showcase.isFavorite(section.id, activeVariantId)}
+                  onChange={() => showcase.toggleFavorite(section.id, activeVariantId)}
+                />
+              )}
             </>
           )}
 
           <div className="flex-1" />
+
+          <div ref={trayRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setTrayOpen(o => !o)}
+              aria-expanded={trayOpen}
+              aria-haspopup="dialog"
+              aria-label={`Favoriten (${favoriteCount})`}
+              title="Deine Seite"
+              className="border-border hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <Heart
+                size={14}
+                className={favoriteCount > 0 ? 'text-accent fill-accent' : 'text-muted-foreground'}
+              />
+              <span className="tabular-nums">{favoriteCount}</span>
+            </button>
+            {trayOpen && <CompositionTray onClose={() => setTrayOpen(false)} />}
+          </div>
+
+          <div className="bg-border hidden h-5 w-px sm:block" />
 
           <div className="border-border flex items-center gap-1 rounded-full border p-1">
             {SHOWCASE_ACCENTS.map(a => {

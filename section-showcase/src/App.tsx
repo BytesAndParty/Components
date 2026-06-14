@@ -2,12 +2,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import { Layout } from './layout'
 import { IndexPage } from './pages/IndexPage'
 import { SectionPage } from './pages/SectionPage'
+import { PreviewPage } from './pages/PreviewPage'
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { index: true, element: <IndexPage /> },
+      // Static `preview` outranks the dynamic `:sectionId` segment in v7.
+      { path: 'preview', element: <PreviewPage /> },
       { path: ':sectionId', element: <SectionPage /> },
     ],
   },
