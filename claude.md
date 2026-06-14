@@ -34,3 +34,22 @@ Jede Komponente und jede Section muss die Ästhetik eines exklusiven, traditions
 ---
 
 Diese Richtlinien stellen sicher, dass jede Komponente "intelligent" wirkt und eine einheitliche, hochwertige User Experience über alle Projekte hinweg bietet.
+
+---
+
+## 6. Verbindliche Zusatz-Instructions
+
+Diese Dateien sind Teil der Instructions und in jeder Session aktiv:
+
+@ARTELIER.md
+@COMPONENT-GUIDELINES.md
+@AGENTS.local.md
+
+## 7. On-Demand-Referenzen
+
+Bei Arbeit am jeweiligen Thema heranziehen (nicht automatisch geladen):
+
+- [CELLAR-CANVAS.md](./CELLAR-CANVAS.md) — Spec des Wine-Label-Designers (`components/cellar-canvas/`).
+- [README.md](./README.md) — Architektur-Überblick AtelierUI (Provider, TanStack, i18n, Komponenten-Inventar).
+- [PROJECT-HEALTH.md](./PROJECT-HEALTH.md) — Audit-Status (Snapshot, keine laufende Instruction).
+- `AGENTS.md` ist auto-generiert (`shared/base/AGENTS.base.md` + `AGENTS.local.md`) — nicht von Hand editieren.
