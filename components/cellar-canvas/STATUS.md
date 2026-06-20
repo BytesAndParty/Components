@@ -134,8 +134,8 @@ Functions ziehen und testen.
 | # | Schritt | Verify | Aufwand |
 |---|---|---|---|
 | ✅ | ~~**F1-Fix:** `imageSourceFromBlob(blob)`-Helper (Data-URL), alle 4 Upload-Pfade darüber~~ **erledigt 2026-06-20** | croppen/pasten → Reload → Bild da; Unit-Test 3/3 ✅ | S |
-| 2 | Objekt-Fabriken → `engine/object-factory.ts` (gemeinsames `CORNER_STYLE` + `attach(meta)`), Bridge delegiert | Tests grün + alle 7 Insert-Wege im Showcase | S |
-| 3 | mm↔px-Mapping aus `get/updateActiveObject` → pure Functions in `object-properties.ts`, **Unit-Tests pro Objekttyp** | CRAP 462 ⇒ < 50 | M |
+| ✅ | ~~Objekt-Fabriken → `engine/object-factory.ts` (gemeinsames `CORNER_STYLE` + `attach(meta)`), Bridge delegiert~~ **erledigt 2026-06-20** | Bridge 881→715 LOC, 7 `place()`-Delegationen, Lint 0 · 11/11 | S |
+| ✅ | ~~mm↔px-Mapping aus `get/updateActiveObject` → pure Functions in `object-properties.ts`, **Unit-Tests pro Objekttyp**~~ **erledigt 2026-06-20** | CRAP 462 ⇒ unter Threshold (raus aus fallow-Top-Liste); 11 Unit-Tests pro Kind | M |
 | 4 | History → `engine/history-manager.ts` (Stack + Index + Reentrancy-Lock); Store behält nur `canUndo/canRedo/isDirty` | Tests: push/undo/redo/Limit/Reentrancy; Cmd+Z-Hammering | M |
 | 5 | Snapshot-Diät: Bild-Registry (`id → src`), Snapshots referenzieren statt kopieren | Heap-Vergleich: 3 Fotos × 30 Steps | M |
 | 6 | Benachrichtigung vereinheitlichen: Custom-Channel für alle non-emitting Mutationen, `setLayers`-Hatch raus, typisierte Events, Teardown mit Handler-Refs | Layer-Panel: reorder/lock/hide/rename ohne Snap-back | M |

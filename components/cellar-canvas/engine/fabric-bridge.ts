@@ -6,7 +6,7 @@
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
 import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
-import { pxToMm, mmToPx } from './units'
+import { mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 import { SnapManager } from './snap-manager'
 import {
@@ -18,6 +18,14 @@ import {
   configureImage,
   configureQRImage,
 } from './object-factory'
+import {
+  geometryKind,
+  readGeometryMm,
+  xToLeft,
+  yToTop,
+  widthToFabricProps,
+  heightToFabricProps,
+} from './object-properties'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -347,18 +355,30 @@ export class FabricBridge {
     const obj = this.canvas.getActiveObject() as (fabric.Object & FabricObjectMeta) | null
     if (!obj) return null
 
+    // Geometry in mm — reported relative to the label top-left so users see the
+    // same coordinate the printer will use.
+    const geo = readGeometryMm(
+      {
+        left: obj.left || 0,
+        top: obj.top || 0,
+        width: obj.width!,
+        height: obj.height!,
+        scaleX: obj.scaleX || 1,
+        scaleY: obj.scaleY || 1,
+      },
+      this.bleedPx,
+    )
+
     return {
       type: obj._type,
       fill: obj.fill as string,
       stroke: obj.stroke as string,
       strokeWidth: obj.strokeWidth,
       opacity: obj.opacity,
-      // Geometry in mm — reported relative to the label top-left so users
-      // see the same coordinate the printer will use.
-      x: pxToMm((obj.left || 0) - this.bleedPx),
-      y: pxToMm((obj.top || 0) - this.bleedPx),
-      width: pxToMm(obj.width! * (obj.scaleX || 1)),
-      height: pxToMm(obj.height! * (obj.scaleY || 1)),
+      x: geo.x,
+      y: geo.y,
+      width: geo.width,
+      height: geo.height,
       rotation: obj.angle,
       // Text specific
       ...(obj instanceof fabric.IText ? {
@@ -399,40 +419,25 @@ export class FabricBridge {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricProps: Record<string, any> = { ...rest }
 
-    if (x !== undefined) fabricProps.left = mmToPx(x) + this.bleedPx
-    if (y !== undefined) fabricProps.top  = mmToPx(y) + this.bleedPx
+    if (x !== undefined) fabricProps.left = xToLeft(x, this.bleedPx)
+    if (y !== undefined) fabricProps.top  = yToTop(y, this.bleedPx)
 
-    // Width / height are object-type specific. For shapes with intrinsic size
-    // (Rect / Image / IText) we adjust their scale so the rendered bounding
-    // box matches the requested mm value. For Circle we map width → 2*radius
-    // (uniform scale, ignoring height). For Line we set x2 directly.
+    // Width / height are object-type specific (circle → radius, line → x2,
+    // textbox → wrap box, everything else → scale). The per-kind math lives in
+    // object-properties.ts so each type is unit-tested in isolation.
+    const kind = geometryKind(obj)
     if (width !== undefined) {
-      const targetPx = mmToPx(width)
-      if (obj instanceof fabric.Circle) {
-        const radiusPx = targetPx / 2
-        fabricProps.radius = radiusPx / (obj.scaleX || 1)
-      } else if (obj instanceof fabric.Line) {
-        // Line stores its geometry in x1/x2/y1/y2 — width is x2-x1 (pre-scale).
-        const x1 = obj.get('x1') as number
-        fabricProps.x2 = x1 + targetPx / (obj.scaleX || 1)
-      } else if (obj instanceof fabric.Textbox) {
-        // Textbox.width controls the wrap box. Setting scaleX would re-stretch
-        // glyphs instead of re-flowing the text — adjust width directly.
-        fabricProps.width = targetPx / (obj.scaleX || 1)
-      } else if (obj.width && obj.width > 0) {
-        fabricProps.scaleX = targetPx / obj.width
-      }
+      Object.assign(
+        fabricProps,
+        widthToFabricProps(width, kind, {
+          scaleX: obj.scaleX || 1,
+          x1: kind === 'line' ? (obj.get('x1') as number) : undefined,
+          intrinsicWidth: obj.width,
+        }),
+      )
     }
-    if (
-      height !== undefined &&
-      !(obj instanceof fabric.Circle) &&
-      !(obj instanceof fabric.Line) &&
-      !(obj instanceof fabric.Textbox)
-    ) {
-      // Textbox height is derived from wrapped lines — ignore explicit height.
-      if (obj.height && obj.height > 0) {
-        fabricProps.scaleY = mmToPx(height) / obj.height
-      }
+    if (height !== undefined) {
+      Object.assign(fabricProps, heightToFabricProps(height, kind, obj.height))
     }
 
     obj.set(fabricProps)
