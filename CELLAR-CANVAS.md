@@ -47,7 +47,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [x] Fabric.js canvas — 90×120mm default, configurable per area
 - [x] Zoom in/out + fit-to-screen (`+`/`-` keys and buttons)
 - [ ] Pan (Spacebar + drag)
-- [ ] Snap to grid + smart guide lines (show on drag near other objects)
+- [x] Snap to grid + smart guide lines (show on drag near other objects)
 - [ ] Ruler overlay (mm units, toggleable)
 - [x] Bleed area — symmetric 40 mm canvas margin so overflowing objects stay visible; CSS overlay dims the bleed (~55 % opacity) and Preview-Toggle (Eye-Icon, header) ramps to 100 % for a clean label-only view
 - [ ] Multi-area tabs: Front / Back / Neck label (independent canvases)
@@ -55,9 +55,9 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 ### Image Input
 - [x] File input (click to upload) — JPEG, PNG, WebP, SVG, max 10MB
 - [x] **Clipboard paste** (`Ctrl/Cmd+V`) — reads `ClipboardEvent.clipboardData.items`, pastes image directly onto canvas at center (skips cropper)
-- [ ] Drag & drop file onto canvas area
+- [x] Drag & drop file onto canvas area
 - [x] After upload: Ark UI `ImageCropper` modal — pre-measured `naturalSize`+`viewportSize` before mount → correct `defaultZoom`/`initialCrop`; Apply renders source-pixel-resolution canvas (no quality loss)
-- [ ] Re-crop: select image on canvas → "Crop" in ContextToolbar → re-open ImageCropper
+- [x] Re-crop: select image on canvas → "Crop" in ContextToolbar → re-open ImageCropper
 
 ### Tools (Main Toolbar)
 - [x] Select / Move / Transform
@@ -385,12 +385,12 @@ Jede Komponente wird in `/designer` als eigene Section showcased.
 
 ### Phase 5 — Image Tool + Shapes + Background ← current
 - [x] File upload → `ImageCropperModal` → canvas (pre-measured zoom/initialCrop; source-pixel-resolution output)
-- [ ] Drag & drop file onto canvas area
-- [ ] Re-crop from ContextToolbar
+- [x] Drag & drop file onto canvas area
+- [x] Re-crop from ContextToolbar
 - [x] Shape tools (Rect / Circle / Line)
 - [x] `BackgroundPanel` — solid colour (gradient + image still pending)
 - [x] Bleed area — symmetric 40 mm canvas + CSS bleed-mask overlay + Preview-Toggle (replaces the originally planned 3 mm dashed zone — the dimming overlay communicates the bleed boundary much more intuitively than a dashed line)
-- [ ] Snap to grid + smart guides
+- [x] Snap to grid + smart guides
 - [ ] Group / Ungroup
 - **Testing: client-side only** — kein Server-Upload, `onExport` callback wird im Showcase nur geloggt
 

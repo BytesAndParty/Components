@@ -98,11 +98,14 @@ Functions ziehen und testen.
 
 ### Befunde
 
-- **F1 — Bug, Datenverlust:** Crop-Apply (`CellarCanvas.tsx:194`) und
-  Clipboard-Paste (`use-clipboard-paste.ts:36`) erzeugen `blob:`-URLs;
-  Toolbar-Upload und Drag&Drop nutzen Data-URLs. Fabric serialisiert `src`
-  wörtlich in Autosave + History → gecroppte/gepastete Bilder sind nach Reload
-  tote Referenzen. Zudem fehlt `revokeObjectURL` (Leak).
+- **F1 — Bug, Datenverlust ✅ gefixt 2026-06-20:** Crop-Apply und Clipboard-Paste
+  erzeugten `blob:`-URLs — tot nach Reload, da Fabric `src` wörtlich in Autosave +
+  History serialisiert. **Fix:** `engine/image-source.ts` (`imageSourceFromBlob` →
+  Data-URL via `FileReader`); alle 4 Upload-Pfade (Crop, Paste, Toolbar-Upload,
+  Drag&Drop) laufen darüber; Unit-Test `image-source.test.ts` (3/3 grün). Der
+  `revokeObjectURL`-Leak entfällt, da keine `createObjectURL` mehr für Canvas-Bilder.
+  **Nebenwirkung:** Data-URLs sind Base64 → **F4 (Snapshot-Gewicht) ist jetzt akut**
+  (jeder History-Step trägt die vollen Bilddaten), siehe Schritt 5.
 - **F2 — God-Object:** Bridge bündelt History, Serialisierung, 7 Objekt-Fabriken,
   Property-Mapping mm↔px (beide Richtungen), Stack-Ops, Alignment, Background,
   Viewport, Layer-Ops. Die `add*`-Fabriken wiederholen je ~30 Zeilen Boilerplate
@@ -130,7 +133,7 @@ Functions ziehen und testen.
 
 | # | Schritt | Verify | Aufwand |
 |---|---|---|---|
-| 1 | **F1-Fix:** `imageSourceFromBlob(blob)`-Helper (Data-URL), alle 4 Upload-Pfade darüber | croppen/pasten → Reload → Bild da; Unit-Test | S |
+| ✅ | ~~**F1-Fix:** `imageSourceFromBlob(blob)`-Helper (Data-URL), alle 4 Upload-Pfade darüber~~ **erledigt 2026-06-20** | croppen/pasten → Reload → Bild da; Unit-Test 3/3 ✅ | S |
 | 2 | Objekt-Fabriken → `engine/object-factory.ts` (gemeinsames `CORNER_STYLE` + `attach(meta)`), Bridge delegiert | Tests grün + alle 7 Insert-Wege im Showcase | S |
 | 3 | mm↔px-Mapping aus `get/updateActiveObject` → pure Functions in `object-properties.ts`, **Unit-Tests pro Objekttyp** | CRAP 462 ⇒ < 50 | M |
 | 4 | History → `engine/history-manager.ts` (Stack + Index + Reentrancy-Lock); Store behält nur `canUndo/canRedo/isDirty` | Tests: push/undo/redo/Limit/Reentrancy; Cmd+Z-Hammering | M |
