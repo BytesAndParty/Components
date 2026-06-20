@@ -4,7 +4,11 @@ import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-butt
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AuroraText } from '@components/aurora-text/aurora-text'
 
-export function ProductV2() {
+export interface ProductV2Props {
+  onBack?: () => void
+}
+
+export function ProductV2({ onBack }: ProductV2Props) {
   const [selectedFormat, setSelectedFormat] = useState('750ml')
 
   return (
@@ -21,6 +25,17 @@ export function ProductV2() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl">
+        {onBack && (
+          <BlurFade delay={50} direction="down" className="mb-12">
+            <button
+              onClick={onBack}
+              className="group text-zinc-400 hover:text-zinc-950 focus-visible:ring-zinc-500 inline-flex items-center gap-3 text-xs font-bold tracking-[0.2em] uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <span className="transition-transform duration-300 group-hover:-translate-x-1">←</span>
+              <span>Zurück zum Sortiment</span>
+            </button>
+          </BlurFade>
+        )}
         <div className="grid grid-cols-1 items-center gap-24 lg:grid-cols-2">
           
           {/* Product Image - Pure & Focused */}

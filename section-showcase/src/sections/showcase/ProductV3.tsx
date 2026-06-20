@@ -17,9 +17,24 @@ const DATA_ROWS: Array<[string, string]> = [
   ['Füllung', '2.400 Flaschen'],
 ]
 
-export function ProductV3() {
+export interface ProductV3Props {
+  onBack?: () => void
+}
+
+export function ProductV3({ onBack }: ProductV3Props) {
   return (
     <section className="bg-[#efece5] px-4 py-24 sm:px-8 lg:py-36">
+      {onBack && (
+        <BlurFade delay={50} direction="down" className="mx-auto mb-8 max-w-6xl px-2">
+          <button
+            onClick={onBack}
+            className="group inline-flex items-center gap-4 text-xs font-bold tracking-[0.25em] text-zinc-900 uppercase focus-visible:ring-zinc-500 focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
+          >
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:-translate-x-1">←</span>
+            <span>Index</span>
+          </button>
+        </BlurFade>
+      )}
       {/* The spread */}
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 bg-white shadow-[0_60px_120px_-40px_rgba(24,24,27,0.35)] lg:grid-cols-2">
         {/* Center fold — desktop only */}

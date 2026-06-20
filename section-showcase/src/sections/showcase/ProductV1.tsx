@@ -2,14 +2,29 @@ import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { Star } from 'lucide-react'
+import { Star, ArrowLeft } from 'lucide-react'
 
-export function ProductV1() {
+export interface ProductV1Props {
+  onBack?: () => void
+}
+
+export function ProductV1({ onBack }: ProductV1Props) {
   const [selectedSize, setSelectedSize] = useState('750ml')
 
   return (
     <section className="bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {onBack && (
+          <BlurFade delay={50} direction="down" className="mb-8">
+            <button
+              onClick={onBack}
+              className="border-border text-muted-foreground hover:text-foreground hover:border-accent/40 focus-visible:ring-accent/60 bg-card/50 inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <ArrowLeft size={16} />
+              <span>Zurück zum Sortiment</span>
+            </button>
+          </BlurFade>
+        )}
         <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
           {/* Image Side */}
           <div className="w-full lg:w-1/2">
