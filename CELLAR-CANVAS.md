@@ -214,13 +214,20 @@ components/cellar-canvas/
 │   ├── types.ts
 │   └── designer-store.ts              ← Zustand store
 ├── engine/
-│   ├── fabric-bridge.ts               ← Imperative Fabric helpers
-│   ├── use-fabric-canvas.ts           ← useEffect mount/teardown + event sync
-│   ├── use-clipboard-paste.ts         ← paste event → image on canvas
-│   ├── snap-guide-manager.ts
-│   ├── alignment-utils.ts
-│   ├── qr-generator.ts                ← qrcode → data URL → fabric.Image
-│   └── export-pipeline.ts             ← PNG + PDF
+│   ├── fabric-bridge.ts               ← Imperative Fabric orchestration
+│   ├── object-factory.ts             ← pure object constructors (rect/circle/line/text/emoji/image/qr)
+│   ├── object-properties.ts          ← pure mm↔px geometry mapping (+ tests)
+│   ├── history-manager.ts            ← undo/redo stack + reentrancy lock (+ tests)
+│   ├── image-source.ts               ← Blob/File → data URL (history/autosave-safe) (+ tests)
+│   ├── units.ts                      ← mm↔px conversion
+│   ├── snap-manager.ts               ← smart guides + snapping
+│   ├── qr-generator.ts               ← qrcode → data URL → fabric.Image
+│   ├── export-pipeline.ts            ← PNG + PDF
+│   ├── use-fabric-canvas.ts          ← useEffect mount/teardown + event sync
+│   ├── use-canvas-sync.ts            ← Fabric events → store (debounced update modes)
+│   ├── use-canvas-autosave.ts        ← debounced localStorage autosave
+│   ├── use-canvas-restore.ts         ← mount-time restore (initialState/localStorage)
+│   └── use-clipboard-paste.ts        ← paste event → image on canvas
 ├── templates/
 │   ├── classic.ts / modern.ts / rustic.ts / minimal.ts / bold.ts
 │   └── index.ts
