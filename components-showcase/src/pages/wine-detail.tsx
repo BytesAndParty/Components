@@ -14,7 +14,7 @@ import { PullQuote } from '@components/pull-quote/pull-quote'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { useToast } from '@components/toast/toast-context'
-import { type EmblaCarouselType } from 'embla-carousel-react'
+import { type EmblaCarouselType } from 'embla-carousel'
 import { 
   Carousel, 
   CarouselContent, 

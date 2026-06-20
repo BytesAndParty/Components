@@ -78,12 +78,10 @@ export function ToastProvider({
       {children}
       <div style={positionStyle}>
         <AnimatePresence>
-          {visible.map((t, i) => (
+          {visible.map((t) => (
             <ToastItem
               key={t.id}
               data={t}
-              index={i}
-              total={visible.length}
               placement={placement}
               messages={m}
               onDismiss={dismiss}
@@ -106,14 +104,12 @@ const variantColors: Record<ToastVariant, string> = {
 
 interface ToastItemProps {
   data: ToastData;
-  index: number;
-  total: number;
   placement: Placement;
   messages: ToastMessages;
   onDismiss: (id: string) => void;
 }
 
-function ToastItem({ data, index: _index, total: _total, placement, messages, onDismiss }: ToastItemProps) {
+function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
   const { id, title, description, variant = 'default', duration = 4000 } = data;
   const progressRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);

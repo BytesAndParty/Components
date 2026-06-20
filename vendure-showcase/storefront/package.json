@@ -17,7 +17,7 @@
     "astro": "^6.2.2",
     "graphql": "^16.10.0",
     "graphql-request": "^7.4.0",
-    "lucide-react": "^0.474.0",
+    "lucide-react": "^1.21.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "zod": "^4.4.3"
@@ -28,6 +28,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.2.4",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }

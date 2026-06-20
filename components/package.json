@@ -21,7 +21,7 @@
     "emoji-picker-react": "^4.19.1",
     "fabric": "^7.4.0",
     "jspdf": "^4.2.1",
-    "lucide-react": "^0.474.0",
+    "lucide-react": "^1.21.0",
     "motion": "^12.38.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
@@ -35,6 +35,6 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }
