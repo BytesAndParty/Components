@@ -37,7 +37,7 @@ export function CanvasHeader({
   onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { snappingEnabled, setSnappingEnabled } = useDesignerStore()
+  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo } = useDesignerStore()
 
   return (
     <div
@@ -61,10 +61,10 @@ export function CanvasHeader({
 
         <div className="bg-border/50 mx-2 h-4 w-px" />
 
-        <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle}>
+        <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle} disabled={!canUndo}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
         </IconButton>
-        <IconButton onClick={() => bridge.current?.redo()} title={m.redoTitle}>
+        <IconButton onClick={() => bridge.current?.redo()} title={m.redoTitle} disabled={!canRedo}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
         </IconButton>
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
@@ -110,17 +110,21 @@ function IconButton({
   title,
   children,
   className,
+  disabled,
 }: {
   onClick: () => void
   title:   string
   children: React.ReactNode
   className?: string
+  disabled?: boolean
 }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         "p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors",
+        "disabled:pointer-events-none disabled:opacity-40",
         className
       )}
       title={title}

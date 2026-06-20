@@ -48,14 +48,13 @@ export interface DesignerState {
   
   // Selection state
   selectedIds: string[]
-  
-  // History — linear stack of JSON snapshots (one per committed mutation).
-  history: string[]
-  historyIndex: number
 
   // UI State
   isDragging: boolean
   isDirty: boolean
+  // History availability — the stack itself lives in the bridge's HistoryManager.
+  canUndo: boolean
+  canRedo: boolean
   snappingEnabled: boolean
   cropperOpen: boolean
   cropperSrc?: string
@@ -67,11 +66,7 @@ export interface DesignerState {
   setActiveTool: (tool: DesignerState['activeTool']) => void
   setSelectedIds: (ids: string[]) => void
   setDirty: (dirty: boolean) => void
+  setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
   setSnappingEnabled: (enabled: boolean) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
-
-  // History actions
-  pushHistory: (state: string) => void
-  undo: () => void
-  redo: () => void
 }

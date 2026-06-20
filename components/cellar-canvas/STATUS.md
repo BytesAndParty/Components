@@ -111,11 +111,12 @@ Functions ziehen und testen.
   Viewport, Layer-Ops. Die `add*`-Fabriken wiederholen je ~30 Zeilen Boilerplate
   (Corner-Style, Origin-Pinning, Meta-Assign, add→activate→render→saveHistory)
   ≈ 150 LOC Dopplung.
-- **F3 — History, zwei Halb-Besitzer:** Store besitzt Stack/Index
-  (`designer-store.ts:32`), Bridge besitzt Save/Restore/Lock
-  (`fabric-bridge.ts:154`); `undo()` koppelt beide via `getState()`.
-  `restoreHistory` ist async ohne Reentrancy-Guard — schnelles Cmd+Z-Hammering
-  startet überlappende `loadFromJSON`-Läufe.
+- **F3 — History, zwei Halb-Besitzer ✅ gefixt 2026-06-20:** Store besaß Stack/Index,
+  Bridge Save/Restore/Lock; `restoreHistory` war async ohne Reentrancy-Guard →
+  Cmd+Z-Hammering startete überlappende `loadFromJSON`-Läufe. **Fix:**
+  `engine/history-manager.ts` ist jetzt alleiniger Besitzer (Stack + Index + Limit
+  + Lock). `runExclusive` serialisiert Restores (jeder wartet auf den vorigen,
+  `isRestoring` für die Dauer gehalten). Store hält nur noch `canUndo/canRedo`.
 - **F4 — Snapshot-Gewicht:** Jeder History-Step ist eine Vollkopie inkl.
   Base64-Bilder. 2-MB-Foto × 50 Steps ⇒ bis ~100 MB Heap nur für Undo —
   plausibelste Wurzel der Performance-Lags aus `b0f78da`.
@@ -136,7 +137,7 @@ Functions ziehen und testen.
 | ✅ | ~~**F1-Fix:** `imageSourceFromBlob(blob)`-Helper (Data-URL), alle 4 Upload-Pfade darüber~~ **erledigt 2026-06-20** | croppen/pasten → Reload → Bild da; Unit-Test 3/3 ✅ | S |
 | ✅ | ~~Objekt-Fabriken → `engine/object-factory.ts` (gemeinsames `CORNER_STYLE` + `attach(meta)`), Bridge delegiert~~ **erledigt 2026-06-20** | Bridge 881→715 LOC, 7 `place()`-Delegationen, Lint 0 · 11/11 | S |
 | ✅ | ~~mm↔px-Mapping aus `get/updateActiveObject` → pure Functions in `object-properties.ts`, **Unit-Tests pro Objekttyp**~~ **erledigt 2026-06-20** | CRAP 462 ⇒ unter Threshold (raus aus fallow-Top-Liste); 11 Unit-Tests pro Kind | M |
-| 4 | History → `engine/history-manager.ts` (Stack + Index + Reentrancy-Lock); Store behält nur `canUndo/canRedo/isDirty` | Tests: push/undo/redo/Limit/Reentrancy; Cmd+Z-Hammering | M |
+| ✅ | ~~History → `engine/history-manager.ts` (Stack + Index + Reentrancy-Lock); Store behält nur `canUndo/canRedo/isDirty`~~ **erledigt 2026-06-20** | 9 Unit-Tests (push/undo/redo/Limit/Branch-Truncation/serialisierte Restores); Store auf `canUndo/canRedo` + `setHistoryFlags` reduziert; Undo/Redo-Buttons disablen jetzt. **Browser-Smoke (Cmd+Z-Hammering) steht noch aus** (kein Dev-Server). | M |
 | 5 | Snapshot-Diät: Bild-Registry (`id → src`), Snapshots referenzieren statt kopieren | Heap-Vergleich: 3 Fotos × 30 Steps | M |
 | 6 | Benachrichtigung vereinheitlichen: Custom-Channel für alle non-emitting Mutationen, `setLayers`-Hatch raus, typisierte Events, Teardown mit Handler-Refs | Layer-Panel: reorder/lock/hide/rename ohne Snap-back | M |
 | 7 | Root entschlacken: `use-wine-field-sync` / `use-canvas-hotkeys` / `use-image-drop` | tsc + Showcase-Smoke | S |

@@ -26,6 +26,7 @@ import {
   widthToFabricProps,
   heightToFabricProps,
 } from './object-properties'
+import { HistoryManager } from './history-manager'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -52,7 +53,7 @@ export class FabricBridge {
   heightMm: number
   bleedMm: number
   private labelColor = '#ffffff'
-  private isRestoringHistory = false
+  private readonly history = new HistoryManager()
   private snapManager: SnapManager
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
@@ -168,53 +169,54 @@ export class FabricBridge {
   }
 
   /**
-   * Captures the current state and pushes it to the store's history stack.
-   * Snapshot is the same shape as `serializeState` (`{ canvas, bg }`) so the
-   * label-paper colour participates in Undo/Redo. Old plain-canvas snapshots
-   * from before this change are still accepted by `restoreHistory`.
+   * Captures the current scene and pushes it onto the history stack. Snapshot
+   * shape matches `serializeState` (`{ canvas, bg }`) so the label-paper colour
+   * participates in Undo/Redo. Skipped while a restore is applying.
    */
   saveHistory() {
-    if (this.isRestoringHistory) return
-    useDesignerStore.getState().pushHistory(JSON.stringify(this.serializeState()))
+    if (this.history.isRestoring) return
+    this.history.push(JSON.stringify(this.serializeState()))
+    const store = useDesignerStore.getState()
+    store.setDirty(true)
+    store.setHistoryFlags(this.history.canUndo, this.history.canRedo)
+  }
+
+  private syncHistoryFlags() {
+    useDesignerStore.getState().setHistoryFlags(this.history.canUndo, this.history.canRedo)
   }
 
   /**
-   * Restores the state from the history stack based on the current index.
-   * Label backdrop is rendered by React, so it doesn't need to be re-pinned.
-   * Bg-colour is included in the snapshot since the introduction of full-
-   * state history; older snapshots without a `bg` field leave the current
-   * colour untouched.
+   * Loads a serialized scene back onto the canvas. The label backdrop is
+   * rendered by React (not a Fabric object) so it needs no re-pinning; the
+   * restored bg-colour reaches React via the property-changed channel. Older
+   * snapshots without a `bg` field leave the current colour untouched.
    */
-  async restoreHistory() {
-    const { history, historyIndex } = useDesignerStore.getState()
-    const state = history[historyIndex]
-    if (!state) return
-
-    const parsed = JSON.parse(state) as Partial<CellarCanvasState>
-    const canvasState = parsed.canvas ?? parsed
-    const nextBg      = parsed.bg
-
-    this.isRestoringHistory = true
+  private async loadScene(canvasState: object, bg: string | undefined): Promise<void> {
     await this.canvas.loadFromJSON(canvasState)
-    if (typeof nextBg === 'string') this.labelColor = nextBg
+    if (typeof bg === 'string') this.labelColor = bg
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
-    this.isRestoringHistory = false
-    // Bg-Color lives outside the Fabric object stack; React mirrors it from
-    // `getBackground()` via the property-changed channel, so the backdrop
-    // re-renders with the restored colour even though no Fabric event fired.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(this.canvas as any).fire('cellar:property-changed', { target: null })
   }
 
+  private applySnapshot(snapshot: string): Promise<void> {
+    const parsed = JSON.parse(snapshot) as Partial<CellarCanvasState>
+    return this.loadScene((parsed.canvas ?? parsed) as object, parsed.bg)
+  }
+
   undo() {
-    useDesignerStore.getState().undo()
-    this.restoreHistory()
+    const snapshot = this.history.undo()
+    if (snapshot === null) return
+    this.syncHistoryFlags()
+    void this.history.runExclusive(() => this.applySnapshot(snapshot))
   }
 
   redo() {
-    useDesignerStore.getState().redo()
-    this.restoreHistory()
+    const snapshot = this.history.redo()
+    if (snapshot === null) return
+    this.syncHistoryFlags()
+    void this.history.runExclusive(() => this.applySnapshot(snapshot))
   }
 
   /**
@@ -233,20 +235,14 @@ export class FabricBridge {
   /**
    * Restore a previously serialized state. Accepts the wrapped `{ canvas, bg }`
    * shape; a plain Fabric JSON is treated as canvas-only (bg untouched) for
-   * backward compatibility with older snapshots.
+   * backward compatibility with older snapshots. Runs through the history lock
+   * so it can't interleave with an in-flight undo/redo.
    */
   async restoreState(state: CellarCanvasState | object): Promise<void> {
     const wrapped = (state as CellarCanvasState).canvas !== undefined
       ? (state as CellarCanvasState)
       : { canvas: state as object, bg: this.labelColor }
-    this.isRestoringHistory = true
-    await this.canvas.loadFromJSON(wrapped.canvas)
-    this.labelColor = wrapped.bg
-    this.canvas.requestRenderAll()
-    this.updateStoreSelection()
-    this.isRestoringHistory = false
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+    await this.history.runExclusive(() => this.loadScene(wrapped.canvas, wrapped.bg))
   }
 
   /**
