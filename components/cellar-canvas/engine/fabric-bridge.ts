@@ -9,6 +9,15 @@ import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from
 import { pxToMm, mmToPx } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 import { SnapManager } from './snap-manager'
+import {
+  createRect,
+  createCircle,
+  createLine,
+  createText,
+  createEmoji,
+  configureImage,
+  configureQRImage,
+} from './object-factory'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -242,196 +251,41 @@ export class FabricBridge {
   }
 
   /**
-   * Adds a basic rectangle to the center of the canvas.
+   * Shared insertion tail for every factory: add to the canvas, select, render
+   * and snapshot history. Returns the placed object for callers needing its id.
    */
+  private place<T extends fabric.Object>(obj: T): T {
+    this.canvas.add(obj)
+    this.canvas.setActiveObject(obj)
+    this.canvas.renderAll()
+    this.saveHistory()
+    return obj
+  }
+
   addRect() {
-    const rect = new fabric.Rect({
-      // Fabric v7 changed the origin default to 'center'/'center'. Our mm/px
-      // mapping treats left/top as the bounding-box corner, so pin v6 semantics.
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + 100,
-      top: this.bleedPx + 100,
-      fill: '#722f37',
-      width: mmToPx(20),
-      height: mmToPx(20),
-      cornerColor: '#ffffff',
-      cornerStrokeColor: '#000000',
-      transparentCorners: false,
-      cornerSize: 8,
-    })
-
-    // Add metadata for Cellar Canvas
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: 'Rectangle',
-      _type: 'rect'
-    }
-    Object.assign(rect, meta)
-
-    this.canvas.add(rect)
-    this.canvas.setActiveObject(rect)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(createRect(this.bleedPx))
   }
 
-  /**
-   * Adds a basic circle to the center of the canvas.
-   */
   addCircle() {
-    const circle = new fabric.Circle({
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + 100,
-      top: this.bleedPx + 100,
-      fill: '#722f37',
-      radius: mmToPx(10),
-      cornerColor: '#ffffff',
-      cornerStrokeColor: '#000000',
-      transparentCorners: false,
-      cornerSize: 8,
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: 'Circle',
-      _type: 'circle',
-    }
-    Object.assign(circle, meta)
-
-    this.canvas.add(circle)
-    this.canvas.setActiveObject(circle)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(createCircle(this.bleedPx))
   }
 
-  /**
-   * Adds a basic line to the canvas.
-   */
   addLine() {
-    const x = this.bleedPx + 100
-    const y = this.bleedPx + 100
-    const length = mmToPx(30)
-    const line = new fabric.Line([x, y, x + length, y], {
-      originX: 'left',
-      originY: 'top',
-      stroke: '#722f37',
-      strokeWidth: 2,
-      cornerColor: '#ffffff',
-      cornerStrokeColor: '#000000',
-      transparentCorners: false,
-      cornerSize: 8,
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: 'Line',
-      _type: 'line',
-    }
-    Object.assign(line, meta)
-
-    this.canvas.add(line)
-    this.canvas.setActiveObject(line)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(createLine(this.bleedPx))
   }
 
-  /**
-   * Adds a text object. Uses `Textbox` (not `IText`) so word-wrap is on by
-   * default at a fixed mm-width — wine labels routinely need multi-line
-   * blocks like producer/region. Manual `\n` via Enter still works.
-   */
   addText(text = 'New Text', fieldKey?: string) {
-    const textbox = new fabric.Textbox(text, {
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + 100,
-      top: this.bleedPx + 100,
-      width: mmToPx(50),
-      fontSize: 24,
-      fontFamily: 'sans-serif',
-      fill: '#000000',
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: text,
-      _type: fieldKey ? 'wine-field' : 'text',
-      _fieldKey: fieldKey
-    }
-    Object.assign(textbox, meta)
-
-    this.canvas.add(textbox)
-    this.canvas.setActiveObject(textbox)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(createText(this.bleedPx, text, fieldKey))
   }
 
-  /**
-   * Adds an emoji as a Fabric text object. Emojis are rendered by the
-   * browser's emoji font so the result stays vector-clean at any zoom and
-   * stores as a single Unicode codepoint instead of a binary blob. The
-   * default font size is roughly double the regular text default — a
-   * sensible label-sized emoji.
-   */
   addEmoji(emoji: string) {
-    const textbox = new fabric.Textbox(emoji, {
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + 100,
-      top: this.bleedPx + 100,
-      width: mmToPx(20),
-      fontSize: 48,
-      fontFamily: 'sans-serif',
-      fill: '#000000',
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: `Emoji ${emoji}`,
-      _type: 'text',
-      _extras: true,
-    }
-    Object.assign(textbox, meta)
-
-    this.canvas.add(textbox)
-    this.canvas.setActiveObject(textbox)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(createEmoji(this.bleedPx, emoji))
   }
 
-  /**
-   * Adds a user-supplied image to the canvas. Scales it to fit within
-   * a 40mm bounding box so it never blows past the label dimensions.
-   */
+  /** Loads an image from a src (data URL — see `imageSourceFromBlob`) and places it. */
   async addImage(src: string) {
     const img = await fabric.FabricImage.fromURL(src)
-    const maxPx = mmToPx(40)
-    const scale = Math.min(maxPx / (img.width ?? maxPx), maxPx / (img.height ?? maxPx), 1)
-    img.set({
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + mmToPx(10),
-      top: this.bleedPx + mmToPx(10),
-      scaleX: scale,
-      scaleY: scale,
-      cornerColor: '#ffffff',
-      cornerStrokeColor: '#000000',
-      transparentCorners: false,
-      cornerSize: 8,
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: 'Image',
-      _type: 'image',
-    }
-    Object.assign(img, meta)
-
-    this.canvas.add(img)
-    this.canvas.setActiveObject(img)
-    this.canvas.renderAll()
-    this.saveHistory()
+    this.place(configureImage(img, this.bleedPx))
   }
 
   /**
@@ -469,27 +323,7 @@ export class FabricBridge {
     if (!dataUrl) return
 
     const img = await fabric.FabricImage.fromURL(dataUrl)
-    img.set({
-      originX: 'left',
-      originY: 'top',
-      left: this.bleedPx + 100,
-      top: this.bleedPx + 100,
-      scaleX: 0.2,
-      scaleY: 0.2,
-    })
-
-    const meta: FabricObjectMeta = {
-      id: crypto.randomUUID(),
-      _layerName: 'QR Code',
-      _type: 'qr-code',
-      _fieldKey: 'qrCode',
-    }
-    Object.assign(img, meta)
-
-    this.canvas.add(img)
-    this.canvas.setActiveObject(img)
-    this.canvas.requestRenderAll()
-    this.saveHistory()
+    this.place(configureQRImage(img, this.bleedPx))
   }
 
   /**
