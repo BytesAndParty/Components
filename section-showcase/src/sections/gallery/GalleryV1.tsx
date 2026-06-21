@@ -13,7 +13,7 @@ const images = [
     className: 'col-span-1 row-span-1',
   },
   {
-    src: 'https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=800&q=80',
     alt: 'Grapes',
     className: 'col-span-1 row-span-2',
   },

@@ -9,7 +9,7 @@ export function HeroV3() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=1600&q=80" 
+          src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1600&q=80" 
           alt="Atmospheric Vineyard" 
           className="h-full w-full object-cover opacity-30 grayscale"
         />

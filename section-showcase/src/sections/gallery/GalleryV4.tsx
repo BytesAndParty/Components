@@ -111,7 +111,7 @@ export function GalleryV4() {
           {/* Plate 4 — small portrait, far lower-left, deepest rotation */}
           <figure className="w-2/3 max-w-[260px] lg:absolute lg:bottom-[4%] lg:left-[16%] lg:z-20 lg:w-[20%] lg:max-w-none lg:-rotate-[2.5deg]">
             <RevealImage
-              src="https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=900&q=80"
+              src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=900&q=80"
               alt="Staubige Flasche mit handgeschriebenem Etikett"
               direction="down"
               delay={700}

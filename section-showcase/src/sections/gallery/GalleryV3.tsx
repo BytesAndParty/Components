@@ -46,7 +46,7 @@ const plates: Plate[] = [
   },
   {
     numeral: 'III',
-    src: 'https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=1200&q=80',
+    src: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1200&q=80',
     alt: 'Detailaufnahme reifer Beeren am Stock',
     caption: 'Beeren im Schiefer­licht.',
     location: 'Rebzeile 12, Süd­hang',

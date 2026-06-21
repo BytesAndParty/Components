@@ -14,7 +14,7 @@ const galleryImages = [
     className: 'lg:col-span-2 lg:row-span-2 lg:mt-24',
   },
   {
-    src: 'https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=800&q=80',
     alt: 'Grapes close-up',
     className: 'lg:col-span-2 lg:row-span-2 lg:-mt-12',
   },
