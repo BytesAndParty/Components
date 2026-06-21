@@ -194,7 +194,7 @@ export function CommandBar() {
         aria-label="Showcase-Steuerung einblenden (H)"
         title="Einblenden (H)"
         style={PIN_HIDDEN_TOGGLE_STYLE}
-        className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
       >
         <Eye size={14} />
       </button>
@@ -218,7 +218,7 @@ export function CommandBar() {
           <GripHorizontal size={14} />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 px-3 pb-3 sm:flex-nowrap">
+        <div className="flex flex-wrap items-center justify-center gap-2 px-3 pb-3 sm:flex-nowrap sm:justify-start">
           <div ref={sectionMenuRef} className="relative">
             <button
               ref={sectionTriggerRef}
@@ -226,7 +226,7 @@ export function CommandBar() {
               onClick={() => setSectionMenuOpen(o => !o)}
               aria-expanded={sectionMenuOpen}
               aria-haspopup="menu"
-              className="border-border bg-background/60 hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="border-border bg-background/60 hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
             >
               <span className="font-display tracking-tight">{section?.label ?? 'Übersicht'}</span>
               <ChevronDown size={12} className={`transition-transform ${sectionMenuOpen ? 'rotate-180' : ''}`} />
@@ -272,18 +272,18 @@ export function CommandBar() {
             <>
               <div className="bg-border hidden h-5 w-px sm:block" />
 
-              <div className="flex items-center gap-0.5">
+              <div className="flex min-w-0 max-w-full flex-1 items-center gap-0.5 sm:flex-none">
                 <button
                   type="button"
                   onClick={() => gotoVariant(-1)}
                   disabled={variantIdx <= 0}
                   aria-label="Vorherige Variante (←)"
                   title="Vorherige Variante (←)"
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
                 >
                   <ChevronLeft size={14} />
                 </button>
-                <div className="flex flex-wrap items-center gap-1">
+                <div className="no-scrollbar flex items-center gap-1 overflow-x-auto">
                   {section.variants.map((v, idx) => {
                     const active = showcase.variantId === v.id
                     return (
@@ -293,7 +293,7 @@ export function CommandBar() {
                         onClick={() => switchVariant(v.id, idx - variantIdx)}
                         aria-pressed={active}
                         title={v.description ?? v.label}
-                        className={`focus-visible:ring-accent/60 rounded-md px-2.5 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+                        className={`focus-visible:ring-accent/60 shrink-0 rounded-md px-2.5 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:px-3 max-sm:py-2.5 ${
                           active
                             ? 'bg-foreground text-background'
                             : 'text-muted-foreground hover:text-foreground'
@@ -310,7 +310,7 @@ export function CommandBar() {
                   disabled={variantIdx < 0 || variantIdx >= variants.length - 1}
                   aria-label="Nächste Variante (→)"
                   title="Nächste Variante (→)"
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -318,90 +318,92 @@ export function CommandBar() {
 
               <div className="bg-border hidden h-5 w-px sm:block" />
 
-              <button
-                type="button"
-                onClick={() => showcase.setMode(showcase.mode === 'single' ? 'stack' : 'single')}
-                aria-pressed={showcase.mode === 'stack'}
-                aria-label={showcase.mode === 'single' ? 'Alle Varianten zeigen (M)' : 'Einzeln zeigen (M)'}
-                title={showcase.mode === 'single' ? 'Alle untereinander (M)' : 'Einzeln (M)'}
-                className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => showcase.setMode(showcase.mode === 'single' ? 'stack' : 'single')}
+                  aria-pressed={showcase.mode === 'stack'}
+                  aria-label={showcase.mode === 'single' ? 'Alle Varianten zeigen (M)' : 'Einzeln zeigen (M)'}
+                  title={showcase.mode === 'single' ? 'Alle untereinander (M)' : 'Einzeln (M)'}
+                  className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+                >
+                  {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
+                </button>
 
-              <div className="bg-border hidden h-5 w-px sm:block" />
-
-              {activeVariantId && (
-                <HeartLike
-                  size={22}
-                  checked={showcase.isFavorite(section.id, activeVariantId)}
-                  onChange={() => showcase.toggleFavorite(section.id, activeVariantId)}
-                />
-              )}
+                {activeVariantId && (
+                  <HeartLike
+                    size={22}
+                    checked={showcase.isFavorite(section.id, activeVariantId)}
+                    onChange={() => showcase.toggleFavorite(section.id, activeVariantId)}
+                  />
+                )}
+              </div>
             </>
           )}
 
-          <div className="flex-1" />
+          <div className="hidden flex-1 sm:block" />
 
-          <div ref={trayRef} className="relative">
+          <div className="flex items-center gap-2">
+            <div ref={trayRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setTrayOpen(o => !o)}
+                aria-expanded={trayOpen}
+                aria-haspopup="dialog"
+                aria-label={`Favoriten (${favoriteCount})`}
+                title="Deine Seite"
+                className="border-border hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
+              >
+                <Heart
+                  size={14}
+                  className={favoriteCount > 0 ? 'text-accent fill-accent' : 'text-muted-foreground'}
+                />
+                <span className="tabular-nums">{favoriteCount}</span>
+              </button>
+              {trayOpen && <CompositionTray onClose={() => setTrayOpen(false)} />}
+            </div>
+
+            <div className="bg-border hidden h-5 w-px sm:block" />
+
+            <div className="border-border flex items-center gap-1 rounded-full border p-1 max-sm:gap-1.5 max-sm:p-1.5">
+              {SHOWCASE_ACCENTS.map(a => {
+                const active = atelier.accent === a
+                return (
+                  <button
+                    key={a}
+                    type="button"
+                    onClick={() => atelier.setAccent(a)}
+                    aria-label={`Akzent ${a}`}
+                    aria-pressed={active}
+                    className={`focus-visible:ring-accent/60 h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none max-sm:h-5 max-sm:w-5 ${
+                      active ? 'ring-foreground/40 ring-offset-card scale-110 ring-1 ring-offset-2' : ''
+                    }`}
+                    style={{ background: accentSwatch(a) }}
+                  />
+                )
+              })}
+            </div>
+
             <button
               type="button"
-              onClick={() => setTrayOpen(o => !o)}
-              aria-expanded={trayOpen}
-              aria-haspopup="dialog"
-              aria-label={`Favoriten (${favoriteCount})`}
-              title="Deine Seite"
-              className="border-border hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              onClick={atelier.toggleTheme}
+              aria-label="Theme umschalten"
+              title="Theme"
+              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
             >
-              <Heart
-                size={14}
-                className={favoriteCount > 0 ? 'text-accent fill-accent' : 'text-muted-foreground'}
-              />
-              <span className="tabular-nums">{favoriteCount}</span>
+              {atelier.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             </button>
-            {trayOpen && <CompositionTray onClose={() => setTrayOpen(false)} />}
+
+            <button
+              type="button"
+              onClick={() => showcase.setBarHidden(true)}
+              aria-label="Steuerung ausblenden (H)"
+              title="Ausblenden (H)"
+              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+            >
+              <EyeOff size={14} />
+            </button>
           </div>
-
-          <div className="bg-border hidden h-5 w-px sm:block" />
-
-          <div className="border-border flex items-center gap-1 rounded-full border p-1">
-            {SHOWCASE_ACCENTS.map(a => {
-              const active = atelier.accent === a
-              return (
-                <button
-                  key={a}
-                  type="button"
-                  onClick={() => atelier.setAccent(a)}
-                  aria-label={`Akzent ${a}`}
-                  aria-pressed={active}
-                  className={`focus-visible:ring-accent/60 h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none ${
-                    active ? 'ring-foreground/40 ring-offset-card scale-110 ring-1 ring-offset-2' : ''
-                  }`}
-                  style={{ background: accentSwatch(a) }}
-                />
-              )
-            })}
-          </div>
-
-          <button
-            type="button"
-            onClick={atelier.toggleTheme}
-            aria-label="Theme umschalten"
-            title="Theme"
-            className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-          >
-            {atelier.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showcase.setBarHidden(true)}
-            aria-label="Steuerung ausblenden (H)"
-            title="Ausblenden (H)"
-            className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <EyeOff size={14} />
-          </button>
         </div>
       </div>
     </div>

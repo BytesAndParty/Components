@@ -16,7 +16,7 @@ Configurable footer with link sections, social icons, and reduced-motion-aware e
 
 1. **Composable data**: Footer sections are defined as an array of `{ label, links: [{ title, href, icon? }] }`. Default content is provided but fully overridable.
 2. **AnimatedContainer**: A private wrapper component that uses `motion.div` with `whileInView` + `viewport: { once: true }`. When `prefers-reduced-motion` is active, it renders children directly (no wrapper).
-3. **Grid layout**: Two-column grid — brand/copyright on the left, link columns on the right with dynamic column count based on the number of sections.
+3. **Grid layout**: Brand/copyright next to the link columns, with a dynamic column count based on the number of sections. Both grids use `repeat(auto-fit, minmax(...))` so they reflow intrinsically — the brand/links split stacks below ~32rem and the link columns collapse on narrow viewports without any media query (inline styles carry no breakpoints).
 4. **Gradient background**: A subtle radial gradient at the top (`rgba(255,255,255,0.06)`) adds depth.
 
 ## Props

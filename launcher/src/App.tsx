@@ -72,12 +72,12 @@ export function App() {
         onClick={toggleTheme}
         aria-label="Theme umschalten"
         title="Theme"
-        className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed top-5 right-5 rounded-full border p-2 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className="border-border bg-background/80 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed top-4 right-4 z-10 flex items-center justify-center rounded-full border p-2 backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
       >
         {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
       </button>
 
-      <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-center px-6 py-20">
+      <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-start px-6 py-16 sm:justify-center sm:py-20">
         <header className="mb-14">
           <p className="text-muted-foreground mb-3 text-[11px] tracking-[0.22em] uppercase">
             Enterprise Design Engine

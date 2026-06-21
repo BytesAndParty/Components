@@ -220,7 +220,10 @@ export function Footer({
           display: 'grid',
           width: '100%',
           gap: '2rem',
-          gridTemplateColumns: '1fr 2fr',
+          // Intrinsically responsive: two columns when there's room, stacks to
+          // one below ~32rem. Inline styles have no breakpoints, so auto-fit
+          // does the collapsing instead of a media query.
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 16rem), 1fr))',
         }}
       >
         {/* Brand column */}
@@ -243,7 +246,10 @@ export function Footer({
           aria-label={companyName}
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${resolvedSections.length}, 1fr)`,
+            // auto-fit collapses the link columns as width shrinks (e.g. 4 → 2
+            // → 1 on a phone) without a media query — inline styles can't carry
+            // breakpoints, so the track sizing handles the reflow.
+            gridTemplateColumns: 'repeat(auto-fit, minmax(8rem, 1fr))',
             gap: '2rem',
           }}
         >
