@@ -100,7 +100,7 @@ export function ProductV1({ onBack }: ProductV1Props) {
             </BlurFade>
             
             <BlurFade delay={700} className="border-border mt-12 border-t pt-8">
-              <div className="grid grid-cols-2 gap-8 text-sm">
+              <div className="grid grid-cols-1 gap-8 text-sm sm:grid-cols-2">
                 <div>
                   <span className="text-foreground font-bold">Region:</span>
                   <p className="text-muted-foreground">Bordeaux, Frankreich</p>

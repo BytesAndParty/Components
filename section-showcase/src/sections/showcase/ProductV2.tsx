@@ -61,7 +61,7 @@ export function ProductV2({ onBack }: ProductV2Props) {
                 </span>
               </BlurFade>
               <BlurFade delay={300} direction="up">
-                <h2 className="font-display text-6xl leading-[1.1] font-light tracking-tight text-zinc-900">
+                <h2 className="font-display text-4xl leading-[1.1] font-light tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl">
                   Réserve Particulière <br />
                   <span className="italic">
                     <ShinyText 
@@ -116,7 +116,7 @@ export function ProductV2({ onBack }: ProductV2Props) {
               />
             </BlurFade>
 
-            <BlurFade delay={700} direction="up" className="grid grid-cols-2 gap-x-12 gap-y-8 border-t border-zinc-100 pt-12">
+            <BlurFade delay={700} direction="up" className="grid grid-cols-1 gap-x-12 gap-y-8 border-t border-zinc-100 pt-12 sm:grid-cols-2">
               <div>
                 <span className="mb-1 block text-[10px] font-bold tracking-[0.2em] text-zinc-400 uppercase">Rebsorte</span>
                 <p className="text-sm font-medium text-zinc-700">Grüner Veltliner</p>

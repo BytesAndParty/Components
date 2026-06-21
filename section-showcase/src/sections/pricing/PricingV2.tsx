@@ -32,7 +32,7 @@ export function PricingV2() {
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Le Club</span>
             </BlurFade>
             <BlurFade delay={200}>
-              <h2 className="font-display text-7xl leading-tight font-light tracking-tight text-zinc-900">
+              <h2 className="font-display text-4xl leading-tight font-light tracking-tight text-zinc-900 sm:text-6xl lg:text-7xl">
                 Ein Abo für <br />
                 <span className="italic">Kenner.</span>
               </h2>

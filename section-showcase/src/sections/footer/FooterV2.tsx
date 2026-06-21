@@ -11,7 +11,7 @@ export function FooterV2() {
             <span className="text-[10px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
               Weingut · seit 1958
             </span>
-            <h2 className="font-display text-5xl leading-[0.95] font-light tracking-tight italic">
+            <h2 className="font-display text-4xl leading-[0.95] font-light tracking-tight italic sm:text-5xl">
               Lacombe<br />& Fils.
             </h2>
             <p className="max-w-xs text-sm leading-relaxed font-light text-zinc-500">

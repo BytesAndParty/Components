@@ -54,7 +54,9 @@ function injectStyles() {
 // ─── Tailwind: nur Spacing + Layout, keine Farben ────────────────────────────────
 // Alle Farb-/Border-Stile kommen aus getVariantStyle → inline styles.
 
-const BASE    = 'px-5 py-2.5 rounded-lg text-sm font-semibold';
+// max-sm:py-3 lifts the smaller variants to a ≥44px touch target on phones
+// (text-sm line-height + 0.75rem padding) without affecting the desktop scale.
+const BASE    = 'px-5 py-2.5 rounded-lg text-sm font-semibold max-sm:py-3';
 const BASE_LG = 'px-6 py-3   rounded-xl text-sm font-semibold';
 
 const variantClasses: Record<MagneticButtonVariant, string> = {
@@ -62,7 +64,7 @@ const variantClasses: Record<MagneticButtonVariant, string> = {
   primary:     `${BASE}`,
   secondary:   `${BASE}`,
   outline:     `${BASE}`,
-  ghost:       'px-4 py-2 rounded-lg text-sm font-medium',
+  ghost:       'px-4 py-2 rounded-lg text-sm font-medium max-sm:py-3',
   destructive: `${BASE}`,
   shimmer:     `${BASE_LG} overflow-hidden`,
   cta:         `${BASE_LG} overflow-hidden`,

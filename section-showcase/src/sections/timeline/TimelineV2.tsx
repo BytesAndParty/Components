@@ -34,7 +34,7 @@ export function TimelineV2() {
             <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Chronik</span>
           </BlurFade>
           <BlurFade delay={200}>
-            <h2 className="font-display text-7xl leading-tight font-light tracking-tight text-zinc-900">
+            <h2 className="font-display text-4xl leading-tight font-light tracking-tight text-zinc-900 sm:text-6xl lg:text-7xl">
               Geschichte <br />
               <span className="pl-[0.1em] italic">geschrieben</span> in Wein.
             </h2>

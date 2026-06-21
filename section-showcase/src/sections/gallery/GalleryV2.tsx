@@ -45,13 +45,13 @@ export function GalleryV2() {
             <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Impressionen</span>
           </BlurFade>
           <BlurFade delay={200}>
-            <h2 className="font-display text-6xl font-light tracking-tight text-zinc-900 italic">
+            <h2 className="font-display text-4xl font-light tracking-tight text-zinc-900 italic sm:text-5xl lg:text-6xl">
               Ein Blick in unsere Welt
             </h2>
           </BlurFade>
         </div>
 
-        <div className="grid min-h-[1000px] grid-cols-1 gap-8 lg:grid-cols-6 lg:grid-rows-5 lg:gap-12">
+        <div className="grid min-h-0 grid-cols-1 gap-8 lg:min-h-250 lg:grid-cols-6 lg:grid-rows-5 lg:gap-12">
           {galleryImages.map((img, i) => (
             <BlurFade
               key={i}

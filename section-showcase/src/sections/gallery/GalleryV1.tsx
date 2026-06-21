@@ -39,7 +39,7 @@ export function GalleryV1() {
           </BlurFade>
         </div>
 
-        <div className="grid h-[800px] grid-cols-1 gap-4 sm:grid-cols-3 sm:grid-rows-3">
+        <div className="grid h-auto grid-cols-1 gap-4 sm:h-200 sm:grid-cols-3 sm:grid-rows-3">
           {images.map((img, i) => (
             <BlurFade
               key={i}
