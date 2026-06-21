@@ -22,8 +22,11 @@ export function HeroV6() {
       </div>
 
       <div className="relative mx-auto max-w-7xl">
-        {/* Layered composition */}
-        <div className="relative lg:min-h-[78vh]">
+        {/* Layered composition. On desktop the three blocks are absolutely
+            positioned and overlap; on mobile they collapse to a flex column,
+            where `order` lifts the headline above the photos so the hero's
+            message leads instead of sitting below the fold. */}
+        <div className="relative flex flex-col lg:block lg:min-h-[78vh]">
           {/* Primary plate — anchored right, type will overlap it */}
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[52%]">
             <RevealImage
@@ -56,7 +59,7 @@ export function HeroV6() {
           </div>
 
           {/* Headline block — overlaps the primary plate from the left */}
-          <div className="relative z-10 mt-14 flex flex-col gap-10 lg:absolute lg:top-[12%] lg:left-0 lg:mt-0 lg:max-w-[58%]">
+          <div className="relative z-10 order-first mt-0 mb-12 flex flex-col gap-10 lg:absolute lg:top-[12%] lg:left-0 lg:order-0 lg:mt-0 lg:mb-0 lg:max-w-[58%]">
             <BlurFade delay={150} direction="up">
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
                 Domaine Buchart · Édition MMXXVI

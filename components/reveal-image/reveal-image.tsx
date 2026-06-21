@@ -71,6 +71,18 @@ export function RevealImage({
     const el = ref.current
     if (!el) return
 
+    // Reveal immediately when the element is already (partly) in the viewport
+    // on mount. Some environments — and some mount/transition timings — don't
+    // deliver IntersectionObserver's initial callback for already-intersecting
+    // targets, which would otherwise leave the image clipped (invisible)
+    // forever. Below-the-fold images skip this and reveal on scroll as before.
+    const r = el.getBoundingClientRect()
+    const alreadyInView = r.top < window.innerHeight && r.bottom > 0
+    if (alreadyInView) {
+      setVisible(true)
+      if (once) return
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
