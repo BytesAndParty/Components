@@ -16,6 +16,7 @@ import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { WineShowcasePlugin } from './plugins/wine-showcase.plugin.js';
+import { StorefrontDeployPlugin } from './plugins/storefront-deploy/storefront-deploy.plugin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -77,5 +78,7 @@ export const config: VendureConfig = {
     }),
     // DEIN CUSTOM PLUGIN
     WineShowcasePlugin,
+    // Manueller „Veröffentlichen"-Button im Dashboard → Netlify-Rebuild
+    StorefrontDeployPlugin,
   ],
 };

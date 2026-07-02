@@ -240,3 +240,27 @@ Alle verfügbaren Variablen — siehe [.env.example](.env.example).
 | `SUPERADMIN_USERNAME` | `superadmin` | Admin-Login |
 | `SUPERADMIN_PASSWORD` | `superadmin` | Admin-Passwort |
 | `COOKIE_SECRET` | dev-secret | In Produktion ändern! |
+| `NETLIFY_BUILD_HOOK_URL` | `""` | Netlify Build Hook für den „Veröffentlichen"-Button (s.u.) |
+
+---
+
+## Storefront veröffentlichen (manueller Rebuild)
+
+Die Storefront rendert die Wein-Daten zur **Build-Zeit** in Astro. Änderungen im Dashboard
+(Bestand, Preis, Custom Fields, neue Produkte) werden erst nach einem **Rebuild + Deploy**
+der statischen Seite live — es gibt bewusst keine Live-Abfrage zur Laufzeit.
+
+Dafür gibt es einen **„Veröffentlichen"-Button** in der Produkt-Liste des Dashboards
+(`StorefrontDeployPlugin`):
+
+1. Netlify → Site settings → Build & deploy → Build hooks → **Add build hook**, URL kopieren.
+2. In `.env`: `NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/…`
+3. Im Dashboard (`/dashboard/`, Produkte-Liste) → **Veröffentlichen** klicken.
+
+Der Button ruft die Admin-API-Mutation `triggerStorefrontRebuild` auf; der Server POSTet
+serverseitig auf den Build-Hook (die URL bleibt geheim, nie im Client-Bundle). 30-Sekunden-
+Cooldown verhindert versehentliche Doppel-Builds. Ohne gesetzte Env-Var meldet der Button
+„Kein Build-Hook konfiguriert".
+
+> Zugriff via Custom-Permission `TriggerStorefrontRebuild` (SuperAdmin hat sie automatisch).
+> API-Details: `live-docs-collection/vendure-dashboard-extensions/` (im `__AI-Workflow__`-Workspace).
