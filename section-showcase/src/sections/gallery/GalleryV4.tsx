@@ -2,8 +2,9 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 
 /**
- * Nachtkeller Collage — true overlapping collage on a warm near-black
- * ground. Plates rotate a few degrees off-axis and physically overlap,
+ * Nachtkeller Collage — true overlapping collage on a theme-adaptive
+ * ground (deep near-black in dark, paper in light, via --background).
+ * Plates rotate a few degrees off-axis and physically overlap,
  * a ghost word in outlined serif floats behind, and the cellar master's
  * note sits tucked between the photographs. Antithesis of the grid:
  * placement reads as if pinned by hand.
@@ -16,12 +17,12 @@ const NOTE = {
 
 export function GalleryV4() {
   return (
-    <section className="relative overflow-hidden bg-[#141110] px-6 py-32 lg:py-44">
+    <section className="relative overflow-hidden bg-background px-6 py-32 lg:py-44">
       {/* Ghost word — outlined serif, drifts behind the collage */}
       <div aria-hidden="true" className="pointer-events-none absolute top-24 left-1/2 -translate-x-1/2 select-none">
         <span
           className="font-display text-[clamp(8rem,26vw,24rem)] leading-none font-light tracking-tight whitespace-nowrap text-transparent italic"
-          style={{ WebkitTextStroke: '1px rgba(231,225,216,0.07)' }}
+          style={{ WebkitTextStroke: '1px color-mix(in oklch, var(--foreground) 8%, transparent)' }}
         >
           Keller
         </span>
@@ -31,12 +32,12 @@ export function GalleryV4() {
         {/* Header — asymmetric, pushed left */}
         <header className="mb-24 max-w-xl lg:mb-32">
           <BlurFade delay={100}>
-            <span className="text-[11px] font-bold tracking-[0.4em] text-stone-500 uppercase">
+            <span className="text-[11px] font-bold tracking-[0.4em] text-muted-foreground uppercase">
               Aus dem Gewölbe · Est. 1904
             </span>
           </BlurFade>
           <BlurFade delay={250}>
-            <h2 className="font-display mt-6 text-5xl leading-[0.95] font-light tracking-tight text-stone-100 lg:text-7xl">
+            <h2 className="font-display mt-6 text-5xl leading-[0.95] font-light tracking-tight text-foreground lg:text-7xl">
               Zwölf Meter
               <br />
               <span className="italic">unter dem Hof.</span>
@@ -57,8 +58,8 @@ export function GalleryV4() {
               imgClassName="brightness-90"
             />
             <figcaption className="mt-4 flex items-baseline justify-between">
-              <span className="font-display text-sm font-light text-stone-400 italic">Das Archiv, Reihe III</span>
-              <span className="text-[9px] font-bold tracking-[0.3em] text-stone-600 uppercase">No. 01</span>
+              <span className="font-display text-sm font-light text-muted-foreground italic">Das Archiv, Reihe III</span>
+              <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground/70 uppercase">No. 01</span>
             </figcaption>
           </figure>
 
@@ -74,18 +75,18 @@ export function GalleryV4() {
               imgClassName="brightness-90"
             />
             <figcaption className="mt-4 flex items-baseline justify-between">
-              <span className="font-display text-sm font-light text-stone-400 italic">Drittbelegung, Fass 12</span>
-              <span className="text-[9px] font-bold tracking-[0.3em] text-stone-600 uppercase">No. 02</span>
+              <span className="font-display text-sm font-light text-muted-foreground italic">Drittbelegung, Fass 12</span>
+              <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground/70 uppercase">No. 02</span>
             </figcaption>
           </figure>
 
           {/* Cellar master's note — tucked into the empty right corner */}
           <BlurFade delay={600} className="max-w-xs lg:absolute lg:top-[6%] lg:right-0 lg:w-[24%]">
-            <div className="border-l border-stone-700/60 pl-6">
-              <p className="font-display text-xl leading-relaxed font-light text-stone-300 italic">
+            <div className="border-l border-border pl-6">
+              <p className="font-display text-xl leading-relaxed font-light text-foreground italic">
                 „{NOTE.quote}"
               </p>
-              <span className="mt-4 block text-[10px] font-bold tracking-[0.25em] text-stone-500 uppercase">
+              <span className="mt-4 block text-[10px] font-bold tracking-[0.25em] text-muted-foreground uppercase">
                 {NOTE.author}
               </span>
             </div>
@@ -103,8 +104,8 @@ export function GalleryV4() {
               imgClassName="brightness-90"
             />
             <figcaption className="mt-4 flex items-baseline justify-between">
-              <span className="font-display text-sm font-light text-stone-400 italic">Erste Probe, März</span>
-              <span className="text-[9px] font-bold tracking-[0.3em] text-stone-600 uppercase">No. 03</span>
+              <span className="font-display text-sm font-light text-muted-foreground italic">Erste Probe, März</span>
+              <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground/70 uppercase">No. 03</span>
             </figcaption>
           </figure>
 
@@ -120,15 +121,15 @@ export function GalleryV4() {
               imgClassName="brightness-90"
             />
             <figcaption className="mt-4">
-              <span className="font-display text-sm font-light text-stone-400 italic">Jahrgang 1979, ungeöffnet</span>
+              <span className="font-display text-sm font-light text-muted-foreground italic">Jahrgang 1979, ungeöffnet</span>
             </figcaption>
           </figure>
         </div>
 
         {/* Colophon */}
         <BlurFade delay={900} className="mt-24 flex items-center gap-6 lg:mt-32">
-          <span aria-hidden="true" className="h-px w-16 bg-stone-700" />
-          <p className="text-[10px] font-bold tracking-[0.3em] text-stone-500 uppercase">
+          <span aria-hidden="true" className="h-px w-16 bg-border" />
+          <p className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
             Fotografien aus dem Hausarchiv · Unretuschiert
           </p>
         </BlurFade>

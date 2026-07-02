@@ -64,7 +64,7 @@ export function CTAV3() {
           <BlurFade delay={750}>
             <a
               href="/einladung"
-              className="group inline-flex items-center gap-5 text-sm font-bold tracking-[0.25em] text-white uppercase"
+              className="group inline-flex min-h-11 items-center gap-5 text-sm font-bold tracking-[0.25em] text-white uppercase"
             >
               Platz erbitten
               <span aria-hidden="true" className="h-px w-12 bg-white/70 transition-all duration-500 group-hover:w-20 group-hover:bg-white" />

@@ -16,10 +16,10 @@ export function FooterV3() {
               die ihn gelesen hat."
             </p>
           </div>
-          <div className="flex flex-col gap-2 text-right text-xs tracking-wider text-zinc-500 uppercase">
-            <a href="https://instagram.com/lacombe.fils" className="transition-colors hover:text-zinc-100">Instagram</a>
-            <a href="/newsletter" className="transition-colors hover:text-zinc-100">Newsletter</a>
-            <a href="/haendler" className="transition-colors hover:text-zinc-100">Händlerportal</a>
+          <div className="flex flex-col text-right text-xs tracking-wider text-zinc-500 uppercase">
+            <a href="https://instagram.com/lacombe.fils" className="inline-flex min-h-11 items-center justify-end transition-colors hover:text-zinc-100">Instagram</a>
+            <a href="/newsletter" className="inline-flex min-h-11 items-center justify-end transition-colors hover:text-zinc-100">Newsletter</a>
+            <a href="/haendler" className="inline-flex min-h-11 items-center justify-end transition-colors hover:text-zinc-100">Händlerportal</a>
           </div>
         </div>
 
@@ -30,12 +30,12 @@ export function FooterV3() {
           Lacombe
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-zinc-800 pt-8 text-[11px] tracking-wider text-zinc-500 uppercase sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1 border-t border-zinc-800 pt-8 text-[11px] tracking-wider text-zinc-500 uppercase sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} · Familienbetrieb seit 1958</span>
           <span className="text-zinc-600">Kellergasse 58 · 3601 Dürnstein · AT</span>
-          <div className="flex gap-6">
-            <a href="/impressum" className="hover:text-zinc-300">Impressum</a>
-            <a href="/datenschutz" className="hover:text-zinc-300">Datenschutz</a>
+          <div className="flex gap-4">
+            <a href="/impressum" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300">Impressum</a>
+            <a href="/datenschutz" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300">Datenschutz</a>
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ export function HeroV1() {
             </a>
             <a
               href="/winzer"
-              className="text-foreground decoration-border hover:decoration-foreground text-sm font-medium underline underline-offset-4"
+              className="text-foreground decoration-border hover:decoration-foreground inline-flex min-h-11 items-center text-sm font-medium underline underline-offset-4"
             >
               Unsere Winzer kennenlernen
             </a>

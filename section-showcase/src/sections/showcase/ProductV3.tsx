@@ -125,7 +125,7 @@ export function ProductV3({ onBack }: ProductV3Props) {
             </div>
             <a
               href="/sortiment/loibenberg-smaragd"
-              className="group inline-flex items-center gap-4 pb-1 text-xs font-bold tracking-[0.25em] text-zinc-900 uppercase"
+              className="group inline-flex min-h-11 items-center gap-4 pb-1 text-xs font-bold tracking-[0.25em] text-zinc-900 uppercase"
             >
               Anfragen
               <span aria-hidden="true" className="h-px w-10 bg-zinc-900 transition-all duration-500 group-hover:w-16" />

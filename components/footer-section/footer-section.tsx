@@ -274,7 +274,7 @@ export function Footer({
                     margin: 0,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.5rem',
+                    gap: '0.25rem',
                   }}
                 >
                   {section.links.map((link) => (
@@ -286,6 +286,8 @@ export function Footer({
                           color: 'var(--muted-foreground, #71717a)',
                           textDecoration: 'none',
                           fontSize: '0.8125rem',
+                          // 44px min tap target (WCAG 2.5.5 / Guidelines §7)
+                          minHeight: '2.75rem',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.25rem',
