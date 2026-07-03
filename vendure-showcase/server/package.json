@@ -12,6 +12,7 @@
     "seed": "tsx src/seed.ts"
   },
   "dependencies": {
+    "@nestjs/common": "^11.1.18",
     "@vendure/core": "^3.6.4",
     "@vendure/asset-server-plugin": "^3.6.4",
     "@vendure/dashboard": "^3.6.4",
