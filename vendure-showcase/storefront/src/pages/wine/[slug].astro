@@ -35,6 +35,6 @@ const initialProduct = data.product;
 
 <Layout title={initialProduct?.name || "Wein Details"}>
 	<main class="max-w-6xl mx-auto px-6 py-10">
-		<WineDetailPage client:only="react" slug={slug!} initialProduct={initialProduct} />
+		<WineDetailPage client:load slug={slug!} initialProduct={initialProduct} />
 	</main>
 </Layout>

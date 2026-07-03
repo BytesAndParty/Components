@@ -92,6 +92,16 @@ export const GET_PRODUCT = `
         priceWithTax
         stockLevel
       }
+      facetValues {
+        id
+        name
+        code
+        facet {
+          id
+          code
+          name
+        }
+      }
     }
   }
 `;
