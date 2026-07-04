@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
@@ -18,7 +18,7 @@ import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
 import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
-import { ValidatorBadge } from '../validator-badge/validator-badge'
+import { ValidatorBadge, type ValidationWarning } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
 // PDF export is dynamically imported on click — keeps jspdf + html2canvas
 // out of the initial designer chunk (≈590 kB of vendor code).
@@ -37,6 +37,8 @@ const BLEED_MASK_OPACITY_PREVIEW = 1
 // EU-standard 3mm print-bleed safety margin. Visualised as a translucent strip
 // at the label boundary to warn designers that content placed here might be lost.
 const PRINT_BLEED_MM = 3
+
+export type { ValidationWarning }
 
 export interface WineFieldValues {
   name?:               string
@@ -87,7 +89,7 @@ export interface CellarCanvasProps {
   onChange?:           (state: CellarCanvasState) => void
   onSave?:             (state: CellarCanvasState) => Promise<void>
   onExport?:           (result: { format: 'png' | 'pdf'; blob: Blob }) => void
-  onValidationChange?: (warnings: string[]) => void
+  onValidationChange?: (warnings: ValidationWarning[]) => void
 
   // Styling
   height?:    string | number
@@ -130,6 +132,8 @@ export function CellarCanvas({
   initialWineFields = DEFAULT_WINE_FIELDS,
   initialState,
   storageKey        = 'cellar-canvas-draft',
+  exportDpi         = 300,
+  enablePdfExport   = true,
   enableValidator   = true,
   disableTour       = false,
   tourStorageKey    = 'cellar-canvas-tour-completed',
@@ -137,6 +141,7 @@ export function CellarCanvas({
   onChange,
   onSave,
   onExport,
+  onValidationChange,
   className,
   style,
   height = '80vh',
@@ -206,10 +211,22 @@ export function CellarCanvas({
     const b = bridge.current
     if (!b) return
     const { exportLabelPdf, downloadBlob } = await import('./engine/export-pipeline')
-    const blob = exportLabelPdf(b)
+    const blob = exportLabelPdf(b, exportDpi)
     downloadBlob(blob, `${m.exportFilename}.pdf`)
     onExport?.({ format: 'pdf', blob })
   }
+
+  // Report compliance changes to the embedding app. Full syncs rebuild the
+  // warnings array with identical content, so we fire only when the actual
+  // set of missing fields changes.
+  const lastWarningsSignature = useRef<string | null>(null)
+  useEffect(() => {
+    if (!onValidationChange) return
+    const signature = warnings.map(w => w.key).join('|')
+    if (signature === lastWarningsSignature.current) return
+    lastWarningsSignature.current = signature
+    onValidationChange(warnings)
+  }, [warnings, onValidationChange])
 
   // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
   // restricts focus to descendants of the fullscreen element, which Fabric's
@@ -301,7 +318,7 @@ export function CellarCanvas({
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
         onSave={onSave}
-        onExportPdf={handleExportPdf}
+        onExportPdf={enablePdfExport ? handleExportPdf : undefined}
       />
 
       <div

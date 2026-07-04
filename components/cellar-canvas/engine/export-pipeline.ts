@@ -2,12 +2,8 @@ import jsPDF from 'jspdf'
 import type { FabricBridge } from './fabric-bridge'
 import { mmToPx } from './units'
 
-const EXPORT_DPI = 300
+const DEFAULT_EXPORT_DPI = 300
 const SCREEN_DPI = 96
-// `mmToPx` works at 96 DPI; the print pipeline needs 300 DPI. Fabric's
-// `multiplier` upscales the rendered raster by this ratio while keeping the
-// crop region in source (96 DPI) pixels.
-const PRINT_MULTIPLIER = EXPORT_DPI / SCREEN_DPI // 3.125
 
 export interface ExportOptions {
   /** Filename without extension. Default: `'label'`. */
@@ -16,7 +12,9 @@ export interface ExportOptions {
 
 /**
  * Renders ONLY the label region (i.e. the inner widthMm × heightMm box,
- * excluding the surrounding workspace bleed) to a PNG data URL at 300 DPI.
+ * excluding the surrounding workspace bleed) to a PNG data URL at `dpi`.
+ * `mmToPx` works at 96 DPI; Fabric's `multiplier` upscales the rendered
+ * raster to the target DPI while keeping the crop region in source pixels.
  *
  * The Fabric canvas is set to `backgroundColor: 'transparent'` at runtime —
  * the label paper colour lives in `bridge.labelColor` and is rendered as a
@@ -27,7 +25,7 @@ export interface ExportOptions {
  * `excludeFromExport: true` on the snap-manager's guide lines keeps them
  * out of the raster automatically — Fabric honours the flag in `toDataURL`.
  */
-function renderLabelPng(bridge: FabricBridge): string {
+function renderLabelPng(bridge: FabricBridge, dpi: number): string {
   const canvas    = bridge.canvas
   const bleedPx   = mmToPx(bridge.bleedMm)
   const labelW    = mmToPx(bridge.widthMm)
@@ -41,7 +39,7 @@ function renderLabelPng(bridge: FabricBridge): string {
       top:        bleedPx,
       width:      labelW,
       height:     labelH,
-      multiplier: PRINT_MULTIPLIER,
+      multiplier: dpi / SCREEN_DPI,
     })
   } finally {
     canvas.backgroundColor = prevBg
@@ -57,8 +55,8 @@ function renderLabelPng(bridge: FabricBridge): string {
  * Returns a Blob so callers can either trigger a download (default) or
  * upload it to a backend via `onExport`.
  */
-export function exportLabelPdf(bridge: FabricBridge): Blob {
-  const png  = renderLabelPng(bridge)
+export function exportLabelPdf(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Blob {
+  const png  = renderLabelPng(bridge, dpi)
   const w    = bridge.widthMm
   const h    = bridge.heightMm
   const pdf  = new jsPDF({
