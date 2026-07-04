@@ -394,7 +394,7 @@ export function CellarCanvas({
         onCrop={handleCrop}
       />
 
-      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} />
+      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} includeSaveStep={!!onSave} />
     </div>
   )
 
