@@ -77,6 +77,7 @@ export type CellarCanvasMessages = {
   wineFieldNotSet:        string
   wineFieldQrTitle:       string
   wineFieldQrHint:        string
+  wineFieldQrMissingUrl:  string
 
   // Layers section
   layersHeading:          string
@@ -182,6 +183,7 @@ export const MESSAGES = {
     wineFieldNotSet:         'Nicht gesetzt',
     wineFieldQrTitle:        'QR-Code hinzufügen',
     wineFieldQrHint:         'EU-Pflichtangabe',
+    wineFieldQrMissingUrl:   'Keine Nährwert-URL gesetzt',
 
     layersHeading:           'Ebenen',
     layersCount:             '{count} gesamt',
@@ -280,6 +282,7 @@ export const MESSAGES = {
     wineFieldNotSet:         'Not set',
     wineFieldQrTitle:        'Add QR Code',
     wineFieldQrHint:         'EU compliance requirement',
+    wineFieldQrMissingUrl:   'No nutrition URL set',
 
     layersHeading:           'Layers',
     layersCount:             '{count} total',
