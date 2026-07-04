@@ -72,6 +72,8 @@ export type CellarCanvasMessages = {
   wineFieldVolume:        string
   wineFieldRegion:        string
   wineFieldProducer:      string
+  wineFieldAllergen:      string
+  wineFieldCountry:       string
   wineFieldNotSet:        string
   wineFieldQrTitle:       string
   wineFieldQrHint:        string
@@ -175,6 +177,8 @@ export const MESSAGES = {
     wineFieldVolume:         'Volumen (ml)',
     wineFieldRegion:         'Region',
     wineFieldProducer:       'Erzeuger',
+    wineFieldAllergen:       'Allergenhinweis',
+    wineFieldCountry:        'Herkunftsland',
     wineFieldNotSet:         'Nicht gesetzt',
     wineFieldQrTitle:        'QR-Code hinzufügen',
     wineFieldQrHint:         'EU-Pflichtangabe',
@@ -271,6 +275,8 @@ export const MESSAGES = {
     wineFieldVolume:         'Volume (ml)',
     wineFieldRegion:         'Region',
     wineFieldProducer:       'Producer',
+    wineFieldAllergen:       'Allergen Note',
+    wineFieldCountry:        'Country of Origin',
     wineFieldNotSet:         'Not set',
     wineFieldQrTitle:        'Add QR Code',
     wineFieldQrHint:         'EU compliance requirement',

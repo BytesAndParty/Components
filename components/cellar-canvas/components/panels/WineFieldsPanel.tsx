@@ -24,6 +24,8 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
     { key: 'volumeMl',       label: m.wineFieldVolume,   value: values.volumeMl },
     { key: 'region',         label: m.wineFieldRegion,   value: values.region },
     { key: 'producer',       label: m.wineFieldProducer, value: values.producer },
+    { key: 'allergenNote',   label: m.wineFieldAllergen, value: values.allergenNote },
+    { key: 'countryOfOrigin', label: m.wineFieldCountry, value: values.countryOfOrigin },
   ] as const
 
   const addField = (key: string, label: string, value?: string | number) => {

@@ -102,6 +102,8 @@ const DEFAULT_WINE_FIELDS: WineFieldValues = {
   vintage:            '2021',
   alcoholPercent:     '13.5%',
   volumeMl:           '750ml',
+  allergenNote:       'enthält Sulfite',
+  countryOfOrigin:    'Österreich',
   nutritionalInfoUrl: 'https://wine-info.eu/vignes-2021',
 }
 
