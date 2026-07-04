@@ -7,15 +7,16 @@ Sub-modules and panels live alongside it as standalone components that can be re
 ## Features
 
 - **Fabric v7 canvas** mounted in mm units, with px conversion via `engine/units.ts`. Origin pinned to `left/top` so the mm/px bounding-box math holds.
-- **Tools**: select / pan / text / image (with crop) / rect / circle / line / QR-code.
+- **Tools**: select / pan (viewport drag) / text / image (with crop + replace) / rect / circle / line / QR-code. Text/image/shape buttons are stamp actions (insert once, back to select); only select and pan are persistent modes.
 - **Undo/Redo System**: Linear history stack (max. 50 steps) using Fabric JSON serialization. Visual controls in the header + keyboard shortcuts.
-- **TanStack Hotkeys**: Global shortcut support (`mod+z`, `mod+shift+z`, `delete`, `backspace`) integrated with the design engine's hotkey registry. Smart focus-handling prevents deleting objects while typing in inputs.
-- **Physical Zoom-to-Fit**: One-click fitting (`Fit to Screen`) that calculates the viewport scale based on the actual physical millimetre dimensions of the label.
+- **TanStack Hotkeys**: Global shortcut support (`mod+z`, `mod+shift+z`, `Delete`, `Backspace`, `+`/`-` zoom, `s` snapping) integrated with the design engine's hotkey registry. Delete and Backspace are registered individually — the library matches one key per registration, comma lists never fire. Single-key hotkeys are input-guarded by the library itself.
+- **Zoom**: cursor-anchored wheel/pinch zoom, `+`/`-` buttons and hotkeys (centre-anchored, same clamp range), one-click `Fit to Screen` based on the physical millimetre dimensions of the label.
 - **Right panel**: properties for the active object (x/y/w/h/rotation/opacity in mm/°/%) + wine-data field inserter.
 - **Layer panel** mirrors the canvas z-order (top of list = front of canvas). Drag-to-reorder, visibility, lock, rename, delete.
 - **EU compliance validator** (Reg. 1308/2013, 2019/33, 1169/2011, 2023/2977): floating badge surfaces missing mandatory fields with the legal basis spelled out per warning. Toggleable via `enableValidator`.
-- **Image crop pipeline**: file picker → `ImageCropperModal` (Ark UI / Zag) → cropped Blob → `addImage` on canvas. Initial zoom auto-fits the source.
-- **Fullscreen mode** with `requestFullscreen` + `fullscreenchange` listener, re-fits the canvas on transition.
+- **Image crop pipeline**: file picker → `ImageCropperModal` (Ark UI / Zag) → cropped Blob → `addImage` on canvas. Initial zoom auto-fits the source. Selected images offer crop (re-opens the cropper) and replace (straight file swap, keeps id/position/layer meta) in the context toolbar.
+- **Export**: PNG and PDF at `exportDpi` (default 300), rendered in exact trim size. PDF is gated behind `enablePdfExport`; both downloads also fire `onExport` for server-side upload.
+- **Fullscreen mode** via CSS (`fixed inset-0`) — the browser Fullscreen API restricts focus and breaks Fabric's hidden textarea (see STATUS.md #23). Escape exits.
 
 ## How It Works
 
@@ -35,12 +36,12 @@ Sub-modules and panels live alongside it as standalone components that can be re
 | `initialWineFields` | `WineFieldValues` | demo data | Pre-fill for the wine-data inserter (name, vintage, alcoholPercent, volumeMl, region, grapes, producer, countryOfOrigin, sugarContent, energyKcal, allergenNote, nutritionalInfoUrl) |
 | `initialState` | `object` | — | Fabric JSON to restore the canvas from |
 | `enableValidator` | `boolean` | `true` | Toggle EU compliance check + floating badge. `false` for showcases, non-EU markets, tests |
-| `exportDpi` | `number` | `300` | DPI for PNG/PDF export |
-| `enablePdfExport` | `boolean` | `true` | Allow PDF format in export |
+| `exportDpi` | `number` | `300` | Raster resolution for PNG/PDF export |
+| `enablePdfExport` | `boolean` | `true` | Show the PDF export button (PNG is always available) |
 | `onChange` | `(state: object) => void` | — | Fired on every canvas mutation |
-| `onSave` | `(state: object) => Promise<void>` | — | Manual save trigger; button shows loading/success |
-| `onExport` | `(r: { format, blob }) => void` | — | Server-side upload hook for the export pipeline |
-| `onValidationChange` | `(warnings: string[]) => void` | — | Fired whenever the compliance result changes |
+| `onSave` | `(state: object) => Promise<void>` | — | Manual save trigger; button shows loading/success. Also gates the tour's save step |
+| `onExport` | `(r: { format: 'png' \| 'pdf', blob }) => void` | — | Server-side upload hook for the export pipeline |
+| `onValidationChange` | `(warnings: ValidationWarning[]) => void` | — | Fired whenever the set of missing mandatory fields changes; each warning carries `key`, `label`, `description` (legal basis) and `severity` |
 | `height` | `string \| number` | `'80vh'` | Editor outer height |
 | `className` / `style` | — | — | Forwarded to the wrapper |
 
