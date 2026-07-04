@@ -47,7 +47,7 @@ export function HeroV6() {
           </div>
 
           {/* Secondary plate — hangs lower-left, overlapping the primary */}
-          <div className="mt-10 w-2/3 max-w-[300px] lg:absolute lg:bottom-0 lg:left-[44%] lg:z-20 lg:mt-0 lg:w-[22%] lg:max-w-none">
+          <div className="mt-10 w-2/3 max-w-75 lg:absolute lg:bottom-0 lg:left-[44%] lg:z-20 lg:mt-0 lg:w-[22%] lg:max-w-none">
             <RevealImage
               src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=900&q=80"
               alt="Rebzeilen im Morgennebel"

@@ -6,7 +6,7 @@ export function HeroV2() {
       {/* Soft accent glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-160"
         style={{
           background:
             'radial-gradient(60% 60% at 50% 0%, color-mix(in oklch, var(--accent) 22%, transparent), transparent 70%)',

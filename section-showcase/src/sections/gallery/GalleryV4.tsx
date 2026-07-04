@@ -46,7 +46,7 @@ export function GalleryV4() {
         </header>
 
         {/* Collage field — absolute placements on desktop, flow on mobile */}
-        <div className="relative flex flex-col gap-16 lg:block lg:min-h-[920px]">
+        <div className="relative flex flex-col gap-16 lg:block lg:min-h-230">
           {/* Plate 1 — large, slightly rotated left */}
           <figure className="lg:absolute lg:top-0 lg:left-0 lg:w-[46%] lg:-rotate-2">
             <RevealImage
@@ -110,7 +110,7 @@ export function GalleryV4() {
           </figure>
 
           {/* Plate 4 — small portrait, far lower-left, deepest rotation */}
-          <figure className="w-2/3 max-w-[260px] lg:absolute lg:bottom-[4%] lg:left-[16%] lg:z-20 lg:w-[20%] lg:max-w-none lg:-rotate-[2.5deg]">
+          <figure className="w-2/3 max-w-65 lg:absolute lg:bottom-[4%] lg:left-[16%] lg:z-20 lg:w-[20%] lg:max-w-none lg:rotate-[-2.5deg]">
             <RevealImage
               src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=900&q=80"
               alt="Staubige Flasche mit handgeschriebenem Etikett"
