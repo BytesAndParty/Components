@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-import type { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
+import type { EmblaOptionsType, EmblaCarouselType, EmblaPluginType } from 'embla-carousel'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -37,7 +37,7 @@ function useCarousel() {
 
 export interface CarouselProps {
   opts?: EmblaOptionsType
-  plugins?: any[]
+  plugins?: EmblaPluginType[]
   orientation?: 'horizontal' | 'vertical'
   setApi?: (api: EmblaCarouselType) => void
   className?: string

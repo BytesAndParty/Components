@@ -50,7 +50,7 @@ describe('Cart Optimistic UI & Sync', () => {
   });
 
   it('updates quantity optimistically and rolls back on error', async () => {
-    (vendureClient.shopApiRequest as any).mockImplementation(() => {
+    vi.mocked(vendureClient.shopApiRequest).mockImplementation(() => {
       return new Promise((_, reject) => setTimeout(() => reject(new Error('Fail')), 50));
     });
 
@@ -73,7 +73,7 @@ describe('Cart Optimistic UI & Sync', () => {
   });
 
   it('removes item optimistically and rolls back on error', async () => {
-    (vendureClient.shopApiRequest as any).mockImplementation(() => {
+    vi.mocked(vendureClient.shopApiRequest).mockImplementation(() => {
       return new Promise((_, reject) => setTimeout(() => reject(new Error('Fail')), 50));
     });
 
