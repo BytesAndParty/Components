@@ -92,6 +92,12 @@ export type CellarCanvasMessages = {
   hotkeyDeleteDescription: string
   hotkeySnappingLabel:    string
   hotkeySnappingDescription: string
+  hotkeyZoomInLabel:      string
+  hotkeyZoomInDescription: string
+  hotkeyZoomOutLabel:     string
+  hotkeyZoomOutDescription: string
+  zoomInTitle:            string
+  zoomOutTitle:           string
   hotkeyCategory:         string
 
   // Onboarding Tour
@@ -198,6 +204,12 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
     hotkeySnappingLabel:     'Snapping umschalten',
     hotkeySnappingDescription: 'Drag-Snapping zu Kanten und Mittellinien an- oder ausschalten',
+    hotkeyZoomInLabel:       'Hineinzoomen',
+    hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
+    hotkeyZoomOutLabel:      'Herauszoomen',
+    hotkeyZoomOutDescription: 'Ansicht verkleinern (Canvas-Mitte)',
+    zoomInTitle:             'Hineinzoomen (+)',
+    zoomOutTitle:            'Herauszoomen (−)',
     hotkeyCategory:          'Aktionen',
 
     tourSkip:                'Überspringen',
@@ -299,6 +311,12 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Remove selected object',
     hotkeySnappingLabel:     'Toggle snapping',
     hotkeySnappingDescription: 'Turn drag-snapping to edges and center lines on or off',
+    hotkeyZoomInLabel:       'Zoom in',
+    hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
+    hotkeyZoomOutLabel:      'Zoom out',
+    hotkeyZoomOutDescription: 'Shrink the view (canvas centre)',
+    zoomInTitle:             'Zoom in (+)',
+    zoomOutTitle:            'Zoom out (−)',
     hotkeyCategory:          'Actions',
 
     tourSkip:                'Skip',

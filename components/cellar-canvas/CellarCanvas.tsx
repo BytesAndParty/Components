@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -269,16 +270,41 @@ export function CellarCanvas({
     description: m.hotkeyRedoDescription,
   })
 
-  useDesignEngineHotkey('delete, backspace', () => {
+  // Registered as two separate hotkeys: the library matches one key per
+  // registration — a comma list like 'delete, backspace' never fires.
+  const deleteSelected = () => {
     // Don't steal Delete/Backspace from text inputs — the user is typing.
     const tag = document.activeElement?.tagName
     if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
       bridge.current?.deleteSelected()
     }
-  }, {
+  }
+
+  useDesignEngineHotkey('Delete', deleteSelected, {
     label:       m.hotkeyDeleteLabel,
     category:    'Actions',
     description: m.hotkeyDeleteDescription,
+  })
+
+  useDesignEngineHotkey('Backspace', deleteSelected, {
+    label:       m.hotkeyDeleteLabel,
+    category:    'Actions',
+    description: m.hotkeyDeleteDescription,
+  })
+
+  // Zoom via keyboard. `{ key: '+' }` is the object form — a literal '+'
+  // inside a hotkey string collides with the combo separator. It also covers
+  // the numpad plus; '-' works as a plain string on all layouts.
+  useDesignEngineHotkey({ key: '+' }, () => bridge.current?.zoomBy(1.2), {
+    label:       m.hotkeyZoomInLabel,
+    category:    'Actions',
+    description: m.hotkeyZoomInDescription,
+  })
+
+  useDesignEngineHotkey('-', () => bridge.current?.zoomBy(1 / 1.2), {
+    label:       m.hotkeyZoomOutLabel,
+    category:    'Actions',
+    description: m.hotkeyZoomOutDescription,
   })
 
   useDesignEngineHotkey('s', () => {
@@ -338,12 +364,30 @@ export function CellarCanvas({
         style={{ gridColumn: '2 / -1' }}
       >
         <ContextToolbar bridge={bridge} activeProps={activeProps} />
-        <button
-          onClick={() => bridge.current?.zoomToFit()}
-          className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
-        >
-          {m.fitToScreen}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => bridge.current?.zoomBy(1 / 1.2)}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
+            title={m.zoomOutTitle}
+            aria-label={m.zoomOutTitle}
+          >
+            <ZoomOut size={14} />
+          </button>
+          <button
+            onClick={() => bridge.current?.zoomBy(1.2)}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
+            title={m.zoomInTitle}
+            aria-label={m.zoomInTitle}
+          >
+            <ZoomIn size={14} />
+          </button>
+          <button
+            onClick={() => bridge.current?.zoomToFit()}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground ml-1 rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
+          >
+            {m.fitToScreen}
+          </button>
+        </div>
       </div>
 
       <div style={{ gridRow: '2 / -1' }}>

@@ -37,9 +37,28 @@ function useHotkeysActions() {
   return context
 }
 
+type RegisterableHotkey = Parameters<typeof useHotkey>[0]
+
+/**
+ * Display string for the ShortcutOverview. The object form exists for keys
+ * the string syntax cannot express — `'+'` collides with the combo
+ * separator, so callers pass `{ key: '+' }` instead.
+ */
+function hotkeyDisplayString(key: RegisterableHotkey): string {
+  if (typeof key === 'string') return key
+  return [
+    key.mod && 'Mod',
+    key.ctrl && 'Control',
+    key.shift && 'Shift',
+    key.alt && 'Alt',
+    key.meta && 'Meta',
+    key.key,
+  ].filter(Boolean).join('+')
+}
+
 /** Wraps TanStack useHotkey, registers metadata for ShortcutOverview, and auto-disables on touch devices. */
 export function useDesignEngineHotkey(
-  key: string,
+  key: RegisterableHotkey,
   callback: (event: KeyboardEvent) => void,
   metadata: Omit<HotkeyMetadata, 'key'>,
   options?: HotkeyOptions
@@ -48,7 +67,11 @@ export function useDesignEngineHotkey(
   const { hasFinePointer } = useDeviceCapabilities()
   const id = React.useId()
 
-  useHotkey(key as Parameters<typeof useHotkey>[0], callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) })
+  useHotkey(key, callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) })
+
+  // `key` may be an inline object literal — depend on the derived display
+  // string so re-renders don't churn the registration.
+  const displayKey = hotkeyDisplayString(key)
 
   // Decompose `metadata` deps so callers can pass new object literals
   // without triggering re-registration. The rule wants the whole
@@ -56,8 +79,8 @@ export function useDesignEngineHotkey(
   // call site that builds metadata inline.
   React.useEffect(() => {
     if (!hasFinePointer) return
-    register(id, { key, ...metadata })
+    register(id, { key: displayKey, ...metadata })
     return () => unregister(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, key, metadata.label, metadata.description, metadata.category, register, unregister, hasFinePointer])
+  }, [id, displayKey, metadata.label, metadata.description, metadata.category, register, unregister, hasFinePointer])
 }

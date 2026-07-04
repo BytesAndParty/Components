@@ -594,6 +594,24 @@ export class FabricBridge {
   }
 
   /**
+   * Multiplies the current zoom by `factor`, anchored to the canvas centre.
+   * Same clamp range as the wheel handler so buttons/hotkeys and wheel zoom
+   * can never diverge.
+   */
+  zoomBy(factor: number) {
+    const current = this.canvas.getZoom()
+    const next = Math.max(0.05, Math.min(20, current * factor))
+    if (next === current) return
+    const center = new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2)
+    this.canvas.zoomToPoint(center, next)
+    this.canvas.requestRenderAll()
+    useDesignerStore.getState().setZoom(next)
+    // Notify React so the CSS-rendered label backdrop tracks Fabric's view.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+  }
+
+  /**
    * Fits the whole HTML-canvas content into the viewport with a small visual
    * padding. Because the canvas is larger than the label (bleed margin), this
    * keeps both the label and any overflowing objects visible at the same time.
