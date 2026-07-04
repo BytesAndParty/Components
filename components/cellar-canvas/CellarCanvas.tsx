@@ -218,6 +218,15 @@ export function CellarCanvas({
     onExport?.({ format: 'pdf', blob })
   }
 
+  async function handleExportPng() {
+    const b = bridge.current
+    if (!b) return
+    const { exportLabelPng, downloadBlob } = await import('./engine/export-pipeline')
+    const blob = exportLabelPng(b, exportDpi)
+    downloadBlob(blob, `${m.exportFilename}.png`)
+    onExport?.({ format: 'png', blob })
+  }
+
   // Report compliance changes to the embedding app. Full syncs rebuild the
   // warnings array with identical content, so we fire only when the actual
   // set of missing fields changes.
@@ -320,6 +329,7 @@ export function CellarCanvas({
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
         onSave={onSave}
+        onExportPng={handleExportPng}
         onExportPdf={enablePdfExport ? handleExportPdf : undefined}
       />
 

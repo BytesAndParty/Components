@@ -119,6 +119,8 @@ export type CellarCanvasMessages = {
   // Export
   exportLabel:            string
   exportTitle:            string
+  exportPngLabel:         string
+  exportPngTitle:         string
   exportFilename:         string
 }
 
@@ -220,6 +222,8 @@ export const MESSAGES = {
 
     exportLabel:             'PDF',
     exportTitle:             'Als PDF exportieren (Trim-Größe)',
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Als PNG exportieren (Druckauflösung)',
     exportFilename:          'weinetikett',
   },
   en: {
@@ -319,6 +323,8 @@ export const MESSAGES = {
 
     exportLabel:             'PDF',
     exportTitle:             'Export as PDF (trim size)',
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Export as PNG (print resolution)',
     exportFilename:          'wine-label',
   },
 } as const satisfies ComponentMessages<CellarCanvasMessages>

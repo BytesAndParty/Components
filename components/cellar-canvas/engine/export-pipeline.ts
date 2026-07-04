@@ -48,6 +48,20 @@ function renderLabelPng(bridge: FabricBridge, dpi: number): string {
 }
 
 /**
+ * Renders the label region as a print-resolution PNG Blob — same raster the
+ * PDF embeds, without the PDF wrapper. For shops/printers that want the
+ * plain image.
+ */
+export function exportLabelPng(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Blob {
+  const dataUrl = renderLabelPng(bridge, dpi)
+  const base64  = dataUrl.split(',')[1]
+  const bytes   = atob(base64)
+  const buf     = new Uint8Array(bytes.length)
+  for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i)
+  return new Blob([buf], { type: 'image/png' })
+}
+
+/**
  * Produces a print-ready PDF in exact trim size — no outer bleed, no crop
  * marks. One page per label, page format matches the label dimensions in
  * millimetres. The print shop adds bleed and marks itself if needed.
