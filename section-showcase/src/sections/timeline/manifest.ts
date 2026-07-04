@@ -1,6 +1,8 @@
 import { TimelineV1 } from './TimelineV1'
 import { TimelineV2 } from './TimelineV2'
 import { TimelineV3 } from './TimelineV3'
+import { TimelineV4 } from './TimelineV4'
+import { TimelineV5 } from './TimelineV5'
 import type { SectionDef } from '../types'
 
 export const timelineSection: SectionDef = {
@@ -23,6 +25,18 @@ export const timelineSection: SectionDef = {
       label: 'Jahrhundert-Register',
       description: 'Typografisches Ledger statt Linie: konturierte Jahres-Ziffern füllen sich bei Hover, das Heute trägt eine Foto-Tafel.',
       Component: TimelineV3,
+    },
+    {
+      id: 'v4',
+      label: 'Die Chronik (Domaine Privée)',
+      description: 'Familienregister mit zentraler Hairline-Spine, Rauten-Siegeln und ovalen Medaillon-Tafeln — alternierend gesetzt.',
+      Component: TimelineV4,
+    },
+    {
+      id: 'v5',
+      label: 'Nachtchronik (Cinematic)',
+      description: 'Vier Filmszenen: entsättigte 21:9-Bildbänder, glühende Serif-Jahre, Rollen-Marker — Hover holt die Szene aus dem Grade.',
+      Component: TimelineV5,
     },
   ],
 }

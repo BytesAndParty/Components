@@ -5,6 +5,8 @@ import { HeroV3 } from './HeroV3'
 import { HeroV4 } from './HeroV4'
 import { HeroV5 } from './HeroV5'
 import { HeroV6 } from './HeroV6'
+import { HeroV7 } from './HeroV7'
+import { HeroV8 } from './HeroV8'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -46,6 +48,18 @@ export const heroSection: SectionDef = {
       label: 'Maison Editorial',
       description: 'Geschichtete Magazin-Komposition: Headline überlappt die Fotografie, vertikale Meta-Leiste, Curtain-Reveals.',
       Component: HeroV6,
+    },
+    {
+      id: 'v7',
+      label: 'Domaine Privée',
+      description: 'Symmetrische Gut-Komposition um ein Rundbogen-Fenster: Kalkstein-Cream, Bordeaux-Tinte, Headline krönt den Bogen.',
+      Component: HeroV7,
+    },
+    {
+      id: 'v8',
+      label: 'Nocturne (Cinematic)',
+      description: 'Kellerkino: Kerzengold-Lichtstrahlen aus der Luke, Staub im Lichtkegel, Title-Card unten links, Ghost-Ziffer „58“.',
+      Component: HeroV8,
     },
   ],
 }

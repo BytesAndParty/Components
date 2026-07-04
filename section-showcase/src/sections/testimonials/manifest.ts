@@ -2,6 +2,8 @@ import { TestimonialsV1 } from './TestimonialsV1'
 import { TestimonialsV2 } from './TestimonialsV2'
 import { TestimonialsV3 } from './TestimonialsV3'
 import { TestimonialsV4 } from './TestimonialsV4'
+import { TestimonialsV5 } from './TestimonialsV5'
+import { TestimonialsV6 } from './TestimonialsV6'
 import type { SectionDef } from '../types'
 
 export const testimonialsSection: SectionDef = {
@@ -30,6 +32,18 @@ export const testimonialsSection: SectionDef = {
       label: 'Moving Voices',
       description: 'Endlos scrollende Reihen von Kundenstimmen (Velocity Scroll).',
       Component: TestimonialsV4,
+    },
+    {
+      id: 'v5',
+      label: 'Livre d’Or (Domaine Privée)',
+      description: 'Aufgeschlagenes Gästebuch: Papier-Doppelseite mit Buchfalz-Hairline, Lead-Stimme links, zwei stille Einträge rechts.',
+      Component: TestimonialsV5,
+    },
+    {
+      id: 'v6',
+      label: 'Maison Stimmen',
+      description: 'Pull-Quote überlappt die Portrait-Tafel (HeroV6-Sprache), vertikale Rail, zwei stille Stimmen an der Hairline-Basis.',
+      Component: TestimonialsV6,
     },
   ],
 }
