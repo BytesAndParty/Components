@@ -122,8 +122,11 @@ export function useCanvasSync(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(canvas as any).on('cellar:property-changed', () => scheduleUpdate('full'))
 
-    // Pan/Zoom updates
+    // Pan/Zoom updates. The bridge fires `cellar:viewport-changed` for
+    // programmatic viewport moves (pan drag) that emit no native event.
     canvas.on('mouse:wheel', () => scheduleUpdate('viewport'))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(canvas as any).on('cellar:viewport-changed', () => scheduleUpdate('viewport'))
 
     // First paint stays synchronous.
     update('full')
@@ -142,6 +145,8 @@ export function useCanvasSync(
       canvas.off('mouse:wheel')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(canvas as any).off('cellar:property-changed')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).off('cellar:viewport-changed')
     }
   }, [bridge, options.enableValidator])
 

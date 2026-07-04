@@ -152,7 +152,7 @@ export const MESSAGES = {
     saveTitleClean:          'Alle Änderungen gespeichert',
 
     toolSelect:              'Auswählen (V)',
-    toolPan:                 'Verschieben (Leertaste)',
+    toolPan:                 'Ansicht verschieben',
     toolText:                'Text (T)',
     toolImage:               'Bild (I)',
     toolRect:                'Rechteck (R)',
@@ -259,7 +259,7 @@ export const MESSAGES = {
     saveTitleClean:          'All changes saved',
 
     toolSelect:              'Select (V)',
-    toolPan:                 'Pan (Space)',
+    toolPan:                 'Pan',
     toolText:                'Text (T)',
     toolImage:               'Image (I)',
     toolRect:                'Rect (R)',
