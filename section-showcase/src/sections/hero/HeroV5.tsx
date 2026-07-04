@@ -49,7 +49,7 @@ export function HeroV5() {
           
           <a 
             href="#how-it-works" 
-            className="group flex items-center gap-3 text-sm font-bold tracking-widest text-white uppercase transition-colors hover:text-white/70"
+            className="group flex min-h-11 items-center gap-3 text-sm font-bold tracking-widest text-white uppercase transition-colors hover:text-white/70"
           >
             How it works
             <span className="h-px w-8 bg-white/20 transition-all group-hover:w-12 group-hover:bg-white" />

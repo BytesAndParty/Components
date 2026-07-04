@@ -13,7 +13,11 @@
     "vendure-showcase/server/src/seed.ts",
     // Vendure Admin-UI extensions are loaded by file path via
     // compileUiExtensions(), not by a traceable import — treat them as entries.
-    "vendure-showcase/server/src/plugins/**/ui/**/*.{ts,tsx}"
+    "vendure-showcase/server/src/plugins/**/ui/**/*.{ts,tsx}",
+    // Vendure Dashboard extensions are likewise registered by file path
+    // (`dashboard: './dashboard/index.tsx'` in the plugin), not a traceable
+    // import — treat them as entries too.
+    "vendure-showcase/server/src/plugins/**/dashboard/**/*.{ts,tsx}"
   ],
 
   "ignoreDependencies": [
@@ -28,12 +32,22 @@
     "@vendure/dashboard",
     "@vendure/ui-devkit",
     "@nestjs/graphql",
+    // Direct dep of server/package.json (we import Injectable), but — like
+    // @vendure/core above — fallow polices "unlisted" against the root
+    // package.json, so it needs listing here too.
+    "@nestjs/common",
     "@angular/core",
     "graphql-tag",
 
     // --- urql peer dependency (vendure-showcase/storefront) ---
     // Required at runtime by urql / @urql/core but never imported directly.
     "graphql",
+
+    // --- Real storefront deps root-scoped by fallow (vendure-showcase/storefront) ---
+    // Declared in storefront/package.json, but fallow's workspaces.patterns only
+    // registers the server, so storefront React-island imports are resolved
+    // against the root package.json and wrongly flagged unlisted. Not missing.
+    "lucide-react",
 
     // --- vite single-instance pins (components-showcase / section-showcase) ---
     // Declared in the showcase package.json on purpose: vite.config.ts pins them

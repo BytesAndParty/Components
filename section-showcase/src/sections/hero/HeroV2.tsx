@@ -41,7 +41,7 @@ export function HeroV2() {
           </a>
           <a
             href="/abo"
-            className="text-muted-foreground hover:text-foreground text-sm font-medium"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center text-sm font-medium"
           >
             oder als Abo →
           </a>

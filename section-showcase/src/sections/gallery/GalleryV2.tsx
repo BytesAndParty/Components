@@ -27,7 +27,7 @@ const galleryImages = [
 
 export function GalleryV2() {
   return (
-    <section className="relative overflow-hidden bg-[#fdfcf9] px-6 py-32">
+    <section className="relative overflow-hidden bg-background px-6 py-32">
       {/* Background Watermark */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap opacity-[0.02]">
         <AuroraText 
@@ -42,10 +42,10 @@ export function GalleryV2() {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-24 flex flex-col items-center gap-6 text-center">
           <BlurFade delay={100}>
-            <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Impressionen</span>
+            <span className="text-[11px] font-bold tracking-[0.4em] text-muted-foreground uppercase">Impressionen</span>
           </BlurFade>
           <BlurFade delay={200}>
-            <h2 className="font-display text-4xl font-light tracking-tight text-zinc-900 italic sm:text-5xl lg:text-6xl">
+            <h2 className="font-display text-4xl font-light tracking-tight text-foreground italic sm:text-5xl lg:text-6xl">
               Ein Blick in unsere Welt
             </h2>
           </BlurFade>

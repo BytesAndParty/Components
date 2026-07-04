@@ -92,7 +92,7 @@ export function StorePage() {
                 </div>
                 <button
                   onClick={() => setActiveProduct('v1')}
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/60 inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/60 inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
                 >
                   <span>Entdecken</span>
                   <ArrowRight size={14} />
@@ -148,7 +148,7 @@ export function StorePage() {
                 </div>
                 <button
                   onClick={() => setActiveProduct('v2')}
-                  className="border-b border-zinc-900 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase hover:text-zinc-500 hover:border-zinc-300 transition-colors focus-visible:ring-zinc-400 focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
+                  className="inline-flex min-h-11 items-center border-b border-zinc-900 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase hover:text-zinc-500 hover:border-zinc-300 transition-colors focus-visible:ring-zinc-400 focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
                 >
                   Detailansicht
                 </button>
@@ -167,7 +167,7 @@ export function StorePage() {
                     alt="Loibenberg Smaragd Bottle"
                     className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
                   />
-                  <span className="absolute bottom-2 left-3 text-[8px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
+                  <span className="absolute bottom-2 left-3 text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
                     Platte XII · Riede Loibenberg
                   </span>
                 </div>
@@ -202,7 +202,7 @@ export function StorePage() {
                 </div>
                 <button
                   onClick={() => setActiveProduct('v3')}
-                  className="group inline-flex items-center gap-3 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase hover:text-zinc-500 transition-colors focus-visible:ring-zinc-400 focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
+                  className="group inline-flex min-h-11 items-center gap-3 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase hover:text-zinc-500 transition-colors focus-visible:ring-zinc-400 focus-visible:ring-2 focus-visible:outline-none cursor-pointer"
                 >
                   <span>Anfragen</span>
                   <span aria-hidden="true" className="h-px w-6 bg-zinc-900 transition-all duration-300 group-hover:w-10" />

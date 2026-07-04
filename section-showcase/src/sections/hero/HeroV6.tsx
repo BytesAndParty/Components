@@ -86,7 +86,7 @@ export function HeroV6() {
             <BlurFade delay={650} direction="up">
               <a
                 href="/sortiment"
-                className="group inline-flex items-center gap-5 text-sm font-bold tracking-[0.25em] text-zinc-900 uppercase"
+                className="group inline-flex min-h-11 items-center gap-5 text-sm font-bold tracking-[0.25em] text-zinc-900 uppercase"
               >
                 <span aria-hidden="true" className="h-px w-12 bg-zinc-900 transition-all duration-500 group-hover:w-20" />
                 Die Weine
