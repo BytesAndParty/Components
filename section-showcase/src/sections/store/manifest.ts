@@ -1,6 +1,7 @@
 import { StorePage } from './StorePage'
 import { StoreCave } from './StoreCave'
 import { StoreNocturne } from './StoreNocturne'
+import { StoreMaison } from './StoreMaison'
 import type { SectionDef } from '../types'
 
 export const storeSection: SectionDef = {
@@ -24,6 +25,12 @@ export const storeSection: SectionDef = {
       label: 'Cave Nocturne (Cinematic)',
       description: 'Nachtverkauf: drei Flaschen im Ambient-Spot, der Rest als gedimmtes Gold-Ledger — jede Position öffnet die Chiaroscuro-Detailseite.',
       Component: StoreNocturne,
+    },
+    {
+      id: 'maison',
+      label: 'Maison Editorial',
+      description: 'Sortiment als Magazin-Register: Cream-Kopf mit übergroßer Serif, Raster aus Editorial-Karten mit Platten-Signatur — jede Position öffnet die Maison-Detailseite.',
+      Component: StoreMaison,
     },
   ],
 }
