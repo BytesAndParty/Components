@@ -2,6 +2,7 @@ import { FooterV1 } from './FooterV1'
 import { FooterV2 } from './FooterV2'
 import { FooterV3 } from './FooterV3'
 import { FooterV4 } from './FooterV4'
+import { FooterV5 } from './FooterV5'
 import type { SectionDef } from '../types'
 
 export const footerSection: SectionDef = {
@@ -32,6 +33,12 @@ export const footerSection: SectionDef = {
       label: 'Le Colophon (Domaine Privée)',
       description: 'Tiefes Bordeaux statt Schwarz: übergroßer Serif-Wortmark, Cream-Hairlines, Kolophon-Zitat und Druckwerk-Schlusszeile.',
       Component: FooterV4,
+    },
+    {
+      id: 'v5',
+      label: 'Maison Colophon',
+      description: 'Print-Kolophon in Cream: übergroßer italic Wortmark, Hairline-Spalten mit wachsenden Strichen, Newsletter und römisches Jahr.',
+      Component: FooterV5,
     },
   ],
 }
