@@ -3,6 +3,7 @@ import { ProductV2 } from './ProductV2'
 import { ProductV3 } from './ProductV3'
 import { ProductV4 } from './ProductV4'
 import { ProductV5 } from './ProductV5'
+import { ProductV6 } from './ProductV6'
 import type { SectionDef } from '../types'
 
 export const showcaseSection: SectionDef = {
@@ -37,6 +38,12 @@ export const showcaseSection: SectionDef = {
       label: 'Chiaroscuro (Cinematic)',
       description: 'Eine Flasche im Kerzengold-Spot auf warmem Schwarz: Backlight-Glow, Abspann-Ledger, glühende Ghost-Jahrgangsziffer.',
       Component: ProductV5,
+    },
+    {
+      id: 'v6',
+      label: 'Maison Editorial',
+      description: 'Ein Wein als geschichteter Magazin-Held: Name überlappt die Flaschen-Tafel, Etikett-Detail versetzt, Fiche Technique als Hairline-Basis. Cream-Grund, asymmetrisch.',
+      Component: ProductV6,
     },
   ],
 }
