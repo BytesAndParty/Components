@@ -3,6 +3,7 @@ import { TimelineV2 } from './TimelineV2'
 import { TimelineV3 } from './TimelineV3'
 import { TimelineV4 } from './TimelineV4'
 import { TimelineV5 } from './TimelineV5'
+import { TimelineV6 } from './TimelineV6'
 import type { SectionDef } from '../types'
 
 export const timelineSection: SectionDef = {
@@ -37,6 +38,12 @@ export const timelineSection: SectionDef = {
       label: 'Nachtchronik (Cinematic)',
       description: 'Vier Filmszenen: entsättigte 21:9-Bildbänder, glühende Serif-Jahre, Rollen-Marker — Hover holt die Szene aus dem Grade.',
       Component: TimelineV5,
+    },
+    {
+      id: 'v6',
+      label: 'Maison Editorial',
+      description: 'Chronik als Magazin-Register: Hairline-getrennte Einträge, übergroße italic Jahres-Ziffern mit römischem Marker, Foto-Tafel fürs Heute.',
+      Component: TimelineV6,
     },
   ],
 }
