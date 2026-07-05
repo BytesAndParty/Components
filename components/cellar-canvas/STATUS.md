@@ -11,16 +11,16 @@
 | Bereich              | Stand                                                                 |
 |----------------------|------------------------------------------------------------------------|
 | Canvas               | Fabric v7 via `use-fabric-canvas.ts`, mm/px Umrechnung steht. Symmetrische 40 mm Bleed-Margin rundherum; Label-Backdrop wird als CSS-`<div>` in `LabelCanvas` gerendert (NICHT mehr als Fabric-Objekt) und tracking-aligned via Fabric-Zoom + Viewport-Transform. User-facing `x/y` bleibt label-relativ. |
-| Tools                | Rect / Circle / Line / Text (Textbox mit Word-Wrap) / Image / QR-Code addbar. Text-Click-to-Edit per `mouse:up` + Drag-Threshold; `hiddenTextarea` wird in `canvas.wrapperEl` umgehängt damit Edit auch in modalen Subtrees funktioniert. |
+| Tools                | Rect / Circle / Line / Text (Textbox mit Word-Wrap) / Image / QR-Code addbar. Stamp-Semantik: Insert-Buttons setzen ein Objekt und fallen auf `select` zurück; nur Select + Pan sind persistente Modi. Pan-Tool (Hand) verschiebt den Viewport per Drag (`skipTargetFind` + `relativePan`, Sync via `cellar:viewport-changed`). Text-Click-to-Edit per `mouse:up` + Drag-Threshold; `hiddenTextarea` wird in `canvas.wrapperEl` umgehängt damit Edit auch in modalen Subtrees funktioniert. |
 | History              | ✅ Undo/Redo (50 Steps) via `engine/history-manager.ts` — alleiniger Besitzer von Stack/Index/Lock; `runExclusive` serialisiert Restores gegen Cmd+Z-Overlap (seit 2026-06-20, Step 4). Store hält nur noch `canUndo/canRedo` (Buttons disablen an den Grenzen). Snapshot ist die volle `serializeState`-Form `{ canvas, bg }` — Bg-Color partizipiert an Undo/Redo. Alte plain-canvas-Snapshots aus localStorage werden weiterhin akzeptiert (Backward-Compat). |
-| Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, del, backspace) inkl. Registry. |
-| Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. |
+| Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, Delete, Backspace, `+`/`-` Zoom, `s` Snapping) inkl. Registry. Delete/Backspace als **separate** Registrierungen — Komma-Listen (`'delete, backspace'`) parst die Lib als einen unmatchbaren Key, der nie feuert. `+` braucht die RawHotkey-Objektform (`{ key: '+' }`), weil ein literales `+` im String mit dem Kombi-Separator kollidiert. |
+| Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. `+`/`-`-Buttons (neben Fit) + Hotkeys zoomen Center-verankert über `bridge.zoomBy` (gleiche Clamp-Range 0.05–20). |
 | Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
 | Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). |
 | Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + Shape Fill/Stroke/Stroke-Width + Image (Crop / Replace / Opacity) + StackOrderControls + AlignmentBar (live). |
 | Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte + Label-Center. Toggle per Header-Button (Magnet) + `S`-Hotkey; Alt unterdrückt Snapping pro Drag. Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
 | Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` setzt `labelColor` Instance-Prop + `isDirty`. Wird per `serializeState` mitpersistiert (`{ canvas, bg }`). |
-| Wine Fields          | 6 Felder + QR-Code, `_fieldKey` Metadata.                              |
+| Wine Fields          | 8 Felder (inkl. Allergenhinweis + Herkunftsland — deckt alle Validator-Pflichtfelder ab) + QR-Code, `_fieldKey` Metadata. QR-Button disabled ohne `nutritionalInfoUrl` (kein `example.com`-Fallback mehr). |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
@@ -30,7 +30,7 @@
 | i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
 | Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
-| Export               | ✅ PDF in Label-Trim-Größe (300 dpi via Fabric `toDataURL` + `jspdf`), Download via Header-Button. `onExport({ format: 'pdf', blob })`-Callback für Server-Upload. PNG-Export + Bleed-PDF mit Crop-Marks bleibt offen. |
+| Export               | ✅ PNG + PDF in Label-Trim-Größe (`exportDpi`, default 300, via Fabric `toDataURL`; PDF via `jspdf`), Download über zwei Header-Buttons. PDF gated über `enablePdfExport`. `onExport({ format, blob })`-Callback für Server-Upload. Bleed-PDF mit Crop-Marks bleibt offen. |
 | Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
 ---
@@ -48,7 +48,7 @@
 ### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
 
 - **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
-- **Pan-Tool** — aktuell nur Tool-Switch ohne Funktion. Plan: Space+Drag, oder eigenes Pan-Mode.
+- ~~**Pan-Tool**~~ — **erledigt 2026-07-04** als eigener Pan-Mode (Hand-Tool). Space+Drag als temporärer Pan bleibt offen.
 - **Background Image** — neben Color auch Image (im `BackgroundPanel`).
 - **Group / Ungroup** für Layer.
 - **Duplicate** (Layer / Selection).
@@ -152,6 +152,19 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 ---
 
 ## Entscheidungs-Log
+
+### #25 — Dead-UI-Sweep: tote Props, Validator-Deadlock, tote Hotkeys *(2026-07-04 — gefixt)*
+
+Audit auf „UI vorhanden, Funktion fehlt" — sieben Befunde, alle behoben (ein Commit pro Fix):
+
+- **Tote Props:** `exportDpi`, `enablePdfExport`, `onValidationChange` standen in `CellarCanvasProps` + COMPONENT.md, wurden aber nie destrukturiert. Jetzt verdrahtet; `onValidationChange` liefert `ValidationWarning[]` (statt `string[]` wie ursprünglich in der Spec) — inkl. Label, Severity und EU-Rechtsgrundlage, direkt in der Storefront anzeigbar. Feuert Signatur-geguardet (Keys-Join), weil Full-Syncs identische Arrays mit neuer Identität erzeugen.
+- **Validator-Deadlock:** Der Validator verlangt `allergenNote` + `countryOfOrigin`, das Panel bot beide nicht an — zwei Error-Warnungen waren per UI unlösbar. Felder ergänzt (8 statt 6), Demo-Daten inkl. `enthält Sulfite` / `Österreich`.
+- **Toter Delete-Hotkey:** `useDesignEngineHotkey('delete, backspace', …)` feuerte nie — `@tanstack/hotkeys` kennt keine Komma-Listen, der String parst zu einem unmatchbaren Key. Jetzt zwei Registrierungen.
+- **Pan-Tool** implementiert (siehe Offen-Liste), **Zoom** per Buttons + `+`/`-`-Hotkeys (A11y: Zoom war bisher nicht tastaturbedienbar). `useDesignEngineHotkey` akzeptiert dafür die RawHotkey-Objektform.
+- **Image-Replace** war beim Refactor 2026-05-26→06-08 aus der ContextToolbar verloren gegangen (STATUS behauptete ihn weiter) — wiederhergestellt via verstecktem File-Input → `bridge.updateImageSource`.
+- **Tour-Step 5** zielte auf `[data-tour="save-button"]`, der ohne `onSave`-Prop nicht existiert (Zag: `not-found`, Tour bricht ab — genau im Showcase-Default). Step ist jetzt konditional (`includeSaveStep={!!onSave}`).
+- **QR ohne URL:** Fallback auf `https://example.com` entfernt — Button disabled mit Hinweis, statt einen toten Link druckfertig zu machen.
+- **Stamp-Semantik:** Insert-Buttons (Text/Image/Shapes) markierten sich als aktiver Modus, obwohl kein Zeichen-Modus existiert — sie fallen jetzt auf `select` zurück.
 
 ### #24 — ImageCropper-Drift bei sequenziellen Uploads *(2026-05-25 — gefixt)*
 
@@ -374,4 +387,4 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-04*

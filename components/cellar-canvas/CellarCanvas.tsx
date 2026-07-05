@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -18,7 +19,7 @@ import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
 import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
-import { ValidatorBadge } from '../validator-badge/validator-badge'
+import { ValidatorBadge, type ValidationWarning } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
 // PDF export is dynamically imported on click — keeps jspdf + html2canvas
 // out of the initial designer chunk (≈590 kB of vendor code).
@@ -37,6 +38,8 @@ const BLEED_MASK_OPACITY_PREVIEW = 1
 // EU-standard 3mm print-bleed safety margin. Visualised as a translucent strip
 // at the label boundary to warn designers that content placed here might be lost.
 const PRINT_BLEED_MM = 3
+
+export type { ValidationWarning }
 
 export interface WineFieldValues {
   name?:               string
@@ -87,7 +90,7 @@ export interface CellarCanvasProps {
   onChange?:           (state: CellarCanvasState) => void
   onSave?:             (state: CellarCanvasState) => Promise<void>
   onExport?:           (result: { format: 'png' | 'pdf'; blob: Blob }) => void
-  onValidationChange?: (warnings: string[]) => void
+  onValidationChange?: (warnings: ValidationWarning[]) => void
 
   // Styling
   height?:    string | number
@@ -100,6 +103,8 @@ const DEFAULT_WINE_FIELDS: WineFieldValues = {
   vintage:            '2021',
   alcoholPercent:     '13.5%',
   volumeMl:           '750ml',
+  allergenNote:       'enthält Sulfite',
+  countryOfOrigin:    'Österreich',
   nutritionalInfoUrl: 'https://wine-info.eu/vignes-2021',
 }
 
@@ -130,6 +135,8 @@ export function CellarCanvas({
   initialWineFields = DEFAULT_WINE_FIELDS,
   initialState,
   storageKey        = 'cellar-canvas-draft',
+  exportDpi         = 300,
+  enablePdfExport   = true,
   enableValidator   = true,
   disableTour       = false,
   tourStorageKey    = 'cellar-canvas-tour-completed',
@@ -137,6 +144,7 @@ export function CellarCanvas({
   onChange,
   onSave,
   onExport,
+  onValidationChange,
   className,
   style,
   height = '80vh',
@@ -206,10 +214,31 @@ export function CellarCanvas({
     const b = bridge.current
     if (!b) return
     const { exportLabelPdf, downloadBlob } = await import('./engine/export-pipeline')
-    const blob = exportLabelPdf(b)
+    const blob = exportLabelPdf(b, exportDpi)
     downloadBlob(blob, `${m.exportFilename}.pdf`)
     onExport?.({ format: 'pdf', blob })
   }
+
+  async function handleExportPng() {
+    const b = bridge.current
+    if (!b) return
+    const { exportLabelPng, downloadBlob } = await import('./engine/export-pipeline')
+    const blob = exportLabelPng(b, exportDpi)
+    downloadBlob(blob, `${m.exportFilename}.png`)
+    onExport?.({ format: 'png', blob })
+  }
+
+  // Report compliance changes to the embedding app. Full syncs rebuild the
+  // warnings array with identical content, so we fire only when the actual
+  // set of missing fields changes.
+  const lastWarningsSignature = useRef<string | null>(null)
+  useEffect(() => {
+    if (!onValidationChange) return
+    const signature = warnings.map(w => w.key).join('|')
+    if (signature === lastWarningsSignature.current) return
+    lastWarningsSignature.current = signature
+    onValidationChange(warnings)
+  }, [warnings, onValidationChange])
 
   // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
   // restricts focus to descendants of the fullscreen element, which Fabric's
@@ -241,16 +270,41 @@ export function CellarCanvas({
     description: m.hotkeyRedoDescription,
   })
 
-  useDesignEngineHotkey('delete, backspace', () => {
+  // Registered as two separate hotkeys: the library matches one key per
+  // registration — a comma list like 'delete, backspace' never fires.
+  const deleteSelected = () => {
     // Don't steal Delete/Backspace from text inputs — the user is typing.
     const tag = document.activeElement?.tagName
     if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
       bridge.current?.deleteSelected()
     }
-  }, {
+  }
+
+  useDesignEngineHotkey('Delete', deleteSelected, {
     label:       m.hotkeyDeleteLabel,
     category:    'Actions',
     description: m.hotkeyDeleteDescription,
+  })
+
+  useDesignEngineHotkey('Backspace', deleteSelected, {
+    label:       m.hotkeyDeleteLabel,
+    category:    'Actions',
+    description: m.hotkeyDeleteDescription,
+  })
+
+  // Zoom via keyboard. `{ key: '+' }` is the object form — a literal '+'
+  // inside a hotkey string collides with the combo separator. It also covers
+  // the numpad plus; '-' works as a plain string on all layouts.
+  useDesignEngineHotkey({ key: '+' }, () => bridge.current?.zoomBy(1.2), {
+    label:       m.hotkeyZoomInLabel,
+    category:    'Actions',
+    description: m.hotkeyZoomInDescription,
+  })
+
+  useDesignEngineHotkey('-', () => bridge.current?.zoomBy(1 / 1.2), {
+    label:       m.hotkeyZoomOutLabel,
+    category:    'Actions',
+    description: m.hotkeyZoomOutDescription,
   })
 
   useDesignEngineHotkey('s', () => {
@@ -301,7 +355,8 @@ export function CellarCanvas({
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
         onSave={onSave}
-        onExportPdf={handleExportPdf}
+        onExportPng={handleExportPng}
+        onExportPdf={enablePdfExport ? handleExportPdf : undefined}
       />
 
       <div
@@ -309,12 +364,30 @@ export function CellarCanvas({
         style={{ gridColumn: '2 / -1' }}
       >
         <ContextToolbar bridge={bridge} activeProps={activeProps} />
-        <button
-          onClick={() => bridge.current?.zoomToFit()}
-          className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
-        >
-          {m.fitToScreen}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => bridge.current?.zoomBy(1 / 1.2)}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
+            title={m.zoomOutTitle}
+            aria-label={m.zoomOutTitle}
+          >
+            <ZoomOut size={14} />
+          </button>
+          <button
+            onClick={() => bridge.current?.zoomBy(1.2)}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
+            title={m.zoomInTitle}
+            aria-label={m.zoomInTitle}
+          >
+            <ZoomIn size={14} />
+          </button>
+          <button
+            onClick={() => bridge.current?.zoomToFit()}
+            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground ml-1 rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
+          >
+            {m.fitToScreen}
+          </button>
+        </div>
       </div>
 
       <div style={{ gridRow: '2 / -1' }}>
@@ -375,7 +448,7 @@ export function CellarCanvas({
         onCrop={handleCrop}
       />
 
-      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} />
+      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} includeSaveStep={!!onSave} />
     </div>
   )
 

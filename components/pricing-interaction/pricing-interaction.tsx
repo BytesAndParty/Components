@@ -53,6 +53,12 @@ export function PricingInteraction({
   const [active, setActive] = React.useState(defaultIndex);
   const [period, setPeriod] = React.useState(0);
   const radioRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+  const groupRef = React.useRef<HTMLDivElement>(null);
+  // The selection highlight is measured from the active row's real geometry so
+  // it stays aligned no matter how tall an option gets (badge, description,
+  // wrapping). A fixed row height clipped multi-line options and detached the
+  // highlight from the rows — hence measured top/height instead of a constant.
+  const [highlight, setHighlight] = React.useState({ top: 0, height: 0 });
 
   const handleChangePlan = (index: number) => {
     setActive(index);
@@ -90,8 +96,22 @@ export function PricingInteraction({
   const getPrice = (basePrice: number) =>
     period === 1 ? Math.round(basePrice * periodMultiplier * 100) / 100 : basePrice;
 
-  const optionHeight = 76;
   const gap = 12;
+
+  // Track the active row's real position/size and keep the highlight glued to
+  // it across content changes, wrapping and viewport resizes.
+  React.useLayoutEffect(() => {
+    const measure = () => {
+      const el = radioRefs.current[active];
+      if (el) setHighlight({ top: el.offsetTop, height: el.offsetHeight });
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    if (groupRef.current) ro.observe(groupRef.current);
+    radioRefs.current.forEach((el) => el && ro.observe(el));
+    return () => ro.disconnect();
+  }, [active, options, period]);
 
   return (
     <div
@@ -177,6 +197,7 @@ export function PricingInteraction({
 
       {/* Options as a radiogroup */}
       <div
+        ref={groupRef}
         role="radiogroup"
         aria-label={m.plansLabel}
         style={{
@@ -209,7 +230,7 @@ export function PricingInteraction({
                 border: '2px solid var(--border)',
                 padding: '1rem',
                 borderRadius: '1rem',
-                height: `${optionHeight}px`,
+                minHeight: '76px',
                 boxSizing: 'border-box',
               }}
             >
@@ -301,19 +322,20 @@ export function PricingInteraction({
           );
         })}
 
-        {/* Selection highlight */}
+        {/* Selection highlight — measured from the active row so it tracks
+            variable-height options instead of assuming a fixed row height. */}
         <div
           aria-hidden
           style={{
             width: '100%',
-            height: `${optionHeight}px`,
+            height: `${highlight.height}px`,
             position: 'absolute',
             top: 0,
             border: '3px solid var(--accent)',
             borderRadius: '1rem',
             pointerEvents: 'none',
-            transform: `translateY(${active * optionHeight + gap * active}px)`,
-            transition: 'transform 0.3s',
+            transform: `translateY(${highlight.top}px)`,
+            transition: 'transform 0.3s, height 0.3s',
           }}
         />
       </div>

@@ -24,6 +24,8 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
     { key: 'volumeMl',       label: m.wineFieldVolume,   value: values.volumeMl },
     { key: 'region',         label: m.wineFieldRegion,   value: values.region },
     { key: 'producer',       label: m.wineFieldProducer, value: values.producer },
+    { key: 'allergenNote',   label: m.wineFieldAllergen, value: values.allergenNote },
+    { key: 'countryOfOrigin', label: m.wineFieldCountry, value: values.countryOfOrigin },
   ] as const
 
   const addField = (key: string, label: string, value?: string | number) => {
@@ -75,22 +77,28 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
       <div className="border-border border-t pt-4">
         {(() => {
           const isQrPlaced = placedFieldKeys.has('qrCode')
+          const qrUrl = values.nutritionalInfoUrl
+          // A QR code without a real nutrition URL would print a dead link —
+          // the button stays disabled until the host supplies one.
+          const isQrDisabled = isQrPlaced || !qrUrl
           return (
             <button
-              disabled={isQrPlaced}
-              onClick={() => bridge.current?.addQRCode(values.nutritionalInfoUrl || 'https://example.com')}
+              disabled={isQrDisabled}
+              onClick={() => qrUrl && bridge.current?.addQRCode(qrUrl)}
               className={cn(
                 "w-full flex items-center justify-between px-3 py-3 rounded-xl border transition-all",
                 isQrPlaced
                   ? "bg-primary/10 border-primary/30 text-primary opacity-80 cursor-not-allowed"
-                  : "bg-primary/5 hover:bg-primary/10 text-primary border-primary/10 hover:border-primary/20"
+                  : !qrUrl
+                    ? "bg-muted/50 border-transparent text-muted-foreground opacity-60 cursor-not-allowed"
+                    : "bg-primary/5 hover:bg-primary/10 text-primary border-primary/10 hover:border-primary/20"
               )}
             >
               <div className="flex items-center gap-3">
                 <QrCode size={18} />
                 <div className="flex flex-col items-start text-left">
                   <span className="text-xs font-bold tracking-wider uppercase">{m.wineFieldQrTitle}</span>
-                  <span className="text-[10px] opacity-70">{m.wineFieldQrHint}</span>
+                  <span className="text-[10px] opacity-70">{qrUrl ? m.wineFieldQrHint : m.wineFieldQrMissingUrl}</span>
                 </div>
               </div>
               {isQrPlaced && <Check size={16} />}

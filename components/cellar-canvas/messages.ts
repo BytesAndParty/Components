@@ -72,9 +72,12 @@ export type CellarCanvasMessages = {
   wineFieldVolume:        string
   wineFieldRegion:        string
   wineFieldProducer:      string
+  wineFieldAllergen:      string
+  wineFieldCountry:       string
   wineFieldNotSet:        string
   wineFieldQrTitle:       string
   wineFieldQrHint:        string
+  wineFieldQrMissingUrl:  string
 
   // Layers section
   layersHeading:          string
@@ -89,6 +92,12 @@ export type CellarCanvasMessages = {
   hotkeyDeleteDescription: string
   hotkeySnappingLabel:    string
   hotkeySnappingDescription: string
+  hotkeyZoomInLabel:      string
+  hotkeyZoomInDescription: string
+  hotkeyZoomOutLabel:     string
+  hotkeyZoomOutDescription: string
+  zoomInTitle:            string
+  zoomOutTitle:           string
   hotkeyCategory:         string
 
   // Onboarding Tour
@@ -116,6 +125,8 @@ export type CellarCanvasMessages = {
   // Export
   exportLabel:            string
   exportTitle:            string
+  exportPngLabel:         string
+  exportPngTitle:         string
   exportFilename:         string
 }
 
@@ -141,7 +152,7 @@ export const MESSAGES = {
     saveTitleClean:          'Alle Änderungen gespeichert',
 
     toolSelect:              'Auswählen (V)',
-    toolPan:                 'Verschieben (Leertaste)',
+    toolPan:                 'Ansicht verschieben',
     toolText:                'Text (T)',
     toolImage:               'Bild (I)',
     toolRect:                'Rechteck (R)',
@@ -175,9 +186,12 @@ export const MESSAGES = {
     wineFieldVolume:         'Volumen (ml)',
     wineFieldRegion:         'Region',
     wineFieldProducer:       'Erzeuger',
+    wineFieldAllergen:       'Allergenhinweis',
+    wineFieldCountry:        'Herkunftsland',
     wineFieldNotSet:         'Nicht gesetzt',
     wineFieldQrTitle:        'QR-Code hinzufügen',
     wineFieldQrHint:         'EU-Pflichtangabe',
+    wineFieldQrMissingUrl:   'Keine Nährwert-URL gesetzt',
 
     layersHeading:           'Ebenen',
     layersCount:             '{count} gesamt',
@@ -190,6 +204,12 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
     hotkeySnappingLabel:     'Snapping umschalten',
     hotkeySnappingDescription: 'Drag-Snapping zu Kanten und Mittellinien an- oder ausschalten',
+    hotkeyZoomInLabel:       'Hineinzoomen',
+    hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
+    hotkeyZoomOutLabel:      'Herauszoomen',
+    hotkeyZoomOutDescription: 'Ansicht verkleinern (Canvas-Mitte)',
+    zoomInTitle:             'Hineinzoomen (+)',
+    zoomOutTitle:            'Herauszoomen (−)',
     hotkeyCategory:          'Aktionen',
 
     tourSkip:                'Überspringen',
@@ -214,6 +234,8 @@ export const MESSAGES = {
 
     exportLabel:             'PDF',
     exportTitle:             'Als PDF exportieren (Trim-Größe)',
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Als PNG exportieren (Druckauflösung)',
     exportFilename:          'weinetikett',
   },
   en: {
@@ -237,7 +259,7 @@ export const MESSAGES = {
     saveTitleClean:          'All changes saved',
 
     toolSelect:              'Select (V)',
-    toolPan:                 'Pan (Space)',
+    toolPan:                 'Pan',
     toolText:                'Text (T)',
     toolImage:               'Image (I)',
     toolRect:                'Rect (R)',
@@ -271,9 +293,12 @@ export const MESSAGES = {
     wineFieldVolume:         'Volume (ml)',
     wineFieldRegion:         'Region',
     wineFieldProducer:       'Producer',
+    wineFieldAllergen:       'Allergen Note',
+    wineFieldCountry:        'Country of Origin',
     wineFieldNotSet:         'Not set',
     wineFieldQrTitle:        'Add QR Code',
     wineFieldQrHint:         'EU compliance requirement',
+    wineFieldQrMissingUrl:   'No nutrition URL set',
 
     layersHeading:           'Layers',
     layersCount:             '{count} total',
@@ -286,6 +311,12 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Remove selected object',
     hotkeySnappingLabel:     'Toggle snapping',
     hotkeySnappingDescription: 'Turn drag-snapping to edges and center lines on or off',
+    hotkeyZoomInLabel:       'Zoom in',
+    hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
+    hotkeyZoomOutLabel:      'Zoom out',
+    hotkeyZoomOutDescription: 'Shrink the view (canvas centre)',
+    zoomInTitle:             'Zoom in (+)',
+    zoomOutTitle:            'Zoom out (−)',
     hotkeyCategory:          'Actions',
 
     tourSkip:                'Skip',
@@ -310,6 +341,8 @@ export const MESSAGES = {
 
     exportLabel:             'PDF',
     exportTitle:             'Export as PDF (trim size)',
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Export as PNG (print resolution)',
     exportFilename:          'wine-label',
   },
 } as const satisfies ComponentMessages<CellarCanvasMessages>

@@ -31,7 +31,7 @@ describe('Security: Render Seams & Input Validation', () => {
       const { container: c1 } = render(<WineText>{null}</WineText>);
       expect(c1.innerHTML).toBe('');
 
-      const { container: c2 } = render(<WineText fallback="No info">{undefined}</WineText>);
+      render(<WineText fallback="No info">{undefined}</WineText>);
       expect(screen.getByText('No info')).toBeDefined();
     });
   });

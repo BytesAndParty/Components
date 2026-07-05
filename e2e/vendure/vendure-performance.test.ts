@@ -33,7 +33,7 @@ test.describe('Vendure Showcase - Performance & Hydration', () => {
 
   test('Hydration completes without errors', async ({ page }) => {
     // We check for console errors during and after hydration
-    const errors: any[] = [];
+    const errors: string[] = [];
     page.on('console', msg => {
       if (msg.type() === 'error') errors.push(msg.text());
     });

@@ -17,6 +17,7 @@ export interface CanvasHeaderProps {
   previewMode:      boolean
   onTogglePreview:  () => void
   onSave?:          (state: CellarCanvasState) => Promise<void>
+  onExportPng?:     () => void
   onExportPdf?:     () => void
 }
 
@@ -34,6 +35,7 @@ export function CanvasHeader({
   previewMode,
   onTogglePreview,
   onSave,
+  onExportPng,
   onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
@@ -68,6 +70,16 @@ export function CanvasHeader({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
         </IconButton>
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
+        {onExportPng && (
+          <button
+            onClick={onExportPng}
+            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
+            title={m.exportPngTitle}
+          >
+            <Download size={12} />
+            {m.exportPngLabel}
+          </button>
+        )}
         {onExportPdf && (
           <button
             onClick={onExportPdf}

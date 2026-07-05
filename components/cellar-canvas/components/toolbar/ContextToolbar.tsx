@@ -1,3 +1,4 @@
+import { useRef, type ChangeEvent } from 'react'
 import { useDesignerStore } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
@@ -5,7 +6,8 @@ import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
-import { Crop, Trash2 } from 'lucide-react'
+import { Crop, ImageUp, Trash2 } from 'lucide-react'
+import { imageSourceFromBlob } from '../../engine/image-source'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectProperties } from '../../store/types'
 
@@ -18,6 +20,18 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
   const m = useCellarCanvasMessages()
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const setCropper = useDesignerStore(s => s.setCropper)
+  const replaceInputRef = useRef<HTMLInputElement>(null)
+
+  function handleReplaceFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    const targetId = useDesignerStore.getState().selectedIds[0]
+    if (file && targetId) {
+      // Straight swap, no cropper: keeps id, position and layer meta.
+      void imageSourceFromBlob(file).then(src => bridge.current?.updateImageSource(targetId, src))
+    }
+    // Reset so picking the same file twice in a row still fires change.
+    e.target.value = ''
+  }
 
   if (!activeProps) {
     return (
@@ -50,6 +64,15 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
     <div className="flex h-full w-full items-center gap-4 px-4">
       {isImage && (
         <div className="flex items-center gap-2">
+          <input
+            ref={replaceInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            onChange={handleReplaceFile}
+            className="sr-only"
+            aria-hidden
+            tabIndex={-1}
+          />
           <button
             onClick={() => {
               const src = bridge.current?.getSelectedImageSrc()
@@ -61,6 +84,13 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
           >
             <Crop size={14} />
             {m.toolCrop ?? 'Crop'}
+          </button>
+          <button
+            onClick={() => replaceInputRef.current?.click()}
+            className="bg-card border-border hover:bg-muted flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
+          >
+            <ImageUp size={14} />
+            {m.toolReplace}
           </button>
           <div className="bg-border mx-2 h-5 w-px" />
           <div className="bg-card border-border flex h-9 items-center rounded-lg border px-2">

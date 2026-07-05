@@ -16,6 +16,13 @@ export interface OnboardingTourProps {
    * persistence (e.g. for tests). Default: `'cellar-canvas-tour-completed'`.
    */
   storageKey?: string | null
+  /**
+   * Whether the final "save" step is part of the tour. The save button only
+   * renders when the host passes `onSave` — without it the step's
+   * `[data-tour="save-button"]` target does not exist and Zag aborts the
+   * tour with a `not-found` status. Default: true.
+   */
+  includeSaveStep?: boolean
 }
 
 const DEFAULT_STORAGE_KEY = 'cellar-canvas-tour-completed'
@@ -32,6 +39,7 @@ const DEFAULT_STORAGE_KEY = 'cellar-canvas-tour-completed'
 export function OnboardingTour({
   disabled = false,
   storageKey = DEFAULT_STORAGE_KEY,
+  includeSaveStep = true,
 }: OnboardingTourProps) {
   const m = useCellarCanvasMessages()
 
@@ -66,14 +74,14 @@ export function OnboardingTour({
       title:       m.tourLayersTitle,
       description: m.tourLayersBody,
     },
-    {
+    ...(includeSaveStep ? [{
       id:          'save',
       type:        'tooltip' as const,
       target:      () => document.querySelector<HTMLElement>('[data-tour="save-button"]'),
       placement:   'bottom' as const,
       title:       m.tourSaveTitle,
       description: m.tourSaveBody,
-    },
+    }] : []),
   ]
 
   const translations = {

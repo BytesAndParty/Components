@@ -6,7 +6,6 @@ import { imageSourceFromBlob } from '../../engine/image-source'
 import { Tooltip } from '../shared'
 import { cn } from '../../../lib/utils'
 import type { FabricBridge } from '../../engine/fabric-bridge'
-import type { DesignerState } from '../../store/types'
 import type { CellarCanvasMessages } from '../../messages'
 
 interface MainToolbarProps {
@@ -38,13 +37,20 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleToolClick(toolId: ToolId) {
-    setActiveTool(toolId as DesignerState['activeTool'])
     switch (toolId) {
-      case 'text':   bridge.current?.addText();   break
-      case 'image':  fileInputRef.current?.click(); break
-      case 'rect':   bridge.current?.addRect();   break
-      case 'circle': bridge.current?.addCircle(); break
-      case 'line':   bridge.current?.addLine();   break
+      // Real modes — stay active until switched.
+      case 'select':
+      case 'pan':
+        setActiveTool(toolId)
+        break
+      // Stamp actions — insert one object (which gets selected) and return
+      // to select mode. Keeping the button highlighted would suggest a
+      // persistent drawing mode that doesn't exist.
+      case 'text':   setActiveTool('select'); bridge.current?.addText();     break
+      case 'image':  setActiveTool('select'); fileInputRef.current?.click(); break
+      case 'rect':   setActiveTool('select'); bridge.current?.addRect();     break
+      case 'circle': setActiveTool('select'); bridge.current?.addCircle();   break
+      case 'line':   setActiveTool('select'); bridge.current?.addLine();     break
     }
   }
 

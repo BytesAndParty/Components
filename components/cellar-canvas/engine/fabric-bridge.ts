@@ -55,6 +55,9 @@ export class FabricBridge {
   private labelColor = '#ffffff'
   private readonly history = new HistoryManager()
   private snapManager: SnapManager
+  /** Pointer position of the ongoing pan drag; null while not panning. */
+  private panLast: { x: number; y: number } | null = null
+  private unsubscribePanMode: () => void
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
     this.canvas = canvas
@@ -62,6 +65,15 @@ export class FabricBridge {
     this.heightMm = opts.heightMm
     this.bleedMm = opts.bleedMm
     this.snapManager = new SnapManager(canvas, opts.widthMm, opts.heightMm, opts.bleedMm)
+
+    // Pan mode: while the Hand tool is active, pointer drags translate the
+    // viewport instead of touching objects. `skipTargetFind` switches off
+    // hit-testing entirely, so selection, text click-to-edit and snapping
+    // stay untouched for the duration.
+    this.unsubscribePanMode = useDesignerStore.subscribe(
+      (s) => s.activeTool,
+      (tool) => this.setPanMode(tool === 'pan'),
+    )
 
     // Click-without-drag on a text → enter edit mode + select-all. We measure
     // pointer travel between mouse:down and mouse:up so that a real drag
@@ -78,8 +90,31 @@ export class FabricBridge {
             ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
             : null
       downAt = point
+      if (point && useDesignerStore.getState().activeTool === 'pan') {
+        this.panLast = point
+        canvas.setCursor('grabbing')
+      }
+    })
+    canvas.on('mouse:move', (opt) => {
+      if (!this.panLast) return
+      const e = opt.e as MouseEvent | TouchEvent | undefined
+      const point =
+        e && 'clientX' in e
+          ? { x: e.clientX, y: e.clientY }
+          : e && 'touches' in e && e.touches[0]
+            ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+            : null
+      if (!point) return
+      canvas.relativePan(new fabric.Point(point.x - this.panLast.x, point.y - this.panLast.y))
+      this.panLast = point
+      canvas.setCursor('grabbing')
+      // Viewport-only sync — the React backdrop tracks the pan live without
+      // recomputing layers/validation per frame.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canvas as any).fire('cellar:viewport-changed')
     })
     canvas.on('mouse:up', (opt) => {
+      this.panLast = null
       this.snapManager.clearGuides()
       const target = opt.target
       const e = opt.e as MouseEvent | TouchEvent | undefined
@@ -594,6 +629,46 @@ export class FabricBridge {
   }
 
   /**
+   * Enters/leaves pan mode. Hit-testing and the selection lasso are disabled
+   * while active so drags translate the viewport only; leaving restores the
+   * normal select behaviour.
+   */
+  private setPanMode(active: boolean) {
+    const c = this.canvas
+    if (active) {
+      c.discardActiveObject()
+      this.updateStoreSelection()
+      c.selection = false
+      c.skipTargetFind = true
+      c.defaultCursor = 'grab'
+    } else {
+      this.panLast = null
+      c.selection = true
+      c.skipTargetFind = false
+      c.defaultCursor = 'default'
+    }
+    c.requestRenderAll()
+  }
+
+  /**
+   * Multiplies the current zoom by `factor`, anchored to the canvas centre.
+   * Same clamp range as the wheel handler so buttons/hotkeys and wheel zoom
+   * can never diverge.
+   */
+  zoomBy(factor: number) {
+    const current = this.canvas.getZoom()
+    const next = Math.max(0.05, Math.min(20, current * factor))
+    if (next === current) return
+    const center = new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2)
+    this.canvas.zoomToPoint(center, next)
+    this.canvas.requestRenderAll()
+    useDesignerStore.getState().setZoom(next)
+    // Notify React so the CSS-rendered label backdrop tracks Fabric's view.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+  }
+
+  /**
    * Fits the whole HTML-canvas content into the viewport with a small visual
    * padding. Because the canvas is larger than the label (bleed margin), this
    * keeps both the label and any overflowing objects visible at the same time.
@@ -711,6 +786,7 @@ export class FabricBridge {
    * Disposes the canvas.
    */
   dispose() {
+    this.unsubscribePanMode()
     this.canvas.dispose()
   }
 }

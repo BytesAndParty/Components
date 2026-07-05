@@ -46,7 +46,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 ### Canvas & Viewport
 - [x] Fabric.js canvas — 90×120mm default, configurable per area
 - [x] Zoom in/out + fit-to-screen (`+`/`-` keys and buttons)
-- [ ] Pan (Spacebar + drag)
+- [x] Pan — Hand-Tool verschiebt den Viewport per Drag (Spacebar-Hold noch offen)
 - [x] Snap to grid + smart guide lines (show on drag near other objects)
 - [ ] Ruler overlay (mm units, toggleable)
 - [x] Bleed area — symmetric 40 mm canvas margin so overflowing objects stay visible; CSS overlay dims the bleed (~55 % opacity) and Preview-Toggle (Eye-Icon, header) ramps to 100 % for a clean label-only view
@@ -64,13 +64,13 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [x] Text tool — `fabric.Textbox` with word-wrap, click-to-edit
 - [x] Image tool — upload → crop → place
 - [x] Shape tool — Rectangle / Circle / Line
-- [ ] Pan mode
+- [x] Pan mode
 - [ ] Extras panel (signature, ornaments, decorative dividers) — *low priority*
 
 ### Context Toolbar (changes per selection)
 - [x] **Text:** font family, size, bold, italic, underline, letter spacing, line height, alignment, color
 - [x] **Shape:** fill color, stroke color, stroke width (corner radius for rect — pending)
-- [ ] **Image:** opacity, replace, re-crop
+- [x] **Image:** opacity, replace, re-crop
 - [x] **Alignment bar:** align L/C/R/Top/Middle/Bottom, distribute evenly — shown when ≥ 2 objects selected
 
 ### Layer Panel
@@ -84,10 +84,10 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [ ] Type icons per layer (text / image / shape / wine-field / group)
 
 ### Wine Data Overlays
-- [x] Insertable field blocks (6: Name, Vintage, Alcohol %, Volume, Producer, Region — rest pending)
+- [x] Insertable field blocks (8: Name, Vintage, Alcohol %, Volume, Producer, Region, Allergen Note, Country of Origin — covers all validator-mandatory fields; rest pending)
 - [x] **QR Code** — generated from `initialWineFields.nutritionalInfoUrl`, inserted as image object, flagged as `_fieldKey: 'qrCode'`
 - [ ] Pre-styled text presets per field (font, size, weight, position suggestion)
-- [ ] Duplicate prevention (each field once per canvas)
+- [x] Duplicate prevention (each field once per canvas)
 - [x] `initialWineFields` prop pre-populates text values
 - [x] Fields panel shows current value preview
 
@@ -97,7 +97,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [x] `ValidatorBadge` floats bottom-right — count of missing fields
 - [x] Popover lists each missing field with description
 - [x] Badge disappears when all required fields are placed
-- [ ] `onValidationChange(warnings: string[])` callback
+- [x] `onValidationChange(warnings: ValidationWarning[])` callback — volle Objekte (key/label/description/severity) statt der ursprünglich geplanten `string[]`
 - [ ] Removing QR code → strong warning (red badge, not just yellow)
 
 ### Persistence & Save
@@ -127,12 +127,12 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 - [ ] History cleared on template apply or area switch (with confirm)
 
 ### Export Pipeline
-- [ ] PNG at 300dpi via Fabric `toDataURL` (multiplier ≈ 3.125×)
+- [x] PNG at 300dpi via Fabric `toDataURL` (multiplier = `exportDpi` / 96)
 - [ ] PDF with 3mm bleed crop marks via `jspdf`
 - [ ] Area selector: front / back / neck / all (as zip for multi-area)
 - [ ] Ark UI `DownloadTrigger` — handles file download natively
 - [ ] `onExport({ area, format, blob })` callback (for server-side upload)
-- [ ] `exportDpi` prop (default: 300)
+- [x] `exportDpi` prop (default: 300)
 
 ### Onboarding Tour
 - [ ] Ark UI `Tour` — 5 steps: Welcome → Canvas → Wine Fields → Layer Panel → Export
@@ -321,7 +321,7 @@ interface CellarCanvasProps {
   onChange?:            (state: Partial<Record<LabelArea, object>>) => void
   onSave?:              (state: Partial<Record<LabelArea, object>>) => Promise<void>
   onExport?:            (result: { area: LabelArea; format: 'png' | 'pdf'; blob: Blob }) => void
-  onValidationChange?:  (warnings: string[]) => void
+  onValidationChange?:  (warnings: ValidationWarning[]) => void
 
   // Styling
   height?:    string | number
@@ -445,6 +445,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-04*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*

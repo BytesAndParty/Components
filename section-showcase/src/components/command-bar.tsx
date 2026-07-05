@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import {
-  ChevronDown, ChevronLeft, ChevronRight,
-  Eye, EyeOff, GripHorizontal, Heart, Layers, Moon, Square, Sun,
+  ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight,
+  Eye, EyeOff, GripHorizontal, Heart, Layers, Moon, SlidersHorizontal, Square, Sun, X,
 } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useAtelier } from '@components/atelier'
 import { HeartLike } from '@components/heart-like/heart-like'
 import { runViewTransition } from '@components/view-transition/run-view-transition'
@@ -11,6 +12,7 @@ import { sections, findSection } from '../sections/registry'
 import {
   SHOWCASE_ACCENTS, accentSwatch, useShowcase,
 } from '../showcase-state'
+import { encodeComposition } from '../composition-url'
 import { CompositionTray } from './composition-tray'
 
 // Reserved view-transition-names keep the floating bar (and its hidden-state
@@ -30,10 +32,12 @@ export function CommandBar() {
   const location = useLocation()
   const isPreview = location.pathname === '/preview'
 
+  const reduceMotion = useReducedMotion()
   const [offset, setOffset] = useState<DragOffset>({ x: 0, y: 0 })
   const [sectionMenuOpen, setSectionMenuOpen] = useState(false)
   const [sectionMenuDirection, setSectionMenuDirection] = useState<'up' | 'down'>('up')
   const [trayOpen, setTrayOpen] = useState(false)
+  const [panelOpen, setPanelOpen] = useState(false)
   const sectionMenuRef = useRef<HTMLDivElement>(null)
   const sectionTriggerRef = useRef<HTMLButtonElement>(null)
   const trayRef = useRef<HTMLDivElement>(null)
@@ -82,6 +86,21 @@ export function CommandBar() {
     return () => document.removeEventListener('pointerdown', onDocPointerDown)
   }, [trayOpen])
 
+  // Mobile control panel: close on Escape, lock body scroll while open.
+  useEffect(() => {
+    if (!panelOpen) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setPanelOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [panelOpen])
+
   // Section + variant navigation helpers
   const sectionIdx = section ? sections.findIndex(s => s.id === section.id) : -1
   function gotoSection(delta: 1 | -1) {
@@ -112,6 +131,12 @@ export function CommandBar() {
     const next = variantIdx + delta
     if (next < 0 || next >= variants.length) return
     switchVariant(variants[next].id, delta)
+  }
+
+  function openPreview() {
+    setPanelOpen(false)
+    const s = encodeComposition(showcase.composition)
+    navigate(s ? `/preview?s=${s}` : '/preview')
   }
 
   // Global hotkeys — defined as named handler so the effect's deps stay honest.
@@ -202,12 +227,14 @@ export function CommandBar() {
   }
 
   return (
+    <>
+    {/* ---------- Desktop / tablet: floating bottom bar (sm and up) ---------- */}
     <div
       style={{
         transform: `translate3d(calc(-50% + ${offset.x}px), ${offset.y}px, 0)`,
         ...PIN_BAR_STYLE,
       } satisfies CSSProperties}
-      className="fixed bottom-6 left-1/2 z-50 select-none"
+      className="fixed bottom-6 left-1/2 z-50 hidden select-none sm:block"
     >
       <div className="border-border bg-card/85 flex w-[min(94vw,760px)] flex-col rounded-2xl border shadow-2xl shadow-black/30 backdrop-blur-xl">
         <div
@@ -218,7 +245,7 @@ export function CommandBar() {
           <GripHorizontal size={14} />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 px-3 pb-3 sm:flex-nowrap sm:justify-start">
+        <div className="flex items-center justify-start gap-2 px-3 pb-3">
           <div ref={sectionMenuRef} className="relative">
             <button
               ref={sectionTriggerRef}
@@ -272,7 +299,7 @@ export function CommandBar() {
             <>
               <div className="bg-border hidden h-5 w-px sm:block" />
 
-              <div className="flex min-w-0 max-w-full flex-1 items-center gap-0.5 sm:flex-none">
+              <div className="flex min-w-0 flex-1 items-center gap-0.5">
                 <button
                   type="button"
                   onClick={() => gotoVariant(-1)}
@@ -407,5 +434,200 @@ export function CommandBar() {
         </div>
       </div>
     </div>
+
+    {/* ---------- Mobile: launcher + slide-in side panel (below sm) ---------- */}
+    <div className="sm:hidden">
+      {!panelOpen && (
+        <button
+          type="button"
+          onClick={() => setPanelOpen(true)}
+          aria-label="Showcase-Steuerung öffnen"
+          className="border-border bg-card/85 text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 backdrop-blur-xl focus-visible:ring-2 focus-visible:outline-none"
+        >
+          <SlidersHorizontal size={18} />
+          {favoriteCount > 0 && (
+            <span className="bg-accent text-background absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-medium tabular-nums">
+              {favoriteCount}
+            </span>
+          )}
+        </button>
+      )}
+
+      <AnimatePresence>
+        {panelOpen && (
+          <>
+            <motion.div
+              key="scrim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.2 }}
+              onClick={() => setPanelOpen(false)}
+              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              aria-hidden
+            />
+            <motion.aside
+              key="panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Showcase-Steuerung"
+              initial={reduceMotion ? { opacity: 0 } : { x: '100%' }}
+              animate={reduceMotion ? { opacity: 1 } : { x: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { x: '100%' }}
+              transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 34 }}
+              className="border-border bg-card/95 fixed inset-y-0 right-0 z-50 flex w-[min(86vw,340px)] flex-col overflow-y-auto border-l shadow-2xl shadow-black/40 backdrop-blur-xl"
+            >
+              <div className="border-border bg-card/95 sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3 backdrop-blur-xl">
+                <span className="font-display text-sm tracking-tight">Steuerung</span>
+                <button
+                  type="button"
+                  onClick={() => setPanelOpen(false)}
+                  aria-label="Schließen"
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex h-11 w-11 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-6 p-4">
+                {/* Section */}
+                <div>
+                  <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Section</p>
+                  <div className="flex flex-col gap-1">
+                    <Link
+                      to="/"
+                      onClick={() => setPanelOpen(false)}
+                      className={`flex min-h-11 items-center justify-between rounded-lg px-3 text-sm transition-colors ${!section ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60'}`}
+                    >
+                      Übersicht
+                      <span className="text-muted-foreground/70 text-[10px] tracking-wider uppercase">Index</span>
+                    </Link>
+                    {sections.map(s => (
+                      <Link
+                        key={s.id}
+                        to={`/${s.id}`}
+                        onClick={() => setPanelOpen(false)}
+                        className={`flex min-h-11 items-center justify-between rounded-lg px-3 text-sm transition-colors ${section?.id === s.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60'}`}
+                      >
+                        {s.label}
+                        <span className="text-muted-foreground/70 text-xs tabular-nums">{s.variants.length}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {section && (
+                  <>
+                    {/* Variants */}
+                    <div>
+                      <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Variante</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {section.variants.map((v, idx) => {
+                          const active = showcase.variantId === v.id
+                          return (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => switchVariant(v.id, idx - variantIdx)}
+                              aria-pressed={active}
+                              className={`inline-flex min-h-11 items-center rounded-lg border px-3 text-xs transition-colors ${active ? 'border-accent bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                            >
+                              {v.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {/* View mode */}
+                    <div>
+                      <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Ansicht</p>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => showcase.setMode('single')}
+                          aria-pressed={showcase.mode === 'single'}
+                          className={`flex min-h-11 items-center justify-center gap-2 rounded-lg border text-sm transition-colors ${showcase.mode === 'single' ? 'border-accent bg-foreground text-background' : 'border-border text-muted-foreground'}`}
+                        >
+                          <Square size={15} /> Einzeln
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => showcase.setMode('stack')}
+                          aria-pressed={showcase.mode === 'stack'}
+                          className={`flex min-h-11 items-center justify-center gap-2 rounded-lg border text-sm transition-colors ${showcase.mode === 'stack' ? 'border-accent bg-foreground text-background' : 'border-border text-muted-foreground'}`}
+                        >
+                          <Layers size={15} /> Alle
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Favorite current variant */}
+                    {activeVariantId && (
+                      <button
+                        type="button"
+                        onClick={() => showcase.toggleFavorite(section.id, activeVariantId)}
+                        aria-pressed={showcase.isFavorite(section.id, activeVariantId)}
+                        className="border-border text-muted-foreground hover:text-foreground flex min-h-11 items-center justify-center gap-2 rounded-lg border text-sm transition-colors"
+                      >
+                        <Heart size={15} className={showcase.isFavorite(section.id, activeVariantId) ? 'text-accent fill-accent' : 'text-muted-foreground'} />
+                        {showcase.isFavorite(section.id, activeVariantId) ? 'Favorit — gemerkt' : 'Als Favorit merken'}
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {/* Accent */}
+                <div>
+                  <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Akzent</p>
+                  <div className="flex flex-wrap gap-2">
+                    {SHOWCASE_ACCENTS.map(a => {
+                      const active = atelier.accent === a
+                      return (
+                        <button
+                          key={a}
+                          type="button"
+                          onClick={() => atelier.setAccent(a)}
+                          aria-label={`Akzent ${a}`}
+                          aria-pressed={active}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full transition-transform ${active ? 'ring-foreground/40 ring-offset-card scale-110 ring-2 ring-offset-2' : ''}`}
+                          style={{ background: accentSwatch(a) }}
+                        >
+                          {active && <Check size={14} className="text-background" />}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Theme */}
+                <button
+                  type="button"
+                  onClick={atelier.toggleTheme}
+                  className="border-border text-muted-foreground hover:text-foreground flex min-h-11 items-center justify-center gap-2 rounded-lg border text-sm transition-colors"
+                >
+                  {atelier.theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+                  {atelier.theme === 'dark' ? 'Helles Theme' : 'Dunkles Theme'}
+                </button>
+              </div>
+
+              {/* Footer: preview composed page */}
+              <div className="border-border bg-card/95 sticky bottom-0 z-10 mt-auto border-t p-4 backdrop-blur-xl">
+                <button
+                  type="button"
+                  onClick={openPreview}
+                  disabled={favoriteCount === 0}
+                  className="bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-accent/60 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-40"
+                >
+                  Deine Seite ({favoriteCount}) ansehen
+                  <ArrowRight size={15} />
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+    </>
   )
 }

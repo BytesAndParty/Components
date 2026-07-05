@@ -2,6 +2,8 @@ import { FeaturesV1 } from './FeaturesV1'
 import { FeaturesV2 } from './FeaturesV2'
 import { FeaturesV3 } from './FeaturesV3'
 import { FeaturesV4 } from './FeaturesV4'
+import { FeaturesV5 } from './FeaturesV5'
+import { FeaturesV6 } from './FeaturesV6'
 import type { SectionDef } from '../types'
 
 export const featuresSection: SectionDef = {
@@ -29,6 +31,18 @@ export const featuresSection: SectionDef = {
       label: 'Interactive Grid',
       description: 'Modernes Grid mit Glow-Karten und Hover-Effekten.',
       Component: FeaturesV4,
+    },
+    {
+      id: 'v5',
+      label: 'Die Rieden (Domaine Privée)',
+      description: 'Drei Terroirs als Rundbogen-Tafeln mit römischen Siegeln, gravierten Datenzeilen und stillen Hovers.',
+      Component: FeaturesV5,
+    },
+    {
+      id: 'v6',
+      label: 'Maison Editorial',
+      description: 'Geschichteter Magazin-Essay: Headline überlappt die Fotografie von rechts, hängende Zweit-Tafel, Grundsätze als Fig. 02–04.',
+      Component: FeaturesV6,
     },
   ],
 }
