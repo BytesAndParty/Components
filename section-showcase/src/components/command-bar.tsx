@@ -113,6 +113,20 @@ export function CommandBar() {
   const variants = section?.variants ?? []
   const variantIdx = variants.findIndex(v => v.id === showcase.variantId)
 
+  // The design each section is currently set to — shown in the section menus so
+  // you always see the active/chosen variant, not just a count. The active
+  // section reflects the live variant on screen; others show their favorited
+  // design (falling back to the default first variant). `chosen` marks the label
+  // in accent when it equals the section's favorite (i.e. it's part of the page).
+  function currentDesign(s: (typeof sections)[number]) {
+    const isActive = s.id === section?.id
+    const vId = isActive
+      ? showcase.variantId ?? s.variants[0]?.id
+      : showcase.favoriteVariant(s.id) ?? s.variants[0]?.id
+    const variant = s.variants.find(v => v.id === vId) ?? s.variants[0]
+    return { label: variant?.label ?? '', chosen: !!variant && showcase.favoriteVariant(s.id) === variant.id }
+  }
+
   // Direction-aware view transition for variant swaps.
   // delta < 0 → previous variant: new slides in from the LEFT (vt-slide-right).
   // delta > 0 → next variant: new slides in from the RIGHT (vt-slide-left).
@@ -236,7 +250,7 @@ export function CommandBar() {
       } satisfies CSSProperties}
       className="fixed bottom-6 left-1/2 z-50 hidden select-none sm:block"
     >
-      <div className="border-border bg-card/85 flex w-[min(94vw,760px)] flex-col rounded-2xl border shadow-2xl shadow-black/30 backdrop-blur-xl">
+      <div className="border-border bg-card/85 flex w-[min(96vw,900px)] flex-col rounded-2xl border shadow-2xl shadow-black/30 backdrop-blur-xl">
         <div
           onPointerDown={onGripPointerDown}
           className="text-muted-foreground/40 flex h-6 cursor-grab items-center justify-center active:cursor-grabbing"
@@ -277,95 +291,50 @@ export function CommandBar() {
                   <span className="text-muted-foreground/70 text-[10px] tracking-wider uppercase">Index</span>
                 </Link>
                 <div className="bg-border/60 my-1 h-px" />
-                {sections.map(s => (
+                {sections.map(s => {
+                  const d = currentDesign(s)
+                  return (
                   <Link
                     key={s.id}
                     to={`/${s.id}`}
                     role="menuitem"
                     onClick={() => setSectionMenuOpen(false)}
-                    className={`hover:bg-muted flex items-center justify-between rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                    className={`hover:bg-muted flex items-center justify-between gap-3 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
                       section?.id === s.id ? 'bg-muted/60 text-foreground' : 'text-muted-foreground'
                     }`}
                   >
-                    {s.label}
-                    <span className="text-muted-foreground/70 text-[10px] tabular-nums">{s.variants.length}</span>
+                    <span className="shrink-0">{s.label}</span>
+                    <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent' : 'text-muted-foreground/60'}`}>
+                      {d.label}
+                    </span>
                   </Link>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
 
           {section && (
-            <>
-              <div className="bg-border hidden h-5 w-px sm:block" />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => showcase.setMode(showcase.mode === 'single' ? 'stack' : 'single')}
+                aria-pressed={showcase.mode === 'stack'}
+                aria-label={showcase.mode === 'single' ? 'Alle Varianten zeigen (M)' : 'Einzeln zeigen (M)'}
+                title={showcase.mode === 'single' ? 'Alle untereinander (M)' : 'Einzeln (M)'}
+                className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+              >
+                {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
+              </button>
 
-              <div className="flex min-w-0 flex-1 items-center gap-0.5">
-                <button
-                  type="button"
-                  onClick={() => gotoVariant(-1)}
-                  disabled={variantIdx <= 0}
-                  aria-label="Vorherige Variante (←)"
-                  title="Vorherige Variante (←)"
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
-                >
-                  <ChevronLeft size={14} />
-                </button>
-                <div className="no-scrollbar flex items-center gap-1 overflow-x-auto">
-                  {section.variants.map((v, idx) => {
-                    const active = showcase.variantId === v.id
-                    return (
-                      <button
-                        key={v.id}
-                        type="button"
-                        onClick={() => switchVariant(v.id, idx - variantIdx)}
-                        aria-pressed={active}
-                        title={v.description ?? v.label}
-                        className={`focus-visible:ring-accent/60 shrink-0 rounded-md px-2.5 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:px-3 max-sm:py-2.5 ${
-                          active
-                            ? 'bg-foreground text-background'
-                            : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        {v.label}
-                      </button>
-                    )
-                  })}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => gotoVariant(1)}
-                  disabled={variantIdx < 0 || variantIdx >= variants.length - 1}
-                  aria-label="Nächste Variante (→)"
-                  title="Nächste Variante (→)"
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
-                >
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-
-              <div className="bg-border hidden h-5 w-px sm:block" />
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => showcase.setMode(showcase.mode === 'single' ? 'stack' : 'single')}
-                  aria-pressed={showcase.mode === 'stack'}
-                  aria-label={showcase.mode === 'single' ? 'Alle Varianten zeigen (M)' : 'Einzeln zeigen (M)'}
-                  title={showcase.mode === 'single' ? 'Alle untereinander (M)' : 'Einzeln (M)'}
-                  className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
-                >
-                  {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
-                </button>
-
-                {activeVariantId && (
-                  <HeartLike
-                    size={22}
-                    checked={showcase.isFavorite(section.id, activeVariantId)}
-                    onChange={() => showcase.toggleFavorite(section.id, activeVariantId)}
-                  />
-                )}
-              </div>
-            </>
+              {activeVariantId && (
+                <HeartLike
+                  size={22}
+                  checked={showcase.isFavorite(section.id, activeVariantId)}
+                  onChange={() => showcase.toggleFavorite(section.id, activeVariantId)}
+                />
+              )}
+            </div>
           )}
 
           <div className="hidden flex-1 sm:block" />
@@ -432,6 +401,52 @@ export function CommandBar() {
             </button>
           </div>
         </div>
+
+        {section && (
+          <div className="border-border flex items-center gap-1 border-t px-3 py-2.5">
+            <button
+              type="button"
+              onClick={() => gotoVariant(-1)}
+              disabled={variantIdx <= 0}
+              aria-label="Vorherige Variante (←)"
+              title="Vorherige Variante (←)"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <div className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
+              {section.variants.map((v, idx) => {
+                const active = showcase.variantId === v.id
+                return (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => switchVariant(v.id, idx - variantIdx)}
+                    aria-pressed={active}
+                    title={v.description ?? v.label}
+                    className={`focus-visible:ring-accent/60 shrink-0 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:py-2.5 ${
+                      active
+                        ? 'bg-foreground text-background'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                )
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => gotoVariant(1)}
+              disabled={variantIdx < 0 || variantIdx >= variants.length - 1}
+              aria-label="Nächste Variante (→)"
+              title="Nächste Variante (→)"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
 
@@ -502,17 +517,22 @@ export function CommandBar() {
                       Übersicht
                       <span className="text-muted-foreground/70 text-[10px] tracking-wider uppercase">Index</span>
                     </Link>
-                    {sections.map(s => (
+                    {sections.map(s => {
+                      const d = currentDesign(s)
+                      return (
                       <Link
                         key={s.id}
                         to={`/${s.id}`}
                         onClick={() => setPanelOpen(false)}
-                        className={`flex min-h-11 items-center justify-between rounded-lg px-3 text-sm transition-colors ${section?.id === s.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60'}`}
+                        className={`flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-sm transition-colors ${section?.id === s.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60'}`}
                       >
-                        {s.label}
-                        <span className="text-muted-foreground/70 text-xs tabular-nums">{s.variants.length}</span>
+                        <span className="shrink-0">{s.label}</span>
+                        <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent' : 'text-muted-foreground/60'}`}>
+                          {d.label}
+                        </span>
                       </Link>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 

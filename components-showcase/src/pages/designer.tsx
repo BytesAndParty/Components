@@ -306,19 +306,19 @@ function TooltipDemo() {
 
 export function DesignerPage() {
   // Page-level designer shortcuts — press ? to see them all
-  useDesignEngineHotkey('Mod+z', () => {}, {
+  useDesignEngineHotkey('Mod+Z', () => {}, {
     label: 'Rückgängig', description: 'Letzte Aktion rückgängig machen', category: 'Actions'
   })
-  useDesignEngineHotkey('Mod+Shift+z', () => {}, {
+  useDesignEngineHotkey('Mod+Shift+Z', () => {}, {
     label: 'Wiederholen', description: 'Letzte Aktion wiederholen', category: 'Actions'
   })
-  useDesignEngineHotkey('Mod+d', () => {}, {
+  useDesignEngineHotkey('Mod+D', () => {}, {
     label: 'Duplizieren', description: 'Ausgewählte Objekte duplizieren', category: 'Actions'
   })
-  useDesignEngineHotkey('Mod+a', () => {}, {
+  useDesignEngineHotkey('Mod+A', () => {}, {
     label: 'Alle auswählen', description: 'Alle Objekte auf dem Canvas selektieren', category: 'Actions'
   })
-  useDesignEngineHotkey('Mod+g', () => {}, {
+  useDesignEngineHotkey('Mod+G', () => {}, {
     label: 'Gruppieren', description: 'Auswahl zu einer Gruppe zusammenfassen', category: 'Actions'
   })
   useDesignEngineHotkey('[', () => {}, {

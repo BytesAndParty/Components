@@ -258,13 +258,13 @@ export function CellarCanvas({
     await bridge.current?.addImage(url)
   })
 
-  useDesignEngineHotkey('mod+z', () => bridge.current?.undo(), {
+  useDesignEngineHotkey('Mod+Z', () => bridge.current?.undo(), {
     label:       m.hotkeyUndoLabel,
     category:    'Actions',
     description: m.hotkeyUndoDescription,
   })
 
-  useDesignEngineHotkey('mod+shift+z', () => bridge.current?.redo(), {
+  useDesignEngineHotkey('Mod+Shift+Z', () => bridge.current?.redo(), {
     label:       m.hotkeyRedoLabel,
     category:    'Actions',
     description: m.hotkeyRedoDescription,
@@ -292,10 +292,9 @@ export function CellarCanvas({
     description: m.hotkeyDeleteDescription,
   })
 
-  // Zoom via keyboard. `{ key: '+' }` is the object form — a literal '+'
-  // inside a hotkey string collides with the combo separator. It also covers
-  // the numpad plus; '-' works as a plain string on all layouts.
-  useDesignEngineHotkey({ key: '+' }, () => bridge.current?.zoomBy(1.2), {
+  // Zoom via keyboard: '=' zoom in, '-' zoom out — the adjacent unshifted keys,
+  // both valid plain-string hotkeys on every layout.
+  useDesignEngineHotkey('=', () => bridge.current?.zoomBy(1.2), {
     label:       m.hotkeyZoomInLabel,
     category:    'Actions',
     description: m.hotkeyZoomInDescription,
@@ -307,7 +306,7 @@ export function CellarCanvas({
     description: m.hotkeyZoomOutDescription,
   })
 
-  useDesignEngineHotkey('s', () => {
+  useDesignEngineHotkey('S', () => {
     const { snappingEnabled, setSnappingEnabled } = useDesignerStore.getState()
     setSnappingEnabled(!snappingEnabled)
   }, {
