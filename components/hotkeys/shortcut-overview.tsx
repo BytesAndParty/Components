@@ -25,9 +25,9 @@ export function ShortcutOverview({
     setIsVisible(false)
   }
 
-  // ? key toggles the overview — also registers itself in the shortcut list
+  // Mod+/ toggles the overview — also registers itself in the shortcut list
   useDesignEngineHotkey(
-    '?',
+    'Mod+/',
     () => setIsVisible((visible: boolean) => !visible),
     { label: 'Shortcuts anzeigen', description: 'Übersicht öffnen / schließen', category: 'Global' }
   )

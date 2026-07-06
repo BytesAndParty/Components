@@ -40,9 +40,9 @@ function useHotkeysActions() {
 type RegisterableHotkey = Parameters<typeof useHotkey>[0]
 
 /**
- * Display string for the ShortcutOverview. The object form exists for keys
- * the string syntax cannot express — `'+'` collides with the combo
- * separator, so callers pass `{ key: '+' }` instead.
+ * Display string for the ShortcutOverview. Handles the string syntax and the
+ * RawHotkey object form (kept as a general escape hatch for keys the string
+ * syntax cannot express).
  */
 function hotkeyDisplayString(key: RegisterableHotkey): string {
   if (typeof key === 'string') return key
