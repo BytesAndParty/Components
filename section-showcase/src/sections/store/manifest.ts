@@ -1,4 +1,3 @@
-import { StorePage } from './StorePage'
 import { StoreCave } from './StoreCave'
 import { StoreNocturne } from './StoreNocturne'
 import { StoreMaison } from './StoreMaison'
@@ -10,14 +9,8 @@ import type { SectionDef } from '../types'
 export const storeSection: SectionDef = {
   id: 'storefront',
   label: 'Storefront',
-  description: 'Wein-Storefront — drei Card-Designs, je als eigene Variante, plus eine Vergleichsansicht.',
+  description: 'Wein-Storefront — drei eigenständige Card-Designs.',
   variants: [
-    {
-      id: 'default',
-      label: 'Alle Drei (Vergleich)',
-      description: 'Vergleichsansicht: alle drei Card-Designs nebeneinander. Die Einzeldesigns stehen als eigene Varianten (Modern · Artisanal · Editorial).',
-      Component: StorePage,
-    },
     {
       id: 'modern',
       label: 'Modern & Interactive',
