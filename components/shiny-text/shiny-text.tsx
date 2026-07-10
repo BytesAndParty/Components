@@ -82,6 +82,11 @@ export function ShinyText({
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
+        // Bei engem leading (< 1) endet die Background-Box über den Unterlängen —
+        // Descender („g", „y") blieben unbemalt. Padding erweitert die bemalbare
+        // Fläche, negatives Margin gleicht das Layout exakt aus.
+        padding: '0.15em 0',
+        margin: '-0.15em 0',
         animation: `shiny-text ${duration}s linear infinite`,
         ...style,
       }}

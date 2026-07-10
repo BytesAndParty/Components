@@ -12,7 +12,7 @@ Editorial curtain reveal for images — a clip-path wipe paired with a counter-z
 
 ## How It Works
 
-1. **Two-layer animation**: the wrapper animates `clip-path`, the image animates `transform` — both GPU-friendly, no layout thrash.
+1. **Two-layer animation**: an inner wrapper animates `clip-path`, the image animates `transform` — both GPU-friendly, no layout thrash. The clip lives on an inner div, **not** on the observed element: Chromium factors an element's own clip-path into IntersectionObserver — `inset(100%)` would never intersect and below-the-fold images would never reveal (deadlock).
 2. **Expo-out easing** (`cubic-bezier(0.16, 1, 0.3, 1)`): fast opening, very soft settle — the signature editorial feel.
 3. **Sizing is consumer-driven**: put aspect/size classes on the wrapper (`className`, e.g. `aspect-3/4`); the image fills via `object-cover`.
 4. **Accessibility**: respects `prefers-reduced-motion` (image shows immediately, no transition). `alt` is a required prop — pass `''` only for decorative images.

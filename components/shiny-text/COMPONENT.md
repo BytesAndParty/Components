@@ -13,6 +13,7 @@ A metallic shine effect for text and buttons that uses a moving linear gradient.
 1. **Background Clip**: `ShinyText` uses `background-clip: text` combined with a `linear-gradient` to create the metallic look.
 2. **Base = `currentColor`**: The gradient's resting color is the element's inherited text color — not a theme token. Sections with fixed palettes (Nocturne cream, Artisanal ink) stay readable in both themes; theme-following text keeps working because its `color` already is the theme foreground.
 3. **Keyframe Animation**: Animates `background-position` to create the "sweep" effect. Injected once per page (`__shiny-text-keyframes__`), disabled under `prefers-reduced-motion`.
+4. **Descender-safe box**: with tight leading (< 1) the paintable background box ends above descenders — „g"/„y" would render clipped. The span carries `padding: 0.15em 0` plus a negative margin of the same size, extending the painted area without any layout shift. (Same fix in `AuroraText`.)
 4. **Zero Runtime**: Pure CSS animation, no JavaScript overhead for the effect itself.
 
 ## Props (ShinyText)

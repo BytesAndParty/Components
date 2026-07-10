@@ -72,10 +72,8 @@ export function RevealImage({
     if (!el) return
 
     // Reveal immediately when the element is already (partly) in the viewport
-    // on mount. Some environments — and some mount/transition timings — don't
-    // deliver IntersectionObserver's initial callback for already-intersecting
-    // targets, which would otherwise leave the image clipped (invisible)
-    // forever. Below-the-fold images skip this and reveal on scroll as before.
+    // on mount — spart den ersten Observer-Roundtrip und startet die Animation
+    // ohne Frame-Verzögerung. Below-the-fold-Bilder reveaen via Observer.
     const r = el.getBoundingClientRect()
     const alreadyInView = r.top < window.innerHeight && r.bottom > 0
     if (alreadyInView) {
@@ -106,26 +104,30 @@ export function RevealImage({
     ? 'none'
     : `transform ${duration}ms ${EASE} ${delay}ms`
 
+  // clip-path liegt auf einem INNEREN Wrapper, nicht auf dem beobachteten
+  // Element: Chromium rechnet die eigene clip-path in die Intersection ein —
+  // inset(100% …) hätte nie eine Intersection und das Reveal würde für
+  // Below-the-fold-Bilder niemals starten (Deadlock).
   return (
-    <div
-      ref={ref}
-      className={cn('overflow-hidden', className)}
-      style={{
-        clipPath: visible ? 'inset(0 0 0 0)' : getInitialClip(direction),
-        transition,
-        ...style,
-      }}
-    >
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        className={cn('block h-full w-full object-cover', imgClassName)}
+    <div ref={ref} className={cn('overflow-hidden', className)} style={style}>
+      <div
+        className="h-full w-full"
         style={{
-          transform: visible ? 'scale(1)' : `scale(${zoom})`,
-          transition: imgTransition,
+          clipPath: visible ? 'inset(0 0 0 0)' : getInitialClip(direction),
+          transition,
         }}
-      />
+      >
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className={cn('block h-full w-full object-cover', imgClassName)}
+          style={{
+            transform: visible ? 'scale(1)' : `scale(${zoom})`,
+            transition: imgTransition,
+          }}
+        />
+      </div>
     </div>
   )
 }
