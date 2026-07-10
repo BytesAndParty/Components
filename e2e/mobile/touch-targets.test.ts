@@ -15,10 +15,10 @@ const MIN_FONT = 9; // uppercase eyebrow labels bottom out at 9px by brand desig
 // (pricing billing toggle, showcase format picker) are intentionally excluded —
 // they're not in this list.
 const TAP_CTAS: Record<string, string[]> = {
-  '/hero': ['Unsere Winzer kennenlernen', 'oder als Abo', 'How it works', 'Die Weine'],
+  '/hero': ['Unsere Winzer kennenlernen', 'Die Weine'],
   '/showcase': ['Anfragen'],
   '/storefront': ['Entdecken', 'Detailansicht', 'Anfragen'],
-  '/cta': ['Unser Versprechen', 'Platz erbitten'],
+  '/cta': ['Platz erbitten'],
   '/footer': [
     'Impressum', 'Datenschutz', 'AGB', 'Eintragen',
     'Instagram', 'Newsletter', 'Händlerportal',

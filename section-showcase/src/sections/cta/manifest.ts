@@ -1,5 +1,4 @@
 import { CTAV1 } from './CTAV1'
-import { CTAV2 } from './CTAV2'
 import { CTAV3 } from './CTAV3'
 import { CTAV4 } from './CTAV4'
 import { CTAV5 } from './CTAV5'
@@ -13,12 +12,6 @@ export const ctaSection: SectionDef = {
       id: 'v1',
       label: 'Elegant Card Invite',
       Component: CTAV1,
-    },
-    {
-      id: 'v2',
-      label: 'Pure Invitation',
-      description: 'Extremer Fokus auf Text, Aurora-Background und Black-Label CTA.',
-      Component: CTAV2,
     },
     {
       id: 'v3',

@@ -1,5 +1,4 @@
 import { GalleryV1 } from './GalleryV1'
-import { GalleryV2 } from './GalleryV2'
 import { GalleryV3 } from './GalleryV3'
 import { GalleryV4 } from './GalleryV4'
 import { GalleryV5 } from './GalleryV5'
@@ -14,12 +13,6 @@ export const gallerySection: SectionDef = {
       id: 'v1',
       label: 'Artisanal Bento',
       Component: GalleryV1,
-    },
-    {
-      id: 'v2',
-      label: 'Atmospheric Asymmetry',
-      description: 'Offenes Grid mit extremem Weichzeichner und Aurora-Watermark.',
-      Component: GalleryV2,
     },
     {
       id: 'v3',
