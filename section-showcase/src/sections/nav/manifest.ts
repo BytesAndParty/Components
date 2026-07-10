@@ -3,6 +3,7 @@ import { NavV2 } from './NavV2'
 import { NavV3 } from './NavV3'
 import { NavV4 } from './NavV4'
 import { NavV5 } from './NavV5'
+import { NavV6 } from './NavV6'
 import type { SectionDef } from '../types'
 
 export const navSection: SectionDef = {
@@ -25,7 +26,7 @@ export const navSection: SectionDef = {
     {
       id: 'v3',
       label: 'Maison Masthead',
-      description: 'Magazin-Impressum: Meta-Zeile zwischen Hairlines, übergroßer italic Wortmark, Links mit wachsenden Strichen.',
+      description: 'Magazin-Impressum über volle Breite: Meta-Zeile zwischen Hairlines, übergroßer italic Wortmark, Links mit wachsenden Strichen, Warenkorb mit Fußnoten-Ziffer.',
       Component: NavV3,
     },
     {
@@ -39,6 +40,12 @@ export const navSection: SectionDef = {
       label: 'Nocturne (Cinematic)',
       description: 'Fast-Schwarz mit Kerzengold: gedimmte Links glimmen im Hover auf, wachsende Gold-Hairline zur Weinkarte.',
       Component: NavV5,
+    },
+    {
+      id: 'v6',
+      label: 'Editorial',
+      description: 'Zeitungskopf auf Papierton: Folio-Zeile, zentrierter Serif-Wortmark, Ressort-Leiste zwischen Doppellinien mit Seitenzahlen als Fußnoten.',
+      Component: NavV6,
     },
   ],
 }

@@ -1,25 +1,35 @@
 import { GlowCard } from '@components/glow-card/glow-card'
 import { BlurFade } from '@components/blur-fade/blur-fade'
-import { Star } from 'lucide-react'
 
-const testimonials = [
-  {
-    name: 'Marc-André Leclerc',
-    role: 'Chef Sommelier, Le Bristol',
-    content: 'Die Selektion Lacombe ist ein Paradebeispiel für Terroir-Treue. Ein Muss für jeden Weinkeller, der auf Qualität statt Masse setzt.',
-    rating: 5,
-  },
+/**
+ * Expert Quotes — token-based standard-premium treatment: one featured
+ * verdict in a wide GlowCard, two quiet supporting voices below it.
+ * Source lines (Publikation/Anlass) replace star ratings; the oversized
+ * quote glyph carries the accent instead of icon noise.
+ */
+
+const FEATURED = {
+  name: 'Marc-André Leclerc',
+  role: 'Chef Sommelier · Le Bristol, Paris',
+  source: 'Carte des Vins 2026',
+  content:
+    'Auf unserer Karte stehen dreihundert Weingüter. Nach diesem Riesling haben wir Seite eins neu gesetzt.',
+}
+
+const VOICES = [
   {
     name: 'Elena Rossi',
-    role: 'Weinkritikerin',
-    content: 'Selten habe ich eine so konsistente Qualität über verschiedene Jahrgänge hinweg erlebt. Die Bio-Wende 1988 spürt man in jeder Nuance.',
-    rating: 5,
+    role: 'Weinkritikerin · Decanter',
+    source: 'Jahrgangsreport',
+    content:
+      'Konsistenz ist das seltenste Talent im Weinbau. Hier trinkt man sie Jahrgang für Jahrgang.',
   },
   {
     name: 'Julian Schmidt',
     role: 'Sammler',
-    content: 'Der Millésime Club ist mein Highlight des Monats. Die Raritäten, die man hier bekommt, sind auf dem freien Markt kaum zu finden.',
-    rating: 5,
+    source: 'Privatkeller, Hamburg',
+    content:
+      'Ich sammle seit zwanzig Jahren. Das hier sind die Flaschen, die ich nicht mehr tausche.',
   },
 ]
 
@@ -37,28 +47,55 @@ export function TestimonialsV1() {
             </p>
           </BlurFade>
         </div>
-        
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <BlurFade key={t.name} delay={300 + i * 100}>
-              <GlowCard className="flex h-full flex-col justify-between p-8">
-                <div>
-                  <div className="text-accent mb-6 flex gap-1">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-foreground text-lg leading-relaxed italic">
-                    "{t.content}"
-                  </p>
-                </div>
-                <div className="border-border mt-8 flex flex-col gap-1 border-t pt-6">
-                  <span className="font-display text-foreground font-medium">{t.name}</span>
-                  <span className="text-muted-foreground text-xs tracking-wider uppercase">{t.role}</span>
-                </div>
-              </GlowCard>
-            </BlurFade>
-          ))}
+
+        <div className="mx-auto mt-16 flex max-w-4xl flex-col gap-8">
+          {/* Featured verdict */}
+          <BlurFade delay={300}>
+            <GlowCard className="relative overflow-hidden p-10 sm:p-14">
+              <span
+                aria-hidden="true"
+                className="font-display text-accent/15 pointer-events-none absolute -top-4 left-6 text-[10rem] leading-none font-light select-none"
+              >
+                „
+              </span>
+              <figure className="relative flex flex-col gap-8">
+                <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
+                  {FEATURED.source}
+                </span>
+                <blockquote className="font-display text-foreground text-2xl leading-snug font-light tracking-tight sm:text-4xl">
+                  {FEATURED.content}
+                </blockquote>
+                <figcaption className="border-border flex flex-col gap-1 border-t pt-6">
+                  <span className="font-display text-foreground text-lg font-medium">{FEATURED.name}</span>
+                  <span className="text-muted-foreground text-xs tracking-wider uppercase">{FEATURED.role}</span>
+                </figcaption>
+              </figure>
+            </GlowCard>
+          </BlurFade>
+
+          {/* Supporting voices */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            {VOICES.map((t, i) => (
+              <BlurFade key={t.name} delay={450 + i * 120}>
+                <GlowCard className="h-full p-8">
+                  <figure className="flex h-full flex-col justify-between gap-8">
+                    <div>
+                      <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
+                        {t.source}
+                      </span>
+                      <blockquote className="font-display text-foreground mt-4 text-lg leading-relaxed font-light italic">
+                        „{t.content}“
+                      </blockquote>
+                    </div>
+                    <figcaption className="border-border flex flex-col gap-1 border-t pt-5">
+                      <span className="font-display text-foreground font-medium">{t.name}</span>
+                      <span className="text-muted-foreground text-xs tracking-wider uppercase">{t.role}</span>
+                    </figcaption>
+                  </figure>
+                </GlowCard>
+              </BlurFade>
+            ))}
+          </div>
         </div>
       </div>
     </section>
