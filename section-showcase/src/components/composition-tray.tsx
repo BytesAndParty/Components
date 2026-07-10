@@ -69,7 +69,7 @@ export function CompositionTray({ onClose }: CompositionTrayProps) {
     <div
       role="dialog"
       aria-label="Favorisierte Sections"
-      className="border-border bg-card/95 absolute right-0 bottom-full mb-2 flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border shadow-xl backdrop-blur-xl"
+      className="border-border bg-elevated absolute right-0 bottom-full mb-2 flex w-[min(92vw,360px)] flex-col overflow-hidden rounded-xl border shadow-xl"
     >
       <div className="border-border flex items-center justify-between border-b px-3.5 py-2.5">
         <div className="flex items-center gap-2">

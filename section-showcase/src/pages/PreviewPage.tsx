@@ -79,7 +79,7 @@ export function PreviewPage() {
           onClick={edit}
           aria-label="Zurück zum Bearbeiten"
           title="Zurück zum Bearbeiten"
-          className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-full border py-2 pr-3.5 pl-2.5 text-sm shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          className="border-border bg-elevated text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-full border py-2 pr-3.5 pl-2.5 text-sm shadow-lg shadow-black/20 transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <ChevronLeft size={15} />
           Bearbeiten
@@ -90,7 +90,7 @@ export function PreviewPage() {
           onClick={copyLink}
           aria-label="Teilbaren Link kopieren"
           title="Link kopieren"
-          className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-full border py-2 pr-3.5 pl-2.5 text-sm shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          className="border-border bg-elevated text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-full border py-2 pr-3.5 pl-2.5 text-sm shadow-lg shadow-black/20 transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           {copied ? <Check size={15} className="text-accent" /> : <Link2 size={15} />}
           {copied ? 'Kopiert' : 'Link'}

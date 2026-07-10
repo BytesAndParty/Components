@@ -69,11 +69,14 @@ export function ShinyText({
     <span
       className={['shiny-text-anim', className].filter(Boolean).join(' ')}
       style={{
+        // currentColor statt var(--foreground): die Basis folgt der sichtbaren
+        // Textfarbe des Kontexts. Sections mit fixen Farbwelten (Nocturne-Cream,
+        // Artisanal-Ink) bleiben damit in beiden Themes lesbar.
         backgroundImage: `linear-gradient(
           120deg,
-          var(--foreground, currentColor) 40%,
+          currentColor 40%,
           ${shineColor} 50%,
-          var(--foreground, currentColor) 60%
+          currentColor 60%
         )`,
         backgroundSize: '200% auto',
         WebkitBackgroundClip: 'text',

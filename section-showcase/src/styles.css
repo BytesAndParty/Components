@@ -23,6 +23,7 @@
   --color-foreground:        var(--foreground);
   --color-card:              var(--card);
   --color-card-foreground:   var(--card-foreground);
+  --color-elevated:          var(--elevated);
   --color-muted:             var(--muted);
   --color-muted-foreground:  var(--muted-foreground);
   --color-border:            var(--border);
@@ -41,6 +42,8 @@
   --foreground:        oklch(0.905 0.004 285);
   --card:              oklch(0.082 0.004 285);
   --card-foreground:   oklch(0.905 0.004 285);
+  /* Opake Chrome-Fläche (Floating Bar & Popovers) — hebt sich von background/card ab. */
+  --elevated:          oklch(0.165 0.008 285);
   --muted:             oklch(0.118 0.004 285);
   --muted-foreground:  oklch(0.611 0.012 285);
   --border:            oklch(0.188 0.006 285);
@@ -55,6 +58,7 @@
   --foreground:       oklch(0.141 0.004 285);
   --card:             oklch(1 0 0);
   --card-foreground:  oklch(0.141 0.004 285);
+  --elevated:         oklch(0.93 0.004 285);
   --muted:            oklch(0.961 0.002 285);
   --muted-foreground: oklch(0.491 0.010 285);
   --border:           oklch(0.870 0.004 285);

@@ -113,6 +113,21 @@ export function CommandBar() {
   const variants = section?.variants ?? []
   const variantIdx = variants.findIndex(v => v.id === showcase.variantId)
 
+  // Keep the active chip visible inside the horizontally scrollable strip —
+  // arrow/hotkey navigation can otherwise move the selection out of view.
+  const variantStripRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!showcase.variantId) return
+    const chip = variantStripRef.current?.querySelector<HTMLElement>(
+      `[data-variant-chip="${showcase.variantId}"]`,
+    )
+    chip?.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }, [showcase.variantId, reduceMotion])
+
   // The design each section is currently set to — shown in the section menus so
   // you always see the active/chosen variant, not just a count. The active
   // section reflects the live variant on screen; others show their favorited
@@ -132,7 +147,15 @@ export function CommandBar() {
   // delta > 0 → next variant: new slides in from the RIGHT (vt-slide-left).
   // Stack mode shows all variants at once, so the slide is unnecessary.
   function switchVariant(nextId: string, delta: number) {
-    if (delta === 0 || showcase.mode === 'stack') {
+    if (showcase.mode === 'stack') {
+      // Stack shows every variant at once — jump to the chosen one instead of sliding.
+      showcase.setVariantId(nextId)
+      document
+        .querySelector(`[data-stack-variant="${nextId}"]`)
+        ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+      return
+    }
+    if (delta === 0) {
       showcase.setVariantId(nextId)
       return
     }
@@ -233,7 +256,7 @@ export function CommandBar() {
         aria-label="Showcase-Steuerung einblenden (H)"
         title="Einblenden (H)"
         style={PIN_HIDDEN_TOGGLE_STYLE}
-        className="border-border bg-card/85 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 backdrop-blur-xl transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+        className="border-border bg-elevated text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
       >
         <Eye size={14} />
       </button>
@@ -250,7 +273,7 @@ export function CommandBar() {
       } satisfies CSSProperties}
       className="fixed bottom-6 left-1/2 z-50 hidden select-none sm:block"
     >
-      <div className="border-border bg-card/85 flex w-[min(96vw,900px)] flex-col rounded-2xl border shadow-2xl shadow-black/30 backdrop-blur-xl">
+      <div className="border-border bg-elevated flex w-[min(96vw,900px)] flex-col rounded-2xl border shadow-2xl shadow-black/30">
         <div
           onPointerDown={onGripPointerDown}
           className="text-muted-foreground/40 flex h-6 cursor-grab items-center justify-center active:cursor-grabbing"
@@ -275,7 +298,7 @@ export function CommandBar() {
             {sectionMenuOpen && (
               <div
                 role="menu"
-                className={`border-border bg-card/95 absolute left-0 w-60 overflow-hidden rounded-xl border p-1.5 shadow-xl backdrop-blur-xl ${
+                className={`border-border bg-elevated absolute left-0 w-60 overflow-hidden rounded-xl border p-1.5 shadow-xl ${
                   sectionMenuDirection === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
                 }`}
               >
@@ -372,7 +395,7 @@ export function CommandBar() {
                     aria-label={`Akzent ${a}`}
                     aria-pressed={active}
                     className={`focus-visible:ring-accent/60 h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none max-sm:h-5 max-sm:w-5 ${
-                      active ? 'ring-foreground/40 ring-offset-card scale-110 ring-1 ring-offset-2' : ''
+                      active ? 'ring-foreground/40 ring-offset-elevated scale-110 ring-1 ring-offset-2' : ''
                     }`}
                     style={{ background: accentSwatch(a) }}
                   />
@@ -414,12 +437,13 @@ export function CommandBar() {
             >
               <ChevronLeft size={16} />
             </button>
-            <div className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
+            <div ref={variantStripRef} className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
               {section.variants.map((v, idx) => {
                 const active = showcase.variantId === v.id
                 return (
                   <button
                     key={v.id}
+                    data-variant-chip={v.id}
                     type="button"
                     onClick={() => switchVariant(v.id, idx - variantIdx)}
                     aria-pressed={active}
@@ -457,7 +481,7 @@ export function CommandBar() {
           type="button"
           onClick={() => setPanelOpen(true)}
           aria-label="Showcase-Steuerung öffnen"
-          className="border-border bg-card/85 text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 backdrop-blur-xl focus-visible:ring-2 focus-visible:outline-none"
+          className="border-border bg-elevated text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 focus-visible:ring-2 focus-visible:outline-none"
         >
           <SlidersHorizontal size={18} />
           {favoriteCount > 0 && (
@@ -490,9 +514,9 @@ export function CommandBar() {
               animate={reduceMotion ? { opacity: 1 } : { x: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { x: '100%' }}
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 34 }}
-              className="border-border bg-card/95 fixed inset-y-0 right-0 z-50 flex w-[min(86vw,340px)] flex-col overflow-y-auto border-l shadow-2xl shadow-black/40 backdrop-blur-xl"
+              className="border-border bg-elevated fixed inset-y-0 right-0 z-50 flex w-[min(86vw,340px)] flex-col overflow-y-auto border-l shadow-2xl shadow-black/40"
             >
-              <div className="border-border bg-card/95 sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3 backdrop-blur-xl">
+              <div className="border-border bg-elevated sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
                 <span className="font-display text-sm tracking-tight">Steuerung</span>
                 <button
                   type="button"
@@ -610,7 +634,7 @@ export function CommandBar() {
                           onClick={() => atelier.setAccent(a)}
                           aria-label={`Akzent ${a}`}
                           aria-pressed={active}
-                          className={`flex h-9 w-9 items-center justify-center rounded-full transition-transform ${active ? 'ring-foreground/40 ring-offset-card scale-110 ring-2 ring-offset-2' : ''}`}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full transition-transform ${active ? 'ring-foreground/40 ring-offset-elevated scale-110 ring-2 ring-offset-2' : ''}`}
                           style={{ background: accentSwatch(a) }}
                         >
                           {active && <Check size={14} className="text-background" />}
@@ -632,7 +656,7 @@ export function CommandBar() {
               </div>
 
               {/* Footer: preview composed page */}
-              <div className="border-border bg-card/95 sticky bottom-0 z-10 mt-auto border-t p-4 backdrop-blur-xl">
+              <div className="border-border bg-elevated sticky bottom-0 z-10 mt-auto border-t p-4">
                 <button
                   type="button"
                   onClick={openPreview}
