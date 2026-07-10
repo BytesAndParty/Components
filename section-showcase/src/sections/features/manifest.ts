@@ -4,6 +4,8 @@ import { FeaturesV3 } from './FeaturesV3'
 import { FeaturesV4 } from './FeaturesV4'
 import { FeaturesV5 } from './FeaturesV5'
 import { FeaturesV6 } from './FeaturesV6'
+import { FeaturesV7 } from './FeaturesV7'
+import { FeaturesV8 } from './FeaturesV8'
 import type { SectionDef } from '../types'
 
 export const featuresSection: SectionDef = {
@@ -43,6 +45,18 @@ export const featuresSection: SectionDef = {
       label: 'Maison Editorial',
       description: 'Geschichteter Magazin-Essay: Headline überlappt die Fotografie von rechts, hängende Zweit-Tafel, Grundsätze als Fig. 02–04.',
       Component: FeaturesV6,
+    },
+    {
+      id: 'v7',
+      label: 'Artisanal Minimal',
+      description: 'Typografisches Manifest: Serif-Statement als Treppensatz, drei versetzte Randnotizen, extremer Weißraum — bewusst ohne Bild (Buchart Style).',
+      Component: FeaturesV7,
+    },
+    {
+      id: 'v8',
+      label: 'Nocturne (Cinematic)',
+      description: 'Drei Kellerszenen als Film-Stills: Kerzengold-Hairlines, Ghost-Numerale, Lower-Third-Captions und Staub im Dunkel.',
+      Component: FeaturesV8,
     },
   ],
 }

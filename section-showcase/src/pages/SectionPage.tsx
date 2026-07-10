@@ -28,7 +28,8 @@ export function SectionPage() {
     return (
       <div className="pb-32">
         {section.variants.map(v => (
-          <article key={v.id} className="border-border border-b">
+          // data-stack-variant: Sprungziel für die Varianten-Chips der Command-Bar.
+          <article key={v.id} data-stack-variant={v.id} className="border-border border-b">
             <header className="mx-auto flex max-w-7xl items-start justify-between gap-4 px-6 pt-10 pb-3">
               <div>
                 <p className="text-muted-foreground text-[11px] tracking-[0.18em] uppercase">

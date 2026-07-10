@@ -65,7 +65,9 @@ export function HeroV8() {
             <h1 className="font-display max-w-4xl text-[clamp(3rem,8.5vw,7.5rem)] leading-[0.92] font-light tracking-tight text-[#f3ece0]">
               Hier unten zählt
               <br />
-              nur die <span className="italic"><ShinyText duration={7} shineColor="#e8d5ae">Zeit.</ShinyText></span>
+              {/* Kerzengold statt Champagner: auf der Cream-Basis (#f3ece0) ist
+                  #e8d5ae praktisch unsichtbar — der Glint braucht Abstand. */}
+              nur die <span className="italic"><ShinyText duration={7} shineColor="#c9a25e">Zeit.</ShinyText></span>
             </h1>
           </BlurFade>
 

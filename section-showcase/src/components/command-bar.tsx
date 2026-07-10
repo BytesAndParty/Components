@@ -113,6 +113,21 @@ export function CommandBar() {
   const variants = section?.variants ?? []
   const variantIdx = variants.findIndex(v => v.id === showcase.variantId)
 
+  // Keep the active chip visible inside the horizontally scrollable strip —
+  // arrow/hotkey navigation can otherwise move the selection out of view.
+  const variantStripRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!showcase.variantId) return
+    const chip = variantStripRef.current?.querySelector<HTMLElement>(
+      `[data-variant-chip="${showcase.variantId}"]`,
+    )
+    chip?.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }, [showcase.variantId, reduceMotion])
+
   // The design each section is currently set to — shown in the section menus so
   // you always see the active/chosen variant, not just a count. The active
   // section reflects the live variant on screen; others show their favorited
@@ -132,7 +147,15 @@ export function CommandBar() {
   // delta > 0 → next variant: new slides in from the RIGHT (vt-slide-left).
   // Stack mode shows all variants at once, so the slide is unnecessary.
   function switchVariant(nextId: string, delta: number) {
-    if (delta === 0 || showcase.mode === 'stack') {
+    if (showcase.mode === 'stack') {
+      // Stack shows every variant at once — jump to the chosen one instead of sliding.
+      showcase.setVariantId(nextId)
+      document
+        .querySelector(`[data-stack-variant="${nextId}"]`)
+        ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+      return
+    }
+    if (delta === 0) {
       showcase.setVariantId(nextId)
       return
     }
@@ -414,12 +437,13 @@ export function CommandBar() {
             >
               <ChevronLeft size={16} />
             </button>
-            <div className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
+            <div ref={variantStripRef} className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
               {section.variants.map((v, idx) => {
                 const active = showcase.variantId === v.id
                 return (
                   <button
                     key={v.id}
+                    data-variant-chip={v.id}
                     type="button"
                     onClick={() => switchVariant(v.id, idx - variantIdx)}
                     aria-pressed={active}

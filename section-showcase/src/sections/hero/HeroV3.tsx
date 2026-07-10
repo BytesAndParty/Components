@@ -8,12 +8,12 @@ export function HeroV3() {
     <section className="relative flex h-screen min-h-[700px] w-full items-center justify-center overflow-hidden bg-zinc-950">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1600&q=80" 
-          alt="Atmospheric Vineyard" 
-          className="h-full w-full object-cover opacity-30 grayscale"
+        <img
+          src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1600&q=80"
+          alt="Atmospheric Vineyard"
+          className="h-full w-full object-cover opacity-65 saturate-[1.15]"
         />
-        <div className="absolute inset-0 bg-linear-to-b from-transparent via-zinc-950/60 to-zinc-950" />
+        <div className="absolute inset-0 bg-linear-to-b from-zinc-950/45 via-zinc-950/65 to-zinc-950" />
       </div>
 
       {/* Atmospheric Particles */}
@@ -33,8 +33,13 @@ export function HeroV3() {
         </BlurFade>
 
         <BlurFade delay={200}>
+          {/* text-white ist bewusst theme-unabhängig — die Section ist immer dunkel.
+              Der Shine mischt den aktiven Akzent hell auf, damit er auf der weißen
+              Basis in beiden Themes sichtbar bleibt. */}
           <h1 className="font-display text-[clamp(3rem,8vw,6rem)] leading-none font-medium tracking-tight text-white">
-            <ShinyText duration={6}>The Soul of the Grape</ShinyText>
+            <ShinyText duration={6} shineColor="color-mix(in oklch, var(--accent) 65%, white)">
+              The Soul of the Grape
+            </ShinyText>
           </h1>
         </BlurFade>
 
