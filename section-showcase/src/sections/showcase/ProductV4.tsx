@@ -62,11 +62,13 @@ export function ProductV4({ onBack }: ProductV4Props) {
                   ’21
                 </span>
                 <Lens zoom={2.2} lensSize={190} ringColor="#5c2331">
-                  <div className="flex aspect-[3/4.4] w-full items-end justify-center overflow-hidden rounded-t-full bg-gradient-to-b from-[#ece7db] to-[#e2dccc]">
+                  {/* Foto verglast den Bogen vollständig — object-contain ließe
+                      das Rechteck des Fotos sichtbar im Rahmen schweben. */}
+                  <div className="aspect-[3/4.4] w-full overflow-hidden rounded-t-full bg-gradient-to-b from-[#ece7db] to-[#e2dccc]">
                     <img
                       src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
                       alt="Riesling Steinriegl 2021 — Flasche mit handgeschöpftem Etikett"
-                      className="h-[92%] object-contain drop-shadow-[0_28px_36px_rgba(34,27,22,0.22)]"
+                      className="h-full w-full object-cover"
                     />
                   </div>
                 </Lens>
