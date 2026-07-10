@@ -1,3 +1,4 @@
+import { navSection } from './nav/manifest'
 import { heroSection } from './hero/manifest'
 import { featuresSection } from './features/manifest'
 import { showcaseSection } from './showcase/manifest'
@@ -15,6 +16,7 @@ import type { SectionDef } from './types'
  * Each section ships its own manifest (id, label, variants).
  */
 export const sections: SectionDef[] = [
+  navSection,
   heroSection,
   featuresSection,
   showcaseSection,
