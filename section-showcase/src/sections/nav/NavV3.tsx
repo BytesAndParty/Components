@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, ShoppingBag, X } from 'lucide-react'
 
 /**
  * Maison Masthead — Kopfzeile als Magazin-Impressum (Maison-Editorial-Linie):
  * Meta-Zeile zwischen Hairlines (Ort · Édition), darunter übergroßer italic
  * Serif-Wortmark und eine Link-Reihe mit wachsenden Strichen wie im Kolophon
- * (FooterV5). Die Nav liest sich als erste Druckseite, nicht als App-Leiste.
+ * (FooterV5). Volle Seitenbreite; der Warenkorb hängt als Fußnoten-Ziffer am
+ * Beutel-Icon. Die Nav liest sich als erste Druckseite, nicht als App-Leiste.
  */
 
 const LINKS = [
@@ -20,7 +21,8 @@ export function NavV3() {
 
   return (
     <nav aria-label="Hauptnavigation" className="bg-[#fdfcf9] px-6 pt-6 lg:px-16">
-      <div className="mx-auto max-w-7xl">
+      {/* Bewusst ohne max-w-Container: das Impressum läuft über die volle Seitenbreite. */}
+      <div>
         {/* Meta row between hairlines */}
         <div className="flex items-baseline justify-between border-y border-zinc-200 py-2.5">
           <span className="text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
@@ -43,30 +45,47 @@ export function NavV3() {
             Buchart&nbsp;<span className="italic">&amp; Söhne.</span>
           </a>
 
-          {/* Desktop links */}
-          <div className="hidden items-center gap-8 pb-1 lg:flex">
-            {LINKS.map(link => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="group inline-flex min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.25em] text-zinc-900 uppercase transition-colors hover:text-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
-              >
-                <span aria-hidden="true" className="h-px w-4 bg-zinc-300 transition-all duration-500 group-hover:w-8 group-hover:bg-zinc-900" />
-                {link.label}
-              </a>
-            ))}
-          </div>
+          <div className="flex items-end gap-2 lg:gap-8">
+            {/* Desktop links */}
+            <div className="hidden items-center gap-8 pb-1 lg:flex">
+              {LINKS.map(link => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="group inline-flex min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.25em] text-zinc-900 uppercase transition-colors hover:text-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
+                >
+                  <span aria-hidden="true" className="h-px w-4 bg-zinc-300 transition-all duration-500 group-hover:w-8 group-hover:bg-zinc-900" />
+                  {link.label}
+                </a>
+              ))}
+            </div>
 
-          <button
-            type="button"
-            onClick={() => setOpen(o => !o)}
-            aria-expanded={open}
-            aria-controls="nav-v3-menu"
-            aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
-            className="mb-1 flex h-11 w-11 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none lg:hidden"
-          >
-            {open ? <X size={19} /> : <Menu size={19} />}
-          </button>
+            {/* Warenkorb — Anzahl als Fußnoten-Ziffer in Serif */}
+            <a
+              href="/warenkorb"
+              aria-label="Warenkorb, 2 Artikel"
+              className="relative mb-1 flex h-11 w-11 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
+            >
+              <ShoppingBag size={18} strokeWidth={1.5} />
+              <span
+                aria-hidden="true"
+                className="font-display absolute top-0.5 right-1 text-sm leading-none font-light text-zinc-900 italic"
+              >
+                2
+              </span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setOpen(o => !o)}
+              aria-expanded={open}
+              aria-controls="nav-v3-menu"
+              aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
+              className="mb-1 flex h-11 w-11 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none lg:hidden"
+            >
+              {open ? <X size={19} /> : <Menu size={19} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile disclosure — set like an index column */}

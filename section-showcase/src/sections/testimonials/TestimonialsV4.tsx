@@ -1,33 +1,42 @@
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 
+/**
+ * Moving Voices — two slowly drifting rows of guest voices. Deliberately
+ * calm (low base velocity): the movement should read like a procession,
+ * not a ticker.
+ */
+
 const testimonials = [
   {
-    name: 'Sarah M.',
-    role: 'Weinsammlerin',
-    content: 'Die Auswahl ist einfach phänomenal. Man merkt, dass hier echte Kenner am Werk sind.',
+    name: 'F. Mairhofer',
+    role: 'Sommelier · Wien',
+    content: 'Der 21er Loibenberg hat unsere Weinkarte neu sortiert.',
   },
   {
-    name: 'Thomas K.',
-    role: 'Sommelier',
-    content: 'Endlich ein Shop, der auch die Geschichten hinter den Winzern erzählt.',
+    name: 'K. Berger',
+    role: 'Stammkundin seit 2009',
+    content: 'Meine Kellerliste hat genau eine Konstante: dieses Haus.',
   },
   {
-    name: 'Julia B.',
-    role: 'Hobby-Genießerin',
-    content: 'Die Lieferung war super schnell und die Verpackung absolut sicher.',
+    name: 'H. & R. Winkler',
+    role: 'Sammler · Salzburg',
+    content: 'Sechs Kisten im Keller, und keine davon wird alt.',
   },
   {
-    name: 'Michael R.',
-    role: 'Restaurantbesitzer',
-    content: 'Beste Qualität zu fairen Preisen. Meine Gäste lieben die neuen Weine.',
+    name: 'M. Fuchs',
+    role: 'Gastgeberin · Loiben',
+    content: 'Die Verkostung im Gewölbe war der stillste Luxus des Jahres.',
   },
   {
-    name: 'Elena G.',
-    role: 'Wein-Bloggerin',
-    content: 'Ein Muss für jeden, der das Besondere sucht. Klare Empfehlung!',
+    name: 'J. Steiner',
+    role: 'Weinhändler · Krems',
+    content: 'Was auf dem Etikett steht, liegt im Glas. Sonst nichts.',
   },
 ]
+
+// Kopie statt reverse() auf dem Original: keine Mutation im Render.
+const reversed = [...testimonials].reverse()
 
 export function TestimonialsV4() {
   return (
@@ -41,30 +50,30 @@ export function TestimonialsV4() {
           </BlurFade>
           <BlurFade delay={200}>
             <p className="font-display text-foreground mt-2 text-4xl font-medium tracking-tight sm:text-5xl">
-              Was unsere Kunden sagen.
+              Was unsere Gäste sagen.
             </p>
           </BlurFade>
         </div>
       </div>
 
       <div className="relative mt-16">
-        <VelocityScroll baseVelocity={-20} rows={1} gap="2rem">
-          {testimonials.map((t, i) => (
-            <TestimonialCard key={i} testimonial={t} className="w-80" />
+        <VelocityScroll baseVelocity={-12} rows={1} gap="2rem">
+          {testimonials.map(t => (
+            <TestimonialCard key={t.name} testimonial={t} className="w-80" />
           ))}
         </VelocityScroll>
-        
+
         <div className="mt-8">
-          <VelocityScroll baseVelocity={20} rows={1} gap="2rem">
-            {testimonials.reverse().map((t, i) => (
-              <TestimonialCard key={i} testimonial={t} className="w-80" />
+          <VelocityScroll baseVelocity={12} rows={1} gap="2rem">
+            {reversed.map(t => (
+              <TestimonialCard key={t.name} testimonial={t} className="w-80" />
             ))}
           </VelocityScroll>
         </div>
 
         {/* Gradient overlays for smooth fade */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-linear-to-r from-background to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-linear-to-l from-background to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-linear-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-linear-to-l from-background to-transparent" />
       </div>
     </section>
   )
