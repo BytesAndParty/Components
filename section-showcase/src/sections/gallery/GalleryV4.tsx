@@ -18,16 +18,6 @@ const NOTE = {
 export function GalleryV4() {
   return (
     <section className="relative overflow-hidden bg-background px-6 py-16 sm:py-32 lg:py-44">
-      {/* Ghost word — outlined serif, drifts behind the collage */}
-      <div aria-hidden="true" className="pointer-events-none absolute top-24 left-1/2 -translate-x-1/2 select-none">
-        <span
-          className="font-display text-[clamp(8rem,26vw,24rem)] leading-none font-light tracking-tight whitespace-nowrap text-transparent italic"
-          style={{ WebkitTextStroke: '1px color-mix(in oklch, var(--foreground) 8%, transparent)' }}
-        >
-          Keller
-        </span>
-      </div>
-
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* Header — asymmetric, pushed left */}
         <header className="mb-24 max-w-xl lg:mb-32">
@@ -47,6 +37,19 @@ export function GalleryV4() {
 
         {/* Collage field — absolute placements on desktop, flow on mobile */}
         <div className="relative flex flex-col gap-16 lg:block lg:min-h-230">
+          {/* Ghost word — outlined serif, drifts behind the collage (not the
+              headline above): centered on this field so it stays clear of
+              the header at any viewport instead of a fixed offset that
+              crossed straight through the h2 on narrow screens. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center select-none">
+            <span
+              className="font-display text-[clamp(8rem,26vw,24rem)] leading-none font-light tracking-tight whitespace-nowrap text-transparent italic"
+              style={{ WebkitTextStroke: '1px color-mix(in oklch, var(--foreground) 8%, transparent)' }}
+            >
+              Keller
+            </span>
+          </div>
+
           {/* Plate 1 — large, slightly rotated left */}
           <figure className="lg:absolute lg:top-0 lg:left-0 lg:w-[46%] lg:-rotate-2">
             <RevealImage
