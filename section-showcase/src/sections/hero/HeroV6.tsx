@@ -25,8 +25,12 @@ export function HeroV6() {
         {/* Layered composition. On desktop the three blocks are absolutely
             positioned and overlap; on mobile they collapse to a flex column,
             where `order` lifts the headline above the photos so the hero's
-            message leads instead of sitting below the fold. */}
-        <div className="relative flex flex-col lg:block lg:min-h-[78vh]">
+            message leads instead of sitting below the fold.
+            min-h: 78vh reicht auf breiten/flachen Screens nicht — die absolute
+            Primärtafel (52% Breite × 5/4 + Caption) wird höher als der Container
+            und die Meta-Row läuft ins Bild. Der min()-Term bildet exakt die
+            Tafelhöhe ab (Container = min(100vw−8rem, 80rem)). */}
+        <div className="relative flex flex-col lg:block lg:min-h-[max(78vh,min(65vw-2.8rem,54.5rem))]">
           {/* Primary plate — anchored right, type will overlap it */}
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[52%]">
             <RevealImage
