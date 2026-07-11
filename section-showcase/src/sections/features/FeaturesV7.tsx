@@ -28,7 +28,7 @@ const NOTES = [
 
 export function FeaturesV7() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-32 lg:px-16 lg:py-44">
+    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-32 lg:px-16 lg:py-44">
       {/* Vertical meta rail — left edge, quiet */}
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">

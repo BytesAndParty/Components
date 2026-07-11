@@ -12,7 +12,7 @@ export function ProductV2({ onBack }: ProductV2Props) {
   const [selectedFormat, setSelectedFormat] = useState('750ml')
 
   return (
-    <section className="relative overflow-hidden bg-[#fdfcf9] px-6 py-32">
+    <section className="relative overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-32">
       {/* Very subtle background texture using AuroraText */}
       <div className="pointer-events-none absolute top-0 right-0 origin-top-right translate-y-20 rotate-90 opacity-[0.03]">
         <AuroraText 

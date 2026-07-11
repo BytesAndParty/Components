@@ -21,7 +21,7 @@ const expertQuotes = [
 
 export function TestimonialsV2() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-24">
           {expertQuotes.map((q, i) => (

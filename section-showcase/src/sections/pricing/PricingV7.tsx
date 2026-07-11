@@ -45,7 +45,7 @@ const PROBEN: Array<{
 
 export function PricingV7() {
   return (
-    <section className="relative overflow-hidden bg-[#0d0a09] px-6 py-28 lg:px-16 lg:py-36">
+    <section className="relative overflow-hidden bg-[#0d0a09] px-6 py-16 sm:py-28 lg:px-16 lg:py-36">
       {/* Dust in the candlelight */}
       <Particles
         particleColors={['#e8d5ae', '#c9a25e']}

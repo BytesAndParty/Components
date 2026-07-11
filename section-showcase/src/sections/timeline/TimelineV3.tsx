@@ -42,7 +42,7 @@ const entries: Entry[] = [
 
 export function TimelineV3() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32 lg:py-44">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32 lg:py-44">
       <div className="mx-auto max-w-6xl">
         {/* Header — asymmetric: label left, intro right */}
         <header className="mb-24 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:gap-24">

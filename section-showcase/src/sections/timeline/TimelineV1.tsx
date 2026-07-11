@@ -26,7 +26,7 @@ const heritageItems = [
 
 export function TimelineV1() {
   return (
-    <section className="bg-background py-24 sm:py-32">
+    <section className="bg-background py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <div>

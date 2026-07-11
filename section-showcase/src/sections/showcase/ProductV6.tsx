@@ -22,7 +22,7 @@ export interface ProductV6Props {
 
 export function ProductV6({ onBack }: ProductV6Props) {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       {/* Vertical meta rail — left edge */}
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">

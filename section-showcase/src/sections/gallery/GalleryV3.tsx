@@ -68,7 +68,7 @@ const plates: Plate[] = [
 
 export function GalleryV3() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32 lg:py-40">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32 lg:py-40">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <header className="mb-24 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-24">

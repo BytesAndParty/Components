@@ -27,7 +27,7 @@ const heritageItems = [
 
 export function TimelineV2() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32">
       <div className="mx-auto max-w-5xl">
         <div className="mb-32 flex flex-col items-center gap-12 text-center">
           <BlurFade delay={100}>

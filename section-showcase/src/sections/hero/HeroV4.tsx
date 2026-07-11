@@ -5,7 +5,7 @@ import { AmbientImage } from '@components/ambient-image/ambient-image'
 
 export function HeroV4() {
   return (
-    <section className="relative flex min-h-[90vh] w-full items-center justify-center overflow-hidden bg-[#fdfcf9] px-6 py-24">
+    <section className="relative flex min-h-[90vh] w-full items-center justify-center overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24">
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-20 lg:grid-cols-[1fr_0.8fr]">
         
         {/* Text Side - Extreme Typography with subtle component polish */}

@@ -16,7 +16,7 @@ export function StoreArtisanal() {
   }
 
   return (
-    <section className="bg-[#fdfcf9] py-24">
+    <section className="bg-[#fdfcf9] py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <BlurFade delay={100} direction="down">

@@ -36,7 +36,7 @@ const RIEDEN = [
 
 export function FeaturesV5() {
   return (
-    <section className="bg-[#f6f3ec] px-6 py-28 lg:px-16 lg:py-36">
+    <section className="bg-[#f6f3ec] px-6 py-16 sm:py-28 lg:px-16 lg:py-36">
       <div className="mx-auto max-w-6xl">
         {/* Header — kicker left, intro right, hairline below */}
         <div className="grid grid-cols-1 gap-8 border-b border-[#ddd5c4] pb-12 lg:grid-cols-2 lg:items-end">

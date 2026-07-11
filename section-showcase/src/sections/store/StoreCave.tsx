@@ -47,7 +47,7 @@ export function StoreCave() {
   const visible = filter === 'alle' ? WINES : WINES.filter(w => w.category === filter)
 
   return (
-    <section className="bg-[#f6f3ec] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="bg-[#f6f3ec] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="border-b border-[#ddd5c4] pb-12">

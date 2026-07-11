@@ -13,7 +13,7 @@ const NAV = [
 
 export function FooterV5() {
   return (
-    <footer className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 pt-24 pb-12 text-zinc-900 lg:px-16 lg:pt-32">
+    <footer className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 pt-16 sm:pt-24 pb-12 text-zinc-900 lg:px-16 lg:pt-32">
       <div className="mx-auto max-w-7xl">
         {/* Masthead row */}
         <div className="flex items-baseline justify-between border-b border-zinc-200 pb-8">

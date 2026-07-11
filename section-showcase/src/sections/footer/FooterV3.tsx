@@ -5,7 +5,7 @@
 export function FooterV3() {
   return (
     <footer className="relative overflow-hidden bg-zinc-950 text-zinc-200">
-      <div className="mx-auto flex max-w-7xl flex-col gap-24 px-6 pt-32 pb-10 lg:px-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-24 px-6 pt-16 sm:pt-32 pb-10 lg:px-10">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.4em] text-zinc-500 uppercase">

@@ -23,7 +23,7 @@ export interface ProductV3Props {
 
 export function ProductV3({ onBack }: ProductV3Props) {
   return (
-    <section className="bg-[#efece5] px-4 py-24 sm:px-8 lg:py-36">
+    <section className="bg-[#efece5] px-4 py-16 sm:px-8 sm:py-24 lg:py-36">
       {onBack && (
         <BlurFade delay={50} direction="down" className="mx-auto mb-8 max-w-6xl px-2">
           <button

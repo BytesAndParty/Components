@@ -8,7 +8,7 @@ import { ShinyText } from '@components/shiny-text/shiny-text'
  */
 export function CTAV4() {
   return (
-    <section className="bg-[#f6f3ec] px-6 py-28 lg:px-16 lg:py-36">
+    <section className="bg-[#f6f3ec] px-6 py-16 sm:py-28 lg:px-16 lg:py-36">
       <div className="mx-auto max-w-3xl">
         <BlurFade delay={100} direction="up">
           {/* Outer frame + inner hairline = letterpress double rule */}

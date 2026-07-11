@@ -31,7 +31,7 @@ const PLATES = [
 
 export function GalleryV6() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="relative mx-auto max-w-7xl">
         {/* Header row */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">

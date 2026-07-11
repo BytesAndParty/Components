@@ -35,7 +35,7 @@ export function ProductV4({ onBack }: ProductV4Props) {
   const [selectedFormat, setSelectedFormat] = useState('0,75 l')
 
   return (
-    <section className="relative overflow-hidden bg-[#f6f3ec] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative overflow-hidden bg-[#f6f3ec] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="relative z-10 mx-auto max-w-7xl">
         {onBack && (
           <BlurFade delay={50} direction="down" className="mb-14">

@@ -23,7 +23,7 @@ const wineClubOptions = [
 
 export function PricingV2() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-24 lg:grid-cols-[1fr_0.7fr]">
           

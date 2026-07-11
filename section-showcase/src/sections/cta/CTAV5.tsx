@@ -9,7 +9,7 @@ import { RevealImage } from '@components/reveal-image/reveal-image'
  */
 export function CTAV5() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="relative mx-auto max-w-7xl">
         {/* Layered composition — plate hangs right-low, headline overlaps */}
         <div className="relative flex flex-col lg:block lg:min-h-176">

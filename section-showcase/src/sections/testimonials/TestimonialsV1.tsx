@@ -35,7 +35,7 @@ const VOICES = [
 
 export function TestimonialsV1() {
   return (
-    <section className="bg-background py-24 sm:py-32">
+    <section className="bg-background py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <BlurFade delay={100}>

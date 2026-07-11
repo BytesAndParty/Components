@@ -17,7 +17,7 @@ const NOTE = {
 
 export function GalleryV4() {
   return (
-    <section className="relative overflow-hidden bg-background px-6 py-32 lg:py-44">
+    <section className="relative overflow-hidden bg-background px-6 py-16 sm:py-32 lg:py-44">
       {/* Ghost word — outlined serif, drifts behind the collage */}
       <div aria-hidden="true" className="pointer-events-none absolute top-24 left-1/2 -translate-x-1/2 select-none">
         <span

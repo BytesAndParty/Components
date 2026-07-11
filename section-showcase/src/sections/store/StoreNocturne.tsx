@@ -61,7 +61,7 @@ export function StoreNocturne() {
   }
 
   return (
-    <section className="bg-[#0d0a09] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="bg-[#0d0a09] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">

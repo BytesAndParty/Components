@@ -35,7 +35,7 @@ const COLUMNS = [
 
 export function FooterV4() {
   return (
-    <footer className="bg-[#2c1119] px-6 pt-24 pb-10 text-[#efe6da] lg:px-16 lg:pt-32">
+    <footer className="bg-[#2c1119] px-6 pt-16 sm:pt-24 pb-10 text-[#efe6da] lg:px-16 lg:pt-32">
       <div className="mx-auto max-w-6xl">
         {/* Wordmark */}
         <BlurFade delay={100} direction="up">
@@ -104,7 +104,7 @@ export function FooterV4() {
                 <a
                   key={label}
                   href={`/${label.toLowerCase()}`}
-                  className="min-h-8 text-[10px] font-bold tracking-[0.25em] text-[#c4a5ab] uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-[#d9b98f]/70 focus-visible:outline-none"
+                  className="inline-flex min-h-11 items-center px-1 text-[10px] font-bold tracking-[0.25em] text-[#c4a5ab] uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-[#d9b98f]/70 focus-visible:outline-none"
                 >
                   {label}
                 </a>

@@ -28,7 +28,7 @@ export function ProductV5({ onBack }: ProductV5Props) {
   const [selectedFormat, setSelectedFormat] = useState('0,75 l')
 
   return (
-    <section className="relative overflow-hidden bg-[#0d0a09] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative overflow-hidden bg-[#0d0a09] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       {/* Ghost vintage behind everything */}
       <span
         aria-hidden="true"

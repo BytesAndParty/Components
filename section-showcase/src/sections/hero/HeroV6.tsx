@@ -11,7 +11,7 @@ import { RevealImage } from '@components/reveal-image/reveal-image'
  */
 export function HeroV6() {
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-[#fdfcf9] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative min-h-screen w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       {/* Vertical meta rail — left edge, desktop only */}
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">
@@ -46,8 +46,12 @@ export function HeroV6() {
             </BlurFade>
           </div>
 
-          {/* Secondary plate — hangs lower-left, overlapping the primary */}
-          <div className="mt-10 w-2/3 max-w-75 lg:absolute lg:bottom-0 lg:left-[44%] lg:z-20 lg:mt-0 lg:w-[22%] lg:max-w-none">
+          {/* Secondary plate — hangs lower-left, overlapping the primary.
+              Mobile keeps the same overlap relationship as desktop (just
+              smaller + margin-based instead of absolute), so the layered
+              magazine feel survives the column collapse instead of falling
+              back to two plain stacked rectangles. */}
+          <div className="relative z-10 -mt-55 ml-6 w-[38%] max-w-40 lg:absolute lg:bottom-0 lg:left-[44%] lg:z-20 lg:mt-0 lg:ml-0 lg:w-[22%] lg:max-w-none">
             <RevealImage
               src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=900&q=80"
               alt="Rebzeilen im Morgennebel"

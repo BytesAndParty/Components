@@ -52,7 +52,7 @@ const TIERS = [
 
 export function PricingV4() {
   return (
-    <section className="bg-[#f6f3ec] px-6 py-28 lg:px-16 lg:py-36">
+    <section className="bg-[#f6f3ec] px-6 py-16 sm:py-28 lg:px-16 lg:py-36">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">

@@ -33,7 +33,7 @@ const supporting = [
 
 export function TestimonialsV3() {
   return (
-    <section className="bg-[#fdfcf9] px-6 py-32 lg:py-40">
+    <section className="bg-[#fdfcf9] px-6 py-16 sm:py-32 lg:py-40">
       <div className="mx-auto max-w-6xl">
         {/* Section header */}
         <header className="mb-20 flex flex-col items-center gap-6 text-center">

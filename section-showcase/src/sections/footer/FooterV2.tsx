@@ -5,7 +5,7 @@
 export function FooterV2() {
   return (
     <footer className="bg-background text-foreground">
-      <div className="mx-auto max-w-7xl px-6 pt-24 pb-12 lg:px-10">
+      <div className="mx-auto max-w-7xl px-6 pt-16 sm:pt-24 pb-12 lg:px-10">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1.2fr_0.9fr_0.9fr]">
           <div className="flex flex-col gap-8">
             <span className="text-[10px] font-bold tracking-[0.4em] text-muted-foreground uppercase">

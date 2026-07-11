@@ -53,7 +53,7 @@ const INCLUDED = [
 
 export function PricingV6() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-24 lg:px-16 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-[#fdfcf9] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       {/* Vertical meta rail — right edge */}
       <div className="absolute top-1/2 right-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="left">

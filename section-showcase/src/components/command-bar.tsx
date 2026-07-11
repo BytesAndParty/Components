@@ -15,10 +15,15 @@ import {
 import { encodeComposition } from '../composition-url'
 import { CompositionTray } from './composition-tray'
 
-// Reserved view-transition-names keep the floating bar (and its hidden-state
-// toggle) out of the document-level root crossfade when a variant slide runs.
+// Reserved view-transition-names keep the floating chrome (bar, hidden-state
+// toggle, and their mobile equivalents) out of the document-level root
+// crossfade when a variant slide runs — otherwise they get swept into the
+// root snapshot and visibly blip out during the transition.
 const PIN_BAR_STYLE = { viewTransitionName: 'showcase-command-bar' } as CSSProperties
 const PIN_HIDDEN_TOGGLE_STYLE = { viewTransitionName: 'showcase-command-bar-toggle' } as CSSProperties
+const PIN_MOBILE_LAUNCHER_STYLE = { viewTransitionName: 'showcase-command-bar-mobile-launcher' } as CSSProperties
+const PIN_MOBILE_SCRIM_STYLE = { viewTransitionName: 'showcase-command-bar-mobile-scrim' } as CSSProperties
+const PIN_MOBILE_PANEL_STYLE = { viewTransitionName: 'showcase-command-bar-mobile-panel' } as CSSProperties
 
 interface DragOffset { x: number; y: number }
 
@@ -481,6 +486,7 @@ export function CommandBar() {
           type="button"
           onClick={() => setPanelOpen(true)}
           aria-label="Showcase-Steuerung öffnen"
+          style={PIN_MOBILE_LAUNCHER_STYLE}
           className="border-border bg-elevated text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 focus-visible:ring-2 focus-visible:outline-none"
         >
           <SlidersHorizontal size={18} />
@@ -502,6 +508,7 @@ export function CommandBar() {
               exit={{ opacity: 0 }}
               transition={{ duration: reduceMotion ? 0 : 0.2 }}
               onClick={() => setPanelOpen(false)}
+              style={PIN_MOBILE_SCRIM_STYLE}
               className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
               aria-hidden
             />
@@ -514,6 +521,7 @@ export function CommandBar() {
               animate={reduceMotion ? { opacity: 1 } : { x: 0 }}
               exit={reduceMotion ? { opacity: 0 } : { x: '100%' }}
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 34 }}
+              style={PIN_MOBILE_PANEL_STYLE}
               className="border-border bg-elevated fixed inset-y-0 right-0 z-50 flex w-[min(86vw,340px)] flex-col overflow-y-auto border-l shadow-2xl shadow-black/40"
             >
               <div className="border-border bg-elevated sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
@@ -529,6 +537,29 @@ export function CommandBar() {
               </div>
 
               <div className="flex flex-col gap-6 p-4">
+                {section && (
+                  <div>
+                    {/* Variants */}
+                    <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Variante</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {section.variants.map((v, idx) => {
+                        const active = showcase.variantId === v.id
+                        return (
+                          <button
+                            key={v.id}
+                            type="button"
+                            onClick={() => switchVariant(v.id, idx - variantIdx)}
+                            aria-pressed={active}
+                            className={`inline-flex min-h-11 items-center rounded-lg border px-3 text-xs transition-colors ${active ? 'border-accent bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                          >
+                            {v.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Section */}
                 <div>
                   <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Section</p>
@@ -562,27 +593,6 @@ export function CommandBar() {
 
                 {section && (
                   <>
-                    {/* Variants */}
-                    <div>
-                      <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Variante</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {section.variants.map((v, idx) => {
-                          const active = showcase.variantId === v.id
-                          return (
-                            <button
-                              key={v.id}
-                              type="button"
-                              onClick={() => switchVariant(v.id, idx - variantIdx)}
-                              aria-pressed={active}
-                              className={`inline-flex min-h-11 items-center rounded-lg border px-3 text-xs transition-colors ${active ? 'border-accent bg-foreground text-background' : 'border-border text-muted-foreground hover:text-foreground'}`}
-                            >
-                              {v.label}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-
                     {/* View mode */}
                     <div>
                       <p className="text-muted-foreground/70 mb-2 text-[10px] font-medium tracking-wider uppercase">Ansicht</p>

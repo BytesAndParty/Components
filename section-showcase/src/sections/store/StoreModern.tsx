@@ -16,7 +16,7 @@ export function StoreModern() {
   }
 
   return (
-    <section className="bg-background py-24 transition-colors duration-500">
+    <section className="bg-background py-16 sm:py-24 transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <BlurFade delay={100} direction="down">
