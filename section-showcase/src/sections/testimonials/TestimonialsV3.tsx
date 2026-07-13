@@ -13,21 +13,21 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 
 const lead = {
   body:
-    'Was die Lacombes machen, ist die seltene Disziplin, nichts hinzuzufügen. Kein Holzeinsatz, der schreit. Keine Säure, die gestellt wirkt. Nur Wein, der von seinem Hang erzählt — leise, präzise und mit einer Klarheit, die im Jahrgang 2018 ihre bisher schönste Form gefunden hat.',
-  attribution: 'Marc-André Leclerc',
-  role: 'Chef Sommelier · Le Bristol',
+    'Man kann Terroir behaupten, oder man kann es schmecken. Hier braucht es kein Adjektiv: der Urgestein-Hang steht im Glas — vom ersten Zug bis in einen Abgang, der seine Minuten nicht als Werbung meint, sondern als Selbstverständlichkeit.',
+  attribution: 'Dr. Anna Moser',
+  role: 'Weinakademikerin · Decanter',
 }
 
 const supporting = [
   {
-    body: 'Eine konsistente Handschrift über vier Jahrgänge. Die Bio-Wende von 1988 spürt man heute in jeder Nuance.',
-    attribution: 'Elena Rossi',
-    role: 'Weinkritikerin · Decanter',
+    body: 'Wir führen dreißig österreichische Winzer. Diesen einen erklären wir den Gästen nicht — er erklärt sich selbst.',
+    attribution: 'Restaurant Hofer',
+    role: 'Krems an der Donau',
   },
   {
-    body: 'Der Millésime Club bringt mir Raritäten ins Haus, die ich auf dem Markt nicht mehr finde.',
-    attribution: 'Julian Schmidt',
-    role: 'Sammler & Connaisseur',
+    body: 'Was auf dem Etikett steht, liegt im Glas. In dieser Branche grenzt das an eine Provokation.',
+    attribution: 'Josef Steiner',
+    role: 'Weinhändler · Krems',
   },
 ]
 

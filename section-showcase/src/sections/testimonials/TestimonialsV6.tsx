@@ -26,7 +26,7 @@ export function TestimonialsV6() {
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[42%]">
             <RevealImage
               src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80"
-              alt="Weinberge, in denen die zitierte Sommelière zu Gast war"
+              alt="Terrassenweingärten, aus denen die zitierten Flaschen stammen"
               direction="up"
               duration={1500}
               className="aspect-3/4 w-full"
@@ -45,23 +45,23 @@ export function TestimonialsV6() {
           <div className="relative z-10 order-first mt-0 mb-12 flex flex-col gap-9 lg:absolute lg:top-[8%] lg:left-0 lg:order-0 lg:mb-0 lg:max-w-[64%]">
             <BlurFade delay={150} direction="up">
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-                Stimmen · Aus dem Gästebuch
+                Stimmen · Aus aller Welt
               </span>
             </BlurFade>
 
             <BlurFade delay={300} direction="up">
               <blockquote>
                 <p className="font-display text-[clamp(2.5rem,6vw,5rem)] leading-[1.02] font-light tracking-tighter text-zinc-900">
-                  „Man schmeckt, dass
+                  „Sechs Flaschen
                   <br />
-                  hier <span className="italic">niemand</span> in
+                  waren der <span className="italic">Grund</span>,
                   <br />
-                  Eile <span className="italic">ist.“</span>
+                  nicht der <span className="italic">Anfang.“</span>
                 </p>
                 <footer className="mt-8">
-                  <p className="font-display text-lg font-light text-zinc-900 italic">Marie Aubert</p>
+                  <p className="font-display text-lg font-light text-zinc-900 italic">Kenji Tanaka</p>
                   <p className="mt-1 text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-                    Sommelière · Restaurant Steirereck, Wien
+                    Importeur · Tokio
                   </p>
                 </footer>
               </blockquote>
@@ -74,12 +74,12 @@ export function TestimonialsV6() {
           <BlurFade delay={600} direction="up">
             <blockquote className="max-w-md">
               <p className="font-display text-xl leading-relaxed font-light text-zinc-600 italic">
-                „96 Punkte — und die stille Gewissheit, dass dieses Haus auch
-                ohne uns Kritiker genau so weitermachen würde.“
+                „Vier Kisten im Keller, und keine wird alt. Nicht weil sie
+                nicht dürften — sie kommen nur nie so weit.“
               </p>
               <footer className="mt-5 flex items-baseline justify-between">
                 <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-                  Falstaff Magazin
+                  H. &amp; R. Winkler · Salzburg
                 </span>
                 <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-300 uppercase">
                   Fig. 02
@@ -90,12 +90,12 @@ export function TestimonialsV6() {
           <BlurFade delay={750} direction="up">
             <blockquote className="max-w-md">
               <p className="font-display text-xl leading-relaxed font-light text-zinc-600 italic">
-                „Der Steinriegl hat an unserem Hochzeitstisch mehr Gesprächsstoff
-                geliefert als die Verwandtschaft.“
+                „Die Verkostung im Gewölbe war der stillste Luxus des Jahres.
+                Kein Wort zu viel, kein Wein zu wenig.“
               </p>
               <footer className="mt-5 flex items-baseline justify-between">
                 <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-                  Familie Leitner · Cercle seit 2016
+                  Margit Fuchs · Loiben
                 </span>
                 <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-300 uppercase">
                   Fig. 03

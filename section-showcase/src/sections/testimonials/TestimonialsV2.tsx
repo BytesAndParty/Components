@@ -3,19 +3,19 @@ import { ShinyText } from '@components/shiny-text/shiny-text'
 
 const expertQuotes = [
   {
-    name: 'Marc-André Leclerc',
-    role: 'Chef Sommelier, Le Bristol',
-    content: 'Die Selektion Lacombe ist ein Paradebeispiel für Terroir-Treue. Ein Muss für jeden Weinkeller, der auf Qualität statt Masse setzt.',
+    name: 'Florian Mairhofer',
+    role: 'Sommelier · Wien',
+    content: 'Der 21er Loibenberg hat unsere Weinkarte neu sortiert — und zwei Kellner zu Winzern gemacht.',
   },
   {
-    name: 'Elena Rossi',
-    role: 'Weinkritikerin',
-    content: 'Selten habe ich eine so konsistente Qualität über verschiedene Jahrgänge hinweg erlebt. Die Bio-Wende 1988 spürt man in jeder Nuance.',
+    name: 'Céline Blanchard',
+    role: 'La Revue du Vin',
+    content: 'Österreich exportiert Präzision. Dieses Haus exportiert Geduld — die seltenere Ware.',
   },
   {
-    name: 'Julian Schmidt',
-    role: 'Sammler & Connaisseur',
-    content: 'Der Millésime Club ist mein Highlight des Monats. Die Raritäten, die man hier bekommt, sind auf dem freien Markt kaum zu finden.',
+    name: 'Katharina Berger',
+    role: 'Stammkundin seit 2009',
+    content: 'Meine Kellerliste hat genau eine Konstante. Alles andere kommt und geht.',
   },
 ]
 
