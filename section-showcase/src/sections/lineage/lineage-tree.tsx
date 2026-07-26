@@ -16,38 +16,71 @@ import {
   type GrapeNode,
 } from './lineage-data'
 
-// ── Layout-Geometrie: Ahnentafel-Pyramide (breite Urreben oben) ─────────────
+// ── Layout-Geometrie: kuratierte, organische Komposition (bewusst KEINE Zeilen) ─
+// Zwei Äste — weiße Sorten links, rote rechts —, die PIWI-Neuzüchtungen unten
+// rechts, die Uhudler-Direktträger als eigener Cluster unten links. Die Positionen
+// sind Knoten-ZENTREN im Roh-Raum; nodeX/nodeTop normalisieren sie in die Bühne
+// (linke/obere Kante = PAD). row/col bleiben nur für Tastatur-Nav & Listen-Gruppen.
 
-const NODE_W = 200
+const NODE_W = 176
 const NODE_H = 72
-const COL_W = 224
-const ROW_H = 188
-const TOP = 56
-const PADX = 48
-const PADY = 60
+const PAD = 64
 
-const MAX_ROW = Math.max(...LINEAGE.map(n => n.row))
-const MAX_COL = Math.max(...LINEAGE.map(n => n.col))
-const CONTENT_W = PADX * 2 + (MAX_COL + 1) * COL_W
-const CONTENT_H = TOP + MAX_ROW * ROW_H + NODE_H + PADY
+const POS: Record<string, { x: number; y: number }> = {
+  // Urreben — weiß (oben links)
+  traminer: { x: 230, y: 90 },
+  'roter-veltliner': { x: 470, y: 120 },
+  silvaner: { x: 120, y: 250 },
+  'sankt-georgen': { x: 640, y: 90 },
+  // Urreben — rot (oben rechts)
+  blaufraenkisch: { x: 900, y: 100 },
+  'sankt-laurent': { x: 1130, y: 140 },
+  'blauer-portugieser': { x: 1320, y: 100 },
+  // Kreuzungen — weiß (Mitte links)
+  neuburger: { x: 120, y: 440 },
+  rotgipfler: { x: 340, y: 400 },
+  zierfandel: { x: 510, y: 520 },
+  'gruener-veltliner': { x: 690, y: 420 },
+  // Kreuzungen — rot (Mitte rechts) + Brücke
+  zweigelt: { x: 940, y: 400 },
+  blauburger: { x: 1150, y: 450 },
+  'seyve-villard': { x: 1360, y: 440 },
+  // PIWI-Neuzüchtungen (unten rechts)
+  roesler: { x: 980, y: 650 },
+  rathay: { x: 1190, y: 680 },
+  // Uhudler-Direktträger — eigener Cluster (unten links)
+  isabella: { x: 170, y: 630 },
+  concord: { x: 400, y: 620 },
+  elvira: { x: 210, y: 750 },
+  noah: { x: 440, y: 740 },
+}
+
+const RMINX = Math.min(...LINEAGE.map(n => POS[n.id].x))
+const RMINY = Math.min(...LINEAGE.map(n => POS[n.id].y))
+const OFFX = PAD + NODE_W / 2 - RMINX
+const OFFY = PAD + NODE_H / 2 - RMINY
 
 function nodeX(n: GrapeNode) {
-  return PADX + n.col * COL_W + COL_W / 2
+  return POS[n.id].x + OFFX
 }
 function nodeTop(n: GrapeNode) {
-  return TOP + n.row * ROW_H
+  return POS[n.id].y + OFFY - NODE_H / 2
 }
 
-/** Umrandung der Uhudler-Direktträger (eigener Stamm, Zeile 3). Seyve-Villard
- *  ist zwar auch Direktträger, lebt aber als „Brücke" in der Kreuzungs-Zeile und
- *  gehört NICHT in diese Box (sonst spannt sie über den halben Baum). */
+const CONTENT_W = Math.max(...LINEAGE.map(nodeX)) + NODE_W / 2 + PAD
+const CONTENT_H = Math.max(...LINEAGE.map(n => nodeTop(n) + NODE_H)) + PAD
+
+/** Umrandung der Uhudler-Direktträger (eigener Cluster). Seyve-Villard ist zwar
+ *  auch Direktträger, lebt aber als „Brücke" bei den Kreuzungen und gehört NICHT
+ *  in diese Box. */
 const UHUDLER = LINEAGE.filter(n => n.family === 'direkttraeger' && n.row === 3)
 const U_PAD = 26
+const U_LABEL_H = 24
 const UHUDLER_BOX = {
   x: Math.min(...UHUDLER.map(nodeX)) - NODE_W / 2 - U_PAD,
-  y: Math.min(...UHUDLER.map(nodeTop)) - U_PAD - 22,
+  y: Math.min(...UHUDLER.map(nodeTop)) - U_PAD - U_LABEL_H,
   w: Math.max(...UHUDLER.map(nodeX)) - Math.min(...UHUDLER.map(nodeX)) + NODE_W + U_PAD * 2,
-  h: NODE_H + U_PAD * 2 + 22,
+  h: Math.max(...UHUDLER.map(n => nodeTop(n) + NODE_H)) - Math.min(...UHUDLER.map(nodeTop)) + U_PAD * 2 + U_LABEL_H,
 }
 
 /** Ids je Zeile, in Spaltenreihenfolge — Grundlage der ←/→-Navigation. */
@@ -77,8 +110,16 @@ function clamp(v: number, min: number, max: number) {
 }
 
 function fitTransform(s: Size): Transform {
-  const scale = Math.min(s.w / CONTENT_W, s.h / CONTENT_H) * 0.92
-  return { scale, x: (s.w - CONTENT_W * scale) / 2, y: (s.h - CONTENT_H * scale) / 2 }
+  // Sichere Zonen: oben die Section-Headline, unten die (Showcase-)Command-Bar.
+  const TOP_SAFE = 136
+  const BOTTOM_SAFE = 88
+  const availH = Math.max(s.h - TOP_SAFE - BOTTOM_SAFE, 240)
+  const scale = Math.min(s.w / CONTENT_W, availH / CONTENT_H) * 0.96
+  return {
+    scale,
+    x: (s.w - CONTENT_W * scale) / 2,
+    y: TOP_SAFE + (availH - CONTENT_H * scale) / 2,
+  }
 }
 
 function focusTransform(node: GrapeNode, s: Size, panelW: number): Transform {
@@ -148,28 +189,17 @@ function GrapeCluster({ x, y, r = 7 }: { x: number; y: number; r?: number }) {
 
 function VineBackdrop() {
   return (
-    <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid slice" style={{ color: 'var(--foreground)', opacity: 0.05 }}>
-      <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round">
+    <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid slice" style={{ color: 'var(--foreground)', opacity: 0.035 }}>
+      <g fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
         <path d="M500,720 C 470,600 540,540 500,440 C 470,360 560,300 520,205 C 500,150 500,105 505,36" />
         <path d="M508,470 C 380,450 300,410 200,342 C 150,307 120,270 95,232" />
         <path d="M500,412 C 640,397 720,352 800,292 C 850,254 880,217 905,182" />
-        <path d="M514,300 C 430,285 370,255 300,206" />
-        <path d="M512,242 C 610,227 670,197 730,152" />
         <path d="M95,232 c -22,-8 -34,-28 -14,-42" />
         <path d="M905,182 c 22,-10 36,-28 16,-44" />
-        <path d="M300,206 c -18,-14 -22,-34 0,-42" />
       </g>
       <g fill="currentColor">
-        <GrapeCluster x={200} y={346} r={8} />
-        <GrapeCluster x={800} y={296} r={8} />
-        <GrapeCluster x={300} y={210} r={7} />
-        <GrapeCluster x={730} y={156} r={7} />
         <GrapeCluster x={505} y={58} r={7} />
-      </g>
-      <g fill="currentColor" opacity="0.7">
-        <ellipse cx="250" cy="382" rx="26" ry="14" transform="rotate(-28 250 382)" />
-        <ellipse cx="760" cy="332" rx="26" ry="14" transform="rotate(28 760 332)" />
-        <ellipse cx="432" cy="300" rx="22" ry="12" transform="rotate(-15 432 300)" />
+        <GrapeCluster x={200} y={346} r={7} />
       </g>
     </svg>
   )
@@ -587,8 +617,9 @@ export function LineageTree({ className }: { className?: string }) {
               const y1 = nodeTop(a) + NODE_H
               const x2 = nodeX(b)
               const y2 = nodeTop(b)
-              const midY = y2 - 30
-              const d = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`
+              // Geschwungene Ranken-Kante (vertikale Tangenten) statt eckiger Klammer.
+              const k = Math.max(36, Math.abs(y2 - y1) * 0.55)
+              const d = `M ${x1} ${y1} C ${x1} ${y1 + k}, ${x2} ${y2 - k}, ${x2} ${y2}`
               const lit = edgeLit(e.from, e.to)
               const dim = !!selectedId && !lit
               return (
@@ -596,10 +627,11 @@ export function LineageTree({ className }: { className?: string }) {
                   key={`${e.from}-${e.to}`}
                   d={d}
                   fill="none"
-                  stroke={lit ? 'var(--accent)' : 'var(--border)'}
-                  strokeWidth={lit ? 2.2 : 1.3}
-                  strokeDasharray={e.primary ? undefined : '4 6'}
-                  style={{ opacity: dim ? 0.18 : lit ? 1 : 0.6, transition: reduce ? undefined : 'opacity 300ms, stroke 300ms' }}
+                  stroke={lit ? 'var(--accent)' : 'color-mix(in oklch, var(--foreground) 22%, transparent)'}
+                  strokeWidth={lit ? 2.4 : 1.3}
+                  strokeLinecap="round"
+                  strokeDasharray={e.primary ? undefined : '3 7'}
+                  style={{ opacity: dim ? 0.12 : lit ? 1 : 0.7, transition: reduce ? undefined : 'opacity 300ms, stroke 300ms' }}
                 />
               )
             })}
@@ -645,7 +677,7 @@ export function LineageTree({ className }: { className?: string }) {
                 }}
               >
                 {/* Farb-Kante: rot/weiß als Wein-Codierung (Wachs-Siegel-Ton) */}
-                <span aria-hidden="true" className="w-[3px] shrink-0" style={{ background: n.color === 'red' ? redInk : whiteInk }} />
+                <span aria-hidden="true" className="w-0.75 shrink-0" style={{ background: n.color === 'red' ? redInk : whiteInk }} />
                 <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-1.5">
                   <span className="font-display text-[15px] leading-[1.05] font-normal text-foreground">{n.name}</span>
                   <span className="text-[9px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
