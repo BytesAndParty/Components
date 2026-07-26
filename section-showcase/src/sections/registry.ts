@@ -8,6 +8,7 @@ import { pricingSection } from './pricing/manifest'
 import { timelineSection } from './timeline/manifest'
 import { testimonialsSection } from './testimonials/manifest'
 import { gallerySection } from './gallery/manifest'
+import { lineageSection } from './lineage/manifest'
 import { footerSection } from './footer/manifest'
 import type { SectionDef } from './types'
 
@@ -26,6 +27,7 @@ export const sections: SectionDef[] = [
   timelineSection,
   testimonialsSection,
   gallerySection,
+  lineageSection,
   footerSection,
 ]
 
