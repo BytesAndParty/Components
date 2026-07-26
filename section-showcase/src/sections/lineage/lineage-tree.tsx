@@ -80,10 +80,18 @@ function fitTransform(s: Size): Transform {
 }
 
 function focusTransform(node: GrapeNode, s: Size, panelW: number): Transform {
-  const scale = clamp(Math.min(s.w, s.h) / 520, 0.9, 1.5)
-  const cx = nodeX(node)
-  const cy = nodeTop(node) + NODE_H / 2
-  return { scale, x: (s.w - panelW) / 2 - cx * scale, y: s.h / 2 - cy * scale }
+  // Framing: die Rebe UND ihre direkten Eltern (die sichtbare Verwandtschaft),
+  // zentriert im freien Bereich links neben dem Detail-Panel.
+  const kin = [node, ...node.parents.map(p => nodeById(p)).filter((n): n is GrapeNode => !!n)]
+  const minX = Math.min(...kin.map(nodeX)) - NODE_W / 2
+  const maxX = Math.max(...kin.map(nodeX)) + NODE_W / 2
+  const minY = Math.min(...kin.map(nodeTop))
+  const maxY = Math.max(...kin.map(n => nodeTop(n) + NODE_H))
+  const availW = Math.max(s.w - panelW, 320)
+  const scale = clamp(Math.min(availW / (maxX - minX), s.h / (maxY - minY)) * 0.7, 0.75, 1.3)
+  const cx = (minX + maxX) / 2
+  const cy = (minY + maxY) / 2
+  return { scale, x: availW / 2 - cx * scale, y: s.h / 2 - cy * scale }
 }
 
 // ── Kleine Helfer ────────────────────────────────────────────────────────────
@@ -484,12 +492,13 @@ export function LineageTree({ className }: { className?: string }) {
   const ready = size.w > 0 && size.h > 0
   const selected = selectedId ? nodeById(selectedId) ?? null : null
   const panelOpen = !!selected && size.w >= 1024
-  const target = selected ? focusTransform(selected, size, panelOpen ? 380 : 0) : fitTransform(size)
+  const target = selected ? focusTransform(selected, size, panelOpen ? 400 : 0) : fitTransform(size)
   const ancestors = selectedId ? ancestorsOf(selectedId) : EMPTY
   const onPath = (id: string) => !selectedId || id === selectedId || ancestors.has(id)
   const edgeLit = (from: string, to: string) => !!selectedId && (to === selectedId || ancestors.has(to)) && ancestors.has(from)
 
-  const spring = reduce ? { duration: 0 } : { type: 'spring' as const, stiffness: 150, damping: 24 }
+  // Weiche, lange Kamerafahrt (Maison-Default-Spring); Reduced-Motion springt hart.
+  const spring = reduce ? { duration: 0 } : { type: 'spring' as const, stiffness: 150, damping: 20 }
 
   function selectNode(id: string) {
     // Erstauswahl aus dem Überblick = History-Push (ein Browser-Zurück zoomt
@@ -541,6 +550,17 @@ export function LineageTree({ className }: { className?: string }) {
       <div aria-hidden="true" className="absolute inset-0 z-0">
         <VineBackdrop />
       </div>
+
+      {/* Recede-Scrim: im Fokus tritt der Hintergrund sanft zurück, damit die
+          herangezoomte Rebe + ihr Ahnen-Pfad Tiefe bekommen. Theme-aware. */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{ zIndex: 15, background: 'var(--background)' }}
+        initial={false}
+        animate={{ opacity: selectedId ? 0.5 : 0 }}
+        transition={reduce ? { duration: 0 } : { duration: 0.45, ease: 'easeOut' }}
+      />
 
       {/* Klick auf freie Fläche zoomt raus (Maus; per Tastatur Escape). */}
       <button type="button" aria-hidden="true" tabIndex={-1} onClick={goToOverview} className="absolute inset-0 z-10 cursor-default" />
