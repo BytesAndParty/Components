@@ -1,51 +1,64 @@
 # Stammbaum — Rebsorten-Lineage (Section)
 
-Ein „Stammbaum" der Weinreben statt Menschen als **chronologische, vertikale Zeitachse**:
-oben die uralten Urreben, nach unten durch die Epochen bis zu den PIWI-Neuzüchtungen —
-man **scrollt durch die Zeit**. Schmal & hoch statt breit. Genealogie ist chronologisch:
-Kinder erscheinen immer unter ihren Eltern.
+Ein „Stammbaum" der Weinreben statt Menschen — als **organische Ampelographie-Tafel
+auf einer Zoom-Bühne**. Der Überblick zeigt die ganze Verwandtschaft verteilt über die
+Fläche; ein Klick **fährt die Kamera an eine Rebe heran** (Ahnen-Pfad leuchtet auf,
+Detail erscheint), Zurück zoomt an die exakte Ausgangsposition raus.
 
-## Aufbau (Zeitachse, oben alt → unten jung)
+## Komposition (bewusst KEINE Zeilen)
 
-Zeilen = Epochen (linke Achse mit Marker), zwei Familien:
+Die Knoten sind **kuratiert platziert** (`POS` in `lineage-tree.tsx`), nicht in ein
+Zeilen-Grid gezwängt:
 
-- **`vinifera`** — der zusammenhängende Hauptstamm über die Epochen:
-  - *Urreben (uralt):* Traminer (Urahn), Roter Veltliner, Silvaner, St.-Georgen, Blaufränkisch,
-    Sankt Laurent, Blauer Portugieser.
-  - *Alte Naturkreuzungen (vor 1800):* Rotgipfler, Zierfandel, Neuburger, Grüner Veltliner.
-  - *Klosterneuburg (1920er):* Zweigelt, Blauburger.
-  - *PIWI-Neuzüchtungen (1960–70):* Rösler, Rathay.
-- **`direkttraeger`** — die **Uhudler-Direktträger** (Isabella 1816, Concord 1849, Elvira 1863,
-  Noah 1869) + **Seyve-Villard** (um 1930, die Brücke). Amerikanische Hybriden, **nicht** mit dem
-  Traminer verwandt. Seyve-Villard verbindet echt zu Rösler/Rathay (gestrichelte Cross-Family-Kante).
+- **Weißer Ast** (links): Traminer (Urahn), Roter Veltliner, Silvaner, St.-Georgen →
+  Rotgipfler, Zierfandel, Neuburger, Grüner Veltliner.
+- **Roter Ast** (rechts): Blaufränkisch, Sankt Laurent, Blauer Portugieser →
+  Zweigelt, Blauburger → **PIWI** Rösler & Rathay (unten rechts).
+- **Seyve-Villard 18-402** („die Brücke", Direktträger) sitzt bei den Kreuzungen und
+  speist über eine **gestrichelte Cross-Family-Kante** Rösler & Rathay.
+- **Uhudler-Direktträger** (Isabella, Concord, Elvira, Noah) als **eigener Cluster**
+  unten links, mit Hairline-Box umrandet — amerikanische Hybriden, **nicht** mit dem
+  Traminer verwandt.
 
-Layout deterministisch über `row`/`col`; Kanten Eltern(oben)→Kind(unten). Kein Zoom/Pan mehr —
-der Baum ist hoch und **scrollt mit der Seite**.
+Generationstiefe läuft grob oben→unten; Kanten Eltern→Kind als geschwungene
+**Ranken-Kurven** (Bézier). `row`/`col` in den Daten dienen nur noch der
+**Tastatur-Navigation** und den **Listen-Gruppen**, nicht dem Rendering.
+
+## Interaktion (Kamera-Zoom)
+
+- **Überblick:** ganze Komposition in die Bühne gefittet (Safe-Zones für Headline
+  oben und Command-Bar unten).
+- **Heranzoomen:** Klick/Enter auf eine Rebe fährt die Kamera weich heran und framt
+  die Rebe **plus ihre direkten Eltern**; der Ahnen-Pfad leuchtet in Accent, der Rest
+  tritt zurück (Recede-Scrim). Detail-Panel rechts (Desktop).
+- **Zurück:** Browser-Zurück, `Esc`, Klick auf freie Fläche und „← Überblick" zoomen
+  an die **exakte Ausgangsposition** raus. Auswahl aus dem Überblick = History-**Push**
+  (ein Browser-Zurück reicht); Wechsel zwischen Reben = `replace` (Zurück bleibt der
+  Überblick).
 
 ## URL-Deep-Link
 
-- `?rebe=<id>` — gewählte Rebsorte (zoomt/scrollt hin, hebt Ahnen-Pfad hervor, öffnet Detail).
+- `?rebe=<id>` — gewählte Rebsorte (zoomt hin, hebt Ahnen-Pfad hervor, öffnet Detail).
+  Teilbar, z. B. `…/lineage?rebe=rotgipfler`.
 - `?ansicht=liste` — Reader-/Listen-Ansicht statt Baum.
-- Die URL ist die **Quelle der Wahrheit** (`useSearchParams`, `replace`); Links sind teilbar,
-  z. B. `…/lineage?rebe=rotgipfler`.
 
 ## Dateien
 
 | Datei | Rolle |
 |---|---|
-| `lineage-data.ts` | Datensatz (`row`/`col`/`epoch`, `ERAS`) + Typen + Graph-Helfer. Bilder + `BACKGROUND_IMAGE`. **Swappable.** |
-| `lineage-tree.tsx` | Primitiv: Zeitachsen-Layout, SVG-Kanten, Ahnen-Highlight, Keyboard-Nav, sticky Detail-Panel (mit Foto), Reader-Ansicht, URL-State, Hintergrund-Untermalung. |
-| `LineageV1.tsx` | Section-Variante „Espalier": Serif-Kopf + Baum + Kolophon. |
+| `lineage-data.ts` | Datensatz (`row`/`col`/`epoch`/`parents` …) + Typen + Graph-Helfer (`ancestorsOf`, `firstChildOf`). Bilder illustrativ. **Swappable.** |
+| `lineage-tree.tsx` | Primitiv: `POS`-Layout, Bézier-Kanten, Ahnen-Highlight, Kamera-Zoom (`fitTransform`/`focusTransform`), Keyboard-Nav, Detail-Panel, Reader-Ansicht, URL-/History-State, Reben-Wasserzeichen. |
+| `LineageV1.tsx` | Section-Variante „Espalier": Serif-Kopf (blendet im Fokus aus) + Baum + Kolophon. |
 
 ## Accessibility
 
-- Jeder Knoten ein `<button>` mit Roving-Tabindex; ←/→ Nachbarn der Zeile, ↑ Elternteil, ↓ Kind;
-  Enter öffnet, Escape schließt. Fokus scrollt in den sichtbaren Bereich.
-- Rot/Weiß + Epoche stehen immer im `aria-label` (nicht nur im Farbpunkt).
-- `useReducedMotion()` + `motion-reduce:`-Guards; Scroll-Verhalten `auto` statt `smooth`.
+- Jeder Knoten ein `<button>` mit Roving-Tabindex; ←/→ Nachbarn (logische Reihe),
+  ↑ Elternteil, ↓ Kind; Enter zoomt heran, Escape zoomt raus (global registriert).
+- Rot/Weiß + Epoche stehen immer im `aria-label` (nicht nur in der Farbkante).
+- `useReducedMotion()` + `motion-reduce:`-Guards; Kamera springt bei Reduced-Motion hart.
 - Reader-/Listen-Ansicht (Desktop-Toggle & Mobile-Default) als semantische `<ul>`-Outline.
 
 ## Daten-Status
 
-Verwandtschaften ampelographisch belegt (Quellen im Datei-Header). Weine, Preise, Lagen und
-Bilder illustrativ (Kolophon), swappable gegen Vendure/CMS.
+Verwandtschaften ampelographisch belegt (Quellen im Datei-Header). Weine, Preise, Lagen
+und Bilder illustrativ (Kolophon), swappable gegen Vendure/CMS.

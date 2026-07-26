@@ -74,25 +74,13 @@ export const FAMILY_LABEL: Record<GrapeFamily, string> = {
   direkttraeger: 'Direktträger · Uhudler',
 }
 
-/** Reihen-Bänder (Generationen) für optionale Beschriftung. */
-export const ROW_BANDS: { row: number; label: string }[] = [
-  { row: 0, label: 'Urreben' },
-  { row: 1, label: 'Kreuzungen' },
-  { row: 2, label: 'Neuzüchtungen' },
-  { row: 3, label: 'Direktträger · Uhudler' },
-]
-
 // ── Bilder (verifizierte Unsplash-IDs, illustrativ) ─────────────────────────
 const IMG = {
-  cellar: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80',
   barrel: 'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1200&q=80',
   tasting: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1200&q=80',
   bottle: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1200&q=80',
   vine: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=1200&q=80',
 } as const
-
-/** Hintergrund-Untermalung hinter dem Vollbild-Baum. */
-export const BACKGROUND_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=2000&q=80'
 
 // ── Lagen ──────────────────────────────────────────────────────────────────
 const RIED_KRAMER: LageRef = { name: 'Ried Kramer', soil: 'Kalkstein & Dolomit', exposition: 'Südost', elevation: '280 m' }

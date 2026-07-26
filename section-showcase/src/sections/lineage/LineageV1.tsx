@@ -24,7 +24,7 @@ export function LineageV1() {
       {/* Desktop-Kopf — Overlay über der Zoom-Bühne, klick-durchlässig */}
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 top-0 z-30 hidden transition-opacity duration-500 ease-out lg:block',
+          'pointer-events-none absolute inset-x-0 top-0 z-30 hidden transition-opacity duration-500 ease-out motion-reduce:transition-none lg:block',
           focused ? 'opacity-0' : 'opacity-100',
         )}
       >
