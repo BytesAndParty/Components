@@ -19,7 +19,7 @@ import {
 // ── Layout-Geometrie: Ahnentafel-Pyramide (breite Urreben oben) ─────────────
 
 const NODE_W = 200
-const NODE_H = 84
+const NODE_H = 72
 const COL_W = 224
 const ROW_H = 188
 const TOP = 56
@@ -38,8 +38,10 @@ function nodeTop(n: GrapeNode) {
   return TOP + n.row * ROW_H
 }
 
-/** Umrandung der Direktträger-Familie (eigener Stamm). */
-const UHUDLER = LINEAGE.filter(n => n.family === 'direkttraeger')
+/** Umrandung der Uhudler-Direktträger (eigener Stamm, Zeile 3). Seyve-Villard
+ *  ist zwar auch Direktträger, lebt aber als „Brücke" in der Kreuzungs-Zeile und
+ *  gehört NICHT in diese Box (sonst spannt sie über den halben Baum). */
+const UHUDLER = LINEAGE.filter(n => n.family === 'direkttraeger' && n.row === 3)
 const U_PAD = 26
 const UHUDLER_BOX = {
   x: Math.min(...UHUDLER.map(nodeX)) - NODE_W / 2 - U_PAD,
@@ -624,31 +626,31 @@ export function LineageTree({ className }: { className?: string }) {
                 }}
                 onKeyDown={e => onNodeKeyDown(e, n)}
                 className={cn(
-                  'pointer-events-auto absolute flex items-center gap-3 rounded-xl border p-2.5 text-left outline-none',
+                  'pointer-events-auto absolute flex items-stretch overflow-hidden rounded-lg border text-left outline-none',
                   'transition-[opacity,transform,box-shadow,border-color] duration-300 motion-reduce:transition-none',
                   'focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                  isSel ? 'border-accent shadow-[0_24px_60px_-28px_rgba(0,0,0,0.55)]' : 'border-border hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg motion-reduce:hover:translate-y-0',
-                  selectedId && !lit && 'opacity-35',
+                  isSel
+                    ? 'border-accent shadow-[16px_20px_50px_-24px_rgba(0,0,0,0.5)]'
+                    : 'border-border/70 hover:-translate-y-0.5 hover:border-accent/50 motion-reduce:hover:translate-y-0',
+                  selectedId && !lit && 'opacity-30',
                 )}
                 style={{
                   left: nodeX(n) - NODE_W / 2,
                   top: nodeTop(n),
                   width: NODE_W,
                   height: NODE_H,
-                  background: isSel ? 'color-mix(in oklch, var(--accent) 10%, var(--card))' : 'var(--card)',
+                  background: isSel
+                    ? 'color-mix(in oklch, var(--accent) 8%, var(--card))'
+                    : 'color-mix(in oklch, var(--card) 88%, transparent)',
                 }}
               >
-                <img
-                  src={n.image}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="h-13 w-13 shrink-0 rounded-full object-cover"
-                  style={{ boxShadow: `0 0 0 2px ${n.color === 'red' ? redInk : whiteInk}` }}
-                />
-                <span className="flex min-w-0 flex-col">
-                  <span className="font-display truncate text-base leading-tight font-normal text-foreground">{n.name}</span>
-                  <span className="truncate text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{kindLabel(n)} · {n.epoch}</span>
+                {/* Farb-Kante: rot/weiß als Wein-Codierung (Wachs-Siegel-Ton) */}
+                <span aria-hidden="true" className="w-[3px] shrink-0" style={{ background: n.color === 'red' ? redInk : whiteInk }} />
+                <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-1.5">
+                  <span className="font-display text-[15px] leading-[1.05] font-normal text-foreground">{n.name}</span>
+                  <span className="text-[9px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
+                    {kindLabel(n)} · {n.epoch}
+                  </span>
                 </span>
               </button>
             )

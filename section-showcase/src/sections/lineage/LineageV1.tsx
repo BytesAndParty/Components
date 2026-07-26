@@ -1,4 +1,6 @@
+import { useSearchParams } from 'react-router'
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { cn } from '@components/lib/utils'
 import { LineageTree } from './lineage-tree'
 
 /**
@@ -12,10 +14,20 @@ import { LineageTree } from './lineage-tree'
  */
 
 export function LineageV1() {
+  // Im Fokus (eine Rebe herangezoomt) blendet der große Kopf aus, damit die
+  // Serif-Headline nicht mit den herangezoomten Knoten kollidiert.
+  const [searchParams] = useSearchParams()
+  const focused = !!searchParams.get('rebe')
+
   return (
     <section className="relative w-full overflow-hidden bg-background">
       {/* Desktop-Kopf — Overlay über der Zoom-Bühne, klick-durchlässig */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden lg:block">
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-x-0 top-0 z-30 hidden transition-opacity duration-500 ease-out lg:block',
+          focused ? 'opacity-0' : 'opacity-100',
+        )}
+      >
         <div className="mx-auto max-w-7xl px-8 pt-8">
           <header className="max-w-md">
             <BlurFade delay={100}>
