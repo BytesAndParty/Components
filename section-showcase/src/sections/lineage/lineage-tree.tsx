@@ -109,12 +109,16 @@ function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v))
 }
 
+/** Standard-Zoom im Überblick. >1 fährt etwas näher heran; der PAD-Rand (64px) um
+ *  die äußeren Knoten fängt den leichten Überhang ab, ohne dass etwas clippt. */
+const OVERVIEW_ZOOM = 1.08
+
 function fitTransform(s: Size): Transform {
   // Sichere Zonen: oben die Section-Headline, unten die (Showcase-)Command-Bar.
   const TOP_SAFE = 136
   const BOTTOM_SAFE = 88
   const availH = Math.max(s.h - TOP_SAFE - BOTTOM_SAFE, 240)
-  const scale = Math.min(s.w / CONTENT_W, availH / CONTENT_H) * 0.96
+  const scale = Math.min(s.w / CONTENT_W, availH / CONTENT_H) * OVERVIEW_ZOOM
   return {
     scale,
     x: (s.w - CONTENT_W * scale) / 2,
