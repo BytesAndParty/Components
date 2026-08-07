@@ -5,6 +5,7 @@ import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@componen
 import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ProductTag, ProductTagGroup, type ProductTagVariant } from '@components/product-tag/product-tag'
+import { BookingCalendar, type BookingSlot } from '@components/booking-calendar/booking-calendar'
 import { useToast } from '@components/toast/toast-context'
 import { useCart } from '../cart-context'
 
@@ -29,8 +30,32 @@ export function ShopPage() {
 
   const tagVariants: ProductTagVariant[] = ['new', 'sale', 'low-stock', 'bestseller', 'limited', 'organic', 'vegan', 'award']
 
+  // Dummy-Slots relativ zu heute, damit der Kalender im aktuellen Monat Termine zeigt.
+  const isoDay = (offset: number) => {
+    const d = new Date()
+    d.setDate(d.getDate() + offset)
+    return d.toISOString().slice(0, 10)
+  }
+  const bookingSlots: BookingSlot[] = [
+    { id: 'b1', date: isoDay(3), time: '15:00', capacity: 6, price: 45 },
+    { id: 'b2', date: isoDay(3), time: '17:30', capacity: 4, price: 45 },
+    { id: 'b3', date: isoDay(10), time: '16:00', capacity: 8, price: 45 },
+    { id: 'b4', date: isoDay(17), time: '11:00', capacity: 12, price: 35 },
+  ]
+
   return (
     <>
+      <Section title="Booking Calendar" description="Datengetriebener Termin-Picker auf Ark UI DatePicker: buchbare Tage aktiv, Rest deaktiviert → Uhrzeit-Chips → Gäste → Absenden. Slots als Prop, onSubmit app-seitig (hier Dummy). i18n DE/EN, semantische Tokens.">
+        <div className="mx-auto max-w-2xl">
+          <BookingCalendar
+            slots={bookingSlots}
+            onSubmit={({ slotId, guests }) => {
+              add({ title: 'Anfrage gesendet', description: `Slot ${slotId} · ${guests} Gäste`, variant: 'success' })
+            }}
+          />
+        </div>
+      </Section>
+
       <Section title="Product Tag" description="Pill-Badges für Produktkarten: Entrance-Pop, Shimmer-Sweep beim Hover, Puls-Dot bei knappem Bestand. 8 Varianten, i18n-Labels, reduced-motion-safe.">
         <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8 shadow-sm">
           <ProductTagGroup>
