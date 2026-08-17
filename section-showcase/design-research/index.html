@@ -1,0 +1,359 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weingut-Websites — Design-Analyse &amp; Richtungsempfehlung</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#12110f; --bg2:#191714; --line:#2e2a25; --line2:#403a33;
+  --fg:#eae4da; --fg2:#a29a8e; --fg3:#6f675c;
+  --acc:#c9a227; --ok:#7d9174; --bad:#b4553f;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+a{color:inherit}
+header.top{border-bottom:1px solid var(--line);padding:56px 0 40px;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3)}
+h1{font-family:var(--serif);font-size:44px;line-height:1.12;font-weight:400;margin:14px 0 10px;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:26px;font-weight:400;margin:0 0 18px;letter-spacing:-.005em}
+h3{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin:0 0 14px;font-weight:500}
+p{margin:0 0 14px;color:var(--fg)}
+p.lead{font-size:17px;line-height:1.6;color:var(--fg2)}
+section{margin:0 0 52px}
+.rule{height:1px;background:var(--line);margin:52px 0}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:5px 10px;border:1px solid var(--line2);border-radius:2px;color:var(--fg2);white-space:nowrap;display:inline-block}
+.tag.marke{border-color:#4a5f45;color:#a8c39f}
+.tag.shop{border-color:#5b4a3a;color:#d0ab86}
+.tag.erlebnis{border-color:#3f4f5e;color:#9dbcd4}
+.score{font-family:var(--mono);font-size:13px;letter-spacing:.22em;color:var(--acc)}
+.score .off{color:var(--line2)}
+.sw{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.sw div{flex:1 1 96px;min-width:96px}
+.sw .chip{height:72px;display:block}
+.sw .lbl{padding:8px 10px 10px;background:var(--bg2);border-top:1px solid var(--line)}
+.sw code{font-family:var(--mono);font-size:11px;color:var(--fg);display:block;text-transform:uppercase}
+.sw span{font-size:11px;color:var(--fg3);display:block;margin-top:2px;line-height:1.35}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);font-weight:500}
+td.k{color:var(--fg2);white-space:nowrap;width:190px}
+td .spec{font-family:var(--mono);font-size:12px;color:var(--fg)}
+td .smp{color:var(--fg3);font-size:13px}
+ul{list-style:none;margin:0}
+li{padding:9px 0 9px 24px;border-bottom:1px solid var(--line);position:relative;color:var(--fg2)}
+li:last-child{border-bottom:0}
+li:before{position:absolute;left:0;top:9px;font-family:var(--mono);font-size:12px}
+ul.take li:before{content:"+";color:var(--ok)}
+ul.avoid li:before{content:"\2212";color:var(--bad)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+figure{margin:0 0 26px}
+figure img{width:100%;display:block;border:1px solid var(--line);border-radius:3px}
+figcaption{font-size:12px;color:var(--fg3);margin-top:8px;line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.card{background:var(--bg2);padding:22px;text-decoration:none;display:block;transition:background .15s}
+.card:hover{background:#211e1a}
+.card .nm{font-family:var(--serif);font-size:20px;margin:8px 0 4px}
+.card .cl{font-size:13px;color:var(--fg2);line-height:1.5;margin:8px 0 14px}
+.card .strip{display:flex;height:20px;border-radius:2px;overflow:hidden;margin-top:12px}
+.card .strip i{flex:1}
+nav.back{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);padding:24px 0;display:block;text-decoration:none}
+nav.back:hover{color:var(--fg)}
+footer{border-top:1px solid var(--line);margin-top:64px;padding:28px 0 60px;font-size:12px;color:var(--fg3)}
+.callout{border-left:2px solid var(--acc);padding:2px 0 2px 20px;margin:0 0 20px}
+.callout p{color:var(--fg2)}
+.tok{font-family:var(--mono);font-size:12.5px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:20px 22px;overflow-x:auto;line-height:1.8;color:var(--fg2);white-space:pre}
+.tok b{color:var(--fg);font-weight:400}
+@media(max-width:760px){.cols{grid-template-columns:1fr;gap:24px}h1{font-size:32px}.wrap{padding:0 20px}}
+
+.cards .card .eyebrow{display:block}
+td .card{background:none;padding:0}
+table td:first-child{width:25%} table td:nth-child(2){width:110px} table td:nth-child(4){width:130px} table td:last-child{width:120px}
+</style></head><body>
+<header class="top"><div class="wrap">
+<span class="eyebrow">Referenzanalyse · 13 Websites · 16.08.2026</span>
+<h1>Weingut-Websites im Vergleich</h1>
+<p class="lead">Analyse der von Michael Hudritsch (LAGOTA) übermittelten Referenzliste — als Grundlage für die Gestaltungsrichtung der neuen Premium-Weinwebsite. Jede Seite wurde im Browser aufgerufen; Farben, Schriftgrößen, Zeilenhöhen, Abstände und Radien stammen aus den ausgelesenen <em>computed styles</em>, nicht aus Schätzungen.</p>
+</div></header>
+<div class="wrap">
+
+<section>
+<h2>Das Wichtigste zuerst</h2>
+<div class="callout"><p>Die Liste mischt drei völlig verschiedene Modelle. Bevor über Farben und Schriften entschieden wird, muss die Frage beantwortet sein: <b>Erzählt die Seite zuerst eine Marke, oder verkauft sie zuerst Flaschen?</b> Ein Shop, der wie ein Shop aussieht, zerstört das Preisgefühl schneller als jede falsche Schriftwahl.</p></div>
+<p>Von dreizehn Seiten erreichen nur drei ein Niveau, das man im Premiumsegment als Vorbild nehmen kann: <b>Mazzei</b> (internationaler Maßstab), <b>Krispel</b> (gestalterisch stärkster österreichischer Auftritt) und <b>Sattlerhof</b> (Gastgeber-Modell mit Weingut, Restaurant und Hotel). <b>Polz</b> und <b>Scharl</b> folgen dicht dahinter. Die übrigen sind Shop-Systeme, deren Mechanik man studieren, deren Optik man aber nicht übernehmen sollte.</p>
+<p>Sieben der dreizehn Seiten begrüßen den Besucher mit einem Rabatt — Newsletter minus zehn Prozent, fünf Prozent ab Erstbestellung, „5+1 gratis“. Genau das ist der Punkt, an dem ein Auftritt aufhört, premium zu sein.</p>
+</section>
+
+<div class="rule"></div>
+
+<section><h2>Alle Seiten im Überblick</h2>
+<table><thead><tr><th>Seite</th><th>Kategorie</th><th>Schriften</th><th>Palette</th><th>Premium&#8209;Eignung</th></tr></thead>
+<tbody><tr>
+<td><a href="sites/mazzei.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Mazzei (Toskana)</b></a><br><span style="font-size:12px;color:var(--fg3)">Shopify</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">Utopia Std Display (Serif) + Montserrat (UI/Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#002450"></i><i style="background:#0b1420"></i><i style="background:#c0392b"></i><i style="background:#ffffff"></i><i style="background:#d9d9d9"></i></span></span></td>
+<td><span class="score">●●●●●<span class="off"></span></span></td>
+</tr><tr>
+<td><a href="sites/krispel.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Genussgut Krispel</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress + WooCommerce, individuell gestaltet</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">Mackay (Serif, kursiv für Kicker) + DIN Pro (Headlines und Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#fff3e8"></i><i style="background:#f9bc88"></i><i style="background:#fee0c9"></i><i style="background:#204c52"></i><i style="background:#d04c20"></i></span></span></td>
+<td><span class="score">●●●●●<span class="off"></span></span></td>
+</tr><tr>
+<td><a href="sites/polz.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut Polz</b></a><br><span style="font-size:12px;color:var(--fg3)">Shopify</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">Libre Bodoni (Display) + Montserrat (UI/Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#c7c2b7"></i><i style="background:#0a2237"></i><i style="background:#4f5a32"></i><i style="background:#ffffff"></i><i style="background:#171717"></i></span></span></td>
+<td><span class="score">●●●●<span class="off">●</span></span></td>
+</tr><tr>
+<td><a href="sites/sattlerhof.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Sattlerhof</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress + Bootstrap, Borlabs Cookie</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">Utopia (Serif, Labels) + DIN (Headlines) + Inter (Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#f5f1e2"></i><i style="background:#fff1df"></i><i style="background:#c03a2c"></i><i style="background:#212529"></i><i style="background:#4a4a4a"></i></span></span></td>
+<td><span class="score">●●●●<span class="off">●</span></span></td>
+</tr><tr>
+<td><a href="sites/scharl.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weinhof Scharl</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress + Elementor + WooCommerce</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">DM Serif Display (Headlines) + PT Sans (Body/Nav)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#000101"></i><i style="background:#ffffff"></i><i style="background:#fafafa"></i><i style="background:#5f5f5f"></i></span></span></td>
+<td><span class="score">●●●●<span class="off">●</span></span></td>
+</tr><tr>
+<td><a href="sites/colterenzio.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Colterenzio — Führung &amp; Verkostung</b></a><br><span style="font-size:12px;color:var(--fg3)">Individuell, dreisprachig</span></td>
+<td><span class="tag erlebnis">Erlebnis</span></td>
+<td style="font-size:13px;color:var(--fg2)">Helvetica Neue LT (Headlines) + Poppins Light (Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#ffffff"></i><i style="background:#f5f5f5"></i><i style="background:#35373d"></i><i style="background:#1e1e1c"></i><i style="background:#8d8d8d"></i></span></span></td>
+<td><span class="score">●●●●<span class="off">●</span></span></td>
+</tr><tr>
+<td><a href="sites/domaene-wachau.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Domäne Wachau</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress (Enfold) + WooCommerce</span></td>
+<td><span class="tag marke">Marke</span></td>
+<td style="font-size:13px;color:var(--fg2)">Interstate (einzige Textschrift, alle Schnitte)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#0a0a0a"></i><i style="background:#282b2e"></i><i style="background:#81827b"></i><i style="background:#82847f"></i><i style="background:#444444"></i></span></span></td>
+<td><span class="score">●●●<span class="off">●●</span></span></td>
+</tr><tr>
+<td><a href="sites/aumann.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Leo Aumann</b></a><br><span style="font-size:12px;color:var(--fg3)">Individueller Shop</span></td>
+<td><span class="tag shop">Shop</span></td>
+<td style="font-size:13px;color:var(--fg2)">Prata (Display-Serif) + Open Sans (Light/Regular/Semibold)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#2b2b2a"></i><i style="background:#d8dcdb"></i><i style="background:#651d32"></i><i style="background:#d0d3d4"></i><i style="background:#ffffff"></i></span></span></td>
+<td><span class="score">●●●<span class="off">●●</span></span></td>
+</tr><tr>
+<td><a href="sites/eder.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut Eder</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress + WooCommerce</span></td>
+<td><span class="tag shop">Shop</span></td>
+<td style="font-size:13px;color:var(--fg2)">Breve Display (fette Serif) + Lato (Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#c8a763"></i><i style="background:#000000"></i><i style="background:#eae7e3"></i><i style="background:#ffffff"></i></span></span></td>
+<td><span class="score">●●●<span class="off">●●</span></span></td>
+</tr><tr>
+<td><a href="sites/michael.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut Michael — Verkostung</b></a><br><span style="font-size:12px;color:var(--fg3)">Wix</span></td>
+<td><span class="tag erlebnis">Erlebnis</span></td>
+<td style="font-size:13px;color:var(--fg2)">Wix-Serif (Headlines) + Avenir LT Light (Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#bfa760"></i><i style="background:#fcf8ed"></i><i style="background:#7d9174"></i><i style="background:#303030"></i><i style="background:#ffffff"></i></span></span></td>
+<td><span class="score">●●●<span class="off">●●</span></span></td>
+</tr><tr>
+<td><a href="sites/pfeifer.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut Pfeifer</b></a><br><span style="font-size:12px;color:var(--fg3)">Individueller Shop, sehr lange Seite</span></td>
+<td><span class="tag shop">Shop</span></td>
+<td style="font-size:13px;color:var(--fg2)">Abril Display (Serif) + Texta (Grotesk)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#e4dec5"></i><i style="background:#333333"></i><i style="background:#4a4949"></i><i style="background:#ffffff"></i><i style="background:#e5e5e5"></i></span></span></td>
+<td><span class="score">●●<span class="off">●●●</span></span></td>
+</tr><tr>
+<td><a href="sites/artner.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut Artner</b></a><br><span style="font-size:12px;color:var(--fg3)">WordPress + WooCommerce</span></td>
+<td><span class="tag shop">Shop</span></td>
+<td style="font-size:13px;color:var(--fg2)">Cabin (Grotesk, w900) + Crimson Text (Serif, Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#d0dfea"></i><i style="background:#ffffff"></i><i style="background:#f7f4f2"></i><i style="background:#2c2c2c"></i><i style="background:#8a8785"></i></span></span></td>
+<td><span class="score">●●<span class="off">●●●</span></span></td>
+</tr><tr>
+<td><a href="sites/dam.html" style="text-decoration:none"><b style="font-family:var(--serif);font-size:16px">Weingut &amp; Vinothek Dam</b></a><br><span style="font-size:12px;color:var(--fg3)">Wix</span></td>
+<td><span class="tag shop">Shop</span></td>
+<td style="font-size:13px;color:var(--fg2)">Playfair Display (Headlines) + Wix-Systemschriften (Body)</td>
+<td><span class="card"><span class="strip" style="width:110px;margin:0"><i style="background:#b76354"></i><i style="background:#cdc5bf"></i><i style="background:#fdfbf8"></i><i style="background:#727557"></i><i style="background:#ffffff"></i></span></span></td>
+<td><span class="score">●●<span class="off">●●●</span></span></td>
+</tr></tbody></table>
+<p style="font-size:12px;color:var(--fg3);margin-top:14px">Premium-Eignung bewertet, wie brauchbar der Auftritt als Vorbild für ein Weingut im gehobenen Segment ist — nicht, wie gut die Seite ihre eigene Aufgabe erfüllt.</p>
+</section>
+
+<div class="rule"></div>
+
+<section><h2>Markenauftritte</h2><p class="lead" style="margin-bottom:22px">Die Website erzählt zuerst Herkunft, Familie und Lage. Der Shop ist eingebettet, aber nicht das Zentrum. Das ist das Modell für ein Premium-Weingut.</p><div class="cards"><a class="card" href="sites/mazzei.html">
+<span class="eyebrow"><span class="score">●●●●●<span class="off"></span></span></span>
+<div class="nm">Mazzei (Toskana)</div>
+<div class="cl">Der internationale Premium-Maßstab in dieser Liste.</div>
+<div class="strip"><i style="background:#002450"></i><i style="background:#0b1420"></i><i style="background:#c0392b"></i><i style="background:#ffffff"></i><i style="background:#d9d9d9"></i></div></a><a class="card" href="sites/krispel.html">
+<span class="eyebrow"><span class="score">●●●●●<span class="off"></span></span></span>
+<div class="nm">Genussgut Krispel</div>
+<div class="cl">Der gestalterisch stärkste österreichische Auftritt der Liste.</div>
+<div class="strip"><i style="background:#fff3e8"></i><i style="background:#f9bc88"></i><i style="background:#fee0c9"></i><i style="background:#204c52"></i><i style="background:#d04c20"></i></div></a><a class="card" href="sites/polz.html">
+<span class="eyebrow"><span class="score">●●●●<span class="off">●</span></span></span>
+<div class="nm">Weingut Polz</div>
+<div class="cl">Der beste E-Commerce-Auftritt der österreichischen Liste.</div>
+<div class="strip"><i style="background:#c7c2b7"></i><i style="background:#0a2237"></i><i style="background:#4f5a32"></i><i style="background:#ffffff"></i><i style="background:#171717"></i></div></a><a class="card" href="sites/sattlerhof.html">
+<span class="eyebrow"><span class="score">●●●●<span class="off">●</span></span></span>
+<div class="nm">Sattlerhof</div>
+<div class="cl">Gastgeber-Auftritt: Weingut, Restaurant und Hotel unter einer Marke.</div>
+<div class="strip"><i style="background:#f5f1e2"></i><i style="background:#fff1df"></i><i style="background:#c03a2c"></i><i style="background:#212529"></i><i style="background:#4a4a4a"></i></div></a><a class="card" href="sites/scharl.html">
+<span class="eyebrow"><span class="score">●●●●<span class="off">●</span></span></span>
+<div class="nm">Weinhof Scharl</div>
+<div class="cl">Reines Schwarzweiß, Magazinlogik – überraschend stark.</div>
+<div class="strip"><i style="background:#000101"></i><i style="background:#ffffff"></i><i style="background:#fafafa"></i><i style="background:#5f5f5f"></i></div></a><a class="card" href="sites/domaene-wachau.html">
+<span class="eyebrow"><span class="score">●●●<span class="off">●●</span></span></span>
+<div class="nm">Domäne Wachau</div>
+<div class="cl">Institution. Breit, laut, technisch solide – aber kein Premium-Gefühl.</div>
+<div class="strip"><i style="background:#0a0a0a"></i><i style="background:#282b2e"></i><i style="background:#81827b"></i><i style="background:#82847f"></i><i style="background:#444444"></i></div></a></div></section>
+<section><h2>Shop-getriebene Auftritte</h2><p class="lead" style="margin-bottom:22px">Im Kern Onlineshops mit Weingut-Anstrich. Funktional oft solide, gestalterisch austauschbar. Hier lohnt sich die Mechanik, nicht die Optik.</p><div class="cards"><a class="card" href="sites/aumann.html">
+<span class="eyebrow"><span class="score">●●●<span class="off">●●</span></span></span>
+<div class="nm">Leo Aumann</div>
+<div class="cl">Sauberer Shop mit gutem Typo-Ansatz, kaputt gemacht durch Rabattlogik.</div>
+<div class="strip"><i style="background:#2b2b2a"></i><i style="background:#d8dcdb"></i><i style="background:#651d32"></i><i style="background:#d0d3d4"></i><i style="background:#ffffff"></i></div></a><a class="card" href="sites/eder.html">
+<span class="eyebrow"><span class="score">●●●<span class="off">●●</span></span></span>
+<div class="nm">Weingut Eder</div>
+<div class="cl">Gold und fette Serif – handwerklich, nicht luxuriös.</div>
+<div class="strip"><i style="background:#c8a763"></i><i style="background:#000000"></i><i style="background:#eae7e3"></i><i style="background:#ffffff"></i></div></a><a class="card" href="sites/pfeifer.html">
+<span class="eyebrow"><span class="score">●●<span class="off">●●●</span></span></span>
+<div class="nm">Weingut Pfeifer</div>
+<div class="cl">Funktionierender Shop, Optik aus dem Rabatt-Repertoire.</div>
+<div class="strip"><i style="background:#e4dec5"></i><i style="background:#333333"></i><i style="background:#4a4949"></i><i style="background:#ffffff"></i><i style="background:#e5e5e5"></i></div></a><a class="card" href="sites/artner.html">
+<span class="eyebrow"><span class="score">●●<span class="off">●●●</span></span></span>
+<div class="nm">Weingut Artner</div>
+<div class="cl">Mutige Farbe, umgekehrte Schriftlogik, wenig Substanz.</div>
+<div class="strip"><i style="background:#d0dfea"></i><i style="background:#ffffff"></i><i style="background:#f7f4f2"></i><i style="background:#2c2c2c"></i><i style="background:#8a8785"></i></div></a><a class="card" href="sites/dam.html">
+<span class="eyebrow"><span class="score">●●<span class="off">●●●</span></span></span>
+<div class="nm">Weingut &amp; Vinothek Dam</div>
+<div class="cl">Freundlich, jung, aber sichtbar Baukasten.</div>
+<div class="strip"><i style="background:#b76354"></i><i style="background:#cdc5bf"></i><i style="background:#fdfbf8"></i><i style="background:#727557"></i><i style="background:#ffffff"></i></div></a></div></section>
+<section><h2>Erlebnis- und Buchungsseiten</h2><p class="lead" style="margin-bottom:22px">Beantworten nur eine Frage: Wie verkauft man Führungen und Verkostungen? Als Bauplan für einen einzelnen Seitenbereich brauchbar.</p><div class="cards"><a class="card" href="sites/colterenzio.html">
+<span class="eyebrow"><span class="score">●●●●<span class="off">●</span></span></span>
+<div class="nm">Colterenzio — Führung &amp; Verkostung</div>
+<div class="cl">Die beste Buchungsmechanik der Liste – emotional aber unterkühlt.</div>
+<div class="strip"><i style="background:#ffffff"></i><i style="background:#f5f5f5"></i><i style="background:#35373d"></i><i style="background:#1e1e1c"></i><i style="background:#8d8d8d"></i></div></a><a class="card" href="sites/michael.html">
+<span class="eyebrow"><span class="score">●●●<span class="off">●●</span></span></span>
+<div class="nm">Weingut Michael — Verkostung</div>
+<div class="cl">Emotional richtig aufgebaut, technisch Baukasten.</div>
+<div class="strip"><i style="background:#bfa760"></i><i style="background:#fcf8ed"></i><i style="background:#7d9174"></i><i style="background:#303030"></i><i style="background:#ffffff"></i></div></a></div></section>
+
+<div class="rule"></div>
+
+<section>
+<h2>Empfohlene Richtung</h2>
+<p class="lead">Mazzei als Referenz für Haltung, Bildsprache und Farbraum. Krispel als Referenz für Struktur und typografischen Mut. Sattlerhof als Referenz für den österreichischen Gastgeber-Ton. Von den Shop-Seiten ausschließlich die Mechanik übernehmen.</p>
+
+<h3>Konkret heißt das</h3>
+<p><b>Zwei Markenräume statt einer Farbe.</b> Eine kalkweiße bis leinenfarbene Grundfläche für alles Erzählende und Verkaufende, ein tiefdunkler Raum mit Grünstich für Hero, Lagen und Footer. Mazzei macht das durchgehend dunkel, Krispel durchgehend warm — die Kombination aus beidem gibt Rhythmus, ohne bunt zu werden. Bordeauxrot mit Gold bleibt außen vor; das ist das sicherste Erkennungszeichen für „will teuer wirken“.</p>
+<p><b>Eine Display-Serif und eine Grotesk, mehr nicht.</b> Alle fünf gut bewerteten Seiten arbeiten genau so: Polz mit Libre Bodoni und Montserrat, Mazzei mit Utopia und Montserrat, Scharl mit DM Serif Display und PT Sans. Die Serif trägt ausschließlich Headlines und Zitate, die Grotesk alles Funktionale.</p>
+<p><b>Wenige, große, gleich belichtete Bilder.</b> Sattlerhof kommt auf der gesamten Startseite mit einer Handvoll Motiven aus, Mazzei hält über die ganze Seite dieselbe kühle Lichtstimmung. Bei Pfeifer und Eder liegen dagegen freigestellte Flaschen, Rosetten und Ornamente übereinander. Menschen, Hände und Details statt Drohnenpanorama.</p>
+<p><b>Der Shop wird Teil der Marke, nicht ein angehängter Bereich.</b> Mazzei nennt ihn Wine Shop, Wine Club, Wine Tour, Wine Concierge — Kommerz als Zugehörigkeit. Die Produktseite gehört aufgebaut wie ein Datenblatt mit Erzählung: Ried und Jahrgang oben, Beschreibung, technische Werte, ruhig gesetzter Preis. Keine Streichpreise, keine Sterne, keine Rosetten.</p>
+<p><b>Verkostungen bekommen einen eigenen Hauptnavigationspunkt.</b> Die Karte von Colterenzio ist der beste Bauplan der Liste: Bild, Titel, Beschreibung, Dauer mit Uhr-Icon, Preis pro Person, genau ein Button. Den Ton dazu liefert Weingut Michael: Kicker, Headline mit Ortsbezug, ein Satz der konkret sagt was enthalten ist, ein Button.</p>
+</section>
+
+<div class="rule"></div>
+
+<section>
+<h2>Pflichtbaustein: Altersabfrage</h2>
+<div class="callout"><p><b>Wir brauchen auf unserer Seite ebenfalls eine Altersfreigabe.</b> Das ist keine gestalterische Option, sondern eine Voraussetzung — und muss deshalb von Anfang an als Bestandteil des Designs mitgeplant werden, nicht später als Plugin daraufgesetzt.</p></div>
+<p>In der Referenzliste haben genau zwei Seiten eine echte Altersabfrage: <b>Polz</b> zeigt beim ersten Besuch ein Overlay mit „Bist du 18 Jahre oder älter“ und zwei Buttons, <b>Mazzei</b> arbeitet mit einem vorgeschalteten Age-Checker. Alle übrigen verzichten darauf. Sehenswert ist beides vor allem als Warnung: Bei Polz stapeln sich Altersabfrage, Cookie-Banner und Treueprogramm-Badge übereinander, sodass der Besucher drei Overlays wegklicken muss, bevor er den ersten Wein sieht. Bei Mazzei verzögert der Age-Checker das Rendern der Seite spürbar.</p>
+<h3>Wie wir es lösen sollten</h3>
+<p><b>Genau ein Overlay auf einmal, in klarer Reihenfolge.</b> Erst die Altersabfrage, danach — und erst nach der Entscheidung — der Cookie-Hinweis. Niemals beides gleichzeitig, und kein Newsletter- oder Rabatt-Layer im selben Ablauf.</p>
+<p><b>Als gestaltetes Markenelement, nicht als Plugin-Dialog.</b> Der dunkle Markenraum als Fläche, die Wortmarke, eine einzige Frage, zwei gleichrangige Buttons im Stil der Seite (1 px Linie, 2 px Radius, gesperrte Versalien). Das ist für viele Besucher der allererste Eindruck der Marke — bei Polz ist es ein neutraler grauer Kasten, und genau diese Chance wird dort verschenkt.</p>
+<p><b>Schlicht Ja/Nein statt Geburtsdatum-Formular.</b> Drei Dropdowns für Tag, Monat und Jahr sind eine Hürde ohne zusätzlichen Nutzen. Die Entscheidung lange speichern (Cookie oder localStorage, mehrere Monate), damit Stammkunden sie nicht bei jedem Besuch erneut treffen müssen.</p>
+<p><b>„Nein“ darf keine Sackgasse sein.</b> Statt einer leeren Fehlerseite eine freundlich formulierte Hinweisseite — gerne mit Verweis auf die alkoholfreien Produkte, Führungen oder den Kontakt zum Betrieb.</p>
+<p><b>Technisch nicht render-blockierend und barrierefrei.</b> Der Seiteninhalt bleibt im DOM, damit Suchmaschinen und Vorschaubilder in sozialen Netzwerken funktionieren. Fokus wird im Dialog gehalten, mit sichtbarem Fokusring; ESC oder ein Klick daneben dürfen nicht als Bestätigung gewertet werden. Auf dem Handy muss der Dialog ohne Scrollen bedienbar sein.</p>
+<p style="font-size:13px;color:var(--fg3)">Die rechtliche Ausgestaltung — Altersgrenze, Formulierung, Protokollierung — gehört mit Michi und im Zweifel mit rechtlicher Beratung abgestimmt. Die Punkte hier beschreiben ausschließlich die gestalterische und technische Umsetzung.</p>
+</section>
+
+<div class="rule"></div>
+
+<section><h2>Design-Tokens — Vorschlag</h2>
+<p class="lead" style="margin-bottom:20px">Startwerte für die Umsetzung, abgeleitet aus den fünf am besten bewerteten Referenzen. Gedacht als Diskussionsgrundlage mit LAGOTA, nicht als fertiges System.</p>
+<div class="tok"><b>/* Farbe */</b>
+--ink            #0F1412   <b>Tiefdunkel mit Grünstich — zweiter Markenraum, Hero, Footer</b>
+--ink-soft       #1A211E   <b>Abgesetzte dunkle Fläche</b>
+--paper          #F2EEE6   <b>Kalk / Leinen — Grundfläche statt Weiß</b>
+--paper-soft     #E7E1D5   <b>Zweite helle Fläche, Karten</b>
+--stone          #8C8578   <b>Sekundärtext, Metadaten, Linien</b>
+--accent         #9C6B3C   <b>Gedecktes Kupfer — NUR Linien, Kicker, Hover</b>
+--line           #D6CFC1   <b>Trennlinien auf hell</b>
+--line-dark      #2A322E   <b>Trennlinien auf dunkel</b>
+
+<b>/* Schrift */</b>
+--display   Canela · Reckless Neue · GT Sectra   <b>(frei: Newsreader, Source Serif 4)</b>
+--ui        Söhne · Suisse Int'l · GT America    <b>(frei: Inter Tight, Instrument Sans)</b>
+
+<b>/* Typo-Skala */</b>
+display-xl   72 / 1.05  ls -0.02em   display   <b>Hero-Zeile</b>
+h1           56 / 1.10  ls -0.015em  display
+h2           40 / 1.15  ls -0.01em   display
+h3           28 / 1.25  ls  0        display
+kicker       12 / 1.00  ls  0.22em   ui  UPPERCASE
+body-l       19 / 1.65  ls  0        ui        <b>Einleitungen</b>
+body         17 / 1.70  ls  0        ui        <b>Fließtext — nie unter 16</b>
+small        14 / 1.60  ls  0.01em   ui        <b>Datenblatt, Metadaten</b>
+
+<b>/* Raum */</b>
+--space-base     8px
+--section-y      160px Desktop · 96px Tablet · 72px Mobil
+--container      1240px
+--measure        68ch   <b>max. Textbreite (ca. 720px)</b>
+
+<b>/* Form */</b>
+--radius         2px    <b>fast eckig — keine Pills, keine 60px-Radien</b>
+--border         1px solid var(--line)
+--shadow         none   <b>keine Schatten, Tiefe kommt aus Fläche und Raum</b>
+
+<b>/* Buttons */</b>
+primär     Fläche --ink, Text --paper, 16/32px, 13px ls 0.12em UPPERCASE, r2
+sekundär   1px Linie --ink, transparent, gleiche Maße
+tertiär    Textlink mit 1px Unterstrich, im Hover --accent
+
+<b>/* Bewegung */</b>
+reveal     opacity 0→1 + translateY 8px, 500ms, cubic-bezier(.16,1,.3,1)
+hover      140ms — kein Parallax, kein Scroll-Jacking, kein Auto-Karussell</div>
+</section>
+
+<div class="rule"></div>
+
+<section class="cols">
+<div><h3>Was wir übernehmen</h3><ul class="take">
+<li>Zwei Markenräume: Kalk/Leinen hell, Tiefdunkel mit Grünstich</li>
+<li>Genau eine Display-Serif und eine Grotesk</li>
+<li>Sandfarbene oder cremefarbene Grundfläche statt reinem Weiß (Polz, Sattlerhof, Krispel)</li>
+<li>Navigation nach Bereichen statt nach Produktkategorien (Krispel)</li>
+<li>Eigene Illustration für Lagen und Rieden statt Foto oder Tabelle (Polz, Mazzei)</li>
+<li>Erlebniskarte mit Bild, Dauer, Preis pro Person und einem Button (Colterenzio)</li>
+<li>Kicker plus Headline mit Ortsbezug plus konkreter Inhaltssatz (Weingut Michael)</li>
+<li>Ganzseitige Serif-Zitate als Rhythmuswechsel (Scharl)</li>
+<li>Auszeichnungen als ruhige Monochrom-Reihe im Footer (Sattlerhof)</li>
+<li>Mengen-Stepper direkt in der Produktkachel für 6er- und 12er-Gebinde (Pfeifer, Aumann)</li>
+<li>Öffnungszeiten und Telefon dauerhaft erreichbar (Pfeifer, Scharl)</li>
+<li><b>Altersabfrage als gestaltetes Markenelement</b> — genau ein Overlay, Ja/Nein, Entscheidung lange gespeichert (Pflichtbaustein, siehe eigener Abschnitt)</li>
+</ul></div>
+<div><h3>Was auf keinen Fall</h3><ul class="avoid">
+<li>Newsletter-Popup mit Rabatt vor dem ersten Scroll (Wachau, Dam)</li>
+<li>Streichpreise, „gratis“-Rosetten, Prozent-Störer (Aumann, Pfeifer)</li>
+<li>Bordeauxrot mit Gold als Markenfarben</li>
+<li>Trauben-, Blatt- und Weinglas-Ornamente als Hintergrund (Pfeifer)</li>
+<li>Punkterosetten und Medaillen auf der Produktkachel (Eder)</li>
+<li>Instagram-Kachelwand vor dem Footer (Wachau)</li>
+<li>Ladeanimation oder Consent-Wall, die den Einstieg blockiert (Wachau, Sattlerhof)</li>
+<li>Drei gestapelte Overlays: Alter, Cookies, Treueprogramm (Polz) — die Altersabfrage brauchen wir, aber allein und zuerst</li>
+<li>Altersabfrage als neutraler Plugin-Kasten oder mit Geburtsdatum-Formular</li>
+<li>Fließtext unter 16 px (Sattlerhof 12 px, Scharl 14 px)</li>
+<li>Vollrunde Pill-Buttons mit 60–800 px Radius (Polz, Eder)</li>
+<li>Sichtbare Baukasten-Struktur (Dam, Michael)</li>
+<li>Scroll-Jacking und Auto-Karussells</li>
+</ul></div>
+</section>
+
+<div class="rule"></div>
+
+<section><h2>Antwortvorschlag an Michi</h2>
+<div class="callout"><p style="font-family:var(--serif);font-size:16px;line-height:1.7">Hallo Michi,<br><br>
+danke für die Liste — wir haben alle Seiten durchgesehen. Kurz unsere Richtung:<br><br>
+<b>Gefällt uns:</b> Mazzei ist für uns der Maßstab — dunkler Markenraum, eine Display-Serif für alle Headlines, kinematografische Bildsprache, und der Shop ist sprachlich Teil der Marke (Wine Club, Wine Tour) statt ein angehängter Bereich. Aus Österreich überzeugt uns Krispel am meisten: Navigation nach Bereichen statt nach Produktkategorien, kursive Serif über großer Grotesk, konsequent eigene Bildwelt. Sattlerhof zeigt gut, wie man Weingut, Kulinarik und Gastlichkeit gleichwertig behandelt. Bei Polz gefällt uns die illustrierte Lagenpyramide und die sandfarbene Grundfläche, bei Scharl die editoriale Struktur mit den ganzseitigen Zitaten.<br><br>
+<b>Kommt für uns nicht in Frage:</b> alles Rabattgetriebene — Newsletter-Popups mit Prozenten, Streichpreise, „gratis“-Rosetten, Aktionsstörer. Ebenso Bordeauxrot mit Gold, Trauben- und Blattornamente, Punkterosetten auf den Produktkacheln, Instagram-Kachelwände vor dem Footer und alles, was sichtbar nach Baukasten aussieht. Auch Ladeanimationen oder Cookie-Wände, die den Einstieg blockieren, möchten wir vermeiden.<br><br>
+<b>Bitte gleich mitplanen:</b> Wir brauchen auf unserer Seite eine Altersabfrage. Uns ist wichtig, dass sie gestaltet ist und nicht als neutraler Plugin-Kasten daherkommt — eine Frage, zwei Buttons im Stil der Seite, Entscheidung länger gespeichert. Und sie soll allein und zuerst kommen: erst Alter, danach der Cookie-Hinweis, nicht beides gleichzeitig wie bei Polz.<br><br>
+<b>Für Führungen und Verkostungen</b> ist Colterenzio strukturell die beste Vorlage (Karte mit Bild, Dauer, Preis pro Person, ein Button) — allerdings in wärmerer Anmutung. Den Tonfall dafür finden wir bei Weingut Michael gut getroffen.<br><br>
+Eine erste Tokenliste mit Farbraum, Schriftpaarung und Skala haben wir schon zusammengestellt und schicken sie dir gerne als Diskussionsgrundlage.<br><br>
+Liebe Grüße</p></div>
+</section>
+
+<footer>13 Seiten analysiert am 16.08.2026. Alle Farb-, Schrift- und Abstandswerte wurden im Browser aus den computed styles der jeweiligen Seite ausgelesen. Screenshots dienen der internen Gestaltungsdiskussion; Rechte an den abgebildeten Inhalten liegen bei den jeweiligen Betrieben.</footer>
+</div></body></html>

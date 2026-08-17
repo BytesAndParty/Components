@@ -1,0 +1,111 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Domäne Wachau — Design-Analyse</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#12110f; --bg2:#191714; --line:#2e2a25; --line2:#403a33;
+  --fg:#eae4da; --fg2:#a29a8e; --fg3:#6f675c;
+  --acc:#c9a227; --ok:#7d9174; --bad:#b4553f;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+a{color:inherit}
+header.top{border-bottom:1px solid var(--line);padding:56px 0 40px;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3)}
+h1{font-family:var(--serif);font-size:44px;line-height:1.12;font-weight:400;margin:14px 0 10px;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:26px;font-weight:400;margin:0 0 18px;letter-spacing:-.005em}
+h3{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);margin:0 0 14px;font-weight:500}
+p{margin:0 0 14px;color:var(--fg)}
+p.lead{font-size:17px;line-height:1.6;color:var(--fg2)}
+section{margin:0 0 52px}
+.rule{height:1px;background:var(--line);margin:52px 0}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:5px 10px;border:1px solid var(--line2);border-radius:2px;color:var(--fg2);white-space:nowrap;display:inline-block}
+.tag.marke{border-color:#4a5f45;color:#a8c39f}
+.tag.shop{border-color:#5b4a3a;color:#d0ab86}
+.tag.erlebnis{border-color:#3f4f5e;color:#9dbcd4}
+.score{font-family:var(--mono);font-size:13px;letter-spacing:.22em;color:var(--acc)}
+.score .off{color:var(--line2)}
+.sw{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.sw div{flex:1 1 96px;min-width:96px}
+.sw .chip{height:72px;display:block}
+.sw .lbl{padding:8px 10px 10px;background:var(--bg2);border-top:1px solid var(--line)}
+.sw code{font-family:var(--mono);font-size:11px;color:var(--fg);display:block;text-transform:uppercase}
+.sw span{font-size:11px;color:var(--fg3);display:block;margin-top:2px;line-height:1.35}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);font-weight:500}
+td.k{color:var(--fg2);white-space:nowrap;width:190px}
+td .spec{font-family:var(--mono);font-size:12px;color:var(--fg)}
+td .smp{color:var(--fg3);font-size:13px}
+ul{list-style:none;margin:0}
+li{padding:9px 0 9px 24px;border-bottom:1px solid var(--line);position:relative;color:var(--fg2)}
+li:last-child{border-bottom:0}
+li:before{position:absolute;left:0;top:9px;font-family:var(--mono);font-size:12px}
+ul.take li:before{content:"+";color:var(--ok)}
+ul.avoid li:before{content:"\2212";color:var(--bad)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+figure{margin:0 0 26px}
+figure img{width:100%;display:block;border:1px solid var(--line);border-radius:3px}
+figcaption{font-size:12px;color:var(--fg3);margin-top:8px;line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.card{background:var(--bg2);padding:22px;text-decoration:none;display:block;transition:background .15s}
+.card:hover{background:#211e1a}
+.card .nm{font-family:var(--serif);font-size:20px;margin:8px 0 4px}
+.card .cl{font-size:13px;color:var(--fg2);line-height:1.5;margin:8px 0 14px}
+.card .strip{display:flex;height:20px;border-radius:2px;overflow:hidden;margin-top:12px}
+.card .strip i{flex:1}
+nav.back{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);padding:24px 0;display:block;text-decoration:none}
+nav.back:hover{color:var(--fg)}
+footer{border-top:1px solid var(--line);margin-top:64px;padding:28px 0 60px;font-size:12px;color:var(--fg3)}
+.callout{border-left:2px solid var(--acc);padding:2px 0 2px 20px;margin:0 0 20px}
+.callout p{color:var(--fg2)}
+.tok{font-family:var(--mono);font-size:12.5px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:20px 22px;overflow-x:auto;line-height:1.8;color:var(--fg2);white-space:pre}
+.tok b{color:var(--fg);font-weight:400}
+@media(max-width:760px){.cols{grid-template-columns:1fr;gap:24px}h1{font-size:32px}.wrap{padding:0 20px}}
+</style></head><body>
+<div class="wrap"><a class="back" href="../index.html">&larr; Übersicht</a></div>
+<header class="top"><div class="wrap">
+<span class="eyebrow">Design-Analyse · Referenz Marke + Shop</span>
+<h1>Domäne Wachau</h1>
+<p class="lead">Institution. Breit, laut, technisch solide – aber kein Premium-Gefühl.</p>
+<div class="meta"><span class="tag marke">Marke + Shop</span><span class="tag">WordPress (Enfold) + WooCommerce</span><span class="tag">Premium-Eignung <span class="score">●●●<span class="off">●●</span></span></span></div>
+<div class="meta"><a class="tag" href="https://www.domaene-wachau.at/de/" target="_blank" rel="noopener">https://www.domaene-wachau.at/de/</a></div>
+</div></header>
+<div class="wrap">
+
+<section><h3>Einschätzung</h3><p>Die größte und inhaltsreichste Seite der Liste. Der schwarze Intro-Screen mit dem gesetzten Logo verspricht Hochwertigkeit, danach kippt der Auftritt in einen sehr klassischen WordPress-Aufbau mit Instagram-Feed, Newsletter-Popup und Rabattlogik. Die Typografie besteht ausschließlich aus einer einzigen Grotesk (Interstate) – kein einziger Serif-Akzent außer im Logo. Für eine Genossenschaft mit dieser Größe stimmig, für ein Familienweingut im Premiumsegment deutlich zu breit und zu funktional.</p></section>
+
+<section><h3>Farbpalette</h3><div class="sw"><div><span class="chip" style="background:#0a0a0a"></span><span class="lbl"><code>#0a0a0a</code><span>Headline-Schwarz</span></span></div><div><span class="chip" style="background:#282b2e"></span><span class="lbl"><code>#282b2e</code><span>Dunkelgrau Sektion</span></span></div><div><span class="chip" style="background:#81827b"></span><span class="lbl"><code>#81827b</code><span>Markengrau (warm)</span></span></div><div><span class="chip" style="background:#82847f"></span><span class="lbl"><code>#82847f</code><span>Fließtext-Grau</span></span></div><div><span class="chip" style="background:#444444"></span><span class="lbl"><code>#444444</code><span>Body</span></span></div><div><span class="chip" style="background:#f8f8f8"></span><span class="lbl"><code>#f8f8f8</code><span>Sektionsfläche</span></span></div><div><span class="chip" style="background:#eeeeee"></span><span class="lbl"><code>#eeeeee</code><span>Trennfläche</span></span></div><div><span class="chip" style="background:#ffffff"></span><span class="lbl"><code>#ffffff</code><span>Grund</span></span></div></div></section>
+
+<section><h3>Typografie</h3>
+<p class="lead" style="margin-bottom:16px">Interstate (einzige Textschrift, alle Schnitte)</p>
+<table><thead><tr><th>Rolle</th><th>Spezifikation &amp; Beispiel</th></tr></thead><tbody><tr><td class="k">H1</td><td><span class="spec">Interstate 66/88 px · w700 · UPPERCASE</span><br><span class="smp">Das Weingut</span></td></tr><tr><td class="k">H2</td><td><span class="spec">Interstate 22/28 px · w700</span><br><span class="smp">Zwischenüberschrift</span></td></tr><tr><td class="k">H3</td><td><span class="spec">Interstate 20/20 px · w700 · UPPERCASE</span><br><span class="smp">Label</span></td></tr><tr><td class="k">Body</td><td><span class="spec">Interstate 18/25 px · w400 · #444</span><br><span class="smp">Fließtext im Content</span></td></tr><tr><td class="k">Nav</td><td><span class="spec">Interstate 18 px · w700 · UPPERCASE</span><br><span class="smp">MENÜ / SHOP</span></td></tr><tr><td class="k">Footer</td><td><span class="spec">Interstate 11/10 px · w400</span><br><span class="smp">Kleingedrucktes</span></td></tr></tbody></table></section>
+
+<section class="cols">
+<div><h3>Layout &amp; Raster</h3><p>Container bis 2180 px, Sektions-Padding 70–120 px, Seitenlänge 5.522 px. Vollbild-Intro mit Ladeanimation, danach klassische Sektionsfolge. Logo sitzt fix und überlagert beim Scrollen den Content.</p></div>
+<div><h3>Bildsprache</h3><p>27 Bilder, überwiegend 1:1 (13×) und 16:9 (9×), 1 Video. Dunkle Kellerfotografie, Porträt-Mosaik aller Weinhauer:innen, Drohnen-/Landschaftsmotive. Bildstimmung uneinheitlich.</p></div>
+</section>
+
+<section class="cols">
+<div><h3>Shop / Buchung</h3><p>WooCommerce mit Side-Cart. Shop-Button dauerhaft im Header, Flaschen-Karussell mit Jahrgang + Ried, CTA „WEINE FINDEN“. Rabattlogik über Newsletter (-10 %).</p></div>
+<div><h3>Bewegung</h3><p>Intro-Loader, Scroll-Reveals, horizontales Flaschen-Karussell.</p></div>
+</section>
+
+<div class="rule"></div>
+
+<section class="cols">
+<div><h3>Übernehmen</h3><ul class="take"><li>Ried-/Lagen-Systematik als eigener Navigationszweig („Weingärten &amp; Rieden“)</li><li>Sehr dunkler, ruhiger Einstiegsscreen mit reduziertem Claim</li><li>Konsequente Verwendung genau einer Schriftfamilie über die gesamte Seite</li></ul></div>
+<div><h3>Vermeiden</h3><ul class="avoid"><li>Newsletter-Popup mit Rabatt schon vor dem ersten Scroll</li><li>Instagram-Feed-Kachelwand kurz vor dem Footer</li><li>Ladeanimation, die den Content mehrere Sekunden blockiert</li><li>Fixes Logo, das über den Text scrollt</li></ul></div>
+</section>
+
+<div class="rule"></div>
+
+<section><h3>Screenshots</h3><figure><img src="../shots/domaene-wachau-1.jpg" alt="Intro-Screen: schwarz, gesetzte Serif-Wortmarke, Claim in Versalien"><figcaption>Intro-Screen: schwarz, gesetzte Serif-Wortmarke, Claim in Versalien</figcaption></figure><figure><img src="../shots/domaene-wachau-2.jpg" alt="Flaschen-Karussell mit Jahrgang/Ried und dunkler Kellersektion"><figcaption>Flaschen-Karussell mit Jahrgang/Ried und dunkler Kellersektion</figcaption></figure><figure><img src="../shots/domaene-wachau-3.jpg" alt="Instagram-Kachelwand und Footer mit Newsletterformular"><figcaption>Instagram-Kachelwand und Footer mit Newsletterformular</figcaption></figure></section>
+
+<footer>Erhoben am 16.08.2026 über Chrome — Farben, Schriftgrößen, Abstände und Radien wurden aus den <em>computed styles</em> der Seite ausgelesen, nicht geschätzt.</footer>
+</div></body></html>
