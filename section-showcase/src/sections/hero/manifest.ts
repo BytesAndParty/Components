@@ -5,6 +5,10 @@ import { HeroV4 } from './HeroV4'
 import { HeroV6 } from './HeroV6'
 import { HeroV7 } from './HeroV7'
 import { HeroV8 } from './HeroV8'
+import { HeroNachtblau } from './HeroNachtblau'
+import { HeroGenussgut } from './HeroGenussgut'
+import { HeroSchwarzweiss } from './HeroSchwarzweiss'
+import { HeroGastgeber } from './HeroGastgeber'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -46,6 +50,30 @@ export const heroSection: SectionDef = {
       label: 'Nocturne (Cinematic)',
       description: 'Kellerkino: Kerzengold-Lichtstrahlen aus der Luke, Staub im Lichtkegel, Title-Card unten links, Ghost-Ziffer „58“.',
       Component: HeroV8,
+    },
+    {
+      id: 'nachtblau',
+      label: 'Nachtblau',
+      description: 'Halbseitiger Split aus kühl gegradeter Fotografie und Navy-Feld, darunter ein zentrierter Serif-Zwischenruf; weißer Pill-CTA plus kursiver Serif-Link mit nachlaufendem Strich.',
+      Component: HeroNachtblau,
+    },
+    {
+      id: 'genussgut',
+      label: 'Genussgut',
+      description: 'Große Grotesk in konsequenter Kleinschreibung führt, die kursive Serif steht nur als Kicker darüber; Einstieg nach Geschäftsbereichen, Wortmarke als angeschnittenes Wasserzeichen.',
+      Component: HeroGenussgut,
+    },
+    {
+      id: 'schwarzweiss',
+      label: 'Schwarzweiß',
+      description: 'Reines Weiß ohne einen einzigen Farbton: gezeichnete Kellertür als Bildmarke, sehr große zentrierte Serif auf strenger Mittelachse, senkrechter Flaschen-Reiter für die Öffnungszeiten.',
+      Component: HeroSchwarzweiss,
+    },
+    {
+      id: 'gastgeber',
+      label: 'Gastgeber',
+      description: 'Warmes Creme, ein einziger Akzent in Ziegelrot, Symmetrie als Prinzip: mittige Wortmarke, gleichrangige Bereichsleiste, Buttons als handgezeichnete Stempel.',
+      Component: HeroGastgeber,
     },
   ],
 }

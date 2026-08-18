@@ -4,6 +4,10 @@ import { FeaturesV5 } from './FeaturesV5'
 import { FeaturesV6 } from './FeaturesV6'
 import { FeaturesV7 } from './FeaturesV7'
 import { FeaturesV8 } from './FeaturesV8'
+import { FeaturesNachtblau } from './FeaturesNachtblau'
+import { FeaturesGenussgut } from './FeaturesGenussgut'
+import { FeaturesSchwarzweiss } from './FeaturesSchwarzweiss'
+import { FeaturesGastgeber } from './FeaturesGastgeber'
 import type { SectionDef } from '../types'
 
 export const featuresSection: SectionDef = {
@@ -44,6 +48,30 @@ export const featuresSection: SectionDef = {
       label: 'Nocturne (Cinematic)',
       description: 'Drei Kellerszenen als Film-Stills: Kerzengold-Hairlines, Ghost-Numerale, Lower-Third-Captions und Staub im Dunkel.',
       Component: FeaturesV8,
+    },
+    {
+      id: 'nachtblau',
+      label: 'Nachtblau',
+      description: 'Die vier Lagen als selbstgezeichnete Inline-SVG-Karte mit roten Ried-Markern, daneben das Datenblatt der aktiven Riede und ein Akkordeon der übrigen.',
+      Component: FeaturesNachtblau,
+    },
+    {
+      id: 'genussgut',
+      label: 'Genussgut',
+      description: 'Rhythmus durch großflächige Farbfelder statt Karten: Aprikose, Petrol und Creme laufen über die volle Breite, die Typo-Farbe kippt mit dem Feld.',
+      Component: FeaturesGenussgut,
+    },
+    {
+      id: 'schwarzweiss',
+      label: 'Schwarzweiß',
+      description: 'Der Dreitakt in Reinform: schmale zentrierte Textspalte, versetztes Bildraster aus 16:9 und 3:4, dann ein ganzseitiges Serif-Zitat als Rhythmuswechsel.',
+      Component: FeaturesSchwarzweiss,
+    },
+    {
+      id: 'gastgeber',
+      label: 'Gastgeber',
+      description: 'Weingut, Verkostung und Gästehaus als drei exakt gleich große, mittig gesetzte Blöcke mit gestempelten Glyphen; darunter die Auszeichnungen als ruhige Monochrom-Reihe.',
+      Component: FeaturesGastgeber,
     },
   ],
 }

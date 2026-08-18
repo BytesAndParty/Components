@@ -4,6 +4,10 @@ import { StoreMaison } from './StoreMaison'
 import { StoreModern } from './StoreModern'
 import { StoreArtisanal } from './StoreArtisanal'
 import { StoreEditorial } from './StoreEditorial'
+import { StoreNachtblau } from './StoreNachtblau'
+import { StoreGenussgut } from './StoreGenussgut'
+import { StoreSchwarzweiss } from './StoreSchwarzweiss'
+import { StoreGastgeber } from './StoreGastgeber'
 import type { SectionDef } from '../types'
 
 export const storeSection: SectionDef = {
@@ -46,6 +50,30 @@ export const storeSection: SectionDef = {
       label: 'Maison Editorial',
       description: 'Sortiment als Magazin-Register: Cream-Kopf mit übergroßer Serif, Raster aus Editorial-Karten mit Platten-Signatur — jede Position öffnet die Maison-Detailseite.',
       Component: StoreMaison,
+    },
+    {
+      id: 'nachtblau',
+      label: 'Nachtblau',
+      description: 'Das Sortiment ohne Kachelraster: eine Position als halbseitiger Split, die übrigen als Serif-Ledger mit Haarlinien, geschlossen von einem Concierge-Band.',
+      Component: StoreNachtblau,
+    },
+    {
+      id: 'genussgut',
+      label: 'Genussgut',
+      description: 'Der Shop als einer von vier Bereichen: Aprikose-Bereichsleiste über die volle Breite, darunter das Sortiment mit Hover-Zoom, Outline-Buttons und Preisen in ruhiger Sans.',
+      Component: StoreGenussgut,
+    },
+    {
+      id: 'schwarzweiss',
+      label: 'Schwarzweiß',
+      description: 'Das Sortiment als versetztes Raster statt gleichförmiger Kacheln: wechselnde Bildformate auf eigenen Höhen, dazwischen ein ganzseitiges Serif-Zitat.',
+      Component: StoreSchwarzweiss,
+    },
+    {
+      id: 'gastgeber',
+      label: 'Gastgeber',
+      description: 'Das Sortiment als symmetrisches Register auf Creme: gleichrangige Bereichsleiste, sechs gleich große Positionen auf einer Achse — ohne Rabatte, Rosetten, Streichpreise oder Badges.',
+      Component: StoreGastgeber,
     },
   ],
 }

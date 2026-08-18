@@ -4,6 +4,10 @@ import { ProductV3 } from './ProductV3'
 import { ProductV4 } from './ProductV4'
 import { ProductV5 } from './ProductV5'
 import { ProductV6 } from './ProductV6'
+import { ProductNachtblau } from './ProductNachtblau'
+import { ProductGenussgut } from './ProductGenussgut'
+import { ProductSchwarzweiss } from './ProductSchwarzweiss'
+import { ProductGastgeber } from './ProductGastgeber'
 import type { SectionDef } from '../types'
 
 export const showcaseSection: SectionDef = {
@@ -44,6 +48,30 @@ export const showcaseSection: SectionDef = {
       label: 'Maison Editorial',
       description: 'Ein Wein als geschichteter Magazin-Held: Name überlappt die Flaschen-Tafel, Etikett-Detail versetzt, Fiche Technique als Hairline-Basis. Cream-Grund, asymmetrisch.',
       Component: ProductV6,
+    },
+    {
+      id: 'nachtblau',
+      label: 'Nachtblau',
+      description: 'Eine Flasche im kühlen Streiflicht: Serif-Name auf Navy links, randlose Produkttafel rechts, darunter die Fiche Technique als Sans-Haarlinien neben dem Fasslager.',
+      Component: ProductNachtblau,
+    },
+    {
+      id: 'genussgut',
+      label: 'Genussgut',
+      description: 'Ein Wein als ruhige Warenkunde: Flasche im Hochformat auf Aprikose-hell, Name in großer Kleinschreib-Grotesk, Notizen als Hairline-Zeilen, Gebinde-Auswahl als einziger Auftritt von Orangerot.',
+      Component: ProductGenussgut,
+    },
+    {
+      id: 'schwarzweiss',
+      label: 'Schwarzweiß',
+      description: 'Ein einzelner Wein auf Weiß: entsättigte Reportagefotografie, Name in großer Serif, technische Daten als schwarze Haarlinien-Zeilen — der schwarze Flächen-Button ist der einzige harte Kontrast.',
+      Component: ProductSchwarzweiss,
+    },
+    {
+      id: 'gastgeber',
+      label: 'Gastgeber',
+      description: 'Ein Wein auf der Mittelachse: Flasche groß und warm auf Creme-Feld, Verkostungsnotiz als ruhige zentrierte Spalte, technische Daten in zwei ausbalancierten Spalten.',
+      Component: ProductGastgeber,
     },
   ],
 }
