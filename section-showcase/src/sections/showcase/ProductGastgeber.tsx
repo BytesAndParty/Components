@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GASTGEBER_FONTS } from '../family-fonts'
 
 /**
  * Gastgeber — ein Wein auf der Mittelachse: roter Serif-Kicker über der
@@ -107,7 +108,7 @@ export interface ProductGastgeberProps {
 
 export function ProductGastgeber({ onBack }: ProductGastgeberProps) {
   return (
-    <section className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-14 sm:py-20 lg:px-16 lg:py-24">
+    <section style={GASTGEBER_FONTS} className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-14 sm:py-20 lg:px-16 lg:py-24">
       <div className="mx-auto max-w-5xl">
         {/* Auch die Rückkehr steht auf der Achse — ein linksbündiger Zurück-Link
             würde die Symmetrie der Familie an der ersten Zeile brechen. */}

@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { SCHWARZWEISS_FONTS } from '../family-fonts'
 
 /**
  * Schwarzweiß — der Dreitakt in Reinform: schmale zentrierte Textspalte,
@@ -26,7 +27,7 @@ function Caption({ children }: { children: string }) {
 
 export function FeaturesSchwarzweiss() {
   return (
-    <section className="w-full bg-[#ffffff] px-6 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-36">
+    <section style={SCHWARZWEISS_FONTS} className="w-full bg-[#ffffff] px-6 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-36">
       {/* Erster Takt — schmale zentrierte Textspalte. */}
       <div className="mx-auto max-w-2xl text-center">
         <BlurFade delay={0} direction="up">

@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GENUSSGUT_FONTS } from '../family-fonts'
 
 /**
  * Genussgut — Rhythmus durch großflächige Farbfelder statt durch Karten:
@@ -18,7 +19,7 @@ const IMAGES = {
 
 export function FeaturesGenussgut() {
   return (
-    <div className="w-full">
+    <div className="w-full" style={GENUSSGUT_FONTS}>
       {/* ── Feld 01 · Aprikose ─────────────────────────────────────────────
           Petrol-Typo auf Aprikose (5,6:1). Auf dieser Fläche steht Fließtext
           in vollem Petrol statt in einer aufgehellten Variante — Aprikose

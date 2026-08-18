@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GENUSSGUT_FONTS } from '../family-fonts'
 
 /**
  * Genussgut — die erste Familie ohne Serif-Führung und ohne Versalien.
@@ -59,6 +60,7 @@ export function HeroGenussgut() {
   return (
     <section
       ref={sectionRef}
+      style={GENUSSGUT_FONTS}
       className="relative w-full overflow-hidden bg-[#fff3e8] px-6 py-16 sm:py-20 lg:px-12 lg:py-24"
     >
       {/* Wortmarken-Wasserzeichen — angeschnitten links und rechts, rein dekorativ */}

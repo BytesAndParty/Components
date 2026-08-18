@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GENUSSGUT_FONTS } from '../family-fonts'
 
 /**
  * Genussgut — ein Wein als ruhige Warenkunde auf Creme: die Flasche steht im
@@ -43,7 +44,7 @@ export function ProductGenussgut({ onBack }: ProductGenussgutProps) {
   const gewaehlt = GEBINDE.find((g) => g.id === gebinde) ?? GEBINDE[0]
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#fff3e8] px-6 py-16 sm:py-20 lg:px-12 lg:py-24">
+    <section style={GENUSSGUT_FONTS} className="relative w-full overflow-hidden bg-[#fff3e8] px-6 py-16 sm:py-20 lg:px-12 lg:py-24">
       {/* Wortmarken-Wasserzeichen — angeschnitten, rein dekorativ */}
       <span
         aria-hidden="true"

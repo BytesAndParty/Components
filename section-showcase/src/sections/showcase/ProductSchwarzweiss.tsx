@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { SCHWARZWEISS_FONTS } from '../family-fonts'
 
 /**
  * Schwarzweiß — ein einzelner Wein auf reinem Weiß. Entsättigte Reportage-
@@ -25,7 +26,7 @@ export interface ProductSchwarzweissProps {
 
 export function ProductSchwarzweiss({ onBack }: ProductSchwarzweissProps) {
   return (
-    <section className="w-full bg-[#ffffff] px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
+    <section style={SCHWARZWEISS_FONTS} className="w-full bg-[#ffffff] px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
       {/* Kopfleiste — dieselbe Rahmung wie im Hero. */}
       <BlurFade delay={0} direction="down">
         <div className="flex min-h-11 items-center justify-between border-b border-[#000101] pb-4">

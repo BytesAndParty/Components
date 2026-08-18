@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GASTGEBER_FONTS } from '../family-fonts'
 import { ProductGastgeber } from '../showcase/ProductGastgeber'
 import { SAMPLE_WINES } from './cards/sample-wines'
 
@@ -80,7 +81,7 @@ export function StoreGastgeber() {
   }
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
+    <section style={GASTGEBER_FONTS} className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-16 sm:py-24 lg:px-16 lg:py-32">
       <div className="mx-auto max-w-6xl">
         {/* Dieselbe Bereichsleiste wie im Hero: der Shop ist einer von drei
             Bereichen, nicht der Hauptdarsteller. */}

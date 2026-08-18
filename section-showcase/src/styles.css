@@ -3,6 +3,39 @@
 /* Tailwind v4 only auto-scans the Vite root; pull in shared components too. */
 @source "../../components/**/*.{ts,tsx}";
 
+/* Self-hosted fonts (@fontsource). Default pairing used site-wide: */
+@import "@fontsource/cormorant-garamond/300.css";
+@import "@fontsource/cormorant-garamond/300-italic.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/500-italic.css";
+
+/* Genussgut family (Krispel-Vorbild: Mackay + DIN Pro → freie Analoga) */
+@import "@fontsource/fraunces/300.css";
+@import "@fontsource/fraunces/300-italic.css";
+@import "@fontsource/fraunces/400.css";
+@import "@fontsource/fraunces/400-italic.css";
+@import "@fontsource/fraunces/500.css";
+@import "@fontsource/fraunces/500-italic.css";
+@import "@fontsource/archivo/300.css";
+@import "@fontsource/archivo/400.css";
+@import "@fontsource/archivo/500.css";
+
+/* Schwarzweiß family (Scharl-Vorbild: DM Serif Display + PT Sans — beide frei) */
+@import "@fontsource/dm-serif-display/400.css";
+@import "@fontsource/dm-serif-display/400-italic.css";
+@import "@fontsource/pt-sans/400.css";
+@import "@fontsource/pt-sans/700.css";
+
+/* Gastgeber family (Sattlerhof-Vorbild: Utopia + DIN + Inter → freies Analog) */
+@import "@fontsource/lora/400.css";
+@import "@fontsource/lora/500.css";
+@import "@fontsource/lora/600.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+
 @custom-variant hover {
   @media (hover: hover) and (pointer: fine) {
     &:hover { @slot; }
@@ -16,8 +49,13 @@
 }
 
 @theme inline {
-  --font-sans:    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  /* `inline` bakes literal theme values straight into the compiled utility
+     (.font-sans { font-family: ...literal... }) — a runtime custom property
+     only survives if the theme value is itself a var() reference, exactly
+     like --color-background below. So --font-sans/--font-display point at
+     the actual overridable variables, which live in :root. */
+  --font-sans:    var(--font-sans-base);
+  --font-display: var(--font-display-base);
 
   --color-background:        var(--background);
   --color-foreground:        var(--foreground);
@@ -34,6 +72,24 @@
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
   --radius-xl: calc(var(--radius) + 8px);
+}
+
+/* ── Fonts (theme-unabhängig) ─────────────────────────── */
+:root {
+  --font-sans-base:    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display-base: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+
+  /* Per-Stil-Pairings — nur Familien mit eigenständigem Vorbild weichen vom
+     Default ab (siehe design-research/). Angewendet via style={{ '--font-display':
+     'var(--font-genussgut-display)', ... }} auf dem jeweiligen Section-Root
+     (family-fonts.ts) — überschreibt dort --font-display-base/--font-sans-base,
+     nicht die @theme-Alias-Namen (die sind zur Build-Zeit bereits aufgelöst). */
+  --font-genussgut-display:    "Fraunces", "Cormorant Garamond", serif;
+  --font-genussgut-sans:       "Archivo", -apple-system, sans-serif;
+  --font-schwarzweiss-display: "DM Serif Display", "Cormorant Garamond", serif;
+  --font-schwarzweiss-sans:    "PT Sans", -apple-system, sans-serif;
+  --font-gastgeber-display:    "Lora", "Cormorant Garamond", serif;
+  --font-gastgeber-sans:       "Inter", -apple-system, sans-serif;
 }
 
 /* ── Dark Mode (default) ─────────────────────────────── */

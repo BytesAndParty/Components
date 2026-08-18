@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GASTGEBER_FONTS } from '../family-fonts'
 
 /**
  * Gastgeber — die Story-Section der Familie: Weingut, Verkostung und Gästehaus
@@ -158,7 +159,7 @@ const AUSZEICHNUNGEN = [
 
 export function FeaturesGastgeber() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-20 sm:py-28 lg:px-16 lg:py-36">
+    <section style={GASTGEBER_FONTS} className="relative w-full overflow-hidden bg-[#f5f1e2] px-6 py-20 sm:py-28 lg:px-16 lg:py-36">
       <div className="mx-auto max-w-6xl">
         {/* Zentrierter Sektionskopf — dieselbe Achse wie im Hero. */}
         <div className="mx-auto max-w-2xl text-center">

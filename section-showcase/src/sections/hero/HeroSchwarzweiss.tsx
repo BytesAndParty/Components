@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { SCHWARZWEISS_FONTS } from '../family-fonts'
 
 /**
  * Schwarzweiß — reines Weiß, kein einziger Farbton. Eine gezeichnete Kellertür
@@ -106,7 +107,7 @@ const REGISTER: Array<[string, string]> = [
 
 export function HeroSchwarzweiss() {
   return (
-    <section className="relative flex min-h-screen w-full flex-col bg-[#ffffff] px-6 py-10 sm:px-10 lg:px-16">
+    <section style={SCHWARZWEISS_FONTS} className="relative flex min-h-screen w-full flex-col bg-[#ffffff] px-6 py-10 sm:px-10 lg:px-16">
       <OeffnungszeitenReiter />
 
       {/* Kopfleiste — rahmt das weiße Feld oben, damit der Raum darunter

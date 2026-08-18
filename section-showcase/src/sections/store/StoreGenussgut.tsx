@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ProductGenussgut } from '../showcase/ProductGenussgut'
 import { SAMPLE_WINES } from './cards/sample-wines'
+import { GENUSSGUT_FONTS } from '../family-fonts'
 
 /**
  * Genussgut — der shop ist ein bereich unter vieren, nicht der hauptdarsteller:
@@ -29,7 +30,7 @@ export function StoreGenussgut() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full" style={GENUSSGUT_FONTS}>
       {/* Bereichsleiste auf Aprikose — petrol auf aprikose liegt bei 5,6:1,
           deshalb steht die schrift hier in vollem petrol statt aufgehellt. */}
       <nav aria-label="bereiche" className="w-full bg-[#f9bc88] px-6 py-5 lg:px-12">

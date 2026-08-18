@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { GASTGEBER_FONTS } from '../family-fonts'
 
 /**
  * Gastgeber — warmes Creme (#f5f1e2), ein einziger Akzent in Ziegelrot, und
@@ -120,7 +121,7 @@ const META = [
 
 export function HeroGastgeber() {
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-[#f5f1e2] px-6 py-9 lg:px-16 lg:py-12">
+    <section style={GASTGEBER_FONTS} className="relative min-h-screen w-full overflow-hidden bg-[#f5f1e2] px-6 py-9 lg:px-16 lg:py-12">
       <div className="mx-auto max-w-6xl">
         {/* Kopfzeile: links Menü, mittig die Wortmarke, rechts die zwei Stempel.
             Auf Mobil kippt die Zeile in eine zentrierte Spalte — die Achse bleibt,
