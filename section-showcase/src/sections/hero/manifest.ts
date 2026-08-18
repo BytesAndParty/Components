@@ -5,6 +5,7 @@ import { HeroV4 } from './HeroV4'
 import { HeroV6 } from './HeroV6'
 import { HeroV7 } from './HeroV7'
 import { HeroV8 } from './HeroV8'
+import { HeroV9 } from './HeroV9'
 import { HeroNachtblau } from './HeroNachtblau'
 import { HeroGenussgut } from './HeroGenussgut'
 import { HeroSchwarzweiss } from './HeroSchwarzweiss'
@@ -50,6 +51,12 @@ export const heroSection: SectionDef = {
       label: 'Nocturne (Cinematic)',
       description: 'Kellerkino: Kerzengold-Lichtstrahlen aus der Luke, Staub im Lichtkegel, Title-Card unten links, Ghost-Ziffer „58“.',
       Component: HeroV8,
+    },
+    {
+      id: 'v9',
+      label: 'Full Bleed',
+      description: 'Abgeleitet von Cinematic Atmosphere, aber ohne Vordergrundeffekte: ein einziges Rebenfoto trägt die Sektion, schmales Title-Card unten links, kein Partikel, kein Shine.',
+      Component: HeroV9,
     },
     {
       id: 'nachtblau',
