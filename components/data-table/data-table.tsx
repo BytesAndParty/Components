@@ -230,7 +230,7 @@ export function DataTable<TData, TValue>({
                               }
                             }}
                             aria-label={nextSortLabel}
-                            className="group text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 focus-visible:ring-offset-card flex cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent p-0 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                            className="group text-muted-foreground hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-card flex cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent p-0 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                           >
                             {flexRender(header.column.columnDef.header, header.getContext())}
                             <span className="flex h-4 w-4 items-center justify-center" aria-hidden="true">

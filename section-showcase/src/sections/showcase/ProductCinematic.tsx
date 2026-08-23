@@ -64,7 +64,7 @@ export function ProductCinematic({ onBack }: ProductCinematicProps) {
             <button
               type="button"
               onClick={onBack}
-              className="group inline-flex min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
+              className="group inline-flex min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
             >
               <span aria-hidden="true" className="transition-transform duration-300 group-hover:-translate-x-1">
                 ←
@@ -150,7 +150,7 @@ export function ProductCinematic({ onBack }: ProductCinematicProps) {
                       type="button"
                       onClick={() => setFormat(f)}
                       aria-pressed={format === f}
-                      className={`min-h-11 border-b pb-1 text-sm transition-all focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none ${
+                      className={`min-h-11 border-b pb-1 text-sm transition-all focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none ${
                         format === f
                           ? 'border-accent-lifted text-white'
                           : 'border-transparent text-zinc-400 hover:text-zinc-200'

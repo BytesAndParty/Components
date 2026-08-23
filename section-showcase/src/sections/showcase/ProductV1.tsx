@@ -18,7 +18,7 @@ export function ProductV1({ onBack }: ProductV1Props) {
           <BlurFade delay={50} direction="down" className="mb-8">
             <button
               onClick={onBack}
-              className="border-border text-muted-foreground hover:text-foreground hover:border-accent/40 focus-visible:ring-accent/60 bg-card/50 inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="border-border text-muted-foreground hover:text-foreground hover:border-accent/40 focus-visible:ring-ring bg-card/50 inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               <ArrowLeft size={16} />
               <span>Zurück zum Sortiment</span>

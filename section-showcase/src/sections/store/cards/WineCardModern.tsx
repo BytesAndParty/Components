@@ -15,7 +15,7 @@ export interface WineCardModernProps {
  */
 export function WineCardModern({ wine, rating, onSelect }: WineCardModernProps) {
   return (
-    <div className="border-border bg-card/45 hover:border-accent/40 focus-within:ring-accent/50 flex h-full flex-col justify-between rounded-2xl border p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl focus-within:ring-2">
+    <div className="border-border bg-card/45 hover:border-accent/40 focus-within:ring-ring flex h-full flex-col justify-between rounded-2xl border p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl focus-within:ring-2">
       <div>
         <div className="from-accent/5 relative mb-8 flex items-center justify-center overflow-hidden rounded-xl bg-radial to-transparent py-6">
           <AmbientImage
@@ -36,7 +36,7 @@ export function WineCardModern({ wine, rating, onSelect }: WineCardModernProps) 
         )}
 
         <h3 className="font-sans text-foreground text-2xl font-semibold tracking-tight">{wine.name}</h3>
-        <p className="text-accent mt-1 text-sm font-medium">Vintage {wine.vintage}</p>
+        <p className="text-accent-readable mt-1 text-sm font-medium">Vintage {wine.vintage}</p>
         <p className="text-muted-foreground mt-4 text-sm leading-relaxed font-light">{wine.description}</p>
       </div>
 
@@ -48,7 +48,7 @@ export function WineCardModern({ wine, rating, onSelect }: WineCardModernProps) 
         <button
           type="button"
           onClick={onSelect}
-          className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/60 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-ring inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <span>Entdecken</span>
           <ArrowRight size={14} aria-hidden="true" />

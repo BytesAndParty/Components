@@ -83,7 +83,7 @@ export function CompositionTray({ onClose }: CompositionTrayProps) {
           type="button"
           onClick={onClose}
           aria-label="Schließen"
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md p-1 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-md p-1 transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <X size={14} />
         </button>
@@ -121,7 +121,7 @@ export function CompositionTray({ onClose }: CompositionTrayProps) {
             <button
               type="button"
               onClick={clearFavorites}
-              className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               <Trash2 size={13} />
               Leeren
@@ -130,7 +130,7 @@ export function CompositionTray({ onClose }: CompositionTrayProps) {
             <button
               type="button"
               onClick={confirm}
-              className="bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-ring flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               Vorschau
               <ArrowRight size={14} />
@@ -174,7 +174,7 @@ function SortableTrayRow({
         {...attributes}
         {...listeners}
         aria-label={`${row.sectionLabel} verschieben`}
-        className="text-muted-foreground/50 hover:text-foreground focus-visible:ring-accent/60 cursor-grab touch-none rounded p-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none active:cursor-grabbing"
+        className="text-muted-foreground/50 hover:text-foreground focus-visible:ring-ring cursor-grab touch-none rounded p-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none active:cursor-grabbing"
       >
         <GripVertical size={15} />
       </button>
@@ -196,7 +196,7 @@ function SortableTrayRow({
         type="button"
         onClick={onRemove}
         aria-label={`${row.sectionLabel} entfernen`}
-        className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 rounded-md p-1 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-md p-1 transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <X size={14} />
       </button>

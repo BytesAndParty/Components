@@ -58,7 +58,7 @@ export function FieldHint({
             'text-muted-foreground hover:text-foreground',
             'transition-colors duration-150 cursor-help',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
-            'focus-visible:ring-accent focus-visible:ring-offset-background',
+            'focus-visible:ring-ring focus-visible:ring-offset-background',
             className,
           )}
           style={{ width: size + 4, height: size + 4 }}

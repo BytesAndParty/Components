@@ -261,7 +261,7 @@ export function CommandBar() {
         aria-label="Showcase-Steuerung einblenden (H)"
         title="Einblenden (H)"
         style={PIN_HIDDEN_TOGGLE_STYLE}
-        className="border-border bg-elevated text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+        className="border-border bg-elevated text-muted-foreground hover:text-foreground focus-visible:ring-ring fixed right-4 bottom-4 z-50 flex h-9 w-9 items-center justify-center rounded-full border shadow-lg shadow-black/20 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
       >
         <Eye size={14} />
       </button>
@@ -295,7 +295,7 @@ export function CommandBar() {
               onClick={() => setSectionMenuOpen(o => !o)}
               aria-expanded={sectionMenuOpen}
               aria-haspopup="menu"
-              className="border-border bg-background/60 hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
+              className="border-border bg-background/60 hover:border-accent/40 focus-visible:ring-ring flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
             >
               <span className="font-display tracking-tight">{section?.label ?? 'Übersicht'}</span>
               <ChevronDown size={12} className={`transition-transform ${sectionMenuOpen ? 'rotate-180' : ''}`} />
@@ -332,7 +332,7 @@ export function CommandBar() {
                     }`}
                   >
                     <span className="shrink-0">{s.label}</span>
-                    <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent' : 'text-muted-foreground/60'}`}>
+                    <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent-readable' : 'text-muted-foreground/60'}`}>
                       {d.label}
                     </span>
                   </Link>
@@ -350,7 +350,7 @@ export function CommandBar() {
                 aria-pressed={showcase.mode === 'stack'}
                 aria-label={showcase.mode === 'single' ? 'Alle Varianten zeigen (M)' : 'Einzeln zeigen (M)'}
                 title={showcase.mode === 'single' ? 'Alle untereinander (M)' : 'Einzeln (M)'}
-                className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+                className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-ring flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
               >
                 {showcase.mode === 'single' ? <Layers size={14} /> : <Square size={14} />}
               </button>
@@ -376,7 +376,7 @@ export function CommandBar() {
                 aria-haspopup="dialog"
                 aria-label={`Favoriten (${favoriteCount})`}
                 title="Deine Seite"
-                className="border-border hover:border-accent/40 focus-visible:ring-accent/60 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
+                className="border-border hover:border-accent/40 focus-visible:ring-ring flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:min-h-11"
               >
                 <Heart
                   size={14}
@@ -399,7 +399,7 @@ export function CommandBar() {
                     onClick={() => atelier.setAccent(a)}
                     aria-label={`Akzent ${a}`}
                     aria-pressed={active}
-                    className={`focus-visible:ring-accent/60 h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none max-sm:h-5 max-sm:w-5 ${
+                    className={`focus-visible:ring-ring h-3.5 w-3.5 rounded-full transition-transform focus-visible:ring-2 focus-visible:outline-none max-sm:h-5 max-sm:w-5 ${
                       active ? 'ring-foreground/40 ring-offset-elevated scale-110 ring-1 ring-offset-2' : ''
                     }`}
                     style={{ background: accentSwatch(a) }}
@@ -413,7 +413,7 @@ export function CommandBar() {
               onClick={atelier.toggleTheme}
               aria-label="Theme umschalten"
               title="Theme"
-              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-ring flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
             >
               {atelier.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             </button>
@@ -423,7 +423,7 @@ export function CommandBar() {
               onClick={() => showcase.setBarHidden(true)}
               aria-label="Steuerung ausblenden (H)"
               title="Ausblenden (H)"
-              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+              className="border-border text-muted-foreground hover:text-foreground focus-visible:ring-ring flex items-center justify-center rounded-md border p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
             >
               <EyeOff size={14} />
             </button>
@@ -438,7 +438,7 @@ export function CommandBar() {
               disabled={variantIdx <= 0}
               aria-label="Vorherige Variante (←)"
               title="Vorherige Variante (←)"
-              className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
             >
               <ChevronLeft size={16} />
             </button>
@@ -453,7 +453,7 @@ export function CommandBar() {
                     onClick={() => switchVariant(v.id, idx - variantIdx)}
                     aria-pressed={active}
                     title={v.description ?? v.label}
-                    className={`focus-visible:ring-accent/60 shrink-0 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:py-2.5 ${
+                    className={`focus-visible:ring-ring shrink-0 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:py-2.5 ${
                       active
                         ? 'bg-foreground text-background'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -470,7 +470,7 @@ export function CommandBar() {
               disabled={variantIdx < 0 || variantIdx >= variants.length - 1}
               aria-label="Nächste Variante (→)"
               title="Nächste Variante (→)"
-              className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex shrink-0 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 max-sm:h-11 max-sm:w-11"
             >
               <ChevronRight size={16} />
             </button>
@@ -487,7 +487,7 @@ export function CommandBar() {
           onClick={() => setPanelOpen(true)}
           aria-label="Showcase-Steuerung öffnen"
           style={PIN_MOBILE_LAUNCHER_STYLE}
-          className="border-border bg-elevated text-foreground focus-visible:ring-accent/60 fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 focus-visible:ring-2 focus-visible:outline-none"
+          className="border-border bg-elevated text-foreground focus-visible:ring-ring fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border shadow-lg shadow-black/25 focus-visible:ring-2 focus-visible:outline-none"
         >
           <SlidersHorizontal size={18} />
           {favoriteCount > 0 && (
@@ -530,7 +530,7 @@ export function CommandBar() {
                   type="button"
                   onClick={() => setPanelOpen(false)}
                   aria-label="Schließen"
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex h-11 w-11 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex h-11 w-11 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
                 >
                   <X size={18} />
                 </button>
@@ -582,7 +582,7 @@ export function CommandBar() {
                         className={`flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-sm transition-colors ${section?.id === s.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60'}`}
                       >
                         <span className="shrink-0">{s.label}</span>
-                        <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent' : 'text-muted-foreground/60'}`}>
+                        <span className={`truncate text-[10px] tracking-wider uppercase ${d.chosen ? 'text-accent-readable' : 'text-muted-foreground/60'}`}>
                           {d.label}
                         </span>
                       </Link>
@@ -671,7 +671,7 @@ export function CommandBar() {
                   type="button"
                   onClick={openPreview}
                   disabled={favoriteCount === 0}
-                  className="bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-accent/60 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-40"
+                  className="bg-foreground text-background hover:bg-foreground/90 focus-visible:ring-ring flex min-h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-40"
                 >
                   Deine Seite ({favoriteCount}) ansehen
                   <ArrowRight size={15} />

@@ -72,7 +72,7 @@ export function App() {
         onClick={toggleTheme}
         aria-label="Theme umschalten"
         title="Theme"
-        className="border-border bg-background/80 text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 fixed top-4 right-4 z-10 flex items-center justify-center rounded-full border p-2 backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
+        className="border-border bg-background/80 text-muted-foreground hover:text-foreground focus-visible:ring-ring fixed top-4 right-4 z-10 flex items-center justify-center rounded-full border p-2 backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:outline-none max-sm:h-11 max-sm:w-11"
       >
         {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
       </button>
@@ -129,7 +129,7 @@ export function App() {
                 ) : (
                   <a
                     href={t.href}
-                    className="group border-border bg-card hover:border-accent/60 focus-visible:ring-accent/60 flex h-full flex-col rounded-2xl border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    className="group border-border bg-card hover:border-accent/60 focus-visible:ring-ring flex h-full flex-col rounded-2xl border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
                     {inner}
                   </a>

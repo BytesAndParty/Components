@@ -218,14 +218,14 @@ function RebstockCTA() {
       <p className="font-display text-lg font-medium text-foreground">{REBSTOCKMIETE.label}</p>
       <p className="mt-1 text-xs text-muted-foreground">{REBSTOCKMIETE.note}</p>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-accent">{REBSTOCKMIETE.price}</span>
+        <span className="text-sm font-semibold text-accent-readable">{REBSTOCKMIETE.price}</span>
         <button
           type="button"
           onClick={() => setBooked(b => !b)}
           aria-pressed={booked}
           className={cn(
             'rounded-full px-4 py-1.5 text-xs font-semibold transition-transform duration-200 active:scale-95 motion-reduce:transition-none',
-            'focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none',
+            'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none',
             booked ? 'border border-accent/50 text-accent' : 'bg-accent text-accent-foreground hover:brightness-110',
           )}
         >
@@ -266,7 +266,7 @@ function DetailBody({ node, onSelectParent }: { node: GrapeNode; onSelectParent:
                 <button
                   type="button"
                   onClick={() => onSelectParent(p)}
-                  className="font-medium text-accent underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 rounded-sm outline-none"
+                  className="font-medium text-accent underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-ring rounded-sm outline-none"
                 >
                   {nodeById(p)?.name}
                 </button>
@@ -335,7 +335,7 @@ function DetailBody({ node, onSelectParent }: { node: GrapeNode; onSelectParent:
                     {w.style} · {w.note}
                   </p>
                 </div>
-                <span className="shrink-0 text-sm font-semibold text-accent">{w.price}</span>
+                <span className="shrink-0 text-sm font-semibold text-accent-readable">{w.price}</span>
               </li>
             ))}
           </ul>
@@ -384,7 +384,7 @@ function Outline({
                     type="button"
                     aria-expanded={open}
                     onClick={() => onToggle(n.id)}
-                    className="flex w-full items-center justify-between gap-3 py-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="flex w-full items-center justify-between gap-3 py-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <span className="flex items-center gap-3">
                       <ColorDot color={n.color} />
@@ -664,7 +664,7 @@ export function LineageTree({ className }: { className?: string }) {
                 className={cn(
                   'pointer-events-auto absolute flex items-stretch overflow-hidden rounded-lg border text-left outline-none',
                   'transition-[opacity,transform,box-shadow,border-color] duration-300 motion-reduce:transition-none',
-                  'focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                   isSel
                     ? 'border-accent shadow-[16px_20px_50px_-24px_rgba(0,0,0,0.5)]'
                     : 'border-border/70 hover:-translate-y-0.5 hover:border-accent/50 motion-reduce:hover:translate-y-0',
@@ -705,7 +705,7 @@ export function LineageTree({ className }: { className?: string }) {
           <button
             type="button"
             onClick={goToOverview}
-            className="flex items-center gap-1.5 rounded-lg border border-border bg-[color-mix(in_oklch,var(--card)_82%,transparent)] px-3 py-1.5 text-xs text-foreground backdrop-blur-sm transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
+            className="flex items-center gap-1.5 rounded-lg border border-border bg-[color-mix(in_oklch,var(--card)_82%,transparent)] px-3 py-1.5 text-xs text-foreground backdrop-blur-sm transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
           >
             <ArrowLeft size={13} /> Überblick
           </button>
@@ -713,7 +713,7 @@ export function LineageTree({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setView('list')}
-            className="flex items-center gap-1.5 rounded-lg border border-border bg-[color-mix(in_oklch,var(--card)_82%,transparent)] px-3 py-1.5 text-xs text-foreground backdrop-blur-sm transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
+            className="flex items-center gap-1.5 rounded-lg border border-border bg-[color-mix(in_oklch,var(--card)_82%,transparent)] px-3 py-1.5 text-xs text-foreground backdrop-blur-sm transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
           >
             <Menu size={13} /> Als Liste
           </button>
@@ -742,7 +742,7 @@ export function LineageTree({ className }: { className?: string }) {
               type="button"
               onClick={goToOverview}
               aria-label="Detail schließen"
-              className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-accent/60 outline-none"
+              className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
             >
               <X size={14} />
             </button>
@@ -764,7 +764,7 @@ export function LineageTree({ className }: { className?: string }) {
               <button
                 type="button"
                 onClick={() => setView('tree')}
-                className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none"
               >
                 <Network size={13} /> Als Baum
               </button>

@@ -138,7 +138,7 @@ export function StoreCinematic() {
                   type="button"
                   onClick={() => setDetailOpen(true)}
                   aria-label={`${wine.name} ${wine.vintage} — Detailseite öffnen`}
-                  className="group grid w-full grid-cols-[3.5rem_1fr_auto] items-center gap-5 py-5 text-left transition-colors duration-300 hover:bg-white/[0.03] focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-inset focus-visible:outline-none sm:grid-cols-[3.5rem_1fr_minmax(0,11rem)_6rem] sm:gap-6"
+                  className="group grid w-full grid-cols-[3.5rem_1fr_auto] items-center gap-5 py-5 text-left transition-colors duration-300 hover:bg-white/[0.03] focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-inset focus-visible:outline-none sm:grid-cols-[3.5rem_1fr_minmax(0,11rem)_6rem] sm:gap-6"
                 >
                   {/* Kontaktabzug-Kader */}
                   <span className="relative block aspect-3/4 w-14 overflow-hidden bg-white/[0.04]">
