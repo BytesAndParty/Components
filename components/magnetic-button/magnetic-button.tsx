@@ -54,9 +54,13 @@ function injectStyles() {
 // ─── Tailwind: nur Spacing + Layout, keine Farben ────────────────────────────────
 // Alle Farb-/Border-Stile kommen aus getVariantStyle → inline styles.
 
-// max-sm:py-3 lifts the smaller variants to a ≥44px touch target on phones
-// (text-sm line-height + 0.75rem padding) without affecting the desktop scale.
-const BASE    = 'px-5 py-2.5 rounded-lg text-sm font-semibold max-sm:py-3';
+// pointer-coarse:py-3 lifts the smaller variants to a ≥44px touch target
+// (text-sm line-height 20px + 2×0.75rem padding) without changing the
+// mouse-driven desktop scale, which stays at 40px.
+// Keyed on the input device rather than the viewport on purpose: a tablet or
+// touch laptop above the sm breakpoint is still finger-operated, and the old
+// max-sm: query left those at 40px (ghost: 36px).
+const BASE    = 'px-5 py-2.5 rounded-lg text-sm font-semibold pointer-coarse:py-3';
 const BASE_LG = 'px-6 py-3   rounded-xl text-sm font-semibold';
 
 const variantClasses: Record<MagneticButtonVariant, string> = {
@@ -64,7 +68,7 @@ const variantClasses: Record<MagneticButtonVariant, string> = {
   primary:     `${BASE}`,
   secondary:   `${BASE}`,
   outline:     `${BASE}`,
-  ghost:       'px-4 py-2 rounded-lg text-sm font-medium max-sm:py-3',
+  ghost:       'px-4 py-2 rounded-lg text-sm font-medium pointer-coarse:py-3',
   destructive: `${BASE}`,
   shimmer:     `${BASE_LG} overflow-hidden`,
   cta:         `${BASE_LG} overflow-hidden`,
