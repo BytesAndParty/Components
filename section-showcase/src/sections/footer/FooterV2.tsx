@@ -36,18 +36,25 @@ export function FooterV2() {
           </div>
 
           <div className="flex flex-col gap-6">
-            <span className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
+            {/* Das sichtbare "Notiz erhalten" ist der Feldname — als <label>
+                ausgezeichnet statt per aria-label, damit er nicht mit dem
+                Platzhalter verschwindet (WCAG 3.3.2). */}
+            <label
+              htmlFor="footer-v2-email"
+              className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
+            >
               Notiz erhalten
-            </span>
-            <p className="max-w-xs text-sm leading-relaxed font-light text-muted-foreground">
+            </label>
+            <p id="footer-v2-email-hint" className="max-w-xs text-sm leading-relaxed font-light text-muted-foreground">
               Drei Briefe pro Jahr. Lese, neue Jahrgänge, geschlossene Verkostungen.
             </p>
             <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
               <input
+                id="footer-v2-email"
                 type="email"
                 required
                 placeholder="ihre@adresse.at"
-                aria-label="E-Mail-Adresse"
+                aria-describedby="footer-v2-email-hint"
                 className="min-h-11 border-b border-border bg-transparent pb-2 text-sm font-light placeholder:text-muted-foreground focus:border-foreground focus:outline-none"
               />
               <button

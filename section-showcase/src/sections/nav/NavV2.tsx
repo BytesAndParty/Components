@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Artisanal Minimal — Cream-Kopfzeile (#fdfcf9): Serif-Wortmark mit italic-Wechsel,
@@ -15,6 +16,9 @@ const LINKS = [
 
 export function NavV2() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="border-b border-zinc-100 bg-[#fdfcf9]">
@@ -49,6 +53,7 @@ export function NavV2() {
           </a>
           <button
             type="button"
+            ref={toggleRef}
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
             aria-controls="nav-v2-menu"
@@ -67,6 +72,7 @@ export function NavV2() {
             <a
               key={link.href}
               href={link.href}
+              onClick={() => setOpen(false)}
               className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.25em] text-zinc-500 uppercase transition-colors hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
             >
               {link.label}

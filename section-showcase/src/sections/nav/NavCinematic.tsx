@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Cinematic Atmosphere — Glaskopfzeile über der Hero-Fotografie: dunkles
@@ -16,13 +17,16 @@ const LINKS = [
 
 export function NavCinematic() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="border-b border-white/10 bg-zinc-950/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 lg:px-8">
         <a
           href="/"
-          className="font-display flex min-h-11 items-center text-xl font-medium tracking-tight text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
+          className="font-display flex min-h-11 items-center text-xl font-medium tracking-tight text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
         >
           Buchart<span className="text-accent-lifted">°58</span>
         </a>
@@ -33,7 +37,7 @@ export function NavCinematic() {
             <a
               key={link.href}
               href={link.href}
-              className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.35em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:outline-none"
+              className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.35em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:outline-none"
             >
               {link.label}
             </a>
@@ -46,7 +50,7 @@ export function NavCinematic() {
               ganzen Stil mit Radius. */}
           <a
             href="/kollektion"
-            className="group hidden min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.3em] text-accent-lifted uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none sm:inline-flex"
+            className="group hidden min-h-11 items-center gap-3 text-[10px] font-bold tracking-[0.3em] text-accent-lifted uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none sm:inline-flex"
           >
             Entdecken
             <span
@@ -56,11 +60,12 @@ export function NavCinematic() {
           </a>
           <button
             type="button"
+            ref={toggleRef}
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
             aria-controls="nav-cinematic-menu"
             aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
-            className="flex h-11 w-11 items-center justify-center text-zinc-400 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:outline-none lg:hidden"
+            className="flex h-11 w-11 items-center justify-center text-zinc-400 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:outline-none lg:hidden"
           >
             {open ? <X size={19} /> : <Menu size={19} />}
           </button>
@@ -74,7 +79,8 @@ export function NavCinematic() {
             <a
               key={link.label}
               href={link.href}
-              className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.35em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:outline-none"
+              onClick={() => setOpen(false)}
+              className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.35em] text-zinc-400 uppercase transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:outline-none"
             >
               {link.label}
             </a>

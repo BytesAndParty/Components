@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Maison Masthead — Kopfzeile als Magazin-Impressum (Maison-Editorial-Linie):
@@ -18,6 +19,9 @@ const LINKS = [
 
 export function NavV3() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="bg-[#fdfcf9] px-6 pt-6 lg:px-16">
@@ -77,6 +81,7 @@ export function NavV3() {
 
             <button
               type="button"
+              ref={toggleRef}
               onClick={() => setOpen(o => !o)}
               aria-expanded={open}
               aria-controls="nav-v3-menu"
@@ -95,6 +100,7 @@ export function NavV3() {
               <a
                 key={link.href}
                 href={link.href}
+                onClick={() => setOpen(false)}
                 className="group flex min-h-11 items-baseline justify-between gap-4 text-[10px] font-bold tracking-[0.25em] text-zinc-900 uppercase transition-colors hover:text-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
               >
                 <span>{link.label}</span>

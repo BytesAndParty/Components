@@ -49,29 +49,36 @@ export function FooterCinematic() {
               Wachau, Österreich
             </address>
             <div className="flex flex-col text-sm text-zinc-300">
-              <a href="tel:+43271155800" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">+43 2711 55 800</a>
-              <a href="mailto:hallo@buchart58.at" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">hallo@buchart58.at</a>
+              <a href="tel:+43271155800" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">+43 2711 55 800</a>
+              <a href="mailto:hallo@buchart58.at" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">hallo@buchart58.at</a>
             </div>
           </div>
 
           <div className="flex flex-col gap-5">
-            <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
+            {/* Das sichtbare "Notiz erhalten" ist der Feldname — als <label>
+                ausgezeichnet statt per aria-label, damit er nicht mit dem
+                Platzhalter verschwindet (WCAG 3.3.2). */}
+            <label
+              htmlFor="footer-cinematic-email"
+              className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase"
+            >
               Notiz erhalten
-            </span>
-            <p className="max-w-xs text-sm leading-relaxed text-zinc-400">
+            </label>
+            <p id="footer-cinematic-email-hint" className="max-w-xs text-sm leading-relaxed text-zinc-400">
               Drei Briefe pro Jahr. Neue Jahrgänge, offene Abende, Nebel über der Terrasse.
             </p>
             <form className="flex flex-col gap-3" onSubmit={e => e.preventDefault()}>
               <input
+                id="footer-cinematic-email"
                 type="email"
                 required
                 placeholder="ihre@adresse.at"
-                aria-label="E-Mail-Adresse"
-                className="min-h-11 border-b border-white/20 bg-transparent pb-2 text-sm text-white placeholder:text-zinc-400 focus:border-accent-lifted focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
+                aria-describedby="footer-cinematic-email-hint"
+                className="min-h-11 border-b border-white/20 bg-transparent pb-2 text-sm text-white placeholder:text-zinc-400 focus:border-accent-lifted focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
               />
               <button
                 type="submit"
-                className="inline-flex min-h-11 items-center self-start text-[11px] font-bold tracking-[0.3em] text-accent-lifted uppercase transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
+                className="inline-flex min-h-11 items-center self-start text-[11px] font-bold tracking-[0.3em] text-accent-lifted uppercase transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none"
               >
                 Eintragen →
               </button>
@@ -90,8 +97,8 @@ export function FooterCinematic() {
         <div className="flex flex-col gap-2 border-t border-white/10 pt-8 text-[11px] tracking-wider text-zinc-400 uppercase sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Buchart°58 · Familienbetrieb</span>
           <div className="flex gap-4">
-            <a href="/impressum" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">Impressum</a>
-            <a href="/datenschutz" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-accent-lifted/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">Datenschutz</a>
+            <a href="/impressum" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">Impressum</a>
+            <a href="/datenschutz" className="inline-flex min-h-11 items-center px-1 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-accent-lifted focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none">Datenschutz</a>
           </div>
         </div>
       </div>

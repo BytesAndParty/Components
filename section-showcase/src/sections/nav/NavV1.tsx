@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, Search, ShoppingBag, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Standard Premium — semantische Kopfzeile über Design-Tokens (Dark/Light-fähig):
@@ -16,11 +17,14 @@ const LINKS = [
 
 export function NavV1() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="border-border bg-background border-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-8">
-        <a href="/" className="text-foreground focus-visible:ring-accent/60 flex min-h-11 items-center gap-2 rounded-md text-lg font-semibold tracking-tight focus-visible:ring-2 focus-visible:outline-none">
+        <a href="/" className="text-foreground focus-visible:ring-ring flex min-h-11 items-center gap-2 rounded-md text-lg font-semibold tracking-tight focus-visible:ring-2 focus-visible:outline-none">
           Buchart<span className="text-accent">°58</span>
         </a>
 
@@ -31,7 +35,7 @@ export function NavV1() {
               key={link.href}
               href={link.href}
               aria-current={link.current ? 'page' : undefined}
-              className={`focus-visible:ring-accent/60 flex min-h-11 items-center rounded-md px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+              className={`focus-visible:ring-ring flex min-h-11 items-center rounded-md px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none ${
                 link.current
                   ? 'text-foreground font-medium'
                   : 'text-muted-foreground hover:text-foreground'
@@ -46,14 +50,14 @@ export function NavV1() {
           <button
             type="button"
             aria-label="Suche öffnen"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <Search size={17} />
           </button>
           <button
             type="button"
             aria-label="Warenkorb, 2 Artikel"
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 relative flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring relative flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <ShoppingBag size={17} />
             <span aria-hidden="true" className="bg-accent text-accent-foreground absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-medium tabular-nums">
@@ -62,17 +66,18 @@ export function NavV1() {
           </button>
           <a
             href="/sortiment"
-            className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-accent/60 hidden min-h-11 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:inline-flex"
+            className="bg-accent text-accent-foreground hover:bg-accent/90 focus-visible:ring-ring hidden min-h-11 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:inline-flex"
           >
             Ab Hof kaufen
           </a>
           <button
             type="button"
+            ref={toggleRef}
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
             aria-controls="nav-v1-menu"
             aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-accent/60 flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
           >
             {open ? <X size={19} /> : <Menu size={19} />}
           </button>
@@ -86,8 +91,9 @@ export function NavV1() {
             <a
               key={link.href}
               href={link.href}
+              onClick={() => setOpen(false)}
               aria-current={link.current ? 'page' : undefined}
-              className={`focus-visible:ring-accent/60 flex min-h-11 items-center rounded-md px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+              className={`focus-visible:ring-ring flex min-h-11 items-center rounded-md px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none ${
                 link.current ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
               }`}
             >

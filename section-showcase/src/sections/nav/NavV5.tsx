@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Nocturne — cineastische Kopfzeile auf Fast-Schwarz (#0d0a09): Serif-Wortmark
@@ -16,6 +17,9 @@ const LINKS = [
 
 export function NavV5() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="border-b border-[#c9a25e]/20 bg-[#0d0a09]">
@@ -50,6 +54,7 @@ export function NavV5() {
           </a>
           <button
             type="button"
+            ref={toggleRef}
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
             aria-controls="nav-v5-menu"
@@ -68,6 +73,7 @@ export function NavV5() {
             <a
               key={link.label}
               href={link.href}
+              onClick={() => setOpen(false)}
               className="flex min-h-11 items-center text-[10px] font-bold tracking-[0.3em] text-[#6b5f50] uppercase transition-colors hover:text-[#e8d5ae] focus-visible:ring-2 focus-visible:ring-[#c9a25e]/70 focus-visible:outline-none"
             >
               {link.label}

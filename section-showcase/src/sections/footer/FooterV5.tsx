@@ -66,12 +66,14 @@ export function FooterV5() {
               </address>
             </div>
             <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-              <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">Notiz erhalten</span>
+              {/* Sichtbarer Feldname als <label> statt aria-label — bleibt
+                  auch stehen, wenn der Platzhalter beim Tippen verschwindet. */}
+              <label htmlFor="footer-v5-email" className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">Notiz erhalten</label>
               <input
+                id="footer-v5-email"
                 type="email"
                 required
                 placeholder="ihre@adresse.at"
-                aria-label="E-Mail-Adresse"
                 className="min-h-11 border-b border-zinc-300 bg-transparent pb-2 text-sm font-light text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none"
               />
               <button

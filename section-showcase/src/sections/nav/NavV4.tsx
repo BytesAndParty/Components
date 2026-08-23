@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
 
 /**
  * Domaine Privée — gravierte Kopfzeile auf Pergament (#f6f3ec): rundes
@@ -15,6 +16,9 @@ const LINKS = [
 
 export function NavV4() {
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+  useDisclosureDismiss(open, setOpen, toggleRef)
 
   return (
     <nav aria-label="Hauptnavigation" className="border-b border-[#ddd5c4] bg-[#f6f3ec]">
@@ -61,6 +65,7 @@ export function NavV4() {
           </a>
           <button
             type="button"
+            ref={toggleRef}
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
             aria-controls="nav-v4-menu"
@@ -79,6 +84,7 @@ export function NavV4() {
             <a
               key={link.href}
               href={link.href}
+              onClick={() => setOpen(false)}
               aria-current={link.current ? 'page' : undefined}
               className={`flex min-h-11 items-center text-[11px] font-bold tracking-[0.25em] uppercase transition-colors focus-visible:ring-2 focus-visible:ring-[#5c2331]/60 focus-visible:outline-none ${
                 link.current ? 'text-[#5c2331]' : 'text-[#a89e8a] hover:text-[#6f6657]'
@@ -89,6 +95,7 @@ export function NavV4() {
           ))}
           <a
             href="/degustation"
+            onClick={() => setOpen(false)}
             className="mt-3 inline-flex min-h-11 items-center bg-[#5c2331] px-7 py-2.5 text-[10px] font-bold tracking-[0.25em] text-[#f6f3ec] uppercase transition-colors hover:bg-[#471a26] focus-visible:ring-2 focus-visible:ring-[#5c2331]/60 focus-visible:outline-none"
           >
             Degustation
