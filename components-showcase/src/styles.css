@@ -35,6 +35,8 @@
   --color-input:                  var(--input);
   --color-ring:                   var(--ring);
   --color-accent:                 var(--accent);
+  --color-accent-lifted:          var(--accent-lifted);
+  --color-accent-readable:        var(--accent-readable);
   --color-primary:                var(--primary);
   --color-primary-foreground:     var(--primary-foreground);
   --color-destructive:            var(--destructive);
@@ -62,7 +64,8 @@
   --accent:                 oklch(0.585 0.233 277);
   --primary:                var(--accent);
   --primary-foreground:     oklch(1 0 0);
-  --ring:                   var(--accent);
+  /* Fokus-Ring — nie mit Opazität abschwächen, siehe --accent-readable unten. */
+  --ring:                   var(--accent-readable);
   --destructive:            oklch(0.577 0.245 27);
   --destructive-foreground: oklch(1 0 0);
   --radius:                 0.5rem;
@@ -88,6 +91,22 @@
   --theme-primary:          99 102 241;
   --theme-accent:           139 92 246;
 }
+
+/* Akzent, aufgehellt für dunkle Flächen — der Basis-Akzent erreicht dort nur
+   3,6:1 (emerald) bis 4,4:1 (indigo), Kleintext braucht 4,5:1. 70 % Akzent +
+   30 % Weiß hebt alle auf 6,5–7,4:1 und behält den Farbton.
+   Spiegelt section-showcase/src/styles.css — beim Ändern beide angleichen. */
+:root {
+  --accent-lifted: color-mix(in oklch, var(--accent) 70%, white);
+}
+
+/* Akzent für theme-abhängige Flächen — hält 4,5:1 als Kleintext (WCAG 1.4.3)
+   und deckt damit die 3:1 für Fokus-Ränder (1.4.11) mit ab. Dunkel aufhellen,
+   hell abdunkeln: --accent pur erreicht auf Dunkel nur 3,6–4,4:1, auf Hell
+   fällt er auf --muted bis 4,1:1.
+   Spiegelt section-showcase/src/styles.css — beim Ändern beide angleichen. */
+:root                { --accent-readable: var(--accent-lifted); }
+[data-theme="light"] { --accent-readable: color-mix(in oklch, var(--accent) 89%, black); }
 
 /* Accent color overrides via data-accent attribute */
 [data-accent="indigo"]  { --accent: oklch(0.585 0.233 277); --theme-primary: 99 102 241;  --theme-accent: 139 92 246; }

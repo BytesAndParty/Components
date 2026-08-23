@@ -68,6 +68,8 @@
   --color-accent:            var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-lifted:     var(--accent-lifted);
+  --color-accent-readable:   var(--accent-readable);
+  --color-ring:              var(--ring);
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -118,6 +120,22 @@
 :root {
   --accent-lifted: color-mix(in oklch, var(--accent) 70%, white);
 }
+
+/* Akzent für Flächen, die mit dem Theme wechseln. Hält 4,5:1 als Kleintext
+   (WCAG 1.4.3) und deckt damit die 3:1 für Fokus-Ränder (1.4.11) mit ab.
+   Die Modi brauchen gegenläufige Richtungen: auf Dunkel erreicht --accent pur
+   nur 2,2:1 (bordeaux) bis 4,4:1 (indigo); auf Hell fällt er auf --elevated
+   bis 3,7:1. Also dunkel aufhellen, hell abdunkeln — ein einzelner Wert kann
+   beides nicht bedienen. 89 % ist die hellste, markennächste Mischung, die
+   alle fünf Akzente auf allen hellen Flächen trägt.
+   Fest dunkle Sections (Cinematic) nutzen weiter --accent-lifted direkt,
+   weil ihre Fläche nicht mit dem Theme wechselt. */
+:root                { --accent-readable: var(--accent-lifted); }
+[data-theme="light"] { --accent-readable: color-mix(in oklch, var(--accent) 89%, black); }
+
+/* Fokus-Ring folgt derselben Regel — nie mit Opazität abschwächen, das mischt
+   den Ring mit der Fläche dahinter und kostet rund die Hälfte des Kontrasts. */
+:root { --ring: var(--accent-readable); }
 
 /* ── Light Mode ──────────────────────────────────────── */
 [data-theme="light"] {
