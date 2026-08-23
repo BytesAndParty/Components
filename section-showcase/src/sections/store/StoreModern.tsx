@@ -20,7 +20,7 @@ export function StoreModern() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <BlurFade delay={100} direction="down">
-            <span className="text-accent text-[11px] font-bold tracking-[0.4em] uppercase">Modern &amp; Interaktiv</span>
+            <span className="text-accent-readable text-[11px] font-bold tracking-[0.4em] uppercase">Modern &amp; Interaktiv</span>
           </BlurFade>
           <BlurFade delay={200} direction="down">
             <h2 className="font-display text-foreground mt-4 text-4xl font-light tracking-tight sm:text-5xl">

@@ -59,7 +59,7 @@ export function TestimonialsV1() {
                 „
               </span>
               <figure className="relative flex flex-col gap-8">
-                <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
+                <span className="text-accent-readable text-[10px] font-bold tracking-[0.3em] uppercase">
                   {FEATURED.source}
                 </span>
                 <blockquote className="font-display text-foreground text-2xl leading-snug font-light tracking-tight sm:text-4xl">
@@ -80,7 +80,7 @@ export function TestimonialsV1() {
                 <GlowCard className="h-full p-8">
                   <figure className="flex h-full flex-col justify-between gap-8">
                     <div>
-                      <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
+                      <span className="text-accent-readable text-[10px] font-bold tracking-[0.3em] uppercase">
                         {t.source}
                       </span>
                       <blockquote className="font-display text-foreground mt-4 text-lg leading-relaxed font-light italic">

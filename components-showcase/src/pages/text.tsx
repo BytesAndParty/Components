@@ -162,7 +162,7 @@ export function TextPage() {
 
           {/* Variant: cellar (dark), right, sm, no mark */}
           <div className="rounded-xl bg-zinc-950 p-10">
-            <p className="mb-6 text-[0.7rem] tracking-[0.15em] text-zinc-500 uppercase">
+            <p className="mb-6 text-[0.7rem] tracking-[0.15em] text-zinc-400 uppercase">
               variant="cellar" · align="right" · size="sm" · showMark={'{false}'}
             </p>
             <PullQuote

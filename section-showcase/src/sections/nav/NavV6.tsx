@@ -50,7 +50,7 @@ export function NavV6() {
               )}
               <a
                 href={ressort.href}
-                className="group inline-flex min-h-11 items-baseline gap-1.5 text-[10px] font-bold tracking-[0.25em] text-zinc-900 uppercase transition-colors hover:text-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
+                className="group inline-flex min-h-11 items-baseline gap-1.5 text-[10px] font-bold tracking-[0.25em] text-zinc-900 uppercase transition-colors hover:text-zinc-600 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
               >
                 {ressort.label}
                 <span className="font-display text-[11px] leading-none font-light text-zinc-400 italic normal-case transition-colors group-hover:text-zinc-900">

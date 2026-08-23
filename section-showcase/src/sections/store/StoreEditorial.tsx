@@ -30,7 +30,7 @@ export function StoreEditorial() {
             </h2>
           </BlurFade>
           <BlurFade delay={300}>
-            <p className="mt-3 text-base font-light text-zinc-500">
+            <p className="mt-3 text-base font-light text-zinc-600">
               Sechs Doppelseiten, ein Sortiment — jede Flasche ihre eigene Fiche Technique.
             </p>
           </BlurFade>
@@ -71,7 +71,7 @@ export function StoreEditorial() {
 
                   <span className="font-display mb-1 block text-6xl font-light tracking-tighter text-zinc-900">’{shortYear}</span>
                   <h3 className="font-display text-3xl leading-tight font-light tracking-tight text-zinc-900">{w.wine.name}</h3>
-                  <p className="mt-4 max-w-md text-sm leading-relaxed font-light text-zinc-500">{w.wine.description}</p>
+                  <p className="mt-4 max-w-md text-sm leading-relaxed font-light text-zinc-600">{w.wine.description}</p>
 
                   <div className="mt-8 flex items-center justify-between border-t border-zinc-300/70 pt-6">
                     <div>
@@ -81,7 +81,7 @@ export function StoreEditorial() {
                     <button
                       type="button"
                       onClick={() => setActive(true)}
-                      className="group inline-flex min-h-11 cursor-pointer items-center gap-3 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase transition-colors hover:text-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
+                      className="group inline-flex min-h-11 cursor-pointer items-center gap-3 pb-0.5 text-xs font-bold tracking-[0.2em] text-zinc-900 uppercase transition-colors hover:text-zinc-600 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:outline-none"
                     >
                       <span>Anfragen</span>
                       <span aria-hidden="true" className="h-px w-6 bg-zinc-900 transition-all duration-300 group-hover:w-10" />

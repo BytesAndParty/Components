@@ -97,7 +97,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
             setStatus('idle');
             setSelectedSlotId(null);
           }}
-          className="mt-2 text-xs font-bold tracking-wider text-accent uppercase transition-opacity hover:opacity-70"
+          className="mt-2 text-xs font-bold tracking-wider text-accent-readable uppercase transition-opacity hover:opacity-70"
         >
           {m.newRequest}
         </button>

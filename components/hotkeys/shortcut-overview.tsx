@@ -99,7 +99,7 @@ export function ShortcutOverview({
 
               return (
                 <div key={category} className="space-y-4">
-                  <h3 className="text-accent text-xs font-bold tracking-[0.2em] uppercase opacity-80">
+                  <h3 className="text-accent-readable text-xs font-bold tracking-[0.2em] uppercase opacity-80">
                     {category}
                   </h3>
                   <div className="space-y-2">

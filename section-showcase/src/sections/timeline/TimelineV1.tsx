@@ -31,7 +31,7 @@ export function TimelineV1() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <div>
             <BlurFade delay={100}>
-              <h2 className="text-accent text-sm font-bold tracking-widest uppercase">L'Héritage</h2>
+              <h2 className="text-accent-readable text-sm font-bold tracking-widest uppercase">L'Héritage</h2>
             </BlurFade>
             <BlurFade delay={200}>
               <p className="font-display text-foreground mt-4 text-4xl font-medium tracking-tight sm:text-6xl">

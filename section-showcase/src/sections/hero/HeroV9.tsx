@@ -24,7 +24,7 @@ export function HeroV9() {
       <div className="relative z-10 w-full px-6 pb-16 sm:px-10 sm:pb-20 lg:px-16 lg:pb-24">
         <div className="mx-auto max-w-7xl">
           <BlurFade delay={100} direction="up">
-            <span className="text-accent mb-6 inline-block text-[10px] font-bold tracking-[0.4em] uppercase">
+            <span className="text-accent-lifted mb-6 inline-block text-[10px] font-bold tracking-[0.4em] uppercase">
               Ethereal Wine Experience
             </span>
           </BlurFade>
