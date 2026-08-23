@@ -18,7 +18,7 @@ export function HeroV3() {
 
       {/* Atmospheric Particles */}
       <Particles 
-        particleColors={['#fff', 'var(--accent)']} 
+        particleColors={['#fff', 'var(--accent-lifted)']} 
         particleCount={150} 
         speed={0.15} 
         moveParticlesOnHover
@@ -27,7 +27,7 @@ export function HeroV3() {
 
       <div className="relative z-20 mx-auto max-w-4xl px-6 text-center">
         <BlurFade delay={100}>
-          <span className="text-accent mb-6 inline-block text-[10px] font-bold tracking-[0.4em] uppercase">
+          <span className="text-accent-lifted mb-6 inline-block text-[10px] font-bold tracking-[0.4em] uppercase">
             Ethereal Wine Experience
           </span>
         </BlurFade>
@@ -53,7 +53,7 @@ export function HeroV3() {
           <MagneticButton variant="primary" className="px-12! py-5! text-base!">
             Kollektion entdecken
           </MagneticButton>
-          <MagneticButton variant="ghost" className="hover:text-accent! text-white!">
+          <MagneticButton variant="ghost" className="hover:text-accent-lifted! text-white!">
             Unsere Vision
           </MagneticButton>
         </BlurFade>
@@ -61,8 +61,8 @@ export function HeroV3() {
 
       {/* Scroll indicator */}
       <BlurFade delay={1000} className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
-        <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-500 uppercase">Scroll</span>
-        <div className="from-accent h-12 w-px bg-linear-to-b to-transparent" />
+        <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">Scroll</span>
+        <div className="from-accent-lifted h-12 w-px bg-linear-to-b to-transparent" />
       </BlurFade>
     </section>
   )

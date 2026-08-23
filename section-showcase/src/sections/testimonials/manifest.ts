@@ -3,6 +3,7 @@ import { TestimonialsV2 } from './TestimonialsV2'
 import { TestimonialsV3 } from './TestimonialsV3'
 import { TestimonialsV5 } from './TestimonialsV5'
 import { TestimonialsV6 } from './TestimonialsV6'
+import { TestimonialsCinematic } from './TestimonialsCinematic'
 import type { SectionDef } from '../types'
 
 export const testimonialsSection: SectionDef = {
@@ -37,6 +38,12 @@ export const testimonialsSection: SectionDef = {
       label: 'Maison Stimmen',
       description: 'Pull-Quote überlappt die Portrait-Tafel (HeroV6-Sprache), vertikale Rail, zwei stille Stimmen an der Hairline-Basis.',
       Component: TestimonialsV6,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Zentriertes Leitzitat wie ein Filmepigraph (HeroV3-Sprache): Partikel, ShinyText, zwei stille Stimmen in Glas-Karten.',
+      Component: TestimonialsCinematic,
     },
   ],
 }

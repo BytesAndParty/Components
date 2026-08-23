@@ -3,6 +3,7 @@ import { GalleryV3 } from './GalleryV3'
 import { GalleryV4 } from './GalleryV4'
 import { GalleryV5 } from './GalleryV5'
 import { GalleryV6 } from './GalleryV6'
+import { GalleryCinematic } from './GalleryCinematic'
 import type { SectionDef } from '../types'
 
 export const gallerySection: SectionDef = {
@@ -37,6 +38,12 @@ export const gallerySection: SectionDef = {
       label: 'Maison Spread',
       description: 'Magazin-Doppelseite: versetzt hängende, überlappende Tafeln mit Fig.-Nummern, Ghost-Word „Herbst“ und Hairline-Fußzeile.',
       Component: GalleryV6,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Drei atmosphärische Weitwinkel-Stills als Reel (HeroV3-Sprache): Partikel, Ghost-Word „Atmosphäre“, Lower-Third-Captions.',
+      Component: GalleryCinematic,
     },
   ],
 }

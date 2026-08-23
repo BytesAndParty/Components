@@ -67,6 +67,7 @@
   --color-border:            var(--border);
   --color-accent:            var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-lifted:     var(--accent-lifted);
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -106,6 +107,16 @@
   --accent:            oklch(0.585 0.233 277);
   --accent-foreground: oklch(1 0 0);
   --radius:            0.5rem;
+}
+
+/* Akzent für immer-dunkle Sections (Cinematic-Linie auf zinc-950).
+   Der Basis-Akzent erreicht dort nur 2,2:1 (bordeaux) bis 4,4:1 (indigo) —
+   die 10px-Versalien-Eyebrows brauchen 4,5:1. 70 % Akzent + 30 % Weiß hebt
+   alle fünf Akzente auf 4,7–7,4:1 und behält den Farbton. Dieselbe Mischung
+   nutzt ShinyText bereits für shineColor. Theme-unabhängig: die Flächen
+   dieser Sections sind es auch. */
+:root {
+  --accent-lifted: color-mix(in oklch, var(--accent) 70%, white);
 }
 
 /* ── Light Mode ──────────────────────────────────────── */

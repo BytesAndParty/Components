@@ -4,6 +4,7 @@ import { NavV3 } from './NavV3'
 import { NavV4 } from './NavV4'
 import { NavV5 } from './NavV5'
 import { NavV6 } from './NavV6'
+import { NavCinematic } from './NavCinematic'
 import type { SectionDef } from '../types'
 
 export const navSection: SectionDef = {
@@ -46,6 +47,12 @@ export const navSection: SectionDef = {
       label: 'Editorial',
       description: 'Zeitungskopf auf Papierton: Folio-Zeile, zentrierter Serif-Wortmark, Ressort-Leiste zwischen Doppellinien mit Seitenzahlen als Fußnoten.',
       Component: NavV6,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Glaskopfzeile über der Hero-Fotografie: dunkles Zinc, Backdrop-Blur, gedimmte Versalien-Links — reaktiver Akzent statt Kerzengold.',
+      Component: NavCinematic,
     },
   ],
 }

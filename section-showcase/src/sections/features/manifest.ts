@@ -8,6 +8,7 @@ import { FeaturesNachtblau } from './FeaturesNachtblau'
 import { FeaturesGenussgut } from './FeaturesGenussgut'
 import { FeaturesSchwarzweiss } from './FeaturesSchwarzweiss'
 import { FeaturesGastgeber } from './FeaturesGastgeber'
+import { FeaturesCinematic } from './FeaturesCinematic'
 import type { SectionDef } from '../types'
 
 export const featuresSection: SectionDef = {
@@ -72,6 +73,12 @@ export const featuresSection: SectionDef = {
       label: 'Gastgeber',
       description: 'Weingut, Verkostung und Gästehaus als drei exakt gleich große, mittig gesetzte Blöcke mit gestempelten Glyphen; darunter die Auszeichnungen als ruhige Monochrom-Reihe.',
       Component: FeaturesGastgeber,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Eine lange Einstellung statt Triptychon: ein hohes Still links, rechts drei Gründe als nummerierte Hairline-Liste, die im Hover wächst.',
+      Component: FeaturesCinematic,
     },
   ],
 }

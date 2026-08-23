@@ -8,6 +8,7 @@ import { ProductNachtblau } from './ProductNachtblau'
 import { ProductGenussgut } from './ProductGenussgut'
 import { ProductSchwarzweiss } from './ProductSchwarzweiss'
 import { ProductGastgeber } from './ProductGastgeber'
+import { ProductCinematic } from './ProductCinematic'
 import type { SectionDef } from '../types'
 
 export const showcaseSection: SectionDef = {
@@ -72,6 +73,12 @@ export const showcaseSection: SectionDef = {
       label: 'Gastgeber',
       description: 'Ein Wein auf der Mittelachse: Flasche groß und warm auf Creme-Feld, Verkostungsnotiz als ruhige zentrierte Spalte, technische Daten in zwei ausbalancierten Spalten.',
       Component: ProductGastgeber,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Detailseite als Standbild: die Flasche vor der Landschaft statt vor flachem Schwarz, Fiche als Abspann mit Rollen- und Einstellungsnummer.',
+      Component: ProductCinematic,
     },
   ],
 }

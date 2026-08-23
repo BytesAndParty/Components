@@ -8,6 +8,7 @@ import { StoreNachtblau } from './StoreNachtblau'
 import { StoreGenussgut } from './StoreGenussgut'
 import { StoreSchwarzweiss } from './StoreSchwarzweiss'
 import { StoreGastgeber } from './StoreGastgeber'
+import { StoreCinematic } from './StoreCinematic'
 import type { SectionDef } from '../types'
 
 export const storeSection: SectionDef = {
@@ -74,6 +75,12 @@ export const storeSection: SectionDef = {
       label: 'Gastgeber',
       description: 'Das Sortiment als symmetrisches Register auf Creme: gleichrangige Bereichsleiste, sechs gleich große Positionen auf einer Achse — ohne Rabatte, Rosetten, Streichpreise oder Badges.',
       Component: StoreGastgeber,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Das Regal als vertikales Reel: stehender Vorspann links, sechs Positionen als Kontaktabzug-Zeilen rechts, jede führt auf die Detailseite.',
+      Component: StoreCinematic,
     },
   ],
 }

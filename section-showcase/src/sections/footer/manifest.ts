@@ -3,6 +3,7 @@ import { FooterV2 } from './FooterV2'
 import { FooterV3 } from './FooterV3'
 import { FooterV4 } from './FooterV4'
 import { FooterV5 } from './FooterV5'
+import { FooterCinematic } from './FooterCinematic'
 import type { SectionDef } from '../types'
 
 export const footerSection: SectionDef = {
@@ -39,6 +40,12 @@ export const footerSection: SectionDef = {
       label: 'Maison Colophon',
       description: 'Print-Kolophon in Cream: übergroßer italic Wortmark, Hairline-Spalten mit wachsenden Strichen, Newsletter und römisches Jahr.',
       Component: FooterV5,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Dunkle Fotografie mit Partikeln statt reinem Zinc-Ton (HeroV3-Sprache): Ghost-Wortmark, ShinyText-Zeile, Newsletter-Feld.',
+      Component: FooterCinematic,
     },
   ],
 }

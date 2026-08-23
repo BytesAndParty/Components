@@ -2,6 +2,7 @@ import { CTAV1 } from './CTAV1'
 import { CTAV3 } from './CTAV3'
 import { CTAV4 } from './CTAV4'
 import { CTAV5 } from './CTAV5'
+import { CTACinematic } from './CTACinematic'
 import type { SectionDef } from '../types'
 
 export const ctaSection: SectionDef = {
@@ -30,6 +31,12 @@ export const ctaSection: SectionDef = {
       label: 'Maison Finale',
       description: 'Magazin-Schlussseite in HeroV6-Sprache: Headline überlappt die hängende Tafel, wachsender Hairline-CTA, Kolophon-Zeile.',
       Component: CTAV5,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Kurzes Finale in HeroV3-Sprache: zentrierte Komposition, atmosphärische Fotografie mit Partikeln und Shiny Text.',
+      Component: CTACinematic,
     },
   ],
 }

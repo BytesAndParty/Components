@@ -3,6 +3,7 @@ import { PricingV4 } from './PricingV4'
 import { PricingV5 } from './PricingV5'
 import { PricingV6 } from './PricingV6'
 import { PricingV7 } from './PricingV7'
+import { PricingCinematic } from './PricingCinematic'
 import type { SectionDef } from '../types'
 
 export const pricingSection: SectionDef = {
@@ -38,6 +39,12 @@ export const pricingSection: SectionDef = {
       label: 'Die Abendkarte (Nocturne)',
       description: 'Die realen Verkostungs-Pakete als Weinkarte im Kerzenlicht: gedimmte Gold-Ledger-Positionen glimmen im Hover auf, Ghost-Ziffer „58" — Kontrastfläche zur Maison-Rebstockmiete.',
       Component: PricingV7,
+    },
+    {
+      id: 'cinematic',
+      label: 'Cinematic Atmosphere',
+      description: 'Drei schwebende Glas-Karten auf Zinc (HeroV3-Sprache) statt Ledger-Liste — Partikel, Akzent-Ring auf der empfohlenen Stufe.',
+      Component: PricingCinematic,
     },
   ],
 }
