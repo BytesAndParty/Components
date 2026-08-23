@@ -33,9 +33,14 @@ interface Particle {
   vx: number
   vy: number
   size: number
-  color: string
+  /** Index in particleColors — die aufgelöste Farbe liegt in colorsRef. */
+  colorIndex: number
   alpha: number
 }
+
+/** Wie oft (in Frames) die CSS-Variablen neu ausgelesen werden. ~3×/s reicht,
+ *  um dem animierten Accent-Wechsel des AccentSwitchers zu folgen. */
+const COLOR_SAMPLE_INTERVAL = 20
 
 // ─── Component ──────────────────────────────────────────────────────────────────
 
@@ -52,6 +57,7 @@ export function Particles({
 }: ParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
+  const colorsRef = useRef<string[]>([])
   const mouseRef = useRef({ x: -9999, y: -9999 })
   const animRef = useRef<number>(0)
 
@@ -64,6 +70,30 @@ export function Particles({
 
     const parent = canvas.parentElement ?? canvas
     const dpr = window.devicePixelRatio || 1
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Canvas kennt keine CSS-Variablen: `ctx.fillStyle = 'var(--accent)'` ist
+    // kein gültiger Farbwert, wird still verworfen — der Partikel erbt dann
+    // die Farbe des zuvor gezeichneten. Deshalb pro var()-Farbe ein
+    // display:none-Sonde-Element, dessen computed color wir auslesen. Sonden
+    // bleiben stehen, damit ein Accent-Wechsel ohne DOM-Mutation ankommt.
+    const probes = particleColors.map(raw => {
+      if (!raw.includes('var(')) return null
+      const probe = document.createElement('span')
+      probe.style.display = 'none'
+      probe.style.color = raw
+      parent.appendChild(probe)
+      return probe
+    })
+
+    function sampleColors() {
+      colorsRef.current = particleColors.map((raw, i) => {
+        const probe = probes[i]
+        return probe ? getComputedStyle(probe).color : raw
+      })
+    }
+
+    sampleColors()
 
     function createParticles(width: number, height: number): Particle[] {
       const particles: Particle[] = []
@@ -82,7 +112,7 @@ export function Particles({
           vx: Math.cos(angle) * velocity,
           vy: Math.sin(angle) * velocity,
           size: Math.random() * particleBaseSize + 1,
-          color: particleColors[Math.floor(Math.random() * particleColors.length)],
+          colorIndex: Math.floor(Math.random() * particleColors.length),
           alpha: Math.random() * 0.6 + 0.4,
         })
       }
@@ -101,7 +131,12 @@ export function Particles({
 
     resize()
 
-    const resizeObserver = new ResizeObserver(resize)
+    // Bei reduzierter Bewegung gibt es keine Schleife, die nach dem Resize
+    // neu zeichnen würde — das eine Standbild muss hier nachgezogen werden.
+    const resizeObserver = new ResizeObserver(() => {
+      resize()
+      if (prefersReduced) frame(false)
+    })
     resizeObserver.observe(parent)
 
     function handleMouseMove(e: MouseEvent) {
@@ -116,21 +151,27 @@ export function Particles({
       mouseRef.current = { x: -9999, y: -9999 }
     }
 
-    if (moveParticlesOnHover) {
+    if (moveParticlesOnHover && !prefersReduced) {
       canvas.addEventListener('mousemove', handleMouseMove)
       canvas.addEventListener('mouseleave', handleMouseLeave)
     }
 
-    function animate() {
+    let frameCount = 0
+
+    function frame(move: boolean) {
       const width = canvas!.width / dpr
       const height = canvas!.height / dpr
 
       ctx!.clearRect(0, 0, width, height)
 
+      if (frameCount++ % COLOR_SAMPLE_INTERVAL === 0) sampleColors()
+
       for (const p of particlesRef.current) {
         // Update position
-        p.x += p.vx
-        p.y += p.vy
+        if (move) {
+          p.x += p.vx
+          p.y += p.vy
+        }
 
         // Wrap around edges
         if (p.x < -p.size) p.x = width + p.size
@@ -139,7 +180,7 @@ export function Particles({
         else if (p.y > height + p.size) p.y = -p.size
 
         // Mouse repulsion
-        if (moveParticlesOnHover) {
+        if (moveParticlesOnHover && move) {
           const dx = p.x - mouseRef.current.x
           const dy = p.y - mouseRef.current.y
           const dist = Math.sqrt(dx * dx + dy * dy)
@@ -154,19 +195,53 @@ export function Particles({
         ctx!.beginPath()
         ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2)
         ctx!.globalAlpha = p.alpha
-        ctx!.fillStyle = p.color
+        ctx!.fillStyle = colorsRef.current[p.colorIndex]
         ctx!.fill()
       }
       ctx!.globalAlpha = 1
+    }
 
+    function animate() {
+      frame(true)
       animRef.current = requestAnimationFrame(animate)
     }
 
-    animRef.current = requestAnimationFrame(animate)
+    // Nur laufen, solange die Section im Viewport ist: eine Komposition
+    // stapelt mehrere Particles-Sections übereinander, und jede unsichtbare
+    // RAF-Schleife kostet dieselbe Framezeit wie die sichtbare.
+    let running = false
+    function start() {
+      if (running) return
+      running = true
+      animRef.current = requestAnimationFrame(animate)
+    }
+    function stop() {
+      if (!running) return
+      running = false
+      cancelAnimationFrame(animRef.current)
+    }
+
+    // prefers-reduced-motion: Der Staub bleibt als Bild stehen, statt zu
+    // verschwinden — die Atmosphäre trägt die Section, die Bewegung nicht.
+    if (prefersReduced) {
+      frame(false)
+      return () => {
+        resizeObserver.disconnect()
+        for (const probe of probes) probe?.remove()
+      }
+    }
+
+    const inViewObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) start()
+      else stop()
+    })
+    inViewObserver.observe(parent)
 
     return () => {
-      cancelAnimationFrame(animRef.current)
+      stop()
+      inViewObserver.disconnect()
       resizeObserver.disconnect()
+      for (const probe of probes) probe?.remove()
       if (moveParticlesOnHover) {
         canvas.removeEventListener('mousemove', handleMouseMove)
         canvas.removeEventListener('mouseleave', handleMouseLeave)
@@ -178,10 +253,15 @@ export function Particles({
     <div
       className={className}
       style={{
-        position: 'relative',
         width: '100%',
         height: '100%',
         overflow: 'hidden',
+        // Kein `position: relative` hier: Inline-Styles schlagen Klassen, und
+        // Consumer platzieren den Layer per `absolute inset-0` — die Inline-
+        // Regel hätte das überstimmt und den Layer in den Fluss gezogen.
+        // `contain: layout` macht den Wrapper trotzdem zum Containing Block
+        // für das absolut gesetzte Canvas, ohne `position` zu belegen.
+        contain: 'layout paint',
         ...style,
       }}
     >
