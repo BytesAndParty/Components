@@ -17,6 +17,8 @@
   --color-input:                  var(--input);
   --color-ring:                   var(--ring);
   --color-accent:                 var(--accent);
+  --color-accent-foreground:      var(--accent-foreground);
+  --color-accent-readable:        var(--accent-readable);
   --color-primary:                var(--primary);
   --color-primary-foreground:     var(--primary-foreground);
   --color-destructive:            var(--destructive);
@@ -40,7 +42,8 @@
   --input:                  oklch(0.188 0.006 285);
   --primary:                var(--accent);
   --primary-foreground:     oklch(1 0 0);
-  --ring:                   var(--accent);
+  /* Fokus-Ring — siehe --accent-readable unter der Akzent-Palette. */
+  --ring:                   var(--accent-readable);
   --destructive:            oklch(0.577 0.245 27);
   --destructive-foreground: oklch(1 0 0);
   --radius:                 0.75rem;
@@ -69,6 +72,25 @@
 [data-accent="forest"]    { --accent: oklch(0.50 0.10 145); }  /* sage forest */
 [data-accent="aubergine"] { --accent: oklch(0.45 0.13 320); }  /* plum */
 [data-accent="indigo"]    { --accent: oklch(0.55 0.18 270); }  /* atelier default */
+
+/* ── Schrift auf --accent ─────────────────────────────────────────
+   Weiß trägt auf vier der fünf Akzente (5,1-8,1:1). Gold ist mit L=0,72
+   zu hell dafür (2,5:1) und bekommt deshalb einen dunklen Vordergrund
+   (7,4:1). Betrifft z. B. die Warenkorb-Zahl im Header, 10px bold. */
+:root                     { --accent-foreground: oklch(1 0 0); }
+[data-accent="gold"]      { --accent-foreground: oklch(0.18 0.01 75); }
+
+/* ── Akzent als Vordergrundfarbe ──────────────────────────────────
+   Für Kleintext (4,5:1, WCAG 1.4.3) und Fokus-Ränder (3:1, 1.4.11) auf
+   der Seitenfläche. --accent pur reicht in keinem der beiden Modi:
+   dunkel fällt bordeaux auf 2,6:1 und aubergine auf 2,6:1, hell fällt
+   gold auf 2,5:1. Also dunkel aufhellen, hell abdunkeln.
+
+   Die Mischung ist bewusst 73 % und nicht 89 % wie in den Showcases:
+   deren Palette hat kein derart helles Mitglied. Gold zwingt hier zum
+   stärkeren Abdunkeln, sonst bleibt es im Light Mode bei 3,4:1. */
+:root                { --accent-readable: color-mix(in oklch, var(--accent) 70%, white); }
+[data-theme="light"] { --accent-readable: color-mix(in oklch, var(--accent) 73%, black); }
 
 @layer base {
   body {

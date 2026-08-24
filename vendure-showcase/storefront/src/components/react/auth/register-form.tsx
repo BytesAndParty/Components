@@ -104,7 +104,7 @@ function RegisterFormInner() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className="w-full bg-background border border-border focus:border-accent rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 transition-all"
+                    className="w-full bg-background border border-border focus:border-ring rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                     required
@@ -131,7 +131,7 @@ function RegisterFormInner() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className="w-full bg-background border border-border focus:border-accent rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 transition-all"
+                    className="w-full bg-background border border-border focus:border-ring rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                     required
@@ -159,7 +159,7 @@ function RegisterFormInner() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full bg-background border border-border focus:border-accent rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 transition-all"
+                  className="w-full bg-background border border-border focus:border-ring rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                   aria-invalid={field.state.meta.errors.length > 0}
                   aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                   required
@@ -186,7 +186,7 @@ function RegisterFormInner() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full bg-background border border-border focus:border-accent rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 transition-all"
+                  className="w-full bg-background border border-border focus:border-ring rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                   aria-invalid={field.state.meta.errors.length > 0}
                   aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                   required
@@ -213,7 +213,7 @@ function RegisterFormInner() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full bg-background border border-border focus:border-accent rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 transition-all"
+                  className="w-full bg-background border border-border focus:border-ring rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all"
                   aria-invalid={field.state.meta.errors.length > 0}
                   aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                   required
