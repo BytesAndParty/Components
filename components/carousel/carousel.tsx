@@ -240,7 +240,10 @@ export function CarouselThumb({ index, className, children }: { index: number; c
       onClick={() => scrollTo(index)}
       className={cn(
         'border-border relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border-2 transition-all',
-        isActive ? 'border-accent ring-accent/20 ring-2' : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0',
+        // Der Rand markiert die Auswahl und braucht 3:1 (WCAG 1.4.11) — auf
+        // --ring statt --accent, das auf dunklem Grund bis 2,2:1 abfällt.
+        // Der weiche Halo daneben ist Deko und bleibt bei /20.
+        isActive ? 'border-ring ring-ring/20 ring-2' : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0',
         className
       )}
     >

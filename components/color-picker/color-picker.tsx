@@ -544,8 +544,12 @@ function SwatchButton({
       aria-label={`Select ${color}`}
       aria-pressed={active}
       className={cn(
-        'w-6 h-6 rounded cursor-pointer ring-1 ring-border hover:ring-2 hover:ring-accent transition-shadow overflow-hidden',
-        active && 'ring-2 ring-accent',
+        // Der Auswahl-Ring braucht 3:1 (WCAG 1.4.11) — auf --ring statt
+        // --accent, das auf dunklem Grund bis 2,2:1 abfällt. Die Auswahl hängt
+        // ohnehin nicht allein an der Farbe: aria-pressed plus Ringstärke
+        // (1 -> 2) unterscheiden die Zustände zusätzlich.
+        'w-6 h-6 rounded cursor-pointer ring-1 ring-border hover:ring-2 hover:ring-ring transition-shadow overflow-hidden',
+        active && 'ring-2 ring-ring',
       )}
       style={{ backgroundColor: color }}
     />

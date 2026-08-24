@@ -343,7 +343,7 @@ export function InputsPage() {
               id="fieldhint-demo-tax"
               aria-describedby="fieldhint-demo-tax-hint"
               placeholder="12 345 678 901"
-              className="bg-card border-border text-foreground focus:border-accent h-11 rounded-xl border px-3 text-sm transition-colors outline-none"
+              className="bg-card border-border text-foreground focus:border-ring h-11 rounded-xl border px-3 text-sm transition-colors outline-none"
             />
           </div>
 
@@ -365,7 +365,7 @@ export function InputsPage() {
               id="fieldhint-demo-iban"
               aria-describedby="fieldhint-demo-iban-hint"
               placeholder="DE00 0000 0000 0000 0000 00"
-              className="bg-card border-border text-foreground focus:border-accent h-11 rounded-xl border px-3 font-mono text-sm transition-colors outline-none"
+              className="bg-card border-border text-foreground focus:border-ring h-11 rounded-xl border px-3 font-mono text-sm transition-colors outline-none"
             />
           </div>
 

@@ -133,7 +133,7 @@ export function AutocompleteCell({
 
   return (
     <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="border-border bg-card focus-within:border-ring focus-within:ring-accent/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
+      <div className="border-border bg-card focus-within:border-ring focus-within:ring-ring/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
         <span className="text-muted-foreground group-focus-within:text-accent shrink-0 transition-colors">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

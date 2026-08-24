@@ -226,7 +226,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                     className={cn(
                       'flex flex-col items-start gap-0.5 rounded-xl border px-3.5 py-2 text-left transition-all',
                       active
-                        ? 'border-accent bg-accent/10 text-foreground'
+                        ? 'border-ring bg-accent/10 text-foreground'
                         : 'border-border text-muted-foreground hover:border-accent/50 hover:text-foreground',
                     )}
                   >
