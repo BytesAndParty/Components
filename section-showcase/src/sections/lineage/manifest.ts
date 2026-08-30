@@ -1,6 +1,7 @@
 import type { SectionDef } from '../types'
 import { LineageV1 } from './LineageV1'
 import { LineageV2 } from './LineageV2'
+import { LineageV3 } from './LineageV3'
 
 export const lineageSection: SectionDef = {
   id: 'lineage',
@@ -13,6 +14,13 @@ export const lineageSection: SectionDef = {
       description:
         'Galerie pro Familie statt Gesamtkarte: erst ein Haus wählen, dann stehen nur 6–10 Sorten auf der Bühne — in echter Schriftgröße statt heruntergezoomt. Kreuzungen als beschrifteter Punkt, Brücken zu anderen Häusern gestrichelt. Abstammung gegen VIVC korrigiert.',
       Component: LineageV2,
+    },
+    {
+      id: 'v3',
+      label: 'Eine Rebe, ein Bildschirm (Fokus)',
+      description:
+        'Der Gegenentwurf: nie eine Gesamtkarte, immer eine Sorte gross im Zentrum mit Eltern, Kindern und Geschwistern drumherum. Ein Klick reist weiter. Verbindungen sind beschriftet („Klosterneuburg · 1922"), das Wissensende beim Urahn ist sichtbar markiert. Reflowt statt zu skalieren.',
+      Component: LineageV3,
     },
     {
       id: 'v1',
