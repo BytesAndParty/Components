@@ -13,6 +13,8 @@ import { Timeline } from '@components/timeline/timeline'
 import { MorphingText } from '@components/morphing-text/morphing-text'
 import { ShinyText, ShinyButton } from '@components/shiny-text/shiny-text'
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 import { testimonials } from '../data'
 
 const wineDescriptionLong = 'Tiefdunkles Granatrot mit violetten Reflexen. In der Nase entfaltet sich ein vielschichtiges Bouquet aus reifen Brombeeren, schwarzen Kirschen und feinen Anklängen von Vanille, Tabak und mediterranen Kräutern. Am Gaumen kraftvoll und doch elegant, mit samtigen Tanninen, einer perfekten Balance zwischen Frucht und Holz und einem langen, anhaltenden Nachklang. Hervorragender Speisebegleiter zu kräftigem Wild, geschmortem Rind und gereiftem Hartkäse.'
@@ -426,6 +428,131 @@ export function TextPage() {
 
       {/* Extra height so ScrollRotate has room to work */}
       <div className="h-[50vh]" />
+
+      <Section
+        title="WaveText"
+        description="Verstecktes Klick-Easteregg: Ein Klick schickt eine Welle durch die Zeichen. Bewusst ohne Cursor-Wechsel und ohne Fokus-Ring — in Produktion soll man es zufällig finden. Hier steht der Hinweis nur, damit die Demo bedienbar bleibt."
+      >
+        <div className="space-y-8">
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Golden Path — vertikale Meta-Rail (Seitenkante). Auf den Text klicken.
+            </p>
+            <div className="border-border flex h-56 items-center rounded-lg border px-6">
+              <WaveText className="text-muted-foreground block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap uppercase [writing-mode:vertical-rl]">
+                Sooss · Niederösterreich — Familie Buchart
+              </WaveText>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Horizontal, Defaults (amplitude 6 · duration 600 · stagger 40)
+            </p>
+            <div className="text-2xl font-semibold">
+              <WaveText>Weingut Buchart 58</WaveText>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Enger und schneller — amplitude 3, stagger 18
+            </p>
+            <div className="text-2xl font-semibold">
+              <WaveText amplitude={3} stagger={18}>Grüner Veltliner Kaiserstein</WaveText>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Edge Case — langer Text: Durchlauf dauert Zeichenzahl × stagger
+            </p>
+            <p className="max-w-xl text-sm leading-relaxed">
+              <WaveText amplitude={4} stagger={12}>
+                Tiefdunkles Granatrot mit violetten Reflexen und feinen Anklängen von Vanille.
+              </WaveText>
+            </p>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Edge Case — einzelnes Zeichen (kein Versatz möglich, schwingt als Ganzes)
+            </p>
+            <div className="text-3xl font-semibold">
+              <WaveText>58</WaveText>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        title="NumeralReveal"
+        description="Verstecktes Klick-Easteregg: Ein Klick blendet für drei Sekunden den arabischen Wert ein. Beide Schreibweisen liegen in derselben Grid-Zelle — der Wechsel kann das Layout nicht verschieben."
+      >
+        <div className="space-y-8">
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Golden Path — Preis-Ledger. Auf eine Ziffer klicken.
+            </p>
+            <div className="border-border grid grid-cols-3 divide-x divide-[var(--border)] rounded-lg border">
+              {[
+                { numeral: 'I', name: 'Ein Jahr', price: 'ab 220 €' },
+                { numeral: 'II', name: 'Zwei Jahre', price: 'ab 290 €' },
+                { numeral: 'XXX', name: 'La Grande', price: '820 €' },
+              ].map(tier => (
+                <div key={tier.numeral} className="flex flex-col px-6 py-8">
+                  <NumeralReveal numeral={tier.numeral} className="text-accent text-lg font-light italic" />
+                  <span className="mt-3 text-xl font-light tracking-tight">{tier.name}</span>
+                  <span className="text-muted-foreground mt-1 text-sm tabular-nums">{tier.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Subtraktionsregel — IV, IX, XL, XC, CM
+            </p>
+            <div className="flex flex-wrap items-baseline gap-8 text-2xl font-light italic">
+              {['IV', 'IX', 'XL', 'XC', 'CM'].map(n => (
+                <NumeralReveal key={n} numeral={n} />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Edge Case — arabisch kürzer bzw. länger als römisch: kein Layout-Sprung
+            </p>
+            <div className="flex flex-wrap items-baseline gap-8 text-2xl font-light italic">
+              <NumeralReveal numeral="XXIX" />
+              <NumeralReveal numeral="MMXXVI" />
+              <NumeralReveal numeral="I" />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Edge Case — ungültige Eingabe: wird unverändert und ohne Klick-Verhalten gerendert
+            </p>
+            <div className="flex flex-wrap items-baseline gap-8 text-2xl font-light italic">
+              <NumeralReveal numeral="ABC" />
+              <NumeralReveal numeral="" />
+              <NumeralReveal numeral="42" />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
+              Kurze Standzeit — revealDuration 1200, transitionDuration 150
+            </p>
+            <div className="text-2xl font-light italic">
+              <NumeralReveal numeral="XII" revealDuration={1200} transitionDuration={150} />
+            </div>
+          </div>
+        </div>
+      </Section>
+
     </>
   )
 }

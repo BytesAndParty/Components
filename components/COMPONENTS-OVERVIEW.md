@@ -22,6 +22,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **aurora-text / shiny-text / sparkles-text:** Edle Text-Animationen.
 - **blur-fade / view-transition:** Flüssige Übergänge beim Scrollen oder Navigieren.
 - **click-spark / splash-cursor:** Interaktives Feedback auf User-Aktionen.
+- **wave-text / numeral-reveal:** Versteckte Klick-Eastereggs — Textwelle bzw. römische Ziffer, die kurz ihren arabischen Wert zeigt. Bewusst ohne Cursor-Wechsel.
 - **cursor-glow / glow-card:** Subtile Lichteffekte, die dem Pointer folgen.
 - **magnetic-button / jelly-button:** Physisch wirkende Buttons.
 - **morphing-text / text-rotate / text-scramble:** Dynamische Typografie.
