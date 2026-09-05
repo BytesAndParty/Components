@@ -49,7 +49,6 @@ Diese Dateien sind Teil der Instructions und in jeder Session aktiv:
 
 Bei Arbeit am jeweiligen Thema heranziehen (nicht automatisch geladen):
 
-- [CELLAR-CANVAS.md](./CELLAR-CANVAS.md) — Spec des Wine-Label-Designers (`components/cellar-canvas/`).
+- [CELLAR-CANVAS.md](./CELLAR-CANVAS.md) — Vision & Decisions Log des Wine-Label-Designers (Implementierungsstand in `components/cellar-canvas/COMPONENT.md` + `STATUS.md`).
 - [README.md](./README.md) — Architektur-Überblick AtelierUI (Provider, TanStack, i18n, Komponenten-Inventar).
-- [PROJECT-HEALTH.md](./PROJECT-HEALTH.md) — Audit-Status (Snapshot, keine laufende Instruction).
 - `AGENTS.md` ist auto-generiert (`shared/base/AGENTS.base.md` + `AGENTS.local.md`) — nicht von Hand editieren.

@@ -49,11 +49,18 @@
 
 - **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
 - ~~**Pan-Tool**~~ — **erledigt 2026-07-04** als eigener Pan-Mode (Hand-Tool). Space+Drag als temporärer Pan bleibt offen.
-- **Background Image** — neben Color auch Image (im `BackgroundPanel`).
+- **Background Gradient + Image** — nur Solid Color ist gebaut (`ColorSwatch`); 2-Stop-Gradient und Image-Fill fehlen im `BackgroundPanel`.
 - **Group / Ungroup** für Layer.
 - **Duplicate** (Layer / Selection).
 - **Strg+A** (Select-All) — selektiert alle User-Objekte; mit Active-Selection-Rebuild damit Alignment/Distribute direkt drauf laufen kann.
 - **Esc** — discardet aktive Selection bzw. exitet Text-Edit-Mode; muss mit dem `hiddenTextarea`-Lifecycle abgestimmt sein.
+- **Type-Icons pro Layer-Row** (text/image/shape/wine-field/group).
+- **Corner-Radius für Rect** in der Shape-ContextToolbar (Fill/Stroke/Stroke-Width sind verdrahtet, Radius fehlt).
+- **QR-Removal-Warning** — Entfernen eines platzierten QR-Codes soll eine starke (rote) Validator-Warnung statt nur des gelben Badges auslösen.
+- **PDF-Bleed + Crop-Marks** — aktueller Export ist Trim-only (siehe Entscheidungs-Log 2026-05-26); 3mm-Bleed mit Schnittmarken ist bewusst zurückgestellt.
+- **Ark UI `DownloadTrigger`** — Export-Buttons nutzen aktuell den Anchor/`revokeObjectURL`-Trick statt der Ark-UI-Komponente.
+- **Extras-Panel: `SignaturePad` + Ornamente** — nur der Emoji-Insert (`emoji-picker-react`) ist gebaut; Unterschrift-Erfassung und dekorative Ornamente (Trenner, Blatt/Traube) aus der ursprünglichen Spec fehlen weiterhin.
+- **Accessibility-Pass** — `FocusTrap`-Audit über alle Modals (Cropper, Export, Extras), `role="toolbar"` + `aria-label` auf den Toolbars, `aria-label="Label canvas"` auf dem `<canvas>`-Element, vollständige Keyboard-Navigation im Layer-Panel (`Tab`/`Enter`-Rename/`Delete`).
 
 ### Tech-Debt / Known Limitations
 
