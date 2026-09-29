@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import {
-  Component, LayoutTemplate, ShoppingBag, ArrowUpRight, Moon, Sun,
+  Component, LayoutTemplate, ShoppingBag, BookOpen, ArrowUpRight, Moon, Sun,
   type LucideIcon,
 } from 'lucide-react'
+import { ReferencePage } from './components/ReferencePage'
 
 // Each showcase is a standalone app. In dev they run on their own ports; in
 // the combined Netlify build they live under subpaths of one publish dir.
@@ -47,6 +48,13 @@ const TARGETS: Target[] = [
   },
 ]
 
+const REFERENCE_TARGET = {
+  label: 'Referenz',
+  tech: 'Links · Embed',
+  description: 'Linksammlung, eingebettete Components und eine grobe Sections-Vorauswahl — für den Aufbau der offiziellen Seite.',
+  icon: BookOpen,
+}
+
 function applyTheme(theme: 'dark' | 'light') {
   const d = document.documentElement
   d.setAttribute('data-theme', theme)
@@ -58,6 +66,7 @@ export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(
     () => (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') ?? 'dark'
   )
+  const [view, setView] = useState<'grid' | 'reference'>('grid')
 
   function toggleTheme() {
     const next = theme === 'dark' ? 'light' : 'dark'
@@ -77,6 +86,9 @@ export function App() {
         {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
       </button>
 
+      {view === 'reference' ? (
+        <ReferencePage onBack={() => setView('grid')} />
+      ) : (
       <main className="mx-auto flex min-h-screen max-w-4xl flex-col justify-start px-6 py-16 sm:justify-center sm:py-20">
         <header className="mb-14">
           <p className="text-muted-foreground mb-3 text-[11px] tracking-[0.22em] uppercase">
@@ -86,12 +98,13 @@ export function App() {
             __Components__
           </h1>
           <p className="text-muted-foreground mt-4 max-w-xl text-sm leading-relaxed">
-            Wähl die Bühne. Drei eigenständige Showcases — die Bausteine, die
-            fertigen Sections und der echte Wein-Shop.
+            Wähl die Bühne. Eigenständige Showcases für die Bausteine, die
+            fertigen Sections und der echte Wein-Shop — plus eine Referenz für
+            den Seitenaufbau.
           </p>
         </header>
 
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TARGETS.map(t => {
             const Icon = t.icon
             // local-only targets are reachable in dev but disabled once deployed.
@@ -137,6 +150,28 @@ export function App() {
               </li>
             )
           })}
+
+          <li>
+            <button
+              type="button"
+              onClick={() => setView('reference')}
+              className="group border-border bg-card hover:border-accent/60 focus-visible:ring-ring flex h-full w-full flex-col rounded-2xl border p-6 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <div className="mb-5 flex items-center justify-between">
+                <REFERENCE_TARGET.icon size={22} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                <ArrowUpRight size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+              </div>
+              <h2 className="font-display text-2xl font-medium tracking-tight">
+                {REFERENCE_TARGET.label}
+              </h2>
+              <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">
+                {REFERENCE_TARGET.tech}
+              </p>
+              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+                {REFERENCE_TARGET.description}
+              </p>
+            </button>
+          </li>
         </ul>
 
         <footer className="text-muted-foreground/50 mt-14 text-xs">
@@ -145,6 +180,7 @@ export function App() {
             : 'buchart58 · Artisanal Minimalism'}
         </footer>
       </main>
+      )}
     </div>
   )
 }
