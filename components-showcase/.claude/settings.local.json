@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "WebSearch",
+      "WebFetch(domain:developer.chrome.com)",
+      "Bash(bun install *)",
+      "Bash(grep *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(list\\(d.get\\('workspaces',{}\\).keys\\(\\)\\), indent=2\\)\\)\")",
+      "Bash(git *)",
+      "Bash(npx untitledui@latest --help)",
+      "Bash(npx untitledui@latest search color picker)",
+      "Bash(npx untitledui@latest search text editor)",
+      "Bash(curl -s \"https://21st.dev/r/anubra266/color-picker\")",
+      "Bash(npx shadcn@latest *)",
+      "Bash(bun add *)",
+      "Bash(npx tsc *)",
+      "Bash(bunx tsc *)",
+      "Bash(curl -s \"https://ark-ui.com/docs/components/image-cropper\")",
+      "Bash(curl -s \"https://ark-ui.com/docs/utilities/download-trigger\")",
+      "Bash(curl -s \"https://ark-ui.com/docs/utilities/focus-trap\")",
+      "WebFetch(domain:ark-ui.com)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k\\) for k in d.get\\('exports',{}\\).keys\\(\\)]\")",
+      "Bash(node *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('types:', d.get\\('types', d.get\\('typings', 'none'\\)\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.get\\('exports',{}\\).items\\(\\) if 'color-picker' in k or 'dialog' in k or 'popover' in k or 'portal' in k or 'image-cropper' in k}, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); exports=d.get\\('exports',{}\\); keys=list\\(exports.keys\\(\\)\\)[:10]; print\\(json.dumps\\({k:exports[k] for k in keys}, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('types',''\\), d.get\\('typings',''\\)\\)\")",
+      "Bash(echo \"Exit: $?\")"
+    ]
+  }
+}
