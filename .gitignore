@@ -10,3 +10,6 @@ dist
 playwright-report/
 test-results/
 .playwright-mcp/
+
+# Build-time-generated (fetch-wines.ts regenerates on every dev/build run)
+components-showcase/src/data/wines.json

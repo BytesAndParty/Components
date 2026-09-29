@@ -195,8 +195,11 @@ export class FabricBridge {
       this.snapManager.clearGuides()
     })
 
-    // Initial history snapshot
-    setTimeout(() => this.saveHistory(), 100)
+    // No initial snapshot here — `resetHistory()` seeds the stack once
+    // mount-time restoration (which runs on its own timer) has settled. An
+    // eager snapshot here used to race that restore and could win, leaving
+    // an empty canvas as the undo floor beneath the restored scene (the
+    // first Cmd+Z after any edit would wipe the whole label).
   }
 
   get bleedPx(): number {
@@ -204,20 +207,53 @@ export class FabricBridge {
   }
 
   /**
-   * Captures the current scene and pushes it onto the history stack. Snapshot
-   * shape matches `serializeState` (`{ canvas, bg }`) so the label-paper colour
-   * participates in Undo/Redo. Skipped while a restore is applying.
+   * Captures the current scene and pushes it onto the history stack after a
+   * short debounce. Snapshot shape matches `serializeState` (`{ canvas, bg }`)
+   * so the label-paper colour participates in Undo/Redo. Skipped while a
+   * restore is applying.
+   *
+   * Debounced because continuous-input controls (the colour picker's hue
+   * slider fires on every pointermove) used to push a full snapshot per
+   * event — a single drag could evict dozens of real edits off the 50-step
+   * stack, and with an image on the canvas each snapshot serializes its
+   * base64 data, stalling the tab. `undo()`/`redo()` flush any pending
+   * snapshot first, so a quick Cmd+Z right after an action still sees it.
    */
+  private static readonly HISTORY_DEBOUNCE_MS = 300
+  private historyDebounceTimer: ReturnType<typeof setTimeout> | null = null
+
   saveHistory() {
     if (this.history.isRestoring) return
+    useDesignerStore.getState().setDirty(true)
+    if (this.historyDebounceTimer) clearTimeout(this.historyDebounceTimer)
+    this.historyDebounceTimer = setTimeout(() => {
+      this.historyDebounceTimer = null
+      this.history.push(JSON.stringify(this.serializeState()))
+      this.syncHistoryFlags()
+    }, FabricBridge.HISTORY_DEBOUNCE_MS)
+  }
+
+  private flushHistoryDebounce() {
+    if (!this.historyDebounceTimer) return
+    clearTimeout(this.historyDebounceTimer)
+    this.historyDebounceTimer = null
     this.history.push(JSON.stringify(this.serializeState()))
-    const store = useDesignerStore.getState()
-    store.setDirty(true)
-    store.setHistoryFlags(this.history.canUndo, this.history.canRedo)
   }
 
   private syncHistoryFlags() {
     useDesignerStore.getState().setHistoryFlags(this.history.canUndo, this.history.canRedo)
+  }
+
+  /**
+   * Clears the undo/redo stack and seeds it with one snapshot of the current
+   * scene. Call once after mount-time restoration finishes (`useCanvasRestore`)
+   * so the restored — or still-empty — canvas becomes the undo floor, instead
+   * of whatever the canvas happened to look like before restoration ran.
+   */
+  resetHistory() {
+    this.history.clear()
+    this.history.push(JSON.stringify(this.serializeState()))
+    this.syncHistoryFlags()
   }
 
   /**
@@ -241,6 +277,7 @@ export class FabricBridge {
   }
 
   undo() {
+    this.flushHistoryDebounce()
     const snapshot = this.history.undo()
     if (snapshot === null) return
     this.syncHistoryFlags()
@@ -248,6 +285,7 @@ export class FabricBridge {
   }
 
   redo() {
+    this.flushHistoryDebounce()
     const snapshot = this.history.redo()
     if (snapshot === null) return
     this.syncHistoryFlags()
@@ -292,13 +330,38 @@ export class FabricBridge {
   /**
    * Shared insertion tail for every factory: add to the canvas, select, render
    * and snapshot history. Returns the placed object for callers needing its id.
+   *
+   * Every factory places new objects at the same fixed inset, so repeated
+   * clicks on an insert tool (Text, Rect, …) used to stack objects on the
+   * exact same pixel — the second click looked like a no-op. Cascading by a
+   * few px per existing object keeps clicks visibly additive without moving
+   * the very first insert.
    */
   private place<T extends fabric.Object>(obj: T): T {
+    const cascade = (this.canvas.getObjects().length % 10) * 8
+    if (cascade > 0) {
+      obj.set({ left: (obj.left ?? 0) + cascade, top: (obj.top ?? 0) + cascade })
+    }
     this.canvas.add(obj)
     this.canvas.setActiveObject(obj)
     this.canvas.renderAll()
     this.saveHistory()
     return obj
+  }
+
+  /**
+   * Replaces the entire scene with a template's pre-built elements in one
+   * atomic step (single history entry, undo-able with one Cmd+Z). Unlike
+   * `place()` this clears existing content first — templates are meant as a
+   * starting layout, not an addition.
+   */
+  applyTemplate(elements: fabric.Object[]) {
+    this.canvas.discardActiveObject()
+    this.canvas.getObjects().slice().forEach((o) => this.canvas.remove(o))
+    elements.forEach((el) => this.canvas.add(el))
+    this.canvas.renderAll()
+    this.updateStoreSelection()
+    this.saveHistory()
   }
 
   addRect() {
@@ -786,6 +849,7 @@ export class FabricBridge {
    * Disposes the canvas.
    */
   dispose() {
+    if (this.historyDebounceTimer) clearTimeout(this.historyDebounceTimer)
     this.unsubscribePanMode()
     this.canvas.dispose()
   }

@@ -17,6 +17,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 - **Image crop pipeline**: file picker → `ImageCropperModal` (Ark UI / Zag) → cropped Blob → `addImage` on canvas. Initial zoom auto-fits the source. Selected images offer crop (re-opens the cropper) and replace (straight file swap, keeps id/position/layer meta) in the context toolbar.
 - **Export**: PNG and PDF at `exportDpi` (default 300), rendered in exact trim size. PDF is gated behind `enablePdfExport`; both downloads also fire `onExport` for server-side upload.
 - **Fullscreen mode** via CSS (`fixed inset-0`) — the browser Fullscreen API restricts focus and breaks Fabric's hidden textarea (see STATUS.md #23). Escape exits.
+- **Templates**: three rudimentary starting layouts (Classic / Modern / Minimal, `templates/templates.ts`) in a dedicated panel tab. Applying one replaces the canvas in a single undo-able step (`bridge.applyTemplate`); wine-field elements carry the same `_fieldKey` metadata as manual inserts, so they stay in sync with `initialWineFields` afterwards.
 
 ## How It Works
 
@@ -92,3 +93,4 @@ import { CellarCanvas } from '@components/cellar-canvas'
 - `addQRCode` uses `await fabric.FabricImage.fromURL(dataUrl)` — the v5 callback signature was removed in v6.
 - The image-cropper child must render at natural CSS size centred in the viewport (`flex items-center justify-center` on Viewport, `flexShrink: 0` on Image) — Zag's `drawCroppedImageToCanvas` assumes 1 viewport-pixel = 1 natural-pixel at zoom=1. Any `object-fit` scaling breaks the crop math. A small `FitZoomOnLoad` helper applies `setZoom(min(vp/nat))` once on first image load.
 - Layer rows must keep their `z-elevation` while `transform !== null`, not just while `isDragging` — `useSortable` flips `isDragging` back on pointer-release but the drop-decay transition still runs for ~200 ms.
+- `FabricBridge.saveHistory()` debounces its actual push 300ms — continuous-input controls (colour picker hue drag) used to push a full snapshot per pointermove. `undo()`/`redo()` flush a pending snapshot first, so a quick Cmd+Z right after an action still sees it. The initial history entry comes from `resetHistory()`, called once by `useCanvasRestore` after mount-time restoration settles — not from the bridge constructor, which used to race that restore (see STATUS.md #26).

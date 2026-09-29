@@ -10,7 +10,78 @@ import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper
 import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-context'
 import { NumberInput } from '@components/number-input/number-input'
 import { Tooltip } from '@components/tooltip/tooltip'
-import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
+import { CellarCanvas, type WineFieldValues } from '@components/cellar-canvas/CellarCanvas'
+import { WINE_LABEL_TEMPLATES, type TemplateContext } from '@components/cellar-canvas/templates/templates'
+import { BLEED_MM } from '@components/cellar-canvas/engine/use-fabric-canvas'
+import { mmToPx } from '@components/cellar-canvas/engine/units'
+import type { CellarCanvasState } from '@components/cellar-canvas/store/types'
+import wineData from '../data/wines.json'
+
+const WINES = wineData as WineFieldValues[]
+const DEFAULT_LABEL_WIDTH_MM = 90
+const DEFAULT_LABEL_HEIGHT_MM = 120
+
+/**
+ * Seeds the canvas with the Classic template pre-filled from the first wine
+ * instead of leaving it blank — an empty label with a red "5 fields missing"
+ * validator badge reads as broken on first paint, not as an invitation to
+ * start designing. Computed once (see the lazy useState in the demo below);
+ * switching wines afterwards goes through `initialWineFields`, which already
+ * keeps placed wine-field text in sync.
+ */
+function buildDefaultLabelState(wine: WineFieldValues): CellarCanvasState {
+  const classic = WINE_LABEL_TEMPLATES.find((t) => t.id === 'classic')!
+  const ctx: TemplateContext = {
+    widthMm: DEFAULT_LABEL_WIDTH_MM,
+    heightMm: DEFAULT_LABEL_HEIGHT_MM,
+    bleedPx: mmToPx(BLEED_MM),
+    wineFields: wine,
+  }
+  const elements = classic.build(ctx)
+  return {
+    canvas: { objects: elements.map((el) => el.toObject(['id', '_layerName', '_type', '_fieldKey'])) },
+    bg: '#ffffff',
+  }
+}
+
+function CellarCanvasDemo() {
+  const [wineIndex, setWineIndex] = useState(0)
+  const [initialState] = useState(() => buildDefaultLabelState(WINES[0]))
+  const wine = WINES[wineIndex] ?? WINES[0]
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <label htmlFor="wine-select" className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+          Wein wählen
+        </label>
+        <select
+          id="wine-select"
+          value={wineIndex}
+          onChange={(e) => setWineIndex(Number(e.target.value))}
+          className="bg-card border-border text-foreground focus-visible:ring-accent/60 rounded-md border px-2 py-1 text-xs focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          {WINES.map((w, i) => (
+            <option key={w.nutritionalInfoUrl ?? i} value={i}>{w.name}</option>
+          ))}
+        </select>
+      </div>
+      <div className="border-border bg-card w-full overflow-hidden rounded-2xl border shadow-2xl">
+        <CellarCanvas
+          widthMm={DEFAULT_LABEL_WIDTH_MM}
+          heightMm={DEFAULT_LABEL_HEIGHT_MM}
+          initialState={initialState}
+          initialWineFields={wine}
+          storageKey={null}
+          onSave={async () => {
+            // Showcase stub — a real integration wires this to e.g. a Vendure mutation.
+            await new Promise((resolve) => setTimeout(resolve, 600))
+          }}
+        />
+      </div>
+    </div>
+  )
+}
 
 // ── Color Picker ──────────────────────────────────────────────────────────────
 
@@ -335,9 +406,7 @@ export function DesignerPage() {
         <p className="text-muted-foreground">
           The full integrated Wine Label Designer. Build labels, export print-ready files.
         </p>
-        <div className="border-border bg-card w-full overflow-hidden rounded-2xl border shadow-2xl">
-          <CellarCanvas />
-        </div>
+        <CellarCanvasDemo />
       </div>
 
       <div className="border-border border-t pt-12">

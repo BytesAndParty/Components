@@ -53,6 +53,14 @@ export type CellarCanvasMessages = {
   tabWineData:            string
   tabBackground:          string
   tabExtras:              string
+  tabTemplates:           string
+
+  // Templates panel
+  templateClassicName:    string
+  templateModernName:     string
+  templateMinimalName:    string
+  templatesHint:          string
+  templatesConfirmReplace: string
 
   // Properties panel
   propsGeometry:          string
@@ -151,13 +159,13 @@ export const MESSAGES = {
     saveTitleDirty:          'Änderungen speichern',
     saveTitleClean:          'Alle Änderungen gespeichert',
 
-    toolSelect:              'Auswählen (V)',
+    toolSelect:              'Auswählen',
     toolPan:                 'Ansicht verschieben',
-    toolText:                'Text (T)',
-    toolImage:               'Bild (I)',
-    toolRect:                'Rechteck (R)',
-    toolCircle:              'Kreis (C)',
-    toolLine:                'Linie (L)',
+    toolText:                'Text',
+    toolImage:               'Bild',
+    toolRect:                'Rechteck',
+    toolCircle:              'Kreis',
+    toolLine:                'Linie',
     toolDelete:              'Auswahl löschen (Entf)',
     toolCrop:                'Zuschneiden',
     toolReplace:             'Ersetzen',
@@ -170,6 +178,13 @@ export const MESSAGES = {
     tabWineData:             'Weindaten',
     tabBackground:           'Hintergrund',
     tabExtras:               'Extras',
+    tabTemplates:            'Vorlagen',
+
+    templateClassicName:    'Klassisch',
+    templateModernName:     'Modern',
+    templateMinimalName:    'Minimal',
+    templatesHint:          'Ersetzt den aktuellen Inhalt der Leinwand mit einem vorgefertigten Layout — Weindaten werden automatisch eingesetzt.',
+    templatesConfirmReplace: 'Aktuellen Entwurf durch die Vorlage ersetzen? Diese Aktion lässt sich mit Cmd+Z rückgängig machen.',
 
     propsGeometry:           'Geometrie',
     propsAppearance:         'Darstellung',
@@ -208,7 +223,7 @@ export const MESSAGES = {
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
     hotkeyZoomOutDescription: 'Ansicht verkleinern (Canvas-Mitte)',
-    zoomInTitle:             'Hineinzoomen (+)',
+    zoomInTitle:             'Hineinzoomen (=)',
     zoomOutTitle:            'Herauszoomen (−)',
     hotkeyCategory:          'Aktionen',
 
@@ -258,13 +273,13 @@ export const MESSAGES = {
     saveTitleDirty:          'Save changes',
     saveTitleClean:          'All changes saved',
 
-    toolSelect:              'Select (V)',
+    toolSelect:              'Select',
     toolPan:                 'Pan',
-    toolText:                'Text (T)',
-    toolImage:               'Image (I)',
-    toolRect:                'Rect (R)',
-    toolCircle:              'Circle (C)',
-    toolLine:                'Line (L)',
+    toolText:                'Text',
+    toolImage:               'Image',
+    toolRect:                'Rect',
+    toolCircle:              'Circle',
+    toolLine:                'Line',
     toolDelete:              'Delete Selected (Del)',
     toolCrop:                'Crop',
     toolReplace:             'Replace',
@@ -277,6 +292,13 @@ export const MESSAGES = {
     tabWineData:             'Wine Data',
     tabBackground:           'Background',
     tabExtras:               'Extras',
+    tabTemplates:            'Templates',
+
+    templateClassicName:    'Classic',
+    templateModernName:     'Modern',
+    templateMinimalName:    'Minimal',
+    templatesHint:          'Replaces the current canvas content with a pre-built layout — wine data is filled in automatically.',
+    templatesConfirmReplace: 'Replace the current draft with this template? This can be undone with Cmd+Z.',
 
     propsGeometry:           'Geometry',
     propsAppearance:         'Appearance',
@@ -315,7 +337,7 @@ export const MESSAGES = {
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',
     hotkeyZoomOutDescription: 'Shrink the view (canvas centre)',
-    zoomInTitle:             'Zoom in (+)',
+    zoomInTitle:             'Zoom in (=)',
     zoomOutTitle:            'Zoom out (−)',
     hotkeyCategory:          'Actions',
 

@@ -168,8 +168,15 @@ export function CellarCanvas({
   const cropperTargetId = useDesignerStore(s => s.cropperTargetId)
   const setCropper      = useDesignerStore(s => s.setCropper)
 
-  useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm, isFullscreen })
+  useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm })
   useCanvasAutosave(bridge, storageKey, onChange)
+
+  // Fullscreen resizes the wrapper, so the previous zoom-to-fit goes stale —
+  // but this must only re-fit, never re-run the restore above (that would
+  // reload initialState/the draft and silently discard the user's edits).
+  useEffect(() => {
+    bridge.current?.zoomToFit()
+  }, [bridge, isFullscreen])
 
   // Sync wine field text on the canvas when the incoming prop changes (e.g.
   // winemaker updated the vintage in the DB while the editor was open).

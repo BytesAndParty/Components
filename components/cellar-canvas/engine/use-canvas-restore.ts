@@ -12,14 +12,18 @@ const BRIDGE_READY_DELAY_MS = 100
  * over the localStorage draft. After restoring, fits the label into the
  * viewport and clears the dirty flag — restoration is not a user edit.
  *
- * Re-runs when dimensions change (canvas is recreated) or when fullscreen
- * toggles (the wrapper resizes and the previous fit becomes stale).
+ * Re-runs only when dimensions change (canvas is recreated). Fullscreen
+ * toggling needs a re-fit too (the wrapper resizes), but must NOT re-run this
+ * restore — it used to sit in the same effect, so entering fullscreen
+ * silently reloaded `initialState`/the localStorage draft and discarded
+ * whatever the user had just changed. See the sibling effect in
+ * `CellarCanvas.tsx` for the fullscreen-only re-fit.
  */
 export function useCanvasRestore(
   bridge:       RefObject<FabricBridge | null>,
   initialState: CellarCanvasState | object | undefined,
   storageKey:   string | null,
-  deps:         { widthMm: number; heightMm: number; isFullscreen: boolean }
+  deps:         { widthMm: number; heightMm: number }
 ) {
   useEffect(() => {
     const timeout = setTimeout(async () => {
@@ -41,10 +45,15 @@ export function useCanvasRestore(
         }
       }
 
+      // Seeds the undo stack with exactly the state now on screen — restored
+      // or still-empty. Without this, undoing past the user's first edit
+      // could land on whatever the canvas looked like a moment before restore
+      // ran (see FabricBridge.resetHistory doc).
+      b.resetHistory()
       b.zoomToFit()
       useDesignerStore.getState().setDirty(false)
     }, BRIDGE_READY_DELAY_MS)
 
     return () => clearTimeout(timeout)
-  }, [bridge, initialState, storageKey, deps.widthMm, deps.heightMm, deps.isFullscreen])
+  }, [bridge, initialState, storageKey, deps.widthMm, deps.heightMm])
 }
