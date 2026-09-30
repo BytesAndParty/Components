@@ -23,7 +23,9 @@ const SIZES = {
 } as const
 
 type LauncherCardAction =
-  | { href: string }
+  // external: fremde Seite im neuen Tab, nofollow — der Launcher ist öffentlich
+  // indexiert und soll z. B. das Staging nicht an Suchmaschinen weiterreichen.
+  | { href: string; external?: boolean }
   | { onClick: () => void }
   | { disabled: true; badge: string }
 
@@ -65,6 +67,7 @@ export function LauncherCard({ title, description, tech, icon: Icon, size = 'md'
         <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">{tech}</p>
       )}
       <p className={`text-muted-foreground leading-relaxed ${s.description}`}>{description}</p>
+      {'external' in action && action.external && <span className="sr-only"> (öffnet in neuem Tab)</span>}
     </>
   )
 
@@ -78,7 +81,11 @@ export function LauncherCard({ title, description, tech, icon: Icon, size = 'md'
 
   if ('href' in action) {
     return (
-      <a href={action.href} className={`${BASE} ${s.padding} ${INTERACTIVE}`}>
+      <a
+        href={action.href}
+        {...(action.external && { target: '_blank', rel: 'nofollow noopener noreferrer' })}
+        className={`${BASE} ${s.padding} ${INTERACTIVE}`}
+      >
         {content}
       </a>
     )
