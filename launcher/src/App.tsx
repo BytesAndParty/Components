@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import {
-  Component, LayoutTemplate, ShoppingBag, BookOpen, ArrowUpRight, Moon, Sun,
+  Component, LayoutTemplate, ShoppingBag, BookOpen, Moon, Sun,
   type LucideIcon,
 } from 'lucide-react'
+import { LauncherCard } from './components/LauncherCard'
 import { ReferencePage } from './components/ReferencePage'
 
 // Each showcase is a standalone app. In dev they run on their own ports; in
@@ -105,72 +106,25 @@ export function App() {
         </header>
 
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {TARGETS.map(t => {
-            const Icon = t.icon
-            // local-only targets are reachable in dev but disabled once deployed.
-            const disabled = t.localOnly && !DEV
-
-            const inner = (
-              <>
-                <div className="mb-5 flex items-center justify-between">
-                  <Icon size={22} className={disabled ? 'text-muted-foreground/50' : 'text-muted-foreground group-hover:text-accent transition-colors'} />
-                  {disabled
-                    ? <span className="border-border text-muted-foreground/60 rounded-full border px-2 py-0.5 text-[9px] tracking-[0.16em] uppercase">nur lokal</span>
-                    : <ArrowUpRight size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />}
-                </div>
-                <h2 className="font-display text-2xl font-medium tracking-tight">
-                  {t.label}
-                </h2>
-                <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">
-                  {t.tech}
-                </p>
-                <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-                  {t.description}
-                </p>
-              </>
-            )
-
-            return (
-              <li key={t.id}>
-                {disabled ? (
-                  <div
-                    aria-disabled="true"
-                    className="border-border bg-card flex h-full cursor-not-allowed flex-col rounded-2xl border p-6 opacity-55"
-                  >
-                    {inner}
-                  </div>
-                ) : (
-                  <a
-                    href={t.href}
-                    className="group border-border bg-card hover:border-accent/60 focus-visible:ring-ring flex h-full flex-col rounded-2xl border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-                  >
-                    {inner}
-                  </a>
-                )}
-              </li>
-            )
-          })}
+          {TARGETS.map(t => (
+            <li key={t.id}>
+              {t.localOnly && !DEV ? (
+                // local-only targets are reachable in dev but disabled once deployed.
+                <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} disabled badge="nur lokal" />
+              ) : (
+                <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} href={t.href} />
+              )}
+            </li>
+          ))}
 
           <li>
-            <button
-              type="button"
+            <LauncherCard
+              title={REFERENCE_TARGET.label}
+              tech={REFERENCE_TARGET.tech}
+              description={REFERENCE_TARGET.description}
+              icon={REFERENCE_TARGET.icon}
               onClick={() => setView('reference')}
-              className="group border-border bg-card hover:border-accent/60 focus-visible:ring-ring flex h-full w-full flex-col rounded-2xl border p-6 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
-            >
-              <div className="mb-5 flex items-center justify-between">
-                <REFERENCE_TARGET.icon size={22} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                <ArrowUpRight size={16} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
-              </div>
-              <h2 className="font-display text-2xl font-medium tracking-tight">
-                {REFERENCE_TARGET.label}
-              </h2>
-              <p className="text-muted-foreground/70 mt-0.5 text-[10px] tracking-[0.18em] uppercase">
-                {REFERENCE_TARGET.tech}
-              </p>
-              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-                {REFERENCE_TARGET.description}
-              </p>
-            </button>
+            />
           </li>
         </ul>
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ArrowUpRight, ChevronLeft } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
+import { LauncherCard } from './LauncherCard'
 
 const DEV = import.meta.env.DEV
 
@@ -100,16 +101,7 @@ export function ReferencePage({ onBack }: ReferencePageProps) {
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {LINKS.map(l => (
             <li key={l.label}>
-              <a
-                href={l.href}
-                className="group border-border bg-card hover:border-accent/60 focus-visible:ring-ring flex h-full flex-col rounded-2xl border p-5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-medium">{l.label}</span>
-                  <ArrowUpRight size={15} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
-                </div>
-                <p className="text-muted-foreground text-xs leading-relaxed">{l.description}</p>
-              </a>
+              <LauncherCard size="sm" title={l.label} description={l.description} href={l.href} />
             </li>
           ))}
         </ul>
