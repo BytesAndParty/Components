@@ -32,7 +32,6 @@ export function TemplatesPanel({ bridge, wineFields, hasObjects }: TemplatesPane
   function apply(id: 'classic' | 'modern' | 'minimal') {
     const b = bridge.current
     if (!b) return
-    if (hasObjects && !window.confirm(m.templatesConfirmReplace)) return
 
     const template = WINE_LABEL_TEMPLATES.find((t) => t.id === id)
     if (!template) return
@@ -42,7 +41,12 @@ export function TemplatesPanel({ bridge, wineFields, hasObjects }: TemplatesPane
       bleedPx: b.bleedPx,
       wineFields,
     }
-    b.applyTemplate(template.build(ctx))
+    const elements = template.build(ctx)
+    // Templates leave out wine fields without a value; one made only of such
+    // fields (Minimal without name + vintage) would just wipe the canvas.
+    if (elements.length === 0) return
+    if (hasObjects && !window.confirm(m.templatesConfirmReplace)) return
+    b.applyTemplate(elements)
   }
 
   return (
