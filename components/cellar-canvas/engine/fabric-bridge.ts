@@ -175,23 +175,35 @@ export class FabricBridge {
       downAt = null
     })
 
-    // Cursor-anchored zoom on wheel / pinch. Without preventDefault the
-    // browser would scroll the page or pinch-zoom the whole document; we want
-    // wheel-over-canvas to mean "zoom the canvas". `zoomToPoint` keeps the
-    // pixel under the cursor stationary while the rest scales around it.
+    // Wheel over the canvas: pinch (trackpads report it as a wheel event with
+    // ctrlKey set) and Ctrl/Cmd + wheel zoom, anchored at the cursor; a plain
+    // wheel or two-finger swipe pans — the Figma/Canva convention, and the
+    // only way to pan with a trackpad. Without preventDefault the browser
+    // would scroll or pinch-zoom the whole page instead.
     canvas.on('mouse:wheel', (opt) => {
       const e = opt.e as WheelEvent
-      const current = canvas.getZoom()
-      // 0.999^delta gives a smooth multiplicative response; delta is roughly
-      // -100..100 per wheel tick, ±10 per pinch frame.
-      let next = current * 0.999 ** e.deltaY
-      next = Math.max(0.05, Math.min(20, next))
-      canvas.zoomToPoint(new fabric.Point(e.offsetX, e.offsetY), next)
       e.preventDefault()
       e.stopPropagation()
-      useDesignerStore.getState().setZoom(next)
+      // Firefox may report line deltas (deltaMode 1) — normalise to pixels.
+      const unit = e.deltaMode === 1 ? 16 : 1
+
+      if (e.ctrlKey || e.metaKey) {
+        const current = canvas.getZoom()
+        // 0.999^delta gives a smooth multiplicative response; delta is roughly
+        // -100..100 per wheel tick, ±10 per pinch frame. `zoomToPoint` keeps
+        // the pixel under the cursor stationary while the rest scales.
+        let next = current * 0.999 ** (e.deltaY * unit)
+        next = Math.max(0.05, Math.min(20, next))
+        canvas.zoomToPoint(new fabric.Point(e.offsetX, e.offsetY), next)
+        useDesignerStore.getState().setZoom(next)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(canvas as any).fire('cellar:property-changed', { target: null })
+        return
+      }
+
+      canvas.relativePan(new fabric.Point(-e.deltaX * unit, -e.deltaY * unit))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).fire('cellar:property-changed', { target: null })
+      ;(canvas as any).fire('cellar:viewport-changed')
     })
 
     canvas.on('object:moving', (opt) => {
