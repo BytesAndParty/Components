@@ -383,7 +383,12 @@ export class FabricBridge {
    */
   private place<T extends fabric.Object>(obj: T): T {
     const cascade = (this.canvas.getObjects().length % 10) * 8
-    if (cascade > 0) {
+    if (cascade > 0 && obj instanceof fabric.Line) {
+      // A Line positions itself from x1/y1/x2/y2 whenever a point changes
+      // (`_setWidthHeight`). Shifting only left/top would desync the points
+      // and the line would jump back on the next width edit (sets x2).
+      obj.set({ x1: obj.x1 + cascade, y1: obj.y1 + cascade, x2: obj.x2 + cascade, y2: obj.y2 + cascade })
+    } else if (cascade > 0) {
       obj.set({ left: (obj.left ?? 0) + cascade, top: (obj.top ?? 0) + cascade })
     }
     this.canvas.add(obj)
