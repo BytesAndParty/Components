@@ -12,26 +12,27 @@
 |----------------------|------------------------------------------------------------------------|
 | Canvas               | Fabric v7 via `use-fabric-canvas.ts`, mm/px Umrechnung steht. Symmetrische 40 mm Bleed-Margin rundherum; Label-Backdrop wird als CSS-`<div>` in `LabelCanvas` gerendert (NICHT mehr als Fabric-Objekt) und tracking-aligned via Fabric-Zoom + Viewport-Transform. User-facing `x/y` bleibt label-relativ. |
 | Tools                | Rect / Circle / Line / Text (Textbox mit Word-Wrap) / Image / QR-Code addbar. Stamp-Semantik: Insert-Buttons setzen ein Objekt und fallen auf `select` zurück; nur Select + Pan sind persistente Modi. Pan-Tool (Hand) verschiebt den Viewport per Drag (`skipTargetFind` + `relativePan`, Sync via `cellar:viewport-changed`). Text-Click-to-Edit per `mouse:up` + Drag-Threshold; `hiddenTextarea` wird in `canvas.wrapperEl` umgehängt damit Edit auch in modalen Subtrees funktioniert. |
-| History              | ✅ Undo/Redo (50 Steps) via `engine/history-manager.ts` — alleiniger Besitzer von Stack/Index/Lock; `runExclusive` serialisiert Restores gegen Cmd+Z-Overlap (seit 2026-06-20, Step 4). Store hält nur noch `canUndo/canRedo` (Buttons disablen an den Grenzen). Snapshot ist die volle `serializeState`-Form `{ canvas, bg }` — Bg-Color partizipiert an Undo/Redo. Alte plain-canvas-Snapshots aus localStorage werden weiterhin akzeptiert (Backward-Compat). `saveHistory()` debounct jetzt 300ms (seit 2026-09-29, #26); `resetHistory()` seedet den Stack einmalig nach dem Mount-Restore statt der Bridge-Constructor selbst zu snapshotten. |
+| History              | ✅ Undo/Redo (50 Steps; Debounce-Snapshot wird vor jeder Pointer-Interaktion weggeschrieben, #27) via `engine/history-manager.ts` — alleiniger Besitzer von Stack/Index/Lock; `runExclusive` serialisiert Restores gegen Cmd+Z-Overlap (seit 2026-06-20, Step 4). Store hält nur noch `canUndo/canRedo` (Buttons disablen an den Grenzen). Snapshot ist die volle `serializeState`-Form `{ canvas, bg }` — Bg-Color partizipiert an Undo/Redo. Alte plain-canvas-Snapshots aus localStorage werden weiterhin akzeptiert (Backward-Compat). `saveHistory()` debounct jetzt 300ms (seit 2026-09-29, #26); `resetHistory()` seedet den Stack einmalig nach dem Mount-Restore statt der Bridge-Constructor selbst zu snapshotten. |
 | Shortcuts            | ✅ TanStack Hotkeys (mod+z, mod+shift+z, Delete, Backspace, `+`/`-` Zoom, `s` Snapping) inkl. Registry. Delete/Backspace als **separate** Registrierungen — Komma-Listen (`'delete, backspace'`) parst die Lib als einen unmatchbaren Key, der nie feuert. `+` braucht die RawHotkey-Objektform (`{ key: '+' }`), weil ein literales `+` im String mit dem Kombi-Separator kollidiert. |
-| Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Wheel/Pinch auf der Canvas zoomt cursor-zentriert via `canvas.zoomToPoint` mit `preventDefault` gegen Browser-Page-Zoom. `+`/`-`-Buttons (neben Fit) + Hotkeys zoomen Center-verankert über `bridge.zoomBy` (gleiche Clamp-Range 0.05–20). |
-| Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). |
+| Zoom                 | ✅ Zoom-to-Fit fittet den vollen Canvas-Pixelbereich (Label + Bleed). Pinch bzw. Strg/Cmd+Wheel zoomt cursor-zentriert via `canvas.zoomToPoint`, normales Scrollen/Zwei-Finger-Swipe verschiebt (seit 2026-10-05, #27); `preventDefault` gegen Browser-Page-Zoom/-Scroll. `+`/`-`-Buttons (neben Fit) + Hotkeys zoomen Center-verankert über `bridge.zoomBy` (gleiche Clamp-Range 0.05–20). |
+| Fullscreen           | ✅ CSS-Fullscreen (`fixed inset-0 z-50`) statt der Browser-Fullscreen-API — Escape exitet. Vorher schluckte die API-Variante Keyboard-Input in Fabric's `hiddenTextarea` (Focus-Restriktion auf Subtree). Die Shell rendert immer in denselben Portal-Container, der nur im DOM verschoben wird (Platzhalter ↔ `body`) — ein Wechsel Inline ↔ Portal mountete den `<canvas>` neu (#27). |
 | Properties Panel     | x / y / rotation / opacity verdrahtet; w / h pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). |
 | Context Toolbar      | Text (Font/Size/Bold/Italic/Underline/Align/Color/Letter-Spacing/Line-Height) + Shape Fill/Stroke/Stroke-Width + Image (Crop / Replace / Opacity) + StackOrderControls + AlignmentBar (live). |
 | Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte + Label-Center. Toggle per Header-Button (Magnet) + `S`-Hotkey; Alt unterdrückt Snapping pro Drag. Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
 | Background           | ✅ ColorSwatch im rechten Panel-Tab (`Background`), `bridge.setBackground` setzt `labelColor` Instance-Prop + `isDirty`. Wird per `serializeState` mitpersistiert (`{ canvas, bg }`). |
-| Wine Fields          | 8 Felder (inkl. Allergenhinweis + Herkunftsland — deckt alle Validator-Pflichtfelder ab) + QR-Code, `_fieldKey` Metadata. QR-Button disabled ohne `nutritionalInfoUrl` (kein `example.com`-Fallback mehr). |
+| Wine Fields          | 8 Felder (inkl. Allergenhinweis + Herkunftsland — deckt alle Validator-Pflichtfelder ab) + QR-Code, `_fieldKey` Metadata. QR-Button disabled ohne `nutritionalInfoUrl` (kein `example.com`-Fallback mehr). Felder ohne Wert sind gesperrt, Wein-Felder `editable: false` (serialisiert, Click-to-Edit respektiert es) — Text kommt nur aus den Weindaten (#27). |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
-| Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas. Serialisierter State = `{ canvas, bg }`. `storageKey`-Prop overridable, `null` deaktiviert. |
+| Bild-Eingänge        | ✅ Alle fünf (Datei, Drag&Drop, Paste, Ersetzen, Cropper-Output) laufen über `prepareImageSource`: lange Kante ≤ 2400 px, JPEG q0,9 bzw. PNG bei Transparenz, SVG unverändert (#27). |
+| Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas, direkt im Effekt (kein Timer, #27). Serialisierter State = `{ canvas, bg }`, Objekt-Props aus `SERIALIZED_OBJECT_PROPS`. `storageKey`-Prop overridable, `null` deaktiviert. Gescheiterter Autosave (Quota, gesperrter Storage) → `draftSaveFailed` + Hinweis im Header. |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. **Re-Crop:** Über ContextToolbar für selektierte Bilder möglich; behält ID und Position bei. |
-| Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich. Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. **3 mm Print-Bleed-Indikator:** Maske reicht im Design-Mode 3 mm INS Label hinein — der entstehende dunklere Randstreifen markiert die Trim-Risiko-Zone (kein wichtiger Inhalt). Preview-Mode unterdrückt das (echter Druck-Look). |
+| Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich, positioniert am Backdrop-Rechteck — folgen damit Zoom und Pan (#27). Design-View ~55 % opak (überlaufende Objekte bleiben lesbar), Preview-Toggle (Eye-Icon Header) schaltet auf 100 % → Bleed verschwindet, nur das druckbare Etikett ist sichtbar. **3 mm Print-Bleed-Indikator:** Maske reicht im Design-Mode 3 mm INS Label hinein — der entstehende dunklere Randstreifen markiert die Trim-Risiko-Zone (kein wichtiger Inhalt). Preview-Mode unterdrückt das (echter Druck-Look). |
 | i18n                 | ✅ `messages.ts` (en+de) + `messages?`-Prop. Locale aus globalem `I18nProvider`; ~60 Strings verteilen sich über einen scoped Messages-Context auf alle Subcomponents (kein Prop-Drilling). |
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. |
 | Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
-| Export               | ✅ PNG + PDF in Label-Trim-Größe (`exportDpi`, default 300, via Fabric `toDataURL`; PDF via `jspdf`), Download über zwei Header-Buttons. PDF gated über `enablePdfExport`. `onExport({ format, blob })`-Callback für Server-Upload. Bleed-PDF mit Crop-Marks bleibt offen. |
-| Templates            | 🟡 3/5 Built-ins (2026-09-29, #26): Classic / Modern / Minimal als `templates/templates.ts` — reine Funktionen, bauen live Fabric-Objekte über dieselben `attach()`-Metadaten wie die Toolbar-Inserts, keine vorserialisierten JSON-Dateien. 5. Panel-Tab „Vorlagen" ruft `bridge.applyTemplate()` (ein Undo-Schritt, `window.confirm`-Gate wenn die Leinwand nicht leer ist). Rustic/Bold, Thumbnails, `customTemplates`-Prop weiterhin offen (siehe unten). |
+| Export               | ✅ PNG + PDF in Label-Trim-Größe (`exportDpi`, default 300, via Fabric `toDataURL`; PDF via `jspdf`), Download über zwei Header-Buttons. PDF gated über `enablePdfExport`. `onExport({ format, blob })`-Callback für Server-Upload. jsPDF lädt nur auf dem PDF-Pfad (#27). Bleed-PDF mit Crop-Marks bleibt offen. |
+| Templates            | 🟡 3/5 Built-ins (2026-09-29, #26): Classic / Modern / Minimal als `templates/templates.ts` — reine Funktionen, bauen live Fabric-Objekte über dieselben `attach()`-Metadaten wie die Toolbar-Inserts, keine vorserialisierten JSON-Dateien. 5. Panel-Tab „Vorlagen" ruft `bridge.applyTemplate()` (ein Undo-Schritt, `window.confirm`-Gate wenn die Leinwand nicht leer ist). Wein-Felder ohne Wert lässt das Template weg statt Platzhalter zu drucken (#27). Rustic/Bold, Thumbnails, `customTemplates`-Prop weiterhin offen (siehe unten). |
 | Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
 ---
@@ -63,13 +64,21 @@
 - **Extras-Panel: `SignaturePad` + Ornamente** — nur der Emoji-Insert (`emoji-picker-react`) ist gebaut; Unterschrift-Erfassung und dekorative Ornamente (Trenner, Blatt/Traube) aus der ursprünglichen Spec fehlen weiterhin.
 - **Accessibility-Pass** — `FocusTrap`-Audit über alle Modals (Cropper, Export, Extras), `role="toolbar"` + `aria-label` auf den Toolbars, `aria-label="Label canvas"` auf dem `<canvas>`-Element, vollständige Keyboard-Navigation im Layer-Panel (`Tab`/`Enter`-Rename/`Delete`). Zusatzbefund (2026-09-29, Usability-Audit): deaktivierte Buttons (z. B. Delete im `MainToolbar`) tragen einen `Tooltip`, der nie erscheint — disabled-Elemente feuern keine Pointer-Events.
 - **Tour hat keinen Re-Entry-Punkt** *(2026-09-29, Usability-Audit)* — einmal dismissed, nie wieder erreichbar; `tourStartButton`/`tourStartTitle` existieren in `messages.ts`, werden aber von keiner Komponente konsumiert. Fehlt: Header-Button, der `OnboardingTour` neu startet.
-- **Stille Fehlerpfade** *(2026-09-29, Usability-Audit)* — `addImage`/`updateImageSource` awaiten `FabricImage.fromURL` ungeguarded (korrupter Upload → nichts passiert sichtbar); `generateQRCodeDataURL`/`addQRCode` loggen nur in die Konsole. `imageSourceFromBlob().then(...)`-Ketten in `MainToolbar.tsx`, `CellarCanvas.tsx`, `ContextToolbar.tsx` haben kein `.catch` (unhandled rejection bei nicht-dekodierbarer Datei).
+- **Stille Fehlerpfade** *(2026-09-29, Usability-Audit)* — `addImage`/`updateImageSource` awaiten `FabricImage.fromURL` ungeguarded (korrupter Upload → nichts passiert sichtbar); `generateQRCodeDataURL`/`addQRCode` loggen nur in die Konsole. `prepareImageSource().then(...)`-Ketten in `MainToolbar.tsx`, `CellarCanvas.tsx`, `ContextToolbar.tsx`, `use-clipboard-paste.ts` haben kein `.catch` (nicht dekodierbare Bilder fängt `prepareImageSource` seit #27 ab und reicht sie unverändert durch; ein Lesefehler des `FileReader` bliebe aber eine unhandled rejection).
 - **„Fit to Screen" misst nie den sichtbaren Container** *(2026-09-29, Bug-Audit)* — `fabric-bridge.ts zoomToFit` skaliert nur relativ zur eigenen (fixen) Canvas-Pixelgröße, nie zur tatsächlichen Viewport-/Wrapper-Größe. Im Fullscreen oder auf kleinen/projektor-großen Fenstern bleibt das Label zu klein bzw. oben abgeschnitten, der Button behebt das nicht. Fix bräuchte eine Referenz auf den äußeren Container zum Messen — noch nicht verdrahtet.
 - **Snap-Guides lösen vollen Sync auf jedem Drag-Frame aus + snappen auf die eigene Multi-Selektion** *(2026-09-29, Bug-Audit)* — `snap-manager.ts` fügt Guide-Lines per `canvas.add`/`remove` ein, was `object:added`/`removed` feuert → `useCanvasSync` löst einen vollen `'full'`-Update aus (Layer-Re-Snapshot + Validator) bei jedem Snap-Frame, nicht nur bei echten Änderungen. Zusätzlich schließt die Snap-Loop die eigenen Kinder einer Multi-Selektion nicht aus — die Gruppe kann an der eigenen Kante mit Delta 0 "snappen" und blockiert damit echtes Snapping gegen andere Objekte.
 - **Properties-Panel X/Y falsch bei Multi-Selektion** *(2026-09-29, Bug-Audit)* — Fabric v7s `ActiveSelection` nutzt `originX/Y: center` als Default; `readGeometryMm`/`xToLeft` behandeln `left/top` aber als Top-Left-Ecke. Eine getippte X-Koordinate auf eine Mehrfachauswahl springt um die halbe Selektionsbreite daneben.
-- **Wine-Field-Sync erreicht restaurierte Objekte nicht zuverlässig** *(2026-09-29, Bug-Audit)* — der `initialWineFields`-Sync-Effect in `CellarCanvas.tsx` läuft beim Mount auf der (noch leeren) Canvas; das Mount-Restore läuft ~100ms später auf einem eigenen Timer. Bleibt `initialWineFields` danach stabil (kein Wein-Wechsel), bekommen frisch restaurierte Wine-Field-Objekte nie die aktuellen Werte. Betrifft nicht den Designer-Showcase (der nutzt `initialState` mit bereits korrekt befüllten Werten statt eines localStorage-Drafts), aber potenziell echte Vendure-Integrationen mit gespeicherten Entwürfen.
+- **Wine-Field-Sync erreicht restaurierte Objekte nicht zuverlässig** *(2026-09-29, Bug-Audit)* — der `initialWineFields`-Sync-Effect in `CellarCanvas.tsx` läuft beim Mount auf der (noch leeren) Canvas; das Mount-Restore ist async (`loadFromJSON`) und landet erst danach — daran ändert auch der seit #27 entfernte 100-ms-Timer nichts. Bleibt `initialWineFields` danach stabil (kein Wein-Wechsel), bekommen frisch restaurierte Wine-Field-Objekte nie die aktuellen Werte. Betrifft nicht den Designer-Showcase (der nutzt `initialState` mit bereits korrekt befüllten Werten statt eines localStorage-Drafts), aber potenziell echte Vendure-Integrationen mit gespeicherten Entwürfen.
 - **Dimensionswechsel (`widthMm`/`heightMm` zur Laufzeit) hinterlässt tote Hooks** *(2026-09-29, Bug-Audit)* — `use-fabric-canvas.ts` erstellt bei Dimensionswechsel eine neue Canvas-Instanz, aber `useCanvasSync`/`useCanvasAutosave` listen nicht auf diese Deps und bleiben an der alten (disposed) Canvas hängen: Properties/Layers/Validator frieren ein, Autosave stoppt. Nur relevant, falls eine Embedding-App die Label-Größe zur Laufzeit ändert.
-- **`canvas.off(event)` ohne Handler-Ref räumt fremde Listener mit ab** *(2026-09-29, Bug-Audit)* — `use-canvas-sync.ts`s Cleanup nutzt argumentlose `canvas.off('selection:created')` etc., was ALLE Listener dieses Event-Typs entfernt, nicht nur die eigenen. Trifft aktuell auch den Bridge-eigenen `mouse:wheel`- (Zoom) und `object:moving`-Handler (Snapping), sobald `enableValidator` zur Laufzeit umgeschaltet wird — bislang nur beim Unmount beobachtet (dort harmlos, da ≈ Dispose).
+- ~~**`canvas.off(event)` ohne Handler-Ref räumt fremde Listener mit ab**~~ — **gefixt 2026-10-05 (#27)**, Listener werden mit Handler-Referenz abgemeldet. *Ursprünglicher Befund (2026-09-29, Bug-Audit):* `use-canvas-sync.ts`s Cleanup nutzt argumentlose `canvas.off('selection:created')` etc., was ALLE Listener dieses Event-Typs entfernt, nicht nur die eigenen. Trifft aktuell auch den Bridge-eigenen `mouse:wheel`- (Zoom) und `object:moving`-Handler (Snapping), sobald `enableValidator` zur Laufzeit umgeschaltet wird — bislang nur beim Unmount beobachtet (dort harmlos, da ≈ Dispose).
+- **Wein-Feld-Sync schreibt leere oder veraltete Werte** *(2026-10-05, Review #27)* — wird ein Wert in `initialWineFields` `undefined`, bleibt der Text des vorigen Weins auf dem Etikett; bei `''` entsteht eine leere Textbox. Der Validator prüft nur, ob ein Objekt mit dem `_fieldKey` existiert, und bleibt grün. Fix: gemeinsames `hasFieldValue()` (Panel, Templates, Sync), Sync entfernt oder markiert ein Feld ohne Wert, Validator verlangt sichtbaren, nicht-leeren Text.
+- **Restore läuft bei jeder neuen `initialState`-Identität** *(2026-10-05, Review #27)* — ein kontrollierter Embedder (`initialState={saved}`, `onSave` setzt `saved`) lädt die Szene nach jedem Save neu: Undo-Stack, Zoom und Selektion weg, Edits während des async Loads verloren. Fix: `initialState` nur beim Mount bzw. Dimensionswechsel lesen (Ref) oder eine explizite `documentKey`-Prop.
+- **`prepareImageSource`-Kanten** *(2026-10-05, Review #27)* — opake PNG-Logos über 1 MB werden JPEG q0,9 (Ringing im Druck); ein Re-Encode kann größer ausfallen als das Original; ein 50-MP-Foto wird erst voll dekodiert (~200 MB Spitze). Fix: Original behalten, wenn das Ergebnis nicht kleiner ist; JPEG nur für verlustbehaftete Quellen.
+- **Gezogene Linie springt bei Breitenänderung zurück** *(2026-10-05, Review #27)* — `widthToFabricProps` setzt `x2` relativ zu `x1`, die Line positioniert sich aus den Punkten neu und ignoriert den Drag. Für frisch eingefügte Linien seit #27 behoben, für gezogene nicht.
+- **Fullscreen-Toggle verliert den Fokus** *(2026-10-05, Review #27, nur aus dem Code)* — das Verschieben des Portal-Containers blurt das aktive Element, beim Text-Edit auch Fabrics `hiddenTextarea`. Ein SSR-Embedder bekäme zudem einen Hydration-Mismatch (Showcase und Buchart58 rendern client-only). Der Fullscreen-Refit-Effekt (#26) begründet sich mit „Wrapper resized", `zoomToFit` misst den Container aber nie; der Effekt setzt nur Zoom/Pan zurück.
+- **Undo/Redo setzen `isDirty` nicht** *(2026-10-05, Review #27)* — nach einem Server-Save zeigt der Save-Button nach Cmd+Z weiter „gespeichert".
+- **Einfüge-Versatz zählt Objekte statt freie Plätze** *(2026-10-05, Review #27)* — nach einem Löschen kann ein neues Objekt wieder exakt auf einem bestehenden landen.
+- **Keine Tests** für History-Debounce/Flush/Reset, Einfüge-Versatz und `prepareImageSource` *(2026-10-05, Review #27)* — ein Bridge-Test mit Fake-Timern hätte die Debounce-Befunde gefangen.
 - **`pxToMm` rundet auf ganze mm** *(2026-09-29, Bug-Audit, Polish)* — `units.ts`, Properties-Panel arbeitet dadurch nur in 1mm-Schritten; ein bereits angezeigter X-Wert erneut eingegeben kann das Objekt um ~2px verschieben.
 
 ### Tech-Debt / Known Limitations
@@ -142,7 +151,7 @@ Functions ziehen und testen.
   `cellar:property-changed` (8× `as any`), manuelles `setLayers`-Spiegeln durch
   Aufrufer (`use-canvas-sync.ts:17`, „panel snap-back"). Wer eine Bridge-Methode
   ergänzt, muss raten, welcher Weg greift.
-- **F6 — Teardown-Falle:** `canvas.off('selection:created')` ohne Handler-Ref
+- **F6 — Teardown-Falle ✅ gefixt 2026-10-05 (#27):** `canvas.off('selection:created')` ohne Handler-Ref
   (`use-canvas-sync.ts:133`) entfernt **alle** Listener dieses Events — aktuell
   verdeckt, weil Teardown ≈ Dispose, aber fragil.
 - **F7 — Root zu fett:** Wine-Field-Sync, Crop, PDF-Export, Drag&Drop, Hotkeys,
@@ -170,6 +179,54 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 ---
 
 ## Entscheidungs-Log
+
+### #27 — Abgleich mit der Buchart58-Kopie *(2026-10-05 — gefixt)*
+
+Die Kopie in `Buchart58/storefront/src/atelier/cellar-canvas` und der Upstream waren in beide Richtungen
+auseinandergelaufen: Buchart58 hatte am 2026-09-26 eigene Fixes (dort STATUS #26, Analyse in
+`Buchart58/CELLAR-CANVAS-PLAN.md`, Bug-Nummern B1–B13), der Upstream am 2026-09-29 (#26 oben). B3
+(Fullscreen-Restore) und B4 (Undo nach Reload) hatten beide Seiten unabhängig gelöst. Jetzt abgeglichen,
+ein Commit pro Fix:
+
+**Buchart58 → Upstream**
+- **B1 Fullscreen-Remount:** Der Wechsel Inline ↔ `createPortal(shell, body)` mountete den `<canvas>` neu,
+  Fabric hing am toten Element. Stabiler Portal-Container, nur im DOM verschoben (Platzhalter ↔ `body`).
+  Der Fullscreen-Refit-Effekt aus #26 bleibt.
+- **B2 Bildgröße:** `prepareImageSource` für alle fünf Bild-Eingänge, lange Kante ≤ 2400 px, JPEG q0,9
+  bzw. PNG bei Transparenz. F4 (Snapshot-Gewicht) entschärft, nicht gelöst (Asset-Registry bleibt Schritt 5).
+- **Autosave-Fehler sichtbar:** `draftSaveFailed` + Hinweis im Header statt `catch {}`.
+- **B6 Wein-Felder:** ohne Wert nicht einfügbar, `editable: false` + serialisiert, Click-to-Edit
+  respektiert das. Die Prop-Liste ist jetzt `SERIALIZED_OBJECT_PROPS`; der Showcase-Startzustand hatte
+  vorher eine eigene, kürzere Liste. Templates lassen Felder ohne Wert weg statt Platzhalter wie
+  „Weinname" zu drucken (die Templates nutzen nur Name/Jahrgang/Region, den Validator betraf das nicht).
+- **B8 / F6:** Listener-Teardown mit Handler-Referenz.
+- **B12 Wheel:** Scroll/Zwei-Finger verschiebt, Pinch bzw. Strg/Cmd+Wheel zoomt.
+- **B13:** Default-Text lokalisiert, `_extras` serialisiert, `toolCrop`-Fallback raus; jsPDF nur noch
+  auf dem PDF-Pfad (in Buchart58 gemessen: `export-pipeline`-Chunk 128 KB → 0,8 KB gzip).
+- **Bleed-Maske** positioniert sich am Backdrop-Rechteck statt in Prozent des Canvas — folgt Zoom/Pan.
+- **Restore ohne 100-ms-Timer:** läuft direkt im Effekt (die Bridge-Ref steht dann schon), Cancel-Flag
+  gegen Unmount, `readDraft` fängt gesperrten Storage ab. `resetHistory()` aus #26 bleibt.
+
+**Neu beim Zusammenführen:** `resetHistory()` verwirft einen ausstehenden Debounce-Snapshot — sonst
+landete er als Duplikat auf der frischen Baseline (Undo sichtbar wirkungslos).
+
+**Upstream → Buchart58:** History-Debounce, Insert-Kaskade, ehrliche Tooltips (aus #26).
+
+**Unabhängiger Review des Abgleichs (Subagent), daraus gefixt (beide Kopien, außer Templates):**
+- Der Debounce-Snapshot nahm die Szene beim Auslösen auf: Farbe ändern, dann sofort ziehen → Snapshot
+  mitten im Drag. `mouse:down:before` schreibt den ausstehenden Snapshot jetzt vorher weg.
+- Redo direkt nach einem Edit: der Flush verwarf den Redo-Zweig, der Redo-Button blieb aktiv. Flush
+  synchronisiert die Flags; `saveHistory` setzt `canUndo`/`canRedo` sofort statt 300 ms später.
+- Einfüge-Versatz über `left/top` ließ Linien bei der nächsten Breitenänderung zurückspringen
+  (`_setWidthHeight` positioniert aus den Punkten, mit Fabric 7 nachgeprüft). Linien werden über ihre
+  Punkte versetzt.
+- Upstream: Minimal-Template ohne Name und Jahrgang ist leer, `applyTemplate([])` leerte die Leinwand.
+  Das Panel bricht bei leerem Template ab.
+
+**Bewusst nicht abgeglichen:** Templates (Buchart58 plant dort einen eigenen Konfigurator), die
+9-px-Tab-Labels aus Buchart58 (für 4 Tabs gerechnet, hier sind es 5), `zoomToFit` (Buchart58-Formel
+rechnerisch identisch, siehe „Fit to Screen" oben). Kein Browser-Lauf: B1 und B12 sind aus dem Code
+abgeleitet.
 
 ### #26 — Demo-Vorbereitung: zwei Opus-Audits, zwei History-Blocker gefixt, Templates + dynamische Weindaten *(2026-09-29)*
 
@@ -426,4 +483,4 @@ Audit auf „UI vorhanden, Funktion fehlt" — sieben Befunde, alle behoben (ein
 
 ---
 
-*Last updated: 2026-09-29*
+*Last updated: 2026-10-05*
