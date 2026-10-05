@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf'
 import type { FabricBridge } from './fabric-bridge'
 import { mmToPx } from './units'
 
@@ -68,8 +67,12 @@ export function exportLabelPng(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): 
  *
  * Returns a Blob so callers can either trigger a download (default) or
  * upload it to a backend via `onExport`.
+ *
+ * jsPDF (plus its html2canvas dependency, ~175 KB gzip) is imported here,
+ * on demand — the PNG path shares this module and must not pay for it.
  */
-export function exportLabelPdf(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Blob {
+export async function exportLabelPdf(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Promise<Blob> {
+  const { jsPDF } = await import('jspdf')
   const png  = renderLabelPng(bridge, dpi)
   const w    = bridge.widthMm
   const h    = bridge.heightMm
