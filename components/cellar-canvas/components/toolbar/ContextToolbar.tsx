@@ -7,7 +7,7 @@ import { StackOrderControls } from '../../../stack-order-controls/stack-order-co
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
 import { Crop, ImageUp, Trash2 } from 'lucide-react'
-import { imageSourceFromBlob } from '../../engine/image-source'
+import { prepareImageSource } from '../../engine/image-source'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectProperties } from '../../store/types'
 
@@ -27,7 +27,7 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
     const targetId = useDesignerStore.getState().selectedIds[0]
     if (file && targetId) {
       // Straight swap, no cropper: keeps id, position and layer meta.
-      void imageSourceFromBlob(file).then(src => bridge.current?.updateImageSource(targetId, src))
+      void prepareImageSource(file).then(src => bridge.current?.updateImageSource(targetId, src))
     }
     // Reset so picking the same file twice in a row still fires change.
     e.target.value = ''

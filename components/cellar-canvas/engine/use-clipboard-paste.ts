@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { imageSourceFromBlob } from './image-source'
+import { prepareImageSource } from './image-source'
 
 /**
  * Document-level `paste` handler that intercepts image clipboard data and
@@ -7,7 +7,7 @@ import { imageSourceFromBlob } from './image-source'
  * so plain text paste keeps working.
  *
  * Data URL (not blob:) so the source survives history restore, autosave
- * round-trips and page reloads — see `imageSourceFromBlob`.
+ * round-trips and page reloads; size-capped — see `prepareImageSource`.
  */
 export function useClipboardPaste(onImage: (dataUrl: string) => void | Promise<void>) {
   const cbRef = useRef(onImage)
@@ -34,7 +34,7 @@ export function useClipboardPaste(onImage: (dataUrl: string) => void | Promise<v
           const file = item.getAsFile()
           if (file) {
             e.preventDefault()
-            void imageSourceFromBlob(file).then(url => cbRef.current(url))
+            void prepareImageSource(file).then(url => cbRef.current(url))
             return
           }
         }

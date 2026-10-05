@@ -5,7 +5,7 @@ import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
-import { imageSourceFromBlob } from './engine/image-source'
+import { prepareImageSource } from './engine/image-source'
 import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { useCanvasSync } from './engine/use-canvas-sync'
 import { useCanvasAutosave } from './engine/use-canvas-autosave'
@@ -209,7 +209,7 @@ export function CellarCanvas({
   async function handleCrop(blob: Blob) {
     // Data URL, not createObjectURL: Fabric serializes `src` into history and
     // autosave and re-fetches it on loadFromJSON — blob: URLs would die there.
-    const url = await imageSourceFromBlob(blob)
+    const url = await prepareImageSource(blob)
     if (cropperTargetId) {
       await bridge.current?.updateImageSource(cropperTargetId, url)
     } else {
@@ -354,7 +354,7 @@ export function CellarCanvas({
     e.stopPropagation()
     const file = e.dataTransfer.files?.[0]
     if (file && file.type.startsWith('image/')) {
-      void imageSourceFromBlob(file).then(src => setCropper({ open: true, src }))
+      void prepareImageSource(file).then(src => setCropper({ open: true, src }))
     }
   }
 
