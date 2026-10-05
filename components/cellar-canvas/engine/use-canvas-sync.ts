@@ -101,52 +101,46 @@ export function useCanvasSync(
       })
     }
 
+    const onFull     = () => scheduleUpdate('full')
+    const onGeometry = () => scheduleUpdate('geometry')
+    const onViewport = () => scheduleUpdate('viewport')
     const onModified = () => {
       scheduleUpdate('full')
       b.saveHistory()
     }
 
-    const canvas = b.canvas
-    canvas.on('selection:created',  () => scheduleUpdate('full'))
-    canvas.on('selection:updated',  () => scheduleUpdate('full'))
-    canvas.on('selection:cleared',  () => scheduleUpdate('full'))
-    canvas.on('object:modified',    onModified)
-    canvas.on('object:moving',      () => scheduleUpdate('geometry'))
-    canvas.on('object:scaling',     () => scheduleUpdate('geometry'))
-    canvas.on('object:rotating',    () => scheduleUpdate('geometry'))
-    canvas.on('object:added',       () => scheduleUpdate('full'))
-    canvas.on('object:removed',     () => scheduleUpdate('full'))
-    
-    // Custom property channel — fired by the bridge for non-event-emitting
-    // mutations. Usually full because they might touch z-order or visibility.
+    // Every listener is registered with a named handler and removed with that
+    // same reference. `canvas.off(event)` without a handler would also strip
+    // the bridge's own listeners (wheel zoom, snap-guide cleanup, selection
+    // sync) whenever this effect re-runs.
+    // Custom channels: `cellar:property-changed` for non-event-emitting bridge
+    // mutations (may touch z-order/visibility → full), `cellar:viewport-changed`
+    // for programmatic viewport moves (pan drag) that emit no native event.
+    const listeners: [string, () => void][] = [
+      ['selection:created',       onFull],
+      ['selection:updated',       onFull],
+      ['selection:cleared',       onFull],
+      ['object:modified',         onModified],
+      ['object:moving',           onGeometry],
+      ['object:scaling',          onGeometry],
+      ['object:rotating',         onGeometry],
+      ['object:added',            onFull],
+      ['object:removed',          onFull],
+      ['cellar:property-changed', onFull],
+      ['mouse:wheel',             onViewport],
+      ['cellar:viewport-changed', onViewport],
+    ]
+    // Fabric's typed event map doesn't know the custom `cellar:*` channels.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(canvas as any).on('cellar:property-changed', () => scheduleUpdate('full'))
-
-    // Pan/Zoom updates. The bridge fires `cellar:viewport-changed` for
-    // programmatic viewport moves (pan drag) that emit no native event.
-    canvas.on('mouse:wheel', () => scheduleUpdate('viewport'))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(canvas as any).on('cellar:viewport-changed', () => scheduleUpdate('viewport'))
+    const canvas = b.canvas as any
+    for (const [event, handler] of listeners) canvas.on(event, handler)
 
     // First paint stays synchronous.
     update('full')
 
     return () => {
       cancelled = true
-      canvas.off('selection:created')
-      canvas.off('selection:updated')
-      canvas.off('selection:cleared')
-      canvas.off('object:modified',    onModified)
-      canvas.off('object:moving')
-      canvas.off('object:scaling')
-      canvas.off('object:rotating')
-      canvas.off('object:added')
-      canvas.off('object:removed')
-      canvas.off('mouse:wheel')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).off('cellar:property-changed')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(canvas as any).off('cellar:viewport-changed')
+      for (const [event, handler] of listeners) canvas.off(event, handler)
     }
   }, [bridge, options.enableValidator])
 
