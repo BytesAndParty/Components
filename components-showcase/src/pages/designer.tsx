@@ -13,6 +13,7 @@ import { Tooltip } from '@components/tooltip/tooltip'
 import { CellarCanvas, type WineFieldValues } from '@components/cellar-canvas/CellarCanvas'
 import { WINE_LABEL_TEMPLATES, type TemplateContext } from '@components/cellar-canvas/templates/templates'
 import { BLEED_MM } from '@components/cellar-canvas/engine/use-fabric-canvas'
+import { SERIALIZED_OBJECT_PROPS } from '@components/cellar-canvas/engine/fabric-bridge'
 import { mmToPx } from '@components/cellar-canvas/engine/units'
 import type { CellarCanvasState } from '@components/cellar-canvas/store/types'
 import wineData from '../data/wines.json'
@@ -39,7 +40,7 @@ function buildDefaultLabelState(wine: WineFieldValues): CellarCanvasState {
   }
   const elements = classic.build(ctx)
   return {
-    canvas: { objects: elements.map((el) => el.toObject(['id', '_layerName', '_type', '_fieldKey'])) },
+    canvas: { objects: elements.map((el) => el.toObject(SERIALIZED_OBJECT_PROPS)) },
     bg: '#ffffff',
   }
 }

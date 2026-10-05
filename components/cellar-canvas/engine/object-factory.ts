@@ -90,7 +90,8 @@ export function createLine(bleedPx: number) {
 /**
  * Text uses `Textbox` (not `IText`) so word-wrap is on by default at a fixed
  * mm-width — wine labels routinely need multi-line blocks like producer/region.
- * Manual `\n` via Enter still works. A `fieldKey` marks it as a wine-field.
+ * Manual `\n` via Enter still works. A `fieldKey` marks it as a wine-field:
+ * its text is bound to the wine data, so it is not editable on the canvas.
  */
 export function createText(bleedPx: number, text: string, fieldKey?: string) {
   const textbox = new fabric.Textbox(text, {
@@ -101,6 +102,7 @@ export function createText(bleedPx: number, text: string, fieldKey?: string) {
     fontSize: 24,
     fontFamily: 'sans-serif',
     fill: '#000000',
+    editable: !fieldKey,
   })
   return attach(textbox, {
     _layerName: text,

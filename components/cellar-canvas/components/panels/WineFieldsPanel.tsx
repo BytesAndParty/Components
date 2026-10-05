@@ -28,26 +28,27 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
     { key: 'countryOfOrigin', label: m.wineFieldCountry, value: values.countryOfOrigin },
   ] as const
 
-  const addField = (key: string, label: string, value?: string | number) => {
-    const text = value ? String(value) : label
-    bridge.current?.addText(text, key)
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-2">
         {fields.map((field) => {
           const isPlaced = placedFieldKeys.has(field.key)
+          // Without a value there is nothing to bind: inserting the field label
+          // as placeholder text used to satisfy the compliance validator with
+          // "Alkoholgehalt" instead of an actual alcohol content.
+          const hasValue = field.value !== undefined && field.value !== ''
           return (
             <button
               key={field.key}
-              disabled={isPlaced}
-              onClick={() => addField(field.key, field.label, field.value)}
+              disabled={isPlaced || !hasValue}
+              onClick={() => bridge.current?.addText(String(field.value), field.key)}
               className={cn(
                 "group flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-left",
-                isPlaced 
-                  ? "bg-primary/5 border-primary/20 opacity-80 cursor-not-allowed" 
-                  : "bg-muted/50 hover:bg-muted border-transparent hover:border-border"
+                isPlaced
+                  ? "bg-primary/5 border-primary/20 opacity-80 cursor-not-allowed"
+                  : !hasValue
+                    ? "bg-muted/50 border-transparent opacity-60 cursor-not-allowed"
+                    : "bg-muted/50 hover:bg-muted border-transparent hover:border-border"
               )}
             >
               <div className="flex flex-col">
@@ -66,7 +67,7 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
               </div>
               {isPlaced ? (
                 <Check size={14} className="text-primary" />
-              ) : (
+              ) : hasValue && (
                 <Plus size={14} className="text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
               )}
             </button>

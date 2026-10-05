@@ -35,6 +35,21 @@ export interface FabricBridgeOptions {
 }
 
 /**
+ * Object props every serialized scene keeps (autosave, history,
+ * `initialState`): our metadata plus Fabric props that `toObject` drops by
+ * default. Embedders building a state by hand (e.g. from template objects)
+ * serialize with this same list, so nothing gets lost on restore.
+ */
+export const SERIALIZED_OBJECT_PROPS = [
+  'id', '_layerName', '_type', '_fieldKey',
+  'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
+  'hasControls',
+  // Wine-fields are non-editable; without this they turn editable again
+  // after every undo/redo and reload.
+  'editable',
+]
+
+/**
  * The FabricBridge provides a set of imperative helpers to interact
  * with the Fabric.js canvas instance while keeping the Zustand store in sync.
  *
@@ -126,6 +141,7 @@ export class FabricBridge {
             : null
       if (
         target instanceof fabric.IText &&
+        target.editable &&
         !target.isEditing &&
         downAt && up &&
         Math.hypot(up.x - downAt.x, up.y - downAt.y) < 4
@@ -297,11 +313,7 @@ export class FabricBridge {
    * that lives outside the object stack (the label-paper colour).
    */
   serializeState(): CellarCanvasState {
-    const canvas = this.canvas.toObject([
-      'id', '_layerName', '_type', '_fieldKey',
-      'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
-      'hasControls',
-    ])
+    const canvas = this.canvas.toObject(SERIALIZED_OBJECT_PROPS)
     return { canvas, bg: this.labelColor }
   }
 
