@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
@@ -260,6 +260,28 @@ export function CellarCanvas({
     return () => document.removeEventListener('keydown', onKey)
   }, [isFullscreen])
 
+  // Fullscreen must escape ancestor stacking contexts (host navbars, floating
+  // carts), so the shell renders through a portal. The portal container stays
+  // the SAME element for the component's lifetime and is only moved in the DOM
+  // (inline placeholder ↔ document.body). Switching between inline render and
+  // portal would remount the subtree — a fresh <canvas> that Fabric never
+  // initialises, leaving the editor dead after the first toggle.
+  const [portalHost] = useState(() => {
+    if (typeof document === 'undefined') return null
+    const host = document.createElement('div')
+    host.style.display = 'contents'
+    return host
+  })
+  const placeholderRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    if (!portalHost) return
+    const target = isFullscreen ? document.body : placeholderRef.current
+    target?.appendChild(portalHost)
+    // Fabric caches the canvas offset for pointer + hidden-textarea maths.
+    bridge.current?.canvas.calcOffset()
+  }, [portalHost, isFullscreen, bridge])
+  useLayoutEffect(() => () => portalHost?.remove(), [portalHost])
+
   // Clipboard paste — image data on the clipboard lands as a Fabric image.
   useClipboardPaste(async (url) => {
     await bridge.current?.addImage(url)
@@ -460,9 +482,8 @@ export function CellarCanvas({
 
   return (
     <MessagesProvider value={m}>
-      {isFullscreen && typeof document !== 'undefined'
-        ? createPortal(shell, document.body)
-        : shell}
+      <div ref={placeholderRef} style={{ display: 'contents' }} />
+      {portalHost ? createPortal(shell, portalHost) : shell}
     </MessagesProvider>
   )
 }
