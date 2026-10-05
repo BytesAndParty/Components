@@ -277,8 +277,14 @@ export class FabricBridge {
    * scene. Call once after mount-time restoration finishes (`useCanvasRestore`)
    * so the restored — or still-empty — canvas becomes the undo floor, instead
    * of whatever the canvas happened to look like before restoration ran.
+   * A still-pending debounced snapshot is dropped: it would land on top of
+   * the fresh baseline as a duplicate and make Undo a visible no-op.
    */
   resetHistory() {
+    if (this.historyDebounceTimer) {
+      clearTimeout(this.historyDebounceTimer)
+      this.historyDebounceTimer = null
+    }
     this.history.clear()
     this.history.push(JSON.stringify(this.serializeState()))
     this.syncHistoryFlags()
