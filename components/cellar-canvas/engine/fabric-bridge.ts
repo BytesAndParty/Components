@@ -224,7 +224,7 @@ export class FabricBridge {
     })
 
     // No initial snapshot here — `resetHistory()` seeds the stack once
-    // mount-time restoration (which runs on its own timer) has settled. An
+    // mount-time restoration (`useCanvasRestore`) has settled. An
     // eager snapshot here used to race that restore and could win, leaving
     // an empty canvas as the undo floor beneath the restored scene (the
     // first Cmd+Z after any edit would wipe the whole label).
