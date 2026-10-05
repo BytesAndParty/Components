@@ -36,6 +36,8 @@ export type CellarCanvasMessages = {
   toolSelect:             string
   toolPan:                string
   toolText:               string
+  /** Content of a freshly inserted text box. */
+  defaultText:            string
   toolImage:              string
   toolRect:               string
   toolCircle:             string
@@ -164,6 +166,7 @@ export const MESSAGES = {
     toolSelect:              'Auswählen',
     toolPan:                 'Ansicht verschieben',
     toolText:                'Text',
+    defaultText:             'Neuer Text',
     toolImage:               'Bild',
     toolRect:                'Rechteck',
     toolCircle:              'Kreis',
@@ -279,6 +282,7 @@ export const MESSAGES = {
     toolSelect:              'Select',
     toolPan:                 'Pan',
     toolText:                'Text',
+    defaultText:             'New Text',
     toolImage:               'Image',
     toolRect:                'Rect',
     toolCircle:              'Circle',

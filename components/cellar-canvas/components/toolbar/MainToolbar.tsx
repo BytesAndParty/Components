@@ -46,7 +46,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       // Stamp actions — insert one object (which gets selected) and return
       // to select mode. Keeping the button highlighted would suggest a
       // persistent drawing mode that doesn't exist.
-      case 'text':   setActiveTool('select'); bridge.current?.addText();     break
+      case 'text':   setActiveTool('select'); bridge.current?.addText(m.defaultText); break
       case 'image':  setActiveTool('select'); fileInputRef.current?.click(); break
       case 'rect':   setActiveTool('select'); bridge.current?.addRect();     break
       case 'circle': setActiveTool('select'); bridge.current?.addCircle();   break

@@ -41,7 +41,7 @@ export interface FabricBridgeOptions {
  * serialize with this same list, so nothing gets lost on restore.
  */
 export const SERIALIZED_OBJECT_PROPS = [
-  'id', '_layerName', '_type', '_fieldKey',
+  'id', '_layerName', '_type', '_fieldKey', '_extras',
   'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
   'hasControls',
   // Wine-fields are non-editable; without this they turn editable again

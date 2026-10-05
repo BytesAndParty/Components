@@ -83,7 +83,7 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
             className="bg-card border-border hover:bg-muted flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
           >
             <Crop size={14} />
-            {m.toolCrop ?? 'Crop'}
+            {m.toolCrop}
           </button>
           <button
             onClick={() => replaceInputRef.current?.click()}
