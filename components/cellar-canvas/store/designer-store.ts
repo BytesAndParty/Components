@@ -13,6 +13,7 @@ export const useDesignerStore = create<DesignerState>()(
     canUndo: false,
     canRedo: false,
     snappingEnabled: true,
+    draftSaveFailed: false,
     cropperOpen: false,
     cropperSrc: undefined,
     cropperTargetId: undefined,
@@ -24,6 +25,7 @@ export const useDesignerStore = create<DesignerState>()(
     setDirty: (isDirty: boolean) => set({ isDirty }),
     setHistoryFlags: (canUndo: boolean, canRedo: boolean) => set({ canUndo, canRedo }),
     setSnappingEnabled: (snappingEnabled: boolean) => set({ snappingEnabled }),
+    setDraftSaveFailed: (draftSaveFailed: boolean) => set({ draftSaveFailed }),
     setCropper: (cropper) => set({
       cropperOpen: cropper.open,
       cropperSrc: cropper.src,

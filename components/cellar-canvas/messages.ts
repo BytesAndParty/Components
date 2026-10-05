@@ -30,6 +30,7 @@ export type CellarCanvasMessages = {
   saveRetry:              string
   saveTitleDirty:         string
   saveTitleClean:         string
+  draftSaveFailed:        string
 
   // Main toolbar tools (label + shortcut hint)
   toolSelect:             string
@@ -158,6 +159,7 @@ export const MESSAGES = {
     saveRetry:               'Erneut versuchen',
     saveTitleDirty:          'Änderungen speichern',
     saveTitleClean:          'Alle Änderungen gespeichert',
+    draftSaveFailed:         'Entwurf zu groß für den lokalen Speicher — Änderungen gehen beim Neuladen verloren.',
 
     toolSelect:              'Auswählen',
     toolPan:                 'Ansicht verschieben',
@@ -272,6 +274,7 @@ export const MESSAGES = {
     saveRetry:               'Retry',
     saveTitleDirty:          'Save changes',
     saveTitleClean:          'All changes saved',
+    draftSaveFailed:         'Draft too large for local storage — changes will be lost on reload.',
 
     toolSelect:              'Select',
     toolPan:                 'Pan',

@@ -1,4 +1,5 @@
 import { useEffect, type RefObject } from 'react'
+import { useDesignerStore } from '../store/designer-store'
 import type { FabricBridge } from './fabric-bridge'
 import type { CellarCanvasState } from '../store/types'
 
@@ -25,10 +26,14 @@ export function useCanvasAutosave(
     const flush = () => {
       const state = b.serializeState()
       if (storageKey) {
+        const { setDraftSaveFailed } = useDesignerStore.getState()
         try {
           localStorage.setItem(storageKey, JSON.stringify(state))
+          setDraftSaveFailed(false)
         } catch {
-          // Quota exceeded / private mode / storage disabled — silent.
+          // Quota exceeded / private mode / storage disabled. Never silent:
+          // the header warns that a reload would lose the draft.
+          setDraftSaveFailed(true)
         }
       }
       onChange?.(state)

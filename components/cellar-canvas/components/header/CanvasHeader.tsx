@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
@@ -39,7 +39,7 @@ export function CanvasHeader({
   onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo } = useDesignerStore()
+  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed } = useDesignerStore()
 
   return (
     <div
@@ -48,8 +48,14 @@ export function CanvasHeader({
     >
       <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">{m.brand}</h2>
       <div className="bg-border mx-6 h-4 w-px" />
-      <div className="text-muted-foreground flex-1 text-[10px] font-bold tracking-wider uppercase">
+      <div className="text-muted-foreground flex flex-1 items-center gap-4 text-[10px] font-bold tracking-wider uppercase">
         {interpolate(m.labelDimensions, { w: widthMm, h: heightMm })}
+        {draftSaveFailed && (
+          <span role="alert" className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
+            <TriangleAlert size={14} aria-hidden />
+            {m.draftSaveFailed}
+          </span>
+        )}
       </div>
 
       <div className="mr-4 flex items-center gap-1">

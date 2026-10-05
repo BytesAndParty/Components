@@ -56,6 +56,8 @@ export interface DesignerState {
   canUndo: boolean
   canRedo: boolean
   snappingEnabled: boolean
+  /** Last autosave write failed (quota exceeded / storage blocked). */
+  draftSaveFailed: boolean
   cropperOpen: boolean
   cropperSrc?: string
   cropperTargetId?: string
@@ -68,5 +70,6 @@ export interface DesignerState {
   setDirty: (dirty: boolean) => void
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
   setSnappingEnabled: (enabled: boolean) => void
+  setDraftSaveFailed: (failed: boolean) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }
