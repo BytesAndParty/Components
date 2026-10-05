@@ -223,6 +223,12 @@ export class FabricBridge {
       this.snapManager.clearGuides()
     })
 
+    // A new pointer interaction (drag, transform, text edit) commits the
+    // snapshot still pending from the previous action. Otherwise the debounce
+    // timer could fire mid-drag and record a position the user never chose,
+    // and the state between the two actions would be unreachable via Undo.
+    canvas.on('mouse:down:before', () => this.flushHistoryDebounce())
+
     // No initial snapshot here — `resetHistory()` seeds the stack once
     // mount-time restoration (`useCanvasRestore`) has settled. An
     // eager snapshot here used to race that restore and could win, leaving
@@ -252,7 +258,12 @@ export class FabricBridge {
 
   saveHistory() {
     if (this.history.isRestoring) return
-    useDesignerStore.getState().setDirty(true)
+    const store = useDesignerStore.getState()
+    store.setDirty(true)
+    // The pending snapshot will land on push or flush, so Undo is possible
+    // and any redo branch is gone already — the buttons reflect that now,
+    // not 300 ms later.
+    if (!store.canUndo || store.canRedo) store.setHistoryFlags(true, false)
     if (this.historyDebounceTimer) clearTimeout(this.historyDebounceTimer)
     this.historyDebounceTimer = setTimeout(() => {
       this.historyDebounceTimer = null
@@ -266,6 +277,9 @@ export class FabricBridge {
     clearTimeout(this.historyDebounceTimer)
     this.historyDebounceTimer = null
     this.history.push(JSON.stringify(this.serializeState()))
+    // The push may have dropped the redo branch; callers like redo() return
+    // early when nothing is left, so the flags must be current here.
+    this.syncHistoryFlags()
   }
 
   private syncHistoryFlags() {
