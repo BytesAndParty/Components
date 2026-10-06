@@ -6,8 +6,12 @@
 > Repo — kein Bezug zu einem konkreten Produkt (Auslöser war eine BuchArt58-Session, die Komponenten
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
-Status: **Plan — noch keine Komponente implementiert.** Dieses Dokument ist der Tracking-Ort für
-Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
+Status: **1 von 4 umgesetzt** — Paper-Note ist fertig ([`components/paper-note/COMPONENT.md`](./components/paper-note/COMPONENT.md)).
+Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
+
+**Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
+~4 bewusst verschiedene Entwürfe auf einer temporären Werkbank-Seite im components-showcase. Daran wird
+iteriert, bis einer (oder eine Kombination) passt — erst dann wandert er nach `components/`.
 
 ---
 
@@ -18,8 +22,8 @@ Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMP
 | 1 | Welche Elemente? | 4 Komponenten: **Paper-Note**, **Polaroid-Frame**, **Marker-Callout**, **Process-Steps** (siehe unten). |
 | 2 | Wie nah am Bild-Vorbild? | **Skeuomorph, wie im Bild.** Eigenes, festes Papier-Farbschema (Kraftpapier-Tan, Creme-Weiß, Chalkboard-Dunkel, Tape-Oliv) — **läuft nicht über die oklch-Theme-Engine** (kein `bg-card`/Dark-Light-Accent-Switch). Der Papier-Look soll themenunabhängig wirken, wie ein physisches Objekt auf der Seite. |
 | 3 | Umfang/Vorgehen | Alle 4 jetzt, aber strategisch: **erst dieser Plan**, Review durch User, **dann** Implementierung eine nach der anderen (Reihenfolge siehe Progress-Tabelle unten). Jede Komponente durchläuft vollständig: `.tsx` → `messages.ts` (falls UI-Strings) → `COMPONENT.md` → Showcase-Eintrag → Quality-Gate (§11 COMPONENT-GUIDELINES.md), bevor die nächste startet. |
-| 4 | Handschrift-Font | **Neu, noch nicht im Repo.** Vorschlag: [`Caveat`](https://fonts.google.com/specimen/Caveat) (Google Font, Weights 400–700, gute Lesbarkeit auch fett) für alle handschriftlichen Texte. Strukturierte Labels (Step-Beschriftungen, "TERMIN ZUR AUSWAHL"-artige Über­schriften) bleiben im normalen UI-Sans. **Offen: User-Review der Font-Wahl.** |
-| 5 | Font-Ladung | Self-contained: Google-Font-`@import` wird per JS injiziert (gleiches `STYLE_ID`-Dedup-Pattern wie Keyframes, siehe COMPONENT-GUIDELINES.md §4c), nicht global in `index.html` ergänzt — Komponente bleibt portabel/kopierbar. Geteilter Helper `injectScrapbookFonts()` in `components/lib/` (einmalige Abstraktion, weil alle 4 Komponenten denselben Font brauchen — kein Over-Engineering, sondern Vermeidung von 4× Duplikat + FOUC-Rennen). |
+| 4 | Handschrift-Font | **Entschieden (Werkbank-Review):** zwei Handschriften statt einer. **Caveat** (lockerer Pinselstift) für gerissenes Papier, **Kalam** (Kugelschreiber-Druckschrift) für den Notizblock-Look. Strukturierte Labels (Step-Beschriftungen, "TERMIN ZUR AUSWAHL"-artige Über­schriften) bleiben im normalen UI-Sans. |
+| 5 | Font-Ladung | **Geändert:** Die Schriften lädt die konsumierende App self-hosted über `@fontsource/caveat` + `@fontsource/kalam` in ihrer `styles.css`, genau wie alle anderen Schriften im Repo (section-showcase). ~~Google-Font-Injection per JS + `injectScrapbookFonts()`~~ verworfen: Google-Fonts-CDN überträgt die IP der Besucher an Google (DSGVO-Risiko für einen österreichischen Shop), und das Repo hostet Schriften bereits selbst. Fehlt die Schrift, fällt die Komponente auf `cursive` zurück. |
 | 6 | Texturen (Papierkorn, Rissrand, Pinselstrich) | **Kein Bildasset.** Alles per Inline-SVG (`feTurbulence` für Papierkorn, gezackter `clipPath`/Polygon-Pfad für Rissrand, handgezeichneter `<path>` für Pinselstrich-Blob). Hält Komponenten self-contained und SSR-safe, keine Asset-Pipeline nötig. |
 | 7 | Naming-Kollision | `Stepper` (bestehend) ist eine interaktive Multi-Step-Wizard-Komponente (Formular-Navigation) — komplett anderer Zweck als `ProcessSteps` (statischer, nicht-interaktiver Erklär-Flow). Keine Überschneidung, eigener Name gewählt. |
 
@@ -34,23 +38,35 @@ handgezeichnetem Pfeil — deckt Sticky-Note, dunkle Kraftpapier-Notiz und hands
 Pfeil-Annotation als Varianten einer Komponente ab (im Bild: "Entdecke mit uns...", "Wir schenken dir...",
 "Auf einen unvergesslichen...", "Mehr Männer...").
 
-**Props (Entwurf):**
+**Werkbank-Ergebnis:** Vier Entwürfe verglichen — A *Scrapbook klassisch* (rundum gerissen, Washi, Caveat),
+B *Notizblock-Abriss* (oben gerissen mit Faserrand, Kreppband an den Ecken, Kalam), C *Büttenpapier*
+(weicher SVG-Displacement-Rand, Serif-Kursive) und D *Collage* (Scherenschnitt, Eselsohr, Akzent-Washi,
+Hover-Lift). **Gewählt: A und B, als zwei Varianten einer Komponente.** C und D verworfen.
+
+**Props (umgesetzt):** Gegenüber dem Entwurf ist `variant` jetzt die Papier-*Art*, die Farbe wanderte nach `paper`.
 | Prop | Typ | Default | Beschreibung |
 |---|---|---|---|
 | `children` | `ReactNode` | required | Notiz-Inhalt |
-| `variant` | `'kraft' \| 'cream' \| 'dark'` | `'kraft'` | Papierfarbe |
-| `rotate` | `number` (deg) | `-2` | Rotationswinkel |
-| `tape` | `boolean \| { position?: 'left'\|'center'\|'right'; angle?: number }` | `false` | Washi-Tape-Streifen oben |
-| `arrow` | `{ direction: 'up'\|'down'\|'left'\|'right' }` | — | Handgezeichneter Verbindungspfeil nach außen |
+| `variant` | `'torn' \| 'notepad'` | `'torn'` | A = `torn`, B = `notepad` |
+| `paper` | `'kraft' \| 'cream' \| 'dark'` | `'kraft'` | Papierfarbe (bei `notepad` bekommt `cream` Linien) |
+| `rotate` | `number` (deg) | `-2` / `1.5` | Rotationswinkel, Default je Variante |
+| `tape` | `boolean` | `false` | Washi mittig (`torn`) bzw. Kreppband an beiden Ecken (`notepad`). `position`/`angle` aus dem Entwurf bewusst weggelassen, bis ein Consumer sie braucht. |
+| `arrow` | `'up'\|'down'\|'left'\|'right'` | — | Handgezeichneter Pfeil nach außen; als String statt `{ direction }`, Farbe = Textfarbe des Wrappers |
+| `seed` | `number` | aus `useId` | Rissform reproduzierbar festlegen |
 | `className` / `style` | — | — | Layout-Anpassung am Wrapper |
 
-**Visual:** Gezackter Rissrand per SVG-`clipPath` (4 Seiten leicht unregelmäßig), feines Papierkorn
-(`feTurbulence`, sehr niedrige Opazität), weicher Drop-Shadow für "liegt auf der Seite"-Effekt,
-Handschrift-Font für `children` (Override via `className` möglich).
+**Visual:** Rissrand per `clip-path: polygon()` aus einem Random-Walk (statt SVG-`clipPath`), feines +
+faseriges Papierkorn (`feTurbulence`), Schatten außerhalb des Clips. `torn` fällt beim Scrollen ins Bild
+und zeichnet den Pfeil, `notepad` ist statisch.
 
-**Abhängigkeiten:** keine externen Libs. `motion/react` optional für Fade+Rotate-In beim Mount.
+**Farbpalette:** als `oklch()`-Konstanten lokal in `paper-note.tsx`. Ausgelagert nach `components/lib/`
+wird erst, wenn Polaroid-Frame oder Marker-Callout dieselben Werte braucht.
 
-**Status:** ⬜ nicht begonnen
+**Abhängigkeiten:** `motion/react`; in der App `@fontsource/caveat` + `@fontsource/kalam`.
+
+**Im Einsatz:** section-showcase → *Veranstaltungen → Die Pinnwand* (`sections/events/EventsPinnwand.tsx`).
+
+**Status:** ✅ umgesetzt
 
 ---
 
@@ -133,12 +149,13 @@ Stack.
 
 ## Gemeinsame technische Basis
 
-- **Farbpalette (fix, nicht Theme-abhängig):** Kraftpapier-Tan (`#D9C7A3`-artig), Creme-Weiß
-  (Polaroid-Rahmen), Chalkboard-Dunkel (`#2B2622`-artig, für dunkle Notiz), Tape-Oliv/Kraft-Beige. Exakte
-  Werte werden beim Implementieren als Modul-Konstanten in einer gemeinsamen `components/lib/`-Datei
-  oder pro Komponente lokal gepflegt (Entscheidung fällt bei Paper-Note als erster Komponente, dann
-  konsistent für die restlichen 3 übernommen).
-- **Handschrift-Font:** `Caveat` (Vorschlag, siehe Entscheidung #4) — self-contained per Font-Injection.
+- **Farbpalette (fix, nicht Theme-abhängig):** Kraftpapier-Tan, Creme-Weiß (Polaroid-Rahmen),
+  Chalkboard-Dunkel (für dunkle Notiz), Tape-Oliv/Kraft-Beige. **Entschieden bei Paper-Note:** als
+  `oklch()`-Modul-Konstanten lokal in der Komponente (kraft `oklch(0.80 0.055 76)`, cream
+  `oklch(0.965 0.016 88)`, dark `oklch(0.27 0.014 55)`). Sobald die zweite Komponente dieselben Werte
+  braucht, wandern sie in eine gemeinsame `components/lib/`-Datei. Was auf dem Seitenhintergrund liegt
+  (Pfeile), folgt dem Theme — sonst ist es im Dark Mode unsichtbar.
+- **Handschrift-Font:** Caveat + Kalam (siehe Entscheidung #4), self-hosted via `@fontsource` in der App (#5).
 - **Texturen:** ausschließlich Inline-SVG (kein Bild-Asset) — Rissrand, Papierkorn, Pinselstrich-Blobs.
 - **A11y:** Rotationen/Deko-SVGs sind `aria-hidden`, Fokus-Reihenfolge bleibt beim eigentlichen Inhalt
   (Text/Bild), keine Information ausschließlich über Rotation/Deko vermittelt.
@@ -151,7 +168,7 @@ Stack.
 
 | Reihenfolge | Komponente | `.tsx` | `messages.ts` | `COMPONENT.md` | Showcase | Quality-Gate |
 |---|---|---|---|---|---|---|
-| 1 | Paper-Note | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 1 | Paper-Note | ✅ | — (keine UI-Strings) | ✅ | ✅ | ✅ |
 | 2 | Polaroid-Frame | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 3 | Marker-Callout | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 4 | Process-Steps | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
@@ -161,3 +178,4 @@ Stack.
 | Date | Change | Reason |
 |------|--------|--------|
 | 2026-09-18 | Plan erstellt | Vier Scrapbook-Textbox-Komponenten aus Cupping-Workshop-Einladungsgrafik abgeleitet, strategisches Vorgehen (Plan → Review → Implementierung) gewünscht. |
+| 2026-10-06 | Paper-Note umgesetzt (`torn` + `notepad`), Showcase-Eintrag, neue Section „Veranstaltungen → Die Pinnwand" | Werkbank mit 4 Entwürfen, A + B gewählt. Fonts entschieden (Caveat + Kalam), Font-Ladung auf self-hosted `@fontsource` umgestellt (DSGVO, Repo-Konvention). Quality-Gate: Lint 0, Typecheck ohne Fehler, Dark/Light, Akzent, Reduced Motion und 390-px-Breite im Browser geprüft. |

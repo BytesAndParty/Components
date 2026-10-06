@@ -230,7 +230,7 @@ export function Root({ children }) {
 
 ## Komponenten
 
-91 Komponenten, nach Einsatzzweck gruppiert in [components/COMPONENTS-OVERVIEW.md](./components/COMPONENTS-OVERVIEW.md). Jede Komponente hat eine eigene `COMPONENT.md` mit Props, Usage und Dependencies.
+92 Komponenten, nach Einsatzzweck gruppiert in [components/COMPONENTS-OVERVIEW.md](./components/COMPONENTS-OVERVIEW.md). Jede Komponente hat eine eigene `COMPONENT.md` mit Props, Usage und Dependencies.
 
 ---
 
