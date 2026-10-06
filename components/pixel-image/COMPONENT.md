@@ -30,6 +30,8 @@ Image reveal effect where the image is split into a grid of cells that fade in w
 | `stagger` | `number` | `40` | Delay between cells in ms |
 | `triggerOnView` | `boolean` | `true` | Trigger on scroll into view |
 | `threshold` | `number` | `0.3` | Intersection observer threshold |
+| `className` | `string` | — | Additional classes on the container |
+| `style` | `CSSProperties` | — | Inline styles on the container |
 
 ## Dependencies
 

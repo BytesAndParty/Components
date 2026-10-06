@@ -1,6 +1,6 @@
 # AnimatedWeatherIcons
 
-Collection of 12 SVG weather icons with continuous Framer Motion looping animations — pulsing suns, twinkling stars, falling rain, flickering lightning, and more.
+Collection of 12 SVG weather icons with continuous motion/react looping animations — pulsing suns, twinkling stars, falling rain, flickering lightning, and more.
 
 ## Icons
 
@@ -21,7 +21,7 @@ Collection of 12 SVG weather icons with continuous Framer Motion looping animati
 
 ## Micro-Interactions
 
-All animations are declarative Framer Motion `animate` props with `repeat: Infinity`:
+All animations are declarative motion/react `animate` props with `repeat: Infinity`:
 
 - **Pulse** — `scale` keyframes (Sun, Moon stars)
 - **Drift** — `x` keyframes (Cloud, Fog, PartlyCloudy)
@@ -44,4 +44,4 @@ All icons are individual named exports (`SunIcon`, `MoonIcon`, etc.) plus a barr
 
 ## Dependencies
 
-- `framer-motion` — All animation via `motion.*` components
+- `motion` (`motion/react`) — All animation via `motion.*` components

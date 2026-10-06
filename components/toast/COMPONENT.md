@@ -40,6 +40,7 @@ ToastProvider       — Context, state management, position container
 | `children` | `ReactNode` | — | App content |
 | `placement` | `Placement` | `'bottom-right'` | Where toasts appear |
 | `maxVisible` | `number` | `4` | Max toasts shown at once |
+| `messages` | `Partial<ToastMessages>` | — | i18n override for the dismiss button label |
 
 ### `useToast()` / `toast()`
 
@@ -60,5 +61,5 @@ ToastProvider       — Context, state management, position container
 
 ## Dependencies
 
-- `framer-motion` — AnimatePresence, motion, drag, layout animations
+- `motion` (`motion/react`) — AnimatePresence, motion, drag, layout animations
 - `lucide-react` — `X` icon for close button

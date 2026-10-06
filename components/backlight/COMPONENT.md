@@ -29,6 +29,9 @@ Wrapper component that renders animated, multi-layered glow blobs behind its chi
 | `blur` | `number` | `60` | Blur radius in px |
 | `animated` | `boolean` | `true` | Enable floating animation |
 | `speed` | `number` | `1` | Animation speed multiplier |
+| `interactive` | `boolean` | `false` | Moves the primary blob towards the cursor; the other blobs keep their idle animation |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

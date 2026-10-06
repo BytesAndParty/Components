@@ -38,6 +38,8 @@ WebGL shader-based volumetric light rays with configurable origin, color, mouse 
 | `mouseInfluence` | `number` | `0.1` | How strongly mouse affects direction |
 | `noiseAmount` | `number` | `0` | Noise overlay intensity |
 | `distortion` | `number` | `0` | Ray edge distortion amount |
+| `className` | `string` | — | Additional classes on the container |
+| `style` | `CSSProperties` | — | Inline styles on the container |
 
 ## Dependencies
 

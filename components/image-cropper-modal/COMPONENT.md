@@ -9,14 +9,15 @@ A high-end image cropping solution integrated into a modal dialog, supporting as
 - **Aspect Ratio Control:** Optional fixed aspect ratio support.
 - **Transformations:** Integrated zoom (slider + buttons), rotation reset, and horizontal/vertical flipping.
 - **Smart Initial Zoom:** Automatically scales large images to fit the viewport on load.
-- **Blob Output:** Returns the cropped result as a `Blob` for easy server upload.
+- **Blob Output:** Returns the cropped result as a PNG `Blob` in source-pixel resolution (capped at 4096 px), ready for print or server upload.
 
 ## How It Works
 
 This component is built on **Ark UI (Zag.js)**. 
 - The `ImageCropper.Root` provides the state engine for cropping logic.
-- A custom `FitZoomOnLoad` helper calculates the initial zoom level based on the image's natural dimensions and the viewport size.
-- The `ApplyButton` uses the `getCroppedImage` API to generate a `Blob` asynchronously.
+- Before the cropper mounts, the image's natural size (hidden `new Image()`) and the viewport size (`ResizeObserver`) are measured. From both it derives `defaultZoom` (fit) and an `initialCrop` covering 95 % of the visible image, so Zag's first default crop already matches what the user sees. A short loading skeleton covers the measuring phase.
+- The measurement carries the `src` it belongs to; the cropper only mounts when it matches the current `imageSrc`, so sequential uploads never reuse the previous image's numbers.
+- The `ApplyButton` does **not** use Zag's `getCroppedImage()` (it renders in viewport pixels, far below print resolution). Instead `renderHighResCrop()` redraws the selection with the same zoom/crop/rotation/flip math onto a canvas in source-pixel resolution.
 
 ## Props
 
@@ -33,7 +34,7 @@ This component is built on **Ark UI (Zag.js)**.
 ## Usage
 
 ```tsx
-import { ImageCropperModal } from './components/image-cropper-modal'
+import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper-modal'
 
 function UserProfile() {
   const [open, setOpen] = useState(false)

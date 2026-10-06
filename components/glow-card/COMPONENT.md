@@ -48,6 +48,8 @@ A card with a continuously rotating conic gradient border and a blurred glow hal
 | `glowRadius` | `number` | `250` | Size of the glow radial gradient |
 | `glowColor` | `string` | `'var(--accent)'` | Primary glow color |
 | `accentColor` | `string` | `'var(--accent)'` | Outer glow ring color |
+| `children` | `ReactNode` | required | Card content |
+| …rest | `HTMLAttributes<HTMLDivElement>` | — | Forwarded to the card `<div>` (`className`, `style`, handlers, …) |
 
 ## Props (RotatingGlowCard)
 

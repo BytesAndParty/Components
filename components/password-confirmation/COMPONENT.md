@@ -34,6 +34,9 @@ Password confirmation input with per-character dot matching, color-coded feedbac
 | `matchColor` | `string` | `'#22c55e'` | Color for matching characters |
 | `mismatchColor` | `string` | `'#ef4444'` | Color for mismatching characters |
 | `neutralColor` | `string` | `'var(--text-muted)'` | Color for untyped dots |
+| `messages` | `Partial<PasswordConfirmationMessages>` | — | i18n overrides for placeholder, match label and aria-label |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

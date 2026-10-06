@@ -7,19 +7,21 @@ Collection of animated icons — Lottie-based icons with play-on-hover/click beh
 | Interaction | Detail |
 |---|---|
 | **Lottie hover play** | Icons play forward on mouse enter and reverse on mouse leave, creating a smooth in/out animation cycle. |
-| **Lottie click play** | On click, the animation plays forward then auto-reverses after 1 second. |
+| **Lottie click play** | On click (or Enter/Space), the animation plays forward then auto-reverses after 1 second. |
 | **Sun rays rotate** | CSS hover animation rotates and scales the sun ray group. |
 | **Moon rock + twinkle** | Moon body rocks on hover; three stars sequentially twinkle in with staggered delays. |
 | **Star spin-glow** | Star polygon spins 360° with a pulsing glow drop-shadow in the accent color. |
 | **Wine tilt + slosh** | The wine glass tilts on hover; the liquid line sloshes with scale/rotate. |
+| **Heart toggle** | `HeartIconCss` / `Heart3DIconCss` are real toggle buttons (`aria-pressed`) that fill red with a soft drop-shadow when liked. |
 | **Reduced motion** | All CSS icon animations are disabled via `prefers-reduced-motion: reduce` media query. |
 
 ## How It Works
 
-1. **Factory pattern**: `createLottieIcon()` generates icon components from Lottie JSON data. Each icon shares the `useLottieHover` hook for consistent play/reverse behavior.
-2. **`useLottieHover` hook**: Returns `lottieRef`, `onMouseEnter`, `onMouseLeave`, and `onClick` handlers. Uses `setDirection(1/-1)` + `play()` on the Lottie instance.
+1. **Factory pattern**: `createLottieIcon()` generates icon components from Lottie JSON data, rendered with `DotLottieReact`. Each icon shares the `useLottieHover` hook for consistent play/reverse behavior.
+2. **`useLottieHover` hook**: Mirrors the dotLottie player instance (delivered via `dotLottieRefCallback`) in a ref and returns `setPlayer`, `onMouseEnter`, `onMouseLeave` and `onClick`. Direction switches via `setMode('forward' | 'reverse')` + `play()`.
 3. **CSS icon injection**: CSS-animated SVG icons inject their keyframes once via `injectCssOnce()` with a module-level flag.
-4. **Color inversion**: Lottie icons use `filter: invert(1)` by default (since Lottie JSONs are typically black-on-white). A `--icon-invert` CSS custom property can override this.
+4. **Color inversion**: Lottie icons use `filter: invert(1)` by default (since Lottie JSONs are typically black-on-white). A `--icon-invert` CSS custom property can override this; passing `color` turns the filter off.
+5. **Accessibility**: Without `aria-label` the icon is decorative (`aria-hidden`); with it, the wrapper becomes `role="img"`. Click-trigger Lottie icons are focusable (`role="button"`, `tabIndex={0}`) and react to Enter/Space.
 
 ## Available Icons
 
@@ -27,7 +29,7 @@ Collection of animated icons — Lottie-based icons with play-on-hover/click beh
 `HomeIcon`, `SearchToXIcon`, `MenuIcon`, `MenuAltIcon`, `FilterIcon`, `NotificationIcon`, `VisibilityIcon`, `CheckmarkIcon`, `CopyIcon`, `LoadingIcon` (auto-loops), `MaximizeMinimizeIcon`, `ShareIcon`, `TrashIcon`
 
 ### CSS SVG Icons
-`SunIconCss`, `MoonIconCss`, `StarIconCss`, `WineIconCss`
+`SunIconCss`, `MoonIconCss`, `StarIconCss`, `WineIconCss`, `ChevronDownIconCss`, `ChevronRightIconCss`, `UserIconCss`, `PlusIconCss`, `MinusIconCss`, `TruckIconCss`, `HeartIconCss`, `Heart3DIconCss`
 
 ## Props
 
@@ -35,10 +37,11 @@ Collection of animated icons — Lottie-based icons with play-on-hover/click beh
 |---|---|---|---|
 | `size` | `number` | `32` | Icon size in px |
 | `className` | `string` | — | Additional CSS classes |
-| `color` | `string` | — | Stroke color override (Lottie icons only) |
+| `aria-label` | `string` | — | Accessible name. Omit for decorative icons (`aria-hidden`). Heart icons fall back to `'Like'`. |
+| `color` | `string` | — | Lottie icons only: when set, the default invert filter is switched off. The value itself is not yet applied to the animation. |
 | `trigger` | `'hover' \| 'click'` | `'hover'` | Animation trigger (Lottie icons only) |
 
 ## Dependencies
 
-- `lottie-react` — Lottie animation player
+- `@lottiefiles/dotlottie-react` — dotLottie player (WASM)
 - Lottie JSON files from `_resources_/` directory

@@ -32,6 +32,7 @@ Sticky announcement bar that slides in on mount, can be dismissed, and optionall
 | `showAfterScrollY` | `number` | — | Only show after the page has scrolled past this Y offset |
 | `zIndex` | `number` | `50` | `z-index` of the sticky container |
 | `className` / `style` | — | — | Forwarded to the wrapper |
+| `messages` | `Partial<StickyBannerMessages>` | — | i18n overrides for region landmark and dismiss button |
 
 ## Dependencies
 

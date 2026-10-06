@@ -18,6 +18,7 @@ Pretext computes wrap layout via the browser's font engine without DOM measureme
 | **Lazy library load** | Pretext is dynamically imported the first time a clamped paragraph mounts; subsequent paragraphs reuse the loaded module. |
 | **Graceful fallback** | If `@chenglou/pretext` is not installed, falls back to a character-width heuristic (less precise but functional). |
 | **Smooth expand** | `max-height` transition on toggle (200ms ease). |
+| **Word reveal** | When the paragraph scrolls into view (IntersectionObserver, threshold 0.1, fires once), each word animates in with a 25 ms stagger — style via `wordAnimation`. Keyframes are injected once (`STYLE_ID`); `prefers-reduced-motion` shows all words immediately. |
 
 ## How It Works
 
@@ -34,11 +35,13 @@ Pretext computes wrap layout via the browser's font engine without DOM measureme
 | `text` | `string` | required | Paragraph content |
 | `clamp` | `number` | — | Max lines before truncation. Undefined = never truncate. |
 | `expandable` | `boolean` | `false` | Show "More"/"Less" button when truncated |
-| `expandLabel` | `string` | `'Mehr lesen'` | Expand button label |
-| `collapseLabel` | `string` | `'Weniger'` | Collapse button label |
+| `expandLabel` | `string` | `messages.expand` | Expand button label (localized fallback: `Mehr lesen` / `Read more`) |
+| `collapseLabel` | `string` | `messages.collapse` | Collapse button label |
 | `className` | `string` | — | Wrapper class |
 | `style` | `CSSProperties` | — | Wrapper inline style |
 | `onMeasure` | `(r: { lineCount, truncated }) => void` | — | Callback after each measurement |
+| `wordAnimation` | `'fade-up' \| 'fade' \| 'blur' \| 'slide-down'` | `'fade-up'` | Scroll-reveal animation per word |
+| `messages` | `Partial<ParagraphMessages>` | — | i18n overrides for the expand/collapse labels |
 
 ## Dependencies
 
@@ -53,7 +56,7 @@ bun add @chenglou/pretext
 ## Usage
 
 ```tsx
-import { Paragraph } from '@/components/paragraph';
+import { Paragraph } from '@components/paragraph/paragraph';
 
 <Paragraph
   text={wine.geschmacksprofil}

@@ -13,7 +13,7 @@ Gradient text effect with an animated aurora shimmer that flows across the text.
 1. **Gradient clip**: The text is rendered with `background-clip: text` and `WebkitTextFillColor: transparent`, making the gradient visible through the letterforms.
 2. **Background-position animation**: The gradient uses `background-size: 200% auto` and animates `background-position` from 0% to 200%, creating a seamless loop with `infinite alternate`.
 3. **Screen-reader duplicate**: A visually hidden `<span>` with the same text content ensures screen readers can access the text, while the visible copy has `aria-hidden="true"`.
-4. **CSS keyframes**: `aurora` and `aurora-gradient` are defined in `showcase/src/styles.css` (see Required CSS below).
+4. **CSS keyframes**: `aurora` and `aurora-gradient` are defined in `components-showcase/src/styles.css` (see Required CSS below).
 
 ## Props
 
@@ -23,10 +23,12 @@ Gradient text effect with an animated aurora shimmer that flows across the text.
 | `colors` | `string[]` | `['#FF0080', '#7928CA', '#0070F3', '#38bdf8']` | Gradient color stops |
 | `speed` | `number` | `1` | Animation speed multiplier (higher = faster) |
 | `variant` | `'aurora'\|'gradient'` | `'aurora'` | `'aurora'`: subtle shimmer with alternate; `'gradient'`: continuous linear loop |
+| `className` | `string` | — | Additional classes on the text span |
+| `style` | `CSSProperties` | — | Inline styles on the text span |
 
 ## Required CSS
 
-Add to your global stylesheet if not using `showcase/src/styles.css`:
+Add to your global stylesheet if not using `components-showcase/src/styles.css`:
 
 ```css
 @keyframes aurora {

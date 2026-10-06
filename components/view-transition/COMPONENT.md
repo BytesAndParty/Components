@@ -21,21 +21,31 @@ Preset-basierter Wrapper um die native View Transitions API (`document.startView
 | `update` | `() => void` | State-Mutation, wird in `flushSync` gewrappt |
 | `options.origin` | `{ x, y }?` | Nur für `circular-reveal` + `grape-burst` — Klickposition |
 | `options.stageName` | `string?` | Custom `view-transition-name` (Default: `vt-stage`) |
+| `options.scope` | `HTMLElement?` | Startet die Transition element-scoped (`element.startViewTransition`) statt auf `document` — nur wo der Browser das unterstützt |
 
-Rückgabe: `ViewTransition` oder `null` wenn API nicht verfügbar.
+Rückgabe: `ViewTransitionLike` oder `null` wenn API nicht verfügbar.
 
-### `<TransitionStage name?, children, style?, className? />`
+### `<TransitionStage />`
 
-Wrapper-Div, das `view-transition-name` setzt. Inhalt darf frei swappen — Browser snapshotted die gesamte Stage als ein Element.
+Wrapper-Div, das `view-transition-name` setzt. Inhalt darf frei swappen — Browser snapshotted die gesamte Stage als ein Element. Leitet `ref` an das Div weiter.
 
-### `VT_PRESETS: VtPresetMeta[]`
+| Prop | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `children` | `ReactNode` | — | Inhalt der Stage |
+| `name` | `string \| 'match-element'` | `'vt-stage'` | `view-transition-name`; `match-element` überlässt die Benennung dem Browser (dann keine Style-Injection) |
+| `nesting` | `'normal' \| 'nearest' \| 'contain'` | `'nearest'` | Wird als `view-transition-group` gesetzt — steuert die Verschachtelung im Transition-Baum |
+| `className` | `string` | — | Klassen am Wrapper |
+| `style` | `CSSProperties` | — | Inline-Styles am Wrapper |
+
+### `VT_PRESETS: VtPresetMeta[]` (aus `vt-utils.ts`)
 
 Preset-Metadaten für UI-Listen (label, hint, `needsOrigin`, `wine`).
 
 ## Usage
 
 ```tsx
-import { runViewTransition, TransitionStage } from '@components/view-transition/view-transition'
+import { runViewTransition } from '@components/view-transition/run-view-transition'
+import { TransitionStage } from '@components/view-transition/transition-stage'
 import { useState } from 'react'
 
 export function Demo() {

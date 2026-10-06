@@ -10,7 +10,7 @@ Scroll-driven rotation that maps page scroll progress to element rotation.
 
 ## How It Works
 
-1. **`useScroll`**: Framer Motion's `useScroll()` provides a `scrollYProgress` motion value (0–1).
+1. **`useScroll`**: motion's `useScroll()` provides a `scrollYProgress` motion value (0–1).
 2. **`useTransform`**: Maps `scrollYProgress` to a rotation range `[0, 360 * speed]`, creating a reactive rotation value.
 3. **Motion value binding**: The `rotate` value is bound directly to `motion.div`'s `style.rotate`, ensuring hardware-accelerated animation without React re-renders.
 
@@ -27,7 +27,8 @@ Scroll-driven rotation that maps page scroll progress to element rotation.
 |---|---|---|---|
 | `children` | `ReactNode` | required | Content to rotate |
 | `speed` | `number` | `1` | Rotation multiplier (1 = one full turn per full scroll) |
+| `className` | `string` | — | Additional classes on the rotating wrapper |
 
 ## Dependencies
 
-- `framer-motion` — `useScroll`, `useTransform`, `motion.div`
+- `motion` (`motion/react`) — `useScroll`, `useTransform`, `motion.div`

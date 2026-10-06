@@ -22,6 +22,8 @@ A text transition effect that morphs between different strings using CSS blur fi
 | `texts` | `string[]` | | Array of strings to cycle through |
 | `duration` | `number` | `2000` | Duration for each word in ms |
 | `className` | `string` | | |
+| `morphDuration` | `number` | `800` | Duration of the blur transition in ms |
+| `style` | `CSSProperties` | — | Inline styles |
 
 ## Dependencies
 

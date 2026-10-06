@@ -38,7 +38,7 @@ interface ValidationWarning {
 ## Usage
 
 ```tsx
-import { ValidatorBadge, type ValidationWarning } from './components/validator-badge'
+import { ValidatorBadge, type ValidationWarning } from '@components/validator-badge/validator-badge'
 
 const warnings: ValidationWarning[] = [
   { 

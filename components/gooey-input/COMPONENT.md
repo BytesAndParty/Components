@@ -24,6 +24,10 @@ Search/input that starts as an icon-only circle and morphs into a full input via
 | `icon` | `ReactNode?` | search SVG | Custom icon |
 | `color` | `string` | `'var(--accent)'` | Pill + circle fill |
 | `iconColor` | `string` | `'#fff'` | Icon stroke color |
+| `variant` | `'filled' \| 'outline'` | `'filled'` | `filled` = solid background, `outline` = transparent with colored border |
+| `messages` | `Partial<GooeyInputMessages>` | — | i18n overrides for placeholder and open/close labels |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Usage
 

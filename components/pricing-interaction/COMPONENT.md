@@ -32,6 +32,9 @@ Interactive pricing selector with plan selection, monthly/yearly period toggle, 
 | `ctaLabel` | `string` | `'Get Started'` | CTA button text |
 | `defaultIndex` | `number` | `0` | Initially selected plan |
 | `onSelect` | `(index, period) => void` | — | Selection callback |
+| `onCta` | `(index, period) => void` | — | Called when the CTA button is clicked |
+| `messages` | `Partial<PricingInteractionMessages>` | — | i18n overrides for period, CTA and region labels |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

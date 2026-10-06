@@ -77,5 +77,5 @@ export function SearchButton() {
 |---|---|
 | `@tanstack/react-hotkeys` | Core hotkey management |
 | `react` | UI Library |
-| `@local/lib` | Device capabilities check |
-| `@local/i18n` | UI strings management |
+| `@components/lib` | Device capabilities check |
+| `@components/i18n` | UI strings management |

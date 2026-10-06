@@ -28,6 +28,8 @@ Image component that extracts edge colors from the loaded image and renders a di
 | `spread` | `number` | `20` | How far the glow extends beyond the image in px |
 | `borderRadius` | `string \| number` | `'12px'` | Border radius for image and glow |
 | `animated` | `boolean` | `true` | Enable/disable glow fade-in |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

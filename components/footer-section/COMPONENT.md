@@ -9,7 +9,7 @@ Configurable footer with link sections, social icons, and reduced-motion-aware e
 | **Blur-in entrance** | Each footer section animates in from a blurred, slightly translated state when scrolled into view (`blur(4px) → 0`, `translateY(-8px) → 0`). |
 | **Staggered delays** | Sections animate with incrementing delays (0.1s, 0.2s, 0.3s, ...) for a cascading reveal. |
 | **Link hover** | Footer links transition their color on hover via CSS transition (200ms). |
-| **Reduced motion** | `useReducedMotion()` from framer-motion disables all entrance animations — children render directly without a motion wrapper. |
+| **Reduced motion** | `useReducedMotion()` from `motion/react` disables all entrance animations — children render directly without a motion wrapper. |
 | **Top highlight** | A subtle centered line at the top of the footer creates a light separation effect with `blur(1px)`. |
 
 ## How It Works
@@ -26,8 +26,11 @@ Configurable footer with link sections, social icons, and reduced-motion-aware e
 | `sections` | `FooterSectionData[]` | Default 4 sections | Array of `{ label, links }` |
 | `companyName` | `string` | `'Asme'` | Company name in copyright |
 | `logo` | `ReactNode` | FrameIcon | Logo element |
+| `messages` | `Partial<FooterMessages>` | — | i18n overrides for the copyright suffix |
+| `className` | `string` | — | Additional classes on the `<footer>` |
+| `style` | `CSSProperties` | — | Inline styles on the `<footer>` |
 
 ## Dependencies
 
-- `framer-motion` — `motion.div`, `useReducedMotion` for entrance animations
+- `motion` (`motion/react`) — `motion.div`, `useReducedMotion` for entrance animations
 - `lucide-react` — FacebookIcon, FrameIcon, InstagramIcon, LinkedinIcon, YoutubeIcon (for defaults)

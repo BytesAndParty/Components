@@ -78,4 +78,4 @@ export function ThemeToggle() {
 | Package | Purpose |
 |---|---|
 | `react` | UI Library |
-| `@local/i18n` | Internal i18n system (AtelierProvider wraps it) |
+| `@components/i18n` | Internal i18n system (AtelierProvider wraps it) |

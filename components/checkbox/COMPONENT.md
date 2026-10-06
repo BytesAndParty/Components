@@ -31,6 +31,7 @@ Animated checkbox with controlled/uncontrolled support, checkmark stroke draw, a
 | `label` | `string` | — | Label text |
 | `disabled` | `boolean` | `false` | Disable interaction |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Box size (16/20/24 px) |
+| `className` | `string` | — | Additional classes on the wrapper `<label>` |
 
 ## Dependencies
 

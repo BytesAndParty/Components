@@ -32,6 +32,12 @@ Canvas-based floating particle background with optional mouse interaction.
 | `particleBaseSize` | `number` | `2` | Maximum additional radius in px (actual: 1 to baseSize+1) |
 | `moveParticlesOnHover` | `boolean` | `false` | Enable mouse repulsion effect |
 | `hoverRadius` | `number` | `80` | Radius of the mouse repulsion zone in px |
+| `className` | `string` | — | Additional classes on the container — use e.g. `absolute inset-0` to position the layer |
+| `style` | `CSSProperties` | — | Inline styles on the container |
+
+## ParticlesCard
+
+`ParticlesCard` (in `particles-card.tsx`) wraps `children` in a `position: relative; overflow: hidden` container and renders `Particles` behind them as a background layer. It takes all `Particles` props plus `children`, `className` and `style` for the outer container.
 
 ## Dependencies
 

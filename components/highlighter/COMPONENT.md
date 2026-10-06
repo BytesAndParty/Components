@@ -30,6 +30,8 @@ Text highlight/underline effect that animates when scrolled into view.
 | `duration` | `number` | `800` | Animation duration in ms |
 | `animateOnView` | `boolean` | `true` | Trigger on scroll into view |
 | `delay` | `number` | `0` | Delay before animation in ms |
+| `className` | `string` | — | Additional classes on the span |
+| `style` | `CSSProperties` | — | Inline styles on the span |
 
 ## Dependencies
 

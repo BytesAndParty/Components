@@ -6,7 +6,7 @@ Input field with filtered autocomplete suggestions, keyboard navigation, and ani
 
 | Interaction | Detail |
 |---|---|
-| **Dropdown entrance** | Suggestion list fades in with a slight upward slide and scale (`opacity + y + scale`) via framer-motion. |
+| **Dropdown entrance** | Suggestion list fades in with a slight upward slide and scale (`opacity + y + scale`) via `motion/react`. |
 | **Highlight tracking** | Arrow keys move a visual highlight across suggestions; mouse enter also updates the highlight index. |
 | **Clear button** | An animated X button fades in/out (scale + opacity) when the input has a value. |
 | **Icon swap** | The left icon switches between a search icon and a spinning loader when `isLoading` is true. |
@@ -29,12 +29,16 @@ Input field with filtered autocomplete suggestions, keyboard navigation, and ani
 | `onChange` | `(value: string) => void` | required | Called on input change or selection |
 | `onKeyDown` | `(e: KeyboardEvent) => void` | — | Additional keyboard handler |
 | `inputRef` | `RefObject<HTMLInputElement>` | — | External ref for the input |
-| `placeholder` | `string` | `'Suchen...'` | Input placeholder |
+| `placeholder` | `string` | `messages.placeholder` | Input placeholder (localized fallback: `Suchen...` / `Search...`) |
 | `isLoading` | `boolean` | `false` | Show loading spinner instead of search icon |
+| `onFocus` | `() => void` | — | Called when the input gains focus |
+| `onBlur` | `() => void` | — | Called when the input loses focus |
+| `messages` | `Partial<AutocompleteMessages>` | — | i18n overrides |
+| `className` | `string` | — | Additional classes on the wrapper |
 
 ## Dependencies
 
-- `framer-motion` — Dropdown and clear button animations
+- `motion` (`motion/react`) — Dropdown and clear button animations
 - `lucide-react` — Search, X, ChevronRight, Loader2 icons
 
 ## Note

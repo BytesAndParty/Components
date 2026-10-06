@@ -17,7 +17,7 @@ Shopping cart icon with flying box animation on count changes and an animated ba
 
 1. **Diff detection**: A `useRef` tracks the previous count. On each change, the component determines if items were added or removed and selects the appropriate animation.
 2. **Staggered state updates**: `displayCount` updates 500ms into the animation (midpoint) so the number changes while the box is visually "in the cart". Badge animation clears after 500ms, box animation after 1000ms.
-3. **CSS keyframes**: All keyframes (`ci-box-add`, `ci-box-remove`, `ci-badge-pop`, `ci-badge-in`, `ci-badge-out`) are defined in `showcase/src/styles.css` (see Required CSS below).
+3. **CSS keyframes**: All keyframes (`ci-box-add`, `ci-box-remove`, `ci-badge-pop`, `ci-badge-in`, `ci-badge-out`) are defined in `components-showcase/src/styles.css` (see Required CSS below).
 4. **First-mount guard**: The component skips animation on initial render to prevent entrance artifacts.
 
 ## Props
@@ -30,10 +30,13 @@ Shopping cart icon with flying box animation on count changes and an animated ba
 | `badgeColor` | `string` | `'var(--accent)'` | Badge background |
 | `badgeTextColor` | `string` | `'#fff'` | Badge text color |
 | `onClick` | `() => void` | — | Click handler |
+| `messages` | `Partial<CartIconMessages>` | — | i18n overrides for the cart aria-label |
+| `className` | `string` | — | Additional classes on the button |
+| `style` | `CSSProperties` | — | Inline styles on the button |
 
 ## Required CSS
 
-Add to your global stylesheet if not using `showcase/src/styles.css`:
+Add to your global stylesheet if not using `components-showcase/src/styles.css`:
 
 ```css
 @keyframes ci-box-add {

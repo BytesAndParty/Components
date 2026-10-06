@@ -26,6 +26,8 @@ Wrapper component that spawns radial spark particles at the click position.
 | `sparkRadius` | `number` | `15` | Burst radius in px |
 | `sparkCount` | `number` | `8` | Number of sparks per click |
 | `duration` | `number` | `400` | Animation duration in ms |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

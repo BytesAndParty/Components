@@ -28,8 +28,8 @@ Favorite / Like heart button with a pop-in fill and a celebratory spark burst. C
 | `size` | `number` | `50` | Size in px (square) |
 | `color` | `string` | `'var(--accent)'` | Heart + sparks color |
 | `disabled` | `boolean` | `false` | Disables interaction |
-| `ariaLabel` | `string` | `'Like'` | Accessible label / title |
 | `className` | `string` | — | Additional class on wrapper `<label>` |
+| `messages` | `Partial<HeartLikeMessages>` | — | i18n overrides for the `like` / `unlike` labels (used as accessible name, switches with the state) |
 
 ## Dependencies
 

@@ -1,6 +1,6 @@
 # ImagesSlider
 
-Fullscreen-capable hero image slider with Ken-Burns zoom, directional slide transitions, keyboard arrows, and overlay tint. Aceternity-inspired, no framer-motion.
+Fullscreen-capable hero image slider with Ken-Burns zoom, directional slide transitions, keyboard arrows, and overlay tint. Aceternity-inspired, no `motion/react`.
 
 ## Features
 
@@ -22,6 +22,10 @@ Fullscreen-capable hero image slider with Ken-Burns zoom, directional slide tran
 | `overlay` | `boolean` | `true` | Render tint overlay |
 | `overlayColor` | `string` | `'rgba(0,0,0,0.55)'` | Tint color |
 | `height` | `string \| number` | `560` | Wrapper height |
+| `imageLabels` | `string[]` | — | Per-image accessible labels. Falls back to "Slide X of Y" |
+| `messages` | `Partial<ImagesSliderMessages>` | — | i18n overrides for carousel label, slide template and loading text |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Usage
 

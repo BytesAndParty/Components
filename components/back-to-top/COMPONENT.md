@@ -7,6 +7,7 @@ Ein dezenter Floating-Button, der nach einer bestimmten Scroll-Distanz erscheint
 - **Scroll Threshold:** Erscheint erst, wenn der Nutzer eine konfigurierbare Distanz gescrollt hat.
 - **Smooth Scroll:** Nutzt die native Browser-Scroll-API für sanfte Bewegungen.
 - **AnimatePresence:** Sanftes Ein- und Ausblenden des Buttons.
+- **Shortcut:** `Mod+ArrowUp` scrollt nach oben — registriert über `useDesignEngineHotkey`, erscheint damit in der `ShortcutOverview`.
 
 ## Installation
 
@@ -15,7 +16,7 @@ Kopiere die Datei `back-to-top.tsx` in dein Projekt. Stellt sicher, dass die `Ma
 ## Verwendung
 
 ```tsx
-import { BackToTop } from './components/back-to-top/back-to-top';
+import { BackToTop } from '@components/back-to-top/back-to-top';
 
 function Layout() {
   return (
@@ -33,3 +34,9 @@ function Layout() {
 | :--- | :--- | :--- | :--- |
 | `threshold` | `number` | `400` | Scroll-Distanz in Pixeln, ab der der Button sichtbar wird. |
 | `className` | `string` | `-` | Zusätzliche CSS-Klassen für den Container. |
+| `messages` | `Partial<BackToTopMessages>` | `-` | i18n-Overrides für das aria-label und Label/Beschreibung des Shortcuts. |
+
+## Abhängigkeiten
+
+- `motion` (`motion/react`) — Ein-/Ausblenden
+- `@components/magnetic-button`, `@components/hotkeys`, `@components/i18n`

@@ -1,35 +1,39 @@
 # Hover3DCard
 
-Card with mouse-dependent 3D tilt perspective and glare overlay.
+Card with mouse-dependent 3D tilt and a glare overlay that follows the cursor.
 
 ## Micro-Interactions
 
 | Interaction | Detail |
 |---|---|
-| **3D tilt** | The card rotates on X and Y axes based on mouse position, creating a depth illusion with `perspective(800px)`. Maximum tilt angle is configurable. |
-| **Scale on hover** | The card subtly scales to 1.02× while tilting for a "lift" effect. |
-| **Glare overlay** | A radial gradient follows the cursor position, simulating light reflection on a glossy surface. |
-| **Smooth return** | On mouse leave, the card transitions back to flat with a configurable transition speed (default 300ms). |
-| **Responsive tracking** | During hover, the transform updates with only 50ms ease-out for near-instant following of the cursor. |
+| **3D tilt** | The card rotates on X and Y based on the cursor position — up to `maxRotate` degrees at the edges, flat at the centre. |
+| **Glare overlay** | A white radial gradient follows the cursor, simulating light on a glossy surface. It fades in on enter and out on leave. |
+| **Direct tracking** | While hovering, the transform has no transition, so the tilt follows the cursor 1:1. |
+| **Smooth return** | On mouse leave, the card eases back to flat over `transitionSpeed` ms. |
 
 ## How It Works
 
-1. **Mouse position mapping**: `onMouseMove` calculates the cursor's normalized position (0–1 range) within the card bounds.
-2. **Tilt calculation**: The normalized position is remapped to `±maxTilt` degrees for both X and Y rotation. Y is inverted so moving left tilts left.
-3. **Differential transition speed**: While hovering, the transform uses a fast 50ms transition for tight cursor tracking. On leave, it uses the full `transitionSpeed` for a smooth return.
-4. **Glare tracking**: The glare's `radial-gradient` center follows the cursor via `glarePos` state, creating a light-reflection that moves with the mouse.
-5. **`preserve-3d`**: The card uses `transformStyle: preserve-3d` for proper 3D rendering of children.
+1. **Mouse position mapping**: `onMouseMove` measures the cursor relative to the card centre and maps it to `±maxRotate` (X inverted, so the card tilts towards the cursor).
+2. **Transition switch**: `transition: none` while hovering, `transform <transitionSpeed>ms ease-out` otherwise — fast tracking, soft return.
+3. **Glare**: `glarePos` (percent of width/height) becomes the centre of the radial gradient; the overlay is `aria-hidden` and `pointer-events: none`.
+4. **3D context**: `transformStyle: preserve-3d` plus a `perspective` on the card itself. Use `className`/`style` for size and border radius — the glare inherits the radius.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | required | Card content |
-| `maxTilt` | `number` | `15` | Maximum tilt angle in degrees |
-| `glareIntensity` | `number` | `0.2` | Glare opacity (0–1) |
-| `glare` | `boolean` | `true` | Enable/disable glare overlay |
-| `transitionSpeed` | `number` | `300` | Return-to-flat transition in ms |
-| `borderRadius` | `number` | `16` | Border radius in px |
+| `maxRotate` | `number` | `15` | Maximum rotation angle in degrees |
+| `perspective` | `number` | `1000` | Perspective distance in px |
+| `transitionSpeed` | `number` | `400` | Return-to-flat and glare fade duration in ms |
+| `glare` | `boolean` | `true` | Enable/disable the glare overlay |
+| `glareIntensity` | `number` | `0.15` | Glare opacity (0–1) |
+| `className` | `string` | — | Classes on the card |
+| `style` | `CSSProperties` | — | Inline styles on the card |
+
+## Known Gaps
+
+- Mouse-only: no touch fallback and no `prefers-reduced-motion` handling yet.
 
 ## Dependencies
 

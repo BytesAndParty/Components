@@ -1,81 +1,75 @@
 # FormInput
 
-Schema-driven text input for forms — text, email, tel, number, password, url. Accepts any `.safeParse(value)` validator (Zod v4 recommended) and handles blur/change validation, error display with shake, and success checkmark.
+Presentational text input for forms — text, email, tel, number, password, url. Validation lives outside (TanStack Form, a Zod schema, plain state); the component renders the result: error with shake, success with a drawn checkmark, description and an optional info hint.
 
 ## Features
 
-- **Zod-compatible**: `schema` accepts anything with `safeParse`. Works with Zod v4 out of the box (no peer dep).
-- **Per-type affordances**: correct `inputMode`, `autoComplete`, optional phone auto-formatting, numeric clamping to `min`/`max`.
-- **Validation modes**: `onBlur` (default), `onChange` (live after first blur), `onSubmit` (parent-driven via `forceError`).
-- **State visual**: idle / error (red border + shake + alert icon) / success (accent border + drawn check).
-- **Accessible**: `aria-invalid`, `aria-describedby` wired to the error or description element.
+- **Externally validated**: pass `error` (string) and/or `success` (boolean). No schema logic inside — keeps the component library-agnostic and works with TanStack Form's field meta out of the box.
+- **State visual**: idle / error (red border + glow + shake + animated `role="alert"` message) / success (accent border + glow + drawn check).
+- **Info hint**: `hint` renders a [`FieldHint`](../field-hint/COMPONENT.md) next to the label, linked to the input.
+- **Accessible**: `aria-invalid`, `aria-required`, and `aria-describedby` wired to error *or* description plus the hint id.
+- **Ref forwarding**: `forwardRef` to the native `<input>` for form libraries and focus control.
+- **Required marker**: `required` appends a localized marker (default `*`) to the label.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `type` | `'text' \| 'email' \| 'tel' \| 'number' \| 'password' \| 'url'` | `'text'` | Input type |
-| `label` | `string?` | — | Label above the input |
-| `description` | `string?` | — | Helper text shown when no error |
-| `schema` | `{ safeParse(v) }?` | — | Zod (or compatible) validator |
-| `validateMode` | `'onBlur' \| 'onChange' \| 'onSubmit'` | `'onBlur'` | When to validate |
-| `forceError` | `string \| null` | `null` | Parent-supplied error (e.g. from form submit) |
-| `value` / `defaultValue` | `string` | `''` | Controlled / uncontrolled value |
-| `onChange` | `(v: string) => void` | — | Value change callback |
-| `onValidate` | `(r: { valid, error }) => void` | — | Fired after each validation |
-| `leftIcon` / `rightIcon` | `ReactNode?` | — | Adornments |
-| `autoFormatPhone` | `boolean` | `false` | Format DE/US phone progressively (only `type="tel"`) |
-| `min` / `max` | `number?` | — | Numeric clamping (only `type="number"`) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Height + font preset |
-| …rest | `InputHTMLAttributes` | — | Forwarded to `<input>` |
+| `label` | `string` | — | Label above the input |
+| `description` | `string` | — | Helper text, shown when there is no error |
+| `error` | `string` | — | Error message; switches to the error state and replays the shake on every new error |
+| `success` | `boolean` | — | Success state (accent border + check icon, unless `rightIcon` is set) |
+| `hint` | `ReactNode` | — | Info-icon tooltip next to the label, linked via `aria-describedby` |
+| `hintPosition` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Tooltip position of the hint |
+| `leftIcon` / `rightIcon` | `ReactNode` | — | Adornments inside the field |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Height + font preset (36 / 44 / 52 px) |
+| `required` | `boolean` | — | Native `required` + `aria-required` + label marker |
+| `wrapperClassName` | `string` | — | Classes on the outer wrapper |
+| `className` | `string` | — | Classes on the `<input>` |
+| `style` | `CSSProperties` | — | Inline styles on the field container |
+| `messages` | `Partial<FormInputMessages>` | — | i18n override for the required marker |
+| …rest | `InputHTMLAttributes` | — | Forwarded to `<input>` (`value`, `onChange`, `onBlur`, `placeholder`, …) |
 
 ## Usage
 
-### Email with Zod v4
+### Validate on blur with Zod
 
 ```tsx
-import { z } from 'zod';
-import { FormInput } from '@components/form-input/form-input';
+import { z } from 'zod'
+import { FormInput } from '@components/form-input/form-input'
 
-const emailSchema = z.string().email('Ungültige E-Mail');
+const emailSchema = z.email('Ungültige E-Mail')
+const [value, setValue] = useState('')
+const [error, setError] = useState<string>()
 
 <FormInput
   type="email"
   label="E-Mail"
-  schema={emailSchema}
-  placeholder="du@beispiel.de"
+  value={value}
+  error={error}
+  onChange={(e) => setValue(e.target.value)}
+  onBlur={(e) => {
+    const res = emailSchema.safeParse(e.target.value)
+    setError(res.success ? undefined : res.error.issues[0].message)
+  }}
 />
 ```
 
-### Phone with auto-format
+### With hint and success state
 
 ```tsx
 <FormInput
-  type="tel"
-  label="Telefon"
-  autoFormatPhone
-  schema={z.string().min(8, 'Zu kurz')}
-/>
-```
-
-### Number with clamping
-
-```tsx
-<FormInput
-  type="number"
-  label="Alter"
-  min={18}
-  max={120}
-  schema={z.number().min(18, 'Min. 18 Jahre').max(120)}
+  label="Steuernummer"
+  hint="Bitte die 11-stellige Steuer-Identifikationsnummer eintragen."
+  hintPosition="right"
+  success={isValid}
 />
 ```
 
 ## Dependencies
 
-- None (Zod optional, anything with `safeParse` works)
+- `motion` (`motion/react`) — error/description transitions
+- `@components/field-hint` — info hint
 
-## Notes
-
-- The component doesn't import Zod itself — pass your own schema. This keeps the component tree-shakeable and works with any version.
-- `autoFormatPhone` uses a pragmatic DE/US heuristic. For international forms, pass `schema` with a phone-specific validator and skip auto-format.
-- `shakeKey` forces animation restart on each new error — the shake always plays on validation failure, not just once.
+Shake and check-draw keyframes are injected once (`__form-input-styles__`).

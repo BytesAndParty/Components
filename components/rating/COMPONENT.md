@@ -15,7 +15,7 @@ Star rating component with controlled/uncontrolled support, hover preview, and p
 
 1. **Controlled/uncontrolled pattern**: If `value` is provided, the component is controlled. Otherwise `defaultValue` + internal state is used.
 2. **Display value**: `hoverValue ?? currentValue` determines which stars are filled, so hover always takes visual priority.
-3. **CSS keyframe**: `rating-pop` is defined in `showcase/src/styles.css` (see Required CSS below).
+3. **CSS keyframe**: `rating-pop` is defined in `components-showcase/src/styles.css` (see Required CSS below).
 4. **ARIA**: Uses `role="radiogroup"` with individual `role="radio"` and `aria-checked` per star for full screen reader support.
 
 ## Props
@@ -30,10 +30,13 @@ Star rating component with controlled/uncontrolled support, hover preview, and p
 | `activeColor` | `string` | `'var(--accent)'` | Filled star color |
 | `inactiveColor` | `string` | `'var(--border)'` | Empty star color |
 | `readOnly` | `boolean` | `false` | Disable interactions |
+| `messages` | `Partial<RatingMessages>` | — | i18n overrides for the group and per-star labels |
+| `className` | `string` | — | Additional classes on the radiogroup |
+| `style` | `CSSProperties` | — | Inline styles on the radiogroup |
 
 ## Required CSS
 
-Add to your global stylesheet if not using `showcase/src/styles.css`:
+Add to your global stylesheet if not using `components-showcase/src/styles.css`:
 
 ```css
 @keyframes rating-pop {

@@ -32,7 +32,7 @@ The buttons are separated by vertical borders and feature subtle hover states an
 ## Usage
 
 ```tsx
-import { StackOrderControls } from '@components/stack-order-controls'
+import { StackOrderControls } from '@components/stack-order-controls/stack-order-controls'
 
 export function LayerActions() {
   const bringToFront = () => { /* canvas logic */ }
@@ -54,5 +54,5 @@ export function LayerActions() {
 |---|---|
 | `lucide-react` | Icons |
 | `react` | UI Library |
-| `@local/lib` | Utility functions (`cn`) |
-| `@local/i18n` | UI strings management |
+| `@components/lib` | Utility functions (`cn`) |
+| `@components/i18n` | UI strings management |

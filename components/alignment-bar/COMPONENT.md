@@ -32,7 +32,7 @@ A compact toolbar for aligning and distributing objects on a canvas. Built with 
 ### Basic
 
 ```tsx
-import { AlignmentBar } from '@components/alignment-bar'
+import { AlignmentBar } from '@components/alignment-bar/alignment-bar'
 
 function Toolbar() {
   const handleAlign = (action) => {

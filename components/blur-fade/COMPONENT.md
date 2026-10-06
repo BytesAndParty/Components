@@ -25,6 +25,9 @@ A viewport-controlled reveal wrapper that fades in and blurs from a specified di
 | `direction` | `'up'\|'down'\|'left'\|'right'` | `'up'` | Direction to slide in from |
 | `blur` | `string` | `'8px'` | Initial blur amount (e.g., '12px') |
 | `once` | `boolean` | `true` | If true, only animates once per mount |
+| `children` | `ReactNode` | required | Content to reveal |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

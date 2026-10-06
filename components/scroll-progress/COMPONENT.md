@@ -24,6 +24,9 @@ Fixed scroll progress bar at the top of the viewport.
 | `height` | `number` | `3` | Bar height in px |
 | `top` | `string` | `'0'` | CSS top position (e.g., `'65px'` below navbar) |
 | `zIndex` | `number` | `50` | z-index |
+| `messages` | `Partial<ScrollProgressMessages>` | — | i18n override for the aria-label |
+| `className` | `string` | — | Additional classes on the bar |
+| `style` | `CSSProperties` | — | Inline styles on the bar |
 
 ## Dependencies
 

@@ -22,6 +22,8 @@ This is a **primitives-based API** — each part of the breadcrumb is a separate
 
 All components use `data-slot` attributes for external styling hooks and accept `style` overrides.
 
+`Breadcrumb` additionally takes `messages?: Partial<BreadcrumbMessages>` (i18n overrides for the nav `aria-label` and the ellipsis "More" text) and forwards all other `<nav>` props.
+
 ## Exports
 
 `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbSeparator`, `BreadcrumbEllipsis`
@@ -32,7 +34,7 @@ All components use `data-slot` attributes for external styling hooks and accept 
 
 ## Accessibility
 
-- Nav has `aria-label="breadcrumb"`
+- Nav has a localized `aria-label` (`messages.ariaLabel`)
 - Current page has `aria-current="page"`
 - Separators and ellipsis have `aria-hidden="true"` and `role="presentation"`
-- Ellipsis includes a visually hidden "More" text for screen readers
+- Ellipsis includes a visually hidden, localized "More" text (`messages.more`) for screen readers

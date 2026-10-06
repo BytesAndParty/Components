@@ -22,6 +22,7 @@ A lightweight ambient cursor-tracking glow effect using pure CSS gradients and t
 | `color` | `string` | `'auto'` | Glow color (defaults to `--accent`) |
 | `size` | `number` | `400` | Diameter of the glow in px |
 | `opacity` | `number` | `0.15` | Maximum opacity of the glow |
+| `blur` | `number` | `60` | Blur radius in px |
 
 ## Dependencies
 

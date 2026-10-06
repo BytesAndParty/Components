@@ -44,4 +44,4 @@ Uses Tailwind CSS classes (`w-full`, `overflow-hidden`, `flex`, etc.) — the co
 
 ## Dependencies
 
-- `framer-motion` — `useScroll`, `useVelocity`, `useSpring`, `useTransform`, `useAnimationFrame`, `useMotionValue`, `motion`
+- `motion` (`motion/react`) — `useScroll`, `useVelocity`, `useSpring`, `useTransform`, `useAnimationFrame`, `useMotionValue`, `motion`

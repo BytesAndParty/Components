@@ -29,6 +29,7 @@ Dark/light theme toggle button with View Transition API circle-reveal animation 
 | `iconSize` | `number` | `18` | SVG icon size in px |
 | `onThemeChange` | `(isDark: boolean) => void` | — | Callback after theme changes |
 | ...rest | `ButtonHTMLAttributes` | — | Spread to the `<button>` |
+| `messages` | `Partial<AnimatedThemeTogglerMessages>` | — | i18n overrides for the toggle label |
 
 ## Dependencies
 

@@ -25,15 +25,18 @@ Animated add-to-cart button with a multi-stage cart roll-in animation inspired b
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `children` | `ReactNode` | `'Add to cart'` | Button label |
+| `children` | `ReactNode` | `messages.idle` | Button label (falls back to the localized idle label) |
 | `onClick` | `() => void` | — | Click callback (fires at animation start) |
 | `duration` | `number` | `3700` | Total animation + reset duration in ms |
 | `bgColor` | `string` | `'var(--accent)'` | Button background |
 | `textColor` | `string` | `'#fff'` | Text and icon color |
+| `messages` | `Partial<AddToCartButtonMessages>` | — | i18n overrides for the idle label and the screen-reader "added" announcement |
+| `className` | `string` | — | Additional classes on the button |
+| `style` | `CSSProperties` | — | Inline styles on the button |
 
 ## Required CSS
 
-Add to your global stylesheet if not using `showcase/src/styles.css`:
+Add to your global stylesheet if not using `components-showcase/src/styles.css`:
 
 ```css
 @keyframes atc-cart {

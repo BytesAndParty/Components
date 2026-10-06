@@ -26,9 +26,10 @@ Three bouncing dots with squish-on-impact and soft shadows — classic "dots bou
 | `color` | `string` | `'var(--accent)'` | Dot color at apex |
 | `squishColor` | `string` | `'var(--muted-foreground)'` | Dot color on impact |
 | `speed` | `number` | `0.5` | Full cycle duration in seconds (lower = faster) |
-| `label` | `string` | `'Loading'` | SR-only + `aria-label` text |
+| `label` | `string` | `messages.loading` | SR-only + `aria-label` text |
 | `className` | `string` | — | Additional class on wrapper |
 | `style` | `CSSProperties` | — | Inline style overrides on wrapper |
+| `messages` | `Partial<BounceLoaderMessages>` | — | i18n override for the default "Loading" label |
 
 ## Dependencies
 

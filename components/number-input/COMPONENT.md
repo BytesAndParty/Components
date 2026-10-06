@@ -39,7 +39,7 @@ A compact, precision-focused numeric input designed for design toolbars. It supp
 ### Physical Dimensions (Millimetres)
 
 ```tsx
-import { NumberInput } from '@components/number-input'
+import { NumberInput } from '@components/number-input/number-input'
 
 function Properties() {
   const [width, setWidth] = useState(90)

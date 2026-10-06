@@ -36,6 +36,7 @@ Range slider with drag-to-set, keyboard steering, and a thumb-squish micro-inter
 | `disabled` | `boolean` | `false` | Dims the slider and disables interaction |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Track + thumb dimensions |
 | `className` / `style` | — | — | Forwarded to the wrapper |
+| `messages` | `Partial<SliderMessages>` | — | i18n override for the slider aria-label |
 
 ## Dependencies
 

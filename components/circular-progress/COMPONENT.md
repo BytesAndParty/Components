@@ -24,6 +24,11 @@ A customizable SVG-based circular progress indicator with smooth transitions.
 | `strokeWidth` | `number` | `6` | Thickness of the progress line |
 | `color` | `string` | `'auto'` | Progress color (defaults to `--accent`) |
 | `children` | `ReactNode` | | Optional content for the center |
+| `trackColor` | `string` | `var(--border)` | Color of the background ring |
+| `duration` | `number` | `600` | Transition duration in ms |
+| `messages` | `Partial<CircularProgressMessages>` | — | i18n overrides for the aria-label template |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

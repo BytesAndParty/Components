@@ -25,11 +25,12 @@ Rolling-digit countdown to a target date/time. Uses the daisyUI-style `transform
 | `target` | `Date \| string \| number` | — | When to count down to. ISO string / Date / epoch ms |
 | `hideLeadingZeros` | `boolean` | `false` | Drop days/hours blocks when they are zero |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Digit font + block padding |
-| `labels` | `{ days?; hours?; minutes?; seconds? }` | German defaults (`Tage`/`Std`/`Min`/`Sek`) | Override per-block labels |
+| `labels` | `{ days?; hours?; minutes?; seconds? }` | localized via `messages` | Override per-block labels |
 | `separator` | `ReactNode` | `":"` | Node between blocks |
 | `transparent` | `boolean` | `false` | Strip card background + border |
 | `onComplete` | `() => void` | — | Fired once when the target is reached |
 | `className` / `style` | — | — | Forwarded to the wrapper |
+| `messages` | `Partial<CountdownMessages>` | — | i18n overrides for unit labels and the screen-reader "remaining" template |
 
 ## Dependencies
 

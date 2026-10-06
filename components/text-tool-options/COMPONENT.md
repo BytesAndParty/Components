@@ -47,7 +47,7 @@ interface TextFormatValues {
 ## Usage
 
 ```tsx
-import { TextToolOptions, type TextFormatValues } from './components/text-tool-options'
+import { TextToolOptions, type TextFormatValues } from '@components/text-tool-options/text-tool-options'
 
 function Editor() {
   const [format, setFormat] = useState<TextFormatValues>(defaultTextFormat)

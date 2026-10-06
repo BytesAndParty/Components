@@ -26,9 +26,9 @@ Cycling text display that rotates through an array of strings with staggered per
 |---|---|---|---|
 | `texts` | `string[]` | — | Array of strings to cycle through |
 | `rotationInterval` | `number` | `2000` | Milliseconds between rotations |
-| `initial` | `object` | `{ y: '100%', opacity: 0 }` | Framer Motion initial state |
-| `animate` | `object` | `{ y: 0, opacity: 1 }` | Framer Motion animate state |
-| `exit` | `object` | `{ y: '-120%', opacity: 0 }` | Framer Motion exit state |
+| `initial` | `object` | `{ y: '100%', opacity: 0 }` | motion/react initial state |
+| `animate` | `object` | `{ y: 0, opacity: 1 }` | motion/react animate state |
+| `exit` | `object` | `{ y: '-120%', opacity: 0 }` | motion/react exit state |
 | `transition` | `object` | Spring (300/25) | Per-element transition config |
 | `staggerDuration` | `number` | `0.03` | Delay between each element (seconds) |
 | `staggerFrom` | `'first' \| 'last' \| 'center' \| 'random' \| number` | `'first'` | Where the stagger wave originates |
@@ -54,4 +54,4 @@ Cycling text display that rotates through an array of strings with staggered per
 
 ## Dependencies
 
-- `framer-motion` — AnimatePresence + motion for staggered enter/exit
+- `motion` (`motion/react`) — AnimatePresence + motion for staggered enter/exit

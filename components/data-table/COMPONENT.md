@@ -49,7 +49,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 ### Basic Example
 
 ```tsx
-import { DataTable } from '@components/data-table'
+import { DataTable } from '@components/data-table/data-table'
 import { ColumnDef } from '@tanstack/react-table'
 
 interface User {
@@ -75,7 +75,7 @@ const users = [
 
 ```tsx
 import { useState } from 'react'
-import { DataTable } from '@components/data-table'
+import { DataTable } from '@components/data-table/data-table'
 import type { SortingState, PaginationState } from '@tanstack/react-table'
 
 const [sorting, setSorting] = useState<SortingState>([])
@@ -95,7 +95,7 @@ const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pa
 
 ```tsx
 import { useState } from 'react'
-import { DataTable } from '@components/data-table'
+import { DataTable } from '@components/data-table/data-table'
 import type { RowSelectionState } from '@tanstack/react-table'
 
 const [selection, setSelection] = useState<RowSelectionState>({})

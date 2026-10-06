@@ -31,7 +31,7 @@ When a new language is selected, it triggers a "flip" animation on the trigger's
 ## Usage
 
 ```tsx
-import { LanguageSwitcher } from '@components/language-switcher'
+import { LanguageSwitcher } from '@components/language-switcher/language-switcher'
 
 export function Navbar() {
   return (
@@ -48,5 +48,5 @@ export function Navbar() {
 | Package | Purpose |
 |---|---|
 | `react` | UI Library |
-| `@local/atelier` | Design system context |
-| `@local/i18n` | Internal i18n hooks and logic |
+| `@components/atelier` | Design system context |
+| `@components/i18n` | Internal i18n hooks and logic |

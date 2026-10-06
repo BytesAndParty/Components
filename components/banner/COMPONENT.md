@@ -28,6 +28,9 @@ Dismissible notification banner with configurable colors and an optional link su
 | `textColor` | `string` | `'#ffffff'` | Text color |
 | `dismissible` | `boolean` | `true` | Show close button |
 | `onDismiss` | `() => void` | — | Callback when dismissed |
+| `messages` | `Partial<BannerMessages>` | — | i18n overrides for the region landmark and the dismiss button |
+| `className` | `string` | — | Additional classes on the banner |
+| `style` | `CSSProperties` | — | Inline styles on the banner |
 
 ### BannerLink
 

@@ -38,7 +38,7 @@ A high-fidelity color picking panel designed for design engines. It provides a 2
 ### Basic Usage
 
 ```tsx
-import { ColorPickerPanel } from '@components/color-picker'
+import { ColorPickerPanel } from '@components/color-picker/color-picker'
 
 function Designer() {
   const [color, setColor] = useState('#722f37')

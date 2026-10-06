@@ -41,6 +41,10 @@ Complete password creation flow with strength meter, checklist validation, gener
 | `dotSize` | `number` | `10` | Confirmation dot size |
 | `matchColor` | `string` | `'#22c55e'` | Match color |
 | `mismatchColor` | `string` | `'#ef4444'` | Mismatch color |
+| `passwordPlaceholder` | `string` | `messages.passwordPlaceholder` | Placeholder of the password field (overrides the i18n default) |
+| `messages` | `Partial<PasswordSetupMessages>` | — | i18n overrides for all user-facing labels |
+| `className` | `string` | — | Classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

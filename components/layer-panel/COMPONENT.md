@@ -10,14 +10,14 @@ A sophisticated sidebar component for managing a stack of layers or canvas objec
 - **In-place Renaming:** Double-click a layer name to rename it.
 - **Selection State:** Supports highlighting the currently active layers.
 - **Keyboard Navigation:** Full support for sorting via keyboard (Shift + ↑/↓).
-- **Smooth Animations:** Framer Motion (`motion`) transitions for adding and removing layers.
+- **Smooth Animations:** `motion/react` transitions for adding and removing layers.
 
 ## How It Works
 
-The component uses a combination of **dnd-kit** for sorting logic and **Framer Motion** for list animations.
+The component uses a combination of **dnd-kit** for sorting logic and **motion/react** for list animations.
 - `DndContext` and `SortableContext` manage the drag interactions.
 - `LayerRow` handles individual layer actions like renaming and visibility toggling.
-- To prevent animation conflicts, `dnd-kit` handles the position transforms during dragging, while Framer Motion handles the entrance/exit fades.
+- To prevent animation conflicts, `dnd-kit` handles the position transforms during dragging, while motion/react handles the entrance/exit fades.
 
 ## Props
 
@@ -49,7 +49,7 @@ interface Layer {
 ## Usage
 
 ```tsx
-import { LayerPanel, type Layer } from './components/layer-panel'
+import { LayerPanel, type Layer } from '@components/layer-panel/layer-panel'
 
 function Sidebar() {
   const [layers, setLayers] = useState<Layer[]>([...])
@@ -68,6 +68,7 @@ function Sidebar() {
 
 - `@dnd-kit/core`: Drag and drop primitives.
 - `@dnd-kit/sortable`: Sorting logic and hooks.
+- `@dnd-kit/utilities`: `CSS.Translate` helper for row transforms.
 - `motion`: For entry/exit animations.
 - `lucide-react`: Icons for layer types and actions.
 - `components/i18n`: Internationalization support.

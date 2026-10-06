@@ -38,6 +38,8 @@ Fallback path: browsers without `corner-shape` ignore the property and render pl
 | `cornerSlot` | `CornerSlotConfig` | — | Rectangular **corner-fit slot**: a tag that fills a notched corner exactly (`{ corner, width, height, content }`). Uses `corner-shape: notch` + elliptical radius so native `box-shadow` follows correctly — no mask/filter trickery. Mutually exclusive with `cutout`. |
 | `hoverLift` | `boolean` | `true` | Lift `translateY(-3px)` on hover. |
 | `hoverAccent` | `boolean` | `true` | Border color shifts toward `--accent` on hover. |
+| `sideNotch` | `{ side: 'top' \| 'right' \| 'bottom' \| 'left'; size: number; position?: number }` | — | Semicircular notch in the middle of a side (camera-notch / Dynamic-Island silhouette). `position` 0–100 along the side, default 50. Pure mask + drop-shadow. |
+| `children` | `ReactNode` | required | Card content |
 
 `CornerShape` keywords: `round` · `squircle` · `scoop` · `notch` · `bevel` · `square`.
 

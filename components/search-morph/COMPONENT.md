@@ -17,7 +17,7 @@ SVG morphing search icon that unrolls into a search input with underline — the
 ## How It Works
 
 1. **Single SVG canvas**: All animations happen in one SVG that spans the full `expandedWidth`. The icon group is a `<g>` that translates, and the underline is a separate `<line>`.
-2. **Spring physics**: All layout movements use framer-motion springs (`damping: 16, stiffness: 90`).
+2. **Spring physics**: All layout movements use `motion/react` springs (`damping: 16, stiffness: 90`).
 3. **strokeDasharray trick**: The circle has a `strokeDasharray` equal to its circumference. Animating `strokeDashoffset` from 0 to `-circumference` creates the unroll effect.
 4. **Accessibility**: The collapsed state has `role="button"` and `tabIndex={0}` with keyboard support (Enter/Space to open).
 
@@ -30,7 +30,10 @@ SVG morphing search icon that unrolls into a search input with underline — the
 | `onChange` | `(value: string) => void` | — | Called on input change |
 | `expandedWidth` | `number` | `280` | Field width when open |
 | `strokeWidth` | `number` | `2.5` | SVG stroke width |
+| `messages` | `Partial<SearchMorphMessages>` | — | i18n overrides for placeholder and open/close labels |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 
-- `framer-motion` — Spring animations for layout morphing
+- `motion` (`motion/react`) — Spring animations for layout morphing

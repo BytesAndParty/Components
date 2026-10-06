@@ -34,7 +34,7 @@ When clicked, the `ColorPickerPanel` is rendered within the popover content. All
 ## Usage
 
 ```tsx
-import { ColorSwatch } from '@components/color-swatch'
+import { ColorSwatch } from '@components/color-swatch/color-swatch'
 
 export function MyToolbar() {
   const [color, setColor] = useState('#722f37')
@@ -57,6 +57,6 @@ export function MyToolbar() {
 | Package | Purpose |
 |---|---|
 | `@ark-ui/react` | Headless UI (Popover, Portal) |
-| `@local/color-picker` | Internal full-featured color picker panel |
-| `@local/lib` | Utility functions (`cn`) |
-| `@local/i18n` | UI strings management |
+| `@components/color-picker` | Internal full-featured color picker panel |
+| `@components/lib` | Utility functions (`cn`) |
+| `@components/i18n` | UI strings management |

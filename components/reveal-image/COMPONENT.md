@@ -30,6 +30,7 @@ Editorial curtain reveal for images — a clip-path wipe paired with a counter-z
 | `once` | `boolean` | `true` | Play once vs. replay on every viewport entry |
 | `className` | `string` | — | Wrapper classes — set size/aspect here |
 | `imgClassName` | `string` | — | Classes for the inner `<img>` |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Usage
 

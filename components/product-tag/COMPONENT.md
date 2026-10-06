@@ -38,7 +38,7 @@ Highly visual, animated labels for highlighting product status, certifications, 
 ### Basic Storefront Implementation
 
 ```tsx
-import { ProductTag, ProductTagGroup } from '@components/product-tag'
+import { ProductTag, ProductTagGroup } from '@components/product-tag/product-tag'
 
 function ProductCard({ product }) {
   return (

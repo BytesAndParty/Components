@@ -26,6 +26,8 @@ Magnifying lens overlay — hover-follow or click-toggle. Zooms any DOM content 
 | `lensSize` | `number` | `170` | Lens diameter in px |
 | `ringWidth` | `number` | `2` | Ring border width in px |
 | `ringColor` | `string` | `'var(--accent)'` | Ring border color |
+| `className` | `string` | — | Additional classes on the container |
+| `style` | `CSSProperties` | — | Inline styles on the container |
 
 ## Usage
 

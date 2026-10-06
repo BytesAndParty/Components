@@ -49,10 +49,28 @@ export function ProductGallery() {
 | :--- | :--- | :--- | :--- |
 | `opts` | `EmblaOptionsType` | `undefined` | Embla options (loop, speed, etc.) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Scroll direction |
-| `plugins` | `any[]` | `undefined` | Embla plugins (autoplay, etc.) |
+| `plugins` | `EmblaPluginType[]` | `undefined` | Embla plugins (autoplay, etc.) |
 | `setApi` | `(api: EmblaCarouselType) => void` | `undefined` | Callback to get the Embla API instance |
+| `className` | `string` | — | Classes on the carousel region |
+| `children` | `ReactNode` | required | Content, previous/next buttons and thumbs |
+
+### CarouselPrevious / CarouselNext
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `hide` | `boolean` | `false` | Renders nothing — e.g. to hide the arrows on touch layouts |
+| …rest | `ComponentProps<'button'>` | — | Forwarded to the `<button>`; disabled automatically at the ends |
+
+`CarouselContent` and `CarouselItem` forward all `<div>` props; `CarouselThumbs` takes `children` and `className`.
 
 ### CarouselThumb
 | Prop | Type | Description |
 | :--- | :--- | :--- |
 | `index` | `number` | The slide index this thumb controls |
+| `children` | `ReactNode` | Thumb content |
+| `className` | `string` | Additional classes |
+
+## Dependencies
+
+- `embla-carousel-react` (+ `embla-carousel` types) — scroll engine
+- `lucide-react` — arrow icons
+- `clsx` & `tailwind-merge` — via `cn()`
