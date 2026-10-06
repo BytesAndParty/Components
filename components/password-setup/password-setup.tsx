@@ -433,7 +433,7 @@ function getStrength(passed: number, m: PasswordSetupMessages) {
 }
 
 // Status colors as small text: mixing in 40 % --foreground darkens them in light
-// mode and lightens them in dark mode (>= 5.2:1 on card in both). oklab keeps
+// mode and lightens them in dark mode (>= 4.9:1 on background and card). oklab keeps
 // the hue; oklch would rotate it towards the hue of --foreground.
 function readableText(color: string) {
   return `color-mix(in oklab, ${color} 60%, var(--foreground))`
