@@ -12,6 +12,7 @@ import { useAddToCart } from '@/lib/cart-context';
 import { useProduct } from '@/lib/store-filters';
 import { WineText } from '@/lib/wine-text';
 import { useT } from '@/lib/i18n';
+import { withBase } from '@/lib/utils';
 import type { Product, FacetValueRef } from '@/lib/types';
 import { Providers } from './Providers';
 
@@ -85,7 +86,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
         <h2 className="mb-3 text-2xl font-bold">{t.detailNotFoundTitle}</h2>
         <p className="text-muted-foreground mb-6">{t.detailNotFoundBody}</p>
         <a
-          href="/"
+          href={withBase('/')}
           className="bg-foreground text-background hover:bg-accent hover:text-primary-foreground inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
         >
           {t.detailBackToStore}
@@ -115,7 +116,7 @@ function WineDetailInner({ slug, initialProduct }: { slug: string; initialProduc
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">{t.navWines}</BreadcrumbLink>
+            <BreadcrumbLink href={withBase('/')}>{t.navWines}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

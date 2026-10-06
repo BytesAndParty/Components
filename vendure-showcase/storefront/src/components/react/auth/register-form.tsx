@@ -1,6 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { useRegister, useLogin } from '@/lib/use-auth';
 import { useT } from '@/lib/i18n';
+import { withBase } from '@/lib/utils';
 import { registerSchema, fieldErrorText } from '@/lib/auth-schemas';
 import { Providers } from '../Providers';
 import { useState } from 'react';
@@ -43,12 +44,12 @@ function RegisterFormInner() {
           try {
             await login({ username: value.email, password: value.password });
             setTimeout(() => {
-              window.location.href = '/profile';
+              window.location.href = withBase('/profile');
             }, 1000);
           } catch {
             // If auto-login fails, send to login page
             setTimeout(() => {
-              window.location.href = '/login';
+              window.location.href = withBase('/login');
             }, 1000);
           }
         } else {
@@ -239,7 +240,7 @@ function RegisterFormInner() {
 
         <div className="border-t border-border pt-4 text-center text-sm text-muted-foreground">
           {t.registerLoginPrompt}{' '}
-          <a href="/login" className="text-foreground hover:text-accent font-semibold transition-colors">
+          <a href={withBase('/login')} className="text-foreground hover:text-accent font-semibold transition-colors">
             {t.registerLoginLink}
           </a>
         </div>

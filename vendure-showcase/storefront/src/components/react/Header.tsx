@@ -1,6 +1,7 @@
 import { useCart } from '@/lib/cart-context'
 import { useT } from '@/lib/i18n'
 import { useActiveCustomer } from '@/lib/use-auth'
+import { withBase } from '@/lib/utils'
 import { Providers } from './Providers'
 import { ThemeToggle } from './ThemeToggle'
 import { LocaleToggle } from './LocaleToggle'
@@ -14,24 +15,24 @@ function HeaderInner() {
   return (
     <header className="bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-        <a href="/" className="shrink-0 text-xl font-bold tracking-tight">
+        <a href={withBase('/')} className="shrink-0 text-xl font-bold tracking-tight">
           🍷 {t.brandName}
         </a>
 
         <nav className="flex flex-1 items-center gap-1 px-4">
-          <NavLink href="/">{t.navWines}</NavLink>
-          <NavLink href="/cart">{t.navCart}</NavLink>
-          <NavLink href="/admin-info">{t.navAdmin}</NavLink>
+          <NavLink href={withBase('/')}>{t.navWines}</NavLink>
+          <NavLink href={withBase('/cart')}>{t.navCart}</NavLink>
+          <NavLink href={withBase('/admin-info')}>{t.navAdmin}</NavLink>
           {customer ? (
-            <NavLink href="/profile">{t.navProfile}</NavLink>
+            <NavLink href={withBase('/profile')}>{t.navProfile}</NavLink>
           ) : (
-            <NavLink href="/login">{t.navLogin}</NavLink>
+            <NavLink href={withBase('/login')}>{t.navLogin}</NavLink>
           )}
         </nav>
 
         <div className="flex items-center gap-2">
           <a
-            href="/cart"
+            href={withBase('/cart')}
             className="hover:bg-muted relative rounded-lg p-2 transition-colors"
             aria-label={t.navCart}
           >

@@ -1,6 +1,6 @@
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import { useAdjustLine, useCart, useRemoveLine } from '@/lib/cart-context'
-import { wineHref } from '@/lib/utils'
+import { wineHref, withBase } from '@/lib/utils'
 import { useT } from '@/lib/i18n'
 import { Providers } from './Providers'
 import { EmptyState } from './EmptyState'
@@ -35,7 +35,7 @@ function CartInner() {
         body={t.cartEmptyBody}
         action={
           <a
-            href="/"
+            href={withBase('/')}
             className="bg-foreground text-background hover:bg-accent hover:text-primary-foreground inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
           >
             {t.cartEmptyCta}

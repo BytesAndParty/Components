@@ -1,6 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { useLogin } from '@/lib/use-auth';
 import { useT } from '@/lib/i18n';
+import { withBase } from '@/lib/utils';
 import { loginSchema, fieldErrorText } from '@/lib/auth-schemas';
 import { Providers } from '../Providers';
 import { useState } from 'react';
@@ -29,7 +30,7 @@ function LoginFormInner() {
           setSuccessMsg(t.loginSuccess);
           // Redirect to profile
           setTimeout(() => {
-            window.location.href = '/profile';
+            window.location.href = withBase('/profile');
           }, 1000);
         } else {
           setErrorMsg(result.message || t.loginError);
@@ -134,7 +135,7 @@ function LoginFormInner() {
 
         <div className="border-t border-border pt-4 text-center text-sm text-muted-foreground">
           {t.loginRegisterPrompt}{' '}
-          <a href="/register" className="text-foreground hover:text-accent font-semibold transition-colors">
+          <a href={withBase('/register')} className="text-foreground hover:text-accent font-semibold transition-colors">
             {t.loginRegisterLink}
           </a>
         </div>

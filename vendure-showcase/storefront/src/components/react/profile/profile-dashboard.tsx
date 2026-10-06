@@ -3,7 +3,7 @@ import { useActiveCustomer, useLogout } from '@/lib/use-auth';
 import { useT, format } from '@/lib/i18n';
 import { Providers } from '../Providers';
 import { Loader2, LogOut, Package, Calendar } from 'lucide-react';
-import { wineHref } from '@/lib/utils';
+import { wineHref, withBase } from '@/lib/utils';
 import { AccountDetailsCard } from './account-details-card';
 import { ChangePasswordCard } from './change-password-card';
 import { AddressesCard } from './addresses-card';
@@ -29,7 +29,7 @@ function ProfileDashboardInner() {
 
   useEffect(() => {
     if (!isLoading && !customer) {
-      window.location.href = '/login';
+      window.location.href = withBase('/login');
     }
   }, [customer, isLoading]);
 
@@ -48,7 +48,7 @@ function ProfileDashboardInner() {
 
   const handleLogout = async () => {
     await logout();
-    window.location.href = '/';
+    window.location.href = withBase('/');
   };
 
   return (
