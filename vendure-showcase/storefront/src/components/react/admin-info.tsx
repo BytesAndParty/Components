@@ -107,7 +107,7 @@ function AdminInfoInner() {
       <section className="border-border bg-card space-y-4 rounded-2xl border p-6">
         <h2 className="text-lg font-bold">{t.adminGuideTitle}</h2>
         <ol className="space-y-3 text-sm">
-          {[t.adminGuideStep1, t.adminGuideStep2, t.adminGuideStep3, t.adminGuideStep4, t.adminGuideStep5].map((step, i) => (
+          {[t.adminGuideStep1, t.adminGuideStep2, t.adminGuideStep3, t.adminGuideStep4, t.adminGuideStep5, t.adminGuideStep6].map((step, i) => (
             <li key={i} className="flex gap-3">
               <span
                 aria-hidden="true"
