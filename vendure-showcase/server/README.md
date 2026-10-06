@@ -209,7 +209,7 @@ Alle Custom Fields sind auf dem `Product`-Typ definiert:
 
 ## Storefront-Verbindung
 
-Der Vite-Dev-Server des Storefronts (`vendure-showcase/storefront`) proxied `/shop-api` automatisch auf `localhost:3000`. Kein CORS-Problem im Dev-Modus.
+Die Storefront (`vendure-showcase/storefront`, Astro) ruft die Shop API direkt unter `http://localhost:3000/shop-api` auf (`src/lib/vendure-client.ts`, mit `credentials: 'include'`). Das funktioniert, weil der Server CORS mit `origin: true` und `credentials: true` erlaubt. Asset-URLs liefert Vendure ebenfalls absolut auf Port 3000 aus — ein Dev-Proxy ist nicht nötig.
 
 ```bash
 # Server starten

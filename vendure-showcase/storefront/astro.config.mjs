@@ -21,9 +21,5 @@ export default defineConfig({
   output: 'static',
   server: {
     port: 5173,
-    proxy: {
-      '/shop-api': 'http://localhost:3000',
-      '/assets': 'http://localhost:3000',
-    },
   },
 });
