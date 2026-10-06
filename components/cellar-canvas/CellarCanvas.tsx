@@ -253,8 +253,13 @@ export function CellarCanvas({
   const placeholderRef = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     if (!portalHost) return
+    // Moving the node blurs whatever had focus inside it — the fullscreen
+    // button, or Fabric's hidden textarea mid text-edit. Give focus back.
+    const focused = document.activeElement
+    const refocus = focused instanceof HTMLElement && portalHost.contains(focused) ? focused : null
     const target = isFullscreen ? document.body : placeholderRef.current
     target?.appendChild(portalHost)
+    if (refocus && document.activeElement !== refocus) refocus.focus({ preventScroll: true })
     // Fabric caches the canvas offset for pointer + hidden-textarea maths.
     bridge.current?.canvas.calcOffset()
   }, [portalHost, isFullscreen, bridge])
