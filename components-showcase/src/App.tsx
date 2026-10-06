@@ -21,6 +21,8 @@ const ShopPage        = lazy(() => import('./pages/shop').then(m => ({ default: 
 const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
 const DesignerPage    = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
 const DataPage        = lazy(() => import('./pages/data').then(m => ({ default: m.DataPage })))
+// Temporär: Werkbank für Paper-Note-Entwürfe, wird nach der Übernahme entfernt
+const LabPaperNotePage = lazy(() => import('./pages/lab-paper-note').then(m => ({ default: m.LabPaperNotePage })))
 
 const queryClient = new QueryClient()
 
@@ -71,6 +73,7 @@ const router = createBrowserRouter([
       { path: 'data',          element: withSuspense(<DataPage />) },
       { path: 'transitions',   element: withSuspense(<TransitionsPage />) },
       { path: 'designer',      element: withSuspense(<DesignerPage />) },
+      { path: 'lab/paper-note', element: withSuspense(<LabPaperNotePage />) },
       { path: 'wine/:slug',    element: <WineDetailPage /> },
     ],
   },
