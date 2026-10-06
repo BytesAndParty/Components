@@ -7,6 +7,7 @@ import { SparklesText } from '@components/sparkles-text/sparkles-text'
 import { Highlighter } from '@components/highlighter/highlighter'
 import { Paragraph } from '@components/paragraph/paragraph'
 import { PullQuote } from '@components/pull-quote/pull-quote'
+import { PaperNote } from '@components/paper-note/paper-note'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -194,6 +195,71 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>PullQuote · semantic tokens · no animation</span>
           <span>Compose with BlurFade for entrance · light/dark/accent aware</span>
+        </div>
+      </Section>
+
+      <Section
+        title="PaperNote"
+        description="Scrapbook-Notiz aus echtem Papier: variant='torn' (rundum gerissen, Washi-Tape, fällt beim Scrollen ins Bild) und variant='notepad' (vom Block gerissen, Kreppband, statisch). Papierfarben kraft · cream · dark bleiben bewusst theme-unabhängig; der Pfeil übernimmt die Textfarbe."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="torn" · Caveat
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-24 px-4 pt-8 pb-16">
+              <PaperNote paper="kraft" rotate={-3} tape arrow="right">
+                Kellerführung am Samstag – wir öffnen die alten Fässer nur für euch.
+              </PaperNote>
+              <PaperNote paper="cream" rotate={2}>
+                Wir schenken dir ein Glas vom 2019er zum Anstoßen.
+              </PaperNote>
+              <PaperNote paper="dark" rotate={-1.5} tape arrow="down">
+                Auf einen unvergesslichen Abend zwischen den Reben!
+              </PaperNote>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="notepad" · Kalam · cream mit Linien
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-24 px-4 pt-8 pb-16">
+              <PaperNote variant="notepad" paper="kraft" rotate={-2} tape arrow="right">
+                Kellerführung am Samstag – wir öffnen die alten Fässer nur für euch.
+              </PaperNote>
+              <PaperNote variant="notepad" paper="cream">
+                Wir schenken dir ein Glas vom 2019er zum Anstoßen.
+              </PaperNote>
+              <PaperNote variant="notepad" paper="dark" rotate={-1} tape arrow="down">
+                Auf einen unvergesslichen Abend zwischen den Reben!
+              </PaperNote>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · langer Inhalt · sehr kurz · ohne Drehung · Pfeil in Akzentfarbe
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-8">
+              <PaperNote paper="kraft" rotate={4} tape>
+                Bis bald!
+              </PaperNote>
+              <PaperNote paper="cream" rotate={0} arrow="left" className="text-accent">
+                Ohne Drehung, Pfeil per text-accent eingefärbt.
+              </PaperNote>
+              <PaperNote variant="notepad" paper="cream" rotate={-0.5}>
+                Bitte festes Schuhwerk mitbringen: Der Weg durch die Riede ist steil und nach Regen rutschig.
+                Treffpunkt ist um 16 Uhr am Hoftor, die Führung dauert etwa zwei Stunden und endet im Keller.
+              </PaperNote>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>PaperNote · fixe Papierfarben · Fonts self-hosted via @fontsource</span>
+          <span>Deko aria-hidden · torn respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 
