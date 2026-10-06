@@ -8,7 +8,7 @@ Accent color picker dropdown with smooth oklch color interpolation between palet
 |---|---|
 | **Color transition** | On palette switch, the accent color interpolates from current → target via oklch with easeInOutCubic easing. Duration configurable via `granularity` prop. |
 | **Icon preview dots** | The 4 palette dots on the trigger icon reveal their actual oklch colors on hover via CSS `color` + `currentColor` trick (see below). |
-| **Trigger hover** | Subtle background fade (`rgba(255,255,255,0.08)`) on mouse enter/leave. |
+| **Trigger hover** | Subtle background fade (`color-mix(in oklch, var(--foreground) 8%, transparent)`) on mouse enter/leave — visible in dark and light mode. |
 | **Dropdown item hover** | Each palette option highlights with a translucent overlay on hover. |
 | **Active checkmark** | Currently selected palette shows a `✓` indicator plus a visually-hidden "current" suffix. |
 

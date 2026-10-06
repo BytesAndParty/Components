@@ -495,7 +495,7 @@ export function NavbarDropdownItem({
         width: '100%',
         ...style,
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+      onMouseEnter={e => (e.currentTarget.style.background = 'color-mix(in oklch, var(--foreground) 5%, transparent)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
     >
       {icon && (
@@ -554,7 +554,7 @@ export function NavbarIconButton({
       }}
       onMouseEnter={e => {
         e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
-        e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+        e.currentTarget.style.background = 'color-mix(in oklch, var(--foreground) 5%, transparent)'
       }}
       onMouseLeave={e => {
         e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'

@@ -10,7 +10,7 @@ Dark/light theme toggle button with View Transition API circle-reveal animation 
 | **Icon crossfade** | Sun and moon icons cross-transition via `rotate + scale(0↔1)` — the active icon scales in while the inactive scales out with a 90° rotation. |
 | **Sun rays rotate** | On hover, the sun's ray group rotates 30° and scales 1.15× over 0.8s. |
 | **Moon rock + stars** | On hover, the moon body rocks ±8°; three tiny stars twinkle in sequence with staggered delays. |
-| **Button hover** | Background fades to `rgba(255,255,255,0.08)` on hover. |
+| **Button hover** | Background fades to `color-mix(in oklch, var(--foreground) 8%, transparent)` on hover — visible in dark and light mode. |
 | **Reduced motion** | All CSS hover animations respect `prefers-reduced-motion: reduce`. |
 
 ## How It Works

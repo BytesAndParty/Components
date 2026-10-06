@@ -230,7 +230,7 @@ export function Stepper({
             "px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border cursor-pointer",
             isFirstStep
               ? "bg-transparent text-(--muted-foreground,#71717a) border-(--border,#2a2a2e) opacity-50 cursor-not-allowed"
-              : "bg-transparent text-(--foreground,#e4e4e7) border-(--border,#2a2a2e) hover:bg-white/5"
+              : "bg-transparent text-(--foreground,#e4e4e7) border-(--border,#2a2a2e) hover:bg-foreground/5"
           )}
         >
           {m.back}

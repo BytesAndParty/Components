@@ -176,7 +176,7 @@ export function CarouselPrevious({ className, hide, ...props }: React.ComponentP
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition-all hover:bg-white/10 disabled:opacity-0',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0',
         orientation === 'horizontal'
           ? '-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -200,7 +200,7 @@ export function CarouselNext({ className, hide, ...props }: React.ComponentProps
       disabled={!canScrollNext}
       onClick={scrollNext}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition-all hover:bg-white/10 disabled:opacity-0',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0',
         orientation === 'horizontal'
           ? '-right-12 top-1/2 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',

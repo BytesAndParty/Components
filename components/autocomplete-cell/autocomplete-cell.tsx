@@ -177,7 +177,7 @@ export function AutocompleteCell({
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={() => { onChange(''); inputRef.current?.focus() }}
               aria-label={m.clearLabel}
-              className="text-muted-foreground hover:text-foreground shrink-0 rounded-full p-1 transition-colors hover:bg-white/5"
+              className="text-muted-foreground hover:text-foreground shrink-0 rounded-full p-1 transition-colors hover:bg-foreground/5"
             >
               <X className="h-3.5 w-3.5" />
             </motion.button>

@@ -205,7 +205,7 @@ function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
           left: 0,
           height: 3,
           width: '100%',
-          background: 'rgba(255,255,255,0.05)',
+          background: 'color-mix(in oklch, var(--foreground) 5%, transparent)',
         }}
       >
         <div
@@ -272,7 +272,7 @@ function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
           transition: 'opacity 0.2s, background 0.15s',
         }}
         onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+          (e.currentTarget as HTMLElement).style.background = 'color-mix(in oklch, var(--foreground) 8%, transparent)';
         }}
         onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
           (e.currentTarget as HTMLElement).style.background = 'transparent';

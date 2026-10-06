@@ -139,7 +139,7 @@ export function PricingInteraction({
           borderRadius: '9999px',
           position: 'relative',
           width: '100%',
-          background: 'rgba(255,255,255,0.05)',
+          background: 'color-mix(in oklch, var(--foreground) 5%, transparent)',
           padding: '0.35rem',
           display: 'flex',
           alignItems: 'center',
@@ -185,7 +185,7 @@ export function PricingInteraction({
         >
           <div
             style={{
-              background: 'rgba(255,255,255,0.08)',
+              background: 'color-mix(in oklch, var(--foreground) 8%, transparent)',
               borderRadius: '9999px',
               width: '100%',
               height: '100%',

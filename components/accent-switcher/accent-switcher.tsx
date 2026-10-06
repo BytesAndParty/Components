@@ -283,7 +283,7 @@ export function AccentSwitcher({
 					height: '2.25rem',
 					borderRadius: '0.375rem',
 					border: 'none',
-					background: hovered ? 'rgba(255,255,255,0.08)' : 'transparent',
+					background: hovered ? 'color-mix(in oklch, var(--foreground) 8%, transparent)' : 'transparent',
 					color: 'inherit',
 					cursor: 'pointer',
 					transition: 'background 0.15s, box-shadow 0.15s linear',
@@ -356,7 +356,7 @@ export function AccentSwitcher({
 						style={{
 							height: '1px',
 							margin: '0.25rem -0.25rem',
-							background: 'rgba(255,255,255,0.08)',
+							background: 'color-mix(in oklch, var(--foreground) 8%, transparent)',
 						}}
 					/>
 
@@ -387,13 +387,13 @@ export function AccentSwitcher({
 									transition: 'background 0.1s',
 								}}
 								onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-									(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+									(e.currentTarget as HTMLElement).style.background = 'color-mix(in oklch, var(--foreground) 8%, transparent)';
 								}}
 								onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
 									(e.currentTarget as HTMLElement).style.background = 'transparent';
 								}}
 								onFocus={(e: React.FocusEvent<HTMLButtonElement>) => {
-									(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+									(e.currentTarget as HTMLElement).style.background = 'color-mix(in oklch, var(--foreground) 8%, transparent)';
 								}}
 								onBlur={(e: React.FocusEvent<HTMLButtonElement>) => {
 									(e.currentTarget as HTMLElement).style.background = 'transparent';

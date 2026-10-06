@@ -196,7 +196,7 @@ export function Footer({
         borderRadius: '2rem 2rem 0 0',
         padding: '3rem 1.5rem',
         background:
-          'radial-gradient(35% 128px at 50% 0%, rgba(255,255,255,0.06), transparent)',
+          'radial-gradient(35% 128px at 50% 0%, color-mix(in oklch, var(--foreground) 6%, transparent), transparent)',
         ...style,
       }}
     >
@@ -209,7 +209,7 @@ export function Footer({
           transform: 'translateX(-50%) translateY(-50%)',
           width: '33%',
           height: '1px',
-          background: 'rgba(255,255,255,0.15)',
+          background: 'color-mix(in oklch, var(--foreground) 15%, transparent)',
           borderRadius: '9999px',
           filter: 'blur(1px)',
         }}

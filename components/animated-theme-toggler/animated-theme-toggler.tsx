@@ -174,7 +174,7 @@ export function AnimatedThemeToggler({
           ...style,
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+          (e.currentTarget as HTMLElement).style.background = 'color-mix(in oklch, var(--foreground) 8%, transparent)';
         }}
         onMouseLeave={(e) => {
           (e.currentTarget as HTMLElement).style.background = 'transparent';
