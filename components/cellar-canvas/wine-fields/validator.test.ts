@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateCompliance } from './validator';
+import { validateCompliance, type ValidatableObject } from './validator';
 import type { FabricObjectMeta } from '../store/types';
 
 describe('EU Compliance Label Validator', () => {
@@ -60,5 +60,20 @@ describe('EU Compliance Label Validator', () => {
 
     const warnings = validateCompliance(mockObjects);
     expect(warnings.length).toBe(5);
+  });
+
+  it('counts only what gets printed: hidden fields and blank text are missing', () => {
+    const objects: ValidatableObject[] = [
+      { _fieldKey: 'alcoholPercent', visible: false, text: '13 % vol' },
+      { _fieldKey: 'volumeMl', text: '   ' },
+      { _fieldKey: 'allergenNote', text: 'enthält Sulfite' },
+      { _fieldKey: 'qrCode', visible: true },
+    ];
+
+    const keys = validateCompliance(objects).map(w => w.key);
+    expect(keys).toContain('alcoholPercent');
+    expect(keys).toContain('volumeMl');
+    expect(keys).not.toContain('allergenNote');
+    expect(keys).not.toContain('qrCode');
   });
 });

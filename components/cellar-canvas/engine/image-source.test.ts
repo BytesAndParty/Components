@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { imageSourceFromBlob } from './image-source'
+import { imageSourceFromBlob, encodingPlan, keepSmaller } from './image-source'
 
 describe('imageSourceFromBlob', () => {
   it('converts a blob into a data URL with the correct mime type', async () => {
@@ -27,5 +27,48 @@ describe('imageSourceFromBlob', () => {
     const url = await imageSourceFromBlob(blob)
 
     expect(url.startsWith('blob:')).toBe(false)
+  })
+})
+
+describe('encodingPlan', () => {
+  it('keeps transparency as PNG, whatever the source', () => {
+    expect(encodingPlan('image/png', true)).toEqual(['image/png'])
+    expect(encodingPlan('image/webp', true)).toEqual(['image/png'])
+  })
+
+  it('sends lossy sources straight to JPEG', () => {
+    expect(encodingPlan('image/jpeg', false)).toEqual(['image/jpeg'])
+    expect(encodingPlan('image/webp', false)).toEqual(['image/jpeg'])
+    expect(encodingPlan('image/avif', false)).toEqual(['image/jpeg'])
+  })
+
+  it('tries PNG first for opaque lossless sources, JPEG only as fallback', () => {
+    expect(encodingPlan('image/png', false)).toEqual(['image/png', 'image/jpeg'])
+    expect(encodingPlan('image/gif', false)).toEqual(['image/png', 'image/jpeg'])
+  })
+})
+
+describe('keepSmaller', () => {
+  const blobOf = (bytes: number) => new Blob([new Uint8Array(bytes)])
+
+  it('keeps the original when the re-encode is not smaller', () => {
+    const original = blobOf(100)
+    expect(keepSmaller(original, blobOf(100), false)).toBe(original)
+    expect(keepSmaller(original, blobOf(150), false)).toBe(original)
+  })
+
+  it('takes a smaller re-encode', () => {
+    const encoded = blobOf(60)
+    expect(keepSmaller(blobOf(100), encoded, false)).toBe(encoded)
+  })
+
+  it('always takes the result of a downscale', () => {
+    const encoded = blobOf(150)
+    expect(keepSmaller(blobOf(100), encoded, true)).toBe(encoded)
+  })
+
+  it('falls back to the original when encoding failed', () => {
+    const original = blobOf(100)
+    expect(keepSmaller(original, null, true)).toBe(original)
   })
 })
