@@ -16,9 +16,10 @@ Text highlight/underline effect that animates when scrolled into view.
 1. **IntersectionObserver**: When `animateOnView` is true, an observer watches the element. Once 50% visible, `isVisible` is set to true and the observer disconnects (fire-once).
 2. **CSS background trick**: The element uses `background-size` transition from `0%` to `100%` with `no-repeat` and `left` position. This creates a smooth reveal without any JavaScript animation loop.
 3. **Two modes**:
-   - `'highlight'`: Full-height background behind the text (20% opacity via hex alpha `33`)
+   - `'highlight'`: Full-height background behind the text at 20 % opacity via `color-mix(in oklch, <color> 20%, transparent)`, so any CSS color format works (hex, `oklch()`, named).
    - `'underline'`: 2px-tall bar at the bottom of the text
-4. **CSS variable support**: When the color is a `var()` reference, the alpha modification is skipped.
+4. **CSS variable support**: When the color is a `var()` reference, the 20 % tint is skipped and the variable is used as is (default `var(--accent)`).
+5. **Reduced motion**: A style block injected once (`__highlighter-styles__`) sets `transition: none !important` under `prefers-reduced-motion: reduce`. The highlight then appears instantly when scrolled into view.
 
 ## Props
 
@@ -26,7 +27,7 @@ Text highlight/underline effect that animates when scrolled into view.
 |---|---|---|---|
 | `children` | `ReactNode` | required | Text content to highlight |
 | `action` | `'highlight' \| 'underline'` | `'highlight'` | Effect type |
-| `color` | `string` | `'var(--accent)'` | Highlight/underline color |
+| `color` | `string` | `'var(--accent)'` | Highlight/underline color, any CSS color format |
 | `duration` | `number` | `800` | Animation duration in ms |
 | `animateOnView` | `boolean` | `true` | Trigger on scroll into view |
 | `delay` | `number` | `0` | Delay before animation in ms |
@@ -35,4 +36,4 @@ Text highlight/underline effect that animates when scrolled into view.
 
 ## Dependencies
 
-None (React only, uses IntersectionObserver API).
+None (React only, uses IntersectionObserver API). `cn()` from `@components/lib/utils`.

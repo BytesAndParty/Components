@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, type ReactNode, type CSSProperties } from 'react'
+import { cn } from '../lib/utils'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -8,7 +9,7 @@ export interface HighlighterProps {
   children: ReactNode
   /** Type of highlight effect */
   action?: HighlightAction
-  /** Highlight color (default: accent) */
+  /** Highlight color, any CSS color (default: accent). `highlight` uses it at 20 % unless it is a `var()`. */
   color?: string
   /** Animation duration in ms (default: 800) */
   duration?: number
@@ -20,26 +21,29 @@ export interface HighlighterProps {
   style?: CSSProperties
 }
 
-// ─── Keyframes (injected once) ──────────────────────────────────────────────────
+// ─── Styles (injected once) ─────────────────────────────────────────────────────
 
-const STYLE_ID = '__highlighter-keyframes__'
+const STYLE_ID = '__highlighter-styles__'
+const CLASS = '__highlighter'
 
-function injectKeyframes() {
+// !important, weil die Transition inline am Span sitzt.
+function injectStyles() {
   if (typeof document === 'undefined') return
   if (document.getElementById(STYLE_ID)) return
   const style = document.createElement('style')
   style.id = STYLE_ID
   style.textContent = `
-    @keyframes highlighter-reveal {
-      from { background-size: 0% 100%; }
-      to   { background-size: 100% 100%; }
-    }
-    @keyframes underline-reveal {
-      from { background-size: 0% 2px; }
-      to   { background-size: 100% 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      .${CLASS} { transition: none !important; }
     }
   `
   document.head.appendChild(style)
+}
+
+// Farbe mit Transparenz für jedes CSS-Farbformat (früher Hex-Suffix, das brach bei oklch()).
+// var()-Farben bleiben wie bisher unverändert.
+function tint(color: string, percent: number) {
+  return color.startsWith('var(') ? color : `color-mix(in oklch, ${color} ${percent}%, transparent)`
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
@@ -47,7 +51,7 @@ function injectKeyframes() {
 export function Highlighter({
   children,
   action = 'highlight',
-  color = 'var(--accent, #6366f1)',
+  color = 'var(--accent)',
   duration = 800,
   animateOnView = true,
   delay = 0,
@@ -58,7 +62,7 @@ export function Highlighter({
   const [isVisible, setIsVisible] = useState(!animateOnView)
 
   useEffect(() => {
-    injectKeyframes()
+    injectStyles()
   }, [])
 
   useEffect(() => {
@@ -79,10 +83,7 @@ export function Highlighter({
   }, [animateOnView])
 
   const isHighlight = action === 'highlight'
-  const alpha = isHighlight ? '33' : 'ff'
-  const bgColor = color.startsWith('var(')
-    ? color
-    : `${color}${alpha}`
+  const bgColor = isHighlight ? tint(color, 20) : color
 
   const baseStyle: CSSProperties = {
     backgroundRepeat: 'no-repeat',
@@ -90,9 +91,7 @@ export function Highlighter({
     backgroundSize: isVisible
       ? isHighlight ? '100% 100%' : '100% 2px'
       : isHighlight ? '0% 100%' : '0% 2px',
-    backgroundImage: isHighlight
-      ? `linear-gradient(${bgColor}, ${bgColor})`
-      : `linear-gradient(${color.startsWith('var(') ? color : bgColor}, ${color.startsWith('var(') ? color : bgColor})`,
+    backgroundImage: `linear-gradient(${bgColor}, ${bgColor})`,
     transition: `background-size ${duration}ms ease ${delay}ms`,
     ...(isHighlight
       ? { borderRadius: '2px', padding: '2px 4px' }
@@ -101,7 +100,7 @@ export function Highlighter({
   }
 
   return (
-    <span ref={ref} className={className} style={baseStyle}>
+    <span ref={ref} className={cn(CLASS, className)} style={baseStyle}>
       {children}
     </span>
   )
