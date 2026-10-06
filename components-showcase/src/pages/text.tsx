@@ -56,7 +56,7 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="Highlighter" description="Text highlighting and underline effects that animate on scroll-into-view.">
+      <Section title="Highlighter" description="Text highlighting, underline and hand-drawn marker effects that animate on scroll-into-view." canReload>
         <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
           <p className="text-foreground text-lg leading-relaxed">
             Unser
@@ -66,6 +66,14 @@ export function TextPage() {
             und entfaltet am Gaumen eine
             {' '}<Highlighter action="highlight" color="#10b981" delay={600}>bemerkenswerte Komplexität</Highlighter>.
           </p>
+          <p className="text-foreground text-lg leading-loose">
+            Bei der Riedenwanderung zeigt Simon euch
+            {' '}<Highlighter action="marker">die steilsten Lagen von Sooß</Highlighter>{' '}
+            und erzählt, warum
+            {' '}<Highlighter action="marker" color="oklch(0.85 0.13 140)" delay={300}>der Grüne Veltliner hier oben mehr Säure und mehr Pfeffer bekommt als unten im Tal</Highlighter>.
+            Danach geht es
+            {' '}<Highlighter action="marker" color="oklch(0.87 0.13 88)" delay={600}>in den Keller</Highlighter>.
+          </p>
           <div className="flex gap-4">
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <span className="inline-block h-3 w-3 rounded" style={{ background: '#6366f133' }} />
@@ -74,6 +82,10 @@ export function TextPage() {
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <span className="inline-block h-1 w-3 rounded" style={{ background: '#f43f5e' }} />
               Underline
+            </div>
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <span className="inline-block h-2.5 w-4 rounded-[40%_60%_45%_55%]" style={{ background: 'color-mix(in oklch, var(--accent) 45%, transparent)' }} />
+              Marker
             </div>
           </div>
         </div>

@@ -3,13 +3,21 @@ import { cn } from '../lib/utils'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-export type HighlightAction = 'highlight' | 'underline'
+export type HighlightAction = 'highlight' | 'underline' | 'marker'
 
 export interface HighlighterProps {
   children: ReactNode
-  /** Type of highlight effect */
+  /**
+   * Type of highlight effect.
+   * - `highlight`: flat full-height background
+   * - `underline`: 2px line
+   * - `marker`: hand-drawn felt-tip stroke, one per line, slightly below the text with uneven ends
+   */
   action?: HighlightAction
-  /** Highlight color, any CSS color (default: accent). `highlight` uses it at 20 % unless it is a `var()`. */
+  /**
+   * Highlight color, any CSS color (default: accent). `highlight` uses it at 20 % unless it is a `var()`,
+   * `marker` always at 45 %.
+   */
   color?: string
   /** Animation duration in ms (default: 800) */
   duration?: number
@@ -81,6 +89,29 @@ export function Highlighter({
     observer.observe(ref.current)
     return () => observer.disconnect()
   }, [animateOnView])
+
+  if (action === 'marker') {
+    const ink = `color-mix(in oklch, ${color} 45%, transparent)`
+    const markerStyle: CSSProperties = {
+      // Weich auslaufende Enden, Strich leicht unter die Schrift gezogen.
+      backgroundImage: `linear-gradient(100deg, transparent 0%, ${ink} 3%, ${ink} 96%, transparent 100%)`,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: '0 78%',
+      backgroundSize: isVisible ? '100% 82%' : '0% 82%',
+      // Ein eigener Strich pro Zeile statt einer durchgehenden Fläche.
+      WebkitBoxDecorationBreak: 'clone',
+      boxDecorationBreak: 'clone',
+      padding: '0.1em 0.45em',
+      borderRadius: '0.5em 1.1em 0.6em 0.9em / 1em 0.45em 0.9em 0.5em',
+      transition: `background-size ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+      ...style,
+    }
+    return (
+      <span ref={ref} className={cn(CLASS, className)} style={markerStyle}>
+        {children}
+      </span>
+    )
+  }
 
   const isHighlight = action === 'highlight'
   const bgColor = isHighlight ? tint(color, 20) : color
