@@ -1,0 +1,11 @@
+node_modules
+dist
+data
+.vendure
+.tanstack
+.DS_Store
+.env
+.env.*
+!.env.example
+# wird beim Dashboard-Build neu generiert
+src/gql

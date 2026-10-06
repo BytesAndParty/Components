@@ -1,0 +1,39 @@
+# Showcase-Stack auf dem Contabo-VPS, neben Buchart58-Staging. Läuft als User `deploy`
+# unter ~/vendure-showcase. Nur 127.0.0.1:3010 ist erreichbar, Caddy reicht das nach vorn.
+# Postgres hat keinen Port nach außen. Ablauf: README → „Deploy auf den VPS“.
+services:
+  db:
+    image: docker.io/library/postgres:18
+    container_name: vendure-showcase-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  server:
+    image: localhost/vendure-showcase-server:latest
+    container_name: vendure-showcase-server
+    restart: unless-stopped
+    env_file: .env.prod
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+    ports:
+      - "127.0.0.1:3010:3000"
+    volumes:
+      - assets:/app/data/assets
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  assets:
