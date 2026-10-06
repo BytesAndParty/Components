@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import { useDesignerStore } from '../store/designer-store'
 import type { FabricBridge } from './fabric-bridge'
 import type { CellarCanvasState } from '../store/types'
@@ -26,10 +26,16 @@ function readDraft(storageKey: string | null): object | null {
  * former 100 ms delay raced the bridge's own initial snapshot, and Undo right
  * after a reload could wipe the restored draft.
  *
- * Re-runs only when dimensions change (canvas is recreated). Never on view
- * toggles like fullscreen: a re-run would reload the debounced localStorage
- * draft over the live canvas and drop the edits of the last second. See the
- * sibling effect in `CellarCanvas.tsx` for the fullscreen-only re-fit.
+ * Re-runs only when the dimensions (canvas is recreated) or `storageKey`
+ * change. Never on view toggles like fullscreen: a re-run would reload the
+ * debounced localStorage draft over the live canvas and drop the edits of the
+ * last second. See the sibling effect in `CellarCanvas.tsx` for the
+ * fullscreen-only re-fit.
+ *
+ * `initialState` is read once, on mount. A new object identity — e.g. an
+ * embedder feeding every `onSave` result back as `initialState` — must not
+ * reload the scene and wipe undo stack, zoom and selection. To load a
+ * different document, remount the editor with a new React `key`.
  */
 export function useCanvasRestore(
   bridge:       RefObject<FabricBridge | null>,
@@ -37,13 +43,15 @@ export function useCanvasRestore(
   storageKey:   string | null,
   deps:         { widthMm: number; heightMm: number }
 ) {
+  const initialStateRef = useRef(initialState)
+
   useEffect(() => {
     const b = bridge.current
     if (!b) return
     let cancelled = false
 
     const restore = async () => {
-      const state = initialState ?? readDraft(storageKey)
+      const state = initialStateRef.current ?? readDraft(storageKey)
       if (state) {
         try {
           await b.restoreState(state)
@@ -61,5 +69,5 @@ export function useCanvasRestore(
     return () => {
       cancelled = true
     }
-  }, [bridge, initialState, storageKey, deps.widthMm, deps.heightMm])
+  }, [bridge, storageKey, deps.widthMm, deps.heightMm])
 }
