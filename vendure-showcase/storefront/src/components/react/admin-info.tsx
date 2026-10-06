@@ -2,9 +2,12 @@ import { ExternalLink, Plug, Terminal } from 'lucide-react';
 import { useT } from '@/lib/i18n';
 import { Providers } from './Providers';
 
-const ADMIN_URL = 'http://localhost:3000/admin';
-const SHOP_API_URL = 'http://localhost:3000/shop-api';
-const ADMIN_API_URL = 'http://localhost:3000/admin-api';
+// Im Deploy der Vendure-Server auf dem VPS, lokal der Dev-Server.
+const DEPLOYED_VENDURE_URL = import.meta.env.PUBLIC_VENDURE_URL;
+const VENDURE_URL = DEPLOYED_VENDURE_URL || 'http://localhost:3000';
+const ADMIN_URL = `${VENDURE_URL}/dashboard/`;
+const SHOP_API_URL = `${VENDURE_URL}/shop-api`;
+const ADMIN_API_URL = `${VENDURE_URL}/admin-api`;
 const PLUGIN_PATH = 'server/src/plugins/wine-showcase.plugin.ts';
 
 function AdminInfoInner() {
@@ -33,14 +36,19 @@ function AdminInfoInner() {
                 </a>
               </dd>
             </div>
-            <div className="flex gap-3">
-              <dt className="w-24 shrink-0 font-semibold">{t.adminPanelUser}</dt>
-              <dd className="font-mono">superadmin</dd>
-            </div>
-            <div className="flex gap-3">
-              <dt className="w-24 shrink-0 font-semibold">{t.adminPanelPassword}</dt>
-              <dd className="font-mono">superadmin</dd>
-            </div>
+            {/* Dev-Login; auf dem VPS ist das Passwort ein Secret und wird nicht gezeigt */}
+            {!DEPLOYED_VENDURE_URL && (
+              <>
+                <div className="flex gap-3">
+                  <dt className="w-24 shrink-0 font-semibold">{t.adminPanelUser}</dt>
+                  <dd className="font-mono">superadmin</dd>
+                </div>
+                <div className="flex gap-3">
+                  <dt className="w-24 shrink-0 font-semibold">{t.adminPanelPassword}</dt>
+                  <dd className="font-mono">superadmin</dd>
+                </div>
+              </>
+            )}
           </dl>
           <a
             href={ADMIN_URL}
