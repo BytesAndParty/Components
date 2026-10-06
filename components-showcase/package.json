@@ -11,6 +11,8 @@
   "dependencies": {
     "@ark-ui/react": "^5.36.2",
     "@chenglou/pretext": "^0.0.5",
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/kalam": "^5.3.0",
     "@lottiefiles/dotlottie-react": "^0.19.1",
     "@number-flow/react": "^0.6.0",
     "@tanstack/react-form": "^1.29.1",

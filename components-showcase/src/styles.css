@@ -7,6 +7,10 @@
    silently collapse to 0/2px. */
 @source "../../components/**/*.{ts,tsx}";
 
+/* Self-hosted Handschriften für PaperNote (torn → Caveat, notepad → Kalam). */
+@import "@fontsource/caveat/400.css";
+@import "@fontsource/kalam/400.css";
+
 /* ── Mobile hover guard ──────────────────────────────────
    Overrides Tailwind's hover: variant so decorative hover
    effects only fire on real pointer devices (mouse/trackpad).
