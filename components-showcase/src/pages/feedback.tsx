@@ -16,7 +16,7 @@ function ToastDemoButtons() {
     <div className="flex flex-wrap gap-2">
       <button
         onClick={() => add({ title: 'Success', description: 'Action completed successfully.', variant: 'success' })}
-        className="border-border bg-card text-foreground cursor-pointer rounded-md border px-3.5 py-1.5 text-[0.8125rem] transition-colors hover:bg-white/5 active:scale-95"
+        className="border-border bg-card text-foreground cursor-pointer rounded-md border px-3.5 py-1.5 text-[0.8125rem] transition-colors hover:bg-foreground/5 active:scale-95"
       >
         Show Toast
       </button>
@@ -34,13 +34,13 @@ function NumberTickerDemo() {
       <div className="flex gap-2">
         <button
           onClick={() => setCount(v => v + 1)}
-          className="border-border bg-card text-foreground flex h-9 w-9 items-center justify-center rounded-lg border text-lg font-medium transition hover:bg-white/5"
+          className="border-border bg-card text-foreground flex h-9 w-9 items-center justify-center rounded-lg border text-lg font-medium transition hover:bg-foreground/5"
         >
           +
         </button>
         <button
           onClick={() => setCount(Math.floor(Math.random() * 999) + 1)}
-          className="border-border bg-card text-foreground h-9 rounded-lg border px-3 text-sm transition hover:bg-white/5"
+          className="border-border bg-card text-foreground h-9 rounded-lg border px-3 text-sm transition hover:bg-foreground/5"
         >
           Random
         </button>

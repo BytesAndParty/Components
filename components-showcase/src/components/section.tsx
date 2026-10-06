@@ -15,7 +15,7 @@ export function Section({ title, description, children, canReload = false }: {
         {canReload && (
           <button
             onClick={() => setReloads(r => r + 1)}
-            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-md p-2 transition-colors hover:bg-white/5"
+            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-md p-2 transition-colors hover:bg-foreground/5"
             title="Animation neu starten"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -178,7 +178,7 @@ function FormInputDemo() {
         <button
           type="button"
           onClick={() => { setForm({ name: '', email: '', phone: '', age: '', website: '' }); setErrors({}) }}
-          className="border-border text-foreground cursor-pointer rounded-md border bg-transparent px-4 py-2 text-sm transition-colors hover:bg-white/5"
+          className="border-border text-foreground cursor-pointer rounded-md border bg-transparent px-4 py-2 text-sm transition-colors hover:bg-foreground/5"
         >
           Zurücksetzen
         </button>
@@ -205,7 +205,7 @@ function ImageUploadDemo() {
       <div
         onClick={!previewUrl ? handleThumbnailClick : undefined}
         className={`relative flex h-48 items-center justify-center transition-colors ${
-          previewUrl ? 'cursor-default' : 'cursor-pointer bg-white/2 hover:bg-white/4'
+          previewUrl ? 'cursor-default' : 'cursor-pointer bg-foreground/2 hover:bg-foreground/4'
         }`}
       >
         {previewUrl ? (
@@ -288,7 +288,7 @@ function PasswordConfirmationDemo() {
       </div>
       {!password && (
         <p className="text-muted-foreground text-[12px]">
-          Kein Passwort gesetzt — Demo prüft gegen <code className="rounded bg-white/5 px-1">demo1234</code>.
+          Kein Passwort gesetzt — Demo prüft gegen <code className="rounded bg-foreground/5 px-1">demo1234</code>.
         </p>
       )}
     </div>
@@ -370,7 +370,7 @@ export function InputsPage() {
           </div>
 
           <p className="text-muted-foreground border-border border-t pt-1 text-[12px]">
-            Tipp: Mit <kbd className="border-border rounded border bg-white/5 px-1.5 py-0.5 text-[10px]">Tab</kbd> auf das Icon fokussieren — der Tooltip öffnet auch via Keyboard.
+            Tipp: Mit <kbd className="border-border rounded border bg-foreground/5 px-1.5 py-0.5 text-[10px]">Tab</kbd> auf das Icon fokussieren — der Tooltip öffnet auch via Keyboard.
           </p>
         </div>
       </Section>

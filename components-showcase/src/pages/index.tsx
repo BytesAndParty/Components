@@ -32,7 +32,7 @@ export function IndexPage() {
               {group.components.map((c) => (
                 <span
                   key={c}
-                  className="border-border text-muted-foreground rounded-full border bg-white/5 px-2 py-0.5 text-[0.6875rem]"
+                  className="border-border text-muted-foreground rounded-full border bg-foreground/5 px-2 py-0.5 text-[0.6875rem]"
                 >
                   {c}
                 </span>
