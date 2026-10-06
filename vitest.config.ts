@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@components': path.resolve(__dirname, './components'),
-      '@': path.resolve(__dirname, './vendure-showcase/storefront/src'),
+      '@components': path.resolve(import.meta.dirname, './components'),
+      '@': path.resolve(import.meta.dirname, './vendure-showcase/storefront/src'),
     },
   },
   test: {

@@ -5,7 +5,7 @@ import path from 'path'
 import fs from 'fs'
 
 const nm = (pkg: string) => {
-  const p = path.resolve(__dirname, `node_modules/${pkg}`)
+  const p = path.resolve(import.meta.dirname, `node_modules/${pkg}`)
   return fs.existsSync(p) ? p : pkg
 }
 
@@ -22,11 +22,11 @@ export default defineConfig(({ command }) => ({
     }),
     tailwindcss(),
   ],
-  publicDir: path.resolve(__dirname, '../_public_'),
+  publicDir: path.resolve(import.meta.dirname, '../_public_'),
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-      '@components': path.resolve(__dirname, '../components'),
+      '@': path.resolve(import.meta.dirname, 'src'),
+      '@components': path.resolve(import.meta.dirname, '../components'),
       'lucide-react':   nm('lucide-react'),
       'clsx':           nm('clsx'),
       'tailwind-merge': nm('tailwind-merge'),

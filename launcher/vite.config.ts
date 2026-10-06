@@ -13,5 +13,5 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  publicDir: path.resolve(__dirname, '../_public_'),
+  publicDir: path.resolve(import.meta.dirname, '../_public_'),
 })
