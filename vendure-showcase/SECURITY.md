@@ -13,6 +13,12 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 
 ## Applied
 
+### 2026-10-06 — Härtung für den öffentlichen Server (VPS)
+- **Was:** Der Server läuft öffentlich auf dem Contabo-VPS hinter Caddy (Deploy: [server/README.md](server/README.md#deploy-auf-den-vps)). Die Storefront bleibt lokal.
+- **CORS:** [`vendure-config.ts`](server/src/vendure-config.ts) wertet `CORS_ORIGINS` außerhalb von dev als Allow-List aus. Auf dem VPS ist die Liste leer, das Dashboard läuft same-origin. `origin: true` gilt nur noch in dev.
+- **Secrets:** `COOKIE_SECRET` ist jetzt tatsächlich verdrahtet (`authOptions.cookieOptions.secret`). Superadmin-Passwort, Cookie-Secret und DB-Passwort werden auf dem Server zufällig erzeugt und liegen nur in `~deploy/vendure-showcase/.env.prod`.
+- **Netz:** Postgres hat keinen Port nach außen, der Server hört nur auf `127.0.0.1:3010`. `trustProxy: 1` hinter Caddy.
+
 ### 2026-05-24 — Slug Allow-List Validation
 - **Was:** [`wineHref()`](storefront/src/lib/utils.ts) + [`isValidWineSlug()`](storefront/src/lib/utils.ts) Regex `^[a-z0-9]+(?:-[a-z0-9]+)*$`, max 100 Zeichen.
 - **Wo:** [`wine-card.tsx`](storefront/src/components/react/wine-card.tsx), [`cart.tsx`](storefront/src/components/react/cart.tsx), [`pages/wine/[slug].astro`](storefront/src/pages/wine/[slug].astro) `getStaticPaths`.
@@ -71,11 +77,6 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 - **Status:** nicht implementiert.
 - **Warum nicht jetzt:** keine Tracking-/Analytics-Cookies, nur Vendure-Session.
 - **Trigger:** sobald Analytics, Marketing-Pixel, oder Drittanbieter-Skripte hinzukommen.
-
-### CORS Allow-List
-- **Status:** `vendure-config.ts` erlaubt fest jede Origin (`cors: { origin: true, credentials: true }`). Die Variable `CORS_ORIGINS` aus `.env.example` wird nicht ausgewertet.
-- **Warum nicht jetzt:** Storefront läuft nur lokal, kein öffentlich erreichbarer Server.
-- **Trigger:** vor dem ersten Produktiv-Deploy. Dann `CORS_ORIGINS` parsen und als Allow-List an `apiOptions.cors.origin` übergeben (nur die Storefront-Domain[s]); `credentials: true` nur zusammen mit expliziten Origins, nie mit `origin: true`.
 
 ### Rate Limiting
 - **Status:** nicht implementiert (Sache des Vendure-Servers / Reverse Proxy).

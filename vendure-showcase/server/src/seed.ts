@@ -12,7 +12,8 @@
  *         Customers, Promotions.
  */
 
-// Auf dem VPS: ADMIN_URL=http://localhost:3010/admin-api, Login aus .env.prod
+// Auf dem VPS läuft der Seed im Server-Container (node dist/seed.js), dort passen die Defaults
+// und der Login kommt aus .env.prod. ADMIN_URL nur setzen, um von außerhalb gegen einen Port zu seeden.
 const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:3000/admin-api';
 const SUPERADMIN_USERNAME = process.env.SUPERADMIN_USERNAME ?? 'superadmin';
 const SUPERADMIN_PASSWORD = process.env.SUPERADMIN_PASSWORD ?? 'superadmin';

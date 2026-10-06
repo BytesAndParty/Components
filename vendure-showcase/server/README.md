@@ -144,6 +144,81 @@ DB_TYPE=postgres DB_HOST=localhost bun run dev
 
 ---
 
+## Deploy auf den VPS
+
+Der Server läuft öffentlich auf dem Contabo-VPS von Buchart58, als eigener Stack neben
+Buchart58-Staging. Die Storefront wird **nicht** deployt, sie bleibt lokal.
+
+| | |
+|---|---|
+| URL | https://vendure-showcase.169-58-203-37.sslip.io (`/` leitet auf `/dashboard/` um) |
+| Endpunkte | `/dashboard/`, `/shop-api`, `/admin-api`, `/assets/…` |
+| Hostname | [sslip.io](https://sslip.io) löst den Namen ohne DNS-Eintrag auf die VPS-IP auf, Caddy holt das Zertifikat |
+| Stack | `compose.prod.yaml`: Server + Postgres 18, Podman rootless als `deploy` unter `~/vendure-showcase/` |
+| Netz | Caddy → `127.0.0.1:3010`. Postgres nur im Pod-Netz |
+| Secrets | `~/vendure-showcase/.env.prod` auf dem Server (nur `deploy` lesbar), nie im Repo |
+
+Server, Zugänge, Caddy und Podman-Eigenheiten sind im Buchart58-Repo dokumentiert
+(`vault/Decisions/hosting-deployment.md`, `vault/Learnings/podman/podman-auf-dem-vps.md`).
+Der SSH-Key braucht eine Passphrase, vorher einmal `ssh-add --apple-use-keychain ~/.ssh/buchart58_vps`.
+
+### Einmalig: Stack-Verzeichnis, Secrets, Caddy
+
+```bash
+# Als deploy: Verzeichnis + .env.prod mit Zufallswerten (Passwörter nie in einen Chat kopieren)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 'mkdir -p ~/vendure-showcase && cd ~/vendure-showcase && umask 077 && cat > .env.prod <<EOF
+DB_NAME=vendure_showcase
+DB_USER=vendure
+DB_PASSWORD=$(openssl rand -hex 24)
+SUPERADMIN_USERNAME=superadmin
+SUPERADMIN_PASSWORD=$(openssl rand -hex 16)
+COOKIE_SECRET=$(openssl rand -hex 32)
+PUBLIC_API_URL=https://vendure-showcase.169-58-203-37.sslip.io
+EOF'
+
+# Als ops: Site-Block an /etc/caddy/Caddyfile anhängen, dann validieren + reload
+#   vendure-showcase.169-58-203-37.sslip.io {
+#       redir / /dashboard/
+#       reverse_proxy 127.0.0.1:3010
+#   }
+sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy
+```
+
+### Deployen (vom Repo-Root auf dem Laptop)
+
+```bash
+# 1. Code auf den Server (ohne node_modules, Builds, Daten, .env)
+rsync -az --delete --exclude node_modules --exclude dist --exclude data --exclude .vendure \
+  --exclude .tanstack --exclude .env --exclude src/gql --exclude .DS_Store \
+  -e "ssh -i ~/.ssh/buchart58_vps" vendure-showcase/server/ deploy@169.58.203.37:/home/deploy/vendure-showcase-build/
+
+# 2. Image auf dem Server bauen (nicht lokal: Cross-Build auf Apple Silicon läuft in Speichermangel).
+#    --ulimit ist Pflicht, sonst scheitert der Dashboard-Build (siehe Kopf des Containerfile)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  "cd ~/vendure-showcase-build && podman build --ulimit nofile=65536:65536 -f Containerfile -t vendure-showcase-server ."
+
+# 3. Stack neu erzeugen. Output verwerfen: podman-compose gibt Secrets im Klartext aus
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  "cp ~/vendure-showcase-build/compose.prod.yaml ~/vendure-showcase/ && cd ~/vendure-showcase \
+   && podman compose -f compose.prod.yaml --env-file .env.prod up -d --force-recreate >/dev/null 2>&1; podman ps"
+
+# 4. Seed (idempotent). Läuft im Server-Container: tsc hat seed.ts nach dist/seed.js gebaut,
+#    Superadmin-Login und localhost:3000 sind dort schon gesetzt. Kein bun install auf dem Host
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  "podman exec vendure-showcase-server node dist/seed.js"
+
+# Superadmin-Passwort nachsehen: nur selbst, nie in einen Chat
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 "grep SUPERADMIN_ ~/vendure-showcase/.env.prod"
+```
+
+**Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
+nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
+Reboot des VPS startet der Stack nicht von selbst (rootless Podman ohne systemd-Unit, offen wie
+bei Buchart58). Der „Veröffentlichen"-Button meldet „Kein Build-Hook konfiguriert", weil keine
+Storefront deployt ist.
+
+---
+
 ## API-Endpunkte
 
 ### Shop API (`/shop-api`) — für den Storefront
@@ -236,10 +311,12 @@ Alle verfügbaren Variablen — siehe [.env.example](.env.example).
 | `DB_USER` | `vendure` | Datenbank-User |
 | `DB_PASSWORD` | `vendure_pw` | Datenbank-Passwort |
 | `PORT` | `3000` | Server-Port |
-| `CORS_ORIGINS` | `localhost:5173,...` | Derzeit **nicht ausgewertet** — `vendure-config.ts` erlaubt fest jede Origin (`origin: true`, `credentials: true`). Vor einem Produktiv-Deploy auf eine Allow-List umstellen. |
-| `SUPERADMIN_USERNAME` | `superadmin` | Admin-Login |
-| `SUPERADMIN_PASSWORD` | `superadmin` | Admin-Passwort |
-| `COOKIE_SECRET` | dev-secret | In Produktion ändern! |
+| `CORS_ORIGINS` | `""` | Allow-List (kommagetrennt), wirkt nur mit `NODE_ENV=production`. In dev ist jede Origin erlaubt. Leer in Produktion → kein Cross-Origin-Zugriff |
+| `PUBLIC_API_URL` | `""` | Öffentliche Basis-URL hinter Caddy (nur Produktion), daraus wird der `assetUrlPrefix` |
+| `SUPERADMIN_USERNAME` | `superadmin` | Admin-Login, auch vom Seed genutzt |
+| `SUPERADMIN_PASSWORD` | `superadmin` | Admin-Passwort, auch vom Seed genutzt. Greift nur beim ersten Start mit leerer DB |
+| `COOKIE_SECRET` | `dev-secret` | In Produktion ändern! |
+| `ADMIN_URL` | `http://localhost:3000/admin-api` | Nur Seed: Admin-API, gegen die geseedet wird |
 | `NETLIFY_BUILD_HOOK_URL` | `""` | Netlify Build Hook für den „Veröffentlichen"-Button (s.u.) |
 
 ---
