@@ -45,7 +45,7 @@ const COLOR_SAMPLE_INTERVAL = 20
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export function Particles({
-  particleColors = ['#ffffff'],
+  particleColors = ['var(--foreground)'],
   particleCount = 200,
   particleSpread: _particleSpread = 10,
   speed = 0.1,

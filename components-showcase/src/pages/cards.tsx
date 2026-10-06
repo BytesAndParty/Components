@@ -873,7 +873,7 @@ export function CardsPage() {
           }}
         >
           <Particles
-            particleColors={['var(--accent, #6366f1)', '#ffffff', '#a78bfa']}
+            particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
             particleCount={150}
             particleSpread={10}
             speed={0.3}
@@ -899,7 +899,7 @@ export function CardsPage() {
       <Section title="ParticlesCard" description="ParticlesCard-Wrapper: Particles als Hintergrund-Layer, beliebiger Content darüber.">
         <div className="grid grid-cols-2 gap-4">
           <ParticlesCard
-            particleColors={['var(--accent, #6366f1)', '#ffffff', '#a78bfa']}
+            particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
             particleCount={120}
             speed={0.2}
             style={{

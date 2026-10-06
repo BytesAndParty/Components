@@ -25,7 +25,7 @@ Canvas-based floating particle background with optional mouse interaction.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `particleColors` | `string[]` | `['#ffffff']` | Color palette — each particle picks a random color. `var(--token)` und `color-mix(…)` sind erlaubt und werden gegen den Container aufgelöst (siehe How It Works #5) |
+| `particleColors` | `string[]` | `['var(--foreground)']` | Color palette — each particle picks a random color. `var(--token)` und `color-mix(…)` sind erlaubt und werden gegen den Container aufgelöst (siehe How It Works #5) |
 | `particleCount` | `number` | `200` | Total number of particles |
 | `particleSpread` | `number` | `10` | Spread factor (scales initial distribution) |
 | `speed` | `number` | `0.1` | Base movement speed multiplier |
