@@ -130,7 +130,7 @@ export function Layout() {
             <LanguageSwitcher />
             <NavbarDivider />
             <AnimatedThemeToggler />
-            <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
+            <AccentSwitcher palettes={palettes} />
             <NavbarMobileToggle />
           </NavbarSection>
 

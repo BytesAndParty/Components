@@ -14,7 +14,7 @@ Accent color picker dropdown with smooth oklch color interpolation between palet
 
 ## How It Works
 
-1. **State from the Atelier system**: The active accent comes from `useAtelier()`; choosing a palette calls `setAccent`, and `AtelierProvider` persists it and writes `data-accent` on `<html>`. All switcher instances therefore stay in sync through context. `activePalette` overrides the displayed selection (controlled mode).
+1. **State from the Atelier system**: The active accent comes from `useAtelier()`; choosing a palette calls `setAccent`, and `AtelierProvider` persists it and writes `data-accent` on `<html>`. All switcher instances therefore stay in sync through context. `activePalette` overrides the displayed selection (controlled mode). The initial accent is set via `AtelierProvider defaultAccent`.
 2. **oklch interpolation**: `parseOklch()` extracts L/C/H channels from oklch strings. `lerpOklch()` interpolates with shortest-path hue rotation (handles the 0°↔360° wrap).
 3. **Animation loop**: On palette change, a `requestAnimationFrame` loop writes interpolated values to a dynamic `<style>` element as `:root { --accent: … !important; }`, overriding the `[data-accent]` CSS rule until the transition completes. Then the override is cleared and the CSS rule takes over.
 4. **Keyboard**: WAI-ARIA menu pattern with `menuitemradio` items. ArrowDown/Enter/Space on the trigger opens the menu, arrow keys cycle items, Home/End jump to the ends, Escape closes and returns focus to the trigger.
@@ -49,8 +49,6 @@ Coloring the trigger's palette dots with oklch failed in every direct form: CSS 
 | `activePalette` | `string` | — | Controlled mode: palette shown as active (falls back to the Atelier accent) |
 | `granularity` | `number` | `400` | Transition duration in ms (0 = instant) |
 | `onAccentChange` | `(key: string) => void` | — | Callback on palette change |
-| `defaultPalette` | `string` | — | Currently ignored — the initial accent comes from `AtelierProvider` (`defaultAccent`) |
-| `accentAttribute` | `string` | `'data-accent'` | Currently ignored — `AtelierProvider` always writes `data-accent` |
 | `messages` | `Partial<AccentSwitcherMessages>` | — | i18n overrides for the trigger/dropdown label and the visually-hidden "current" suffix |
 | `className` | `string` | — | Additional classes on the wrapper |
 | `style` | `CSSProperties` | — | Inline styles on the wrapper |

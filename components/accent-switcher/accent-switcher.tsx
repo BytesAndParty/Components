@@ -58,12 +58,11 @@ export interface PaletteConfig {
 export interface AccentSwitcherProps {
 	/** Map of palette key -> config. Keys are used as `data-accent` attribute values. */
 	palettes: Record<string, PaletteConfig>;
-	/** Initial/default palette key (must exist in `palettes`). */
-	defaultPalette?: string;
-	/** Currently active palette key (controlled mode). Falls back to defaultPalette. */
+	/**
+	 * Currently active palette key (controlled mode). Falls back to the Atelier accent.
+	 * The initial accent and the `data-accent` attribute are owned by `AtelierProvider`.
+	 */
 	activePalette?: string;
-	/** HTML attribute name set on <html> for the accent. Default: "data-accent". */
-	accentAttribute?: string;
 	/**
 	 * Transition duration in ms for the color fade between accents.
 	 * Higher = longer & smoother, lower = faster & coarser. 0 = instant.
@@ -84,9 +83,7 @@ export interface AccentSwitcherProps {
 
 export function AccentSwitcher({
 	palettes,
-	defaultPalette: _defaultPalette,
 	activePalette,
-	accentAttribute: _accentAttribute = 'data-accent',
 	granularity = 400,
 	onAccentChange,
 	messages,

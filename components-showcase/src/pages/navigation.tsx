@@ -226,7 +226,7 @@ export function NavigationPage() {
       <Section title="AccentSwitcher" description="Accent color picker dropdown with colored dots on hover.">
         <div className="flex items-center gap-6">
           <div className="border-border bg-card rounded-lg border p-4">
-            <AccentSwitcher palettes={palettes} defaultPalette="indigo" />
+            <AccentSwitcher palettes={palettes} />
           </div>
           <p className="text-muted-foreground text-sm">
             Hover over the icon to see the 4 palette colors on the dots.
