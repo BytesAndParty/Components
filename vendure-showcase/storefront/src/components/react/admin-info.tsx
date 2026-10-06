@@ -94,6 +94,24 @@ function AdminInfoInner() {
         </section>
       </div>
 
+      <section className="border-border bg-card space-y-4 rounded-2xl border p-6">
+        <h2 className="text-lg font-bold">{t.adminGuideTitle}</h2>
+        <ol className="space-y-3 text-sm">
+          {[t.adminGuideStep1, t.adminGuideStep2, t.adminGuideStep3, t.adminGuideStep4, t.adminGuideStep5].map((step, i) => (
+            <li key={i} className="flex gap-3">
+              <span
+                aria-hidden="true"
+                className="border-border text-muted-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold"
+              >
+                {i + 1}
+              </span>
+              <span className="leading-relaxed">{step}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="text-muted-foreground border-border border-t pt-4 text-xs leading-relaxed">{t.adminGuideNote}</p>
+      </section>
+
       <section className="border-border bg-muted/40 space-y-3 rounded-2xl border p-6">
         <h2 className="text-lg font-bold">{t.adminPluginTitle}</h2>
         <p className="text-muted-foreground text-sm leading-relaxed">{t.adminPluginBody}</p>
