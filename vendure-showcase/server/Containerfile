@@ -1,18 +1,27 @@
 # Build-Kontext = vendure-showcase/server (eigenständiges Bun-Projekt, kein Workspace):
-#   podman build -f Containerfile -t vendure-showcase-server .
+#   podman build --ulimit nofile=65536:65536 -f Containerfile -t vendure-showcase-server .
+# --ulimit ist Pflicht: rootless `podman build` gibt RUN-Schritten nur 1024 Dateihandles
+# (hart, im Containerfile nicht anhebbar). Der Dashboard-Build scheitert dann still mit
+# „Rollup failed to resolve import "clsx"" — `podman run` hat das Problem nicht.
 # Image-Refs voll qualifiziert — Podman auf dem VPS hat keine unqualified-search-registries.
 
-# ── Build Stage: Server (tsc) + Dashboard (vite) ─────────────────────────────
-FROM docker.io/oven/bun:1-slim AS build
+# ── Basis: Bun-Binary auf Node 22 ────────────────────────────────────────────
+# Install-Skripte nativer Module (better-sqlite3) laufen so unter derselben Node-Version
+# wie die Runtime und finden vorgebaute Binaries. Unter reinem Bun meldet sich der
+# Install als Node 26 → kein Prebuild → node-gyp ohne Python bricht ab.
+FROM docker.io/library/node:22-slim AS base
+COPY --from=docker.io/oven/bun:1-slim /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
+
+# ── Build Stage: Server (tsc) + Dashboard (vite) ─────────────────────────────
+FROM base AS build
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 
 # ── Nur Produktions-Dependencies ─────────────────────────────────────────────
-FROM docker.io/oven/bun:1-slim AS prod-deps
-WORKDIR /app
+FROM base AS prod-deps
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 
