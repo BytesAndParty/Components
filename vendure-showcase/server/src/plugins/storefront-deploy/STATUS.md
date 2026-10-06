@@ -1,6 +1,6 @@
 # StorefrontDeployPlugin — STATUS
 
-> Stand: 2026-07-02 · manueller „Veröffentlichen"-Button (Dashboard → Netlify Rebuild)
+> Stand: 2026-10-06 · manueller „Veröffentlichen"-Button (Dashboard → Netlify Rebuild)
 
 ## Implementiert ✅
 - Admin-API-Mutation `triggerStorefrontRebuild` + `StorefrontDeployService` (serverseitiger
@@ -11,9 +11,9 @@
 - Server-`tsc`: exit 0.
 
 ## Offen — muss noch verifiziert werden ⚠️
-1. **`bun run dashboard:build`** durchlaufen lassen — die `dashboard/index.tsx` ist vom
-   Server-`tsc` ausgeschlossen; der typed `graphql()`-Aufruf braucht erst Codegen. Noch nie
-   gebaut → hier zeigt sich, ob alles kompiliert.
+1. ~~**`bun run dashboard:build`** durchlaufen lassen~~ — **erledigt 2026-10-06** (mit Vendure 3.7.4):
+   `bun run build` (Server-`tsc` + Dashboard-Vite-Build) exit 0, die Mutation
+   `triggerStorefrontRebuild` steckt im Dashboard-Bundle.
 2. **`pageId: 'product-list'`** prüfen — erscheint der Button? Bei falscher `pageId` fehlt er
    **stumm** (keine Fehlermeldung). Fallback zum Testen: `product-detail`.
 3. **End-to-End-Test** — `NETLIFY_BUILD_HOOK_URL` setzen (echter Hook oder `webhook.site`),

@@ -4,7 +4,7 @@ Testprojekt um **Vendure.js** als Headless-Commerce-Backend für den geplanten W
 
 ## Was ist das?
 
-- **`server/`** — Vendure.js Backend mit 10 weinspezifischen Custom Fields, SQLite DB, React Dashboard (`@vendure/dashboard` v3.6.4)
+- **`server/`** — Vendure.js Backend mit 10 weinspezifischen Custom Fields, SQLite DB, React Dashboard (`@vendure/dashboard` v3.7.4)
 - **`storefront/`** — Astro-Storefront (`output: 'static'`) mit React-19-Inseln, die über GraphQL mit Vendure kommuniziert. Weindaten werden zur Build-Zeit gerendert (siehe [ARCHITECTURE.md](./ARCHITECTURE.md)).
 
 Die Storefront bindet Komponenten aus der `components/` Library direkt über den Alias `@components` ein (Bun-Workspace) — nichts wird kopiert.

@@ -8,7 +8,7 @@ Vendure-basierter E-Commerce-Backend für den Wine Showcase. Stellt Shop-API und
 
 | Komponente | Details |
 |---|---|
-| Framework | [Vendure](https://vendure.io) v3.6.4 (NestJS-basiert) |
+| Framework | [Vendure](https://vendure.io) v3.7.4 (NestJS-basiert) |
 | Datenbank (Lokal) | SQLite via `better-sqlite3` — kein Setup nötig |
 | Datenbank (Produktion) | PostgreSQL 16 |
 | Container | Podman (`podman compose`) |
@@ -74,7 +74,7 @@ bun run dev
 bun run seed
 ```
 
-> Bei einem Vendure-Major-Upgrade (z.B. 3.2 → 3.6): SQLite-DB löschen (`data/vendure.sqlite`) und Seed neu durchlaufen, da Schema-Migrationen nicht automatisch auf bestehenden Daten ausgeführt werden.
+> Bei einem Vendure-Minor-/Major-Upgrade mit Schema-Änderungen (z.B. 3.2 → 3.6): SQLite-DB löschen (`data/vendure.sqlite`) und Seed neu durchlaufen, da Schema-Migrationen nicht automatisch auf bestehenden Daten ausgeführt werden.
 
 Das Skript legt beim ersten Aufruf automatisch an:
 - Land (Österreich) + Zone (Europe)

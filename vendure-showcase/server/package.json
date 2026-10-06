@@ -12,20 +12,20 @@
     "seed": "tsx src/seed.ts"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.18",
-    "@vendure/core": "^3.6.4",
-    "@vendure/asset-server-plugin": "^3.6.4",
-    "@vendure/dashboard": "^3.6.4",
-    "better-sqlite3": "^11.8.0",
-    "pg": "^8.13.0"
+    "@nestjs/common": "^11.2.7",
+    "@vendure/asset-server-plugin": "^3.7.4",
+    "@vendure/core": "^3.7.4",
+    "@vendure/dashboard": "^3.7.4",
+    "better-sqlite3": "^11.10.0",
+    "pg": "^8.23.1"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.0",
-    "@types/node": "^22.15.0",
-    "@types/pg": "^8.11.0",
-    "tsx": "^4.19.4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
     "typescript": "~5.8.3",
-    "vite": "^7.3.1"
+    "vite": "^7.3.7"
   },
   "overrides": {
     "rxjs": "7.8.1"

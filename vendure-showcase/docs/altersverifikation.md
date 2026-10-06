@@ -190,5 +190,5 @@ Damit kann das Plugin heute `DeliveryCheckStrategy` nutzen und morgen `EuIdWalle
 - [ ] Klären: Welchen Versanddienstleister nutzen wir? (DHL vs. Post AT)
 - [ ] Preise Ident-Service bei DHL/Post AT einholen
 - [ ] DSGVO: Einwilligungstext für Geburtsdatum-Speicherung formulieren lassen
-- [ ] Prüfen: Ist `@vendure/scheduler-plugin` in v3.2 verfügbar? (für Geburtstagsgutschein-Kopplung)
+- [x] Prüfen: Scheduler für die Geburtstagsgutschein-Kopplung — seit Vendure 3.3 als `DefaultSchedulerPlugin` + `ScheduledTask` in `@vendure/core` (kein eigenes Paket)
 - [ ] Entscheidung: MVP-Variante oder direkt mit KYC-Provider starten?
