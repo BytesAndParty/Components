@@ -73,7 +73,8 @@ function HandArrow() {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-muted-foreground mx-auto mt-4 block h-6 w-11 rotate-90 @2xl:absolute @2xl:top-10 @2xl:right-0 @2xl:mt-0 @2xl:translate-x-1/2 @2xl:-translate-y-1/2 @2xl:rotate-0"
+      // In der Zeile nie breiter als die Lücke zwischen zwei Kreisen (Spalte minus Kreis 5rem, etwas Luft).
+      className="text-muted-foreground mx-auto mt-4 block h-6 w-11 rotate-90 @2xl:absolute @2xl:top-10 @2xl:right-0 @2xl:mt-0 @2xl:w-[min(2.75rem,calc(100%-5.5rem))] @2xl:translate-x-1/2 @2xl:-translate-y-1/2 @2xl:rotate-0"
     >
       <path d={ARROW_SHAFT} />
       <path d={ARROW_HEAD} />
@@ -223,7 +224,7 @@ function LedgerSteps({ steps, reduce }: { steps: ProcessStep[]; reduce: boolean 
             initial={reduce ? false : { scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, amount: 1 }}
-            transition={{ duration: 1.2, delay: i * 0.15, ease: EXPO_OUT }}
+            transition={{ scaleX: { duration: 1.2, delay: i * 0.15, ease: EXPO_OUT } }}
           />
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 8 }}
@@ -252,8 +253,10 @@ function LedgerSteps({ steps, reduce }: { steps: ProcessStep[]; reduce: boolean 
 
 export function ProcessSteps({ steps, variant = 'paper', className, style }: ProcessStepsProps) {
   const reduce = useReducedMotion() ?? false
+  if (steps.length === 0) return null
+  // w-full: ein @container hat keine eigene Inhaltsbreite und fiele in w-fit- oder Flex-Eltern sonst auf 0.
   return (
-    <div className={cn('@container', className)} style={{ '--steps': steps.length, ...style } as CSSProperties}>
+    <div className={cn('@container w-full', className)} style={{ '--steps': steps.length, ...style } as CSSProperties}>
       {variant === 'paper' && <PaperSteps steps={steps} reduce={reduce} />}
       {variant === 'trail' && <TrailSteps steps={steps} reduce={reduce} />}
       {variant === 'ledger' && <LedgerSteps steps={steps} reduce={reduce} />}
