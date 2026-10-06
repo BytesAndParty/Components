@@ -1,5 +1,6 @@
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useInsertionEffect, useRef, useState } from 'react';
 import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react';
+import { recolorLottie, resolveCssColor } from './lottie-color';
 const cn = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
 import homeData from '../../_resources_/Home/home.json';
@@ -19,7 +20,10 @@ import trashData from '../../_resources_/Trash V2/trashV2.json';
 interface AnimatedIconProps {
   size?: number;
   className?: string;
-  /** Stroke color override. Default: currentColor */
+  /**
+   * Icon color — any CSS color incl. `var(--accent)` or oklch.
+   * Default: the inherited text color (`currentColor`).
+   */
   color?: string;
   /** Animation trigger. Default: 'hover' */
   trigger?: 'hover' | 'click';
@@ -77,6 +81,38 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
 
   function Icon({ size = 32, className, color, trigger = 'hover', 'aria-label': ariaLabel }: AnimatedIconProps) {
     const { setPlayer, onMouseEnter, onMouseLeave, onClick } = useLottieHover();
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    // Lottie renders to <canvas>, so CSS colors cannot reach the strokes. The
+    // wrapper carries the color; we resolve it and recolor the animation data.
+    const [colored, setColored] = useState<{ key: string; data: Record<string, unknown> } | null>(null);
+
+    useEffect(() => {
+      const el = wrapperRef.current;
+      if (!el) return;
+      let settleTimer: ReturnType<typeof setTimeout> | undefined;
+      const apply = () => {
+        const rgba = resolveCssColor(el);
+        const key = rgba.join(',');
+        setColored((prev) => (prev?.key === key ? prev : { key, data: recolorLottie(animationData, rgba) }));
+      };
+      const frame = requestAnimationFrame(apply);
+      // Theme and accent switches flip attributes on <html>. The accent fade of
+      // AccentSwitcher settles ~400 ms later, so read the color once more then.
+      const observer = new MutationObserver(() => {
+        apply();
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(apply, 500);
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'data-theme', 'data-accent'],
+      });
+      return () => {
+        cancelAnimationFrame(frame);
+        clearTimeout(settleTimer);
+        observer.disconnect();
+      };
+    }, [color]);
 
     const isHover = trigger === 'hover' && !loop;
     const isClick = trigger === 'click' && !loop;
@@ -96,6 +132,7 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
       // click-trigger variants get role="button" + tabIndex + keyDown below.
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
+        ref={wrapperRef}
         {...a11y}
         {...(isClick ? { role: 'button', tabIndex: 0 } : {})}
         className={cn(
@@ -109,16 +146,18 @@ function createLottieIcon(animationData: unknown, displayName: string, options: 
         style={{
           width: size,
           height: size,
-          filter: color ? 'none' : 'var(--icon-invert, invert(1))',
+          color,
         }}
       >
-        <DotLottieReact
-          dotLottieRefCallback={setPlayer}
-          data={animationData as Record<string, unknown>}
-          loop={loop}
-          autoplay={autoplay}
-          style={{ width: size, height: size }}
-        />
+        {colored && (
+          <DotLottieReact
+            dotLottieRefCallback={setPlayer}
+            data={colored.data}
+            loop={loop}
+            autoplay={autoplay}
+            style={{ width: size, height: size }}
+          />
+        )}
       </div>
     );
   }
@@ -269,17 +308,21 @@ const cssIconStyles = `
 }
 `;
 
-let cssInjected = false;
-function injectCssOnce() {
-  if (cssInjected || typeof document === 'undefined') return;
-  const style = document.createElement('style');
-  style.textContent = cssIconStyles;
-  document.head.appendChild(style);
-  cssInjected = true;
+const STYLE_ID = '__animated-icons-styles__';
+
+/** Injects the shared keyframes once, before layout — no first-paint flash. */
+function useIconStyles() {
+  useInsertionEffect(() => {
+    if (document.getElementById(STYLE_ID)) return;
+    const style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = cssIconStyles;
+    document.head.appendChild(style);
+  }, []);
 }
 
 function CssIconWrapper({ size = 32, className, children, 'aria-label': ariaLabel }: CssIconProps & { children: React.ReactNode }) {
-  injectCssOnce();
+  useIconStyles();
   const a11y = ariaLabel
     ? { role: 'img' as const, 'aria-label': ariaLabel }
     : { 'aria-hidden': true };
@@ -430,7 +473,7 @@ TruckIconCss.displayName = 'TruckIconCss';
 
 export function HeartIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   const [liked, setLiked] = useState(false);
-  injectCssOnce();
+  useIconStyles();
   return (
     <button
       type="button"
@@ -454,7 +497,7 @@ export function Heart3DIconCss({ size = 32, className, 'aria-label': ariaLabel }
   // the colons it returns are valid in SVG id refs but stripped here so
   // the values are also safe for any downstream CSS selector use.
   const id = `heart3d-${useId().replace(/:/g, '')}`;
-  injectCssOnce();
+  useIconStyles();
   return (
     <button
       type="button"
