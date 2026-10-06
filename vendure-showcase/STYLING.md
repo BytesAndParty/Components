@@ -1,21 +1,18 @@
 # Styling-Entscheidungen
 
-## Aktueller Stand
+## Aktueller Stand (2026-10-06)
 
-Tailwind CSS ist konfiguriert (`@tailwindcss/vite`), wird aber gemischt mit Inline-Styles verwendet.
-Komponenten die aus `components/` übernommen wurden bringen ihre Inline-Styles mit,
-im vendure-showcase selbst kommen vereinzelt Tailwind-Klassen dazu.
+Die Storefront ist auf Tailwind-Klassen umgestellt. Komponenten aus `components/` werden nicht mehr
+kopiert, sondern über den Alias `@components` eingebunden und bringen ihr Styling selbst mit.
 
-## Geplante Umstellung
+Inline-Styles gibt es nur noch für dynamische Werte (siehe COMPONENT-GUIDELINES §4b) — aktuell drei
+Stellen in `AccentPicker.tsx`: die Swatch-Farben pro Akzent und ein `zIndex` am Ark-UI-`Popover.Positioner`.
 
-**Ziel:** Vollständige Umstellung auf Tailwind-Klassen – keine Inline-Styles mehr im Storefront.
+## Regeln
 
-**Warum:**
-- Tailwind-Tokens (`rounded-lg`, `text-sm`, `gap-4` etc.) sind ein zentraler Designpunkt
-- Änderungen am Design (z.B. Border-Radius, Spacing) an einer Stelle, nicht in jeder Komponente einzeln
-- Konsistenz mit modernen React-Projekten
-
-**Was das bedeutet:**
-- Komponenten die aus `components/` kopiert werden, müssen beim Einbau ins Storefront auf Tailwind-Klassen umgeschrieben werden
-- `style={{ borderRadius: '12px' }}` → `className="rounded-xl"`
-- CSS Custom Properties (`--accent`, `--border` etc.) bleiben erhalten – sie werden via Tailwind-Theme oder direkt in `globals.css` definiert
+- Layout, Spacing, Typo und Farben über Tailwind-Utilities mit semantischen Tokens (`bg-card`,
+  `text-muted-foreground`, `border-border`, …) — keine Hex-Werte.
+- Werte, die sich pro Instanz oder Interaktion ändern (Farbe eines Swatches, Position, Progress),
+  gehen als Inline-Style bzw. CSS-Variable über `style`, nicht als generierte Klasse.
+- CSS Custom Properties (`--accent`, `--border` etc.) bleiben die Quelle der Wahrheit und werden im
+  Tailwind-Theme referenziert.
