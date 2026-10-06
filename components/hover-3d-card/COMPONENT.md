@@ -10,6 +10,7 @@ Card with mouse-dependent 3D tilt and a glare overlay that follows the cursor.
 | **Glare overlay** | A white radial gradient follows the cursor, simulating light on a glossy surface. It fades in on enter and out on leave. |
 | **Direct tracking** | While hovering, the transform has no transition, so the tilt follows the cursor 1:1. |
 | **Smooth return** | On mouse leave, the card eases back to flat over `transitionSpeed` ms. |
+| **Reduced motion** | With `prefers-reduced-motion: reduce` (read on every mouse move) the card stays flat; only the glare follows the cursor. |
 
 ## How It Works
 
@@ -33,7 +34,7 @@ Card with mouse-dependent 3D tilt and a glare overlay that follows the cursor.
 
 ## Known Gaps
 
-- Mouse-only: no touch fallback and no `prefers-reduced-motion` handling yet.
+- Mouse-only: no touch fallback.
 
 ## Dependencies
 

@@ -33,6 +33,8 @@ export function Hover3DCard({
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!cardRef.current) return
+    // Tilt is motion; the glare is light and stays. Read at event time.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const rect = cardRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -44,7 +46,7 @@ export function Hover3DCard({
     const rotateX = ((y - centerY) / centerY) * -maxRotate
     const rotateY = ((x - centerX) / centerX) * maxRotate
 
-    setRotate({ x: rotateX, y: rotateY })
+    setRotate(reduceMotion ? { x: 0, y: 0 } : { x: rotateX, y: rotateY })
     setGlarePos({
       x: (x / rect.width) * 100,
       y: (y / rect.height) * 100,
