@@ -37,6 +37,7 @@ function SparkleIcon({ size, color, style }: { size: number; color: string; styl
       viewBox="0 0 160 160"
       fill="none"
       aria-hidden
+      className="sparkles-text__sparkle"
       style={{
         position: 'absolute',
         pointerEvents: 'none',
@@ -80,6 +81,9 @@ function injectKeyframes() {
       0%   { transform: scale(0) rotate(0deg); opacity: 1; }
       50%  { transform: scale(1) rotate(90deg); opacity: 1; }
       100% { transform: scale(0) rotate(180deg); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sparkles-text__sparkle { display: none; }
     }
   `
   document.head.appendChild(style)

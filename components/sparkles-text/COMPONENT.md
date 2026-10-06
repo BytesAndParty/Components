@@ -16,6 +16,7 @@ Text wrapper with small four-pointed sparkles that pop in, rotate and vanish at 
 2. **Positioning**: Sparkles are absolutely positioned (percent coordinates) inside an `inline-block`, `position: relative` span that wraps the text.
 3. **SVG star**: Each sparkle is an inline SVG path (`aria-hidden`, `pointer-events: none`) — crisp at any size.
 4. **Keyframe injection**: `@keyframes sparkle-spin` is injected once per page (`__sparkles-text-keyframes__`) in an effect.
+5. **Reduced motion**: The same style block hides all sparkles under `@media (prefers-reduced-motion: reduce)` — the text stays, the glitter goes.
 
 ## Props
 
@@ -29,10 +30,6 @@ Text wrapper with small four-pointed sparkles that pop in, rotate and vanish at 
 | `enabled` | `boolean` | `true` | Turns the effect on/off |
 | `className` | `string` | — | Classes on the wrapper span |
 | `style` | `CSSProperties` | — | Inline styles on the wrapper span |
-
-## Known Gaps
-
-- No `prefers-reduced-motion` handling yet — pass `enabled={!prefersReducedMotion}` from the consumer for now.
 
 ## Dependencies
 
