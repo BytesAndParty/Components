@@ -147,7 +147,9 @@ DB_TYPE=postgres DB_HOST=localhost bun run dev
 ## Deploy auf den VPS
 
 Der Server läuft öffentlich auf dem Contabo-VPS von Buchart58, als eigener Stack neben
-Buchart58-Staging. Die Storefront wird **nicht** deployt, sie bleibt lokal.
+Buchart58-Staging. Die Storefront liegt nicht hier, sondern auf Netlify unter
+https://artilier-ui.netlify.app/shop/ (kombinierter Build, siehe [../README.md](../README.md)).
+Sie holt die Weine zur Build-Zeit von diesem Server, ihr Warenkorb geht über den Netlify-Proxy `/shop-api`.
 
 | | |
 |---|---|
@@ -214,8 +216,8 @@ ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 "grep SUPERADMIN_ ~/vendure-sho
 **Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
 nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
 Reboot des VPS startet der Stack nicht von selbst (rootless Podman ohne systemd-Unit, offen wie
-bei Buchart58). Der „Veröffentlichen"-Button meldet „Kein Build-Hook konfiguriert", weil keine
-Storefront deployt ist.
+bei Buchart58). Der Netlify-Build der Storefront braucht diesen Server: ist er nicht erreichbar,
+scheitert der ganze kombinierte Build, und Netlify lässt den vorherigen Deploy online.
 
 ---
 
@@ -333,6 +335,10 @@ Dafür gibt es einen **„Veröffentlichen"-Button** in der Produkt-Liste des Da
 1. Netlify → Site settings → Build & deploy → Build hooks → **Add build hook**, URL kopieren.
 2. In `.env`: `NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/…`
 3. Im Dashboard (`/dashboard/`, Produkte-Liste) → **Veröffentlichen** klicken.
+
+Auf dem VPS ist das eingerichtet: Der Hook „Vendure Veröffentlichen (vendure-showcase)" der
+Netlify-Site `artilier-ui` (Branch `main`) steht in `~/vendure-showcase/.env.prod`. Ein Klick baut
+den kompletten kombinierten Deploy neu (Launcher, Components, Sections, Storefront).
 
 Der Button ruft die Admin-API-Mutation `triggerStorefrontRebuild` auf; der Server POSTet
 serverseitig auf den Build-Hook (die URL bleibt geheim, nie im Client-Bundle). 30-Sekunden-

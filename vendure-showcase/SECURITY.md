@@ -14,7 +14,7 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 ## Applied
 
 ### 2026-10-06 — Härtung für den öffentlichen Server (VPS)
-- **Was:** Der Server läuft öffentlich auf dem Contabo-VPS hinter Caddy (Deploy: [server/README.md](server/README.md#deploy-auf-den-vps)). Die Storefront bleibt lokal.
+- **Was:** Der Server läuft öffentlich auf dem Contabo-VPS hinter Caddy (Deploy: [server/README.md](server/README.md#deploy-auf-den-vps)). Die Storefront liegt auf Netlify unter `/shop/` und spricht die Shop-API same-origin über einen Netlify-Proxy an.
 - **CORS:** [`vendure-config.ts`](server/src/vendure-config.ts) wertet `CORS_ORIGINS` außerhalb von dev als Allow-List aus. Auf dem VPS ist die Liste leer, das Dashboard läuft same-origin. `origin: true` gilt nur noch in dev.
 - **Secrets:** `COOKIE_SECRET` ist jetzt tatsächlich verdrahtet (`authOptions.cookieOptions.secret`). Superadmin-Passwort, Cookie-Secret und DB-Passwort werden auf dem Server zufällig erzeugt und liegen nur in `~deploy/vendure-showcase/.env.prod`.
 - **Netz:** Postgres hat keinen Port nach außen, der Server hört nur auf `127.0.0.1:3010`. `trustProxy: 1` hinter Caddy.
