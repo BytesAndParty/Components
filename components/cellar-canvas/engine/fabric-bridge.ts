@@ -335,6 +335,8 @@ export class FabricBridge {
     const snapshot = this.history.undo()
     if (snapshot === null) return
     this.syncHistoryFlags()
+    // The scene now differs from what was last saved (e.g. via onSave).
+    useDesignerStore.getState().setDirty(true)
     void this.history.runExclusive(() => this.applySnapshot(snapshot))
   }
 
@@ -343,6 +345,7 @@ export class FabricBridge {
     const snapshot = this.history.redo()
     if (snapshot === null) return
     this.syncHistoryFlags()
+    useDesignerStore.getState().setDirty(true)
     void this.history.runExclusive(() => this.applySnapshot(snapshot))
   }
 
