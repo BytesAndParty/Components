@@ -27,6 +27,8 @@ import {
   heightToFabricProps,
 } from './object-properties'
 import { HistoryManager } from './history-manager'
+import { hasFieldValue } from '../wine-fields/field-value'
+import type { WineFieldValues } from '../CellarCanvas'
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -41,7 +43,7 @@ export interface FabricBridgeOptions {
  * serialize with this same list, so nothing gets lost on restore.
  */
 export const SERIALIZED_OBJECT_PROPS = [
-  'id', '_layerName', '_type', '_fieldKey', '_extras',
+  'id', '_layerName', '_type', '_fieldKey', '_extras', '_valueMissing',
   'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
   'hasControls',
   // Wine-fields are non-editable; without this they turn editable again
@@ -68,6 +70,8 @@ export class FabricBridge {
   heightMm: number
   bleedMm: number
   private labelColor = '#ffffff'
+  /** Current wine data — wine-field text on the canvas always mirrors it. */
+  private wineFields: WineFieldValues = {}
   private readonly history = new HistoryManager()
   private snapManager: SnapManager
   /** Pointer position of the ongoing pan drag; null while not panning. */
@@ -313,6 +317,8 @@ export class FabricBridge {
   private async loadScene(canvasState: object, bg: string | undefined): Promise<void> {
     await this.canvas.loadFromJSON(canvasState)
     if (typeof bg === 'string') this.labelColor = bg
+    // A draft or an undo snapshot may carry wine-field text of an older wine.
+    this.applyWineFields()
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -360,6 +366,53 @@ export class FabricBridge {
       ? (state as CellarCanvasState)
       : { canvas: state as object, bg: this.labelColor }
     await this.history.runExclusive(() => this.loadScene(wrapped.canvas, wrapped.bg))
+  }
+
+  /**
+   * Sets the wine data and applies it to every placed wine field. Scene loads
+   * (restore, undo/redo) re-apply it too, so a field never shows text from an
+   * older wine — not even right after mount, when the async restore lands
+   * after the embedder's first `setWineFields` call.
+   */
+  setWineFields(values: WineFieldValues) {
+    this.wineFields = values
+    if (!this.applyWineFields()) return
+    this.canvas.requestRenderAll()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+  }
+
+  /**
+   * With a value: text = value; a field hidden for a missing value shows
+   * again. Without a value: emptied and hidden (`_valueMissing`), so neither
+   * stale text nor an empty box gets printed and the validator reports the
+   * field as missing. Position and style stay on the object for when a value
+   * returns; a field the user hid via the layer panel stays hidden.
+   * Returns whether anything changed.
+   */
+  private applyWineFields(): boolean {
+    let changed = false
+    for (const obj of this.canvas.getObjects()) {
+      const meta = obj as fabric.Object & FabricObjectMeta
+      if (meta._type !== 'wine-field' || !meta._fieldKey || !(obj instanceof fabric.Textbox)) continue
+      const value = (this.wineFields as Record<string, unknown>)[meta._fieldKey]
+      if (hasFieldValue(value)) {
+        if (obj.text !== String(value)) {
+          obj.set('text', String(value))
+          changed = true
+        }
+        if (meta._valueMissing) {
+          obj.set('visible', true)
+          meta._valueMissing = false
+          changed = true
+        }
+      } else if (!meta._valueMissing) {
+        obj.set({ text: '', visible: false })
+        meta._valueMissing = true
+        changed = true
+      }
+    }
+    return changed
   }
 
   /**

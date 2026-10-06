@@ -1,6 +1,7 @@
 import * as fabric from 'fabric'
 import { mmToPx } from '../engine/units'
 import { attach, CORNER_STYLE } from '../engine/object-factory'
+import { hasFieldValue } from '../wine-fields/field-value'
 import type { WineFieldValues } from '../CellarCanvas'
 
 /**
@@ -72,7 +73,7 @@ function fieldText(
   opts: Omit<TextOptions, 'fieldKey'>,
 ): fabric.Textbox | null {
   const value = ctx.wineFields[key]
-  if (value === undefined || value === '') return null
+  if (!hasFieldValue(value)) return null
   return labelText(ctx, yMm, String(value), { ...opts, fieldKey: key })
 }
 

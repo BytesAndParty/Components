@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react'
-import { validateCompliance } from '../wine-fields/validator'
+import { validateCompliance, type ValidatableObject } from '../wine-fields/validator'
 import type { FabricBridge } from './fabric-bridge'
-import type { FabricObjectMeta, FabricObjectProperties } from '../store/types'
+import type { FabricObjectProperties } from '../store/types'
 import type { Layer } from '../../layer-panel/layer-panel'
 import type { ValidationWarning } from '../../validator-badge/validator-badge'
 
@@ -60,7 +60,7 @@ export function useCanvasSync(
       if (mode === 'full') {
         setLayers(b.getLayers() ?? [])
         if (options.enableValidator) {
-          const objects = (b.canvas.getObjects() ?? []) as unknown as FabricObjectMeta[]
+          const objects = (b.canvas.getObjects() ?? []) as unknown as ValidatableObject[]
           setWarnings(validateCompliance(objects))
         }
       }

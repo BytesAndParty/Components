@@ -17,6 +17,8 @@ export interface FabricObjectMeta {
   _fieldKey?: string
   _locked?: boolean
   _extras?: boolean
+  /** Wine field hidden by the sync because the current wine has no value for it. */
+  _valueMissing?: boolean
 }
 
 export interface FabricObjectProperties {

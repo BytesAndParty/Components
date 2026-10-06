@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ZoomIn, ZoomOut } from 'lucide-react'
-import * as fabric from 'fabric'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
@@ -25,7 +24,7 @@ import { mmToPx } from './engine/units'
 // loads only on the PDF path, so a PNG export stays small too.
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
-import type { CellarCanvasState, FabricObjectMeta } from './store/types'
+import type { CellarCanvasState } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
 // Bleed dimming around the label. Design view stays semi-transparent so
@@ -178,32 +177,11 @@ export function CellarCanvas({
     bridge.current?.zoomToFit()
   }, [bridge, isFullscreen])
 
-  // Sync wine field text on the canvas when the incoming prop changes (e.g.
-  // winemaker updated the vintage in the DB while the editor was open).
-  // This ensures the label doesn't go stale without manual deletion/re-insertion.
+  // Wine-field text mirrors the incoming prop (e.g. the winemaker updated the
+  // vintage in the DB while the editor was open). Fields whose value went
+  // missing are hidden, not left with stale text — see `setWineFields`.
   useEffect(() => {
-    const b = bridge.current
-    if (!b || !initialWineFields) return
-
-    const objects = b.canvas.getObjects()
-    let changed = false
-
-    objects.forEach(obj => {
-      const meta = obj as fabric.Object & FabricObjectMeta
-      if (meta._type === 'wine-field' && meta._fieldKey && obj instanceof fabric.Textbox) {
-        const newValue = (initialWineFields as Record<string, unknown>)[meta._fieldKey]
-        if (newValue !== undefined && obj.text !== String(newValue)) {
-          obj.set('text', String(newValue))
-          changed = true
-        }
-      }
-    })
-
-    if (changed) {
-      b.canvas.requestRenderAll()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(b.canvas as any).fire('cellar:property-changed', { target: null })
-    }
+    bridge.current?.setWineFields(initialWineFields)
   }, [bridge, initialWineFields])
 
   async function handleCrop(blob: Blob) {

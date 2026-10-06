@@ -48,8 +48,19 @@ const MANDATORY_KEYS = [
   },
 ] as const
 
-export function validateCompliance(objects: FabricObjectMeta[]): ValidationWarning[] {
-  const presentKeys = new Set(objects.map(o => o._fieldKey).filter(Boolean))
+/** What the validator reads from a canvas object (a Fabric object or a plain test double). */
+export type ValidatableObject = Pick<FabricObjectMeta, '_fieldKey'> & {
+  visible?: boolean
+  text?: string
+}
+
+/** Only what ends up on the printed label counts: visible, and for text non-blank. */
+function isPrinted(o: ValidatableObject): boolean {
+  return o.visible !== false && (o.text === undefined || o.text.trim() !== '')
+}
+
+export function validateCompliance(objects: ValidatableObject[]): ValidationWarning[] {
+  const presentKeys = new Set(objects.filter(isPrinted).map(o => o._fieldKey).filter(Boolean))
 
   const warnings: ValidationWarning[] = []
 

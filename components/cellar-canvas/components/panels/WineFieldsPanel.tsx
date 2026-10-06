@@ -4,6 +4,7 @@ import { Plus, QrCode, Check } from 'lucide-react'
 import { useCellarCanvasMessages } from '../../messages-context'
 import type { Layer } from '../../../layer-panel/layer-panel'
 import { cn } from '../../../lib/utils'
+import { hasFieldValue } from '../../wine-fields/field-value'
 
 interface WineFieldsPanelProps {
   bridge: React.MutableRefObject<FabricBridge | null>
@@ -36,7 +37,7 @@ export function WineFieldsPanel({ bridge, values = {}, layers = [] }: WineFields
           // Without a value there is nothing to bind: inserting the field label
           // as placeholder text used to satisfy the compliance validator with
           // "Alkoholgehalt" instead of an actual alcohol content.
-          const hasValue = field.value !== undefined && field.value !== ''
+          const hasValue = hasFieldValue(field.value)
           return (
             <button
               key={field.key}
