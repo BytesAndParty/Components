@@ -20,7 +20,6 @@ A card whose border glows in a radial gradient that follows the mouse cursor.
 1. **Mouse tracking**: `onMouseMove` calculates cursor position relative to the card and stores it in state.
 2. **CSS custom properties**: The glow position, opacity, and size are set as inline CSS custom properties, consumed by the radial gradient.
 3. **Mask-based border**: The glow layer uses `mask: ... content-box exclude` to render only the border area, not the card interior. This creates a clean glow-border without affecting content.
-4. **Performance**: `useMemo` prevents recalculation of the glow style object on unrelated re-renders.
 
 ### RotatingGlowCard (animated border)
 

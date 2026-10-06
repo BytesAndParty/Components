@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-restricted-imports -- useMemo caches the radial-gradient style string per accent change.
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -30,14 +29,14 @@ export function GlowCard({
     setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
-  const glowStyles = useMemo(() => ({
+  const glowStyles = {
     '--glow-x': `${mousePosition.x}px`,
     '--glow-y': `${mousePosition.y}px`,
     '--glow-opacity': isHovering ? 1 : 0,
     '--glow-size': `${glowRadius}px`,
     '--glow-color': glowColor,
     '--accent-color': accentColor,
-  } as React.CSSProperties), [mousePosition.x, mousePosition.y, isHovering, glowRadius, glowColor, accentColor]);
+  } as React.CSSProperties;
 
   return (
     <div
