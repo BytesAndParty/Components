@@ -4,12 +4,31 @@
 
 [build.environment]
   BUN_VERSION  = "1.3.12"
-  NODE_VERSION = "20"
+  # Astro 7 (storefront) refuses to run on Node < 22.12. `bun run build` starts
+  # the astro CLI via its node shebang, so this version is the one that counts.
+  NODE_VERSION = "22"
+
+# ── Vendure Shop-API proxy ──────────────────────────────────────────────────
+# The storefront under /shop/ is static (real files, no rule needed). Its cart
+# islands call the Shop API same-origin at /shop-api; Netlify proxies that to
+# the Vendure server on the VPS. Same-origin keeps the anonymous session cookie
+# first-party (Safari/Firefox block it cross-site). Must stay above the
+# launcher catch-all.
+
+[[redirects]]
+  from   = "/shop-api"
+  to     = "https://vendure-showcase.169-58-203-37.sslip.io/shop-api"
+  status = 200
+
+[[redirects]]
+  from   = "/shop-api/*"
+  to     = "https://vendure-showcase.169-58-203-37.sslip.io/shop-api/:splat"
+  status = 200
 
 # ── SPA client-routing fallbacks ────────────────────────────────────────────
 # The two Vite SPAs use history routing, so deep links must fall back to their
 # own index.html. Rules are evaluated top-down; subpaths must come BEFORE the
-# launcher catch-all. The Vendure storefront is static (real files) — no rule.
+# launcher catch-all.
 
 [[redirects]]
   from   = "/components/*"

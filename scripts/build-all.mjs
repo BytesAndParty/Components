@@ -10,10 +10,12 @@
 //   dist/            ← launcher  (base '/')            → /
 //   dist/components/ ← components-showcase (base /components/)
 //   dist/sections/   ← section-showcase  (base /sections/)
+//   dist/shop/       ← vendure storefront (Astro base /shop via DEPLOY_SUBPATH)
 //
-// The Vendure storefront is intentionally NOT part of the deploy — it runs
-// local-only. In prod the launcher card links to the Vendure dashboard on the VPS
-// (vendure-showcase/server/README.md), in dev to the local storefront.
+// The storefront pulls the wines at build time from the Vendure server on the
+// VPS (vendure-showcase/server/README.md) — the VPS must be up during the build.
+// In the browser it calls /shop-api same-origin; netlify.toml proxies that to
+// the VPS.
 //
 // The base paths live in each app's own config; this script only orchestrates
 // and copies. Run via `bun run build:all`.
@@ -26,11 +28,22 @@ import path from 'node:path'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const out = path.join(root, 'dist')
 
+const VENDURE_URL = 'https://vendure-showcase.169-58-203-37.sslip.io'
+
 /** @type {{ name: string, cwd: string, dist: string, dest: string, env?: Record<string,string> }[]} */
 const apps = [
   { name: 'launcher',            cwd: 'launcher',            dist: 'dist', dest: '.' },
   { name: 'components-showcase', cwd: 'components-showcase',  dist: 'dist', dest: 'components' },
   { name: 'section-showcase',    cwd: 'section-showcase',    dist: 'dist', dest: 'sections' },
+  {
+    name: 'vendure-storefront', cwd: 'vendure-showcase/storefront', dist: 'dist', dest: 'shop',
+    env: {
+      DEPLOY_SUBPATH: '/shop',
+      VENDURE_SHOP_API_URL: `${VENDURE_URL}/shop-api`, // build time (Node) → VPS directly
+      PUBLIC_SHOP_API_URL: '/shop-api',                 // browser → Netlify proxy
+      PUBLIC_VENDURE_URL: VENDURE_URL,                  // dashboard/API links on /shop/admin-info
+    },
+  },
 ]
 
 console.log('▸ cleaning', out)
