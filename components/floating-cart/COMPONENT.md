@@ -1,6 +1,6 @@
 # FloatingCart
 
-Fixed-position floating action button (FAB) with stacked product thumbnails, inspired by Quickbeam.js.
+Fixed-position floating action button (FAB) with stacked product thumbnails, inspired by Quickbeam.js (found via [speckyboy: E-Commerce Micro-Interaction Snippets](https://speckyboy.com/ecommerce-microinteraction-css-js-snippets/)).
 
 ## Micro-Interactions
 
@@ -35,6 +35,10 @@ Fixed-position floating action button (FAB) with stacked product thumbnails, ins
 | `fabColor` | `string` | `'var(--accent)'` | FAB accent color |
 | `maxVisible` | `number` | `4` | Max visible product thumbnails |
 | `icon` | `ReactNode` | — | Custom cart icon |
+| `fabTextColor` | `string` | `'#fff'` | Text color on the FAB |
+| `messages` | `Partial<FloatingCartMessages>` | — | i18n overrides for cart/region/remove labels |
+| `className` | `string` | — | Additional classes on the wrapper |
+| `style` | `CSSProperties` | — | Inline styles on the wrapper |
 
 ## Dependencies
 

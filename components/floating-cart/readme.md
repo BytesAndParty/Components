@@ -1,1 +1,0 @@
-https://speckyboy.com/ecommerce-microinteraction-css-js-snippets/
