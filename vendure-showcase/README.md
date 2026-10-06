@@ -42,7 +42,31 @@ bun run dev
 
 > **Dashboard im Dev-Modus:** Der Vite-Dev-Server des Dashboards läuft standardmäßig auf Port 5173 (gleicher Port wie Storefront-Dev, aber separates Projekt). Beide gleichzeitig: Dashboard-Vite startet auf dem nächstverfügbaren Port (5174 o.Ä.).
 
-**Admin Login:** `superadmin` / `superadmin`
+**Admin Login (lokal):** `superadmin` / `superadmin`
+
+## Deploy unter `/shop/`
+
+Die Storefront ist Teil des kombinierten Netlify-Deploys (`scripts/build-all.mjs`, `netlify.toml` im Repo-Root) und liegt dort unter `/shop/`. Der Launcher verlinkt sie in Prod. Der Vendure-Server läuft auf dem VPS unter `https://vendure-showcase.169-58-203-37.sslip.io` (siehe [server/README.md](./server/README.md)).
+
+- **Build-Zeit:** Astro rendert Katalog und Weinseiten statisch und holt die Daten direkt vom VPS. Ist der Server beim Build nicht erreichbar, bricht der Storefront-Build ab und mit ihm der ganze Deploy.
+- **Browser:** Warenkorb, Filter und Login rufen die Shop-API same-origin unter `/shop-api` auf, `netlify.toml` proxied das auf den VPS. So bleibt die anonyme Session-Cookie des Warenkorbs First-Party, cross-site würden Safari und Firefox sie blockieren.
+- **Neue oder geänderte Weine** im Dashboard erscheinen auf den statischen Seiten erst nach einem neuen Netlify-Build.
+- **Interne Links** laufen alle über `withBase()` aus `src/lib/utils.ts`, nie als festes `/…`.
+
+Env-Variablen der Storefront (alle optional, ohne Env läuft alles lokal wie bisher):
+
+| Variable | Wirkung | Lokal (Default) | Deploy (`build-all.mjs`) |
+|---|---|---|---|
+| `DEPLOY_SUBPATH` | Astro `base` | nicht gesetzt (`/`) | `/shop` |
+| `VENDURE_SHOP_API_URL` | Shop-API für den Build (Node), absolut | `http://localhost:3000/shop-api` | `https://vendure-showcase.169-58-203-37.sslip.io/shop-api` |
+| `PUBLIC_SHOP_API_URL` | Shop-API im Browser, relativ = same-origin | `http://localhost:3000/shop-api` | `/shop-api` |
+| `PUBLIC_VENDURE_URL` | Basis-URL für Dashboard- und API-Links auf `/admin-info`. Gesetzt blendet den Dev-Login aus | `http://localhost:3000` | `https://vendure-showcase.169-58-203-37.sslip.io` |
+
+Lokal ändert sich nichts: Quick Start wie oben, die Storefront läuft auf `/` gegen `localhost:3000`. Den Deploy-Build nachstellen (VPS muss erreichbar sein):
+
+```bash
+bun run build:all   # im Repo-Root, Ergebnis in ./dist, Storefront in dist/shop/
+```
 
 ## Verwendete Komponenten
 
