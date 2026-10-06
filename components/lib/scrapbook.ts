@@ -8,6 +8,13 @@ export const PAPER = {
   dark:  { bg: 'oklch(0.27 0.014 55)', ink: 'oklch(0.92 0.025 85)' },
 } as const
 
+/** Stabiler Zahlen-Seed aus einer `useId()`-ID, damit jede Instanz eine eigene Form bekommt. */
+export function hashSeed(id: string) {
+  let h = 0
+  for (let i = 0; i < id.length; i++) h = (Math.imul(h, 31) + id.charCodeAt(i)) | 0
+  return h
+}
+
 /** Papierkorn als `feTurbulence`-Data-URI für `background-image` (kein Bild-Asset). */
 export function paperGrain(freq: number, octaves: number, alpha: number, size: number) {
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='${freq}' numOctaves='${octaves}' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(#n)' opacity='${alpha}'/></svg>`

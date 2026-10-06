@@ -73,7 +73,8 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **paper-note:** Scrapbook-Notiz aus Papier (rundum gerissen oder vom Block) mit Klebestreifen und Pfeil, für persönliche Zwischentöne wie Einladungen und Termine.
 - **polaroid-frame:** Foto im Polaroid-Rahmen mit handschriftlicher Caption und optionalem Washi-Tape, für persönliche Momente in Event- und Story-Sections.
 - **process-steps:** Statische Erklär-Kette in drei Darstellungen (Papier-Kreise, Wanderpfad, Hairline-Ledger), z. B. vom Rebstock bis ins Glas. Kein Wizard, dafür gibt es stepper.
-- **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen.
+- **marker-callout:** Ein Satz auf handgemachter Fläche (Pinselstrich, Aquarell oder Kreppband-Zeilen) für die Zeile, die hängen bleiben soll. Textmarker im Fließtext: highlighter mit `action="marker"`.
+- **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen (Fläche, Unterstrich oder handgezeichneter Textmarker).
 - **timeline:** Storytelling für Marken-Historie.
 - **data-table:** TanStack-Table mit Sortierung, Pagination, Auswahl und Spaltenbreiten.
 
@@ -89,4 +90,4 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **language-switcher / accent-switcher / animated-theme-toggler:** Globalisierung und Personalisierung.
 
 ---
-*Stand: 2026-10-06 — 94 Komponenten, jede mit eigener `COMPONENT.md`.*
+*Stand: 2026-10-06 — 95 Komponenten, jede mit eigener `COMPONENT.md`.*

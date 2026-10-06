@@ -11,6 +11,7 @@ import { PullQuote } from '@components/pull-quote/pull-quote'
 import { PaperNote } from '@components/paper-note/paper-note'
 import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
 import { ProcessSteps, type ProcessStep } from '@components/process-steps/process-steps'
+import { MarkerCallout } from '@components/marker-callout/marker-callout'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -409,6 +410,65 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>ProcessSteps · Container-Query @2xl · Papier fix, Linien folgen dem Theme</span>
           <span>ol · Deko aria-hidden · respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
+      <Section
+        title="MarkerCallout"
+        description="Ein Satz auf einer handgemachten Fläche: variant='brush' (Pinselstrich, zieht sich auf), 'watercolor' (Aquarell mit Pigmentrand) und 'tape' (eine Zeile pro Kreppband-Streifen). Farben kraft · sage · rose bleiben theme-unabhängig. Für Textmarker im Fließtext: Highlighter action='marker'."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="brush" · Caveat · Form pro Instanz verschieden
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-16 px-4 pt-8 pb-12">
+              <MarkerCallout rotate={-1.5}>Ein besonderes Erlebnis für alle Weinliebhaber – mit euch!</MarkerCallout>
+              <MarkerCallout color="sage" rotate={1}>Reben mieten, durch die Ried wandern, im Keller verkosten.</MarkerCallout>
+              <MarkerCallout color="rose" rotate={-0.5}>Die Miete ist rein symbolisch.</MarkerCallout>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="watercolor" · font-display kursiv
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-12">
+              <MarkerCallout variant="watercolor" rotate={-0.6}>Ein besonderes Erlebnis für alle Weinliebhaber – mit euch!</MarkerCallout>
+              <MarkerCallout variant="watercolor" color="sage" rotate={0.5}>Reben mieten, durch die Ried wandern, im Keller verkosten.</MarkerCallout>
+              <MarkerCallout variant="watercolor" color="rose" rotate={-0.3}>Die Miete ist rein symbolisch.</MarkerCallout>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="tape" · Kalam fett · lines statt children
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-16 px-4 pt-8 pb-12">
+              <MarkerCallout variant="tape" rotate={-1.5} lines={['Ein besonderes Erlebnis', 'für alle Weinliebhaber', '– mit euch!']} />
+              <MarkerCallout variant="tape" color="sage" rotate={1} lines={['Reben mieten,', 'durch die Ried wandern,', 'im Keller verkosten.']} />
+              <MarkerCallout variant="tape" color="rose" rotate={-0.5} lines={['Die Miete', 'ist rein symbolisch.']} />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · sehr kurz · langer Satz mit max-w-md · ohne Drehung · einzelner Streifen
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-16 px-4 pt-8 pb-8">
+              <MarkerCallout color="rose" rotate={3}>Prost!</MarkerCallout>
+              <MarkerCallout variant="watercolor" color="kraft" rotate={0} className="max-w-md">
+                Bitte festes Schuhwerk mitbringen: Der Weg durch die Riede ist steil, und nach Regen wird er rutschig.
+              </MarkerCallout>
+              <MarkerCallout variant="tape" color="sage" rotate={0} lines={['Samstag, 16 Uhr']} />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>MarkerCallout · fixe Mini-Palette · Texturen per Inline-SVG</span>
+          <span>Deko aria-hidden · respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 

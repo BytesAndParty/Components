@@ -10,6 +10,7 @@
 /* Self-hosted Handschriften für PaperNote (torn → Caveat, notepad → Kalam) und PolaroidFrame (Caveat). */
 @import "@fontsource/caveat/400.css";
 @import "@fontsource/kalam/400.css";
+@import "@fontsource/kalam/700.css"; /* MarkerCallout tape */
 
 /* Self-hosted Display-Serif für font-display (ProcessSteps ledger, PullQuote, NumeralReveal). */
 @import "@fontsource/cormorant-garamond/300-italic.css";

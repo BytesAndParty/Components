@@ -13,7 +13,7 @@ export const groups = [
     descKey: 'desc.text',
     title: 'Text & Motion',
     description: 'Text animations, sparkles, highlights, scramble, and scroll-reactive motion.',
-    components: ['SparklesText', 'Highlighter', 'Paragraph', 'PaperNote', 'PolaroidFrame', 'ProcessSteps', 'Timeline', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
+    components: ['SparklesText', 'Highlighter', 'Paragraph', 'PaperNote', 'PolaroidFrame', 'ProcessSteps', 'MarkerCallout', 'Timeline', 'TextScramble', 'TextRotate', 'AuroraText', 'VelocityScroll', 'ScrollRotate'],
   },
   {
     path: '/icons',

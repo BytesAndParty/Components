@@ -1,7 +1,7 @@
 import { useId, useRef, type CSSProperties, type ReactNode } from 'react'
 import { motion, useInView, useReducedMotion, type Variants } from 'motion/react'
 import { cn } from '../lib/utils'
-import { PAPER, WASHI, paperGrain } from '../lib/scrapbook'
+import { PAPER, WASHI, hashSeed, paperGrain } from '../lib/scrapbook'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -64,12 +64,6 @@ function rand(seed: number) {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
-}
-
-function hashSeed(id: string) {
-  let h = 0
-  for (let i = 0; i < id.length; i++) h = (Math.imul(h, 31) + id.charCodeAt(i)) | 0
-  return h
 }
 
 const clamp = (v: number, max: number) => Math.min(max, Math.max(0, v))

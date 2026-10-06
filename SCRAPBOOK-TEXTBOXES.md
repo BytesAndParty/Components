@@ -6,7 +6,7 @@
 > Repo — kein Bezug zu einem konkreten Produkt (Auslöser war eine BuchArt58-Session, die Komponenten
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
-Status: **3 von 4 umgesetzt** — Paper-Note ([`COMPONENT.md`](./components/paper-note/COMPONENT.md)), Polaroid-Frame ([`COMPONENT.md`](./components/polaroid-frame/COMPONENT.md)) und Process-Steps ([`COMPONENT.md`](./components/process-steps/COMPONENT.md)) sind fertig. Marker-Callout liegt mit vier Entwürfen auf der Werkbank (`/lab/marker-callout` im components-showcase).
+Status: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
 **Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
@@ -105,26 +105,36 @@ Die Sepia-/Vintage-Option ist mit Entwurf D verworfen.
 rotiert (im Bild: "Ein besonderes Erlebnis für alle Kaffeeliebhaber – mit euch!").
 
 > Abgrenzung zur bestehenden [`Highlighter`](./components/highlighter/highlighter.tsx)-Komponente:
-> `Highlighter` ist eine animierte Inline-Text-Unterstreichung/-Markierung (scroll-getriggert, für
-> einzelne Wörter in Fließtext). `MarkerCallout` ist ein eigenständiger, statischer Block mit
-> handgezeichneter Pinselstrich-Fläche als Hintergrund für ganze Sätze — anderer Einsatzzweck, kein
-> Duplikat.
+> `Highlighter` ist eine animierte Inline-Markierung (scroll-getriggert, für Wörter in Fließtext).
+> `MarkerCallout` ist ein eigenständiger Block mit handgemachter Fläche hinter ganzen Sätzen.
+> **Entschieden (Werkbank-Review):** Entwurf B *Textmarker* war technisch derselbe Mechanismus wie
+> `Highlighter` (`background-size`-Wipe auf einem Inline-Span) und wurde deshalb **nicht** Teil von
+> `MarkerCallout`, sondern als `action="marker"` in den `Highlighter` übernommen. Eine Capability, eine
+> Komponente. Bei der Gelegenheit bekam `Highlighter` Reduced Motion, `color-mix` statt Hex-Alpha und
+> keinen Hex-Fallback mehr.
 
-**Props (Entwurf):**
+**Werkbank-Ergebnis:** Vier Entwürfe verglichen — A *Pinselstrich*, B *Textmarker*, C *Aquarell* und
+D *Kreppband-Zeilen*. **A, C und D als drei Varianten von `MarkerCallout`, B in den `Highlighter`.**
+
+**Props (umgesetzt):**
 | Prop | Typ | Default | Beschreibung |
 |---|---|---|---|
-| `children` | `ReactNode` | required | Text-Inhalt |
-| `color` | `'kraft' \| 'sage' \| 'rose'` | `'kraft'` | Pinselstrich-Farbe (festes Mini-Palette, keine freien Hex-Werte) |
-| `rotate` | `number` (deg) | `-1` | Rotationswinkel |
-| `variant` | `1 \| 2 \| 3` | `1` | Wählt eine von 3 vorgefertigten Blob-Pfad-Varianten (vermeidet identisch wirkende Wiederholung bei Mehrfach-Einsatz) |
+| `variant` | `'brush' \| 'watercolor' \| 'tape'` | `'brush'` | A = `brush`, C = `watercolor`, D = `tape` |
+| `children` | `ReactNode` | required (nicht bei `tape`) | Text-Inhalt |
+| `lines` | `string[]` | required bei `tape` | Eine Zeile pro Streifen (Discriminated Union mit `children`) |
+| `color` | `'kraft' \| 'sage' \| 'rose'` | `'kraft'` | Feste Mini-Palette, keine freien Farbwerte |
+| `rotate` | `number` (deg) | `-1` / `-0.5` / `-1` | Rotationswinkel, Default je Variante |
+| `seed` | `number` | aus `useId` | Ersetzt das geplante `variant: 1 \| 2 \| 3` für die Blob-Form: automatisch pro Instanz verschieden, reproduzierbar festlegbar |
 | `className` / `style` | — | — | Layout-Anpassung |
 
-**Visual:** Inline-SVG-`<path>` (handgezeichnete Blob-Form, 3 Varianten vordefiniert) als Hintergrund,
-Text zentriert darüber, Handschrift-Font.
+**Visual:** `brush` = Inline-SVG-Blob (3 Formen) mit Borstenstreifen und trockenem Rand, Caveat.
+`watercolor` = Farbwolke mit Pigmentrand per SVG-Displacement, Display-Serif kursiv. `tape` = Kreppband-Streifen
+pro Zeile mit gerissenen Enden, Kalam fett. Alle blenden beim Scrollen ein.
 
-**Abhängigkeiten:** keine.
+**Abhängigkeiten:** `motion/react`; in der App `@fontsource/caveat`, `@fontsource/kalam` (700) und eine
+Display-Serif als `--font-display`.
 
-**Status:** 🟡 Werkbank — A *Pinselstrich*, B *Textmarker*, C *Aquarell*, D *Kreppband-Zeilen*
+**Status:** ✅ umgesetzt
 
 ---
 
@@ -164,7 +174,7 @@ Schritten dazwischen über.
 - **Farbpalette (fix, nicht Theme-abhängig):** Kraftpapier-Tan, Creme-Weiß (Polaroid-Rahmen),
   Chalkboard-Dunkel (für dunkle Notiz), Tape-Oliv/Kraft-Beige. Als `oklch()`-Konstanten (kraft
   `oklch(0.80 0.055 76)`, cream `oklch(0.965 0.016 88)`, dark `oklch(0.27 0.014 55)`). **Seit Polaroid-Frame**
-  in [`components/lib/scrapbook.ts`](./components/lib/scrapbook.ts): `PAPER`, `paperGrain()` und `WASHI`.
+  in [`components/lib/scrapbook.ts`](./components/lib/scrapbook.ts): `PAPER`, `paperGrain()`, `WASHI` und `hashSeed()`.
   Komponenten-spezifische Werte (z. B. der etwas weißere Polaroid-Karton) bleiben lokal. Was auf dem
   Seitenhintergrund liegt (Pfeile), folgt dem Theme — sonst ist es im Dark Mode unsichtbar.
 - **Handschrift-Font:** Caveat + Kalam (siehe Entscheidung #4), self-hosted via `@fontsource` in der App (#5).
@@ -182,7 +192,7 @@ Schritten dazwischen über.
 |---|---|---|---|---|---|---|
 | 1 | Paper-Note | ✅ | — (keine UI-Strings) | ✅ | ✅ | ✅ |
 | 2 | Polaroid-Frame | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
-| 3 | Marker-Callout | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 3 | Marker-Callout | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 | 4 | Process-Steps | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 
 ## Change History
@@ -194,3 +204,4 @@ Schritten dazwischen über.
 | 2026-10-06 | Werkbänke für Polaroid-Frame, Marker-Callout und Process-Steps (je 4 Entwürfe); Paper-Note-Werkbank entfernt | Gleiches Vorgehen wie bei Paper-Note: erst vergleichen, dann übernehmen. |
 | 2026-10-06 | Polaroid-Frame umgesetzt (Entwurf A *Klassisch*), Showcase-Eintrag auf der Text-Seite, gemeinsame Basis `components/lib/scrapbook.ts` (Paper-Note darauf umgestellt) | Zweite Komponente braucht Tinte, Washi und Korn von Paper-Note, daher wie geplant nach `lib/` ausgelagert. |
 | 2026-10-06 | Process-Steps umgesetzt (Entwürfe A, B, C als `paper`, `trail`, `ledger`), Showcase-Eintrag auf der Text-Seite, Cormorant self-hosted im components-showcase | Werkbank-Review. Responsive auf Container-Query umgestellt, weil die Werkbank-Fassung zwischen 640 und ~900 px überlief. |
+| 2026-10-06 | Marker-Callout umgesetzt (A, C, D als `brush`, `watercolor`, `tape`), Entwurf B als `Highlighter` `action="marker"`, Highlighter-Fixes, Werkbank entfernt | Werkbank-Review. B überschnitt sich mit `Highlighter`, daher dort integriert statt doppelt im System. |
