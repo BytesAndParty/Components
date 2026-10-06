@@ -13,6 +13,7 @@
 @import "@fontsource/kalam/700.css"; /* MarkerCallout tape */
 
 /* Self-hosted Display-Serif für font-display (ProcessSteps ledger, PullQuote, NumeralReveal). */
+@import "@fontsource/cormorant-garamond/300.css"; /* PullQuote: font-light, nicht kursiv */
 @import "@fontsource/cormorant-garamond/300-italic.css";
 @import "@fontsource/cormorant-garamond/400.css";
 @import "@fontsource/cormorant-garamond/400-italic.css";
