@@ -5,9 +5,9 @@ Testprojekt um **Vendure.js** als Headless-Commerce-Backend für den geplanten W
 ## Was ist das?
 
 - **`server/`** — Vendure.js Backend mit 10 weinspezifischen Custom Fields, SQLite DB, React Dashboard (`@vendure/dashboard` v3.6.4)
-- **`storefront/`** — React 19 + Vite Storefront das über GraphQL mit Vendure kommuniziert
+- **`storefront/`** — Astro-Storefront (`output: 'static'`) mit React-19-Inseln, die über GraphQL mit Vendure kommuniziert. Weindaten werden zur Build-Zeit gerendert (siehe [ARCHITECTURE.md](./ARCHITECTURE.md)).
 
-Die Storefront verwendet kopierte Komponenten aus der `components/` Library (shadcn-Style).
+Die Storefront bindet Komponenten aus der `components/` Library direkt über den Alias `@components` ein (Bun-Workspace) — nichts wird kopiert.
 
 ## Quick Start
 
@@ -26,8 +26,8 @@ cd vendure-showcase/server
 bun run dashboard
 
 # 4. In neuem Terminal: Storefront starten
+#    (Abhängigkeiten kommen über `bun install` im Repo-Root — die Storefront ist ein Workspace)
 cd vendure-showcase/storefront
-bun install
 bun run dev
 ```
 
@@ -46,20 +46,15 @@ bun run dev
 
 ## Verwendete Komponenten
 
-Aus der `components/` Library (kopiert, nicht referenziert):
+Aus der `components/` Library, eingebunden über `@components/…`:
 
-| Komponente         | Einsatz                                    |
-|--------------------|--------------------------------------------|
-| `GlowCard`         | Produktkarten mit Cursor-Glow              |
-| `AddToCartButton`  | Animierter Add-to-Cart mit Cart-Animation  |
-| `CartIcon`         | Header-Cart mit Badge-Bounce               |
-| `ProductTag`       | NEU, Prämiert, Limitiert Tags              |
-| `Rating`           | Sterne-Bewertung auf Produktkarten         |
-| `MagneticButton`   | CTA-Buttons mit magnetischem Hover         |
-| `AuroraText`       | Schimmernder Headline-Text                 |
-| `TextScramble`     | Scramble-Reveal auf der Startseite         |
-| `Toast`            | Feedback bei Add-to-Cart & Checkout        |
-| `Stepper`          | Checkout-Flow (Adresse → Versand → Zahlung)|
+| Komponente | Einsatz |
+|---|---|
+| `atelier` | `AtelierProvider` + Theme-/Akzent-/Sprach-State für Header-Toggles |
+| `i18n` | Lokalisierte Texte (`de`/`en`) |
+| `shape-card` | Wein-Karten und Detailansicht |
+| `checkbox` | Filter im Sortiment (`FilterDrawer`) |
+| `breadcrumb` | Navigation auf der Detailseite |
 
 ## Vendure Custom Fields
 
