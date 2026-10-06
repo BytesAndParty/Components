@@ -9,6 +9,7 @@ An overlapping row of image cards that elastically push apart when a card is hov
 | **Hover push** | The hovered card scales to 1.05 and moves to the front; its siblings slide away from it — the closer the sibling, the stronger the push (`maxTranslation / distance`). |
 | **Elastic easing** | All movement runs as a CSS `transform` transition with an overshooting `cubic-bezier(.17, .67, elasticity, 1.2)`, so cards bounce slightly past their target. |
 | **Reset** | On mouse-leave of the container, every card springs back to its resting position and original stacking order. |
+| **Reduced motion** | With `prefers-reduced-motion: reduce` (read at hover time) the hovered card only moves to the front — no push, no scale. |
 
 ## How It Works
 
@@ -42,10 +43,13 @@ import { BounceCards } from '@components/bounce-cards/bounce-cards'
 />
 ```
 
+## Theming
+
+Cards use `var(--card)` as background and `var(--border)` for the 1 px border, so they follow dark/light mode.
+
 ## Known Gaps
 
-- Hover-only: no keyboard or touch equivalent, and no `prefers-reduced-motion` handling yet.
-- Card background and border are hardcoded (`#2a2a2e`, `rgba(255,255,255,0.1)`) instead of theme tokens.
+- Hover-only: the cards are decorative images without a keyboard or touch equivalent.
 
 ## Dependencies
 

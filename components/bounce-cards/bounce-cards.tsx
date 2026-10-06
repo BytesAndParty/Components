@@ -41,8 +41,15 @@ export function BounceCards({
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
 
   function pushSiblings(index: number) {
+    // Read at event time — always current, no listener needed.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     cardRefs.current.forEach((card, idx) => {
       if (!card) return
+      if (reduceMotion) {
+        // Only raise the hovered card; no push, no scale.
+        card.style.zIndex = idx === index ? '10' : String(idx)
+        return
+      }
       const diff = idx - index
       const distance = Math.abs(diff)
       const direction = diff > 0 ? 1 : -1
@@ -96,8 +103,8 @@ export function BounceCards({
             height: baseSize,
             borderRadius: '12px',
             overflow: 'hidden',
-            background: '#2a2a2e',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--card)',
+            border: '1px solid var(--border)',
             marginLeft: idx === 0 ? 0 : -baseSize * overlap,
             zIndex: idx,
             position: 'relative',
