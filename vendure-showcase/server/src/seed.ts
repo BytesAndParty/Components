@@ -1,6 +1,6 @@
 // fallow-ignore-file security-sink
-// Reason: local dev seed — fetch() only ever targets the hardcoded localhost
-// ADMIN_URL constant, never an attacker-controlled URL.
+// Reason: operator-run seed — fetch() only targets ADMIN_URL, which defaults to
+// localhost and is otherwise set by whoever runs the script, never by request input.
 
 /**
  * SEED-SKRIPT
@@ -12,7 +12,10 @@
  *         Customers, Promotions.
  */
 
-const ADMIN_URL = 'http://localhost:3000/admin-api';
+// Auf dem VPS: ADMIN_URL=http://localhost:3010/admin-api, Login aus .env.prod
+const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:3000/admin-api';
+const SUPERADMIN_USERNAME = process.env.SUPERADMIN_USERNAME ?? 'superadmin';
+const SUPERADMIN_PASSWORD = process.env.SUPERADMIN_PASSWORD ?? 'superadmin';
 
 type GqlResponse<T = any> = { data?: T; errors?: Array<{ message: string }> };
 
@@ -23,12 +26,13 @@ async function seed() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       query: `
-        mutation {
-          login(username: "superadmin", password: "superadmin") {
+        mutation Login($username: String!, $password: String!) {
+          login(username: $username, password: $password) {
             ... on CurrentUser { id }
           }
         }
       `,
+      variables: { username: SUPERADMIN_USERNAME, password: SUPERADMIN_PASSWORD },
     }),
   });
   const vendureToken = authRes.headers.get('vendure-auth-token') ?? '';
@@ -669,7 +673,7 @@ async function seed() {
   // ─── Fertig ────────────────────────────────────────────────────────────────
   console.log('\n🍷 Seed abgeschlossen!');
   console.log('   Admin UI: http://localhost:3002/admin');
-  console.log('   Login: superadmin / superadmin');
+  console.log(`   Login: ${SUPERADMIN_USERNAME}`);
 }
 
 seed().catch(err => {
