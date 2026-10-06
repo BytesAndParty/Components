@@ -37,7 +37,8 @@
   --card:                   oklch(0.082 0.004 285);
   --card-foreground:        oklch(0.905 0.004 285);
   --muted:                  oklch(0.118 0.004 285);
-  --muted-foreground:       oklch(0.491 0.010 285);
+  /* 5,4–5,5:1 auf background/card/muted. Der Light-Wert 0.491 lag hier bei 3,3:1. Wie launcher und section-showcase. */
+  --muted-foreground:       oklch(0.611 0.012 285);
   --border:                 oklch(0.188 0.006 285);
   --input:                  oklch(0.188 0.006 285);
   --primary:                var(--accent);
