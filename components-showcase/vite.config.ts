@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import fs from 'fs'
@@ -20,18 +21,14 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/components/' : '/',
   server: { port: 5171 },
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          // React Compiler — eliminates manual useMemo/useCallback.
-          // No compilationMode: default infers correctly (only instruments
-          // function components and hooks, not utility functions).
-          // 'all' would compile every function incl. module-level utilities,
-          // causing useMemoCache calls before React is initialized.
-          'babel-plugin-react-compiler',
-        ],
-      },
-    }),
+    react(),
+    // React Compiler — eliminates manual useMemo/useCallback. plugin-react v6
+    // has no `babel` option anymore, so it runs through @rolldown/plugin-babel.
+    // No compilationMode: default infers correctly (only instruments function
+    // components and hooks, not utility functions). 'all' would compile every
+    // function incl. module-level utilities, causing useMemoCache calls before
+    // React is initialized.
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
   ],
   publicDir: path.resolve(import.meta.dirname, '../_public_'),

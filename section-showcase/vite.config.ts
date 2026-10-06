@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import fs from 'fs'
@@ -15,11 +16,9 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/sections/' : '/',
   server: { port: 5174 },
   plugins: [
-    react({
-      babel: {
-        plugins: ['babel-plugin-react-compiler'],
-      },
-    }),
+    // React Compiler via @rolldown/plugin-babel (plugin-react v6 dropped `babel`).
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
   ],
   publicDir: path.resolve(import.meta.dirname, '../_public_'),

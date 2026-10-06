@@ -125,7 +125,7 @@ const filtered = useMemo(() => items.filter(isActive), [items, isActive])
 const filtered = items.filter(isActive)
 ```
 
-`babel-plugin-react-compiler` (stable seit Oktober 2025, Default-`compilationMode` — instrumentiert nur Komponenten und Hooks; `'all'` würde auch Modul-Utilities kompilieren und `useMemoCache` vor der React-Initialisierung aufrufen) analysiert Code statisch und fügt Memoization exakt dort ein, wo sie Sinn ergibt — ohne false positives, ohne vergessene Dependencies. Konsequenz: kein `useCallback`, kein `useMemo` im Projekt, außer wo externe Bibliotheken explizit stabile Referenzen fordern.
+`babel-plugin-react-compiler` (stable seit Oktober 2025, Default-`compilationMode` — instrumentiert nur Komponenten und Hooks; `'all'` würde auch Modul-Utilities kompilieren und `useMemoCache` vor der React-Initialisierung aufrufen) analysiert Code statisch und fügt Memoization exakt dort ein, wo sie Sinn ergibt — ohne false positives, ohne vergessene Dependencies. Eingebunden ist er in launcher, components-showcase und section-showcase über `@rolldown/plugin-babel` mit `reactCompilerPreset()` aus `@vitejs/plugin-react` — v6 des Plugins hat keine `babel`-Option mehr. Kontrolle nach dem Build: `grep -l react.memo_cache_sentinel dist/*/assets/*.js` muss App-Chunks treffen, nicht nur `vendor-react`. Konsequenz: kein `useCallback`, kein `useMemo` im Projekt, außer wo externe Bibliotheken explizit stabile Referenzen fordern.
 
 ---
 
