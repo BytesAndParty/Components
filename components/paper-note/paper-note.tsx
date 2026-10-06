@@ -270,7 +270,7 @@ export function PaperNote({
   return (
     <motion.div
       ref={ref}
-      className={cn('relative w-fit max-w-68 text-[1.6rem] leading-[1.15]', className)}
+      className={cn('relative w-fit max-w-68 text-[1.6rem]', className)}
       style={{ fontFamily: FONT.torn, ...style }}
       variants={drop}
       initial={reduce ? false : 'hidden'}
@@ -278,8 +278,9 @@ export function PaperNote({
     >
       {/* Schatten am Eltern-Element: clip-path würde ihn sonst wegschneiden */}
       <div style={{ filter: 'drop-shadow(0 10px 12px oklch(0.2 0.03 60 / 0.28)) drop-shadow(0 2px 2px oklch(0.2 0.03 60 / 0.22))' }}>
+        {/* leading hier statt am Wrapper: ein text-*-Override per className würde es sonst per tailwind-merge entfernen */}
         <div
-          className="px-7 pt-7 pb-6"
+          className="px-7 pt-7 pb-6 leading-[1.15]"
           style={{
             clipPath: deckleEdge(s, 3.5),
             backgroundColor: p.bg,
