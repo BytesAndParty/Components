@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Barrel, Droplets, Grape, MapPin, Sun, Wine } from 'lucide-react'
 import { Section } from '../components/section'
 import { TextScramble } from '@components/text-scramble/text-scramble'
 import { TextRotate } from '@components/text-rotate/text-rotate'
@@ -9,6 +10,7 @@ import { Paragraph } from '@components/paragraph/paragraph'
 import { PullQuote } from '@components/pull-quote/pull-quote'
 import { PaperNote } from '@components/paper-note/paper-note'
 import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
+import { ProcessSteps, type ProcessStep } from '@components/process-steps/process-steps'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -21,6 +23,22 @@ import { testimonials } from '../data'
 
 const wineDescriptionLong = 'Tiefdunkles Granatrot mit violetten Reflexen. In der Nase entfaltet sich ein vielschichtiges Bouquet aus reifen Brombeeren, schwarzen Kirschen und feinen Anklängen von Vanille, Tabak und mediterranen Kräutern. Am Gaumen kraftvoll und doch elegant, mit samtigen Tanninen, einer perfekten Balance zwischen Frucht und Holz und einem langen, anhaltenden Nachklang. Hervorragender Speisebegleiter zu kräftigem Wild, geschmortem Rind und gereiftem Hartkäse.'
 const wineDescriptionShort = 'Frischer Grüner Veltliner mit feiner Pfeffernote.'
+
+const STEP_ICON = { size: 34, strokeWidth: 1.4 } as const
+
+const WINE_STEPS: ProcessStep[] = [
+  { icon: <Sun {...STEP_ICON} />, label: 'Reifen am Stock' },
+  { icon: <Grape {...STEP_ICON} />, label: 'Lese von Hand' },
+  { icon: <Droplets {...STEP_ICON} />, label: 'Sanft pressen' },
+  { icon: <Barrel {...STEP_ICON} />, label: 'Reifen im Fass' },
+  { icon: <Wine {...STEP_ICON} />, label: 'Verkosten' },
+]
+
+const SHORT_STEPS: ProcessStep[] = [
+  { icon: <MapPin {...STEP_ICON} />, label: 'Treffpunkt am Hoftor' },
+  { icon: <Grape {...STEP_ICON} />, label: 'Durch die Ried Hölzer bis hinauf zum Aussichtspunkt' },
+  { icon: <Wine {...STEP_ICON} />, label: 'Verkostung im Keller' },
+]
 
 export function TextPage() {
   return (
@@ -335,6 +353,50 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>PolaroidFrame · fixe Rahmenfarbe · Caveat self-hosted via @fontsource</span>
           <span>figure + figcaption · Hover nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
+      <Section
+        title="ProcessSteps"
+        description="Statische Erklär-Kette in drei Darstellungen: variant='paper' (Papier-Kreise mit Pfeilen), 'trail' (Kraft-Stempel auf einem gepunkteten Pfad) und 'ledger' (römische Ziffern über Hairlines, Maison-Stil). Unter 42 rem Containerbreite stapeln sich die Schritte vertikal."
+        canReload
+      >
+        <div className="flex flex-col gap-14">
+          <div>
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="paper" · Default
+            </p>
+            <ProcessSteps steps={WINE_STEPS} />
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="trail" · Caveat
+            </p>
+            <ProcessSteps variant="trail" steps={WINE_STEPS} />
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              variant="ledger" · font-display
+            </p>
+            <ProcessSteps variant="ledger" steps={WINE_STEPS} />
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · drei Schritte mit langem Label · schmaler Container (max-w-sm) stapelt vertikal
+            </p>
+            <div className="flex flex-col gap-12 lg:flex-row lg:items-start">
+              <ProcessSteps steps={SHORT_STEPS} className="lg:flex-1" />
+              <ProcessSteps variant="trail" steps={SHORT_STEPS} className="max-w-sm" />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>ProcessSteps · Container-Query @2xl · Papier fix, Linien folgen dem Theme</span>
+          <span>ol · Deko aria-hidden · respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 

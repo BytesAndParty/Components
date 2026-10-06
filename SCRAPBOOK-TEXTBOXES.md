@@ -6,7 +6,7 @@
 > Repo — kein Bezug zu einem konkreten Produkt (Auslöser war eine BuchArt58-Session, die Komponenten
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
-Status: **2 von 4 umgesetzt** — Paper-Note ([`COMPONENT.md`](./components/paper-note/COMPONENT.md)) und Polaroid-Frame ([`COMPONENT.md`](./components/polaroid-frame/COMPONENT.md)) sind fertig. Marker-Callout und Process-Steps liegen mit je vier Entwürfen auf der Werkbank (`/lab/marker-callout`, `/lab/process-steps` im components-showcase).
+Status: **3 von 4 umgesetzt** — Paper-Note ([`COMPONENT.md`](./components/paper-note/COMPONENT.md)), Polaroid-Frame ([`COMPONENT.md`](./components/polaroid-frame/COMPONENT.md)) und Process-Steps ([`COMPONENT.md`](./components/process-steps/COMPONENT.md)) sind fertig. Marker-Callout liegt mit vier Entwürfen auf der Werkbank (`/lab/marker-callout` im components-showcase).
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
 **Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
@@ -134,21 +134,28 @@ Text zentriert darüber, Handschrift-Font.
 darunter (im Bild: Bohne → Nase → Tasse → Sprechblasen = "verschiedene Kaffees verkosten" → "den
 Cupping-Prozess verstehen" → …).
 
-**Props (Entwurf):**
+**Werkbank-Ergebnis:** Vier Entwürfe verglichen — A *Papier-Kreise*, B *Wanderpfad*, C *Hairline-Ledger*
+und D *Kreidetafel*. **Gewählt: A, B und C, als drei Varianten einer Komponente.** D verworfen.
+
+**Props (umgesetzt):**
 | Prop | Typ | Default | Beschreibung |
 |---|---|---|---|
 | `steps` | `{ icon: ReactNode; label: string }[]` | required | Schritt-Definitionen |
-| `arrowIcon` | `ReactNode` | eingebauter Pfeil | Custom-Pfeil zwischen Schritten |
-| `className` / `style` | — | — | Layout-Anpassung |
+| `variant` | `'paper' \| 'trail' \| 'ledger'` | `'paper'` | A = `paper`, B = `trail`, C = `ledger` |
+| `className` / `style` | — | — | Layout-Anpassung am Container |
 
-**Visual:** Kreis-Badges (Kraftpapier-Creme-Ton, dünner Border, dunkles Linien-Icon mittig), Pfeile
-zwischen den Kreisen, Labels in normalem UI-Sans (**nicht** Handschrift — Lesbarkeit bei kurzen
-Prozess-Beschreibungen hat Vorrang). Responsive: `flex-wrap` + Pfeil dreht sich 90° im vertikalen
-Stack.
+`arrowIcon` aus dem Entwurf bewusst weggelassen, bis ein Consumer einen eigenen Pfeil braucht.
 
-**Abhängigkeiten:** keine. `motion/react` optional für Staggered-Reveal beim Scroll-in-View.
+**Visual:** `paper` = Creme-Papierkreise mit Pfeilen, UI-Sans-Labels (wie im Plan). `trail` = Kraft-Stempel auf
+gepunktetem Wellenpfad, Caveat-Labels. `ledger` = römische Ziffern (`font-display`) über Hairlines, Kapitälchen.
+Responsive per Container-Query statt `flex-wrap`: ab 42 rem eine Spalte pro Schritt, darunter vertikaler Stack
+mit 90° gedrehten Pfeilen. Die Werkbank-Fassung wechselte schon ab 640 px in die Zeile und lief bei fünf
+Schritten dazwischen über.
 
-**Status:** 🟡 Werkbank — A *Papier-Kreise*, B *Wanderpfad*, C *Hairline-Ledger*, D *Kreidetafel*
+**Abhängigkeiten:** `motion/react`; in der App `@fontsource/caveat` (`trail`) und eine Display-Serif als
+`--font-display` (`ledger`, im components-showcase `@fontsource/cormorant-garamond`).
+
+**Status:** ✅ umgesetzt
 
 ---
 
@@ -176,7 +183,7 @@ Stack.
 | 1 | Paper-Note | ✅ | — (keine UI-Strings) | ✅ | ✅ | ✅ |
 | 2 | Polaroid-Frame | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 | 3 | Marker-Callout | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 4 | Process-Steps | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 4 | Process-Steps | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 
 ## Change History
 
@@ -186,3 +193,4 @@ Stack.
 | 2026-10-06 | Paper-Note umgesetzt (`torn` + `notepad`), Showcase-Eintrag, neue Section „Veranstaltungen → Die Pinnwand" | Werkbank mit 4 Entwürfen, A + B gewählt. Fonts entschieden (Caveat + Kalam), Font-Ladung auf self-hosted `@fontsource` umgestellt (DSGVO, Repo-Konvention). Quality-Gate: Lint 0, Typecheck ohne Fehler, Dark/Light, Akzent, Reduced Motion und 390-px-Breite im Browser geprüft. |
 | 2026-10-06 | Werkbänke für Polaroid-Frame, Marker-Callout und Process-Steps (je 4 Entwürfe); Paper-Note-Werkbank entfernt | Gleiches Vorgehen wie bei Paper-Note: erst vergleichen, dann übernehmen. |
 | 2026-10-06 | Polaroid-Frame umgesetzt (Entwurf A *Klassisch*), Showcase-Eintrag auf der Text-Seite, gemeinsame Basis `components/lib/scrapbook.ts` (Paper-Note darauf umgestellt) | Zweite Komponente braucht Tinte, Washi und Korn von Paper-Note, daher wie geplant nach `lib/` ausgelagert. |
+| 2026-10-06 | Process-Steps umgesetzt (Entwürfe A, B, C als `paper`, `trail`, `ledger`), Showcase-Eintrag auf der Text-Seite, Cormorant self-hosted im components-showcase | Werkbank-Review. Responsive auf Container-Query umgestellt, weil die Werkbank-Fassung zwischen 640 und ~900 px überlief. |

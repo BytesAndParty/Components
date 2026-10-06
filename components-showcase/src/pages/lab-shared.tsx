@@ -1,7 +1,7 @@
 import { Fragment, useEffect, type ReactNode } from 'react'
 
-// Temporär: gemeinsame Bausteine der Scrapbook-Werkbänke (lab-marker-callout, lab-process-steps).
-// Wird zusammen mit den Werkbank-Seiten gelöscht.
+// Temporär: gemeinsame Bausteine der Scrapbook-Werkbank (lab-marker-callout).
+// Wird zusammen mit der Werkbank-Seite gelöscht.
 
 const FONT_LINK_ID = '__lab-scrapbook-fonts__'
 const FONT_HREF =

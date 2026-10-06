@@ -11,6 +11,11 @@
 @import "@fontsource/caveat/400.css";
 @import "@fontsource/kalam/400.css";
 
+/* Self-hosted Display-Serif für font-display (ProcessSteps ledger, PullQuote, NumeralReveal). */
+@import "@fontsource/cormorant-garamond/300-italic.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
+
 /* ── Mobile hover guard ──────────────────────────────────
    Overrides Tailwind's hover: variant so decorative hover
    effects only fire on real pointer devices (mouse/trackpad).
@@ -27,6 +32,7 @@
 
 @theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
 
   /* Color mappings */
   --color-background:             var(--background);

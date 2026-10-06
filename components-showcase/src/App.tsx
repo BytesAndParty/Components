@@ -23,9 +23,8 @@ const ShopPage        = lazy(() => import('./pages/shop').then(m => ({ default: 
 const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
 const DesignerPage    = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
 const DataPage        = lazy(() => import('./pages/data').then(m => ({ default: m.DataPage })))
-// Temporär: Werkbänke für Marker-Callout und Process-Steps, werden nach der Übernahme entfernt
+// Temporär: Werkbank für Marker-Callout, wird nach der Übernahme entfernt
 const LabMarkerCalloutPage = lazy(() => import('./pages/lab-marker-callout').then(m => ({ default: m.LabMarkerCalloutPage })))
-const LabProcessStepsPage = lazy(() => import('./pages/lab-process-steps').then(m => ({ default: m.LabProcessStepsPage })))
 
 const queryClient = new QueryClient()
 
@@ -78,7 +77,6 @@ const router = createBrowserRouter([
       { path: 'transitions',   element: withSuspense(<TransitionsPage />) },
       { path: 'designer',      element: withSuspense(<DesignerPage />) },
       { path: 'lab/marker-callout', element: withSuspense(<LabMarkerCalloutPage />) },
-      { path: 'lab/process-steps', element: withSuspense(<LabProcessStepsPage />) },
       { path: 'wine/:slug',    element: <WineDetailPage /> },
       { path: '*',             element: <NotFoundPage /> },
     ],
