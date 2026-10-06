@@ -22,14 +22,21 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Wir prüfen, ob wir in der lokalen Entwicklung (SQLite) oder Prod (Postgres) sind
 const isPostgres = process.env.DB_TYPE === 'postgres';
+const IS_DEV = process.env.NODE_ENV !== 'production';
+// Öffentliche Basis-URL hinter Caddy, z. B. https://vendure-showcase.169-58-203-37.sslip.io
+const PUBLIC_API_URL = process.env.PUBLIC_API_URL;
+const CORS_ORIGINS = process.env.CORS_ORIGINS?.split(',').map(origin => origin.trim()).filter(Boolean);
 
 export const config: VendureConfig = {
   apiOptions: {
     port: parseInt(process.env.PORT ?? '3000'),
     adminApiPath: 'admin-api', // Endpunkt für die Verwaltung
     shopApiPath: 'shop-api',   // Endpunkt für den Webshop
+    // Hinter Caddy: X-Forwarded-Proto auswerten, sonst gelten Requests als http
+    trustProxy: IS_DEV ? false : 1,
     cors: {
-      origin: true,
+      // Dashboard läuft same-origin; fremde Origins nur per Allow-List
+      origin: IS_DEV ? true : (CORS_ORIGINS ?? false),
       credentials: true,
     },
   },
@@ -39,6 +46,9 @@ export const config: VendureConfig = {
     superadminCredentials: {
       identifier: process.env.SUPERADMIN_USERNAME ?? 'superadmin',
       password: process.env.SUPERADMIN_PASSWORD ?? 'superadmin',
+    },
+    cookieOptions: {
+      secret: process.env.COOKIE_SECRET ?? 'dev-secret',
     },
   },
   paymentOptions: {
@@ -68,6 +78,7 @@ export const config: VendureConfig = {
     AssetServerPlugin.init({
       route: 'assets',
       assetUploadDir: path.join(__dirname, '..', 'data', 'assets'),
+      assetUrlPrefix: IS_DEV || !PUBLIC_API_URL ? undefined : `${PUBLIC_API_URL}/assets/`,
     }),
     DefaultSearchPlugin.init({ bufferUpdates: false }),
     DefaultJobQueuePlugin.init({}),
