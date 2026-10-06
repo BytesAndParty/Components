@@ -125,7 +125,7 @@ const filtered = useMemo(() => items.filter(isActive), [items, isActive])
 const filtered = items.filter(isActive)
 ```
 
-`babel-plugin-react-compiler` (stable seit Oktober 2025, `compilationMode: 'all'`) analysiert Code statisch und fügt Memoization exakt dort ein, wo sie Sinn ergibt — ohne false positives, ohne vergessene Dependencies. Konsequenz: kein `useCallback`, kein `useMemo` im Projekt, außer wo externe Bibliotheken explizit stabile Referenzen fordern.
+`babel-plugin-react-compiler` (stable seit Oktober 2025, Default-`compilationMode` — instrumentiert nur Komponenten und Hooks; `'all'` würde auch Modul-Utilities kompilieren und `useMemoCache` vor der React-Initialisierung aufrufen) analysiert Code statisch und fügt Memoization exakt dort ein, wo sie Sinn ergibt — ohne false positives, ohne vergessene Dependencies. Konsequenz: kein `useCallback`, kein `useMemo` im Projekt, außer wo externe Bibliotheken explizit stabile Referenzen fordern.
 
 ---
 
@@ -194,11 +194,14 @@ Fasst `@media (hover: hover)`, `@media (pointer: fine)` und `useReducedMotion()`
 ## Quick Start
 
 ```bash
-# Showcase starten
-cd showcase && bun install && bun run dev
+# Abhängigkeiten aller Workspaces (components, launcher, components-showcase, section-showcase, vendure-showcase/storefront)
+bun install
 
-# Production Build
-cd showcase && bun run build
+# Komponenten-Showcase starten (Port 5171)
+cd components-showcase && bun run dev
+
+# Kombinierter Netlify-Build: launcher + components-showcase + section-showcase nach ./dist
+bun run build:all
 ```
 
 `AtelierProvider` an die Wurzel des Component-Trees:
@@ -227,28 +230,7 @@ export function Root({ children }) {
 
 ## Komponenten
 
-~84 Komponenten. Vollständiger Status inkl. Refactoring-Fortschritt in [components/COMPONENTS-OVERVIEW.md](./components/COMPONENTS-OVERVIEW.md).
-
-### Design Engine (Cellar Canvas)
-`alignment-bar` · `color-picker` · `image-cropper-modal` · `layer-panel` · `number-input` · `text-tool-options` · `validator-badge`
-
-### System & Theming
-`atelier/provider` · `atelier/init-script` · `hotkeys/provider` · `hotkeys/shortcut-overview` · `i18n/provider` · `language-switcher` · `accent-switcher` · `animated-theme-toggler`
-
-### Navigation & Layout
-`navbar` · `back-to-top` · `breadcrumb` · `scroll-progress` · `sticky-banner` · `footer-section`
-
-### Inputs & Forms
-`form-input` · `search-overlay` · `number-input` · `slider` · `switch` · `checkbox` · `rating` · `gooey-input` · `password-setup` · `password-confirmation`
-
-### Feedback & Overlays
-`toast` · `tooltip` · `validator-badge` · `circular-progress` · `stepper`
-
-### E-Commerce
-`add-to-cart-button` · `cart-icon` · `floating-cart` · `product-badge` · `product-tag` · `pricing-interaction`
-
-### Animation & Visual
-`animated-search` · `aurora-text` · `blur-fade` · `bounce-cards` · `click-spark` · `confetti` · `cursor-glow` · `dock` · `glow-card` · `heart-like` · `lens` · `light-rays` · `magnetic-button` · `morphing-text` · `particles` · `shiny-text` · `sparkles-text` · `splash-cursor` · `velocity-scroll`
+91 Komponenten, nach Einsatzzweck gruppiert in [components/COMPONENTS-OVERVIEW.md](./components/COMPONENTS-OVERVIEW.md). Jede Komponente hat eine eigene `COMPONENT.md` mit Props, Usage und Dependencies.
 
 ---
 
