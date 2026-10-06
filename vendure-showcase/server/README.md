@@ -236,7 +236,7 @@ Alle verfügbaren Variablen — siehe [.env.example](.env.example).
 | `DB_USER` | `vendure` | Datenbank-User |
 | `DB_PASSWORD` | `vendure_pw` | Datenbank-Passwort |
 | `PORT` | `3000` | Server-Port |
-| `CORS_ORIGINS` | `localhost:5173,...` | Erlaubte Origins (kommagetrennt) |
+| `CORS_ORIGINS` | `localhost:5173,...` | Derzeit **nicht ausgewertet** — `vendure-config.ts` erlaubt fest jede Origin (`origin: true`, `credentials: true`). Vor einem Produktiv-Deploy auf eine Allow-List umstellen. |
 | `SUPERADMIN_USERNAME` | `superadmin` | Admin-Login |
 | `SUPERADMIN_PASSWORD` | `superadmin` | Admin-Passwort |
 | `COOKIE_SECRET` | dev-secret | In Produktion ändern! |

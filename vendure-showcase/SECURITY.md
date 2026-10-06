@@ -72,6 +72,11 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
 - **Warum nicht jetzt:** keine Tracking-/Analytics-Cookies, nur Vendure-Session.
 - **Trigger:** sobald Analytics, Marketing-Pixel, oder Drittanbieter-Skripte hinzukommen.
 
+### CORS Allow-List
+- **Status:** `vendure-config.ts` erlaubt fest jede Origin (`cors: { origin: true, credentials: true }`). Die Variable `CORS_ORIGINS` aus `.env.example` wird nicht ausgewertet.
+- **Warum nicht jetzt:** Storefront läuft nur lokal, kein öffentlich erreichbarer Server.
+- **Trigger:** vor dem ersten Produktiv-Deploy. Dann `CORS_ORIGINS` parsen und als Allow-List an `apiOptions.cors.origin` übergeben (nur die Storefront-Domain[s]); `credentials: true` nur zusammen mit expliziten Origins, nie mit `origin: true`.
+
 ### Rate Limiting
 - **Status:** nicht implementiert (Sache des Vendure-Servers / Reverse Proxy).
 - **Trigger:** Production-Deploy.
