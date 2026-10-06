@@ -10,6 +10,8 @@ import { Layout } from './layout'
 import { IndexPage } from './pages/index'
 import { CardsPage } from './pages/cards'
 import { WineDetailPage } from './pages/wine-detail'
+// Fehlerseiten bewusst eager: ein fehlgeschlagener Chunk-Load darf sie nicht mitreißen.
+import { NotFoundPage, RouteErrorPage } from './pages/error-pages'
 
 // Route-level code splitting for non-critical pages
 const TextPage        = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
@@ -62,6 +64,7 @@ const router = createBrowserRouter([
         <ScrollToTopOnPush />
       </>
     ),
+    errorElement: <RouteErrorPage />,
     children: [
       { index: true,           element: <IndexPage /> },
       { path: 'cards',         element: <CardsPage /> },
@@ -77,6 +80,7 @@ const router = createBrowserRouter([
       { path: 'lab/marker-callout', element: withSuspense(<LabMarkerCalloutPage />) },
       { path: 'lab/process-steps', element: withSuspense(<LabProcessStepsPage />) },
       { path: 'wine/:slug',    element: <WineDetailPage /> },
+      { path: '*',             element: <NotFoundPage /> },
     ],
   },
 ], {
