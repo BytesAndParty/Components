@@ -12,7 +12,8 @@
 //   dist/sections/   ← section-showcase  (base /sections/)
 //
 // The Vendure storefront is intentionally NOT part of the deploy — it runs
-// local-only (the launcher links to it in dev, disables the card in prod).
+// local-only. In prod the launcher card links to the Vendure dashboard on the VPS
+// (vendure-showcase/server/README.md), in dev to the local storefront.
 //
 // The base paths live in each app's own config; this script only orchestrates
 // and copies. Run via `bun run build:all`.

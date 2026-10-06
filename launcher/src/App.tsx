@@ -15,8 +15,8 @@ interface Target {
   description: string
   href: string
   icon: LucideIcon
-  // local-only apps aren't part of the deploy — shown but disabled in prod.
-  localOnly?: boolean
+  // hosted outside this deploy — opens in a new tab, nofollow.
+  external?: boolean
 }
 
 const DEV = import.meta.env.DEV
@@ -41,11 +41,12 @@ const TARGETS: Target[] = [
   {
     id: 'vendure',
     label: 'Vendure Shop',
-    tech: 'Astro · Storefront',
-    description: 'Der Wein-Storefront auf Vendure — Katalog, Produktdetail, Checkout. Läuft nur lokal.',
-    href: 'http://localhost:5173',
+    tech: 'Vendure · Astro',
+    description: 'Der Wein-Shop auf Vendure. Online: das Dashboard mit Wein-Feldern, Bestand und Bestellungen. Die Astro-Storefront läuft nur lokal.',
+    // Prod: Vendure-Server auf dem Contabo-VPS (vendure-showcase/server/README.md)
+    href: DEV ? 'http://localhost:5173' : 'https://vendure-showcase.169-58-203-37.sslip.io/dashboard/',
     icon: ShoppingBag,
-    localOnly: true,
+    external: !DEV,
   },
 ]
 
@@ -108,12 +109,7 @@ export function App() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TARGETS.map(t => (
             <li key={t.id}>
-              {t.localOnly && !DEV ? (
-                // local-only targets are reachable in dev but disabled once deployed.
-                <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} disabled badge="nur lokal" />
-              ) : (
-                <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} href={t.href} />
-              )}
+              <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} href={t.href} external={t.external} />
             </li>
           ))}
 
