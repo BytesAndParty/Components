@@ -635,6 +635,16 @@ export class FabricBridge {
     if (height !== undefined) {
       Object.assign(fabricProps, heightToFabricProps(height, kind, obj.height))
     }
+    // A Line repositions itself from its points whenever one changes, so a
+    // dragged line (left/top moved, points not) jumped back on a width edit.
+    // `set` applies keys in order — put the position last: the requested
+    // x/y, otherwise where the line is now.
+    if (kind === 'line' && width !== undefined) {
+      const { left = obj.left, top = obj.top } = fabricProps
+      delete fabricProps.left
+      delete fabricProps.top
+      Object.assign(fabricProps, { left, top })
+    }
 
     obj.set(fabricProps)
     obj.setCoords()
