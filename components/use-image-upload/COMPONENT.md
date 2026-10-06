@@ -9,7 +9,7 @@ Single-image upload in two layers: the headless `useImageUpload` hook (file pick
 | **File picker trigger** | `handleThumbnailClick` programmatically clicks a hidden `<input type="file">`, keeping the UI clean. |
 | **Drag & drop** (`ImageUpload`) | The zone accepts a dropped file; while dragging it switches to an accent-tinted state with a "drop to upload" prompt. |
 | **Preview URL** | Creates a `URL.createObjectURL` for instant local preview without uploading to a server. |
-| **Memory cleanup** | Revokes the object URL on removal and any remaining URL on unmount via `useEffect` cleanup. |
+| **Memory cleanup** | Revokes the previous object URL when a new file replaces it, on removal, and on unmount via `useEffect` cleanup. |
 | **File name tracking** | Exposes `fileName` for display (e.g., "photo.jpg"). |
 | **Reset** | `handleRemove` clears preview, filename, and resets the file input's value so the same file can be re-selected. |
 | **Keyboard** (`ImageUpload`) | The empty zone is a focusable `role="button"`; Enter/Space opens the file picker. |
@@ -65,7 +65,6 @@ import { ImageUpload } from '@components/use-image-upload/image-upload'
 ## Security Notes
 
 - Only creates local blob URLs — no server upload logic. The consumer is responsible for upload validation (file type, size) if sending to a backend.
-- Selecting a second file without removing the first does not revoke the first URL until unmount.
 
 ## Dependencies
 

@@ -15,6 +15,8 @@ export function useImageUpload({ onUpload }: UseImageUploadProps = {}) {
   }
 
   const handleFile = (file: File) => {
+    // A second pick replaces the preview — free the old blob right away.
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current)
     setFileName(file.name)
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
