@@ -15,7 +15,7 @@
 // The storefront pulls the wines at build time from the Vendure server on the
 // VPS (vendure-showcase/server/README.md) — the VPS must be up during the build.
 // In the browser it calls /shop-api same-origin; netlify.toml proxies that to
-// the VPS.
+// the VPS. The launcher card links to /shop/ in prod, to the local storefront in dev.
 //
 // The base paths live in each app's own config; this script only orchestrates
 // and copies. Run via `bun run build:all`.

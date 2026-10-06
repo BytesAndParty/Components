@@ -15,8 +15,6 @@ interface Target {
   description: string
   href: string
   icon: LucideIcon
-  // hosted outside this deploy — opens in a new tab, nofollow.
-  external?: boolean
 }
 
 const DEV = import.meta.env.DEV
@@ -41,12 +39,11 @@ const TARGETS: Target[] = [
   {
     id: 'vendure',
     label: 'Vendure Shop',
-    tech: 'Vendure · Astro',
-    description: 'Der Wein-Shop auf Vendure. Online: das Dashboard mit Wein-Feldern, Bestand und Bestellungen. Die Astro-Storefront läuft nur lokal.',
-    // Prod: Vendure-Server auf dem Contabo-VPS (vendure-showcase/server/README.md)
-    href: DEV ? 'http://localhost:5173' : 'https://vendure-showcase.169-58-203-37.sslip.io/dashboard/',
+    tech: 'Astro · Vendure',
+    description: 'Die Wein-Storefront — Katalog, Filter, Produktdetail, Warenkorb. Die Daten kommen live aus Vendure.',
+    // Prod: statischer Build unter /shop/, Daten vom Vendure-Server auf dem VPS (scripts/build-all.mjs)
+    href: DEV ? 'http://localhost:5173' : '/shop/',
     icon: ShoppingBag,
-    external: !DEV,
   },
 ]
 
@@ -109,7 +106,7 @@ export function App() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TARGETS.map(t => (
             <li key={t.id}>
-              <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} href={t.href} external={t.external} />
+              <LauncherCard title={t.label} tech={t.tech} description={t.description} icon={t.icon} href={t.href} />
             </li>
           ))}
 
