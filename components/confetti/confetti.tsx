@@ -28,9 +28,9 @@ export interface ConfettiRainProps {
   particleCount?: number
   /** Particle colors */
   colors?: string[]
-  /** Number of waves (default: 5) */
+  /** Number of waves (default: 7) */
   waves?: number
-  /** Delay between waves in ms (default: 350) */
+  /** Delay between waves in ms (default: 500) */
   waveDelay?: number
 }
 
