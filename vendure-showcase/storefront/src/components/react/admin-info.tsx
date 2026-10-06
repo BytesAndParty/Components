@@ -10,6 +10,14 @@ const SHOP_API_URL = `${VENDURE_URL}/shop-api`;
 const ADMIN_API_URL = `${VENDURE_URL}/admin-api`;
 const PLUGIN_PATH = 'server/src/plugins/wine-showcase.plugin.ts';
 
+// Angezeigter Login: im Deploy der Demo-Account aus der Netlify-Env (eingeschränkte Rolle),
+// lokal der Dev-Superadmin. Im Deploy ohne Env wird kein Login gezeigt.
+const DEMO_USER = import.meta.env.PUBLIC_DEMO_ADMIN_USER;
+const DEMO_PASSWORD = import.meta.env.PUBLIC_DEMO_ADMIN_PASSWORD;
+const LOGIN = DEPLOYED_VENDURE_URL
+  ? DEMO_USER && DEMO_PASSWORD ? { user: DEMO_USER, password: DEMO_PASSWORD } : undefined
+  : { user: 'superadmin', password: 'superadmin' };
+
 function AdminInfoInner() {
   const t = useT();
 
@@ -36,20 +44,22 @@ function AdminInfoInner() {
                 </a>
               </dd>
             </div>
-            {/* Dev-Login; auf dem VPS ist das Passwort ein Secret und wird nicht gezeigt */}
-            {!DEPLOYED_VENDURE_URL && (
+            {LOGIN && (
               <>
                 <div className="flex gap-3">
                   <dt className="w-24 shrink-0 font-semibold">{t.adminPanelUser}</dt>
-                  <dd className="font-mono">superadmin</dd>
+                  <dd className="font-mono">{LOGIN.user}</dd>
                 </div>
                 <div className="flex gap-3">
                   <dt className="w-24 shrink-0 font-semibold">{t.adminPanelPassword}</dt>
-                  <dd className="font-mono">superadmin</dd>
+                  <dd className="font-mono">{LOGIN.password}</dd>
                 </div>
               </>
             )}
           </dl>
+          {DEPLOYED_VENDURE_URL && LOGIN && (
+            <p className="text-muted-foreground text-xs leading-relaxed">{t.adminPanelDemoNote}</p>
+          )}
           <a
             href={ADMIN_URL}
             target="_blank"
