@@ -161,7 +161,7 @@ export function TextPage() {
 
       <Section
         title="PullQuote"
-        description="Editorial blockquote primitive — serif body, hairline rule, all-caps attribution. Three variants (editorial · plate · cellar), three sizes (sm/md/lg), three alignments. Uses semantic tokens; light/dark/accent aware."
+        description="Editorial blockquote primitive — serif body, hairline rule, all-caps attribution. Three variants (editorial · plate · cellar), three sizes (sm/md/lg), three alignments. Uses semantic tokens; follows light/dark."
       >
         <div className="flex flex-col gap-12">
           {/* Variant: editorial (default) */}
@@ -195,9 +195,9 @@ export function TextPage() {
             </PullQuote>
           </div>
 
-          {/* Variant: cellar (dark), right, sm, no mark */}
-          <div className="rounded-xl bg-zinc-950 p-10">
-            <p className="mb-6 text-[0.7rem] tracking-[0.15em] text-zinc-400 uppercase">
+          {/* Variant: cellar (muted ground), right, sm, no mark */}
+          <div className="bg-muted rounded-xl p-10">
+            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
               variant="cellar" · align="right" · size="sm" · showMark={'{false}'}
             </p>
             <PullQuote
@@ -226,7 +226,7 @@ export function TextPage() {
 
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>PullQuote · semantic tokens · no animation</span>
-          <span>Compose with BlurFade for entrance · light/dark/accent aware</span>
+          <span>Compose with BlurFade for entrance · follows light/dark</span>
         </div>
       </Section>
 

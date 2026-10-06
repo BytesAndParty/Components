@@ -18,7 +18,7 @@ export interface PullQuoteProps {
    * Visual treatment.
    * - `editorial` (default): cream-bg friendly, hairline divider above attribution.
    * - `plate`: framed by a thin border, padded — looks like a printed plate.
-   * - `cellar`: dark-ground variant, ideal on `bg-zinc-950` / dark hero overlays.
+   * - `cellar`: quieter, softened tones for muted grounds (`bg-muted`, footers). Follows the theme like the others.
    */
   variant?: PullQuoteVariant
   /** Text alignment + content alignment. Default `left`. */

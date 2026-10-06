@@ -4,11 +4,11 @@ Editorial-grade blockquote primitive for testimonial, magazine and brand-letter 
 
 ## Features
 
-- Three visual treatments (`editorial`, `plate`, `cellar`) covering cream-on-paper, framed-card and dark-cellar grounds.
+- Three visual treatments (`editorial`, `plate`, `cellar`) covering cream-on-paper, framed-card and muted grounds.
 - Three sizes (`sm`, `md`, `lg`) that scale only the headline text and decorative quote mark — paddings stay constant.
 - Three alignments (`left`, `center`, `right`) — fully control which side the hairline rule sits on.
 - Optional decorative opening quotation mark (rendered via `&ldquo;` so screen readers can ignore it via `aria-hidden`).
-- Uses semantic tokens (`text-foreground`, `bg-card`, `text-muted-foreground`) so dark/light mode and accent switches Just Work.
+- Uses semantic tokens (`text-foreground`, `bg-card`, `text-muted-foreground`) so dark/light mode Just Works. Every variant follows the theme — none of them is pinned to a dark ground. The accent color is not used.
 - Pure layout — no animation, no JS state. Compose with `BlurFade` for entrance effects.
 
 ## How It Works
@@ -64,7 +64,9 @@ import { PullQuote } from '@components/pull-quote/pull-quote'
 </PullQuote>
 ```
 
-### Cellar — dark backgrounds (zinc-950 hero, footer)
+### Cellar — muted grounds (`bg-muted`, footer)
+
+Follows the theme: dark ground in dark mode, light ground in light mode. Do not place it on a fixed dark surface like `bg-zinc-950` — in light mode `text-foreground` turns dark and the quote disappears.
 
 ```tsx
 <PullQuote
