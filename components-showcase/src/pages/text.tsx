@@ -8,6 +8,7 @@ import { Highlighter } from '@components/highlighter/highlighter'
 import { Paragraph } from '@components/paragraph/paragraph'
 import { PullQuote } from '@components/pull-quote/pull-quote'
 import { PaperNote } from '@components/paper-note/paper-note'
+import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -260,6 +261,80 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>PaperNote · fixe Papierfarben · Fonts self-hosted via @fontsource</span>
           <span>Deko aria-hidden · torn respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
+      <Section
+        title="PolaroidFrame"
+        description="Foto im klassischen Polaroid-Rahmen mit breitem Fuß für eine Caption in Caveat, optional mit Washi-Tape. Fällt beim Scrollen ins Bild und richtet sich beim Hover gerade. Rahmen und Tinte bleiben bewusst theme-unabhängig."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              golden path · Caption · Tape
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-20 px-4 pt-8 pb-16">
+              <PolaroidFrame
+                src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80"
+                alt="Reihen von Weinstöcken im Abendlicht"
+                caption="Riedenwanderung im Oktober"
+                rotate={-3}
+                tape
+              />
+              <PolaroidFrame
+                src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
+                alt="Zwei Weingläser beim Anstoßen"
+                caption="Anstoßen im Kellergewölbe"
+                rotate={2}
+              />
+              <PolaroidFrame
+                src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=700&q=80"
+                alt="Gewölbekeller mit Holzfässern"
+                rotate={-1}
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · lange Caption mit Markup · Bild fehlt · breiter ohne Drehung · mit PaperNote
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-20 px-4 pt-8 pb-8">
+              <PolaroidFrame
+                src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80"
+                alt="Reihen von Weinstöcken im Abendlicht"
+                caption={<>Die ganze Familie bei der Lese <em>2025</em>, mit Simon, Oma und den Nachbarskindern</>}
+                rotate={1.5}
+              />
+              <PolaroidFrame src="/does-not-exist.jpg" alt="Foto vom Hoffest (Bild fehlt)" caption="Bild fehlt" rotate={-2} />
+              <PolaroidFrame
+                src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
+                alt="Zwei Weingläser beim Anstoßen"
+                caption="Ohne Drehung, w-80"
+                rotate={0}
+                className="w-80"
+              />
+              <div className="flex items-start gap-6">
+                <PolaroidFrame
+                  src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=700&q=80"
+                  alt="Gewölbekeller mit Holzfässern"
+                  caption="Kellerführung"
+                  rotate={-2.5}
+                  tape
+                  className="w-56"
+                />
+                <PaperNote paper="kraft" rotate={3} className="mt-24">
+                  Samstag, 16 Uhr am Hoftor
+                </PaperNote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>PolaroidFrame · fixe Rahmenfarbe · Caveat self-hosted via @fontsource</span>
+          <span>figure + figcaption · Hover nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 

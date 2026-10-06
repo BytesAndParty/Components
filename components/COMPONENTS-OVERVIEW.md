@@ -71,6 +71,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 
 - **pull-quote:** Editoriales Zitat für Stimmen und Markenbriefe.
 - **paper-note:** Scrapbook-Notiz aus Papier (rundum gerissen oder vom Block) mit Klebestreifen und Pfeil, für persönliche Zwischentöne wie Einladungen und Termine.
+- **polaroid-frame:** Foto im Polaroid-Rahmen mit handschriftlicher Caption und optionalem Washi-Tape, für persönliche Momente in Event- und Story-Sections.
 - **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen.
 - **timeline:** Storytelling für Marken-Historie.
 - **data-table:** TanStack-Table mit Sortierung, Pagination, Auswahl und Spaltenbreiten.
@@ -87,4 +88,4 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **language-switcher / accent-switcher / animated-theme-toggler:** Globalisierung und Personalisierung.
 
 ---
-*Stand: 2026-10-06 — 92 Komponenten, jede mit eigener `COMPONENT.md`.*
+*Stand: 2026-10-06 — 93 Komponenten, jede mit eigener `COMPONENT.md`.*

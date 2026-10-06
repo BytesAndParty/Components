@@ -6,7 +6,7 @@
 > Repo — kein Bezug zu einem konkreten Produkt (Auslöser war eine BuchArt58-Session, die Komponenten
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
-Status: **1 von 4 umgesetzt** — Paper-Note ist fertig ([`components/paper-note/COMPONENT.md`](./components/paper-note/COMPONENT.md)).
+Status: **2 von 4 umgesetzt** — Paper-Note ([`COMPONENT.md`](./components/paper-note/COMPONENT.md)) und Polaroid-Frame ([`COMPONENT.md`](./components/polaroid-frame/COMPONENT.md)) sind fertig. Marker-Callout und Process-Steps liegen mit je vier Entwürfen auf der Werkbank (`/lab/marker-callout`, `/lab/process-steps` im components-showcase).
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
 **Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
@@ -75,22 +75,27 @@ wird erst, wenn Polaroid-Frame oder Marker-Callout dieselben Werte braucht.
 **Zweck:** Foto im weißen Polaroid-Rahmen mit breiterem unteren Rand für eine Caption, leichte
 Rotation (im Bild: das Kaffee-Cupping-Foto mit "Riechen. Schlürfen. Entdecken.").
 
-**Props (Entwurf):**
+**Werkbank-Ergebnis:** Vier Entwürfe verglichen — A *Klassisch* (Washi-Tape, Caveat, richtet sich beim
+Hover gerade), B *Sofortbild* (Foto entwickelt sich beim Scrollen), C *Passepartout* (Maison-Stil mit
+Bildsignatur und Cormorant) und D *Pinnwand* (Reißzwecke, Sepia, pendelt). **Gewählt: A.** B, C und D verworfen.
+
+**Props (umgesetzt):**
 | Prop | Typ | Default | Beschreibung |
 |---|---|---|---|
 | `src` | `string` | required | Bild-URL |
 | `alt` | `string` | required | Alt-Text (A11y-Pflicht) |
-| `caption` | `ReactNode` | — | Text unter dem Foto (Handschrift-Font) |
+| `caption` | `ReactNode` | — | Text auf dem Rahmenfuß (Caveat) |
 | `rotate` | `number` (deg) | `1.5` | Rotationswinkel |
-| `tape` | `boolean` | `false` | Kleines Tape-Eck als Deko |
-| `className` / `style` | — | — | Layout-Anpassung |
+| `tape` | `boolean` | `false` | Washi-Tape mittig oben (wie bei Paper-Note `torn`) statt Tape-Eck |
+| `className` / `style` | — | — | Layout-Anpassung, Breite per `w-*` (Default `w-64`) |
 
-**Visual:** Weißer Rahmen (dünn oben/seitlich, breit unten ~22%), Foto `object-cover`, dezenter
-Schlagschatten, optionale leichte Sepia/Warmton-Filter-Option für "Vintage"-Gefühl (später, nicht MVP).
+**Visual:** Fotokarton-Rahmen (dünn oben/seitlich, breiter Fuß), quadratisches Foto `object-cover` mit
+Innenkante, flacher Schatten. Fällt beim Scrollen ins Bild, richtet sich beim Hover gerade (nur feiner Zeiger).
+Die Sepia-/Vintage-Option ist mit Entwurf D verworfen.
 
-**Abhängigkeiten:** keine.
+**Abhängigkeiten:** `motion/react`; in der App `@fontsource/caveat`.
 
-**Status:** ⬜ nicht begonnen
+**Status:** ✅ umgesetzt
 
 ---
 
@@ -119,7 +124,7 @@ Text zentriert darüber, Handschrift-Font.
 
 **Abhängigkeiten:** keine.
 
-**Status:** ⬜ nicht begonnen
+**Status:** 🟡 Werkbank — A *Pinselstrich*, B *Textmarker*, C *Aquarell*, D *Kreppband-Zeilen*
 
 ---
 
@@ -143,18 +148,18 @@ Stack.
 
 **Abhängigkeiten:** keine. `motion/react` optional für Staggered-Reveal beim Scroll-in-View.
 
-**Status:** ⬜ nicht begonnen
+**Status:** 🟡 Werkbank — A *Papier-Kreise*, B *Wanderpfad*, C *Hairline-Ledger*, D *Kreidetafel*
 
 ---
 
 ## Gemeinsame technische Basis
 
 - **Farbpalette (fix, nicht Theme-abhängig):** Kraftpapier-Tan, Creme-Weiß (Polaroid-Rahmen),
-  Chalkboard-Dunkel (für dunkle Notiz), Tape-Oliv/Kraft-Beige. **Entschieden bei Paper-Note:** als
-  `oklch()`-Modul-Konstanten lokal in der Komponente (kraft `oklch(0.80 0.055 76)`, cream
-  `oklch(0.965 0.016 88)`, dark `oklch(0.27 0.014 55)`). Sobald die zweite Komponente dieselben Werte
-  braucht, wandern sie in eine gemeinsame `components/lib/`-Datei. Was auf dem Seitenhintergrund liegt
-  (Pfeile), folgt dem Theme — sonst ist es im Dark Mode unsichtbar.
+  Chalkboard-Dunkel (für dunkle Notiz), Tape-Oliv/Kraft-Beige. Als `oklch()`-Konstanten (kraft
+  `oklch(0.80 0.055 76)`, cream `oklch(0.965 0.016 88)`, dark `oklch(0.27 0.014 55)`). **Seit Polaroid-Frame**
+  in [`components/lib/scrapbook.ts`](./components/lib/scrapbook.ts): `PAPER`, `paperGrain()` und `WASHI`.
+  Komponenten-spezifische Werte (z. B. der etwas weißere Polaroid-Karton) bleiben lokal. Was auf dem
+  Seitenhintergrund liegt (Pfeile), folgt dem Theme — sonst ist es im Dark Mode unsichtbar.
 - **Handschrift-Font:** Caveat + Kalam (siehe Entscheidung #4), self-hosted via `@fontsource` in der App (#5).
 - **Texturen:** ausschließlich Inline-SVG (kein Bild-Asset) — Rissrand, Papierkorn, Pinselstrich-Blobs.
 - **A11y:** Rotationen/Deko-SVGs sind `aria-hidden`, Fokus-Reihenfolge bleibt beim eigentlichen Inhalt
@@ -169,7 +174,7 @@ Stack.
 | Reihenfolge | Komponente | `.tsx` | `messages.ts` | `COMPONENT.md` | Showcase | Quality-Gate |
 |---|---|---|---|---|---|---|
 | 1 | Paper-Note | ✅ | — (keine UI-Strings) | ✅ | ✅ | ✅ |
-| 2 | Polaroid-Frame | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 2 | Polaroid-Frame | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 | 3 | Marker-Callout | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 4 | Process-Steps | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
@@ -179,3 +184,5 @@ Stack.
 |------|--------|--------|
 | 2026-09-18 | Plan erstellt | Vier Scrapbook-Textbox-Komponenten aus Cupping-Workshop-Einladungsgrafik abgeleitet, strategisches Vorgehen (Plan → Review → Implementierung) gewünscht. |
 | 2026-10-06 | Paper-Note umgesetzt (`torn` + `notepad`), Showcase-Eintrag, neue Section „Veranstaltungen → Die Pinnwand" | Werkbank mit 4 Entwürfen, A + B gewählt. Fonts entschieden (Caveat + Kalam), Font-Ladung auf self-hosted `@fontsource` umgestellt (DSGVO, Repo-Konvention). Quality-Gate: Lint 0, Typecheck ohne Fehler, Dark/Light, Akzent, Reduced Motion und 390-px-Breite im Browser geprüft. |
+| 2026-10-06 | Werkbänke für Polaroid-Frame, Marker-Callout und Process-Steps (je 4 Entwürfe); Paper-Note-Werkbank entfernt | Gleiches Vorgehen wie bei Paper-Note: erst vergleichen, dann übernehmen. |
+| 2026-10-06 | Polaroid-Frame umgesetzt (Entwurf A *Klassisch*), Showcase-Eintrag auf der Text-Seite, gemeinsame Basis `components/lib/scrapbook.ts` (Paper-Note darauf umgestellt) | Zweite Komponente braucht Tinte, Washi und Korn von Paper-Note, daher wie geplant nach `lib/` ausgelagert. |
