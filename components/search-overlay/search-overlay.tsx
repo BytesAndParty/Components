@@ -6,7 +6,7 @@ import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type SearchOverlayMessages } from './messages';
 
-interface SearchResult {
+export interface SearchResult {
   id: string;
   title: string;
   category: string;
@@ -15,13 +15,18 @@ interface SearchResult {
   icon?: React.ReactNode;
 }
 
-interface SearchOverlayProps {
+export interface SearchOverlayProps {
   /**
    * Search function that returns a promise of results.
    */
   fetchResults?: (query: string) => Promise<SearchResult[]>;
   /** Initial/static results for the "empty" state or suggestions */
   initialSuggestions?: SearchResult[];
+  /**
+   * Called when a result is chosen (click or Enter). Use it for client-side routing.
+   * Without it, the overlay navigates to `result.href`.
+   */
+  onSelect?: (result: SearchResult) => void;
   messages?: Partial<SearchOverlayMessages>;
   className?: string;
 }
@@ -29,6 +34,7 @@ interface SearchOverlayProps {
 export function SearchOverlay({
   fetchResults,
   initialSuggestions = [],
+  onSelect,
   messages,
   className
 }: SearchOverlayProps) {
@@ -47,6 +53,12 @@ export function SearchOverlay({
     setIsOpen(false);
     setQuery('');
     setSelectedIndex(0);
+  }
+
+  function select(result: SearchResult) {
+    close();
+    if (onSelect) onSelect(result);
+    else window.location.assign(result.href);
   }
 
   // TanStack Hotkeys Integration via Design Engine Registry
@@ -98,9 +110,10 @@ export function SearchOverlay({
       e.preventDefault();
       setSelectedIndex((prev: number) => (prev - 1 + displayResults.length) % Math.max(1, displayResults.length));
     } else if (e.key === 'Enter') {
-      if (displayResults[selectedIndex]) {
-        console.log('Navigating to:', displayResults[selectedIndex].href);
-        close();
+      const result = displayResults[selectedIndex];
+      if (result) {
+        e.preventDefault();
+        select(result);
       }
     }
   };
@@ -153,6 +166,7 @@ export function SearchOverlay({
                 aria-expanded={displayResults.length > 0}
                 aria-controls="search-results"
                 aria-autocomplete="list"
+                aria-activedescendant={displayResults[selectedIndex] ? `result-item-${selectedIndex}` : undefined}
                 placeholder={m.placeholder}
                 value={query}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,10 +199,7 @@ export function SearchOverlay({
                       role="option"
                       aria-selected={index === selectedIndex}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      onClick={() => {
-                        console.log('Selected:', result);
-                        close();
-                      }}
+                      onClick={() => select(result)}
                       className={cn(
                         "w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left outline-none",
                         index === selectedIndex

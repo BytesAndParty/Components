@@ -8,7 +8,8 @@ Ein Spotlight-inspiriertes Such-Overlay für eine immersive Navigations-Erfahrun
 - **Server-State via TanStack Query:** `fetchResults(query)` wird über `useQuery` aufgerufen (Query-Key `['search', query, fetchResults]`, `staleTime` 1 min). Keine eigenen Loading-/Error-States in der Komponente.
 - **Vorschläge im Leerzustand:** Ohne Suchbegriff zeigt die Liste `initialSuggestions`.
 - **Kategorisierte Ergebnisse:** Jeder Treffer mit Titel, Kategorie, optionaler Beschreibung und Icon.
-- **Keyboard Navigation:** Pfeiltasten wandern durch die Treffer (`role="listbox"` / `role="option"` mit `aria-selected`), Enter wählt.
+- **Keyboard Navigation:** Pfeiltasten wandern durch die Treffer (`role="listbox"` / `role="option"` mit `aria-selected`, aktive Option per `aria-activedescendant` am Eingabefeld), Enter wählt.
+- **Auswahl:** Klick oder Enter schließt das Overlay und ruft `onSelect(result)` auf — ohne `onSelect` navigiert die Komponente per `window.location.assign(result.href)`.
 - **Micro-Interactions:** Sanfte Feder-Animationen für das Öffnen und Auswählen von Elementen.
 
 ## Props
@@ -17,11 +18,12 @@ Ein Spotlight-inspiriertes Such-Overlay für eine immersive Navigations-Erfahrun
 | :--- | :--- | :--- | :--- |
 | `fetchResults` | `(query: string) => Promise<SearchResult[]>` | `-` | Liefert die Treffer zur Eingabe. Läuft erst ab einem Zeichen. |
 | `initialSuggestions` | `SearchResult[]` | `[]` | Treffer für den Leerzustand (vor der ersten Eingabe). |
+| `onSelect` | `(result: SearchResult) => void` | `-` | Wird bei Auswahl aufgerufen, z. B. für Client-Routing (`navigate(result.href)`). Ohne Callback: Seitenwechsel auf `href`. |
 | `messages` | `Partial<SearchOverlayMessages>` | `-` | i18n-Overrides für Placeholder, Leer-/Kein-Treffer-Texte, Hilfetexte und Shortcut-Labels. |
 | `className` | `string` | `-` | Zusätzliche CSS-Klassen am Overlay. |
 
 ```ts
-interface SearchResult {
+export interface SearchResult {
   id: string
   title: string
   category: string
@@ -43,15 +45,11 @@ const suggestions = [
 <SearchOverlay
   initialSuggestions={suggestions}
   fetchResults={(q) => api.search(q)}
+  onSelect={(r) => navigate(r.href)}
 />
 ```
 
 Benötigt einen `QueryClientProvider` und einen `HotkeysProvider` im Baum.
-
-## Bekannte Lücken
-
-- Auswahl (Klick oder Enter) schließt das Overlay nur — es gibt noch keinen `onSelect`-Callback und keine Navigation zu `href`.
-- `SearchResult` und `SearchOverlayProps` sind nicht exportiert.
 
 ## Dependencies
 

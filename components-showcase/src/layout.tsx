@@ -89,6 +89,7 @@ export function Layout() {
         <SearchOverlay 
           fetchResults={async (q) => mockResults.filter(r => r.title.toLowerCase().includes(q.toLowerCase()))} 
           initialSuggestions={mockResults.slice(0, 2)}
+          onSelect={(r) => navigate(r.href, { viewTransition: true })}
         />
         <ShortcutOverview />
         <BackToTop threshold={300} />
