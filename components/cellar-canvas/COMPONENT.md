@@ -23,8 +23,8 @@ Sub-modules and panels live alongside it as standalone components that can be re
 ## How It Works
 
 1. **Imperative bridge over Fabric**. `engine/fabric-bridge.ts` is the only place that touches the Fabric API. All add / update / z-order / layer-meta calls flow through it. v7 specifics (Canvas-side `bringObjectToFront` / `moveObjectTo`, `FabricObjectProps`, `await FabricImage.fromURL`) are encapsulated there.
-2. **Zustand store for UI metadata**, Fabric as source of truth for geometry. `store/designer-store.ts` holds `activeTool`, `selectedIds`, `zoom`, `dirty`, and the linear `history` stack. The bridge mirrors Fabric selection into the store.
-3. **History management via serialization**: The bridge captures `canvas.toJSON()` snapshots on every mutation (`saveHistory()`). Undo/Redo operations temporarily disable history-tracking via `isRestoringHistory` to prevent recursion.
+2. **Zustand store for UI metadata**, Fabric as source of truth for geometry. `store/designer-store.ts` holds `activeTool`, `selectedIds`, `zoom`, `isDirty`, `canUndo`/`canRedo`, `snappingEnabled`, `draftSaveFailed` and the cropper state. The bridge mirrors Fabric selection into the store.
+3. **History management via serialization**: `engine/history-manager.ts` is the sole owner of the snapshot stack (max. 50), index and lock. Snapshots are the full `{ canvas, bg }` state, so the label colour takes part in undo/redo. `runExclusive` serialises restores, so hammering Cmd+Z never starts overlapping `loadFromJSON` runs.
 4. **State sync via events**: Fabric `object:added/removed/modified/moving/scaling/rotating` + `selection:*` events re-pull `getActiveObjectProperties()` + `getLayers()` + `validateCompliance()` into local React state. `object:modified` additionally triggers a history snapshot.
 5. **TanStack Hotkeys**: Shortcuts are registered via `useDesignEngineHotkey`, making them discoverable in the global `ShortcutOverview`. The `mod+z` (Undo) and `mod+shift+z` (Redo) mappings handle cross-platform command/control keys automatically.
 6. **Explicit sync for stack mutations**: `moveObjectTo` and `obj.set('visible'/'lockMovementX')` do **not** fire events Fabric exposes, so `onReorder` / `onVisibilityToggle` / `onLockToggle` / `onRename` call `setLayers(bridge.getLayers())` directly to keep the panel from snapping back to a stale array.
@@ -36,12 +36,16 @@ Sub-modules and panels live alongside it as standalone components that can be re
 |---|---|---|---|
 | `widthMm` / `heightMm` | `number` | `90` / `120` | Label size in millimetres |
 | `initialWineFields` | `WineFieldValues` | demo data | Pre-fill for the wine-data inserter (name, vintage, alcoholPercent, volumeMl, region, grapes, producer, countryOfOrigin, sugarContent, energyKcal, allergenNote, nutritionalInfoUrl) |
-| `initialState` | `object` | — | Fabric JSON to restore the canvas from |
+| `initialState` | `CellarCanvasState \| object` | — | State to restore from: `{ canvas, bg }` (or plain Fabric JSON from older drafts). Takes precedence over the localStorage draft |
+| `storageKey` | `string \| null` | `'cellar-canvas-draft'` | localStorage key for the debounced autosave draft; `null` disables autosave |
 | `enableValidator` | `boolean` | `true` | Toggle EU compliance check + floating badge. `false` for showcases, non-EU markets, tests |
 | `exportDpi` | `number` | `300` | Raster resolution for PNG/PDF export |
 | `enablePdfExport` | `boolean` | `true` | Show the PDF export button (PNG is always available) |
-| `onChange` | `(state: object) => void` | — | Fired on every canvas mutation |
-| `onSave` | `(state: object) => Promise<void>` | — | Manual save trigger; button shows loading/success. Also gates the tour's save step |
+| `disableTour` | `boolean` | `false` | Skip the first-run guided tour |
+| `tourStorageKey` | `string \| null` | `'cellar-canvas-tour-completed'` | localStorage key for the "tour seen" flag; `null` opts out of persisting it |
+| `messages` | `Partial<CellarCanvasMessages>` | — | Override individual UI strings (~60, `de`/`en`); the locale comes from the global `I18nProvider` |
+| `onChange` | `(state: CellarCanvasState) => void` | — | Fired on every canvas mutation |
+| `onSave` | `(state: CellarCanvasState) => Promise<void>` | — | Manual save trigger; button shows loading/success. Also gates the tour's save step |
 | `onExport` | `(r: { format: 'png' \| 'pdf', blob }) => void` | — | Server-side upload hook for the export pipeline |
 | `onValidationChange` | `(warnings: ValidationWarning[]) => void` | — | Fired whenever the set of missing mandatory fields changes; each warning carries `key`, `label`, `description` (legal basis) and `severity` |
 | `height` | `string \| number` | `'80vh'` | Editor outer height |
@@ -52,7 +56,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 ### Minimal (showcase / non-EU)
 
 ```tsx
-import { CellarCanvas } from '@components/cellar-canvas'
+import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
 
 <CellarCanvas enableValidator={false} />
 ```
@@ -85,13 +89,16 @@ import { CellarCanvas } from '@components/cellar-canvas'
 - `zustand@^5` — designer store (`subscribeWithSelector` selectors)
 - `@ark-ui/react@^5` — `ImageCropper`, `Dialog`, `Portal`, color picker
 - `@dnd-kit/core` + `@dnd-kit/sortable` — layer-panel drag reorder
-- `motion` — enter/exit fades on layer rows
+- `motion` (`motion/react`) — enter/exit fades on layer rows
 - `lucide-react` — toolbar icons
+- `jspdf` — PDF export, loaded via dynamic `import()` only when a PDF is exported
+- `qrcode` — client-side QR code for the nutrition-info URL
+- `emoji-picker-react` — Extras panel
 
 ## Notes
 
 - Fabric v7 changed the origin default to `center/center`. The bridge pins `originX/originY: 'left'/'top'` on every new object so the existing mm/px-as-bounding-box-corner mapping stays correct. Switching the mapping to center-origin is a separate refactor (tracked in `STATUS.md`).
 - `addQRCode` uses `await fabric.FabricImage.fromURL(dataUrl)` — the v5 callback signature was removed in v6.
-- The image-cropper child must render at natural CSS size centred in the viewport (`flex items-center justify-center` on Viewport, `flexShrink: 0` on Image) — Zag's `drawCroppedImageToCanvas` assumes 1 viewport-pixel = 1 natural-pixel at zoom=1. Any `object-fit` scaling breaks the crop math. A small `FitZoomOnLoad` helper applies `setZoom(min(vp/nat))` once on first image load.
+- The image-cropper child must render at natural CSS size centred in the viewport (`flex items-center justify-center` on Viewport, `flexShrink: 0` on Image) — Zag's `drawCroppedImageToCanvas` assumes 1 viewport-pixel = 1 natural-pixel at zoom=1. Any `object-fit` scaling breaks the crop math. The fit zoom is computed from pre-measured natural/viewport sizes and passed as `defaultZoom` + `initialCrop` before the cropper mounts (see `ImageCropperModal` and STATUS.md #21).
 - Layer rows must keep their `z-elevation` while `transform !== null`, not just while `isDragging` — `useSortable` flips `isDragging` back on pointer-release but the drop-decay transition still runs for ~200 ms.
 - `FabricBridge.saveHistory()` debounces its actual push 300ms — continuous-input controls (colour picker hue drag) used to push a full snapshot per pointermove. `undo()`/`redo()` flush a pending snapshot first, so a quick Cmd+Z right after an action still sees it. The initial history entry comes from `resetHistory()`, called once by `useCanvasRestore` after mount-time restoration settles — not from the bridge constructor, which used to race that restore (see STATUS.md #26).

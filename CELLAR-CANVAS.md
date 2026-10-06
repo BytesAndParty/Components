@@ -38,13 +38,13 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 
 | # | Question | Decision |
 |---|---|---|
-| 1 | Image upload | **File input only.** Clipboard paste (`Ctrl+V`) also supported — pastes image directly onto canvas. Showcase-Testing: **client-side only** — kein Server-Upload. |
+| 1 | Image upload | **File input only.** Clipboard paste (`Ctrl+V`) also supported — pastes image directly onto canvas. Showcase-Testing: **client-side only** — kein Server-Upload. *Since extended:* drag & drop and image replace use the same pipeline (`prepareImageSource`, STATUS.md #27). |
 | 2 | Autosave | **localStorage auto + `onSave` callback** for DB. Component handles localStorage, app wires `onSave` to Vendure account mutation. Manual "Save" button triggers `onSave(state)`. |
-| 3 | Print bleed | **Yes, 3mm bleed indicator** on canvas — dashed overlay, non-interactive. Required for professional offset printing. |
+| 3 | Print bleed | **Yes, 3mm bleed indicator** on canvas, non-interactive. Required for professional offset printing. *Implemented differently (2026-05-26):* no dashed line — the bleed mask reaches 3 mm into the label and darkens the trim-risk strip; preview mode hides it (STATUS.md, Entscheidungs-Log). |
 | 4 | Signature Pad | **"Extras" insert panel** — low priority section alongside decorative dividers, ornaments, etc. Signature is one of several extras. Not a main toolbar tool. |
-| 5 | i18n | **`i18n` prop object with English defaults.** Component ships English strings. App passes `i18n={cellarCanvasDE}` for German. No coupling to i18next/next-intl. Standard pattern (React DatePicker, TanStack Table). |
+| 5 | i18n | ~~`i18n` prop object with English defaults~~ — *superseded (2026-05-26):* `messages.ts` ships `de` + `en`, the locale comes from the global `I18nProvider`, single strings are overridden via the `messages` prop (project-wide pattern, see COMPONENT-GUIDELINES §6). Still no coupling to i18next/next-intl. |
 | 6 | Watermark | **Not needed.** |
-| 7 | QR Code | **Mandatory overlay, generated client-side.** EU Reg. 2023/2977 requires nutritional info — QR is the allowed alternative. URL from `initialWineFields.nutritionalInfoUrl`. Generated via `qrcode` package, inserted as canvas image. Removing it triggers a strong EU validator warning. |
+| 7 | QR Code | **Mandatory overlay, generated client-side.** EU Reg. 2023/2977 requires nutritional info — QR is the allowed alternative. URL from `initialWineFields.nutritionalInfoUrl`. Generated via `qrcode` package, inserted as canvas image. Removing it should trigger a strong EU validator warning — *still open* (STATUS.md, „QR-Removal-Warning“). |
 | 8 | Aspect ratio lock | **Locked by default on images, Shift to unlock.** Shapes unlocked by default. |
 
 ---
@@ -66,6 +66,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-08-28*
+*Last updated: 2026-10-06*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*
