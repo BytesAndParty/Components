@@ -10,14 +10,17 @@
 - Plugin in `vendure-config.ts` registriert, `NETLIFY_BUILD_HOOK_URL` in `.env.example`.
 - Server-`tsc`: exit 0.
 
-## Offen — muss noch verifiziert werden ⚠️
+## Verifikation ✅
 1. ~~**`bun run dashboard:build`** durchlaufen lassen~~ — **erledigt 2026-10-06** (mit Vendure 3.7.4):
    `bun run build` (Server-`tsc` + Dashboard-Vite-Build) exit 0, die Mutation
    `triggerStorefrontRebuild` steckt im Dashboard-Bundle.
-2. **`pageId: 'product-list'`** prüfen — erscheint der Button? Bei falscher `pageId` fehlt er
-   **stumm** (keine Fehlermeldung). Fallback zum Testen: `product-detail`.
-3. **End-to-End-Test** — `NETLIFY_BUILD_HOOK_URL` setzen (echter Hook oder `webhook.site`),
-   Bestand ändern, „Veröffentlichen" klicken, eingehenden POST bestätigen.
+2. ~~**`pageId: 'product-list'`** prüfen~~ — **erledigt 2026-10-06**: Der Button erscheint in der
+   Produktliste neben „Rebuild search index". Er erscheint nur mit der Permission
+   `TriggerStorefrontRebuild` (`requiresPermission`). Ohne sie fehlt er ebenfalls stumm.
+3. ~~**End-to-End-Test**~~ — **erledigt 2026-10-06** auf dem VPS mit dem Hook der Netlify-Site
+   `artilier-ui`. Als Demo-Admin wurde ein neues Produkt angelegt, danach „Veröffentlichen“ geklickt.
+   Ergebnis: Toast „Build angestoßen“, Netlify-Deploy „triggered by hook“ nach 51 s fertig, der neue
+   Wein steht unter `/shop/` samt Detailseite.
 
 ## Konfiguration (Betrieb)
 - `NETLIFY_BUILD_HOOK_URL` in der echten `.env` setzen (Netlify → Build & deploy → Build hooks).
