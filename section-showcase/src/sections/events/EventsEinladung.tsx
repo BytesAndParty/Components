@@ -71,8 +71,8 @@ export function EventsEinladung() {
           <div className="relative flex flex-col items-center gap-14 pt-4 sm:items-start">
             <PolaroidFrame
               src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=700&q=80"
-              alt="Weinglas im Gegenlicht einer einzelnen Kellerlampe"
-              caption="Der Keller im Kerzenlicht"
+              alt="Weinflaschen nebeneinander in einem Holzregal"
+              caption="Sechs Flaschen warten schon"
               rotate={-3}
               tape
             />
@@ -81,7 +81,8 @@ export function EventsEinladung() {
               alt="Zwei Weingläser beim Anstoßen"
               caption="Auf den Jahrgang!"
               rotate={2.5}
-              className="w-56 sm:ml-40 sm:-mt-28"
+              // Weit genug rechts, dass die Caption des ersten Polaroids frei bleibt
+              className="w-56 sm:-mt-48 sm:ml-64"
             />
             <MarkerCallout
               variant="tape"

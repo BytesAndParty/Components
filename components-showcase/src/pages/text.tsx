@@ -308,8 +308,8 @@ export function TextPage() {
             <div className="flex flex-wrap items-start gap-x-20 gap-y-20 px-4 pt-8 pb-16">
               <PolaroidFrame
                 src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80"
-                alt="Reihen von Weinstöcken im Abendlicht"
-                caption="Riedenwanderung im Oktober"
+                alt="Glas Rotwein auf einem Geländer vor Rebzeilen und einem See"
+                caption="Ein Glas mit Aussicht"
                 rotate={-3}
                 tape
               />
@@ -321,7 +321,7 @@ export function TextPage() {
               />
               <PolaroidFrame
                 src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=700&q=80"
-                alt="Gewölbekeller mit Holzfässern"
+                alt="Rotweinglas mit Trauben und Weinlaub auf dunklem Grund"
                 rotate={-1}
               />
             </div>
@@ -333,8 +333,8 @@ export function TextPage() {
             </p>
             <div className="flex flex-wrap items-start gap-x-20 gap-y-20 px-4 pt-8 pb-8">
               <PolaroidFrame
-                src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=700&q=80"
-                alt="Reihen von Weinstöcken im Abendlicht"
+                src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=700&q=80"
+                alt="Reife blaue Trauben am Stock im Gegenlicht"
                 caption={<>Die ganze Familie bei der Lese <em>2025</em>, mit Simon, Oma und den Nachbarskindern</>}
                 rotate={1.5}
               />
@@ -349,8 +349,8 @@ export function TextPage() {
               <div className="flex items-start gap-6">
                 <PolaroidFrame
                   src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=700&q=80"
-                  alt="Gewölbekeller mit Holzfässern"
-                  caption="Kellerführung"
+                  alt="Rotweinglas mit Trauben und Weinlaub auf dunklem Grund"
+                  caption="Verkostung im Keller"
                   rotate={-2.5}
                   tape
                   className="w-56"
