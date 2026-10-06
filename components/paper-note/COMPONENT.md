@@ -14,7 +14,7 @@ Scrapbook-Notiz, die wie ein echtes Stück Papier auf der Seite liegt: Rissrand,
 
 ## How It Works
 
-1. **Fixe Papierfarben statt Theme-Tokens.** Die Notiz soll wie ein physisches Objekt wirken und sich beim Dark/Light-Wechsel nicht verfärben (Entscheidung #2 in SCRAPBOOK-TEXTBOXES.md). Die Werte sind trotzdem `oklch()`-Konstanten, keine Hex-Farben. Was auf dem Seitenhintergrund liegt (Pfeil), folgt dagegen dem Theme, sonst wäre er im Dark Mode unsichtbar.
+1. **Fixe Papierfarben statt Theme-Tokens.** Die Notiz soll wie ein physisches Objekt wirken und sich beim Dark/Light-Wechsel nicht verfärben (Entscheidung #2 in SCRAPBOOK-TEXTBOXES.md). Die Werte sind trotzdem `oklch()`-Konstanten, keine Hex-Farben, und liegen zusammen mit Papierkorn und Washi-Tape in [`components/lib/scrapbook.ts`](../lib/scrapbook.ts), das sich `PaperNote` mit `PolaroidFrame` teilt. Was auf dem Seitenhintergrund liegt (Pfeil), folgt dagegen dem Theme, sonst wäre er im Dark Mode unsichtbar.
 2. **Rissrand per `clip-path: polygon()`.** Die Punkte entstehen aus einem deterministischen PRNG (mulberry32) als Random-Walk. So wirkt der Rand gerissen statt gesägt. Die Tiefe ist in px angegeben, damit sie nicht mit der Notizgröße skaliert.
 3. **Schatten außerhalb des Clips.** `clip-path` schneidet `box-shadow` und `filter` am selben Element weg. Deshalb sitzt bei `torn` ein `drop-shadow` auf einem Eltern-Element, bei `notepad` liegen zwei schräge Schatten-Spans mit `-z-10` hinter dem Blatt (`isolate` am Wrapper).
 4. **Papierkorn** als zwei `feTurbulence`-Data-URIs (fein + faserig), per `background-blend-mode` mit der Papierfarbe verrechnet.
@@ -74,5 +74,5 @@ Im Einsatz: Section „Veranstaltungen → Die Pinnwand" in der section-showcase
 ## Dependencies
 
 - `motion` (`motion/react`) für Drop-in und Pfeil-Zeichnen.
-- `cn()` aus `@components/lib/utils`.
+- `cn()` aus `@components/lib/utils`, Farben und Texturen aus `@components/lib/scrapbook`.
 - In der konsumierenden App: `@fontsource/caveat`, `@fontsource/kalam`.

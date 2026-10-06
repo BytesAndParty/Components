@@ -1,6 +1,7 @@
 import { useId, useRef, type CSSProperties, type ReactNode } from 'react'
 import { motion, useInView, useReducedMotion, type Variants } from 'motion/react'
 import { cn } from '../lib/utils'
+import { PAPER, WASHI, paperGrain } from '../lib/scrapbook'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -33,12 +34,7 @@ export interface PaperNoteProps {
 
 // ─── Tokens ─────────────────────────────────────────────────────────────────
 
-// Fix statt Theme-Tokens: die Notiz soll wie ein physisches Objekt wirken (SCRAPBOOK-TEXTBOXES.md #2).
-const PAPER: Record<PaperNotePaper, { bg: string; ink: string }> = {
-  kraft: { bg: 'oklch(0.80 0.055 76)', ink: 'oklch(0.27 0.035 55)' },
-  cream: { bg: 'oklch(0.965 0.016 88)', ink: 'oklch(0.27 0.02 60)' },
-  dark:  { bg: 'oklch(0.27 0.014 55)', ink: 'oklch(0.92 0.025 85)' },
-}
+// Papierfarben (PAPER) und Washi-Tape kommen fix aus lib/scrapbook (SCRAPBOOK-TEXTBOXES.md #2).
 
 // Schriften lädt die App selbst (self-hosted via @fontsource), siehe COMPONENT.md.
 const FONT: Record<PaperNoteVariant, string> = {
@@ -52,13 +48,8 @@ const SPRING = { type: 'spring', stiffness: 150, damping: 20 } as const
 
 // ─── Texturen (Inline-SVG, kein Bild-Asset) ─────────────────────────────────
 
-function noise(freq: number, octaves: number, alpha: number, size: number) {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='${freq}' numOctaves='${octaves}' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(#n)' opacity='${alpha}'/></svg>`
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
-}
-
-const GRAIN_FINE = noise(0.85, 2, 0.14, 180)
-const GRAIN_FIBER = noise(0.012, 3, 0.2, 420)
+const GRAIN_FINE = paperGrain(0.85, 2, 0.14, 180)
+const GRAIN_FIBER = paperGrain(0.012, 3, 0.2, 420)
 const RULED = 'repeating-linear-gradient(to bottom, transparent 0 calc(1.75rem - 1px), oklch(0.72 0.04 240 / 0.35) calc(1.75rem - 1px) 1.75rem)'
 
 const blend = (paper: PaperNotePaper) => (paper === 'dark' ? 'soft-light' : 'multiply')
@@ -118,18 +109,6 @@ function tornTop(seed: number, depth: number) {
   }
 }
 
-function zigzagEnds(teeth: number, depth: number) {
-  const left: string[] = []
-  const right: string[] = []
-  for (let i = 0; i <= teeth; i++) {
-    const y = ((i / teeth) * 100).toFixed(1)
-    left.push(`${i % 2 ? depth : 0}px ${y}%`)
-    right.unshift(`calc(100% - ${i % 2 ? depth : 0}px) ${y}%`)
-  }
-  return `polygon(${[...left, ...right].join(', ')})`
-}
-
-const ZIGZAG = zigzagEnds(6, 4)
 const TORN_ENDS = 'polygon(0 0, 100% 4%, calc(100% - 3px) 30%, 100% 55%, calc(100% - 4px) 78%, 100% 100%, 0 96%, 3px 70%, 0 48%, 4px 22%)'
 
 // ─── Pfeil ──────────────────────────────────────────────────────────────────
@@ -192,8 +171,7 @@ function WashiTape() {
       className="absolute -top-3 left-1/2 h-6.5 w-27"
       style={{
         transform: 'translateX(-50%) rotate(-4deg)',
-        background: 'linear-gradient(180deg, oklch(1 0 0 / 0.14), transparent 45%), repeating-linear-gradient(90deg, oklch(0.6 0.07 118 / 0.8) 0 3px, oklch(0.64 0.07 118 / 0.72) 3px 7px)',
-        clipPath: ZIGZAG,
+        ...WASHI,
       }}
     />
   )
