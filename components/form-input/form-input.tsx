@@ -106,7 +106,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
 
   const borderColor =
     state === 'error'
-      ? '#ef4444'
+      ? 'var(--destructive)'
       : state === 'success'
         ? 'color-mix(in oklch, var(--accent) 70%, transparent)'
         : 'var(--border)';
@@ -213,12 +213,12 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
             height={18}
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#ef4444"
+            stroke="currentColor"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
-            className="ml-2 shrink-0"
+            className="text-destructive ml-2 shrink-0"
           >
             <circle cx="12" cy="12" r="10" />
             <path d="M12 8v4" />
@@ -243,7 +243,10 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              className="text-[12px] font-medium text-[#ef4444]"
+              className="text-[12px] font-medium"
+              // --destructive alone drops below 4.5:1 as small text in dark mode;
+              // 20 % --foreground lifts it there and darkens it in light mode.
+              style={{ color: 'color-mix(in oklab, var(--destructive) 80%, var(--foreground))' }}
             >
               {error}
             </motion.p>

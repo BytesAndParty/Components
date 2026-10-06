@@ -181,9 +181,9 @@ export function PasswordConfirmation({
   // Focus ring glow
   let boxShadow = 'none'
   if (focused && !matched) {
-    boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.15)'
+    boxShadow = '0 0 0 3px color-mix(in oklch, var(--accent) 15%, transparent)'
   } else if (matched) {
-    boxShadow = `0 0 0 3px ${matchColor}26`
+    boxShadow = `0 0 0 3px color-mix(in oklch, ${matchColor} 15%, transparent)`
   }
 
   return (
@@ -279,7 +279,8 @@ export function PasswordConfirmation({
           role="status"
           style={{
             fontSize: '13px',
-            color: matchColor,
+            // 40 % --foreground keeps the status color readable as text in light and dark mode
+            color: `color-mix(in oklab, ${matchColor} 60%, var(--foreground))`,
             display: 'flex',
             alignItems: 'center',
             gap: '4px',

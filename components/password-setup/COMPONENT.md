@@ -39,7 +39,7 @@ Complete password creation flow with strength meter, checklist validation, gener
 | `allowGenerate` | `boolean` | `true` | Show generate button |
 | `renderVisibilityIcon` | `(visible: boolean) => ReactNode` | — | Custom eye icon |
 | `dotSize` | `number` | `10` | Confirmation dot size |
-| `matchColor` | `string` | `'#22c55e'` | Match color |
+| `matchColor` | `string` | `'#22c55e'` | Match color. As small text it is mixed with 40 % `--foreground` so it stays readable in light and dark mode. |
 | `mismatchColor` | `string` | `'#ef4444'` | Mismatch color |
 | `passwordPlaceholder` | `string` | `messages.passwordPlaceholder` | Placeholder of the password field (overrides the i18n default) |
 | `messages` | `Partial<PasswordSetupMessages>` | — | i18n overrides for all user-facing labels |

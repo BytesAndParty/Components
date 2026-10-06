@@ -5,7 +5,7 @@ Presentational text input for forms — text, email, tel, number, password, url.
 ## Features
 
 - **Externally validated**: pass `error` (string) and/or `success` (boolean). No schema logic inside — keeps the component library-agnostic and works with TanStack Form's field meta out of the box.
-- **State visual**: idle / error (red border + glow + shake + animated `role="alert"` message) / success (accent border + glow + drawn check).
+- **State visual**: idle / error (`--destructive` border + glow + shake + animated `role="alert"` message) / success (accent border + glow + drawn check).
 - **Info hint**: `hint` renders a [`FieldHint`](../field-hint/COMPONENT.md) next to the label, linked to the input.
 - **Accessible**: `aria-invalid`, `aria-required`, and `aria-describedby` wired to error *or* description plus the hint id.
 - **Ref forwarding**: `forwardRef` to the native `<input>` for form libraries and focus control.

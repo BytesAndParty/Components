@@ -432,6 +432,13 @@ function getStrength(passed: number, m: PasswordSetupMessages) {
   return { label: m.strengthVeryStrong, color: '#22c55e' }
 }
 
+// Status colors as small text: mixing in 40 % --foreground darkens them in light
+// mode and lightens them in dark mode (>= 5.2:1 on card in both). oklab keeps
+// the hue; oklch would rotate it towards the hue of --foreground.
+function readableText(color: string) {
+  return `color-mix(in oklab, ${color} 60%, var(--foreground))`
+}
+
 function generatePassword(length = 16): string {
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   const array = new Uint32Array(length)
@@ -550,7 +557,7 @@ export function PasswordSetup({
           onFocus={() => setFocused1(true)}
           onBlur={() => setFocused1(false)}
           borderColor={focused1 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
-          boxShadow={focused1 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none'}
+          boxShadow={focused1 ? '0 0 0 3px color-mix(in oklch, var(--accent) 15%, transparent)' : 'none'}
           dotSize={dotSize}
           matchColor={matchColor}
           mismatchColor={mismatchColor}
@@ -592,7 +599,7 @@ export function PasswordSetup({
                   gap: '5px',
                   padding: '5px 10px',
                   fontSize: '12px',
-                  color: copied ? matchColor : 'var(--muted-foreground, #71717a)',
+                  color: copied ? readableText(matchColor) : 'var(--muted-foreground, #71717a)',
                   background: 'none',
                   border: '1px solid var(--border, #2a2a2e)',
                   borderRadius: '7px',
@@ -612,13 +619,13 @@ export function PasswordSetup({
                 <div style={{ height: '4px', width: '100%', background: 'var(--border, #2a2a2e)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
                   <div style={{ height: '100%', width: `${(passed / checks.length) * 100}%`, background: strength.color, borderRadius: '2px', transition: 'width 300ms ease, background 300ms ease', animation: 'pws-strength-grow 300ms ease' }} />
                 </div>
-                <span style={{ fontSize: '12px', color: strength.color, marginTop: '2px', display: 'block' }}>{strength.label}</span>
+                <span style={{ fontSize: '12px', color: readableText(strength.color), marginTop: '2px', display: 'block' }}>{strength.label}</span>
               </div>
             )}
             {showChecklist && (
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '3px', animation: 'pws-fade-in 200ms ease' }}>
                 {checkResults.map((check, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? matchColor : 'var(--muted-foreground, #71717a)', transition: 'color 200ms ease' }}>
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? readableText(matchColor) : 'var(--muted-foreground, #71717a)', transition: 'color 200ms ease' }}>
                     {check.valid ? (
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></svg>
                     ) : (
@@ -647,7 +654,7 @@ export function PasswordSetup({
             onFocus={() => setFocused2(true)}
             onBlur={() => setFocused2(false)}
             borderColor={matched ? matchColor : confirm.length > 0 && confirm !== password.slice(0, confirm.length) ? mismatchColor : focused2 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
-            boxShadow={matched ? `0 0 0 3px ${matchColor}26` : focused2 ? '0 0 0 3px rgba(99, 102, 241, 0.15)' : 'none'}
+            boxShadow={matched ? `0 0 0 3px color-mix(in oklch, ${matchColor} 15%, transparent)` : focused2 ? '0 0 0 3px color-mix(in oklch, var(--accent) 15%, transparent)' : 'none'}
             shake={shake}
             matched={matched}
             dotSize={dotSize}
@@ -658,7 +665,7 @@ export function PasswordSetup({
             hideLabel={m.hidePassword}
           />
           {matched && (
-            <span role="status" style={{ fontSize: '12px', color: matchColor, display: 'flex', alignItems: 'center', gap: '5px', animation: 'pws-fade-in 200ms ease' }}>
+            <span role="status" style={{ fontSize: '12px', color: readableText(matchColor), display: 'flex', alignItems: 'center', gap: '5px', animation: 'pws-fade-in 200ms ease' }}>
               <CheckIcon /> {m.match}
             </span>
           )}

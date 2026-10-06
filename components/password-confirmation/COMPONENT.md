@@ -31,7 +31,7 @@ Password confirmation input with per-character dot matching, color-coded feedbac
 | `onMatch` | `() => void` | — | Called once when passwords match |
 | `placeholder` | `string` | `'Confirm password'` | Input placeholder |
 | `dotSize` | `number` | `10` | Individual dot size in px |
-| `matchColor` | `string` | `'#22c55e'` | Color for matching characters |
+| `matchColor` | `string` | `'#22c55e'` | Color for matching characters. The match text mixes it with 40 % `--foreground` so it stays readable in light and dark mode. |
 | `mismatchColor` | `string` | `'#ef4444'` | Color for mismatching characters |
 | `neutralColor` | `string` | `'var(--text-muted)'` | Color for untyped dots |
 | `messages` | `Partial<PasswordConfirmationMessages>` | — | i18n overrides for placeholder, match label and aria-label |
