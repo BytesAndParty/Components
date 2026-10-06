@@ -5,7 +5,7 @@ High-end, touch-enabled carousel component based on `embla-carousel`. Features s
 ## Features
 
 - **Touch & Drag:** Native feeling inertia and bounce.
-- **Accessible:** Keyboard navigation and ARIA roles built-in.
+- **Accessible:** Arrow-key navigation, named `region` landmark, localized button labels (de/en), visible focus ring on arrows and thumbs, `aria-current` on the active thumb. All buttons are `type="button"`, so they never submit a surrounding form.
 - **Thumbnails:** Integrated thumb-sync logic for product galleries.
 - **Orientation:** Supports both horizontal and vertical scrolling.
 - **View Transitions:** Optimized for morphing the primary slide image.
@@ -52,6 +52,7 @@ export function ProductGallery() {
 | `plugins` | `EmblaPluginType[]` | `undefined` | Embla plugins (autoplay, etc.) |
 | `setApi` | `(api: EmblaCarouselType) => void` | `undefined` | Callback to get the Embla API instance |
 | `className` | `string` | — | Classes on the carousel region |
+| `messages` | `Partial<CarouselMessages>` | — | i18n override: `region`, `previous`, `next`, `goTo` (`{n}` = 1-based slide number) |
 | `children` | `ReactNode` | required | Content, previous/next buttons and thumbs |
 
 ### CarouselPrevious / CarouselNext
@@ -65,7 +66,7 @@ export function ProductGallery() {
 ### CarouselThumb
 | Prop | Type | Description |
 | :--- | :--- | :--- |
-| `index` | `number` | The slide index this thumb controls |
+| `index` | `number` | The slide index this thumb controls. The button is labelled with `goTo` ("Zu Folie {n}"), so images inside can use `alt=""` |
 | `children` | `ReactNode` | Thumb content |
 | `className` | `string` | Additional classes |
 
@@ -73,4 +74,4 @@ export function ProductGallery() {
 
 - `embla-carousel-react` (+ `embla-carousel` types) — scroll engine
 - `lucide-react` — arrow icons
-- `clsx` & `tailwind-merge` — via `cn()`
+- `cn()` from `components/lib/utils`, `useComponentMessages` from `components/i18n`

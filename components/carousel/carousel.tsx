@@ -2,12 +2,9 @@ import { useState, useEffect, createContext, useContext } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import type { EmblaOptionsType, EmblaCarouselType, EmblaPluginType } from 'embla-carousel'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type CarouselMessages } from './messages'
 
 // ─── Context ────────────────────────────────────────────────────────────────────
 
@@ -23,6 +20,7 @@ type CarouselContextProps = {
   scrollTo: (index: number) => void
   opts?: EmblaOptionsType
   orientation?: 'horizontal' | 'vertical'
+  m: CarouselMessages
 }
 
 const CarouselContext = createContext<CarouselContextProps | null>(null)
@@ -41,6 +39,7 @@ export interface CarouselProps {
   orientation?: 'horizontal' | 'vertical'
   setApi?: (api: EmblaCarouselType) => void
   className?: string
+  messages?: Partial<CarouselMessages>
   children: React.ReactNode
 }
 
@@ -50,6 +49,7 @@ export function Carousel({
   setApi,
   plugins,
   className,
+  messages,
   children,
 }: CarouselProps) {
   const [carouselRef, api] = useEmblaCarousel(
@@ -63,6 +63,7 @@ export function Carousel({
   const [canScrollNext, setCanScrollNext] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
+  const m = useComponentMessages(MESSAGES, messages)
 
   const scrollPrev = () => api?.scrollPrev()
   const scrollNext = () => api?.scrollNext()
@@ -100,6 +101,7 @@ export function Carousel({
     api.on('select', onSelect)
 
     return () => {
+      api.off('reInit', onSelect)
       api.off('select', onSelect)
     }
   }, [api])
@@ -118,6 +120,7 @@ export function Carousel({
         selectedIndex,
         scrollSnaps,
         scrollTo,
+        m,
       }}
     >
       <div
@@ -125,6 +128,7 @@ export function Carousel({
         className={cn('relative', className)}
         role="region"
         aria-roledescription="carousel"
+        aria-label={m.region}
       >
         {children}
       </div>
@@ -167,16 +171,17 @@ export function CarouselItem({ className, ...props }: React.ComponentProps<'div'
 }
 
 export function CarouselPrevious({ className, hide, ...props }: React.ComponentProps<'button'> & { hide?: boolean }) {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel()
+  const { orientation, scrollPrev, canScrollPrev, m } = useCarousel()
 
   if (hide) return null
 
   return (
     <button
+      type="button"
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         orientation === 'horizontal'
           ? '-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -184,23 +189,24 @@ export function CarouselPrevious({ className, hide, ...props }: React.ComponentP
       )}
       {...props}
     >
-      <ChevronLeft className="h-4 w-4" />
-      <span className="sr-only">Previous slide</span>
+      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+      <span className="sr-only">{m.previous}</span>
     </button>
   )
 }
 
 export function CarouselNext({ className, hide, ...props }: React.ComponentProps<'button'> & { hide?: boolean }) {
-  const { orientation, scrollNext, canScrollNext } = useCarousel()
+  const { orientation, scrollNext, canScrollNext, m } = useCarousel()
 
   if (hide) return null
 
   return (
     <button
+      type="button"
       disabled={!canScrollNext}
       onClick={scrollNext}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         orientation === 'horizontal'
           ? '-right-12 top-1/2 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -208,8 +214,8 @@ export function CarouselNext({ className, hide, ...props }: React.ComponentProps
       )}
       {...props}
     >
-      <ChevronRight className="h-4 w-4" />
-      <span className="sr-only">Next slide</span>
+      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+      <span className="sr-only">{m.next}</span>
     </button>
   )
 }
@@ -232,18 +238,21 @@ export function CarouselThumbs({ children, className }: { children: React.ReactN
 }
 
 export function CarouselThumb({ index, className, children }: { index: number; className?: string; children: React.ReactNode }) {
-  const { selectedIndex, scrollTo } = useCarousel()
+  const { selectedIndex, scrollTo, m } = useCarousel()
   const isActive = selectedIndex === index
 
   return (
     <button
+      type="button"
       onClick={() => scrollTo(index)}
+      aria-label={m.goTo.replace('{n}', String(index + 1))}
+      aria-current={isActive ? 'true' : undefined}
       className={cn(
-        'border-border relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border-2 transition-all',
+        'border-border relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         // Der Rand markiert die Auswahl und braucht 3:1 (WCAG 1.4.11) — auf
         // --ring statt --accent, das auf dunklem Grund bis 2,2:1 abfällt.
         // Der weiche Halo daneben ist Deko und bleibt bei /20.
-        isActive ? 'border-ring ring-ring/20 ring-2' : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0',
+        isActive ? 'border-ring ring-ring/20 ring-2' : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0 focus-visible:opacity-100 focus-visible:grayscale-0',
         className
       )}
     >

@@ -245,7 +245,7 @@ export function WineDetailPage() {
                 <CarouselThumb key={index} index={index} className="h-14 w-14 rounded-lg">
                   <img
                     src={src}
-                    alt="Thumb"
+                    alt=""
                     className="h-full w-full object-contain p-1"
                   />
                 </CarouselThumb>
