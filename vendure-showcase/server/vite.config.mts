@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
     base: '/dashboard/',
     build: {
         outDir: join(__dirname, 'dist', 'dashboard'),
@@ -17,10 +17,12 @@ export default defineConfig({
             // Ohne dies kompiliert der Config-Loader nach CommonJS und kollidiert mit der
             // `const __dirname = …`-Deklaration ("Identifier '__dirname' already declared").
             module: 'esm',
-            api: {
-                host: 'http://localhost',
-                port: parseInt(process.env.PORT ?? '3000'),
-            },
+            // Dev: Vite läuft auf eigenem Port, die API auf localhost:3000.
+            // Build: Vendure serviert das Dashboard selbst, Host und Port kommen aus
+            // window.location — sonst funkt das Dashboard auf dem Server gegen localhost.
+            api: command === 'serve'
+                ? { host: 'http://localhost', port: parseInt(process.env.PORT ?? '3000') }
+                : { host: 'auto', port: 'auto' },
             gqlOutputPath: './src/gql',
         }),
     ],
@@ -29,4 +31,4 @@ export default defineConfig({
             '@/gql': resolve(__dirname, './src/gql/graphql.ts'),
         },
     },
-});
+}));
