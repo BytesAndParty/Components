@@ -74,6 +74,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **polaroid-frame:** Foto im Polaroid-Rahmen mit handschriftlicher Caption und optionalem Washi-Tape, für persönliche Momente in Event- und Story-Sections.
 - **process-steps:** Statische Erklär-Kette in drei Darstellungen (Papier-Kreise, Wanderpfad, Hairline-Ledger), z. B. vom Rebstock bis ins Glas. Kein Wizard, dafür gibt es stepper.
 - **marker-callout:** Ein Satz auf handgemachter Fläche (Pinselstrich, Aquarell oder Kreppband-Zeilen) für die Zeile, die hängen bleiben soll. Textmarker im Fließtext: highlighter mit `action="marker"`.
+- **hang-tag:** Kraftkarton-Anhänger mit Bäckergarn und Handschrift, am Flaschenhals hängend oder frei, für Widmungen, Winzer-Notizen und Gutscheine. Status-Badges wie „Neu“ oder „Sale“: product-tag.
 - **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen (Fläche, Unterstrich oder handgezeichneter Textmarker).
 - **timeline:** Storytelling für Marken-Historie.
 - **data-table:** TanStack-Table mit Sortierung, Pagination, Auswahl und Spaltenbreiten.
