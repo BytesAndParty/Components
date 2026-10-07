@@ -7,7 +7,7 @@
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
 Status Runde 1: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
-Status Runde 2: **2 von 4 umgesetzt** — Hang-Tag und Unterschrift sind fertig. Stempel und Handschrift-Markierungen im Highlighter: Werkbänke offen (siehe [Runde 2](#runde-2)).
+Status Runde 2: **3 von 4 umgesetzt** — Hang-Tag, Unterschrift und Stempel sind fertig. Handschrift-Markierungen im Highlighter: Werkbank offen (siehe [Runde 2](#runde-2)).
 **Offen:** Die Unterschrift zeichnet noch einen Platzhalter-Pfad. Simons echte Unterschrift fehlt als SVG-Pfad (je Federzug ein Pfad, Anleitung in [`components/signature/COMPONENT.md`](./components/signature/COMPONENT.md) unter „Hinweise“), danach `SIGNATURE_SIMON` in `components-showcase/src/data.ts` ersetzen.
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
@@ -283,7 +283,39 @@ damit ich den neuen Wein schnell finde.
 
 **Abgrenzung:** Eigene Komponente, keine Variante von `ProductTag` (Entscheidung #11).
 
-**Status:** ⬜ Werkbank offen
+**Werkbank-Ergebnis:** Vier Entwürfe für „Jahrgang 2025“ verglichen, jeweils auf der Seite (Tinte folgt dem Theme), auf
+dem hellen Etikett der Weißweinflasche, in Deckweiß auf dem dunklen Etikett der Rotweinflasche und auf Papier.
+**Gewählt: A als Default, D als zweite Variante.** B und C verworfen, die Werkbank ist entfernt.
+
+| Entwurf | Form | Schrift | Tinte auf Papier | Farbauftrag | Bewegung |
+|---|---|---|---|---|---|
+| A · Rundstempel | Doppelring mit Umschrift (Weingut, Ort) | Versalien, Jahr in Cormorant | Bordeaux | feine Fehlstellen, wolkig | Aufgedrückt, federt kurz nach |
+| B · Kastenstempel | Rechteck mit Doppelrahmen, „Neuer Jahrgang“ | UI-Sans fett, gesperrt | Violett | oben links satt, unten rechts ausgefranst | Hartes Aufsetzen ohne Federn |
+| C · Linolstempel | Handgeschnitzter Rahmen mit Traube | Kalam fett | Rebgrün | fleckig, Kanten dunkler | Farbe sickert ein |
+| D · Datumsstempel | Oval mit Datumsband | Versalien, Jahr in Monospace | Schwarzblau | frisches Kissen, läuft leicht aus | Ziffernräder rasten auf das Jahr ein |
+
+**Entschieden bei der Umsetzung:**
+- **Eine Komponente `Stamp`** mit `variant` = Form: `seal` (A, Default), `date` (D). Beide tragen dieselben Daten
+  (Jahr, Absender) und erfüllen dieselbe User Story. Eigene Komponenten erst, wenn `date` ein volles Datum bräuchte.
+- **Texte als Props, nicht fest:** `issuer` (oben im Ring bzw. unter dem Band) und `place` (nur `seal`, unten im Ring).
+  „Jahrgang“ kommt aus `messages.ts` (de/en). Damit ist die Komponente an kein Weingut gebunden.
+- **Tinte = `currentColor`**, keine eigene Farb-Prop, wie bei `Signature`. Auf dunklen Etiketten Deckweiß per `style`.
+- **Lange Umschrift wird gestaucht** (`textLength`, Breite geschätzt), ohne Umschrift wird die Mitte größer.
+
+**Props (umgesetzt):**
+| Prop | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `year` | `number` | required | Jahrgang |
+| `variant` | `'seal' \| 'date'` | `'seal'` | Rundstempel oder Datumsstempel |
+| `issuer` | `string` | — | Absender, in Versalien |
+| `place` | `string` | — | Nur `seal`: untere Umschrift |
+| `rotate` | `number` (deg) | `-12` / `-8` | Drehung |
+| `messages` | `Partial<StampMessages>` | — | Überschreibt „Jahrgang“ |
+| `className` / `style` | — | — | Breite (Default `w-40` / `w-52`) und Tintenfarbe am Wrapper |
+
+**Im Einsatz:** components-showcase → *Text → Stamp*.
+
+**Status:** ✅ umgesetzt
 
 ### 8. Handschrift-Markierungen im Highlighter
 
@@ -330,7 +362,7 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 |---|---|---|---|---|---|---|---|---|
 | 5 | Hang-Tag | ✅ (entfernt) | ✅ A | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv), Anstoßen per Maus offen |
 | 6 | Unterschrift | ✅ (entfernt) | ✅ B + A, C | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv); echte Unterschrift offen |
-| 7 | Stempel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 7 | Stempel | ✅ (entfernt) | ✅ A + D | ✅ | ✅ (de/en) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv) |
 | 8 | Highlighter-Handschrift | ⬜ | ⬜ | ⬜ (Erweiterung) | ⬜ | ⬜ | ⬜ | ⬜ |
 
 ## Change History
@@ -348,3 +380,5 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 | 2026-10-07 | HangTag umgesetzt (Entwurf A, `hanging` + `loose`), Showcase-Eintrag auf der Text-Seite, neue Storefront-Variante „Das Geschenk“, Werkbank entfernt | Werkbank-Review: A gewählt, B–D verworfen. Platzierung am Hals über einen Ankerpunkt statt Hals-Koordinaten, damit jedes Produktbild funktioniert. |
 | 2026-10-07 | Unterschrift und Stempel werden eigene Komponenten (#11). Werkbank `/lab/signature` mit vier Entwürfen (A Füllfeder, B Breitfeder, C Filzstift, D Briefschluss), jeweils auf der Seite und auf Papier | Offene Frage zum Stempel vom User entschieden. Gleiches Vorgehen wie Runde 1: erst vergleichen, dann übernehmen. |
 | 2026-10-07 | Signature umgesetzt (B als `nib` Default, A als `pen`, C als `felt`), Showcase-Eintrag auf der Text-Seite, Werkbank entfernt | Werkbank-Review: B gefällt am besten, eine Komponente mit Varianten. D (Briefschluss mit Scroll-Kopplung) verworfen, den Aufbau übernimmt der Consumer. |
+| 2026-10-07 | Werkbank `/lab/stamp` mit vier Entwürfen (A Rundstempel, B Kastenstempel, C Linolstempel, D Datumsstempel), jeweils auf der Seite, auf hellem und dunklem Etikett und auf Papier | Gleiches Vorgehen wie bisher: erst vergleichen, dann übernehmen. |
+| 2026-10-07 | Stamp umgesetzt (A als `seal` Default, D als `date`), Showcase-Eintrag auf der Text-Seite, Werkbank entfernt | Werkbank-Review: A und D behalten. Eine Komponente mit Varianten, weil beide dieselben Daten tragen und dieselbe User Story erfüllen. |
