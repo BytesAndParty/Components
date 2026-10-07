@@ -160,6 +160,8 @@ export function Layout() {
         <FloatingCart
           items={cartItems}
           onClick={() => navigate('/shop')}
+          // Unbekannte IDs (z. B. 'barolo' aus dem Shop) landen auf dem Dummy-Wein der Detailseite.
+          onItemClick={(id) => navigate(`/wine/${encodeURIComponent(id)}`)}
           onItemRemove={(id) => removeItem(id)}
         />
       </ToastProvider>

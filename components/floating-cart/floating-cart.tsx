@@ -220,7 +220,6 @@ export function FloatingCart({
                 justifyContent: 'center',
                 fontSize: '11px',
                 fontWeight: 700,
-                cursor: 'default',
                 textAlign: 'center',
                 padding: '4px',
               }}>
@@ -240,7 +239,6 @@ export function FloatingCart({
                   justifyContent: 'center',
                   fontSize: '10px',
                   fontWeight: 700,
-                  cursor: 'default',
                   textAlign: 'center',
                   padding: '4px',
                 }}>
