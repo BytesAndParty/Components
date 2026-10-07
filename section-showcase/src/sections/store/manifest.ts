@@ -9,6 +9,7 @@ import { StoreGenussgut } from './StoreGenussgut'
 import { StoreSchwarzweiss } from './StoreSchwarzweiss'
 import { StoreGastgeber } from './StoreGastgeber'
 import { StoreCinematic } from './StoreCinematic'
+import { StoreGeschenk } from './StoreGeschenk'
 import type { SectionDef } from '../types'
 
 export const storeSection: SectionDef = {
@@ -81,6 +82,12 @@ export const storeSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Das Regal als vertikales Reel: stehender Vorspann links, sechs Positionen als Kontaktabzug-Zeilen rechts, jede führt auf die Detailseite.',
       Component: StoreCinematic,
+    },
+    {
+      id: 'geschenk',
+      label: 'Das Geschenk',
+      description: 'Eine Flasche als Hero mit handgeschriebener Widmung am Hals (HangTag hanging), daneben Serif-Headline, Hairline-Ablauf und ein Gutschein als freier HangTag (loose).',
+      Component: StoreGeschenk,
     },
   ],
 }
