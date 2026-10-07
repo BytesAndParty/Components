@@ -6,7 +6,8 @@
 > Repo — kein Bezug zu einem konkreten Produkt (Auslöser war eine BuchArt58-Session, die Komponenten
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
-Status: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
+Status Runde 1: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
+Status Runde 2: **1 von 4 umgesetzt** — Hang-Tag ist fertig. Unterschrift, Stempel und Handschrift-Markierungen im Highlighter sind beschlossen, Werkbänke offen (siehe [Runde 2](#runde-2)).
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
 **Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
@@ -26,6 +27,9 @@ iteriert, bis einer (oder eine Kombination) passt — erst dann wandert er nach 
 | 5 | Font-Ladung | **Geändert:** Die Schriften lädt die konsumierende App self-hosted über `@fontsource/caveat` + `@fontsource/kalam` in ihrer `styles.css`, genau wie alle anderen Schriften im Repo (section-showcase). ~~Google-Font-Injection per JS + `injectScrapbookFonts()`~~ verworfen: Google-Fonts-CDN überträgt die IP der Besucher an Google (DSGVO-Risiko für einen österreichischen Shop), und das Repo hostet Schriften bereits selbst. Fehlt die Schrift, fällt die Komponente auf `cursive` zurück. |
 | 6 | Texturen (Papierkorn, Rissrand, Pinselstrich) | **Kein Bildasset.** Alles per Inline-SVG (`feTurbulence` für Papierkorn, gezackter `clipPath`/Polygon-Pfad für Rissrand, handgezeichneter `<path>` für Pinselstrich-Blob). Hält Komponenten self-contained und SSR-safe, keine Asset-Pipeline nötig. |
 | 7 | Naming-Kollision | `Stepper` (bestehend) ist eine interaktive Multi-Step-Wizard-Komponente (Formular-Navigation) — komplett anderer Zweck als `ProcessSteps` (statischer, nicht-interaktiver Erklär-Flow). Keine Überschneidung, eigener Name gewählt. |
+| 8 | Runde 2: welche Elemente? | **Entschieden 2026-10-07:** **Hang-Tag** (Flaschenanhänger), **Unterschrift**, **Stempel** (für den aktuellen Jahrgang, es gibt keinen Heurigen) und **Handschrift-Markierungen** als neue `action`s im bestehenden `Highlighter`. Gleiches Vorgehen wie Runde 1: erst Werkbank mit ~4 Entwürfen, User wählt, dann Umsetzung. |
+| 9 | Runde 2: verworfen | Heurigen-Tafel (kein Heuriger), Umschlag zum Öffnen, Fotostreifen, Klebeband-Hülle für beliebige Elemente. |
+| 10 | Runde 2: offen | **Ticket/Eintrittskarte** (Perforation, Abriss mit Datum und Preis, statt Eckdaten auf Kreppband in `EventsEinladung`) und **Collage-Layout** (Container für überlappende Papier-Elemente, statt fester Offsets wie `sm:-mt-48 sm:ml-64`). Vorgeschlagen, noch nicht entschieden. |
 
 ---
 
@@ -169,6 +173,95 @@ Schritten dazwischen über.
 
 ---
 
+## Runde 2
+
+Beschlossen am 2026-10-07 (Entscheidung #8). Reihenfolge wie in der Progress-Tabelle. Die User Stories sind aus
+den Vorschlägen abgeleitet, denen der User zugestimmt hat. Korrekturen hier eintragen.
+
+### 5. Hang-Tag (Flaschenanhänger)
+
+**Zweck:** Kartonanhänger mit Loch und Schnur, der am Flaschenhals hängt. Trägt eine Widmung zum Geschenk oder eine
+Notiz des Winzers zum Wein. Die Flasche bleibt das Hauptmotiv, der Anhänger ist das persönliche Detail daran.
+Ohne Flasche auch frei auf der Seite nutzbar (Gutschein, Grußkarte).
+
+**User Story:** Als Shop-Besucher möchte ich an der Flasche eine handgeschriebene Notiz sehen (Widmung oder
+Empfehlung des Winzers), damit sich der Wein wie ein Geschenk aus der Familie anfühlt und nicht wie Lagerware.
+
+**Abgrenzung:** `ProductTag` ist ein Status-Badge (`new`, `sale`, `award` …) mit Shimmer und Pop-in. Der Hang-Tag
+trägt Fließtext in Handschrift und hängt physisch an der Flasche. Keine Überschneidung.
+
+**Werkbank-Ergebnis:** Vier Entwürfe verglichen, jeweils an Rotwein- und Weißweinflasche plus einer frei auf der
+Seite. **Gewählt: A.** B, C und D verworfen, die Werkbank ist entfernt.
+
+| Entwurf | Material | Schrift | Schnur | Bewegung |
+|---|---|---|---|---|
+| A · Kraft klassisch | Kraftkarton, abgeschrägte Ecken, verstärkte Öse | Caveat | Bäckergarn Bordeaux/Creme | Pendelt beim Einblenden aus, Hover stößt ihn in Zeigerrichtung an |
+| B · Bütten & Seidenband | Creme-Bütten mit weichem Rand, gestanztes Loch | Cormorant kursiv + Kapitälchen | Satinband Bordeaux | Ruhiges Einschwingen, Hover hebt ihn leicht an |
+| C · Gepäckanhänger | Manila-Karton, Verstärkungsfeld, Metallöse | Vordruck in UI-Sans, Einträge in Kalam (Kugelschreiber-Blau) | Baumwollkordel | Pendelt wie A |
+| D · Halskragen | Dunkler Karton mit Loch, über den Hals gestülpt, unten gerissen | Caveat | keine | Rutscht beim Einblenden den Hals hinunter |
+
+**Entschieden bei der Umsetzung:**
+- **Name `HangTag`**, weil der Anhänger auch ohne Flasche funktioniert (Gutschein, Nagel an der Wand).
+- **Platzierung über einen Ankerpunkt:** Bei `variant="hanging"` ist der Wrapper selbst der Knoten (`absolute`,
+  0 × 0 px). Der Consumer setzt ihn per `left`/`top` auf den Hals und gibt optional `neckWidth` für die Schlaufe mit.
+  Hals-Koordinaten als Prop wären an ein bestimmtes Bildformat gebunden, der Ankerpunkt funktioniert mit jedem Bild.
+- **`variant`** = Aufhängung (`hanging` | `loose`), nicht Material. Die Materialien B–D sind verworfen.
+
+**Props (umgesetzt):**
+| Prop | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `children` | `ReactNode` | required | Text in Caveat |
+| `sign` | `ReactNode` | — | Unterschrift unten rechts, Gedankenstrich automatisch |
+| `variant` | `'hanging' \| 'loose'` | `'hanging'` | Am Hals hängend oder frei auf der Seite |
+| `rotate` | `number` (deg) | `-8` / `-4` | Ruhewinkel (`hanging`, negativ = nach rechts) bzw. Drehung (`loose`) |
+| `cordLength` | `number` (px) | `44` | Nur `hanging`: Schnur vom Knoten bis zur Öse |
+| `neckWidth` | `number` (px) | — | Nur `hanging`: zeichnet die Schlaufe um den Hals |
+| `className` / `style` | — | — | `hanging`: Position des Knotens, `loose`: Layout am Wrapper |
+
+**Im Einsatz:** components-showcase → *Text → HangTag*, section-showcase → *Storefront → Das Geschenk*
+(`sections/store/StoreGeschenk.tsx`).
+
+**Status:** ✅ umgesetzt
+
+### 6. Unterschrift
+
+**Zweck:** Handschriftliche Unterschrift des Winzers, die sich beim Scrollen selbst zeichnet (SVG-Stroke), z. B.
+unter einer Einladung oder einem Brief.
+
+**User Story:** Als Leser einer Einladung oder eines Briefs vom Weingut möchte ich die Unterschrift des Winzers
+sehen, damit der Text persönlich wirkt und klar ist, wer dahintersteht.
+
+**Voraussetzung:** Die Unterschrift muss als echter SVG-Pfad vorliegen. Ein Schriftzug aus einer Handschrift-Font
+lässt sich nicht glaubwürdig nachzeichnen. Für die Werkbank genügt ein Platzhalter-Pfad.
+
+**Status:** ⬜ Werkbank offen
+
+### 7. Stempel
+
+**Zweck:** Schräger Gummistempel mit ungleichmäßigem Farbauftrag, z. B. „Jahrgang 2025“ oder „Neuer Jahrgang“
+auf Produktbild oder Papier-Element.
+
+**User Story:** Als Shop-Besucher möchte ich auf einen Blick sehen, welcher Wein aus dem aktuellen Jahrgang ist,
+damit ich den neuen Wein schnell finde.
+
+**Offene Frage:** Überschneidung mit `ProductTag` (`new`). Entweder wird der Stempel eine Variante von
+`ProductTag` oder eine eigene Komponente mit klar anderem Zweck. Vor der Werkbank klären.
+
+**Status:** ⬜ Werkbank offen
+
+### 8. Handschrift-Markierungen im Highlighter
+
+**Zweck:** Neue `action`s im bestehenden `Highlighter` statt einer eigenen Komponente (wie schon `marker`, siehe
+Marker-Callout): Kreis um ein Wort, Durchstreichen, Kringel-Unterstreichung. Beispiel: „30,–“ durchgestrichen,
+„25,–“ daneben.
+
+**User Story:** Als Leser möchte ich, dass einzelne Wörter wie mit dem Stift eingekreist, durchgestrichen oder
+unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervorgehoben wirken.
+
+**Status:** ⬜ Werkbank offen
+
+---
+
 ## Gemeinsame technische Basis
 
 - **Farbpalette (fix, nicht Theme-abhängig):** Kraftpapier-Tan, Creme-Weiß (Polaroid-Rahmen),
@@ -195,6 +288,15 @@ Schritten dazwischen über.
 | 3 | Marker-Callout | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 | 4 | Process-Steps | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Browser-Checks offen |
 
+**Runde 2**
+
+| Reihenfolge | Komponente | Werkbank | Entwurf gewählt | `.tsx` | `messages.ts` | `COMPONENT.md` | Showcase | Quality-Gate |
+|---|---|---|---|---|---|---|---|---|
+| 5 | Hang-Tag | ✅ (entfernt) | ✅ A | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv), Anstoßen per Maus offen |
+| 6 | Unterschrift | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 7 | Stempel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 8 | Highlighter-Handschrift | ⬜ | ⬜ | ⬜ (Erweiterung) | ⬜ | ⬜ | ⬜ | ⬜ |
+
 ## Change History
 
 | Date | Change | Reason |
@@ -205,3 +307,6 @@ Schritten dazwischen über.
 | 2026-10-06 | Polaroid-Frame umgesetzt (Entwurf A *Klassisch*), Showcase-Eintrag auf der Text-Seite, gemeinsame Basis `components/lib/scrapbook.ts` (Paper-Note darauf umgestellt) | Zweite Komponente braucht Tinte, Washi und Korn von Paper-Note, daher wie geplant nach `lib/` ausgelagert. |
 | 2026-10-06 | Process-Steps umgesetzt (Entwürfe A, B, C als `paper`, `trail`, `ledger`), Showcase-Eintrag auf der Text-Seite, Cormorant self-hosted im components-showcase | Werkbank-Review. Responsive auf Container-Query umgestellt, weil die Werkbank-Fassung zwischen 640 und ~900 px überlief. |
 | 2026-10-06 | Marker-Callout umgesetzt (A, C, D als `brush`, `watercolor`, `tape`), Entwurf B als `Highlighter` `action="marker"`, Highlighter-Fixes, Werkbank entfernt | Werkbank-Review. B überschnitt sich mit `Highlighter`, daher dort integriert statt doppelt im System. |
+| 2026-10-07 | Runde 2 beschlossen: Hang-Tag, Unterschrift, Stempel, Highlighter-Handschrift. Verworfen: Heurigen-Tafel, Umschlag, Fotostreifen, Klebeband-Hülle. Ticket und Collage-Layout offen. | Ideen-Runde nach Abschluss von Runde 1. |
+| 2026-10-07 | Werkbank `/lab/hang-tag` mit vier Entwürfen (A Kraft, B Bütten, C Gepäckanhänger, D Halskragen), jeweils an Rot- und Weißweinflasche und frei | Gleiches Vorgehen wie Runde 1: erst vergleichen, dann übernehmen. |
+| 2026-10-07 | HangTag umgesetzt (Entwurf A, `hanging` + `loose`), Showcase-Eintrag auf der Text-Seite, neue Storefront-Variante „Das Geschenk“, Werkbank entfernt | Werkbank-Review: A gewählt, B–D verworfen. Platzierung am Hals über einen Ankerpunkt statt Hals-Koordinaten, damit jedes Produktbild funktioniert. |
