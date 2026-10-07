@@ -47,6 +47,7 @@
   --color-input:                  var(--input);
   --color-ring:                   var(--ring);
   --color-accent:                 var(--accent);
+  --color-accent-foreground:      var(--accent-foreground);
   --color-accent-lifted:          var(--accent-lifted);
   --color-accent-readable:        var(--accent-readable);
   --color-primary:                var(--primary);
@@ -75,6 +76,8 @@
   --border:                 oklch(0.188 0.006 285);
   --input:                  oklch(0.188 0.006 285);
   --accent:                 oklch(0.585 0.233 277);
+  /* Text auf Akzentfläche (bg-accent). Spiegelt section-showcase/src/styles.css. */
+  --accent-foreground:      oklch(1 0 0);
   --primary:                var(--accent);
   --primary-foreground:     oklch(1 0 0);
   /* Fokus-Ring — nie mit Opazität abschwächen, siehe --accent-readable unten. */
