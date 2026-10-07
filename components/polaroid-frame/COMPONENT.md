@@ -8,7 +8,7 @@ Foto im klassischen Polaroid-Rahmen: schmaler Rand oben und seitlich, breiter Fu
 - Breiter Fuß mit Caption in Handschrift **Caveat**. Ohne Caption bleibt der Fuß leer, das Polaroid-Format bleibt erhalten.
 - Olivgrünes Washi-Tape (dasselbe wie bei `PaperNote` `torn`) mittig oben über `tape`.
 - Fällt beim Scrollen ins Bild (einmalig) und richtet sich beim Hover gerade, wie in die Hand genommen.
-- Während das Bild lädt, hält eine ruhige Fläche das Quadrat. Das Layout springt nicht. Fehlt das Bild, zeigt der Browser darauf sein Fehler-Symbol und den Alt-Text klein in Sans.
+- Während das Bild lädt, hält eine ruhige Fläche das Quadrat. Das Layout springt nicht. Lädt das Bild nicht (`onError`), bleibt das Polaroid „unentwickelt“: dunkle, warme Fläche mit Bild-Symbol und dem Alt-Text klein in Sans. Der Platzhalter trägt den Alt-Text als `role="img"`-Namen, bei leerem Alt ist er `aria-hidden`. Ein neues `src` setzt den Fallback zurück.
 - Texturen per Inline-SVG und CSS (kein Bild-Asset), SSR-tauglich.
 
 ## How It Works
@@ -73,5 +73,6 @@ import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
 ## Dependencies
 
 - `motion` (`motion/react`) für Einfallen und Hover.
+- `lucide-react` (`ImageOff`) für den Fallback bei fehlendem Bild.
 - `cn()` aus `@components/lib/utils`, `useDeviceCapabilities` aus `@components/lib/use-device-capabilities`, Farben und Texturen aus `@components/lib/scrapbook`.
 - In der konsumierenden App: `@fontsource/caveat`.
