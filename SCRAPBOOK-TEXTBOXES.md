@@ -7,7 +7,8 @@
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
 Status Runde 1: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
-Status Runde 2: **1 von 4 umgesetzt** — Hang-Tag ist fertig. Unterschrift, Stempel und Handschrift-Markierungen im Highlighter sind beschlossen, Werkbänke offen (siehe [Runde 2](#runde-2)).
+Status Runde 2: **2 von 4 umgesetzt** — Hang-Tag und Unterschrift sind fertig. Stempel und Handschrift-Markierungen im Highlighter: Werkbänke offen (siehe [Runde 2](#runde-2)).
+**Offen:** Die Unterschrift zeichnet noch einen Platzhalter-Pfad. Simons echte Unterschrift fehlt als SVG-Pfad (je Federzug ein Pfad, Anleitung in [`components/signature/COMPONENT.md`](./components/signature/COMPONENT.md) unter „Hinweise“), danach `SIGNATURE_SIMON` in `components-showcase/src/data.ts` ersetzen.
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
 **Vorgehen pro Komponente (seit Paper-Note):** Statt direkt nach dem Props-Entwurf zu bauen, entstehen zuerst
@@ -30,6 +31,7 @@ iteriert, bis einer (oder eine Kombination) passt — erst dann wandert er nach 
 | 8 | Runde 2: welche Elemente? | **Entschieden 2026-10-07:** **Hang-Tag** (Flaschenanhänger), **Unterschrift**, **Stempel** (für den aktuellen Jahrgang, es gibt keinen Heurigen) und **Handschrift-Markierungen** als neue `action`s im bestehenden `Highlighter`. Gleiches Vorgehen wie Runde 1: erst Werkbank mit ~4 Entwürfen, User wählt, dann Umsetzung. |
 | 9 | Runde 2: verworfen | Heurigen-Tafel (kein Heuriger), Umschlag zum Öffnen, Fotostreifen, Klebeband-Hülle für beliebige Elemente. |
 | 10 | Runde 2: offen | **Ticket/Eintrittskarte** (Perforation, Abriss mit Datum und Preis, statt Eckdaten auf Kreppband in `EventsEinladung`) und **Collage-Layout** (Container für überlappende Papier-Elemente, statt fester Offsets wie `sm:-mt-48 sm:ml-64`). Vorgeschlagen, noch nicht entschieden. |
+| 11 | Runde 2: Unterschrift und Stempel | **Entschieden 2026-10-07:** beide werden **eigene Komponenten**. Der Stempel wird keine Variante von `ProductTag`, die Unterschrift kein Teil von `HangTag`. |
 
 ---
 
@@ -234,7 +236,42 @@ sehen, damit der Text persönlich wirkt und klar ist, wer dahintersteht.
 **Voraussetzung:** Die Unterschrift muss als echter SVG-Pfad vorliegen. Ein Schriftzug aus einer Handschrift-Font
 lässt sich nicht glaubwürdig nachzeichnen. Für die Werkbank genügt ein Platzhalter-Pfad.
 
-**Status:** ⬜ Werkbank offen
+**Abgrenzung:** Eigene Komponente (Entscheidung #11). Das `sign`-Feld am `HangTag` bleibt Text in Caveat.
+
+**Werkbank-Ergebnis:** Vier Entwürfe mit demselben Platzhalter-Pfad „Simon“ verglichen, jeweils direkt auf der Seite
+(Tinte folgt dem Theme) und auf Papier (feste Tinte). **Gewählt: B als Default, A und C als weitere Varianten.**
+D verworfen, die Werkbank ist entfernt.
+
+| Entwurf | Strich | Tinte auf Papier | Bewegung |
+|---|---|---|---|
+| A · Füllfeder | gleichmäßig fein | Blauschwarz | Zeichnet sich beim Einscrollen in Schreibtempo, Namenszug, i-Punkt, Schwung |
+| B · Breitfeder | Haar- und Schattenstriche (versetzte Kopien entlang des Federwinkels) | Bordeaux | Wie A, ruhiger |
+| C · Filzstift | kräftig, rauer Rand (SVG-Displacement) | Graphit auf Kraft | Wie A, zügiger |
+| D · Briefschluss | wie A, dazu Grußformel, Name und Rolle als Klartext | Blauschwarz | An die Scroll-Position gekoppelt, rückwärts radiert sie |
+
+**Entschieden bei der Umsetzung:**
+- **Name `Signature`**, `variant` = Strich: `nib` (B, Default), `pen` (A), `felt` (C).
+- **D fällt weg.** Grußformel, Name und Rolle setzt der Consumer selbst um die Unterschrift (Beispiel in der COMPONENT.md).
+  Die Scroll-Kopplung entfällt damit auch.
+- **Unterschrift als Daten:** `strokes` (Federzüge mit Dauer) + `viewBox`, die Komponente kennt keine bestimmte
+  Unterschrift. Der Platzhalter liegt in `components-showcase/src/data.ts`, die Schräglage ist in die Koordinaten eingerechnet.
+- **Tinte = `currentColor`**, keine eigene Farb-Prop. Auf Papier erbt sie die Papiertinte oder kommt per `style`.
+- **Strich skaliert mit der viewBox** (Referenz 254 Einheiten), damit eine echte Unterschrift in beliebigen Einheiten gleich wirkt.
+
+**Props (umgesetzt):**
+| Prop | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `strokes` | `{ d: string; duration: number }[]` | required | Federzüge in Schreibreihenfolge |
+| `viewBox` | `string` | required | viewBox der Pfade |
+| `variant` | `'nib' \| 'pen' \| 'felt'` | `'nib'` | Breitfeder, Füllfeder oder Filzstift |
+| `label` | `string` | — | Zugänglicher Name, ohne Wert `aria-hidden` |
+| `className` / `style` | — | — | Breite (Default `w-60`) und Tintenfarbe am Wrapper |
+
+**Im Einsatz:** components-showcase → *Text → Signature*.
+
+**Offen:** echte Unterschrift von Simon als SVG-Pfad.
+
+**Status:** ✅ umgesetzt (mit Platzhalter-Pfad)
 
 ### 7. Stempel
 
@@ -244,8 +281,7 @@ auf Produktbild oder Papier-Element.
 **User Story:** Als Shop-Besucher möchte ich auf einen Blick sehen, welcher Wein aus dem aktuellen Jahrgang ist,
 damit ich den neuen Wein schnell finde.
 
-**Offene Frage:** Überschneidung mit `ProductTag` (`new`). Entweder wird der Stempel eine Variante von
-`ProductTag` oder eine eigene Komponente mit klar anderem Zweck. Vor der Werkbank klären.
+**Abgrenzung:** Eigene Komponente, keine Variante von `ProductTag` (Entscheidung #11).
 
 **Status:** ⬜ Werkbank offen
 
@@ -293,7 +329,7 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 | Reihenfolge | Komponente | Werkbank | Entwurf gewählt | `.tsx` | `messages.ts` | `COMPONENT.md` | Showcase | Quality-Gate |
 |---|---|---|---|---|---|---|---|---|
 | 5 | Hang-Tag | ✅ (entfernt) | ✅ A | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv), Anstoßen per Maus offen |
-| 6 | Unterschrift | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 6 | Unterschrift | ✅ (entfernt) | ✅ B + A, C | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv); echte Unterschrift offen |
 | 7 | Stempel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 8 | Highlighter-Handschrift | ⬜ | ⬜ | ⬜ (Erweiterung) | ⬜ | ⬜ | ⬜ | ⬜ |
 
@@ -310,3 +346,5 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 | 2026-10-07 | Runde 2 beschlossen: Hang-Tag, Unterschrift, Stempel, Highlighter-Handschrift. Verworfen: Heurigen-Tafel, Umschlag, Fotostreifen, Klebeband-Hülle. Ticket und Collage-Layout offen. | Ideen-Runde nach Abschluss von Runde 1. |
 | 2026-10-07 | Werkbank `/lab/hang-tag` mit vier Entwürfen (A Kraft, B Bütten, C Gepäckanhänger, D Halskragen), jeweils an Rot- und Weißweinflasche und frei | Gleiches Vorgehen wie Runde 1: erst vergleichen, dann übernehmen. |
 | 2026-10-07 | HangTag umgesetzt (Entwurf A, `hanging` + `loose`), Showcase-Eintrag auf der Text-Seite, neue Storefront-Variante „Das Geschenk“, Werkbank entfernt | Werkbank-Review: A gewählt, B–D verworfen. Platzierung am Hals über einen Ankerpunkt statt Hals-Koordinaten, damit jedes Produktbild funktioniert. |
+| 2026-10-07 | Unterschrift und Stempel werden eigene Komponenten (#11). Werkbank `/lab/signature` mit vier Entwürfen (A Füllfeder, B Breitfeder, C Filzstift, D Briefschluss), jeweils auf der Seite und auf Papier | Offene Frage zum Stempel vom User entschieden. Gleiches Vorgehen wie Runde 1: erst vergleichen, dann übernehmen. |
+| 2026-10-07 | Signature umgesetzt (B als `nib` Default, A als `pen`, C als `felt`), Showcase-Eintrag auf der Text-Seite, Werkbank entfernt | Werkbank-Review: B gefällt am besten, eine Komponente mit Varianten. D (Briefschluss mit Scroll-Kopplung) verworfen, den Aufbau übernimmt der Consumer. |
