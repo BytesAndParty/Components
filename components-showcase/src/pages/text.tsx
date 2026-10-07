@@ -338,7 +338,7 @@ export function TextPage() {
                 caption={<>Die ganze Familie bei der Lese <em>2025</em>, mit Simon, Oma und den Nachbarskindern</>}
                 rotate={1.5}
               />
-              <PolaroidFrame src="/does-not-exist.jpg" alt="Foto vom Hoffest (Bild fehlt)" caption="Bild fehlt" rotate={-2} />
+              <PolaroidFrame src="/does-not-exist.jpg" alt="Test: leeres Polaroid, Bild fehlt absichtlich" caption="Test: absichtlich leer" rotate={-2} />
               <PolaroidFrame
                 src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
                 alt="Zwei Weingläser beim Anstoßen"
