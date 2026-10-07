@@ -713,7 +713,7 @@ export function TextPage() {
             <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">
               Golden Path — vertikale Meta-Rail (Seitenkante). Auf den Text klicken.
             </p>
-            <div className="border-border flex h-56 items-center rounded-lg border px-6">
+            <div className="border-border flex items-center rounded-lg border px-6 py-8">
               <WaveText className="text-muted-foreground block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap uppercase [writing-mode:vertical-rl]">
                 Sooss · Niederösterreich — Familie Buchart
               </WaveText>
