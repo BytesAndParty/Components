@@ -13,6 +13,7 @@ import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
 import { ProcessSteps, type ProcessStep } from '@components/process-steps/process-steps'
 import { MarkerCallout } from '@components/marker-callout/marker-callout'
 import { HangTag } from '@components/hang-tag/hang-tag'
+import { Signature } from '@components/signature/signature'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -21,7 +22,7 @@ import { ShinyText, ShinyButton } from '@components/shiny-text/shiny-text'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { WaveText } from '@components/wave-text/wave-text'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
-import { testimonials } from '../data'
+import { SIGNATURE_SIMON, testimonials } from '../data'
 
 const wineDescriptionLong = 'Tiefdunkles Granatrot mit violetten Reflexen. In der Nase entfaltet sich ein vielschichtiges Bouquet aus reifen Brombeeren, schwarzen Kirschen und feinen Anklängen von Vanille, Tabak und mediterranen Kräutern. Am Gaumen kraftvoll und doch elegant, mit samtigen Tanninen, einer perfekten Balance zwischen Frucht und Holz und einem langen, anhaltenden Nachklang. Hervorragender Speisebegleiter zu kräftigem Wild, geschmortem Rind und gereiftem Hartkäse.'
 const wineDescriptionShort = 'Frischer Grüner Veltliner mit feiner Pfeffernote.'
@@ -533,6 +534,69 @@ export function TextPage() {
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>HangTag · fixe Karton- und Garnfarben · Caveat self-hosted via @fontsource</span>
           <span>Deko aria-hidden · Anstoßen nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
+      <Section
+        title="Signature"
+        description="Handschriftliche Unterschrift, die sich beim Einscrollen Federzug für Federzug selbst zeichnet. variant='nib' (Default) schreibt mit der Breitfeder Haar- und Schattenstriche, 'pen' fein mit der Füllfeder, 'felt' kräftig mit dem Filzstift. Die Tinte ist currentColor: auf der Seite folgt sie dem Theme, auf Papier der Papiertinte. Pfad hier ein Platzhalter."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              golden path · nib · pen · felt auf der Seite
+            </p>
+            <div className="flex flex-wrap items-end gap-x-20 gap-y-12 px-4 pt-8 pb-8">
+              {(['nib', 'pen', 'felt'] as const).map(variant => (
+                <figure key={variant} className="flex flex-col gap-3">
+                  <Signature {...SIGNATURE_SIMON} variant={variant} label="Unterschrift: Simon Buchart" className="text-foreground" />
+                  <figcaption className="text-muted-foreground text-xs">
+                    variant="{variant}"{variant === 'nib' && ' · Default'}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              auf papier · Bordeaux-Tinte per style · Tinte vom Papier geerbt
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-8">
+              <PaperNote variant="notepad" paper="cream" rotate={1.5}>
+                Danke fürs Mithelfen bei der Lese! Ohne euch wär der 2025er noch am Stock.
+                <Signature {...SIGNATURE_SIMON} label="Unterschrift: Simon" className="mt-4 w-40" style={{ color: 'oklch(0.36 0.1 15)' }} />
+              </PaperNote>
+              <PaperNote paper="kraft" rotate={-2}>
+                Kellerführung am Samstag, 16 Uhr. Wir freuen uns!
+                <Signature {...SIGNATURE_SIMON} variant="felt" label="Unterschrift: Simon" className="mt-3 w-36" />
+              </PaperNote>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · Deko neben Klartext-Namen (ohne label) · sehr klein · sehr groß
+            </p>
+            <div className="flex flex-wrap items-end gap-x-20 gap-y-12 px-4 pt-8 pb-8">
+              <div className="text-foreground">
+                <p className="font-display text-2xl italic">Herzlich,</p>
+                <Signature {...SIGNATURE_SIMON} variant="pen" className="mt-1 w-52" />
+                <div className="border-border mt-2 border-t pt-2.5">
+                  <p className="text-[0.68rem] font-medium tracking-[0.22em] uppercase">Simon Buchart</p>
+                  <p className="text-muted-foreground mt-1 text-xs">Winzer · Weingut Buchart</p>
+                </div>
+              </div>
+              <Signature {...SIGNATURE_SIMON} label="Unterschrift: Simon" className="text-foreground w-24" />
+              <Signature {...SIGNATURE_SIMON} label="Unterschrift: Simon" className="text-foreground w-full max-w-md" />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>Signature · Tinte = currentColor · Strich skaliert mit der viewBox</span>
+          <span>mit label role=img, sonst aria-hidden · respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 

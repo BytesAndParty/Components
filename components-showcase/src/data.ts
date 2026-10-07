@@ -131,3 +131,17 @@ export const testimonials = [
   { name: 'Yuki Tanaka', role: 'Senior Engineer', content: 'Zero Overhead' },
   { name: 'Nina Hoffmann', role: 'Product Manager', content: '+12% Conversion' },
 ]
+
+// Platzhalter-Unterschrift „Simon“ für <Signature>, bis die echte als SVG-Pfad vorliegt.
+// Federzüge in Schreibreihenfolge: Namenszug, i-Punkt, Schwung.
+export const SIGNATURE_SIMON = {
+  viewBox: '4 4 254 104',
+  strokes: [
+    {
+      d: 'M 105 20 C 97 4, 56 8, 50.5 30 C 45.5 50, 79 52, 66.6 78 C 55.1 100, 14.6 102, 8.6 86 C 5.5 74, 25 68, 42 72 C 53.3 75, 62.1 80, 72.6 78 C 79.1 76, 83.5 66, 86 60 C 83.5 70, 80.1 80, 86.1 80 C 91.1 80, 97.5 62, 101.5 62 C 105.5 62, 99.1 80, 103.1 80 C 107.1 80, 113.5 62, 117.5 62 C 121.5 62, 115.1 80, 120.1 80 C 126.1 80, 133.5 66, 130.3 63 C 126 60, 118 72, 123.8 77 C 128.1 80, 135.5 70, 140 64 C 143.5 62, 139.1 80, 144.1 80 C 149.1 80, 155.3 63, 160.3 63 C 165.3 63, 159.1 80, 165.1 80 C 174.1 80, 186.5 70, 197.5 58',
+      duration: 1.7,
+    },
+    { d: 'M 89.3 47 L 93.8 45', duration: 0.1 },
+    { d: 'M 20.1 104 C 70.1 96, 150.1 88, 235.6 90 C 251.6 90, 257.6 94, 247.6 98', duration: 0.5 },
+  ],
+}
