@@ -195,22 +195,9 @@ const cssIconStyles = `
   50% { transform: rotate(30deg) scale(1.15); }
   100% { transform: rotate(0deg) scale(1); }
 }
-@keyframes moon-rock {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-8deg); }
-  75% { transform: rotate(5deg); }
-}
-@keyframes moon-star-twinkle1 {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  40%, 70% { opacity: 1; transform: scale(1.5); }
-}
-@keyframes moon-star-twinkle2 {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  50%, 80% { opacity: 1; transform: scale(1.3); }
-}
-@keyframes moon-star-twinkle3 {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  30%, 60% { opacity: 1; transform: scale(1.8); }
+@keyframes moon-sparkle-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 @keyframes star-spin-glow {
   0% { transform: rotate(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
@@ -275,10 +262,21 @@ const cssIconStyles = `
 }
 
 .css-icon:hover .icon-sun-rays { animation: sun-rays-rotate 0.8s ease; }
-.css-icon:hover .icon-moon-body { animation: moon-rock 0.7s ease; }
-.css-icon:hover .icon-moon-star1 { animation: moon-star-twinkle1 0.7s ease forwards; }
-.css-icon:hover .icon-moon-star2 { animation: moon-star-twinkle2 0.7s ease 0.1s forwards; }
-.css-icon:hover .icon-moon-star3 { animation: moon-star-twinkle3 0.7s ease 0.2s forwards; }
+/* Mond: neigt sich und bleibt geneigt, solange gehovert wird; die Sterne gehen gestaffelt
+   in der Aussparung auf und funkeln weiter. transform-box: fill-box, damit jeder Stern um
+   seine eigene Mitte skaliert statt um den SVG-Ursprung. Das Verlassen läuft ohne Staffelung zurück. */
+.icon-moon-body { transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.css-icon:hover .icon-moon-body { transform: rotate(-14deg); }
+.icon-moon-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.2) rotate(-90deg);
+  transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.css-icon:hover .icon-moon-star { opacity: 1; transform: scale(1) rotate(0deg); animation: moon-sparkle-twinkle 1.8s ease-in-out 0.6s infinite; }
+.css-icon:hover .icon-moon-star2 { transition-delay: 0.12s; animation-delay: 0.9s; }
+.css-icon:hover .icon-moon-star3 { transition-delay: 0.24s; animation-delay: 1.2s; }
 .css-icon:hover .icon-star-shape { animation: star-spin-glow 0.7s ease; }
 .css-icon:hover .icon-wine-svg { animation: wine-tilt 0.7s ease; }
 .css-icon:hover .icon-wine-liquid { animation: wine-slosh 0.8s ease; }
@@ -291,10 +289,7 @@ const cssIconStyles = `
 .css-icon:hover .icon-heart { animation: heart-pulse 0.6s ease; }
 @media (prefers-reduced-motion: reduce) {
   .css-icon:hover .icon-sun-rays,
-  .css-icon:hover .icon-moon-body,
-  .css-icon:hover .icon-moon-star1,
-  .css-icon:hover .icon-moon-star2,
-  .css-icon:hover .icon-moon-star3,
+  .css-icon:hover .icon-moon-star,
   .css-icon:hover .icon-star-shape,
   .css-icon:hover .icon-wine-svg,
   .css-icon:hover .icon-wine-liquid,
@@ -305,6 +300,10 @@ const cssIconStyles = `
   .css-icon:hover .icon-minus,
   .css-icon:hover .icon-truck,
   .css-icon:hover .icon-heart { animation: none !important; }
+  /* Mond: keine Bewegung, die Sterne blenden nur ein. */
+  .css-icon:hover .icon-moon-body { transform: none; }
+  .icon-moon-star,
+  .css-icon:hover .icon-moon-star { transform: none; transition: opacity 0.35s ease; }
 }
 `;
 
@@ -354,14 +353,21 @@ export function SunIconCss({ size = 32, className, 'aria-label': ariaLabel }: Cs
 }
 SunIconCss.displayName = 'SunIconCss';
 
+/** Vierzackiger Funkelstern mit eingezogenen Flanken, Mittelpunkt (cx, cy), Spitzenradius r. */
+function sparkle(cx: number, cy: number, r: number) {
+  const k = r * 0.18;
+  return `M${cx} ${cy - r}Q${cx + k} ${cy - k} ${cx + r} ${cy}Q${cx + k} ${cy + k} ${cx} ${cy + r}Q${cx - k} ${cy + k} ${cx - r} ${cy}Q${cx - k} ${cy - k} ${cx} ${cy - r}Z`;
+}
+
 export function MoonIconCss({ size = 32, className, 'aria-label': ariaLabel }: CssIconProps) {
   return (
     <CssIconWrapper size={size} className={className} aria-label={ariaLabel}>
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <path className="icon-moon-body" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" style={{ transformOrigin: '10px 14px' }} />
-        <circle className="icon-moon-star1" cx="19" cy="5" r="0.6" fill="currentColor" opacity="0" />
-        <circle className="icon-moon-star2" cx="21" cy="9" r="0.4" fill="currentColor" opacity="0" />
-        <circle className="icon-moon-star3" cx="17" cy="3" r="0.5" fill="currentColor" opacity="0" />
+        {/* Positionen liegen in der Aussparung und bleiben auch bei geneigtem Mond frei von dessen Kontur. */}
+        <path className="icon-moon-star" d={sparkle(17, 6.8, 2.4)} fill="currentColor" stroke="none" />
+        <path className="icon-moon-star icon-moon-star2" d={sparkle(21, 3, 1.2)} fill="currentColor" stroke="none" />
+        <path className="icon-moon-star icon-moon-star3" d={sparkle(14, 1.6, 0.8)} fill="currentColor" stroke="none" />
       </svg>
     </CssIconWrapper>
   );
