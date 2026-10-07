@@ -11,8 +11,8 @@ import {
   ColumnSizingState,
 } from '@tanstack/react-table'
 // eslint-disable-next-line no-restricted-imports -- useMemo is load-bearing for stable column defs/data refs that drive TanStack Table memo.
-import { useEffect, useMemo, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion, type Variants } from 'motion/react'
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -84,7 +84,6 @@ export function DataTable<TData, TValue>({
   })
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({})
   const [internalColumnSizing, setInternalColumnSizing] = useState<ColumnSizingState>({})
-  const [[page, direction], setPage] = useState([0, 0])
   const m = useComponentMessages(MESSAGES, messages)
   const shouldReduceMotion = useReducedMotion()
 
@@ -92,11 +91,17 @@ export function DataTable<TData, TValue>({
   const handleSortingChange = onSortingChange ?? setInternalSorting
 
   const pagination = controlledPagination ?? internalPagination
-  const handlePaginationChange = (next: PaginationState) => {
-    const dir = next.pageIndex > pagination.pageIndex ? 1 : -1
-    setPage([next.pageIndex, dir])
-    if (onPaginationChange) onPaginationChange(next)
-    else setInternalPagination(next)
+  const handlePaginationChange = onPaginationChange ?? setInternalPagination
+
+  // Richtung der Einlauf-Animation, abgeleitet während des Renders, damit sie auch bei
+  // Änderungen von außen (URL, Browser-Zurück) schon im ersten Frame stimmt:
+  // 1/-1 = vor-/zurückgeblättert (Slide), 0 = erster Render, umsortiert oder neue Daten (reines Einblenden).
+  const sortKey = JSON.stringify(sorting)
+  const [prevView, setPrevView] = useState({ pageIndex: pagination.pageIndex, sortKey, data })
+  const [direction, setDirection] = useState(0)
+  if (pagination.pageIndex !== prevView.pageIndex || sortKey !== prevView.sortKey || data !== prevView.data) {
+    setPrevView({ pageIndex: pagination.pageIndex, sortKey, data })
+    setDirection(Math.sign(pagination.pageIndex - prevView.pageIndex))
   }
 
   const rowSelection = controlledRowSelection ?? internalRowSelection
@@ -154,28 +159,23 @@ export function DataTable<TData, TValue>({
     },
   })
 
-  // Sync internal page state if pagination prop changes from outside.
-  // `page` is intentionally omitted: it is set inside this effect, so
-  // including it would create a feedback loop.
-  useEffect(() => {
-    if (pagination.pageIndex !== page) {
-      setPage([pagination.pageIndex, pagination.pageIndex > page ? 1 : -1])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.pageIndex])
-
   const variants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 20 : -20,
+      x: direction * 20,
       opacity: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
     },
-    exit: (direction: number) => ({
+  }
+
+  // Die alte Seite verlässt die Tabelle als Ganzes, entgegen der Blätter-Richtung.
+  const pageVariants: Variants = {
+    leave: (direction: number) => ({
       x: direction < 0 ? 20 : -20,
       opacity: 0,
+      transition: { duration: 0.18, ease: 'easeIn' },
     }),
   }
 
@@ -185,7 +185,8 @@ export function DataTable<TData, TValue>({
         <div className="overflow-x-auto">
           <table
             className={cn(
-              'w-full text-sm text-left border-collapse',
+              // isolate: eigener Stacking-Context, damit z-10 der Resize-Griffe nicht mit der Seite konkurriert.
+              'isolate w-full text-sm text-left border-collapse',
               enableColumnResizing && 'table-fixed'
             )}
             style={enableColumnResizing ? { width: table.getTotalSize() } : undefined}
@@ -223,12 +224,6 @@ export function DataTable<TData, TValue>({
                           <button
                             type="button"
                             onClick={header.column.getToggleSortingHandler()}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault()
-                                header.column.getToggleSortingHandler()?.(e)
-                              }
-                            }}
                             aria-label={nextSortLabel}
                             className="group text-muted-foreground hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-card flex cursor-pointer items-center gap-2 rounded-sm border-0 bg-transparent p-0 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                           >
@@ -278,59 +273,73 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-border relative divide-y">
-              <AnimatePresence mode="popLayout" initial={false} custom={direction}>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row, i) => (
+            {/* Ein tbody pro Seite statt Exit pro Zeile: popLayout würde ausblendende <tr> auf
+                position: absolute setzen, dabei verlieren die Zellen ihre Spaltenbreiten. */}
+            <AnimatePresence mode="wait" initial={false} custom={direction}>
+              <motion.tbody
+                key={pagination.pageIndex}
+                custom={direction}
+                variants={shouldReduceMotion ? undefined : pageVariants}
+                exit={shouldReduceMotion ? undefined : 'leave'}
+                className="divide-border divide-y"
+              >
+                {/* Eigene Presence für die Zeilen: beim Umsortieren blenden neu auf die Seite kommende
+                    Zeilen ein. Unter der äußeren Presence wären sie auf der ersten Seite dauerhaft
+                    blockiert (initial={false} gilt dort für die ganze Lebenszeit). Beim ersten Render
+                    (direction 0) läuft nichts ein. Ohne exit verschwinden gehende Zeilen sofort. */}
+                <AnimatePresence initial={direction !== 0}>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row, i) => (
+                      <motion.tr
+                        key={row.id}
+                        // Nur Positionen animieren (Sortieren). Größen-Layout würde die Zeilen beim
+                        // Ziehen einer Spaltenbreite per scaleX verzerren.
+                        layout={shouldReduceMotion ? false : 'position'}
+                        custom={direction}
+                        variants={shouldReduceMotion ? undefined : variants}
+                        initial={shouldReduceMotion ? false : 'enter'}
+                        animate={shouldReduceMotion ? undefined : 'center'}
+                        transition={{
+                          layout: { type: 'spring', stiffness: 300, damping: 30 },
+                          opacity: { duration: 0.35, delay: i * 0.015 },
+                          x: { type: 'spring', stiffness: 180, damping: 24, delay: i * 0.015 },
+                        }}
+                        className="hover:bg-muted/30 data-[state=selected]:bg-accent/5 transition-colors"
+                        data-state={row.getIsSelected() ? 'selected' : undefined}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td
+                            key={cell.id}
+                            className={cn(
+                              'px-4 py-3 text-foreground whitespace-nowrap',
+                              enableColumnResizing && 'overflow-hidden text-ellipsis'
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        ))}
+                      </motion.tr>
+                    ))
+                  ) : (
                     <motion.tr
-                      key={row.id}
-                      layout={shouldReduceMotion ? false : true}
-                      custom={direction}
-                      variants={shouldReduceMotion ? undefined : variants}
-                      initial={shouldReduceMotion ? false : 'enter'}
-                      animate={shouldReduceMotion ? undefined : 'center'}
-                      exit={shouldReduceMotion ? undefined : 'exit'}
-                      transition={{
-                        layout: { type: 'spring', stiffness: 180, damping: 24 },
-                        opacity: { duration: 0.35, delay: i * 0.015 },
-                        x: { type: 'spring', stiffness: 180, damping: 24, delay: i * 0.015 },
-                      }}
-                      className="hover:bg-muted/30 data-[state=selected]:bg-accent/5 transition-colors"
-                      data-state={row.getIsSelected() ? 'selected' : undefined}
+                      key="empty"
+                      initial={shouldReduceMotion ? false : { opacity: 0 }}
+                      animate={shouldReduceMotion ? undefined : { opacity: 1 }}
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className={cn(
-                            'px-4 py-3 text-foreground whitespace-nowrap',
-                            enableColumnResizing && 'overflow-hidden text-ellipsis'
-                          )}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
+                      <td
+                        colSpan={tableColumns.length}
+                        className="text-muted-foreground h-24 text-center"
+                      >
+                        {m.noResults}
+                      </td>
                     </motion.tr>
-                  ))
-                ) : (
-                  <motion.tr
-                    key="empty"
-                    initial={shouldReduceMotion ? false : { opacity: 0 }}
-                    animate={shouldReduceMotion ? undefined : { opacity: 1 }}
-                    exit={shouldReduceMotion ? undefined : { opacity: 0 }}
-                  >
-                    <td
-                      colSpan={tableColumns.length}
-                      className="text-muted-foreground h-24 text-center"
-                    >
-                      {m.noResults}
-                    </td>
-                  </motion.tr>
-                )}
-              </AnimatePresence>
-            </tbody>
+                  )}
+                </AnimatePresence>
+              </motion.tbody>
+            </AnimatePresence>
           </table>
         </div>
       </div>
@@ -407,7 +416,8 @@ function ResizeHandle({
       }}
       onKeyDown={onKeyDown}
       className={cn(
-        'absolute right-0 top-0 h-full w-2 -mr-1 cursor-col-resize touch-none select-none',
+        // z-10: sonst überdeckt die nächste (ebenfalls relative) Spaltenüberschrift die rechte Hälfte des Griffs.
+        'absolute right-0 top-0 z-10 h-full w-2 -mr-1 cursor-col-resize touch-none select-none',
         'after:absolute after:right-1 after:top-2 after:bottom-2 after:w-px',
         'after:bg-border hover:after:bg-accent focus-visible:after:bg-accent',
         'after:transition-colors focus-visible:outline-none',

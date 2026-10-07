@@ -12,7 +12,8 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 - **Empty States**: Integrated "No Results" messaging when data is filtered out or empty.
 - **Row Selection (opt-in)**: Header + per-row checkboxes via the project `Checkbox`. Controllable or uncontrolled; emits `RowSelectionState`.
 - **Auto Column Sizing (opt-in)**: Measures the widest accessor value across the *entire* dataset (not just the visible page) and applies it as `min-width` per column — prevents layout jumps when sorting/paginating moves long values in or out of view.
-- **Column Resizing (opt-in)**: Drag the right edge of any header to resize. Keyboard-accessible (Tab to handle, Arrow Left/Right to nudge, Shift+Arrow for larger steps). Pairs with auto-sizing: measured widths seed the starting sizes.
+- **Column Resizing (opt-in)**: Drag the right edge of any header to resize. Keyboard-accessible (Tab to handle, Arrow Left/Right to nudge, Shift+Arrow for larger steps). Pairs with auto-sizing: measured widths seed the starting sizes. The handle sits above the neighbouring header (`z-10` inside an `isolate`d table), so it can be grabbed right on the visible line.
+- **Motion**: Paging slides the old page out as one `<tbody>` (180 ms) and staggers the new rows in from the paging direction. Sorting on the current page glides the remaining rows to their new position (`layout="position"`) and fades in rows that are new on the page, without a side offset; the same fade applies when `data` changes. Sorting from a later page jumps back to page 1 (TanStack's `autoResetPageIndex`) and plays the page transition instead. The first render does not animate. Size changes (column resizing) are deliberately not animated, so rows never stretch.
 - **Accessibility**: Sort headers are real buttons with `aria-sort`, keyboard activation (Enter/Space), focus ring; `prefers-reduced-motion` disables row spring/stagger.
 - **i18n Ready**: Localized pagination labels ("Page X of Y") and button titles.
 
@@ -22,6 +23,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 2. **UI Mapping**: Iterates through `getHeaderGroups()` and `getRowModel()` to render standard HTML `<table>` elements with design-system-compliant classes.
 3. **Decoupled Rendering**: Utilizes `flexRender` to allow both simple strings and complex React components within column definitions.
 4. **Themed Styling**: Uses Tailwind CSS for consistent borders, rounded corners (`xl`), and interactive hover states (`hover:bg-muted/30`).
+5. **Page transitions**: One keyed `<tbody>` per page inside `AnimatePresence mode="wait"`. Animating individual `<tr>` exits with `popLayout` would set them to `position: absolute`, which detaches the cells from the column widths. The paging direction is derived during render (previous page index/sort kept in state), so it is already correct when the page changes from outside (URL, back button). Rows get their own `AnimatePresence` so rows sorted onto the current page can fade in.
 
 ## Props
 
