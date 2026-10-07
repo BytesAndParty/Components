@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Barrel, Droplets, Grape, MapPin, Sun, Wine } from 'lucide-react'
 import { Section } from '../components/section'
 import { TextScramble } from '@components/text-scramble/text-scramble'
@@ -12,6 +12,7 @@ import { PaperNote } from '@components/paper-note/paper-note'
 import { PolaroidFrame } from '@components/polaroid-frame/polaroid-frame'
 import { ProcessSteps, type ProcessStep } from '@components/process-steps/process-steps'
 import { MarkerCallout } from '@components/marker-callout/marker-callout'
+import { HangTag } from '@components/hang-tag/hang-tag'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -472,6 +473,69 @@ export function TextPage() {
         </div>
       </Section>
 
+      <Section
+        title="HangTag"
+        description="Kraftkarton-Anhänger mit Ösenring und Bäckergarn, Text in Caveat. variant='hanging' hängt an der Schnur am Flaschenhals: Der Wrapper ist der Knoten, der Anhänger pendelt beim Einblenden aus und lässt sich mit der Maus anstoßen. variant='loose' liegt frei auf der Seite. Karton und Garn bleiben theme-unabhängig."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              golden path · am Flaschenhals mit Widmung und Winzer-Notiz · frei als Gutschein
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-12">
+              <TaggedBottle bottle={SHOP_BOTTLES.red}>
+                {knot => (
+                  <HangTag style={{ left: knot.left, top: knot.top }} neckWidth={knot.neckWidth} rotate={-11} cordLength={46} sign="Simon">
+                    Für Anna – auf viele gemeinsame Abende!
+                  </HangTag>
+                )}
+              </TaggedBottle>
+              <TaggedBottle bottle={SHOP_BOTTLES.white}>
+                {knot => (
+                  <HangTag style={{ left: knot.left, top: knot.top }} neckWidth={knot.neckWidth} rotate={8} cordLength={40} sign="Simon">
+                    Gut gekühlt zum Backhendl. Prost!
+                  </HangTag>
+                )}
+              </TaggedBottle>
+              <HangTag variant="loose" sign="Simon" className="mt-40">
+                Gutschein für eine Kellerführung zu zweit
+              </HangTag>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · langer Text ohne Unterschrift · am Haken ohne Halsschlaufe · sehr kurz
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-8">
+              <TaggedBottle bottle={SHOP_BOTTLES.red}>
+                {knot => (
+                  <HangTag style={{ left: knot.left, top: knot.top }} neckWidth={knot.neckWidth} rotate={-6}>
+                    Für Oma Resi, die jeden Herbst als Erste im Weingarten steht und als Letzte geht. Alles Liebe zum Achtzigsten!
+                  </HangTag>
+                )}
+              </TaggedBottle>
+              {/* Ohne neckWidth nur Knoten und Schnur, hier an einem Nagel */}
+              <div className="relative h-80 w-40">
+                <span aria-hidden="true" className="bg-muted-foreground absolute top-0 left-1/2 size-2 -translate-x-1/2 rounded-full" />
+                <HangTag className="top-1 left-1/2" rotate={3} cordLength={64} sign="Simon">
+                  Danke fürs Mithelfen bei der Lese!
+                </HangTag>
+              </div>
+              <HangTag variant="loose" rotate={5} className="mt-16">
+                Prost!
+              </HangTag>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>HangTag · fixe Karton- und Garnfarben · Caveat self-hosted via @fontsource</span>
+          <span>Deko aria-hidden · Anstoßen nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
       <Section title="TextScramble" description="Text reveal with randomized character scramble animation." canReload>
         <div className="text-foreground font-mono text-2xl font-semibold">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />
@@ -883,6 +947,47 @@ function ParagraphMeasureDemo() {
           </span>
         </p>
       )}
+    </div>
+  )
+}
+
+// ─── HangTag-Demo ───────────────────────────────────────────────────────────
+
+// Freigestellte Shop-Flaschen (1024 × 1536). Maße in Bildpixeln, aus dem Alpha-Kanal vermessen:
+// Umriss der Flasche, Knoten am Übergang Hals → Schulter, Halsbreite dort.
+const SHOP_BOTTLES = {
+  red: { src: '/wine-default.png', alt: 'Rotweinflasche', x: 390, y: 253, w: 246, h: 986, knotX: 513.5, knotY: 514, neck: 92 },
+  white: { src: '/white-wine-default.png', alt: 'Weißweinflasche', x: 410, y: 269, w: 212, h: 866, knotX: 516, knotY: 501, neck: 79 },
+}
+
+const BOTTLE_H = 520
+
+/** Flasche auf 520 px Höhe zugeschnitten. Reicht Knotenpunkt und Halsbreite in px an den HangTag weiter. */
+function TaggedBottle({
+  bottle,
+  children,
+}: {
+  bottle: (typeof SHOP_BOTTLES)['red']
+  children: (knot: { left: number; top: number; neckWidth: number }) => ReactNode
+}) {
+  const s = BOTTLE_H / bottle.h
+  return (
+    <div className="relative shrink-0" style={{ width: bottle.w * s, height: BOTTLE_H }}>
+      {/* Heller Schein hinter der Flasche, sonst verschwindet die dunkle Flasche im Dark Mode */}
+      <span
+        aria-hidden="true"
+        className="absolute -inset-x-16 inset-y-0"
+        style={{ background: 'radial-gradient(closest-side, color-mix(in oklch, var(--foreground) 9%, transparent), transparent)' }}
+      />
+      <div className="absolute inset-0 overflow-hidden">
+        <img
+          src={bottle.src}
+          alt={bottle.alt}
+          className="absolute max-w-none"
+          style={{ width: 1024 * s, left: -bottle.x * s, top: -bottle.y * s }}
+        />
+      </div>
+      {children({ left: (bottle.knotX - bottle.x) * s, top: (bottle.knotY - bottle.y) * s, neckWidth: bottle.neck * s })}
     </div>
   )
 }
