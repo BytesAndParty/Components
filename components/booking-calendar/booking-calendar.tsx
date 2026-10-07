@@ -97,7 +97,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
             setStatus('idle');
             setSelectedSlotId(null);
           }}
-          className="mt-2 text-xs font-bold tracking-wider text-accent-readable uppercase transition-opacity hover:opacity-70"
+          className="mt-2 cursor-pointer text-xs font-bold tracking-wider text-accent-readable uppercase transition-opacity hover:opacity-70"
         >
           {m.newRequest}
         </button>
@@ -147,13 +147,13 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                 {(api) => (
                   <div>
                     <div className="mb-3 flex items-center justify-between">
-                      <DatePicker.PrevTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <DatePicker.PrevTrigger className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                         <ChevronLeft size={16} />
                       </DatePicker.PrevTrigger>
                       <span className="text-sm font-semibold text-foreground">
                         {api.visibleRangeText.start}
                       </span>
-                      <DatePicker.NextTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <DatePicker.NextTrigger className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                         <ChevronRight size={16} />
                       </DatePicker.NextTrigger>
                     </div>
@@ -175,15 +175,22 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                           <DatePicker.TableRow key={i}>
                             {week.map((day, j) => (
                               <DatePicker.TableCell key={j} value={day} className="p-0.5 text-center">
+                                {/* Zag setzt bei nicht buchbaren Tagen data-disabled (auch bei unavailable)
+                                    und blockt deren Klicks selbst. Deshalb kein pointer-events-none: der
+                                    Cursor soll zeigen, dass der Tag gesperrt ist. */}
                                 <DatePicker.TableCellTrigger
                                   className={cn(
-                                    'mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm text-foreground transition-all',
-                                    'hover:bg-muted',
+                                    'mx-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-sm text-foreground transition-all select-none',
+                                    'hover:bg-muted active:scale-95',
                                     'data-[today]:font-bold data-[today]:text-accent',
                                     'data-[selected]:bg-accent data-[selected]:text-accent-foreground data-[selected]:font-semibold data-[selected]:hover:bg-accent',
-                                    'data-[unavailable]:pointer-events-none data-[unavailable]:text-muted-foreground/25',
-                                    'data-[disabled]:pointer-events-none data-[disabled]:opacity-25',
-                                    'data-[outside-range]:text-muted-foreground/30',
+                                    'data-[disabled]:cursor-not-allowed data-[disabled]:text-muted-foreground/45 data-[disabled]:hover:bg-transparent data-[disabled]:active:scale-100',
+                                    'data-[outside-range]:opacity-60',
+                                    // Gleich spezifische data-Varianten sortiert Tailwind alphabetisch (today nach selected),
+                                    // deshalb die Kombinationen explizit: heute + ausgewählt bleibt lesbar,
+                                    // heute + gesperrt bleibt zur Orientierung in Akzentfarbe, aber gedämpft.
+                                    'data-[today]:data-[selected]:text-accent-foreground',
+                                    'data-[today]:data-[disabled]:text-accent/50',
                                   )}
                                 >
                                   {day.day}
@@ -224,7 +231,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                       setGuests((g) => Math.min(Math.max(1, g), slot.capacity));
                     }}
                     className={cn(
-                      'flex flex-col items-start gap-0.5 rounded-xl border px-3.5 py-2 text-left transition-all',
+                      'flex cursor-pointer flex-col items-start gap-0.5 rounded-xl border px-3.5 py-2 text-left transition-all',
                       active
                         ? 'border-ring bg-accent/10 text-foreground'
                         : 'border-border text-muted-foreground hover:border-accent/50 hover:text-foreground',
@@ -257,7 +264,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                   type="button"
                   onClick={submit}
                   disabled={status === 'submitting'}
-                  className="min-h-11 w-full rounded-xl bg-accent px-6 py-3 text-xs font-bold tracking-widest text-accent-foreground uppercase transition-all hover:opacity-90 disabled:opacity-60"
+                  className="min-h-11 w-full cursor-pointer rounded-xl bg-accent px-6 py-3 text-xs font-bold tracking-widest text-accent-foreground uppercase transition-all hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
                 >
                   {status === 'submitting' ? m.submitting : m.submit}
                 </button>

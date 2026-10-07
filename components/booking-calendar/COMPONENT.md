@@ -8,7 +8,10 @@ Komponente kennt kein Backend. Wiederverwendbar für Verkostung/Wanderung/Keller
 ## Features
 
 - **Ark UI DatePicker** (`inline`): echtes Monatsraster mit Keyboard-Navigation & Screenreader-Support
-  gratis. `isDateUnavailable` deaktiviert Tage ohne Slots.
+  gratis. `isDateUnavailable` deaktiviert Tage ohne Slots: Sie bleiben sichtbar, aber ausgegraut, ohne
+  Hover-Fläche und mit `not-allowed`-Cursor. Buchbare Tage zeigen `pointer` und geben beim Klick leicht
+  nach (`active:scale-95`). Den Klick auf gesperrte Tage blockt Zag selbst. Heute bleibt in Akzentfarbe,
+  gesperrt aber gedämpft.
 - **Datengetrieben**: `slots` (Datum/Uhrzeit/Plätze/Preis) rein → Komponente gruppiert nach Tag,
   sortiert Uhrzeiten, deckelt Gäste auf `capacity`.
 - **Flow-States**: Datum → Uhrzeit → Gäste → Absenden → Erfolgs-Panel (mit Reset für weitere Anfrage).
