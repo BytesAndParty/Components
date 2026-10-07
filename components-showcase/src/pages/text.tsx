@@ -14,6 +14,7 @@ import { ProcessSteps, type ProcessStep } from '@components/process-steps/proces
 import { MarkerCallout } from '@components/marker-callout/marker-callout'
 import { HangTag } from '@components/hang-tag/hang-tag'
 import { Signature } from '@components/signature/signature'
+import { Stamp } from '@components/stamp/stamp'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
 import { Timeline } from '@components/timeline/timeline'
@@ -600,6 +601,102 @@ export function TextPage() {
         </div>
       </Section>
 
+      <Section
+        title="Stamp"
+        description="Gummistempel für den Jahrgang, der sich beim Einscrollen aufdrückt. variant='seal' (Default) ist der Rundstempel mit Umschrift, 'date' der Datumsstempel, dessen Ziffernräder auf das Jahr einrasten. Die Tinte ist currentColor: auf der Seite folgt sie dem Theme, auf Etikett und Papier kommt sie per style. Jeder Abdruck hat eigene Fehlstellen."
+        canReload
+      >
+        <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              golden path · seal · date auf der Seite
+            </p>
+            <div className="flex flex-wrap items-center gap-x-20 gap-y-12 px-4 pt-8 pb-8">
+              <Stamp year={2025} issuer="Weingut Buchart" place="Sooß · Niederösterreich" className="text-foreground" />
+              <Stamp year={2025} variant="date" issuer="Weingut Buchart" className="text-foreground" />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              auf dem etikett · Bordeaux und Schwarzblau auf hellem, Deckweiß auf dunklem Etikett
+            </p>
+            {/* Der Schein hinter den Flaschen ragt seitlich über die Reihe: abschneiden, damit 390 px nicht quer scrollt,
+                und am Rand ausblenden statt hart kappen */}
+            <div className="flex flex-wrap items-center gap-x-12 gap-y-12 overflow-x-clip px-4 pt-8 pb-8 [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]">
+              <TaggedBottle bottle={SHOP_BOTTLES.white}>
+                {(_, label) => (
+                  <div className="absolute flex items-center justify-center" style={label}>
+                    <Stamp year={2025} issuer="Weingut Buchart" place="Sooß · Niederösterreich" className="w-27" style={{ color: STAMP_INK.bordeaux }} />
+                  </div>
+                )}
+              </TaggedBottle>
+              <TaggedBottle bottle={SHOP_BOTTLES.red}>
+                {(_, label) => (
+                  <div className="absolute flex items-center justify-center" style={label}>
+                    <Stamp year={2025} issuer="Weingut Buchart" place="Sooß · Niederösterreich" className="w-27" style={{ color: STAMP_INK.chalk }} />
+                  </div>
+                )}
+              </TaggedBottle>
+              <TaggedBottle bottle={SHOP_BOTTLES.white}>
+                {(_, label) => (
+                  <div className="absolute flex items-center justify-center" style={label}>
+                    <Stamp year={2025} variant="date" issuer="Weingut Buchart" className="w-29" style={{ color: STAMP_INK.navy }} />
+                  </div>
+                )}
+              </TaggedBottle>
+              <TaggedBottle bottle={SHOP_BOTTLES.red}>
+                {(_, label) => (
+                  <div className="absolute flex items-center justify-center" style={label}>
+                    <Stamp year={2025} variant="date" issuer="Weingut Buchart" className="w-29" style={{ color: STAMP_INK.chalk }} />
+                  </div>
+                )}
+              </TaggedBottle>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              auf papier · Tinte per style
+            </p>
+            <div className="flex flex-wrap items-start gap-x-24 gap-y-16 px-4 pt-8 pb-8">
+              <PaperNote variant="notepad" paper="cream" rotate={1.5} className="max-w-64">
+                Der Veltliner ist abgefüllt, ab Samstag im Hofladen!
+                <Stamp year={2025} issuer="Weingut Buchart" place="Sooß" className="mt-5 ml-auto w-28" style={{ color: STAMP_INK.bordeaux }} />
+              </PaperNote>
+              <PaperNote paper="kraft" rotate={-2} className="max-w-64">
+                Jahrgangspräsentation am 14. November, wir freuen uns!
+                <Stamp year={2025} variant="date" issuer="Weingut Buchart" className="mt-4 ml-auto w-36" style={{ color: STAMP_INK.navy }} />
+              </PaperNote>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · ohne Umschrift · lange Texte (gestaucht) · englisch per messages · anderes Jahr · sehr klein
+            </p>
+            <div className="flex flex-wrap items-center gap-x-16 gap-y-12 px-4 pt-8 pb-8">
+              <Stamp year={2025} className="text-foreground" />
+              <Stamp
+                year={2025}
+                issuer="Weingut Familie Buchart & Söhne"
+                place="Sooß an der Südbahn · Niederösterreich · Österreich"
+                messages={{ vintage: 'Neuer Jahrgang' }}
+                className="text-foreground"
+              />
+              <Stamp year={2025} variant="date" issuer="Domaine Buchart" messages={{ vintage: 'Vintage' }} className="text-foreground" />
+              <Stamp year={2019} variant="date" className="text-foreground" />
+              <Stamp year={2025} issuer="Weingut Buchart" place="Sooß" className="text-foreground w-20" />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
+          <span>Stamp · Tinte = currentColor · „Jahrgang“ per i18n (de/en)</span>
+          <span>role=img mit „Jahrgang 2025“ · respektiert prefers-reduced-motion</span>
+        </div>
+      </Section>
+
       <Section title="TextScramble" description="Text reveal with randomized character scramble animation." canReload>
         <div className="text-foreground font-mono text-2xl font-semibold">
           <TextScramble text="Hello, this is TextScramble!" speed={25} />
@@ -1015,24 +1112,30 @@ function ParagraphMeasureDemo() {
   )
 }
 
-// ─── HangTag-Demo ───────────────────────────────────────────────────────────
+// ─── HangTag- und Stamp-Demo ────────────────────────────────────────────────
 
 // Freigestellte Shop-Flaschen (1024 × 1536). Maße in Bildpixeln, aus dem Alpha-Kanal vermessen:
-// Umriss der Flasche, Knoten am Übergang Hals → Schulter, Halsbreite dort.
+// Umriss der Flasche, Knoten am Übergang Hals → Schulter, Halsbreite dort, Etikett.
 const SHOP_BOTTLES = {
-  red: { src: '/wine-default.png', alt: 'Rotweinflasche', x: 390, y: 253, w: 246, h: 986, knotX: 513.5, knotY: 514, neck: 92 },
-  white: { src: '/white-wine-default.png', alt: 'Weißweinflasche', x: 410, y: 269, w: 212, h: 866, knotX: 516, knotY: 501, neck: 79 },
+  red: { src: '/wine-default.png', alt: 'Rotweinflasche', x: 390, y: 253, w: 246, h: 986, knotX: 513.5, knotY: 514, neck: 92, label: { x: 392, y: 690, w: 240, h: 330 } },
+  white: { src: '/white-wine-default.png', alt: 'Weißweinflasche', x: 410, y: 269, w: 212, h: 866, knotX: 516, knotY: 501, neck: 79, label: { x: 410, y: 652, w: 210, h: 306 } },
 }
 
 const BOTTLE_H = 520
 
-/** Flasche auf 520 px Höhe zugeschnitten. Reicht Knotenpunkt und Halsbreite in px an den HangTag weiter. */
+// Stempeltinte auf Etikett und Papier. Auf der Seite folgt sie dem Theme.
+const STAMP_INK = { bordeaux: 'oklch(0.43 0.13 18)', navy: 'oklch(0.34 0.07 258)', chalk: 'oklch(0.93 0.02 85)' }
+
+/** Flasche auf 520 px Höhe zugeschnitten. Reicht Knotenpunkt und Halsbreite (HangTag) sowie das Etikett (Stamp) in px weiter. */
 function TaggedBottle({
   bottle,
   children,
 }: {
   bottle: (typeof SHOP_BOTTLES)['red']
-  children: (knot: { left: number; top: number; neckWidth: number }) => ReactNode
+  children: (
+    knot: { left: number; top: number; neckWidth: number },
+    label: { left: number; top: number; width: number; height: number },
+  ) => ReactNode
 }) {
   const s = BOTTLE_H / bottle.h
   return (
@@ -1051,7 +1154,10 @@ function TaggedBottle({
           style={{ width: 1024 * s, left: -bottle.x * s, top: -bottle.y * s }}
         />
       </div>
-      {children({ left: (bottle.knotX - bottle.x) * s, top: (bottle.knotY - bottle.y) * s, neckWidth: bottle.neck * s })}
+      {children(
+        { left: (bottle.knotX - bottle.x) * s, top: (bottle.knotY - bottle.y) * s, neckWidth: bottle.neck * s },
+        { left: (bottle.label.x - bottle.x) * s, top: (bottle.label.y - bottle.y) * s, width: bottle.label.w * s, height: bottle.label.h * s },
+      )}
     </div>
   )
 }
