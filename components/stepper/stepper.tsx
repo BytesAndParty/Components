@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-imports -- useCallback keeps step-navigation handlers stable across renders. */
 import {
   useCallback,
+  useEffect,
+  useRef,
   useState,
   type ReactNode,
   type CSSProperties,
@@ -8,10 +10,13 @@ import {
   isValidElement,
 } from 'react'
 /* eslint-enable no-restricted-imports */
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { cn } from '../lib/utils'
 import { useComponentMessages, interpolate } from '../i18n'
 import { MESSAGES, type StepperMessages } from './messages'
+
+// Höhe des Inhaltsbereichs: Spring ohne Überschwingen, sonst würde der Inhalt kurz abgeschnitten.
+const HEIGHT_TRANSITION = { type: 'spring', duration: 0.5, bounce: 0 } as const
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -145,6 +150,19 @@ export function Stepper({
   const m = useComponentMessages(MESSAGES, messages)
   const [currentStep, setCurrentStep] = useState(initialStep)
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = backward
+  const reduce = useReducedMotion()
+
+  // Der Inhalt wird gemessen und die Höhe animiert, damit die Section beim Step-Wechsel
+  // weich mitwächst bzw. schrumpft statt zu springen.
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [contentHeight, setContentHeight] = useState<number | null>(null)
+  useEffect(() => {
+    const el = contentRef.current
+    if (!el) return
+    const observer = new ResizeObserver(([entry]) => setContentHeight(entry.borderBoxSize[0].blockSize))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const steps = Children.toArray(children).filter(
     child => isValidElement(child) && child.type === Step
@@ -174,9 +192,10 @@ export function Stepper({
   const isFirstStep = currentStep === 1
   const isLastStep = currentStep === totalSteps
 
+  const offset = reduce ? 0 : 60
   const variants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 60 : -60,
+      x: dir > 0 ? offset : -offset,
       opacity: 0,
     }),
     center: {
@@ -184,7 +203,7 @@ export function Stepper({
       opacity: 1,
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -60 : 60,
+      x: dir > 0 ? -offset : offset,
       opacity: 0,
     }),
   }
@@ -199,26 +218,33 @@ export function Stepper({
       />
 
       {/* Step content with animation */}
-      <div
-        className="relative min-h-30 overflow-hidden"
+      {/* overflow-clip statt -hidden: kein Scroll-Container. Sonst könnte Fokus auf noch abgeschnittenen
+          Inhalt den Bereich während des Höhen-Morphs dauerhaft verscrollen. */}
+      <motion.div
+        className="relative overflow-clip"
         role="group"
         aria-label={interpolate(m.stepOfTotal, { current: currentStep, total: totalSteps })}
         aria-live="polite"
+        initial={false}
+        animate={{ height: contentHeight ?? 'auto' }}
+        transition={reduce ? { duration: 0 } : HEIGHT_TRANSITION}
       >
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={currentStep}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-          >
-            {steps[currentStep - 1]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+        <div ref={contentRef} className="min-h-30">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={reduce ? { duration: 0 } : { duration: 0.25, ease: 'easeInOut' }}
+            >
+              {steps[currentStep - 1]}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
 
       {/* Navigation buttons */}
       <div className="mt-6 flex justify-between gap-3">

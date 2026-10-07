@@ -5,7 +5,7 @@ import {
   Children,
   isValidElement,
 } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { useComponentMessages, interpolate } from '../i18n'
 import { MESSAGES, type StepperMessages } from './messages'
 
@@ -121,6 +121,12 @@ export function VerticalStep(_props: VerticalStepProps) {
 const BADGE_SIZE = 36 // px – width & height of the step number badge
 const CONNECTOR_OFFSET = BADGE_SIZE / 2 - 1 // align 2 px line under badge centre
 
+// Ein Tempo für alles: Auf-/Zuklappen, Farbwechsel und Verbindungslinie laufen gemeinsam.
+const DURATION = 0.6 // s, vorher 0.28 – bewusst ruhiger
+const EASE = [0.4, 0, 0.2, 1] as const
+const CSS_EASE = `cubic-bezier(${EASE.join(', ')})`
+const CSS_TIMING = `${DURATION * 1000}ms ${CSS_EASE}`
+
 export function VerticalStepper({
   children,
   initialStep = 1,
@@ -132,6 +138,8 @@ export function VerticalStepper({
 }: VerticalStepperProps) {
   const m = useComponentMessages(MESSAGES, messages)
   const [currentStep, setCurrentStep] = useState(initialStep)
+  const reduce = useReducedMotion()
+  const expand = reduce ? { duration: 0 } : { duration: DURATION, ease: EASE }
 
   // Collect VerticalStep children
   const steps = Children.toArray(children).filter(
@@ -204,7 +212,7 @@ export function VerticalStepper({
                 background: isActive
                   ? 'color-mix(in oklch, var(--accent, #6366f1) 6%, var(--card, #18181b))'
                   : 'var(--card, #18181b)',
-                transition: 'border-color 300ms ease, background 300ms ease',
+                transition: `border-color ${CSS_TIMING}, background ${CSS_TIMING}`,
               }}
             >
               {/* Badge */}
@@ -219,7 +227,7 @@ export function VerticalStepper({
                   justifyContent: 'center',
                   fontSize: '14px',
                   fontWeight: 700,
-                  transition: 'background 300ms ease, color 300ms ease',
+                  transition: `background ${CSS_TIMING}, color ${CSS_TIMING}`,
                   background: isCompleted || isActive
                     ? 'var(--accent, #6366f1)'
                     : 'var(--muted, #27272a)',
@@ -265,7 +273,7 @@ export function VerticalStepper({
                     color: isPending
                       ? 'var(--muted-foreground, #71717a)'
                       : 'var(--foreground, #e4e4e7)',
-                    transition: 'color 300ms ease',
+                    transition: `color ${CSS_TIMING}`,
                   }}
                 >
                   {step.props.title}
@@ -279,7 +287,7 @@ export function VerticalStepper({
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                      transition={expand}
                       style={{ overflow: 'hidden' }}
                     >
                       <div style={{ paddingTop: '12px' }}>
@@ -297,7 +305,7 @@ export function VerticalStepper({
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                      transition={expand}
                       style={{ overflow: 'hidden' }}
                     >
                       <div
@@ -361,7 +369,7 @@ export function VerticalStepper({
                     width: '100%',
                     height: isCompleted ? '100%' : '0%',
                     background: 'var(--accent, #6366f1)',
-                    transition: 'height 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: reduce ? 'none' : `height ${CSS_TIMING}`,
                     borderRadius: 'inherit',
                   }}
                 />

@@ -7,9 +7,11 @@ Multi-step wizard in two layouts: horizontal `Stepper` (indicator bar + sliding 
 | Interaction | Detail |
 |---|---|
 | **Content slide** (`Stepper`) | Step panels slide in from the right (forward) or left (backward) by 60 px with an opacity fade — `motion/react` `AnimatePresence` with directional variants, 250 ms `easeInOut`. |
+| **Height morph** (`Stepper`) | A `ResizeObserver` measures the step content; the container animates its `height` to the new step (spring, 0.5 s, no bounce) instead of jumping. |
 | **Connector fill** (`Stepper`) | The line between step circles fills with the accent colour as steps complete. |
 | **Step circle states** | Completed steps show a checkmark, the active step is highlighted, upcoming steps stay numbered and muted. |
-| **Expand/collapse** (`VerticalStepper`) | The active step's content and its inline back/next buttons expand via `height: 0 → auto` (280 ms); other steps collapse to their title. |
+| **Expand/collapse** (`VerticalStepper`) | The active step's content and its inline back/next buttons expand via `height: 0 → auto`; other steps collapse to their title. Expand/collapse, card border/background, badge, title colour and connector fill share one tempo (600 ms, `cubic-bezier(0.4, 0, 0.2, 1)`). |
+| **Reduced motion** | `useReducedMotion()`: no slide offset, height changes and expand/collapse apply instantly, the vertical connector fills without transition. |
 | **Button labels** | "Back" is unavailable on the first step; on the last step "Next" switches to the localized finalize label. |
 
 ## How It Works
