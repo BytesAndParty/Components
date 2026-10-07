@@ -1,6 +1,6 @@
 import { useRef, useEffect, type ReactNode, type CSSProperties } from 'react'
 import confetti from 'canvas-confetti'
-import { fireConfetti, RAIN_COLORS, type ConfettiOptions } from './fire'
+import { fireConfetti, startRain, type ConfettiOptions } from './fire'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -28,10 +28,8 @@ export interface ConfettiRainProps {
   particleCount?: number
   /** Particle colors */
   colors?: string[]
-  /** Number of waves (default: 7) */
-  waves?: number
-  /** Delay between waves in ms (default: 500) */
-  waveDelay?: number
+  /** How long new confetti keeps falling in, in ms (default: 3000) */
+  duration?: number
 }
 
 /**
@@ -41,65 +39,29 @@ export interface ConfettiRainProps {
 export function ConfettiRain({
   active,
   onComplete,
-  particleCount = 400,
+  particleCount,
   colors,
-  waves = 7,
-  waveDelay = 500,
+  duration,
 }: ConfettiRainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const cannonRef = useRef<confetti.CreateTypes | null>(null)
 
   useEffect(() => {
     if (!active || !canvasRef.current) return
 
-    if (!cannonRef.current) {
-      cannonRef.current = confetti.create(canvasRef.current, { resize: true })
-    }
-    const cannon = cannonRef.current
-
-    const positions = 4
-    const colorGroups = colors ? [colors] : RAIN_COLORS
-    const perShot = Math.max(2, Math.floor(particleCount / (waves * positions * colorGroups.length)))
-    let wavesDone = 0
+    // One cannon per run: the canvas unmounts while inactive, so a cannon kept
+    // across runs would keep drawing on the detached old canvas.
+    const cannon = confetti.create(canvasRef.current, { resize: true })
+    const rain = startRain(cannon, { particleCount, colors, duration })
     let cancelled = false
-    const timers: ReturnType<typeof setTimeout>[] = []
-
-    function fireWave() {
-      if (cancelled) return
-      for (let i = 0; i < positions; i++) {
-        const x = Math.random()
-        for (const group of colorGroups) {
-          cannon({
-            origin: { x, y: -0.05 },
-            angle: 270 + (Math.random() - 0.5) * 30,
-            spread: 15 + Math.random() * 15,
-            startVelocity: 20 + Math.random() * 40,
-            gravity: 1.2 + Math.random() * 0.6,
-            ticks: 350,
-            particleCount: perShot,
-            scalar: 0.7 + Math.random() * 0.6,
-            drift: (Math.random() - 0.5) * 2,
-            colors: Array.isArray(group) ? group : [group],
-            disableForReducedMotion: true,
-          })
-        }
-      }
-      wavesDone++
-      if (wavesDone < waves) {
-        timers.push(setTimeout(fireWave, waveDelay))
-      } else {
-        timers.push(setTimeout(() => onComplete?.(), 3000))
-      }
-    }
-
-    fireWave()
+    rain.done.then(() => {
+      if (!cancelled) onComplete?.()
+    })
 
     return () => {
       cancelled = true
-      timers.forEach(clearTimeout)
-      cannon.reset()
+      rain.cancel()
     }
-  }, [active, particleCount, colors, waves, waveDelay, onComplete])
+  }, [active, particleCount, colors, duration, onComplete])
 
   if (!active) return null
 
