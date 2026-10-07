@@ -53,7 +53,7 @@ export const groups = [
     descKey: 'desc.shop',
     title: 'Shop Components',
     description: 'E-Commerce-spezifische Komponenten für den Wein-Onlineshop.',
-    components: ['ProductTag', 'CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
+    components: ['ProductTag', 'Carousel', 'CartIcon', 'AddToCartButton', 'FloatingCart', 'Stepper'],
   },
   {
     path: '/designer',

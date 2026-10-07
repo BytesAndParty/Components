@@ -6,8 +6,32 @@ import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ProductTag, ProductTagGroup, type ProductTagVariant } from '@components/product-tag/product-tag'
 import { BookingCalendar, type BookingSlot } from '@components/booking-calendar/booking-calendar'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  CarouselThumb,
+  CarouselThumbs,
+} from '@components/carousel/carousel'
 import { useToast } from '@components/toast/toast-context'
 import { useCart } from '../cart-context'
+
+const gallery = [
+  { src: '/wine-default.png', alt: 'Barolo Riserva 2018, Vorderseite' },
+  { src: '/wine-with-extra.png', alt: 'Barolo Riserva 2018 mit Glas und Trauben' },
+  { src: '/white-wine-default.png', alt: 'Grüner Veltliner Ried Steinberg 2022, Vorderseite' },
+  { src: '/white-wine-with-extra.png', alt: 'Grüner Veltliner Ried Steinberg 2022 mit Glas und Trauben' },
+]
+
+function GallerySlide({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="bg-muted/40 flex h-72 items-center justify-center rounded-lg">
+      <img src={src} alt={alt} className="h-60 object-contain" draggable={false} />
+    </div>
+  )
+}
 
 export function ShopPage() {
   const [selectedLabel, setSelectedLabel] = useState('')
@@ -73,6 +97,66 @@ export function ShopPage() {
           <div className="border-border text-muted-foreground flex justify-between border-t pt-3 text-[0.7rem]">
             <span>ProductTag · injected keyframes · prefers-reduced-motion aware</span>
             <span>No dependencies</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Carousel" description="Produktgalerie auf Embla: Wischen, Pfeiltasten, Pfeil-Buttons und Thumbs. Pfeile mit 46-px-Trefferfläche, unter sm innerhalb der Slides. Auf Mobile nur ausblenden, wenn Thumbs oder Punkte da sind: Wischen allein erfüllt WCAG 2.5.1 nicht.">
+        <div className="flex flex-col gap-10">
+          <div className="border-border bg-card rounded-xl border p-6 shadow-sm sm:px-20">
+            <p className="text-muted-foreground mb-4 text-[0.7rem] tracking-[0.15em] uppercase">
+              Pfeile · Mobile innen, ab sm daneben
+            </p>
+            <Carousel>
+              <CarouselContent>
+                {gallery.map(img => (
+                  <CarouselItem key={img.src}>
+                    <GallerySlide {...img} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+
+          <div className="border-border bg-card rounded-xl border p-6 shadow-sm sm:px-20">
+            <p className="text-muted-foreground mb-4 text-[0.7rem] tracking-[0.15em] uppercase">
+              Thumbs · Pfeile auf Mobile ausgeblendet (className=&quot;max-sm:hidden&quot;)
+            </p>
+            <Carousel>
+              <CarouselContent>
+                {gallery.map(img => (
+                  <CarouselItem key={img.src}>
+                    <GallerySlide {...img} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="max-sm:hidden" />
+              <CarouselNext className="max-sm:hidden" />
+              <CarouselThumbs className="justify-center">
+                {gallery.map((img, index) => (
+                  <CarouselThumb key={img.src} index={index}>
+                    <img src={img.src} alt="" className="h-full w-full object-contain p-1" draggable={false} />
+                  </CarouselThumb>
+                ))}
+              </CarouselThumbs>
+            </Carousel>
+          </div>
+
+          <div className="border-border bg-card rounded-xl border p-6 shadow-sm sm:px-20">
+            <p className="text-muted-foreground mb-4 text-[0.7rem] tracking-[0.15em] uppercase">
+              edge · ein Bild · beide Pfeile deaktiviert und unsichtbar
+            </p>
+            <Carousel>
+              <CarouselContent>
+                <CarouselItem>
+                  <GallerySlide {...gallery[0]} />
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
         </div>
       </Section>
