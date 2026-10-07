@@ -181,9 +181,9 @@ export function CarouselPrevious({ className, hide, ...props }: React.ComponentP
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border bg-card/80 text-foreground backdrop-blur-md transition-all hover:bg-muted after:absolute after:-inset-2 disabled:pointer-events-none disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         orientation === 'horizontal'
-          ? '-left-12 top-1/2 -translate-y-1/2'
+          ? 'left-2 sm:-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
         className
       )}
@@ -206,9 +206,9 @@ export function CarouselNext({ className, hide, ...props }: React.ComponentProps
       disabled={!canScrollNext}
       onClick={scrollNext}
       className={cn(
-        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground backdrop-blur-md transition-all hover:bg-foreground/10 disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'absolute flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border bg-card/80 text-foreground backdrop-blur-md transition-all hover:bg-muted after:absolute after:-inset-2 disabled:pointer-events-none disabled:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         orientation === 'horizontal'
-          ? '-right-12 top-1/2 -translate-y-1/2'
+          ? 'right-2 sm:-right-12 top-1/2 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
         className
       )}

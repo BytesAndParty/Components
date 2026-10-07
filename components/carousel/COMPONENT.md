@@ -6,6 +6,7 @@ High-end, touch-enabled carousel component based on `embla-carousel`. Features s
 
 - **Touch & Drag:** Native feeling inertia and bounce.
 - **Accessible:** Arrow-key navigation, named `region` landmark, localized button labels (de/en), visible focus ring on arrows and thumbs, `aria-current` on the active thumb. All buttons are `type="button"`, so they never submit a surrounding form.
+- **Arrows on every screen size:** 32 px visible, 46 px hit area (invisible `::after`, inset from inside the 1 px border). Below `sm` they sit inside the slide edges, from `sm` on 48 px outside. Glass background (`bg-card/80` + blur) keeps them readable over photos. A disabled arrow is invisible and lets touches through, so it never blocks swiping.
 - **Thumbnails:** Integrated thumb-sync logic for product galleries.
 - **Orientation:** Supports both horizontal and vertical scrolling.
 - **View Transitions:** Optimized for morphing the primary slide image.
@@ -58,7 +59,7 @@ export function ProductGallery() {
 ### CarouselPrevious / CarouselNext
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `hide` | `boolean` | `false` | Renders nothing — e.g. to hide the arrows on touch layouts |
+| `hide` | `boolean` | `false` | Renders nothing. Only together with another single-tap way to change slides (thumbs, dots): swiping alone fails WCAG 2.5.1. To hide them on mobile only, pass `className="max-sm:hidden"` instead |
 | …rest | `ComponentProps<'button'>` | — | Forwarded to the `<button>`; disabled automatically at the ends |
 
 `CarouselContent` and `CarouselItem` forward all `<div>` props; `CarouselThumbs` takes `children` and `className`.
