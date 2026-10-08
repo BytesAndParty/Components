@@ -513,7 +513,7 @@ export function TextPage() {
 
       <Section
         title="HangTag"
-        description="Kraftkarton-Anhänger mit Ösenring und Bäckergarn, Text in Caveat. variant='hanging' hängt an der Schnur am Flaschenhals: Der Wrapper ist der Knoten, der Anhänger pendelt beim Einblenden aus und lässt sich mit der Maus anstoßen. variant='loose' liegt frei auf der Seite. Karton und Garn bleiben theme-unabhängig."
+        description="Kraftkarton-Anhänger mit Ösenring und Bäckergarn, Text in Caveat. variant='hanging' hängt an der Schnur am Flaschenhals: Der Wrapper ist der Knoten, der Anhänger pendelt beim Einblenden aus. variant='loose' liegt frei auf der Seite. Karton und Garn bleiben theme-unabhängig."
         canReload
       >
         <div className="flex flex-col gap-10">
@@ -570,7 +570,7 @@ export function TextPage() {
 
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>HangTag · fixe Karton- und Garnfarben · Caveat self-hosted via @fontsource</span>
-          <span>Deko aria-hidden · Anstoßen nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
+          <span>Deko aria-hidden · Hover (loose) nur mit feinem Zeiger · respektiert prefers-reduced-motion</span>
         </div>
       </Section>
 
@@ -709,7 +709,7 @@ export function TextPage() {
 
           <div>
             <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
-              edge · ohne Umschrift · lange Texte (gestaucht) · englisch per messages · anderes Jahr · sehr klein
+              edge · ohne Umschrift · lange Texte (gestaucht) · englisch per messages · anderes Jahr · sehr klein · decorative neben Produkttitel
             </p>
             <div className="flex flex-wrap items-center gap-x-16 gap-y-12 px-4 pt-8 pb-8">
               <Stamp year={2025} className="text-foreground" />
@@ -723,6 +723,12 @@ export function TextPage() {
               <Stamp year={2025} variant="date" issuer="Domaine Buchart" messages={{ vintage: 'Vintage' }} className="text-foreground" />
               <Stamp year={2019} variant="date" className="text-foreground" />
               <Stamp year={2025} issuer="Weingut Buchart" place="Sooß" className="text-foreground w-20" />
+              {/* Jahrgang steht im Titel, der Stempel wird nicht vorgelesen */}
+              <div className="text-foreground">
+                <p className="font-display text-xl">Grüner Veltliner 2025</p>
+                <p className="text-muted-foreground text-xs">Ried Hochfeld · trocken</p>
+                <Stamp year={2025} variant="date" decorative className="mt-3 w-36" />
+              </div>
             </div>
           </div>
         </div>
