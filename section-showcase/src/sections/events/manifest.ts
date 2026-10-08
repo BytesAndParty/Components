@@ -3,6 +3,7 @@ import { EventsEinladung } from './EventsEinladung'
 import { EventsWandertag } from './EventsWandertag'
 import { EventsProgramm } from './EventsProgramm'
 import type { SectionDef } from '../types'
+import { EventsBuchArt } from './EventsBuchArt'
 
 export const eventsSection: SectionDef = {
   id: 'events',
@@ -31,6 +32,12 @@ export const eventsSection: SectionDef = {
       label: 'Das Programm',
       description: 'Herbstabend in Maison-Sprache: ProcessSteps (ledger) mit römischen Ziffern über Hairlines, ein MarkerCallout (watercolor) als einziger handgemachter Moment.',
       Component: EventsProgramm,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Erlebnisse',
+      description: 'Kleine und große Weinprobe, Riedenwanderung mit allen Original-Bedingungen als Karte im Kohle-Etikett; die Auswahl stellt das Anfrageformular ein.',
+      Component: EventsBuchArt,
     },
   ],
 }

@@ -5,6 +5,7 @@ import { PricingV6 } from './PricingV6'
 import { PricingV7 } from './PricingV7'
 import { PricingCinematic } from './PricingCinematic'
 import type { SectionDef } from '../types'
+import { PricingBuchArt } from './PricingBuchArt'
 
 export const pricingSection: SectionDef = {
   id: 'pricing',
@@ -45,6 +46,12 @@ export const pricingSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Drei schwebende Glas-Karten auf Zinc (HeroV3-Sprache) statt Ledger-Liste — Partikel, Akzent-Ring auf der empfohlenen Stufe.',
       Component: PricingCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Rebstockmiete',
+      description: 'Alle Varianten der Original-Seite als Ledger, Laufzeit umschaltbar; die Urkunde entsteht live mit dem Namen der beschenkten Person.',
+      Component: PricingBuchArt,
     },
   ],
 }

@@ -6,6 +6,7 @@ import { TimelineV5 } from './TimelineV5'
 import { TimelineV6 } from './TimelineV6'
 import { TimelineCinematic } from './TimelineCinematic'
 import type { SectionDef } from '../types'
+import { TimelineBuchArt } from './TimelineBuchArt'
 
 export const timelineSection: SectionDef = {
   id: 'timeline',
@@ -51,6 +52,12 @@ export const timelineSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Alternierendes Filmstreifen-Layout (HeroV3-Sprache): Bild und Jahr wechseln die Seite, Sprocket-Ticks am Rand, Partikel über der Spalte.',
       Component: TimelineCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Riedenwanderung',
+      description: 'Der Ablauf der Original-Wanderung als sechs Stationen an einer Goldlinie, die sich mit dem Scrollen zeichnet.',
+      Component: TimelineBuchArt,
     },
   ],
 }
