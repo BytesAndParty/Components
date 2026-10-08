@@ -1,9 +1,12 @@
 import { useRef, useEffect, useState, type ReactNode, type CSSProperties } from 'react'
 import { cn } from '../lib/utils'
+import { HandMark, type HighlightPen } from './hand-mark'
+
+export type { HighlightPen } from './hand-mark'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-export type HighlightAction = 'highlight' | 'underline' | 'marker'
+export type HighlightAction = 'highlight' | 'underline' | 'marker' | 'circle' | 'strike' | 'squiggle'
 
 export interface HighlighterProps {
   children: ReactNode
@@ -12,14 +15,27 @@ export interface HighlighterProps {
    * - `highlight`: flat full-height background
    * - `underline`: 2px line
    * - `marker`: hand-drawn felt-tip stroke, one per line, slightly below the text with uneven ends
+   * - `circle`: hand-drawn loop around the words
+   * - `strike`: hand-drawn line through the words, rendered as `<s>` (no longer valid, e.g. an old price)
+   * - `squiggle`: hand-drawn wave below the words
+   *
+   * `circle`, `strike` and `squiggle` keep the words on one line; use them for single words or short phrases.
    */
   action?: HighlightAction
   /**
+   * Pen for `circle`, `strike` and `squiggle`: `pen` fountain pen (default), `nib` broad nib with thin and thick
+   * strokes, `pencil` sketched twice in grainy graphite. Ignored by the other actions.
+   */
+  pen?: HighlightPen
+  /**
    * Highlight color, any CSS color (default: accent). `highlight` uses it at 20 % unless it is a `var()`,
-   * `marker` always at 45 %.
+   * `marker` always at 45 %, the hand-drawn actions at full strength (`currentColor` takes the text color).
    */
   color?: string
-  /** Animation duration in ms (default: 800) */
+  /**
+   * Animation duration in ms (default: 800). The hand-drawn actions take their writing time from the word width
+   * and scale it by `duration / 800`.
+   */
   duration?: number
   /** Trigger animation when scrolled into view (default: true) */
   animateOnView?: boolean
@@ -42,7 +58,7 @@ function injectStyles() {
   style.id = STYLE_ID
   style.textContent = `
     @media (prefers-reduced-motion: reduce) {
-      .${CLASS} { transition: none !important; }
+      .${CLASS}, .${CLASS} path { transition: none !important; }
     }
   `
   document.head.appendChild(style)
@@ -59,6 +75,7 @@ function tint(color: string, percent: number) {
 export function Highlighter({
   children,
   action = 'highlight',
+  pen = 'pen',
   color = 'var(--accent)',
   duration = 800,
   animateOnView = true,
@@ -88,7 +105,26 @@ export function Highlighter({
 
     observer.observe(ref.current)
     return () => observer.disconnect()
-  }, [animateOnView])
+    // action: Die Handschrift-Actions rendern ein anderes Element (HandMark), beim Wechsel neu beobachten.
+  }, [animateOnView, action])
+
+  if (action === 'circle' || action === 'strike' || action === 'squiggle') {
+    return (
+      <HandMark
+        spanRef={ref}
+        action={action}
+        pen={pen}
+        color={color}
+        isVisible={isVisible}
+        tempo={duration / 800}
+        delay={delay}
+        className={cn(CLASS, className)}
+        style={style}
+      >
+        {children}
+      </HandMark>
+    )
+  }
 
   if (action === 'marker') {
     const ink = `color-mix(in oklch, ${color} 45%, transparent)`

@@ -77,7 +77,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **hang-tag:** Kraftkarton-Anhänger mit Bäckergarn und Handschrift, am Flaschenhals hängend oder frei, für Widmungen, Winzer-Notizen und Gutscheine. Status-Badges wie „Neu“ oder „Sale“: product-tag.
 - **signature:** Handschriftliche Unterschrift, die sich beim Einscrollen Federzug für Federzug zeichnet (Breitfeder, Füllfeder oder Filzstift), z. B. unter Einladungen und Briefen vom Weingut.
 - **stamp:** Gummistempel für den Jahrgang, der sich beim Einscrollen aufdrückt (Rundstempel mit Umschrift oder Datumsstempel mit Ziffernrädern), auf Etikett, Produktbild oder Papier. Status-Badges wie „Neu“ oder „Sale“: product-tag.
-- **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen (Fläche, Unterstrich oder handgezeichneter Textmarker).
+- **paragraph / highlighter:** Kürzbarer Fließtext mit Wort-Reveal, Text-Markierung beim Scrollen (Fläche, Unterstrich oder handgezeichneter Textmarker) und Handschrift-Markierungen (einkreisen, durchstreichen, unterwellen) mit Füllfeder, Breitfeder oder Bleistift.
 - **timeline:** Storytelling für Marken-Historie.
 - **data-table:** TanStack-Table mit Sortierung, Pagination, Auswahl und Spaltenbreiten.
 
