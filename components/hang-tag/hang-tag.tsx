@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { animate, motion, useInView, useMotionValue, type Variants } from 'motion/react'
 import { cn } from '../lib/utils'
 import { useDeviceCapabilities } from '../lib/use-device-capabilities'
@@ -47,8 +47,6 @@ const TWINE = { base: 'oklch(0.94 0.015 85)', twist: 'oklch(0.46 0.13 22)', edge
 const SWING = { type: 'spring', stiffness: 60, damping: 5 } as const
 const SPRING = { type: 'spring', stiffness: 150, damping: 20 } as const
 const SNAPPY = { type: 'spring', stiffness: 300, damping: 30 } as const
-// Anstoß beim Darüberstreifen, in Grad pro Sekunde.
-const IMPULSE = 55
 
 // ─── Parts ──────────────────────────────────────────────────────────────────
 
@@ -112,7 +110,7 @@ function Card({ children, sign }: { children: ReactNode; sign?: ReactNode }) {
 // ─── Varianten ──────────────────────────────────────────────────────────────
 
 function HangingTag({ children, sign, rotate = -8, cordLength = 44, neckWidth, className, style }: Omit<HangTagProps, 'variant'>) {
-  const { hasFinePointer, prefersReducedMotion: reduce } = useDeviceCapabilities()
+  const { prefersReducedMotion: reduce } = useDeviceCapabilities()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.5 })
   // Startet ausgelenkt und pendelt beim Einblenden in den Ruhewinkel.
@@ -127,14 +125,6 @@ function HangingTag({ children, sign, rotate = -8, cordLength = 44, neckWidth, c
     const controls = animate(angle, rotate, SWING)
     return () => controls.stop()
   }, [inView, reduce, rotate, angle])
-
-  // Mit der Maus darüberstreifen stößt den Anhänger in Zeigerrichtung an.
-  function nudge(e: ReactPointerEvent<HTMLDivElement>) {
-    if (!hasFinePointer || reduce) return
-    const r = e.currentTarget.getBoundingClientRect()
-    const fromLeft = e.clientX < r.left + r.width / 2
-    animate(angle, rotate, { ...SWING, velocity: fromLeft ? -IMPULSE : IMPULSE })
-  }
 
   const loop = neckWidth === undefined ? 0 : neckWidth / 2 + 2
 
@@ -153,7 +143,7 @@ function HangingTag({ children, sign, rotate = -8, cordLength = 44, neckWidth, c
         animate={{ opacity: reduce || inView ? 1 : 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div ref={ref} onPointerEnter={nudge} className="absolute left-0 -translate-x-1/2" style={{ top: cordLength - HOLE_Y }}>
+        <div ref={ref} className="absolute left-0 -translate-x-1/2" style={{ top: cordLength - HOLE_Y }}>
           <Card sign={sign}>{children}</Card>
         </div>
         {/* Nach dem Anhänger, damit die Schnur vor der Kante ins Loch läuft */}
