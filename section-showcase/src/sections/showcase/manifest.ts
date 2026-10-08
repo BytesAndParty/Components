@@ -10,6 +10,7 @@ import { ProductSchwarzweiss } from './ProductSchwarzweiss'
 import { ProductGastgeber } from './ProductGastgeber'
 import { ProductCinematic } from './ProductCinematic'
 import type { SectionDef } from '../types'
+import { ProductBuchArt } from './ProductBuchArt'
 
 export const showcaseSection: SectionDef = {
   id: 'showcase',
@@ -79,6 +80,12 @@ export const showcaseSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Detailseite als Standbild: die Flasche vor der Landschaft statt vor flachem Schwarz, Fiche als Abspann mit Rollen- und Einstellungsnummer.',
       Component: ProductCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Coorbeau noir',
+      description: 'Produktseite im Bordeaux-Etikett: trocken/lieblich umschaltbar, Formate bis 3 l, Karton-Hinweis — alle Texte aus dem Original-Shop.',
+      Component: ProductBuchArt,
     },
   ],
 }

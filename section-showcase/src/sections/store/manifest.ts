@@ -11,6 +11,7 @@ import { StoreGastgeber } from './StoreGastgeber'
 import { StoreCinematic } from './StoreCinematic'
 import { StoreGeschenk } from './StoreGeschenk'
 import type { SectionDef } from '../types'
+import { StoreBuchArt } from './StoreBuchArt'
 
 export const storeSection: SectionDef = {
   id: 'storefront',
@@ -88,6 +89,12 @@ export const storeSection: SectionDef = {
       label: 'Das Geschenk',
       description: 'Eine Flasche als Hero mit handgeschriebener Widmung am Hals (HangTag hanging), daneben Serif-Headline, Hairline-Ablauf und ein Gutschein als freier HangTag (loose).',
       Component: StoreGeschenk,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Weinshop',
+      description: 'Original-Kategorien als Tabs mit Lesebändchen, Flaschen im Etiketten-Farbcode, ein 12er-Karton füllt sich statt Warenkorb-Badge.',
+      Component: StoreBuchArt,
     },
   ],
 }
