@@ -10,6 +10,8 @@ import { timelineSection } from './timeline/manifest'
 import { testimonialsSection } from './testimonials/manifest'
 import { gallerySection } from './gallery/manifest'
 import { lineageSection } from './lineage/manifest'
+import { etikettenSection } from './etiketten/manifest'
+import { kontaktSection } from './kontakt/manifest'
 import { footerSection } from './footer/manifest'
 import type { SectionDef } from './types'
 
@@ -30,6 +32,8 @@ export const sections: SectionDef[] = [
   testimonialsSection,
   gallerySection,
   lineageSection,
+  etikettenSection,
+  kontaktSection,
   footerSection,
 ]
 
