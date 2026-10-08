@@ -10,6 +10,7 @@ import { HeroNachtblau } from './HeroNachtblau'
 import { HeroGenussgut } from './HeroGenussgut'
 import { HeroSchwarzweiss } from './HeroSchwarzweiss'
 import { HeroGastgeber } from './HeroGastgeber'
+import { HeroBuchArt } from './HeroBuchArt'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -81,6 +82,12 @@ export const heroSection: SectionDef = {
       label: 'Gastgeber',
       description: 'Warmes Creme, ein einziger Akzent in Ziegelrot, Symmetrie als Prinzip: mittige Wortmarke, gleichrangige Bereichsleiste, Buttons als handgezeichnete Stempel.',
       Component: HeroGastgeber,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art',
+      description: 'Claim der Original-Seite in Goudy, daneben die drei Etikettenfarben als Flaschen vor dem Buch-Signet, das sich mit Feder zeichnet; Faktenzeile aus den alten Bannern.',
+      Component: HeroBuchArt,
     },
   ],
 }

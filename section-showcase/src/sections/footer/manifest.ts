@@ -5,6 +5,7 @@ import { FooterV4 } from './FooterV4'
 import { FooterV5 } from './FooterV5'
 import { FooterCinematic } from './FooterCinematic'
 import type { SectionDef } from '../types'
+import { FooterBuchArt } from './FooterBuchArt'
 
 export const footerSection: SectionDef = {
   id: 'footer',
@@ -46,6 +47,12 @@ export const footerSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Dunkle Fotografie mit Partikeln statt reinem Zinc-Ton (HeroV3-Sprache): Ghost-Wortmark, ShinyText-Zeile, Newsletter-Feld.',
       Component: FooterCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art',
+      description: 'Kolophon in Kohle und Gold: Besuch, Durchwahlen, Versandkosten mit DPD und alle Service-Seiten des Originals.',
+      Component: FooterBuchArt,
     },
   ],
 }

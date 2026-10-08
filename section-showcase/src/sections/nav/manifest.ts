@@ -6,6 +6,7 @@ import { NavV5 } from './NavV5'
 import { NavV6 } from './NavV6'
 import { NavCinematic } from './NavCinematic'
 import type { SectionDef } from '../types'
+import { NavBuchArt } from './NavBuchArt'
 
 export const navSection: SectionDef = {
   id: 'nav',
@@ -53,6 +54,12 @@ export const navSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Glaskopfzeile über der Hero-Fotografie: dunkles Zinc, Backdrop-Blur, gedimmte Versalien-Links — reaktiver Akzent statt Kerzengold.',
       Component: NavCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art',
+      description: 'Original-CI von buchart58.at: Logo-Wortmarke mit Buch-Signet in Gold, Faktenleiste in Kohle, das rote Lesebändchen wandert zum Punkt unter dem Zeiger.',
+      Component: NavBuchArt,
     },
   ],
 }
