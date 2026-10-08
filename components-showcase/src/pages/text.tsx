@@ -60,7 +60,7 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="Highlighter" description="Text highlighting, underline and hand-drawn marker effects that animate on scroll-into-view." canReload>
+      <Section title="Highlighter" description="Text highlighting, underline, hand-drawn marker and handwriting marks (circle, strike, squiggle) that animate on scroll-into-view. The handwriting marks come with three pens: pen (fountain pen, default), nib (broad nib) and pencil (sketched twice)." canReload>
         <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
           <p className="text-foreground text-lg leading-relaxed">
             Unser
@@ -90,6 +90,42 @@ export function TextPage() {
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <span className="inline-block h-2.5 w-4 rounded-[40%_60%_45%_55%]" style={{ background: 'color-mix(in oklch, var(--accent) 45%, transparent)' }} />
               Marker
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-10">
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              handschrift · circle · strike · squiggle · je Stift eine Zeile
+            </p>
+            <div className="flex flex-col gap-6 px-4 pt-6">
+              {(['pen', 'nib', 'pencil'] as const).map(pen => (
+                <p key={pen} className="font-display text-foreground text-2xl leading-[1.6]">
+                  Die Kellerführung kostet <Highlighter action="strike" pen={pen}>30,–</Highlighter> 25,– Euro. Wir lesen{' '}
+                  <Highlighter action="circle" pen={pen} delay={200}>von Hand</Highlighter>, und der 2025er wird{' '}
+                  <Highlighter action="squiggle" pen={pen} delay={400}>außergewöhnlich</Highlighter>.
+                  <span className="text-muted-foreground ml-3 font-sans text-xs">pen=&quot;{pen}&quot;{pen === 'pen' && ' · Default'}</span>
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground mb-2 text-[0.7rem] tracking-[0.15em] uppercase">
+              auf papier · color=&quot;currentColor&quot; nimmt die Papiertinte · edge: lange Phrase, ohne Scroll-Trigger
+            </p>
+            <div className="flex flex-wrap items-start gap-x-20 gap-y-12 px-4 pt-8 pb-8">
+              <PaperNote variant="notepad" paper="cream" rotate={1.5} className="max-w-72">
+                Hofladen am Samstag: Veltliner <Highlighter action="strike" color="currentColor">9,50</Highlighter> 8,– · nur{' '}
+                <Highlighter action="circle" pen="pencil" color="currentColor">300 Flaschen</Highlighter> ·{' '}
+                <Highlighter action="squiggle" pen="nib" color="oklch(0.43 0.13 18)">unbedingt</Highlighter> kosten!
+              </PaperNote>
+              <p className="text-foreground max-w-md text-lg leading-loose">
+                Bei der Riedenwanderung zeigt Simon euch{' '}
+                <Highlighter action="circle" pen="nib">die steilsten Lagen von Sooß</Highlighter> und danach{' '}
+                <Highlighter action="squiggle" animateOnView={false}>den Keller</Highlighter>, ganz ohne Scroll-Trigger.
+              </p>
             </div>
           </div>
         </div>
