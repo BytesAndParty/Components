@@ -1,6 +1,6 @@
 # MarkerCallout
 
-Eigenständiger Satz auf einer handgemachten Farbfläche, leicht gedreht. Für die eine Zeile, die in einer Einladung oder Story hängen bleiben soll („Ein besonderes Erlebnis für alle Weinliebhaber – mit euch!“). Vierte Komponente aus dem Scrapbook-Set ([SCRAPBOOK-TEXTBOXES.md](../../SCRAPBOOK-TEXTBOXES.md)).
+Eigenständiger Satz auf einer handgemachten Farbfläche, leicht gedreht. Für die eine Zeile, die in einer Einladung oder Story hängen bleiben soll („Ein besonderes Erlebnis für alle Weinliebhaber – mit euch!“). Vierte Komponente aus dem Scrapbook-Set.
 
 > **Abgrenzung zu [`Highlighter`](../highlighter/COMPONENT.md):** Der markiert Wörter *im* Fließtext (inline, auch als handgezeichneter Textmarker mit `action="marker"`). `MarkerCallout` ist ein eigener Block mit Fläche hinter dem ganzen Satz. Für einen Textmarker-Strich also immer `Highlighter` nehmen, nicht diese Komponente.
 
@@ -16,7 +16,7 @@ Eigenständiger Satz auf einer handgemachten Farbfläche, leicht gedreht. Für d
 
 ## How It Works
 
-1. **Fixe Farben statt Theme-Tokens.** Die Fläche ist ein physisches Objekt und bleibt beim Dark/Light- und Akzent-Wechsel gleich (Entscheidung #2 in SCRAPBOOK-TEXTBOXES.md). Tinte und Kraft-Ton kommen aus [`lib/scrapbook.ts`](../lib/scrapbook.ts), Salbei und Rosé sind lokal.
+1. **Fixe Farben statt Theme-Tokens.** Die Fläche ist ein physisches Objekt und bleibt beim Dark/Light- und Akzent-Wechsel gleich. Tinte und Kraft-Ton kommen aus [`lib/scrapbook.ts`](../lib/scrapbook.ts), Salbei und Rosé sind lokal.
 2. **Brush:** Ein `<path>` aus drei vordefinierten Blobs (`seed % 3`), gestreckt per `preserveAspectRatio="none"` auf die Textgröße. Ein `feTurbulence` + `feDisplacementMap` franst den Rand aus, vier helle Streifen im Blob-`clipPath` imitieren Borsten. Das Aufziehen läuft über `clip-path: inset()` auf einem inneren Wrapper. Das `useInView`-Ziel bleibt ungeclippt (STYLE-GUIDE §11).
 3. **Watercolor:** Eine Fläche mit unregelmäßigem `border-radius` und innerem Schatten in dunklerem Ton (das Pigment am Rand), verzerrt durch einen SVG-Displacement-Filter. Der Text liegt unverzerrt darüber.
 4. **Tape:** `lines` statt `children`, weil jede Zeile ein eigenes Element mit eigenem `clip-path` sein muss. Das geht mit einem einzigen umbrechenden Text nicht. Die Streifen sind Flex-Items und damit eigene Blöcke, Screenreader und Kopieren lesen sie als getrennte Zeilen.

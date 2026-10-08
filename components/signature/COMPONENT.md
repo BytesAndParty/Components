@@ -1,6 +1,6 @@
 # Signature
 
-Handschriftliche Unterschrift, die sich beim Einscrollen Federzug für Federzug selbst zeichnet. Sechste Komponente aus dem Scrapbook-Set ([SCRAPBOOK-TEXTBOXES.md](../../SCRAPBOOK-TEXTBOXES.md), Runde 2). Die drei Strich-Varianten sind die Werkbank-Entwürfe B (Breitfeder, Default), A (Füllfeder) und C (Filzstift). Gedacht für Einladungen, Briefe und Notizen vom Weingut: Der Text wirkt persönlich, und es ist klar, wer dahintersteht.
+Handschriftliche Unterschrift, die sich beim Einscrollen Federzug für Federzug selbst zeichnet. Sechste Komponente aus dem Scrapbook-Set. Die drei Strich-Varianten sind die Werkbank-Entwürfe B (Breitfeder, Default), A (Füllfeder) und C (Filzstift). Gedacht für Einladungen, Briefe und Notizen vom Weingut: Der Text wirkt persönlich, und es ist klar, wer dahintersteht.
 
 ## Features
 
@@ -94,6 +94,7 @@ Steht der Name ohnehin als Text daneben, bleibt die Unterschrift ohne `label` un
 
 ## Hinweise
 
+- **Offen:** Der Showcase zeichnet noch einen Platzhalter-Pfad (`SIGNATURE_SIMON` in `components-showcase/src/data.ts`). Simons echte Unterschrift fehlt als SVG-Pfad, danach dort ersetzen.
 - **Echte Unterschrift als Pfad:** Eine Handschrift-Font lässt sich nicht glaubwürdig nachzeichnen, die Pfade müssen der Mittellinie des Strichs folgen. Am einfachsten auf dem Tablet als Vektor schreiben oder einen Scan in Inkscape mit dem Bézier-Werkzeug nachziehen, je Federzug ein Pfad, Kontur statt Füllung. Schräglage und Transforms vorher in die Koordinaten übernehmen.
 - **Leser ohne JS:** Die Unterschrift startet unsichtbar und zeichnet sich erst per JS. In einer Astro-Insel daher `client:visible` setzen.
 - **Aufwand:** `nib` rendert sieben Pfade je Federzug, bei drei Zügen also 21. Für eine Unterschrift pro Ansicht unkritisch, für lange Listen `pen` nehmen.

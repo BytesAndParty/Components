@@ -29,7 +29,7 @@ export interface ProcessStepsProps {
 
 // ─── Tokens ─────────────────────────────────────────────────────────────────
 
-// Papier fix (SCRAPBOOK-TEXTBOXES.md #2). Pfeile, Pfad und Hairline liegen auf dem Seitenhintergrund und folgen dem Theme.
+// Papier fix (wie lib/scrapbook). Pfeile, Pfad und Hairline liegen auf dem Seitenhintergrund und folgen dem Theme.
 const GRAIN = paperGrain(0.85, 2, 0.14, 180)
 
 // Schrift lädt die App selbst (self-hosted via @fontsource), siehe COMPONENT.md.

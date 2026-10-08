@@ -1,6 +1,6 @@
 // Gemeinsame Basis der Scrapbook-Komponenten (PaperNote, PolaroidFrame).
 // Fix statt Theme-Tokens: Papier und Tape sollen wie physische Objekte wirken
-// (SCRAPBOOK-TEXTBOXES.md, Entscheidung #2).
+// und bleiben beim Dark/Light- und Akzent-Wechsel gleich.
 
 export const PAPER = {
   kraft: { bg: 'oklch(0.80 0.055 76)', ink: 'oklch(0.27 0.035 55)' },

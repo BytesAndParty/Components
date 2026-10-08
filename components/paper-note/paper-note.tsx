@@ -34,7 +34,7 @@ export interface PaperNoteProps {
 
 // ─── Tokens ─────────────────────────────────────────────────────────────────
 
-// Papierfarben (PAPER) und Washi-Tape kommen fix aus lib/scrapbook (SCRAPBOOK-TEXTBOXES.md #2).
+// Papierfarben (PAPER) und Washi-Tape kommen fix aus lib/scrapbook.
 
 // Schriften lädt die App selbst (self-hosted via @fontsource), siehe COMPONENT.md.
 const FONT: Record<PaperNoteVariant, string> = {

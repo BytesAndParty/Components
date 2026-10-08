@@ -1,6 +1,6 @@
 # PolaroidFrame
 
-Foto im klassischen Polaroid-Rahmen: schmaler Rand oben und seitlich, breiter Fuß für eine handschriftliche Caption, leicht gedreht, optional mit Washi-Tape. Zweite Komponente aus dem Scrapbook-Set ([SCRAPBOOK-TEXTBOXES.md](../../SCRAPBOOK-TEXTBOXES.md)), passt direkt neben [`PaperNote`](../paper-note/COMPONENT.md). Gedacht für persönliche Momente in Event- und Story-Sections: Riedenwanderung, Verkostung, Lese.
+Foto im klassischen Polaroid-Rahmen: schmaler Rand oben und seitlich, breiter Fuß für eine handschriftliche Caption, leicht gedreht, optional mit Washi-Tape. Zweite Komponente aus dem Scrapbook-Set, passt direkt neben [`PaperNote`](../paper-note/COMPONENT.md). Gedacht für persönliche Momente in Event- und Story-Sections: Riedenwanderung, Verkostung, Lese.
 
 ## Features
 
@@ -13,7 +13,7 @@ Foto im klassischen Polaroid-Rahmen: schmaler Rand oben und seitlich, breiter Fu
 
 ## How It Works
 
-1. **Fixe Farben statt Theme-Tokens.** Rahmen und Tinte bleiben beim Dark/Light- und Akzent-Wechsel gleich, das Polaroid ist ein physisches Objekt (Entscheidung #2 in SCRAPBOOK-TEXTBOXES.md). Tinte, Washi-Tape und Papierkorn teilt sich die Komponente mit `PaperNote` über [`components/lib/scrapbook.ts`](../lib/scrapbook.ts). Der Rahmen selbst ist eine Spur weißer als das Creme-Papier, weil Polaroids Fotokarton sind.
+1. **Fixe Farben statt Theme-Tokens.** Rahmen und Tinte bleiben beim Dark/Light- und Akzent-Wechsel gleich, das Polaroid ist ein physisches Objekt. Tinte, Washi-Tape und Papierkorn teilt sich die Komponente mit `PaperNote` über [`components/lib/scrapbook.ts`](../lib/scrapbook.ts). Der Rahmen selbst ist eine Spur weißer als das Creme-Papier, weil Polaroids Fotokarton sind.
 2. **Animation über Variants** (`motion/react`): `hidden` → `shown` startet per `useInView` (einmalig, 40 % sichtbar) mit Spring `stiffness 150 / damping 20`. `lift` beim Hover nutzt die kurze Spring `300 / 30` und dreht auf 0°.
 3. **Untransformierter Wrapper:** Der äußere `div` trägt `className`/`style`, misst die Sichtbarkeit und nimmt den Hover entgegen. Gedreht wird nur die innere `<figure>`, die die Variants erbt. Läge der Hover auf dem gedrehten Element, würden sich die Ecken beim Geraderichten unter dem Zeiger wegbewegen und der Hover flackern.
 4. **Hover nur mit feinem Zeiger** über `useDeviceCapabilities().hasFinePointer`, wie überall im Projekt.

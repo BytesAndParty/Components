@@ -1,6 +1,6 @@
 # ProcessSteps
 
-Statische Erklär-Kette aus wenigen Schritten, z. B. „Reifen am Stock → Lese → Pressen → Fass → Verkosten“. Dritte Komponente aus dem Scrapbook-Set ([SCRAPBOOK-TEXTBOXES.md](../../SCRAPBOOK-TEXTBOXES.md)). Nicht interaktiv. Für einen bedienbaren Mehrschritt-Wizard gibt es [`Stepper`](../stepper/COMPONENT.md).
+Statische Erklär-Kette aus wenigen Schritten, z. B. „Reifen am Stock → Lese → Pressen → Fass → Verkosten“. Dritte Komponente aus dem Scrapbook-Set. Nicht interaktiv. Für einen bedienbaren Mehrschritt-Wizard gibt es [`Stepper`](../stepper/COMPONENT.md).
 
 ## Features
 

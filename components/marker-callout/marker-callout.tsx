@@ -40,7 +40,7 @@ export type MarkerCalloutProps = MarkerCalloutSurface | MarkerCalloutTape
 
 // ─── Tokens ─────────────────────────────────────────────────────────────────
 
-// Fix statt Theme-Tokens (SCRAPBOOK-TEXTBOXES.md #2): die Fläche ist ein physisches Objekt.
+// Fix statt Theme-Tokens (wie lib/scrapbook): die Fläche ist ein physisches Objekt.
 const INK = PAPER.kraft.ink
 
 const BRUSH: Record<MarkerCalloutColor, string> = {
