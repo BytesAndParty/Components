@@ -142,6 +142,8 @@
         "@fontsource/kalam": "^5.3.0",
         "@fontsource/lora": "^5.3.0",
         "@fontsource/pt-sans": "^5.3.0",
+        "@fontsource/schibsted-grotesk": "^5.3.0",
+        "@fontsource/sorts-mill-goudy": "^5.3.0",
         "clsx": "^2.1.1",
         "lucide-react": "^1.23.0",
         "motion": "^12.42.2",
@@ -437,6 +439,10 @@
     "@fontsource/lora": ["@fontsource/lora@5.3.0", "", {}, "sha512-OK1g1z01rHVPqO5aw/FOIoDqc46KKYZdgL3NOLkxLWDk6QhDHhdr/h2BV1cke6gTvR1tzpDfdKyUkGsC+sQLeQ=="],
 
     "@fontsource/pt-sans": ["@fontsource/pt-sans@5.3.0", "", {}, "sha512-qisFKuquwSWlELeuQHQldOa4oSxDAOFpak2hj3FjFcdo4eCUGV0trhIBk3qt+Py50L8JKWHKnnL7/JPxRH0TPw=="],
+
+    "@fontsource/schibsted-grotesk": ["@fontsource/schibsted-grotesk@5.3.0", "", {}, "sha512-9k+Fd2eg7umKxI2JV2HtDcOkXEM0iJx0u4Iu1b+QHikVU8Sl/MtozJ/mtZfsltR6xnVGSQjpcxXQeJPW0KGpIA=="],
+
+    "@fontsource/sorts-mill-goudy": ["@fontsource/sorts-mill-goudy@5.3.0", "", {}, "sha512-Od2Ye3oYQhhJqcsD8uD/ppeEB5usYTIcQOPjU9ePpUIuU96+KgIifuBr0lMQHlMnJk0PgQKkSOAQfNQ0KDAXlA=="],
 
     "@graphql-typed-document-node/core": ["@graphql-typed-document-node/core@3.2.0", "", { "peerDependencies": { "graphql": "^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0" } }, "sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ=="],
 

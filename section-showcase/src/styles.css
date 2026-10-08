@@ -36,6 +36,14 @@
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 
+/* Buch·Art family (Original-CI von buchart58.at: Etiketten in Goudy Old Style →
+   Sorts Mill Goudy als freier Goudy-Nachbau; Schibsted Grotesk für Daten und UI) */
+@import "@fontsource/sorts-mill-goudy/400.css";
+@import "@fontsource/sorts-mill-goudy/400-italic.css";
+@import "@fontsource/schibsted-grotesk/400.css";
+@import "@fontsource/schibsted-grotesk/500.css";
+@import "@fontsource/schibsted-grotesk/600.css";
+
 /* Handschriften für das Scrapbook-Set: Caveat (PaperNote torn, PolaroidFrame, ProcessSteps trail,
    MarkerCallout brush), Kalam (PaperNote notepad, MarkerCallout tape in 700) */
 @import "@fontsource/caveat/400.css";
@@ -99,6 +107,8 @@
   --font-schwarzweiss-sans:    "PT Sans", -apple-system, sans-serif;
   --font-gastgeber-display:    "Lora", "Cormorant Garamond", serif;
   --font-gastgeber-sans:       "Inter", -apple-system, sans-serif;
+  --font-buchart-display:      "Sorts Mill Goudy", "Goudy Old Style", Georgia, serif;
+  --font-buchart-sans:         "Schibsted Grotesk", -apple-system, sans-serif;
 }
 
 /* ── Dark Mode (default) ─────────────────────────────── */

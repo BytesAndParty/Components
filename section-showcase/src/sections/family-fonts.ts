@@ -25,3 +25,4 @@ function familyFonts(display: string, sans: string): CSSProperties {
 export const GENUSSGUT_FONTS = familyFonts('--font-genussgut-display', '--font-genussgut-sans')
 export const SCHWARZWEISS_FONTS = familyFonts('--font-schwarzweiss-display', '--font-schwarzweiss-sans')
 export const GASTGEBER_FONTS = familyFonts('--font-gastgeber-display', '--font-gastgeber-sans')
+export const BUCHART_FONTS = familyFonts('--font-buchart-display', '--font-buchart-sans')
