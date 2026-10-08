@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { Highlighter } from '@components/highlighter/highlighter'
 import { PaperNote } from '@components/paper-note/paper-note'
 
 /**
@@ -9,6 +10,8 @@ import { PaperNote } from '@components/paper-note/paper-note'
  *
  * Die Zettel ergänzen die Termine statt sie zu wiederholen — was in der Liste
  * steht, ist verbindlich; was auf den Zetteln steht, klingt nach Gastgeber.
+ * Einzelne Wörter sind wie mit dem Stift eingekreist, durchgestrichen oder
+ * unterwellt (Highlighter-Handschrift), immer in der Tinte des Zettels.
  */
 
 const EVENTS = [
@@ -69,13 +72,16 @@ export function EventsPinnwand() {
         {/* Pinnwand: zwei Spalten ab sm, versetzt, damit es nicht nach Raster aussieht */}
         <div className="grid grid-cols-1 gap-x-8 gap-y-24 pt-4 sm:grid-cols-2">
           <PaperNote paper="kraft" rotate={-3} tape arrow="down" className="justify-self-start">
-            Kellerführung am Samstag – wir öffnen die alten Fässer nur für euch.
+            Kellerführung am Samstag – wir öffnen die alten Fässer{' '}
+            <Highlighter action="circle" pen="pencil" color="currentColor" delay={500}>nur für euch</Highlighter>.
           </PaperNote>
           <PaperNote variant="notepad" paper="cream" rotate={2} className="justify-self-end sm:mt-20">
-            Mitbringen: festes Schuhwerk, eine Jacke für den Keller – und Durst.
+            Mitbringen: festes Schuhwerk, eine Jacke für den Keller – und{' '}
+            <Highlighter action="squiggle" color="currentColor" delay={300}>Durst</Highlighter>.
           </PaperNote>
           <PaperNote paper="dark" rotate={-1.5} tape className="justify-self-start sm:ml-6">
-            Sturm & Kastanien: das erste Glas geht aufs Haus!
+            Sturm & Kastanien: das erste Glas{' '}
+            <Highlighter action="strike" pen="nib" color="currentColor" delay={500}>4,–</Highlighter> geht aufs Haus!
           </PaperNote>
           <PaperNote variant="notepad" paper="kraft" rotate={1} tape className="justify-self-end sm:mt-12">
             Wanderung mit Jause am Marterl – Decken bringen wir mit.
