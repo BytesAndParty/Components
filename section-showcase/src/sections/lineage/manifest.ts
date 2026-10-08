@@ -2,6 +2,7 @@ import type { SectionDef } from '../types'
 import { LineageV1 } from './LineageV1'
 import { LineageV2 } from './LineageV2'
 import { LineageV3 } from './LineageV3'
+import { LineageBuchArt } from './LineageBuchArt'
 
 export const lineageSection: SectionDef = {
   id: 'lineage',
@@ -28,6 +29,12 @@ export const lineageSection: SectionDef = {
       description:
         'Vertikaler Stammbaum der Thermenregion-Rebsorten. Klick zoomt an die Rebe heran, hebt den Ahnen-Pfad hervor und zeigt Lagen & Weine. Voll tastaturbedienbar, mit Listen-Fallback.',
       Component: LineageV1,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Die Familie',
+      description: 'Stammbaum als Familie: Anton & Irmgard, darunter Simon und Elias — Monogramme statt Porträts, Linien zeichnen sich wie Tinte.',
+      Component: LineageBuchArt,
     },
   ],
 }

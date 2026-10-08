@@ -5,6 +5,7 @@ import { TestimonialsV5 } from './TestimonialsV5'
 import { TestimonialsV6 } from './TestimonialsV6'
 import { TestimonialsCinematic } from './TestimonialsCinematic'
 import type { SectionDef } from '../types'
+import { TestimonialsBuchArt } from './TestimonialsBuchArt'
 
 export const testimonialsSection: SectionDef = {
   id: 'testimonials',
@@ -44,6 +45,12 @@ export const testimonialsSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Zentriertes Leitzitat wie ein Filmepigraph (HeroV3-Sprache): Partikel, ShinyText, zwei stille Stimmen in Glas-Karten.',
       Component: TestimonialsCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Gästebuch',
+      description: 'Echte Google-Rezensionen (5,0 aus 66) als aufgeschlagenes Gästebuch mit Falz — das Signet wörtlich genommen.',
+      Component: TestimonialsBuchArt,
     },
   ],
 }

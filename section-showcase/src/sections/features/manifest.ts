@@ -10,6 +10,7 @@ import { FeaturesSchwarzweiss } from './FeaturesSchwarzweiss'
 import { FeaturesGastgeber } from './FeaturesGastgeber'
 import { FeaturesCinematic } from './FeaturesCinematic'
 import type { SectionDef } from '../types'
+import { FeaturesBuchArt } from './FeaturesBuchArt'
 
 export const featuresSection: SectionDef = {
   id: 'features',
@@ -79,6 +80,12 @@ export const featuresSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Eine lange Einstellung statt Triptychon: ein hohes Still links, rechts drei Gründe als nummerierte Hairline-Liste, die im Hover wächst.',
       Component: FeaturesCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Das Weingut',
+      description: 'Kapitel im Weißwein-Farbcode (Creme, Flaschengrün): das (Un)kraut-Zitat groß, drei Grundsätze, Rieden und Rebsorten als Register.',
+      Component: FeaturesBuchArt,
     },
   ],
 }

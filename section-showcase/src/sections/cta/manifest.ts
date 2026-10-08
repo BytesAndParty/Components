@@ -4,6 +4,7 @@ import { CTAV4 } from './CTAV4'
 import { CTAV5 } from './CTAV5'
 import { CTACinematic } from './CTACinematic'
 import type { SectionDef } from '../types'
+import { CTABuchArt } from './CTABuchArt'
 
 export const ctaSection: SectionDef = {
   id: 'cta',
@@ -37,6 +38,12 @@ export const ctaSection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Kurzes Finale in HeroV3-Sprache: zentrierte Komposition, atmosphärische Fotografie mit Partikeln und Shiny Text.',
       Component: CTACinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Wir sind für Sie da',
+      description: 'Der Block, der auf jeder Original-Seite steht, als ein lautes Feld in Etikettenrot: drei Durchwahlen mit Monogramm statt Foto.',
+      Component: CTABuchArt,
     },
   ],
 }

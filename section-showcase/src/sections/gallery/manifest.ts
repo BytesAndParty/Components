@@ -5,6 +5,7 @@ import { GalleryV5 } from './GalleryV5'
 import { GalleryV6 } from './GalleryV6'
 import { GalleryCinematic } from './GalleryCinematic'
 import type { SectionDef } from '../types'
+import { GalleryBuchArt } from './GalleryBuchArt'
 
 export const gallerySection: SectionDef = {
   id: 'gallery',
@@ -44,6 +45,12 @@ export const gallerySection: SectionDef = {
       label: 'Cinematic Atmosphere',
       description: 'Drei atmosphärische Weitwinkel-Stills als Reel (HeroV3-Sprache): Partikel, Ghost-Word „Atmosphäre“, Lower-Third-Captions.',
       Component: GalleryCinematic,
+    },
+    {
+      id: 'buchart',
+      label: 'Buch·Art — Die Vinothek',
+      description: 'Vinothek-Geschichte der Original-Seite; die Fundstücke aus den Weingärten (Korallen, Urmeer-Muscheln, Münzen) als Goldlinien in Rundbogen-Nischen.',
+      Component: GalleryBuchArt,
     },
   ],
 }
