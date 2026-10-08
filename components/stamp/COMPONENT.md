@@ -1,6 +1,6 @@
 # Stamp
 
-Gummistempel für den Jahrgang, der sich beim Einscrollen aufdrückt. Siebte Komponente aus dem Scrapbook-Set ([SCRAPBOOK-TEXTBOXES.md](../../SCRAPBOOK-TEXTBOXES.md), Runde 2). Die zwei Varianten sind die Werkbank-Entwürfe A (Rundstempel, Default) und D (Datumsstempel). Gedacht für Etikett, Produktbild und Papier: Shop-Besucher sehen auf einen Blick, welcher Wein aus dem aktuellen Jahrgang ist.
+Gummistempel für den Jahrgang, der sich beim Einscrollen aufdrückt. Siebte Komponente aus dem Scrapbook-Set. Die zwei Varianten sind die Werkbank-Entwürfe A (Rundstempel, Default) und D (Datumsstempel). Gedacht für Etikett, Produktbild und Papier: Shop-Besucher sehen auf einen Blick, welcher Wein aus dem aktuellen Jahrgang ist.
 
 Kein Status-Badge: „Neu“, „Sale“ oder „Prämiert“ als Pille mit Shimmer liefert `ProductTag`.
 
@@ -31,6 +31,7 @@ Kein Status-Badge: „Neu“, „Sale“ oder „Prämiert“ als Pille mit Shim
 | `issuer` | `string` | — | Absender, z. B. „Weingut Buchart“. `seal`: obere Umschrift, `date`: Zeile unter dem Band. Wird in Versalien gesetzt. |
 | `place` | `string` | — | Nur `seal`: untere Umschrift, z. B. „Sooß · Niederösterreich“. |
 | `rotate` | `number` (deg) | `-12` / `-8` | Drehung (`seal` / `date`). |
+| `decorative` | `boolean` | `false` | Deko: Der Jahrgang steht schon als Text daneben. Der Stempel wird `aria-hidden` und nicht vorgelesen. |
 | `messages` | `Partial<StampMessages>` | — | Überschreibt `vintage` („Jahrgang“ / „Vintage“). |
 | `className` | `string` | — | Klassen am Wrapper. Breite per `w-*` (Default `w-40` bzw. `w-52`), Tinte per `text-*`. |
 | `style` | `CSSProperties` | — | Inline-Styles am Wrapper, z. B. `{ color: 'oklch(0.43 0.13 18)' }` für Bordeaux. |
@@ -68,6 +69,15 @@ Der Stempel sitzt auf dem Etikett. Auf hellem Etikett eine dunkle Tinte, auf dun
 </PaperNote>
 ```
 
+### Neben einem Produkttitel
+
+Steht der Jahrgang schon im Text, ist der Stempel nur Deko:
+
+```tsx
+<h3>Grüner Veltliner 2025</h3>
+<Stamp year={2025} variant="date" decorative className="w-36" />
+```
+
 ### Andere Sprache
 
 Der Text folgt der Locale aus dem `AtelierProvider`. Einzelne Stempel lassen sich überschreiben:
@@ -82,7 +92,7 @@ Der Text folgt der Locale aus dem `AtelierProvider`. Einzelne Stempel lassen sic
 - **Schriften:** Umschrift und Versalien nutzen `--font-sans`, das Jahr bei `seal` `--font-display` aus dem Theme (Fallback System-Sans bzw. Georgia). Die Ziffern bei `date` laufen in der System-Monospace.
 - **Jahr:** Erwartet eine vierstellige Jahreszahl. Fehlt der Jahrgang in den Produktdaten, den Stempel gar nicht rendern statt `NaN` zu übergeben.
 - **Ohne JS unsichtbar:** Der Stempel startet mit `opacity: 0` und erscheint erst per JS. In Astro muss er deshalb als Insel hydriert werden (`client:visible`), ohne Hydration bliebe er für alle unsichtbar.
-- **A11y:** Der Wrapper ist `role="img"` mit `aria-label` „Jahrgang 2025“ (übersetzt), das SVG selbst `aria-hidden`. Absender und Ort sind Deko und stehen nicht im Label. Nicht interaktiv, kein Fokus-Stop.
+- **A11y:** Der Wrapper ist `role="img"` mit `aria-label` „Jahrgang 2025“ (übersetzt), das SVG selbst `aria-hidden`. Absender und Ort sind Deko und stehen nicht im Label. Steht der Jahrgang schon als Text daneben (Produkttitel, Kachel), `decorative` setzen: Dann ist der ganze Stempel `aria-hidden` und das Jahr wird nicht doppelt vorgelesen. Nicht interaktiv, kein Fokus-Stop.
 
 ## Dependencies
 

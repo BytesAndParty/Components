@@ -20,6 +20,11 @@ export interface StampProps {
   place?: string
   /** Drehung in Grad. Default `-12` (seal) bzw. `-8` (date). */
   rotate?: number
+  /**
+   * Deko: Der Jahrgang steht schon als Text daneben, z. B. im Produkttitel „Grüner Veltliner 2025“. Der Stempel
+   * wird `aria-hidden`, Screenreader überspringen ihn statt das Jahr doppelt vorzulesen.
+   */
+  decorative?: boolean
   messages?: Partial<StampMessages>
   className?: string
   style?: CSSProperties
@@ -252,7 +257,7 @@ function DateStamp({ uid, seed, shown, reduce, year, label, issuer }: Impression
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function Stamp({ year, variant = 'seal', issuer, place, rotate, messages, className, style }: StampProps) {
+export function Stamp({ year, variant = 'seal', issuer, place, rotate, decorative, messages, className, style }: StampProps) {
   const m = useComponentMessages(MESSAGES, messages)
   const id = useId()
   const reduce = Boolean(useReducedMotion())
@@ -276,8 +281,9 @@ export function Stamp({ year, variant = 'seal', issuer, place, rotate, messages,
   return (
     <div
       ref={ref}
-      role="img"
-      aria-label={`${m.vintage} ${year}`}
+      role={decorative ? undefined : 'img'}
+      aria-label={decorative ? undefined : `${m.vintage} ${year}`}
+      aria-hidden={decorative || undefined}
       className={cn(seal ? 'w-40' : 'w-52', className)}
       style={{ rotate: `${rotate ?? (seal ? -12 : -8)}deg`, ...style }}
     >
