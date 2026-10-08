@@ -7,7 +7,7 @@
 > selbst sind aber generisch für jedes Projekt nutzbar, das den "Scrapbook"-Look braucht).
 
 Status Runde 1: **4 von 4 umgesetzt** — Paper-Note, Polaroid-Frame, Process-Steps und Marker-Callout sind fertig, jeweils mit eigener `COMPONENT.md` unter `components/<name>/`. Die Werkbänke sind entfernt.
-Status Runde 2: **3 von 4 umgesetzt** — Hang-Tag, Unterschrift und Stempel sind fertig. Handschrift-Markierungen im Highlighter: Werkbank offen (siehe [Runde 2](#runde-2)).
+Status Runde 2: **4 von 4 umgesetzt** — Hang-Tag, Unterschrift, Stempel und Handschrift-Markierungen im Highlighter sind fertig (siehe [Runde 2](#runde-2)).
 **Offen:** Die Unterschrift zeichnet noch einen Platzhalter-Pfad. Simons echte Unterschrift fehlt als SVG-Pfad (je Federzug ein Pfad, Anleitung in [`components/signature/COMPONENT.md`](./components/signature/COMPONENT.md) unter „Hinweise“), danach `SIGNATURE_SIMON` in `components-showcase/src/data.ts` ersetzen.
 Dieses Dokument ist der Tracking-Ort für Fortschritt, bis jede Komponente ihr eigenes `COMPONENT.md` bekommt (siehe [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md)).
 
@@ -326,7 +326,33 @@ Marker-Callout): Kreis um ein Wort, Durchstreichen, Kringel-Unterstreichung. Bei
 **User Story:** Als Leser möchte ich, dass einzelne Wörter wie mit dem Stift eingekreist, durchgestrichen oder
 unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervorgehoben wirken.
 
-**Status:** ⬜ Werkbank offen
+**Werkbank-Ergebnis:** Vier Stift-Stile mit je Kreis, Durchstreichen und Kringel verglichen, im Fließtext auf der
+Seite (Akzentfarbe wie der Highlighter) und auf Papier (Tinte des Stils). In Runde 2 kam E (Breitfeder) dazu.
+**Gewählt: A, D und E als Stifte.** B und C verworfen, die Werkbank ist entfernt.
+
+| Entwurf | Strich | Kreis | Durchstreichen | Kringel |
+|---|---|---|---|---|
+| A · Füllfeder | fein, ein Zug | ein Umlauf mit Überstand | eine Linie, leicht steigend | sanfte Welle |
+| B · Filzstift | kräftig, leicht transparent | zwei Umläufe | zwei Linien | Schlaufen wie „eee“ |
+| C · Rotstift | gekörnt, schnell | ein Umlauf, unruhig | Kritzel hin und her | Zickzack |
+| D · Bleistift skizziert | fein, gekörnt, zwei Züge | zwei versetzte Umläufe | zwei fast parallele Linien | zwei Wellen |
+| E · Breitfeder (Runde 2) | Haar- und Schattenstriche wie Signature `nib` | wie A | wie A | Welle, an- und abschwellend |
+
+**Entschieden bei der Umsetzung:**
+- **Drei neue `action`s** im `Highlighter`: `circle`, `strike`, `squiggle`. Dazu **`pen`** = Stift: `pen` (A, Default),
+  `nib` (E), `pencil` (D). `pen` wirkt nur auf die drei Handschrift-Actions.
+- **Kreise knapp und leicht eckig** (Superellipse), plus `0.25em` seitlicher Rand am Wort. Runde 1 schnitt die
+  Nachbarwörter, eine reine Ellipse die Ecken der äußeren Buchstaben.
+- **Durchstreichen als `<s>`**, weil „alter Preis“ inhaltlich etwas bedeutet. Höhe 60 % der Zeile, passt für
+  Mediävalziffern (Cormorant) und Versalziffern (Caveat).
+- **Strich in Pixeln:** Das Wort misst sich per `ResizeObserver`, das SVG nutzt die Pixelgröße als viewBox. Gezeichnet
+  wird per `stroke-dashoffset`-Transition wie der Rest des Highlighters, ohne motion. Geometrie in
+  `components/highlighter/hand-mark.tsx`.
+- **Tinte:** `color` wie bisher (Default Akzent), `'currentColor'` nimmt die Tinte eines `PaperNote`.
+
+**Im Einsatz:** components-showcase → *Text → Highlighter*, section-showcase → *Veranstaltungen → Die Pinnwand*.
+
+**Status:** ✅ umgesetzt
 
 ---
 
@@ -363,7 +389,7 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 | 5 | Hang-Tag | ✅ (entfernt) | ✅ A | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv), Anstoßen per Maus offen |
 | 6 | Unterschrift | ✅ (entfernt) | ✅ B + A, C | ✅ | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv); echte Unterschrift offen |
 | 7 | Stempel | ✅ (entfernt) | ✅ A + D | ✅ | ✅ (de/en) | ✅ | ✅ | 🟡 Lint/Typecheck ✅, Dark/Light, 390 px und Reduced Motion per Screenshot geprüft; Tastatur entfällt (nicht interaktiv) |
-| 8 | Highlighter-Handschrift | ⬜ | ⬜ | ⬜ (Erweiterung) | ⬜ | ⬜ | ⬜ | ⬜ |
+| 8 | Highlighter-Handschrift | ✅ (entfernt) | ✅ A + D + E | ✅ (Erweiterung) | — (keine UI-Strings) | ✅ | ✅ | 🟡 Lint/Typecheck/Build ✅, Light/Dark und Pinnwand per Screenshot geprüft; Tastatur entfällt (nicht interaktiv) |
 
 ## Change History
 
@@ -382,3 +408,6 @@ unterkringelt werden, damit Preisänderungen und Kernaussagen persönlich hervor
 | 2026-10-07 | Signature umgesetzt (B als `nib` Default, A als `pen`, C als `felt`), Showcase-Eintrag auf der Text-Seite, Werkbank entfernt | Werkbank-Review: B gefällt am besten, eine Komponente mit Varianten. D (Briefschluss mit Scroll-Kopplung) verworfen, den Aufbau übernimmt der Consumer. |
 | 2026-10-07 | Werkbank `/lab/stamp` mit vier Entwürfen (A Rundstempel, B Kastenstempel, C Linolstempel, D Datumsstempel), jeweils auf der Seite, auf hellem und dunklem Etikett und auf Papier | Gleiches Vorgehen wie bisher: erst vergleichen, dann übernehmen. |
 | 2026-10-07 | Stamp umgesetzt (A als `seal` Default, D als `date`), Showcase-Eintrag auf der Text-Seite, Werkbank entfernt | Werkbank-Review: A und D behalten. Eine Komponente mit Varianten, weil beide dieselben Daten tragen und dieselbe User Story erfüllen. |
+| 2026-10-08 | Werkbank `/lab/handwriting` mit vier Stift-Stilen (A Füllfeder, B Filzstift, C Rotstift, D Bleistift skizziert), je Kreis, Durchstreichen und Kringel auf der Seite und auf Papier | Gleiches Vorgehen wie bisher: erst vergleichen, dann übernehmen. |
+| 2026-10-08 | Werkbank Runde 2: B und C raus, E Breitfeder dazu, Kreise knapper und leicht eckig | Review: A und D gefallen, Breitfeder gewünscht. Kreise schnitten Nachbarwörter. |
+| 2026-10-08 | Highlighter-Handschrift umgesetzt (`circle`, `strike`, `squiggle` mit `pen`, `nib`, `pencil`), Showcase-Eintrag, Pinnwand-Section nutzt sie, Werkbank entfernt | Werkbank-Review: alle drei Stifte behalten, Füllfeder als Default. Runde 2 damit abgeschlossen. |
