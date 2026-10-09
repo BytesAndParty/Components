@@ -1,15 +1,16 @@
-import { useId, useState, type FormEvent } from 'react'
+import { useId, useState, type CSSProperties } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { Check, Minus, Plus } from 'lucide-react'
+import { BookingCalendar, type BookingSlot } from '@components/booking-calendar/booking-calendar'
 import { BUCHART_FONTS } from '../family-fonts'
-import { RibbonFill, RunningHead } from '../buchart-kit'
+import { RunningHead } from '../buchart-kit'
 import { ADDRESS } from '../buchart-data'
 
 /**
  * Buch·Art — „Zu Gast in Sooss“ im Farbcode der schwarzen Etiketten (Kohle,
  * Gold, rotes Band). Die drei Angebote der Original-Seite mit allen Bedingungen
- * als Karte zum Auswählen; die Auswahl stellt das Anfrageformular ein (Mindest-
- * personen, ob überhaupt angemeldet werden muss). Preise und Regeln wortgetreu.
+ * als Karte zum Auswählen; die Auswahl stellt den Buchungskalender ein — oder
+ * zeigt, dass für die kleine Probe gar keine Anmeldung nötig ist. Preise und
+ * Regeln wortgetreu.
  */
 
 const OFFERS = [
@@ -45,27 +46,61 @@ const OFFERS = [
 type OfferId = (typeof OFFERS)[number]['id']
 
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d7c69f] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e1d1b]'
-const FIELD = 'mt-2 w-full border-0 border-b border-[#d7c69f]/40 bg-transparent px-0 py-2.5 text-[15px] text-[#f0e8c3] placeholder:text-[#a39882] transition-colors focus:border-[#d7c69f] focus:ring-0 focus-visible:outline-none'
 const LABEL = 'block text-[11px] font-medium tracking-[0.2em] text-[#d7c69f] uppercase'
+
+/**
+ * BookingCalendar folgt den Theme-Tokens. Die Fläche hier ist fest Kohle, darum
+ * werden die Tokens am Wrapper auf die Etikettenfarben gesetzt — gilt in Dark
+ * und Light gleich.
+ */
+const CALENDAR_TOKENS = {
+  '--foreground': '#f0e8c3',
+  '--muted-foreground': '#a39882',
+  '--muted': 'rgba(240, 232, 195, 0.06)',
+  '--border': 'rgba(215, 198, 159, 0.28)',
+  '--card': '#262522',
+  '--accent': '#9e1919',
+  '--accent-foreground': '#f7f3e8',
+  '--accent-readable': '#d7c69f',
+  '--ring': '#d7c69f',
+} as CSSProperties
+
+/** Tag in `n` Tagen als ISO-Datum, in lokaler Zeit (toISOString wäre UTC). */
+function isoDay(n: number) {
+  const d = new Date()
+  d.setDate(d.getDate() + n)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+/** Nächster Wochentag (0 = Sonntag … 6 = Samstag) ab heute plus `weeks` Wochen. */
+function nextWeekday(day: number, weeks: number) {
+  const offset = (day - new Date().getDay() + 7) % 7 || 7
+  return isoDay(offset + weeks * 7)
+}
+
+/**
+ * Demo-Termine: Im Original gibt es Wanderung und große Probe nach Vereinbarung.
+ * Hier stehen beispielhafte Wochenend-Slots, damit der Buchungsablauf sichtbar wird.
+ */
+const WEEKS = [0, 1, 2, 3]
+
+// Einmal beim Laden berechnet, nicht pro Render — das Datum ist kein Render-Input.
+const SLOTS: Record<'wanderung' | 'grosse', BookingSlot[]> = {
+  wanderung: WEEKS.flatMap(w => [
+    { id: `rw-sa-${w}`, date: nextWeekday(6, w), time: '10:00', capacity: 15, price: 40 },
+    { id: `rw-so-${w}`, date: nextWeekday(0, w), time: '14:00', capacity: 15, price: 40 },
+  ]),
+  grosse: WEEKS.flatMap(w => [
+    { id: `gp-fr-${w}`, date: nextWeekday(5, w), time: '17:00', capacity: 15, price: 30 },
+    { id: `gp-sa-${w}`, date: nextWeekday(6, w), time: '15:00', capacity: 15, price: 30 },
+  ]),
+}
 
 export function EventsBuchArt() {
   const [offerId, setOfferId] = useState<OfferId>('wanderung')
-  const [persons, setPersons] = useState(4)
-  const [sent, setSent] = useState(false)
   const reduce = useReducedMotion()
   const uid = useId()
   const offer = OFFERS.find(o => o.id === offerId) ?? OFFERS[2]
-  const count = Math.max(persons, offer.min)
-
-  function choose(id: OfferId) {
-    setOfferId(id)
-    setSent(false)
-  }
-
-  function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setSent(true)
-  }
 
   return (
     <section style={BUCHART_FONTS} className="bg-[#1e1d1b] px-6 py-20 text-[#f0e8c3] lining-nums lg:px-16 lg:py-28">
@@ -87,7 +122,7 @@ export function EventsBuchArt() {
                   const active = o.id === offerId
                   return (
                     <label key={o.id} className="group relative block cursor-pointer py-7 pl-8">
-                      <input type="radio" name={`${uid}-offer`} value={o.id} checked={active} onChange={() => choose(o.id)} className="peer sr-only" />
+                      <input type="radio" name={`${uid}-offer`} value={o.id} checked={active} onChange={() => setOfferId(o.id)} className="peer sr-only" />
                       {/* Das rote Band markiert die Auswahl — dieselbe Geste wie in Nav und Shop. */}
                       <span aria-hidden="true" className={`absolute top-0 left-0 h-14 w-2.5 bg-[#9e1919] transition-transform duration-500 ${active ? 'scale-y-100' : 'scale-y-0'} origin-top`} style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 6px), 0 100%)' }} />
                       <span className="absolute inset-0 peer-focus-visible:ring-2 peer-focus-visible:ring-[#d7c69f] peer-focus-visible:ring-inset" />
@@ -124,68 +159,21 @@ export function EventsBuchArt() {
                       {ADDRESS.street}, {ADDRESS.zip} {ADDRESS.town}
                     </p>
                   </motion.div>
-                ) : sent ? (
-                  <motion.div key="sent" role="status" initial={reduce ? false : { opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="border border-[#be9f55] p-8">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#be9f55] text-[#be9f55]">
-                      <Check size={18} />
-                    </span>
-                    <p className="font-display mt-5 text-[1.9rem] leading-tight">Danke — Ihre Anfrage ist notiert.</p>
-                    <p className="mt-3 text-[14.5px] leading-relaxed text-[#d7c69f]">
-                      {offer.title} für {count} Personen. Wir melden uns mit einer Bestätigung oder einem Gegenvorschlag.
-                    </p>
-                    <button type="button" onClick={() => setSent(false)} className={`mt-6 min-h-11 text-[13px] underline underline-offset-4 ${FOCUS}`}>
-                      Weitere Anfrage
-                    </button>
-                  </motion.div>
                 ) : (
-                  <motion.form key={`form-${offer.id}`} onSubmit={submit} initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0 }} className="space-y-6">
+                  <motion.div key={offer.id} initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0 }}>
                     <p className="font-display text-[1.5rem] leading-tight">
-                      Anfrage: <span className="italic text-[#be9f55]">{offer.title}</span>
+                      Termin: <span className="italic text-[#be9f55]">{offer.title}</span>
                     </p>
-                    <div>
-                      <label htmlFor={`${uid}-name`} className={LABEL}>Name</label>
-                      <input id={`${uid}-name`} name="name" required autoComplete="name" className={FIELD} />
+                    <div className="mt-6" style={CALENDAR_TOKENS}>
+                      <BookingCalendar slots={SLOTS[offer.id]} />
                     </div>
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                      <div>
-                        <label htmlFor={`${uid}-mail`} className={LABEL}>E-Mail</label>
-                        <input id={`${uid}-mail`} name="email" type="email" required autoComplete="email" className={FIELD} />
-                      </div>
-                      <div>
-                        <label htmlFor={`${uid}-tel`} className={LABEL}>Telefon</label>
-                        <input id={`${uid}-tel`} name="tel" type="tel" required autoComplete="tel" className={FIELD} />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor={`${uid}-date`} className={LABEL}>Wunschtermin</label>
-                        <input id={`${uid}-date`} name="date" type="date" required className={`${FIELD} [color-scheme:dark]`} />
-                      </div>
-                      <div>
-                        <span id={`${uid}-persons`} className={LABEL}>Personen</span>
-                        <div role="group" aria-labelledby={`${uid}-persons`} className="mt-2 flex items-center justify-between border-b border-[#d7c69f]/40">
-                          <button type="button" aria-label="Eine Person weniger" disabled={count <= offer.min} onClick={() => setPersons(Math.max(offer.min, count - 1))} className={`flex h-11 w-9 items-center justify-center disabled:opacity-30 ${FOCUS}`}>
-                            <Minus size={14} />
-                          </button>
-                          <output aria-live="polite" className="text-[15px] tabular-nums">{count}</output>
-                          <button type="button" aria-label="Eine Person mehr" disabled={count >= 15} onClick={() => setPersons(Math.min(15, count + 1))} className={`flex h-11 w-9 items-center justify-center disabled:opacity-30 ${FOCUS}`}>
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor={`${uid}-note`} className={LABEL}>Wünsche, gewünschte Weine</label>
-                      <textarea id={`${uid}-note`} name="note" rows={2} className={`${FIELD} resize-none`} />
-                    </div>
-                    <button type="submit" className={`group relative inline-flex min-h-12 w-full items-center justify-center py-3 pr-8 pl-6 text-[14px] font-medium text-[#f7f3e8] ${FOCUS}`}>
-                      <RibbonFill />
-                      <span className="relative">Unverbindlich anfragen</span>
-                    </button>
-                    <p className="text-[12px] leading-relaxed text-[#a39882]">
-                      {offer.min > 1 && `Ab ${offer.min} Personen. `}Kein Kaufabschluss. Unsere Vinothek schließt um 19 Uhr.
+                    <p className="mt-6 text-[12px] leading-relaxed text-[#a39882]">
+                      {offer.min > 1 && `Ab ${offer.min} Personen. `}Unverbindliche Anfrage, kein Kaufabschluss. Lieber ein eigener Termin?{' '}
+                      <a href={`mailto:${ADDRESS.email}`} className={`text-[#d7c69f] underline underline-offset-4 ${FOCUS}`}>
+                        {ADDRESS.email}
+                      </a>
                     </p>
-                  </motion.form>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
