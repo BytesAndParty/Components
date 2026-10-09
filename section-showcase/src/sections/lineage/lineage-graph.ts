@@ -1,8 +1,9 @@
 /**
  * Rebsorten-Abstammung — korrigiertes Graph-Modell.
  *
- * Ersetzt `lineage-data.ts`. Der Unterschied ist nicht kosmetisch, sondern
- * strukturell: Rebsorten-Genealogie ist KEIN Baum wie beim Menschen.
+ * Einziger Datensatz der Stammbaum-Varianten. Das frühere Baum-Modell
+ * (`lineage-data.ts`) ist entfernt: Rebsorten-Genealogie ist KEIN Baum wie beim
+ * Menschen.
  *
  *   · Sorten sind vegetativ vermehrte Klone — ein Traminer heute ist genetisch
  *     derselbe Stock wie vor 1000 Jahren. Es gibt keine Generationen, alle
