@@ -12,6 +12,7 @@ import {
   type GrapeNode,
 } from './lineage-graph'
 import { layoutSubgraph, type PlacedGrape, type PlacedUnion } from './lineage-layout'
+import { ColourDot } from './lineage-ui'
 
 /**
  * Bühne für einen Rebsorten-Teilgraphen.
@@ -51,16 +52,6 @@ export interface LineageStageProps {
 function pathStart(d: string): { x: number; y: number } | null {
   const m = /^M\s*(-?[\d.]+)\s+(-?[\d.]+)/.exec(d)
   return m ? { x: Number(m[1]), y: Number(m[2]) } : null
-}
-
-function ColourDot({ colour }: { colour: GrapeNode['colour'] }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="inline-block size-2 shrink-0 rounded-full ring-1 ring-inset ring-foreground/25"
-      style={{ background: colour === 'red' ? 'oklch(0.48 0.17 18)' : 'oklch(0.85 0.09 92)' }}
-    />
-  )
 }
 
 function nodeAria(n: GrapeNode): string {

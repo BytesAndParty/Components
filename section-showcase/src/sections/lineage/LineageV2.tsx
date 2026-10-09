@@ -15,12 +15,12 @@ import {
   nodesInCluster,
   originStatement,
   parentsOf,
-  REBSTOCKMIETE,
   siblingsOf,
   type Cluster,
   type GrapeNode,
 } from './lineage-graph'
 import { LineageStage } from './lineage-stage'
+import { RebstockCTA } from './lineage-ui'
 
 /**
  * „Die vier Häuser" — Galerie pro Familie.
@@ -43,16 +43,6 @@ import { LineageStage } from './lineage-stage'
 const HOUSES: Cluster[] = ['thermenregion', 'klosterneuburg', 'amerikaner', 'ahnen']
 
 // ── Detail ───────────────────────────────────────────────────────────────────
-
-function RebstockCTA() {
-  return (
-    <div className="rounded-xl border border-accent/40 p-4" style={{ background: 'color-mix(in oklch, var(--accent) 8%, transparent)' }}>
-      <p className="font-display text-lg font-medium text-foreground">{REBSTOCKMIETE.label}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{REBSTOCKMIETE.note}</p>
-      <p className="mt-3 text-sm font-semibold text-accent-readable">{REBSTOCKMIETE.price}</p>
-    </div>
-  )
-}
 
 function Relation({ label, ids, onPick }: { label: string; ids: string[]; onPick: (id: string) => void }) {
   if (ids.length === 0) return null

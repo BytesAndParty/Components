@@ -12,9 +12,9 @@ import {
   kindLabel,
   LINEAGE,
   nodeById,
-  REBSTOCKMIETE,
   type GrapeNode,
 } from './lineage-data'
+import { RebstockCTA } from './lineage-ui'
 
 // ── Layout-Geometrie: kuratierte, organische Komposition (bewusst KEINE Zeilen) ─
 // Zwei Äste — weiße Sorten links, rote rechts —, die PIWI-Neuzüchtungen unten
@@ -211,31 +211,6 @@ function VineBackdrop() {
 
 // ── Detail-Inhalt (geteilt zwischen Panel & Liste) ──────────────────────────
 
-function RebstockCTA() {
-  const [booked, setBooked] = useState(false)
-  return (
-    <div className="rounded-xl border border-accent/40 p-4" style={{ background: 'color-mix(in oklch, var(--accent) 8%, transparent)' }}>
-      <p className="font-display text-lg font-medium text-foreground">{REBSTOCKMIETE.label}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{REBSTOCKMIETE.note}</p>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-accent-readable">{REBSTOCKMIETE.price}</span>
-        <button
-          type="button"
-          onClick={() => setBooked(b => !b)}
-          aria-pressed={booked}
-          className={cn(
-            'rounded-full px-4 py-1.5 text-xs font-semibold transition-transform duration-200 active:scale-95 motion-reduce:transition-none',
-            'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background outline-none',
-            booked ? 'border border-accent/50 text-accent' : 'bg-accent text-accent-foreground hover:brightness-110',
-          )}
-        >
-          {booked ? 'Vorgemerkt ✓' : 'Patenschaft →'}
-        </button>
-      </div>
-    </div>
-  )
-}
-
 function DetailBody({ node, onSelectParent }: { node: GrapeNode; onSelectParent: (id: string) => void }) {
   return (
     <div className="flex flex-col gap-6">
@@ -342,7 +317,7 @@ function DetailBody({ node, onSelectParent }: { node: GrapeNode; onSelectParent:
         </div>
       )}
 
-      {node.family === 'vinifera' && <RebstockCTA />}
+      {node.family === 'vinifera' && <RebstockCTA bookable />}
     </div>
   )
 }
