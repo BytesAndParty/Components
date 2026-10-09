@@ -1,9 +1,10 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { BUCHART_FONTS } from '../family-fonts'
-import { Bottle, RibbonFill, Signet, Stars } from '../buchart-kit'
+import { Bottle, RibbonFill, Signet } from '../buchart-kit'
 import { RATING, type Glass, type LabelCode } from '../buchart-data'
 import { CountUp } from '../count-up'
+import { Rating } from '@components/rating/rating'
 
 /**
  * Buch·Art — der Claim der Original-Seite („Wein erleben im Weinort Sooss“) als
@@ -109,7 +110,7 @@ export function HeroBuchArt() {
                   {f.count !== undefined ? <CountUp value={f.count} /> : f.value}
                 </span>
                 {f.unit && <span className="ml-2 text-[13px] text-[#7d6226]">{f.unit}</span>}
-                {f.stars && <Stars value={RATING.value} className="ml-3 h-4 text-[#be9f55]" />}
+                {f.stars && <Rating value={RATING.value} readOnly size={16} activeColor="#be9f55" inactiveColor="#ddd3bc" className="ml-3 align-[-2px]" />}
                 <span aria-hidden="true" className="mt-3 block max-w-[15rem] text-[13px] leading-snug text-[#5e574b]">
                   {f.label}
                 </span>

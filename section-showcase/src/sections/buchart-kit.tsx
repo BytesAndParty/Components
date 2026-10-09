@@ -302,22 +302,3 @@ export function Medallion({ initial, className, tone = 'paper' }: { initial: str
     </span>
   )
 }
-
-/** Fünf Sterne in Gold, gefüllt bis `value`. */
-export function Stars({ value, className }: { value: number; className?: string }) {
-  return (
-    <span className={`inline-flex gap-1 ${className ?? ''}`} aria-hidden="true">
-      {[0, 1, 2, 3, 4].map(i => (
-        <svg key={i} viewBox="0 0 20 20" className="h-full w-auto">
-          <path
-            d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.8l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7Z"
-            fill={i < value ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ))}
-    </span>
-  )
-}

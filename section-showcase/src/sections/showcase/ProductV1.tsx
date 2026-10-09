@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { Star, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import { Rating } from '@components/rating/rating'
 
 export interface ProductV1Props {
   onBack?: () => void
@@ -43,10 +44,8 @@ export function ProductV1({ onBack }: ProductV1Props) {
           {/* Content Side */}
           <div className="flex w-full flex-col lg:w-1/2">
             <BlurFade delay={200}>
-              <div className="text-accent flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
-                ))}
+              <div className="flex items-center gap-1">
+                <Rating value={5} readOnly size={16} />
                 <span className="text-muted-foreground ml-2 text-xs font-bold tracking-widest uppercase">
                   Excellent · 4.9/5
                 </span>

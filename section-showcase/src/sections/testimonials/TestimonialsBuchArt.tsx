@@ -1,7 +1,8 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { BUCHART_FONTS } from '../family-fonts'
-import { RunningHead, Stars } from '../buchart-kit'
+import { RunningHead } from '../buchart-kit'
 import { RATING, REVIEWS } from '../buchart-data'
+import { Rating } from '@components/rating/rating'
 
 /**
  * Buch·Art — echte Google-Rezensionen (5,0 aus 66, Stand 2026-08) als
@@ -29,7 +30,7 @@ export function TestimonialsBuchArt() {
                 <p className="font-display mt-8 text-[clamp(6rem,14vw,10rem)] leading-[0.8]">
                   {RATING.value.toFixed(1).replace('.', ',')}
                 </p>
-                <Stars value={RATING.value} className="mt-5 h-6 text-[#be9f55]" />
+                <Rating value={RATING.value} readOnly size={24} activeColor="#be9f55" inactiveColor="#ddd3bc" className="mt-5" />
                 <p className="mt-4 text-[15px] text-[#5e574b]">aus {RATING.count} Bewertungen</p>
               </div>
               <div className="mt-14 flex flex-wrap gap-x-8 gap-y-3 text-[14px]">
