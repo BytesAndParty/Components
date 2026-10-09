@@ -18,6 +18,10 @@ Komponente kennt kein Backend. Wiederverwendbar für Verkostung/Wanderung/Keller
 - **i18n**: `messages`-Prop überschreibt Strings; Monats-/Wochentagsnamen kommen aus Arks `locale`
   (DE/EN via globalen `I18nProvider`). Preis über `Intl.NumberFormat` (de-AT / en-IE, EUR).
 - **Theming**: nur semantische oklch-Tokens (`bg-card`, `text-accent`, `border-border`, …), keine Hex.
+  Auf fest gefärbten Flächen lassen sich die Tokens am Wrapper per `style` umsetzen (Beispiel:
+  `section-showcase/…/EventsBuchArt.tsx`).
+- **Container-Query**: Monat und Uhrzeit stehen ab 36 rem eigener Breite nebeneinander (`@xl`),
+  darunter übereinander — unabhängig vom Viewport, also auch in einer schmalen Seitenspalte.
 
 ## Props
 
@@ -26,7 +30,7 @@ Komponente kennt kein Backend. Wiederverwendbar für Verkostung/Wanderung/Keller
 | `slots` | `BookingSlot[]` | — | Buchbare Termine. Leeres Array → Leerzustand. |
 | `onSubmit` | `(b: { slotId, guests }) => void \| Promise<void>` | — | App-Callback beim Absenden. Async → Button zeigt Lade-/Erfolgs-State. |
 | `messages` | `Partial<BookingCalendarMessages>` | — | Einzelne UI-Strings überschreiben. |
-| `className` | `string?` | — | Zusätzliche Klassen am Wurzel-Grid. |
+| `className` | `string?` | — | Zusätzliche Klassen am äußeren `@container`-Wrapper (Layout: Breite, Abstand). |
 
 ```ts
 interface BookingSlot {
@@ -67,6 +71,7 @@ import { BookingCalendar } from '@components/booking-calendar/booking-calendar';
 | 1 | Kalender-Lib vs. handgebaut | **Ark UI DatePicker** — headless, a11y/Keyboard gratis, idiomatisch (Ark ist die Foundation). |
 | 2 | Monatsraster vs. Slot-Liste | **Monatsraster** mit deaktivierten Nicht-Slot-Tagen (User-Wahl). |
 | 3 | Backend | **Keins** — `onSubmit` ist app-seitig; die Komponente ist rein präsentational + Slot-getrieben. |
+| 4 | Zwei Spalten ab Viewport `md` vs. ab eigener Breite | **Eigene Breite** (`@container`) — in einer 4-von-12-Spalte überlappten Monat und Uhrzeit-Panel sonst. |
 
 ## Not in scope
 
