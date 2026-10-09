@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Die Rebstockmiete (Maison Editorial) — das reale Buchart-Angebot als Magazin-
@@ -58,7 +59,7 @@ export function PricingV6() {
       <div className="absolute top-1/2 right-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="left">
           <span className="block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-zinc-400 uppercase [writing-mode:vertical-rl]">
-            Rebstockmiete · Sooss · Anno 1958
+            <WaveText>Rebstockmiete · Sooss · Anno 1958</WaveText>
           </span>
         </BlurFade>
       </div>

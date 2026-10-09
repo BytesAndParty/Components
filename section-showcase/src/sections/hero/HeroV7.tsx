@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Domaine Privée — symmetric estate composition around a single arch window.
@@ -33,14 +34,14 @@ export function HeroV7() {
           <div className="pointer-events-none absolute inset-y-0 left-0 hidden items-center lg:flex">
             <BlurFade delay={900} direction="right">
               <span className="block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-[#a89e8a] uppercase [writing-mode:vertical-rl]">
-                Grüner Veltliner · Riesling · St. Laurent
+                <WaveText>Grüner Veltliner · Riesling · St. Laurent</WaveText>
               </span>
             </BlurFade>
           </div>
           <div className="pointer-events-none absolute inset-y-0 right-0 hidden items-center lg:flex">
             <BlurFade delay={900} direction="left">
               <span className="block rotate-180 text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-[#a89e8a] uppercase [writing-mode:vertical-rl]">
-                Handlese seit drei Generationen
+                <WaveText>Handlese seit drei Generationen</WaveText>
               </span>
             </BlurFade>
           </div>

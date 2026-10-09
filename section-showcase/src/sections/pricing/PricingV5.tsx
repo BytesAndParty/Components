@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Maison Editorial — das Rebstock-Abonnement als editoriale Preistafel. Drei Stufen als
@@ -50,7 +51,7 @@ export function PricingV5() {
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">
           <span className="block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-zinc-400 uppercase [writing-mode:vertical-rl]">
-            Le Club · Édition MMXXVI
+            <WaveText>Le Club · Édition MMXXVI</WaveText>
           </span>
         </BlurFade>
       </div>

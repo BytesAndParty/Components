@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Artisanal Minimal — the story as a typographic manifesto (HeroV4 line).
@@ -33,7 +34,7 @@ export function FeaturesV7() {
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">
           <span className="block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-zinc-300 uppercase [writing-mode:vertical-rl]">
-            Handwerk seit 1958 — ohne Eile
+            <WaveText>Handwerk seit 1958 — ohne Eile</WaveText>
           </span>
         </BlurFade>
       </div>

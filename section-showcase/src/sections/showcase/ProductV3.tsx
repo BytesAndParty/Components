@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Editorial Spread — an opened magazine double page. Left page is
@@ -58,7 +59,7 @@ export function ProductV3({ onBack }: ProductV3Props) {
           />
           {/* Vertical caption rail on the photo */}
           <span className="absolute bottom-8 left-6 text-[9px] font-bold tracking-[0.4em] text-white/70 uppercase [writing-mode:vertical-rl]">
-            Photographie · Hofarchiv, Tafel XII
+            <WaveText>Photographie · Hofarchiv, Tafel XII</WaveText>
           </span>
           {/* Page number, print-style */}
           <span className="absolute bottom-6 right-8 hidden text-[10px] font-medium tracking-[0.2em] text-white/60 lg:block">

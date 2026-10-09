@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { ProductV6 } from '../showcase/ProductV6'
 import { WineCardEditorial } from './cards/WineCardEditorial'
 import type { WineCardData } from './cards/types'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Maison Editorial — das Sortiment als Magazin-Register. Cream-Grund, Maison-Kopf mit
@@ -107,7 +108,7 @@ export function StoreMaison() {
       <div className="absolute top-1/2 right-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="left">
           <span className="block rotate-180 text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-zinc-400 uppercase [writing-mode:vertical-rl]">
-            Das Sortiment · MMXXVI
+            <WaveText>Das Sortiment · MMXXVI</WaveText>
           </span>
         </BlurFade>
       </div>

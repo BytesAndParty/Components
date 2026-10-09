@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { WaveText } from '@components/wave-text/wave-text'
 
 /**
  * Maison Editorial — layered magazine composition. The headline physically
@@ -16,7 +17,7 @@ export function HeroV6() {
       <div className="absolute top-1/2 left-6 hidden -translate-y-1/2 lg:block">
         <BlurFade delay={900} direction="right">
           <span className="block text-[9px] font-bold tracking-[0.45em] whitespace-nowrap text-zinc-400 uppercase [writing-mode:vertical-rl]">
-            Wachau · Österreich — Maison seit 1958
+            <WaveText>Wachau · Österreich — Maison seit 1958</WaveText>
           </span>
         </BlurFade>
       </div>
