@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { BUCHART_FONTS } from '../family-fonts'
 import { Bottle, RibbonFill, Signet, Stars } from '../buchart-kit'
 import { RATING, type Glass, type LabelCode } from '../buchart-data'
+import { CountUp } from '../count-up'
 
 /**
  * Buch·Art — der Claim der Original-Seite („Wein erleben im Weinort Sooss“) als
@@ -19,7 +20,7 @@ const SHELF: { code: LabelCode; glass: Glass; name: string; sub?: string; vintag
 
 const FACTS = [
   { value: '8–19', unit: 'Uhr', label: 'Ab Hof, täglich — auch Sonn- und Feiertag' },
-  { value: '60', unit: 'Weine', label: 'Trocken, lieblich und süß im Online-Shop' },
+  { value: '60', count: 60, unit: 'Weine', label: 'Trocken, lieblich und süß im Online-Shop' },
   { value: '5,0', unit: '', label: `aus ${RATING.count} Google-Bewertungen`, stars: true },
   { value: '12er', unit: 'Karton', label: 'Versandkostenfrei in ganz Österreich' },
 ]
@@ -104,7 +105,9 @@ export function HeroBuchArt() {
             <div key={f.label}>
               <dt className="sr-only">{f.label}</dt>
               <dd>
-                <span className="font-display text-[2.6rem] leading-none">{f.value}</span>
+                <span className="font-display text-[2.6rem] leading-none">
+                  {f.count !== undefined ? <CountUp value={f.count} /> : f.value}
+                </span>
                 {f.unit && <span className="ml-2 text-[13px] text-[#7d6226]">{f.unit}</span>}
                 {f.stars && <Stars value={RATING.value} className="ml-3 h-4 text-[#be9f55]" />}
                 <span aria-hidden="true" className="mt-3 block max-w-[15rem] text-[13px] leading-snug text-[#5e574b]">

@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+import { CountUp } from '../count-up'
 
 /**
  * Maison Editorial — layered magazine composition. The headline physically
@@ -109,12 +110,15 @@ export function HeroV6() {
         <BlurFade delay={1100} className="mt-20 lg:mt-28">
           <div className="grid grid-cols-1 gap-6 border-t border-zinc-200 pt-8 sm:grid-cols-3">
             {[
-              ['07', 'Rieden in Steillage'],
-              ['450 m', 'Über der Donau'],
-              ['18', 'Fässer je Jahrgang'],
-            ].map(([value, label]) => (
+              { value: 7, pad: 2, unit: '', label: 'Rieden in Steillage' },
+              { value: 450, pad: 0, unit: ' m', label: 'Über der Donau' },
+              { value: 18, pad: 0, unit: '', label: 'Fässer je Jahrgang' },
+            ].map(({ value, pad, unit, label }) => (
               <div key={label} className="flex items-baseline gap-4">
-                <span className="font-display text-3xl font-light text-zinc-900 italic">{value}</span>
+                <span className="font-display text-3xl font-light text-zinc-900 italic">
+                  <CountUp value={value} pad={pad} />
+                  {unit}
+                </span>
                 <span className="text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase">{label}</span>
               </div>
             ))}
