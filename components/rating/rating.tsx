@@ -73,6 +73,29 @@ export function Rating({
   const currentValue = isControlled ? controlledValue : internalValue
   const displayValue = hoverValue ?? currentValue
 
+  // Nur Anzeige: eine Grafik mit Beschriftung statt einer Gruppe deaktivierter
+  // Radio-Buttons — sonst kündigt ein Screenreader ein Eingabefeld an, das keins ist.
+  if (readOnly) {
+    return (
+      <div
+        className={className}
+        role="img"
+        aria-label={`${m.ariaLabel}: ${interpolate(m.starLabel, { current: currentValue, total: count })}`}
+        style={{ display: 'inline-flex', gap: '2px', ...style }}
+      >
+        {Array.from({ length: count }, (_, i) => (
+          <span key={i} style={{ display: 'flex', padding: '2px' }}>
+            <StarIcon
+              size={size}
+              fill={i < currentValue ? activeColor : 'none'}
+              stroke={i < currentValue ? activeColor : inactiveColor}
+            />
+          </span>
+        ))}
+      </div>
+    )
+  }
+
   const handleClick = (index: number) => {
       if (readOnly) return
       const newValue = index + 1
