@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Editorial Spread — an opened magazine double page. Left page is
@@ -142,7 +143,7 @@ export function ProductV3({ onBack }: ProductV3Props) {
       {/* Spread caption below, like a printed legend */}
       <BlurFade delay={1400} className="mx-auto mt-10 flex max-w-6xl items-center justify-between px-2">
         <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-          Aus dem Jahrgangsheft MMXXVI
+          Aus dem Jahrgangsheft <NumeralReveal numeral="MMXXVI" />
         </span>
         <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
           Doppelseite 14–15

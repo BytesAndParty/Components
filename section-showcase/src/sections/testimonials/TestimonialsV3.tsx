@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Editorial Letter — single oversized lead testimonial as a printed letter,
@@ -80,7 +81,7 @@ export function TestimonialsV3() {
             {/* Paper-stamp date in the corner */}
             <div className="absolute top-0 right-0 translate-x-2 -translate-y-1/2 rotate-3 border border-zinc-200 bg-[#fdfcf9] px-4 py-2 shadow-sm">
               <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-                Mai · MMXXVI
+                Mai · <NumeralReveal numeral="MMXXVI" />
               </span>
             </div>
           </div>

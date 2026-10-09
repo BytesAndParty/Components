@@ -1,3 +1,5 @@
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+
 /**
  * Maison Colophon — der Print-Kolophon am Ende des Magazins. Cream-Grund, übergroßer
  * italic Serif-Wortmark, Hairline-geführte Spalten und eine gesetzte Schlusszeile mit
@@ -89,7 +91,7 @@ export function FooterV5() {
 
         {/* Colophon closing line */}
         <div className="mt-20 flex flex-col gap-3 border-t border-zinc-200 pt-8 text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase sm:flex-row sm:items-center sm:justify-between">
-          <span>Gesetzt &amp; gefüllt · Anno MMXXVI</span>
+          <span>Gesetzt &amp; gefüllt · Anno <NumeralReveal numeral="MMXXVI" /></span>
           <div className="flex gap-5">
             <a href="/impressum" className="inline-flex min-h-11 items-center hover:text-zinc-900">Impressum</a>
             <a href="/datenschutz" className="inline-flex min-h-11 items-center hover:text-zinc-900">Datenschutz</a>

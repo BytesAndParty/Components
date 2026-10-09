@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Editorial — die Chronik als Magazin-Register. Hairline-getrennte Einträge,
@@ -54,7 +55,7 @@ export function TimelineV6() {
         {/* Header */}
         <div className="mb-16 max-w-3xl lg:mb-24">
           <BlurFade delay={100} direction="up">
-            <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Seit MCMLVIII</span>
+            <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">Seit <NumeralReveal numeral="MCMLVIII" /></span>
           </BlurFade>
           <BlurFade delay={250} direction="up">
             <h2 className="font-display mt-6 text-[clamp(3rem,7.5vw,6.5rem)] leading-[0.88] font-light tracking-tighter text-zinc-900">
@@ -71,7 +72,7 @@ export function TimelineV6() {
             <BlurFade key={entry.year} delay={400 + i * 150} direction="up">
               <article className="grid grid-cols-1 gap-6 border-t border-zinc-200 py-10 lg:grid-cols-[0.8fr_2fr] lg:gap-16 lg:py-14">
                 <div className="flex items-start gap-4">
-                  <span className="mt-3 text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">{entry.roman}</span>
+                  <span className="mt-3 text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase"><NumeralReveal numeral={entry.roman} /></span>
                   <span className="font-display text-[clamp(3rem,6vw,5rem)] leading-[0.8] font-light tracking-tighter text-zinc-900 italic">
                     {entry.year}
                   </span>

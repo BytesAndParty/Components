@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Editorial — ein einzelner Wein als geschichteter Magazin-Held. Aus HeroV6/
@@ -61,7 +62,7 @@ export function ProductV6({ onBack }: ProductV6Props) {
               <span className="font-display text-sm font-light text-zinc-400 italic">
                 Streiflicht, Kellermauer
               </span>
-              <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">Tafel XII</span>
+              <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">Tafel <NumeralReveal numeral="XII" /></span>
             </BlurFade>
           </div>
 

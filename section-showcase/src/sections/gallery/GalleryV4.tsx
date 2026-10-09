@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Nachtkeller Collage — true overlapping collage on a theme-adaptive
@@ -61,7 +62,7 @@ export function GalleryV4() {
               imgClassName="brightness-90"
             />
             <figcaption className="mt-4 flex items-baseline justify-between">
-              <span className="font-display text-sm font-light text-muted-foreground italic">Das Archiv, Reihe III</span>
+              <span className="font-display text-sm font-light text-muted-foreground italic">Das Archiv, Reihe <NumeralReveal numeral="III" /></span>
               <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground/70 uppercase">No. 01</span>
             </figcaption>
           </figure>

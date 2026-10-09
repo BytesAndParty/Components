@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Le Cercle — Domaine Privée membership tiers as an engraved ledger:
@@ -90,7 +91,7 @@ export function PricingV4() {
                     tier.featured ? 'text-[#d9b98f]' : 'text-[#5c2331]'
                   }`}
                 >
-                  {tier.numeral}
+                  <NumeralReveal numeral={tier.numeral} />
                 </span>
                 <h3
                   className={`font-display mt-4 text-3xl font-light tracking-tight ${

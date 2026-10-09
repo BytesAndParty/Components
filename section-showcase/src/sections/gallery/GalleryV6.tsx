@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Spread — gallery as a layered magazine double page, derived from
@@ -38,7 +39,7 @@ export function GalleryV6() {
           <div>
             <BlurFade delay={100} direction="up">
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-                Aus dem Lesejahr · MMXXV
+                Aus dem Lesejahr · <NumeralReveal numeral="MMXXV" />
               </span>
             </BlurFade>
             <BlurFade delay={250} direction="up">
@@ -131,7 +132,7 @@ export function GalleryV6() {
         <BlurFade delay={1200}>
           <div className="mt-20 flex items-baseline justify-between border-t border-zinc-200 pt-8 lg:mt-28">
             <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-              Tafeln I — III
+              Tafeln <NumeralReveal numeral="I" /> — <NumeralReveal numeral="III" />
             </span>
             <a
               href="/archiv"

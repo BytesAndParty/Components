@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Editorial — das Rebstock-Abonnement als editoriale Preistafel. Drei Stufen als
@@ -89,7 +90,7 @@ export function PricingV5() {
                 <div>
                   <div className="flex items-baseline justify-between border-b border-zinc-100 pb-5">
                     <span className="font-display text-2xl font-light tracking-tight text-zinc-900">{tier.name}</span>
-                    <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">{tier.roman}</span>
+                    <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase"><NumeralReveal numeral={tier.roman} /></span>
                   </div>
 
                   <span className="mt-5 block text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase italic">

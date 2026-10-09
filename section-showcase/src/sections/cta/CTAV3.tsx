@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Die Einladung — closing page of a lookbook. Full-bleed photography,
@@ -79,7 +80,7 @@ export function CTAV3() {
               Kellergasse 12 · Dürnstein an der Donau
             </span>
             <span className="font-display text-sm font-light text-white/60 italic">
-              Sankt-Lorenz-Nacht, 22. August MMXXVI
+              Sankt-Lorenz-Nacht, 22. August <NumeralReveal numeral="MMXXVI" />
             </span>
           </div>
         </BlurFade>

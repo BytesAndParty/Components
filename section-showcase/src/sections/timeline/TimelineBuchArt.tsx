@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { BUCHART_FONTS } from '../family-fonts'
 import { RibbonFill, RunningHead } from '../buchart-kit'
@@ -90,7 +91,7 @@ export function TimelineBuchArt() {
                 <li key={s.title} className="relative pb-12 last:pb-0">
                   <BlurFade delay={80} direction="left">
                     <span aria-hidden="true" className="font-display absolute top-0 -left-16 flex h-10 w-10 items-center justify-center rounded-full border border-[#be9f55] bg-[#f7f3e8] text-[1rem] text-[#7d6226]">
-                      {ROMAN[i]}
+                      <NumeralReveal numeral={ROMAN[i]} />
                     </span>
                     <h3 className="font-display text-[1.65rem] leading-tight">{s.title}</h3>
                     <p className="mt-2 max-w-lg text-[15px] leading-[1.7] text-[#5e574b]">{s.text}</p>

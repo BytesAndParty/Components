@@ -1,3 +1,5 @@
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+
 /**
  * Editorial — Kopf einer Zeitungs-Titelseite (Editorial-Spread-Linie von
  * ProductV3/StoreEditorial): Folio-Zeile oben, zentrierter Serif-Wortmark
@@ -19,7 +21,7 @@ export function NavV6() {
     <nav aria-label="Hauptnavigation" className="bg-[#efece5] px-6 pt-7 lg:px-12">
       {/* Folio row */}
       <div className="flex items-baseline justify-between text-[9px] font-bold tracking-[0.35em] text-zinc-400 uppercase">
-        <span>Jahrgangsheft MMXXVI</span>
+        <span>Jahrgangsheft <NumeralReveal numeral="MMXXVI" /></span>
         <span className="hidden sm:block">Wachau · Loiben</span>
         <span>№ 12</span>
       </div>

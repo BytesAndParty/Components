@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Nachtchronik — cinematic heritage as film scenes: each era is a wide,
@@ -86,7 +87,7 @@ export function TimelineV5() {
                     </span>
                     {/* Frame counter — top right like a film marker */}
                     <span className="absolute top-4 right-6 text-[9px] font-bold tracking-[0.35em] text-[#c9a25e]/70 uppercase lg:right-10">
-                      Rolle {['I', 'II', 'III', 'IV'][i]} / IV
+                      Rolle <NumeralReveal numeral={['I', 'II', 'III', 'IV'][i]} /> / <NumeralReveal numeral="IV" />
                     </span>
                   </div>
 

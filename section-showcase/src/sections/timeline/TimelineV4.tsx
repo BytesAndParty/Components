@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Die Chronik — Domaine Privée heritage as an engraved family register:
@@ -128,7 +129,7 @@ export function TimelineV4() {
                           className="aspect-[3/4] w-full rounded-[50%]"
                         />
                         <span className="mt-3 block text-center text-[9px] font-bold tracking-[0.3em] text-[#a89e8a] uppercase">
-                          Tafel {['I', 'II', 'III', 'IV', 'V'][i]}
+                          Tafel <NumeralReveal numeral={['I', 'II', 'III', 'IV', 'V'][i]} />
                         </span>
                       </div>
                     </BlurFade>

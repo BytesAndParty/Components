@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@components/lib/utils'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 import { BA, LABEL, type Glass, type LabelCode } from './buchart-data'
 
 /**
@@ -279,7 +280,7 @@ export function RunningHead({ chapter, title, tone = 'paper' }: { chapter: strin
     <div className={`flex items-end justify-between gap-6 border-b pb-3 text-[10.5px] font-medium tracking-[0.24em] uppercase ${dark ? 'border-[#be9f55]/45 text-[#d7c69f]' : 'border-[#be9f55]/70 text-[#7d6226]'}`}>
       <span>Buchart 58</span>
       <span className="text-right">
-        Kapitel {chapter}
+        Kapitel <NumeralReveal numeral={chapter} />
         <span aria-hidden="true" className="mx-2.5 opacity-60">·</span>
         {title}
       </span>

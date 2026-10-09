@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Menu, ShoppingBag, X } from 'lucide-react'
 import { useDisclosureDismiss } from '@components/lib/use-disclosure-dismiss'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Masthead — Kopfzeile als Magazin-Impressum (Maison-Editorial-Linie):
@@ -36,7 +37,7 @@ export function NavV3() {
             Seit 1958
           </span>
           <span className="text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-            Édition MMXXVI
+            Édition <NumeralReveal numeral="MMXXVI" />
           </span>
         </div>
 

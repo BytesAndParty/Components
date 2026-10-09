@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Domaine Privée — symmetric estate composition around a single arch window.
@@ -53,7 +54,7 @@ export function HeroV7() {
                 shineColor="oklch(0.78 0.08 85 / 0.5)"
                 className="font-display text-lg font-light text-[#8a8070]! italic"
               >
-                Édition Automne MMXXVI
+                Édition Automne <NumeralReveal numeral="MMXXVI" />
               </ShinyText>
             </span>
             <h1 className="font-display text-[clamp(3.25rem,9vw,7.5rem)] leading-[0.92] font-light tracking-tight text-[#221b16]">

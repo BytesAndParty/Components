@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Die Rieden — three terroirs as arch plates (Domaine Privée line).
@@ -81,7 +82,7 @@ export function FeaturesV5() {
                     aria-hidden="true"
                     className="font-display absolute -bottom-5 left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full border border-[#ddd5c4] bg-[#f6f3ec] text-base font-light text-[#5c2331] italic"
                   >
-                    {riede.numeral}
+                    <NumeralReveal numeral={riede.numeral} />
                   </span>
                 </div>
 

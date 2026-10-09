@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Le Colophon — Domaine Privée footer on deep bordeaux ink: oversized
@@ -97,7 +98,7 @@ export function FooterV4() {
         <BlurFade delay={750}>
           <div className="mt-20 flex flex-col items-center gap-5 border-t border-[#efe6da]/15 pt-8 text-center sm:flex-row sm:justify-between sm:text-left">
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#c4a5ab] uppercase">
-              © MMXXVI Domaine Privée
+              © <NumeralReveal numeral="MMXXVI" /> Domaine Privée
             </span>
             <div className="flex gap-8">
               {['Impressum', 'Datenschutz', 'AGB'].map(label => (

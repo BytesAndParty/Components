@@ -1,3 +1,5 @@
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+
 /**
  * Cellar Minimal — dark cellar feel, oversized wordmark, single-row meta.
  * Maximum whitespace; brand carries the section.
@@ -9,7 +11,7 @@ export function FooterV3() {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-              Wachau · MMXXVI
+              Wachau · <NumeralReveal numeral="MMXXVI" />
             </span>
             <p className="font-display max-w-md text-2xl leading-snug font-light italic text-zinc-300">
               „Der Wein erinnert sich an alles — den Hang, das Jahr, die Hand,

@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ProductNachtblau } from '../showcase/ProductNachtblau'
 import { SAMPLE_WINES } from './cards/sample-wines'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Nachtblau — das Sortiment ohne Kachelraster. Eine Position bekommt den
@@ -28,7 +29,7 @@ export function StoreNachtblau() {
       <div className="px-6 py-20 sm:px-10 sm:py-28 lg:px-16">
         <BlurFade delay={0} direction="up">
           <span className="block text-[10px] font-semibold tracking-[0.4em] text-[#d9d9d9] uppercase">
-            Der Weinclub — Ausgabe MMXXVI
+            Der Weinclub — Ausgabe <NumeralReveal numeral="MMXXVI" />
           </span>
         </BlurFade>
         <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">

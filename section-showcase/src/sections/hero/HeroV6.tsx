@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Editorial — layered magazine composition. The headline physically
@@ -71,7 +72,7 @@ export function HeroV6() {
           <div className="relative z-10 order-first mt-0 mb-12 flex flex-col gap-10 lg:absolute lg:top-[12%] lg:left-0 lg:order-0 lg:mt-0 lg:mb-0 lg:max-w-[58%]">
             <BlurFade delay={150} direction="up">
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-                Domaine Buchart · Édition MMXXVI
+                Domaine Buchart · Édition <NumeralReveal numeral="MMXXVI" />
               </span>
             </BlurFade>
 

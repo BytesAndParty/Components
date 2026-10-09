@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Particles } from '@components/particles/particles'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Nocturne — features as three cellar scenes (cinematic line of HeroV8 /
@@ -109,7 +110,7 @@ export function FeaturesV8() {
                   />
                   {/* Lower-third caption */}
                   <span className="absolute bottom-4 left-4 text-[9px] font-bold tracking-[0.3em] text-[#e8d5ae]/80 uppercase">
-                    Szene {scene.numeral} · {scene.data}
+                    Szene <NumeralReveal numeral={scene.numeral} /> · {scene.data}
                   </span>
                 </div>
 
@@ -131,7 +132,7 @@ export function FeaturesV8() {
               Fortsetzung: der Nachtverkauf, ein Stockwerk tiefer.
             </span>
             <span className="text-[10px] font-bold tracking-[0.3em] text-[#6b5f50] uppercase">
-              Kap. II / IV
+              Kap. <NumeralReveal numeral="II" /> / <NumeralReveal numeral="IV" />
             </span>
           </div>
         </BlurFade>

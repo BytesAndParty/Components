@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Das Triptychon — Domaine Privée gallery as an altar of three arch
@@ -75,7 +76,7 @@ export function GalleryV5() {
                   </div>
                   <figcaption className="mt-8">
                     <span className="font-display block text-lg font-light text-[#5c2331] italic">
-                      {plate.numeral}
+                      <NumeralReveal numeral={plate.numeral} />
                     </span>
                     <span className="mt-2 block text-[11px] font-bold tracking-[0.3em] text-[#221b16] uppercase">
                       {plate.title}

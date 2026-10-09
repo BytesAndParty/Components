@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Die Rebstockmiete (Maison Editorial) — das reale Buchart-Angebot als Magazin-
@@ -165,7 +166,7 @@ export function PricingV6() {
               {INCLUDED.map((item) => (
                 <div key={item.label} className="flex flex-col gap-2">
                   <span className="font-display text-4xl font-light tracking-tighter text-zinc-900 italic">
-                    {item.n}
+                    <NumeralReveal numeral={item.n} />
                   </span>
                   <span className="text-xs leading-relaxed font-light text-zinc-500">{item.label}</span>
                 </div>

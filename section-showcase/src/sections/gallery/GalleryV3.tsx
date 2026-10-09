@@ -1,4 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Editorial Plates — magazine-style index of photographic plates. Each
@@ -75,7 +76,7 @@ export function GalleryV3() {
           <div className="flex flex-col gap-6">
             <BlurFade delay={100}>
               <span className="text-[11px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-                Tafelband · I–IV
+                Tafelband · <NumeralReveal numeral="I" />–<NumeralReveal numeral="IV" />
               </span>
             </BlurFade>
             <BlurFade delay={200}>
@@ -109,7 +110,7 @@ export function GalleryV3() {
                 {/* Plate number header */}
                 <div className="flex items-baseline justify-between border-b border-zinc-200 pb-3">
                   <span className="font-display text-2xl leading-none font-light text-zinc-400 italic">
-                    Tafel {plate.numeral}
+                    Tafel <NumeralReveal numeral={plate.numeral} />
                   </span>
                   <span className="text-[10px] font-bold tracking-[0.25em] text-zinc-400 uppercase">
                     {plate.season}

@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 
 /**
  * Maison Finale — CTA as the closing page of the magazine, in the layered
@@ -79,7 +80,7 @@ export function CTAV5() {
         <BlurFade delay={1100}>
           <div className="mt-20 grid grid-cols-1 gap-6 border-t border-zinc-200 pt-8 sm:grid-cols-3 lg:mt-28">
             <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-400 uppercase">
-              Domaine Buchart · Édition MMXXVI
+              Domaine Buchart · Édition <NumeralReveal numeral="MMXXVI" />
             </span>
             <span className="font-display text-center text-sm font-light text-zinc-400 italic">
               Ende des Kapitels
