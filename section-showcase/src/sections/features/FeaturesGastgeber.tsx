@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { GASTGEBER_FONTS } from '../family-fonts'
+import { GlassStamp as KitGlassStamp } from '../gastgeber-kit'
 
 /**
  * Gastgeber — die Story-Section der Familie: Weingut, Verkostung und Gästehaus
@@ -62,27 +63,9 @@ function GrapeStamp({ className }: StampProps) {
   )
 }
 
-/** Stempel-Glas für „Verkostung“. */
+/** Glas aus dem Familien-Kit, mit dem dünneren Strich dieser Dreier-Serie. */
 function GlassStamp({ className }: StampProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.05"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <g transform="rotate(-2.5 12 12)">
-        <path d="M7.9 3.5c2.8-.35 5.6-.3 8.3.1" />
-        <path d="M8 3.6c-.35 4.7 1.1 8 3.9 8.3 2.9-.25 4.45-3.6 4.3-8.3" />
-        <path d="M11.9 11.9c.12 2.2.12 4.4 0 6.6" />
-        <path d="M8.4 18.9c2.5-.55 5.1-.5 7.4-.05" />
-      </g>
-    </svg>
-  )
+  return <KitGlassStamp className={className} strokeWidth={1.05} />
 }
 
 /** Stempel-Haus für „Gästehaus“. */

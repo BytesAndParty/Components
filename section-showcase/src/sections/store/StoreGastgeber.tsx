@@ -4,6 +4,7 @@ import { RevealImage } from '@components/reveal-image/reveal-image'
 import { GASTGEBER_FONTS } from '../family-fonts'
 import { ProductGastgeber } from '../showcase/ProductGastgeber'
 import { SAMPLE_WINES } from './cards/sample-wines'
+import { CrateStamp, StampFrame } from '../gastgeber-kit'
 
 /**
  * Gastgeber — das Sortiment als symmetrisches Register auf Creme. Oben stehen
@@ -16,55 +17,6 @@ import { SAMPLE_WINES } from './cards/sample-wines'
 
 /** Einheitliche Bildstimmung — alle Motive der Familie kommen aus derselben Welt. */
 const WARM = 'sepia-[.18] saturate-90 contrast-[1.02]'
-
-/**
- * Handgezeichneter Stempelrahmen — dieselbe Linie wie im Hero, damit die
- * Buttons der Familie überall aus derselben Hand kommen.
- */
-function StampFrame() {
-  return (
-    <svg
-      viewBox="0 0 240 64"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-100"
-    >
-      <path
-        d="M6.5 7.5C62 3.8 152 4.6 233 7.2c2.8 16.4 2.4 36.4.9 49.4C160 60 68 59.4 6.8 56.9 3.6 40.2 4.4 21.6 6.5 7.5Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  )
-}
-
-/** Stempel-Kiste für „Ab Hof“ — Flaschenhälse über der handgezeichneten Steige. */
-function CrateStamp({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.15"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <g transform="rotate(1.5 12 12)">
-        <path d="M8.2 3.4c-.2 1.7-.2 3.3-.1 4.7" />
-        <path d="M12 2.9c-.1 1.9-.1 3.7 0 5.2" />
-        <path d="M15.8 3.6c.12 1.5.12 3 0 4.5" />
-        <path d="M4.4 8.4c5.2-.45 10.4-.4 15.4.1.3 3.9.25 8-.05 11.9-5.2.4-10.6.35-15.6 0-.3-4-.2-8 .25-12Z" />
-        <path d="M4.6 13.2c5.1-.35 10.2-.3 15 .05" />
-      </g>
-    </svg>
-  )
-}
 
 /** Die drei Geschäftsbereiche — gleichrangig, gleiche Fläche, gleiches Gewicht. */
 const BEREICHE = [
