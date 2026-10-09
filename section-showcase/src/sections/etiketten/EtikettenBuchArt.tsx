@@ -1,6 +1,7 @@
-import { useEffect, useId, useState, type ChangeEvent } from 'react'
+import { useEffect, useId, useState, type ChangeEvent, type CSSProperties } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { Check, ImagePlus, Minus, Plus } from 'lucide-react'
+import { Check, ImagePlus, Mail, Minus, Plus, Printer, Send, Truck } from 'lucide-react'
+import { ProcessSteps } from '@components/process-steps/process-steps'
 import { BUCHART_FONTS } from '../family-fonts'
 import { Bottle, RibbonFill, RunningHead, Signet } from '../buchart-kit'
 import { formatEuro } from '../buchart-data'
@@ -47,12 +48,16 @@ const FORMATS = [
   { id: '300', label: 'Magnum 3 Liter', from: 45 },
 ] as const
 
+/** „So einfach geht's" der Original-Seite, gekürzt auf Kapitälchen-Länge. */
 const STEPS = [
-  'Etikett wählen und Ihre Angaben unverbindlich senden.',
-  'Wir entwerfen Muster und schicken sie Ihnen per E-Mail.',
-  'Erst nach Ihrem OK werden die Etiketten gedruckt.',
-  'Abholung in Sooss oder Versand zu Ihnen.',
+  { icon: <Send />, label: 'Angaben unverbindlich senden' },
+  { icon: <Mail />, label: 'Muster kommen per E-Mail' },
+  { icon: <Printer />, label: 'Gedruckt erst nach Ihrem OK' },
+  { icon: <Truck />, label: 'Abholen in Sooss oder Versand' },
 ]
+
+/** ProcessSteps folgt den Theme-Tokens — hier auf die feste Papierfläche gesetzt. */
+const STEPS_TOKENS = { '--muted-foreground': '#5e574b', '--border': '#ddd3bc' } as CSSProperties
 
 const DESIGN_FEE = 3
 const MAX_BYTES = 5 * 1024 * 1024
@@ -241,16 +246,6 @@ export function EtikettenBuchArt() {
               </div>
             </div>
 
-            <ol className="mt-14 grid gap-6 border-t border-[#ddd3bc] pt-8 sm:grid-cols-2">
-              {STEPS.map((s, i) => (
-                <li key={s} className="flex gap-4">
-                  <span aria-hidden="true" className="font-display flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#be9f55] text-[1rem] text-[#7d6226]">
-                    {i + 1}
-                  </span>
-                  <span className="pt-1.5 text-[14.5px] leading-snug">{s}</span>
-                </li>
-              ))}
-            </ol>
           </div>
 
           {/* Das Muster */}
@@ -359,6 +354,11 @@ export function EtikettenBuchArt() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-24">
+          <p className={LEGEND}>So einfach geht&apos;s</p>
+          <ProcessSteps variant="ledger" steps={STEPS} className="mt-8" style={STEPS_TOKENS} />
         </div>
       </div>
     </section>
