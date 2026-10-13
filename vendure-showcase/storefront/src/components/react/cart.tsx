@@ -54,65 +54,69 @@ function CartInner() {
           {lines.map((line) => (
             <div
               key={line.id}
-              className="bg-card border-border flex items-center gap-6 rounded-xl border p-4"
+              className="bg-card border-border flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-center sm:gap-6"
             >
-              <div
-                className="bg-muted flex h-16 w-16 shrink-0 items-center justify-center rounded-lg text-3xl"
-                aria-hidden="true"
-              >
-                🍷
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <a
-                  href={wineHref(line.productVariant.product.slug)}
-                  className="hover:text-accent block truncate font-bold transition-colors"
+              <div className="flex min-w-0 flex-1 items-center gap-4">
+                <div
+                  className="bg-muted flex h-16 w-16 shrink-0 items-center justify-center rounded-lg text-3xl"
+                  aria-hidden="true"
                 >
-                  {line.productVariant.name}
-                </a>
-                <p className="text-muted-foreground text-sm">
-                  {formatPrice(line.productVariant.priceWithTax)} {t.cartPerBottle}
-                </p>
+                  🍷
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <a
+                    href={wineHref(line.productVariant.product.slug)}
+                    className="hover:text-accent block truncate font-bold transition-colors"
+                  >
+                    {line.productVariant.name}
+                  </a>
+                  <p className="text-muted-foreground text-sm">
+                    {formatPrice(line.productVariant.priceWithTax)} {t.cartPerBottle}
+                  </p>
+                </div>
               </div>
 
-              <div className="border-border bg-muted/50 flex items-center gap-1 rounded-lg border p-1">
+              <div className="flex items-center justify-between gap-4 sm:gap-6">
+                <div className="border-border bg-muted/50 flex items-center gap-1 rounded-lg border p-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      line.quantity <= 1
+                        ? removeLine(line.id)
+                        : adjustLine({ lineId: line.id, quantity: line.quantity - 1 })
+                    }
+                    className="hover:bg-background grid h-8 w-8 place-items-center rounded transition-colors"
+                    aria-label={t.cartLineDecrement}
+                  >
+                    <Minus size={14} aria-hidden="true" />
+                  </button>
+                  <span className="w-6 text-center text-sm font-medium tabular-nums">
+                    {line.quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => adjustLine({ lineId: line.id, quantity: line.quantity + 1 })}
+                    className="hover:bg-background grid h-8 w-8 place-items-center rounded transition-colors"
+                    aria-label={t.cartLineIncrement}
+                  >
+                    <Plus size={14} aria-hidden="true" />
+                  </button>
+                </div>
+
+                <div className="w-24 text-right font-bold tabular-nums">
+                  {formatPrice(line.linePriceWithTax)}
+                </div>
+
                 <button
                   type="button"
-                  onClick={() =>
-                    line.quantity <= 1
-                      ? removeLine(line.id)
-                      : adjustLine({ lineId: line.id, quantity: line.quantity - 1 })
-                  }
-                  className="hover:bg-background grid h-8 w-8 place-items-center rounded transition-colors"
-                  aria-label={t.cartLineDecrement}
+                  onClick={() => removeLine(line.id)}
+                  className="text-muted-foreground hover:text-destructive p-2 transition-colors"
+                  aria-label={t.cartLineRemove}
                 >
-                  <Minus size={14} aria-hidden="true" />
-                </button>
-                <span className="w-6 text-center text-sm font-medium tabular-nums">
-                  {line.quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => adjustLine({ lineId: line.id, quantity: line.quantity + 1 })}
-                  className="hover:bg-background grid h-8 w-8 place-items-center rounded transition-colors"
-                  aria-label={t.cartLineIncrement}
-                >
-                  <Plus size={14} aria-hidden="true" />
+                  <Trash2 size={16} aria-hidden="true" />
                 </button>
               </div>
-
-              <div className="w-24 text-right font-bold tabular-nums">
-                {formatPrice(line.linePriceWithTax)}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => removeLine(line.id)}
-                className="text-muted-foreground hover:text-destructive p-2 transition-colors"
-                aria-label={t.cartLineRemove}
-              >
-                <Trash2 size={16} aria-hidden="true" />
-              </button>
             </div>
           ))}
         </div>

@@ -24,6 +24,7 @@ const messages = {
     themeToggle: 'Theme wechseln',
     localeToggle: 'Sprache wechseln',
     accentToggle: 'Akzentfarbe wechseln',
+    menuToggle: 'Menü öffnen/schließen',
 
     // Store page
     storeTitle: 'Unsere Weine',
@@ -214,6 +215,7 @@ const messages = {
     themeToggle: 'Toggle theme',
     localeToggle: 'Toggle language',
     accentToggle: 'Change accent colour',
+    menuToggle: 'Toggle menu',
 
     storeTitle: 'Our Wines',
     storeSubtitle: 'Hand-picked from Austria’s finest vineyards.',
