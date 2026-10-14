@@ -18,7 +18,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 - **Export**: PNG and PDF at `exportDpi` (default 300), rendered in exact trim size. PDF is gated behind `enablePdfExport`; both downloads also fire `onExport` for server-side upload.
 - **Fullscreen mode** via CSS (`fixed inset-0`) — the browser Fullscreen API restricts focus and breaks Fabric's hidden textarea (see STATUS.md #23). Escape exits. The shell always renders into the same portal container, which only moves in the DOM, so the Fabric canvas survives the toggle (STATUS.md #27).
 - **Autosave** to localStorage (debounced 1 s); a failed write (quota, blocked storage) shows a warning in the header instead of failing silently.
-- **Templates**: three rudimentary starting layouts (Classic / Modern / Minimal, `templates/templates.ts`) in a dedicated panel tab. Applying one replaces the canvas in a single undo-able step (`bridge.applyTemplate`); wine-field elements carry the same `_fieldKey` metadata as manual inserts, so they stay in sync with `initialWineFields` afterwards. Fields without a value are left out of the template.
+- **Templates**: five starting layouts (Classic / Modern / Minimal / Rustic / Bold, `templates/templates.ts`; Rustic and Bold also place alcohol and volume at the foot) in a dedicated panel tab. Applying one replaces the canvas in a single undo-able step (`bridge.applyTemplate`); wine-field elements carry the same `_fieldKey` metadata as manual inserts, so they stay in sync with `initialWineFields` afterwards. Fields without a value are left out of the template.
 
 ## How It Works
 

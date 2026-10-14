@@ -71,6 +71,8 @@ export type CellarCanvasMessages = {
   templateClassicName:    string
   templateModernName:     string
   templateMinimalName:    string
+  templateRusticName:     string
+  templateBoldName:       string
   templatesHint:          string
   templatesConfirmReplace: string
 
@@ -228,6 +230,8 @@ export const MESSAGES = {
     templateClassicName:    'Klassisch',
     templateModernName:     'Modern',
     templateMinimalName:    'Minimal',
+    templateRusticName:     'Rustikal',
+    templateBoldName:       'Kräftig',
     templatesHint:          'Ersetzt den aktuellen Inhalt der Leinwand mit einem vorgefertigten Layout — Weindaten werden automatisch eingesetzt.',
     templatesConfirmReplace: 'Aktuellen Entwurf durch die Vorlage ersetzen? Diese Aktion lässt sich mit Cmd+Z rückgängig machen.',
 
@@ -375,6 +379,8 @@ export const MESSAGES = {
     templateClassicName:    'Classic',
     templateModernName:     'Modern',
     templateMinimalName:    'Minimal',
+    templateRusticName:     'Rustic',
+    templateBoldName:       'Bold',
     templatesHint:          'Replaces the current canvas content with a pre-built layout — wine data is filled in automatically.',
     templatesConfirmReplace: 'Replace the current draft with this template? This can be undone with Cmd+Z.',
 

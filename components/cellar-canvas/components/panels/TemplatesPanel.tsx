@@ -2,7 +2,7 @@ import { type RefObject } from 'react'
 import { LayoutTemplate } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { useCellarCanvasMessages } from '../../messages-context'
-import { WINE_LABEL_TEMPLATES, type TemplateContext } from '../../templates/templates'
+import { WINE_LABEL_TEMPLATES, type TemplateContext, type WineLabelTemplate } from '../../templates/templates'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { WineFieldValues } from '../../CellarCanvas'
 import type { CellarCanvasMessages } from '../../messages'
@@ -16,11 +16,13 @@ export interface TemplatesPanelProps {
 function templateName(m: CellarCanvasMessages, id: string): string {
   if (id === 'classic') return m.templateClassicName
   if (id === 'modern')  return m.templateModernName
+  if (id === 'rustic')  return m.templateRusticName
+  if (id === 'bold')    return m.templateBoldName
   return m.templateMinimalName
 }
 
 /**
- * Three rudimentary starting layouts (Classic / Modern / Minimal). Applying
+ * Five rudimentary starting layouts (Classic / Modern / Minimal / Rustic / Bold). Applying
  * one replaces the current canvas content in a single undo-able step — see
  * `FabricBridge.applyTemplate`. Wine-field text comes from the currently
  * selected wine and keeps updating afterwards through the same
@@ -29,7 +31,7 @@ function templateName(m: CellarCanvasMessages, id: string): string {
 export function TemplatesPanel({ bridge, wineFields, hasObjects }: TemplatesPanelProps) {
   const m = useCellarCanvasMessages()
 
-  function apply(id: 'classic' | 'modern' | 'minimal') {
+  function apply(id: WineLabelTemplate['id']) {
     const b = bridge.current
     if (!b) return
 

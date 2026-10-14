@@ -26,7 +26,7 @@ export interface TemplateContext {
 }
 
 export interface WineLabelTemplate {
-  id:   'classic' | 'modern' | 'minimal'
+  id:   'classic' | 'modern' | 'minimal' | 'rustic' | 'bold'
   build: (ctx: TemplateContext) => fabric.Object[]
 }
 
@@ -38,7 +38,13 @@ interface TextOptions {
   fill?:      string
   widthMm?:   number
   leftMm?:    number
+  fontFamily?: string
+  fontWeight?: 'normal' | 'bold'
+  /** Letter spacing in Fabric units (1/1000 em). */
+  charSpacing?: number
 }
+
+const SERIF = 'Georgia, serif'
 
 /** Full-label-width Textbox with `textAlign` doing the centring — no manual text-width math needed. */
 function labelText(ctx: TemplateContext, yMm: number, text: string, opts: TextOptions): fabric.Textbox {
@@ -52,7 +58,9 @@ function labelText(ctx: TemplateContext, yMm: number, text: string, opts: TextOp
     top: bleedPx + mmToPx(yMm),
     width: mmToPx(boxWidthMm),
     fontSize: opts.fontSize,
-    fontFamily: 'sans-serif',
+    fontFamily: opts.fontFamily ?? 'sans-serif',
+    fontWeight: opts.fontWeight ?? 'normal',
+    charSpacing: opts.charSpacing ?? 0,
     fill: opts.fill ?? '#1a1a1a',
     textAlign: opts.align ?? 'left',
     // Wine-field text is bound to the wine data, not edited on the canvas.
@@ -157,8 +165,113 @@ function buildMinimal(ctx: TemplateContext): fabric.Object[] {
   ].filter((obj) => obj !== null)
 }
 
+/** Unfilled rectangle inset `insetMm` from the label edge — the rustic double frame. */
+function frame(ctx: TemplateContext, insetMm: number, strokeWidth: number, color: string): fabric.Rect {
+  const { bleedPx, widthMm, heightMm } = ctx
+  const rect = new fabric.Rect({
+    originX: 'left',
+    originY: 'top',
+    left: bleedPx + mmToPx(insetMm),
+    top: bleedPx + mmToPx(insetMm),
+    width: mmToPx(widthMm - 2 * insetMm),
+    height: mmToPx(heightMm - 2 * insetMm),
+    fill: 'transparent',
+    stroke: color,
+    strokeWidth,
+    // Without this the stroke grows the box with every resize.
+    strokeUniform: true,
+    // Only the line itself is clickable; a click into the empty label
+    // would otherwise select the frame instead of clearing the selection.
+    perPixelTargetFind: true,
+    ...CORNER_STYLE,
+  })
+  return attach(rect, { _layerName: 'Rahmen', _type: 'rect' })
+}
+
+/** Full-width colour block across the top `heightShare` of the label — the bold layout's header. */
+function colorBlock(ctx: TemplateContext, heightShare: number, color: string): fabric.Rect {
+  const { bleedPx, widthMm, heightMm } = ctx
+  const rect = new fabric.Rect({
+    originX: 'left',
+    originY: 'top',
+    left: bleedPx,
+    top: bleedPx,
+    width: mmToPx(widthMm),
+    height: mmToPx(heightMm * heightShare),
+    fill: color,
+    ...CORNER_STYLE,
+  })
+  return attach(rect, { _layerName: 'Farbblock', _type: 'rect' })
+}
+
+/** Alcohol left, volume right, small at the foot — two mandatory EU fields. */
+function footer(ctx: TemplateContext, yMm: number, opts: Omit<TextOptions, 'fieldKey' | 'align' | 'leftMm' | 'widthMm'>) {
+  const half = ctx.widthMm / 2 - 10
+  return [
+    fieldText(ctx, yMm, 'alcoholPercent', { ...opts, align: 'left', leftMm: 10, widthMm: half, layerName: 'Alkoholgehalt' }),
+    fieldText(ctx, yMm, 'volumeMl', { ...opts, align: 'right', leftMm: ctx.widthMm / 2, widthMm: half, layerName: 'Füllmenge' }),
+  ]
+}
+
+/**
+ * Double hairline frame in earth brown, serif type, the vintage letter-spaced
+ * between two short rules — the family-estate, handcrafted look.
+ */
+function buildRustic(ctx: TemplateContext): fabric.Object[] {
+  const { heightMm } = ctx
+  const brown = '#5b4636'
+  const ink = '#3b2e24'
+  const nameY = heightMm * 0.32
+  return [
+    frame(ctx, 5, 1.5, brown),
+    frame(ctx, 7, 0.75, brown),
+    fieldText(ctx, nameY, 'name', {
+      fontSize: 24, align: 'center', layerName: 'Weinname', fontFamily: SERIF, fill: ink,
+      leftMm: 12, widthMm: ctx.widthMm - 24,
+    }),
+    rule(ctx, nameY + 16, 14, brown),
+    fieldText(ctx, nameY + 19, 'vintage', {
+      fontSize: 11, align: 'center', layerName: 'Jahrgang', fontFamily: SERIF, fill: brown, charSpacing: 300,
+    }),
+    rule(ctx, nameY + 27, 14, brown),
+    fieldText(ctx, nameY + 32, 'region', {
+      fontSize: 10, align: 'center', layerName: 'Region', fontFamily: SERIF, fill: brown,
+      leftMm: 12, widthMm: ctx.widthMm - 24,
+    }),
+    ...footer(ctx, heightMm - 18, { fontSize: 8, fontFamily: SERIF, fill: brown }),
+  ].filter((obj) => obj !== null)
+}
+
+/**
+ * A full-width wine-red block over the top third with the name in heavy white
+ * type, the vintage large beneath it — a poster layout for a statement wine.
+ */
+function buildBold(ctx: TemplateContext): fabric.Object[] {
+  const { heightMm } = ctx
+  const blockShare = 0.38
+  const blockMm = heightMm * blockShare
+  return [
+    colorBlock(ctx, blockShare, '#722f37'),
+    fieldText(ctx, blockMm - 18, 'name', {
+      fontSize: 28, align: 'left', layerName: 'Weinname', fontWeight: 'bold', fill: '#ffffff',
+      leftMm: 8, widthMm: ctx.widthMm - 16,
+    }),
+    fieldText(ctx, blockMm + 8, 'vintage', {
+      fontSize: 34, align: 'left', layerName: 'Jahrgang', fontWeight: 'bold', fill: '#1a1a1a',
+      leftMm: 8, widthMm: ctx.widthMm - 16,
+    }),
+    fieldText(ctx, blockMm + 24, 'region', {
+      fontSize: 11, align: 'left', layerName: 'Region', fill: '#4a4a4a', charSpacing: 120,
+      leftMm: 8, widthMm: ctx.widthMm - 16,
+    }),
+    ...footer(ctx, heightMm - 14, { fontSize: 8, fill: '#4a4a4a' }),
+  ].filter((obj) => obj !== null)
+}
+
 export const WINE_LABEL_TEMPLATES: WineLabelTemplate[] = [
   { id: 'classic', build: buildClassic },
   { id: 'modern',  build: buildModern },
   { id: 'minimal', build: buildMinimal },
+  { id: 'rustic',  build: buildRustic },
+  { id: 'bold',    build: buildBold },
 ]

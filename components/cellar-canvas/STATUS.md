@@ -32,7 +32,7 @@
 | Onboarding Tour      | ✅ 5-Step Ark UI Tour (Welcome / Canvas / Wine Data / Layers / Save). DOM-Anchors via `[data-tour=...]`. Auto-Start mit 400 ms Delay, `cellar-canvas-tour-completed`-Flag in localStorage; `disableTour`-Prop + `tourStorageKey`-Prop. Header-Button (Fragezeichen) startet die Tour jederzeit neu, auch bei `disableTour` (seit 2026-10-14). |
 | Extras-Panel         | ✅ 4. Tab "Extras" mit `emoji-picker-react`. Click landet als `fabric.Textbox` (fontSize 48, Layer-Label `"Emoji 🍷"`, `_extras: true` Meta). Picker-Theme syncen wir via MutationObserver auf `data-theme`. |
 | Export               | ✅ PNG + PDF in Label-Trim-Größe (`exportDpi`, default 300, via Fabric `toDataURL`; PDF via `jspdf`), Download über zwei Header-Buttons. PDF gated über `enablePdfExport`. `onExport({ format, blob })`-Callback für Server-Upload. jsPDF lädt nur auf dem PDF-Pfad (#27). Bleed-PDF mit Crop-Marks bleibt offen. |
-| Templates            | 🟡 3/5 Built-ins (2026-09-29, #26): Classic / Modern / Minimal als `templates/templates.ts` — reine Funktionen, bauen live Fabric-Objekte über dieselben `attach()`-Metadaten wie die Toolbar-Inserts, keine vorserialisierten JSON-Dateien. 5. Panel-Tab „Vorlagen" ruft `bridge.applyTemplate()` (ein Undo-Schritt, `window.confirm`-Gate wenn die Leinwand nicht leer ist). Wein-Felder ohne Wert lässt das Template weg statt Platzhalter zu drucken (#27). Rustic/Bold, Thumbnails, `customTemplates`-Prop weiterhin offen (siehe unten). |
+| Templates            | ✅ 5/5 Built-ins: Classic / Modern / Minimal (2026-09-29, #26), Rustic + Bold (2026-10-14; Doppelrahmen mit `perPixelTargetFind` bzw. Farbblock, beide mit Alkohol + Füllmenge im Fuß) als `templates/templates.ts` — reine Funktionen, bauen live Fabric-Objekte über dieselben `attach()`-Metadaten wie die Toolbar-Inserts, keine vorserialisierten JSON-Dateien. 5. Panel-Tab „Vorlagen" ruft `bridge.applyTemplate()` (ein Undo-Schritt, `window.confirm`-Gate wenn die Leinwand nicht leer ist). Wein-Felder ohne Wert lässt das Template weg statt Platzhalter zu drucken (#27). Thumbnails und `customTemplates`-Prop weiterhin offen (siehe unten). |
 | Multi-Area           | ⏸ out of scope — eine Canvas (Front).                                  |
 
 ---
@@ -42,7 +42,7 @@
 ### Roadmap-Items (CELLAR-CANVAS.md)
 
 **Später / Zum Schluss:**
-- **Templates** — ~~5 Built-in~~ 3/5 gebaut (2026-09-29, #26: Classic/Modern/Minimal). Rustic + Bold fehlen weiterhin. Kein Thumbnail-Grid (nur Text-Buttons — bewusst rudimentär für die Demo). `customTemplates`-Prop für app-spezifische Vorlagen weiterhin offen. Kein History-Clear bei Template-Wechsel (aus der ursprünglichen Spec) — nicht nötig, `applyTemplate` ist selbst ein normaler Undo-Schritt.
+- **Templates** — 5/5 Built-ins gebaut (Classic/Modern/Minimal 2026-09-29 #26, Rustic/Bold 2026-10-14). Kein Thumbnail-Grid (nur Text-Buttons — bewusst rudimentär für die Demo). `customTemplates`-Prop für app-spezifische Vorlagen weiterhin offen. Kein History-Clear bei Template-Wechsel (aus der ursprünglichen Spec) — nicht nötig, `applyTemplate` ist selbst ein normaler Undo-Schritt.
 
 **Out of Scope** (vorerst zurückgestellt):
 - ~~Multi-Area Tabs (Front / Back / Neck)~~ — eine Canvas reicht.

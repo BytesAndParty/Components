@@ -58,6 +58,8 @@ export const SERIALIZED_OBJECT_PROPS = [
   // Wine-fields are non-editable; without this they turn editable again
   // after every undo/redo and reload.
   'editable',
+  // Template frames hit-test on their stroke only; Fabric doesn't serialize it.
+  'perPixelTargetFind',
 ]
 
 /**
