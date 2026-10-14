@@ -106,6 +106,10 @@ export type CellarCanvasMessages = {
   hotkeyDeleteDescription: string
   hotkeySnappingLabel:    string
   hotkeySnappingDescription: string
+  hotkeySelectAllLabel:   string
+  hotkeySelectAllDescription: string
+  hotkeyDeselectLabel:    string
+  hotkeyDeselectDescription: string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
@@ -230,6 +234,10 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
     hotkeySnappingLabel:     'Snapping umschalten',
     hotkeySnappingDescription: 'Drag-Snapping zu Kanten und Mittellinien an- oder ausschalten',
+    hotkeySelectAllLabel:    'Alles auswählen',
+    hotkeySelectAllDescription: 'Alle sichtbaren, nicht gesperrten Objekte auswählen',
+    hotkeyDeselectLabel:     'Auswahl aufheben',
+    hotkeyDeselectDescription: 'Auswahl aufheben, ohne Auswahl den Vollbildmodus verlassen',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
@@ -349,6 +357,10 @@ export const MESSAGES = {
     hotkeyDeleteDescription: 'Remove selected object',
     hotkeySnappingLabel:     'Toggle snapping',
     hotkeySnappingDescription: 'Turn drag-snapping to edges and center lines on or off',
+    hotkeySelectAllLabel:    'Select all',
+    hotkeySelectAllDescription: 'Select all visible, unlocked objects',
+    hotkeyDeselectLabel:     'Deselect',
+    hotkeyDeselectDescription: 'Clear the selection; with nothing selected, leave fullscreen',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',

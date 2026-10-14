@@ -247,7 +247,8 @@ export function CellarCanvas({
   useEffect(() => {
     if (!isFullscreen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsFullscreen(false)
+      // The Escape hotkey below marks an Escape that cleared a selection.
+      if (e.key === 'Escape' && !e.defaultPrevented) setIsFullscreen(false)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -332,6 +333,25 @@ export function CellarCanvas({
     category:    'Actions',
     description: m.hotkeyZoomOutDescription,
   })
+
+  // Both skip inputs and textareas: Mod+A keeps its native select-all there,
+  // and Fabric's text editing (a hidden textarea) handles Mod+A and Escape
+  // itself.
+  useDesignEngineHotkey('Mod+A', () => bridge.current?.selectAll(), {
+    label:       m.hotkeySelectAllLabel,
+    category:    'Actions',
+    description: m.hotkeySelectAllDescription,
+  }, { ignoreInputs: true })
+
+  // No preventDefault by default: only an Escape that actually cleared a
+  // selection is marked, so the fullscreen listener above leaves the others.
+  useDesignEngineHotkey('Escape', (e) => {
+    if (bridge.current?.discardSelection()) e.preventDefault()
+  }, {
+    label:       m.hotkeyDeselectLabel,
+    category:    'Actions',
+    description: m.hotkeyDeselectDescription,
+  }, { ignoreInputs: true, preventDefault: false })
 
   useDesignEngineHotkey('S', () => {
     const { snappingEnabled, setSnappingEnabled } = useDesignerStore.getState()

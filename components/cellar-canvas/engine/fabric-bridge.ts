@@ -594,6 +594,35 @@ export class FabricBridge {
   }
 
   /**
+   * Mod+A: selects every user object as one ActiveSelection, so alignment and
+   * the Properties Panel act on all of them at once. Hidden and locked
+   * objects stay out — moving the selection would drag locked ones along.
+   */
+  selectAll() {
+    const objects = this.canvas.getObjects().filter(o =>
+      (o as fabric.Object & FabricObjectMeta)._type !== undefined && o.visible && !o.lockMovementX)
+    if (!objects.length) return
+    this.canvas.discardActiveObject()
+    this.canvas.setActiveObject(
+      objects.length === 1 ? objects[0] : new fabric.ActiveSelection(objects, { canvas: this.canvas }),
+    )
+    this.canvas.requestRenderAll()
+  }
+
+  /**
+   * Esc: drops the current selection. Returns false when nothing was
+   * selected, so Escape can do something else (leave fullscreen). Text
+   * editing never gets here: Fabric's hidden textarea handles Escape itself
+   * (exitEditing) and stops the event.
+   */
+  discardSelection(): boolean {
+    if (!this.canvas.getActiveObject()) return false
+    this.canvas.discardActiveObject()
+    this.canvas.requestRenderAll()
+    return true
+  }
+
+  /**
    * Returns properties of the currently active object for the UI.
    */
   getActiveObjectProperties(): FabricObjectProperties | null {
