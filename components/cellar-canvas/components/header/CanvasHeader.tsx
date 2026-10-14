@@ -1,5 +1,6 @@
 import { type RefObject } from 'react'
 import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp } from 'lucide-react'
+import { DownloadTrigger } from '@ark-ui/react/download-trigger'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
@@ -17,8 +18,10 @@ export interface CanvasHeaderProps {
   previewMode:      boolean
   onTogglePreview:  () => void
   onSave?:          (state: CellarCanvasState) => Promise<void>
-  onExportPng?:     () => void
-  onExportPdf?:     () => void
+  /** Renders the PNG export; the download trigger saves the result. */
+  exportPng?:       () => Promise<Blob>
+  /** Renders the PDF export; the download trigger saves the result. */
+  exportPdf?:       () => Promise<Blob>
 }
 
 /**
@@ -35,8 +38,8 @@ export function CanvasHeader({
   previewMode,
   onTogglePreview,
   onSave,
-  onExportPng,
-  onExportPdf,
+  exportPng,
+  exportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
   const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed, insertError, setInsertError, startTour } = useDesignerStore()
@@ -94,25 +97,29 @@ export function CanvasHeader({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
         </IconButton>
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
-        {onExportPng && (
-          <button
-            onClick={onExportPng}
+        {exportPng && (
+          <DownloadTrigger
+            data={exportPng}
+            fileName={`${m.exportFilename}.png`}
+            mimeType="image/png"
             className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
             title={m.exportPngTitle}
           >
             <Download size={12} />
             {m.exportPngLabel}
-          </button>
+          </DownloadTrigger>
         )}
-        {onExportPdf && (
-          <button
-            onClick={onExportPdf}
+        {exportPdf && (
+          <DownloadTrigger
+            data={exportPdf}
+            fileName={`${m.exportFilename}.pdf`}
+            mimeType="application/pdf"
             className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
             title={m.exportTitle}
           >
             <Download size={12} />
             {m.exportLabel}
-          </button>
+          </DownloadTrigger>
         )}
         {startTour && (
           <IconButton onClick={startTour} title={m.tourStartTitle} className="ml-2">

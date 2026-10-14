@@ -91,19 +91,3 @@ export async function exportLabelPdf(bridge: FabricBridge, dpi = DEFAULT_EXPORT_
   pdf.addImage(png, 'PNG', 0, 0, w, h)
   return pdf.output('blob')
 }
-
-/**
- * Triggers a browser download for a Blob. Revokes the temporary object
- * URL on the next tick so the anchor click has time to start the
- * download before the URL is invalidated.
- */
-export function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a   = document.createElement('a')
-  a.href     = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 0)
-}

@@ -211,22 +211,15 @@ export function CellarCanvas({
     }
   }
 
-  async function handleExportPdf() {
+  // Renders the export for the header's download triggers (Ark UI saves the
+  // file) and hands the same blob to `onExport` for a server upload.
+  async function exportBlob(format: 'png' | 'pdf'): Promise<Blob> {
     const b = bridge.current
-    if (!b) return
-    const { exportLabelPdf, downloadBlob } = await import('./engine/export-pipeline')
-    const blob = await exportLabelPdf(b, exportDpi)
-    downloadBlob(blob, `${m.exportFilename}.pdf`)
-    onExport?.({ format: 'pdf', blob })
-  }
-
-  async function handleExportPng() {
-    const b = bridge.current
-    if (!b) return
-    const { exportLabelPng, downloadBlob } = await import('./engine/export-pipeline')
-    const blob = exportLabelPng(b, exportDpi)
-    downloadBlob(blob, `${m.exportFilename}.png`)
-    onExport?.({ format: 'png', blob })
+    if (!b) throw new Error('Cellar Canvas is not mounted yet')
+    const { exportLabelPng, exportLabelPdf } = await import('./engine/export-pipeline')
+    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi) : exportLabelPng(b, exportDpi)
+    onExport?.({ format, blob })
+    return blob
   }
 
   // Report compliance changes to the embedding app. Full syncs rebuild the
@@ -449,8 +442,8 @@ export function CellarCanvas({
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
         onSave={onSave}
-        onExportPng={handleExportPng}
-        onExportPdf={enablePdfExport ? handleExportPdf : undefined}
+        exportPng={() => exportBlob('png')}
+        exportPdf={enablePdfExport ? () => exportBlob('pdf') : undefined}
       />
 
       <div
