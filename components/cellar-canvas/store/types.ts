@@ -5,9 +5,18 @@ export type LabelArea = 'front' | 'back' | 'neck'
  * the object stack (label-paper colour). Used for `initialState`, the
  * `onChange`/`onSave` callbacks, and localStorage autosave.
  */
+/**
+ * The label paper. A solid colour stays a plain CSS colour string, so drafts
+ * and `initialState`s from before gradients and images keep loading.
+ */
+export type LabelBackground =
+  | string
+  | { type: 'gradient'; from: string; to: string; /** CSS `linear-gradient` angle in degrees */ angle: number }
+  | { type: 'image'; /** data URL (see `prepareImageSource`) */ src: string }
+
 export interface CellarCanvasState {
   canvas: object
-  bg: string
+  bg: LabelBackground
 }
 
 export interface FabricObjectMeta {

@@ -10,7 +10,7 @@ import { ExtrasPanel } from './ExtrasPanel'
 import { TemplatesPanel } from './TemplatesPanel'
 import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
-import type { FabricObjectMeta, FabricObjectProperties } from '../../store/types'
+import type { FabricObjectMeta, FabricObjectProperties, LabelBackground } from '../../store/types'
 import type { CellarCanvasMessages } from '../../messages'
 import type { WineFieldValues } from '../../CellarCanvas'
 
@@ -32,7 +32,7 @@ export interface RightPanelProps {
   layers:           Layer[]
   setLayers:        (layers: Layer[]) => void
   selectedIds:      string[]
-  backgroundColor:  string
+  background:       LabelBackground
   wineFields:       WineFieldValues
 }
 
@@ -51,7 +51,7 @@ export function RightPanel({
   layers,
   setLayers,
   selectedIds,
-  backgroundColor,
+  background,
   wineFields,
 }: RightPanelProps) {
   const m = useCellarCanvasMessages()
@@ -83,7 +83,7 @@ export function RightPanel({
       <div className="flex-1 overflow-auto p-4">
         {tab === 'props'      && <PropertiesPanel bridge={bridge} activeProps={activeProps} />}
         {tab === 'fields'     && <WineFieldsPanel bridge={bridge} values={wineFields} layers={layers} />}
-        {tab === 'background' && <BackgroundPanel bridge={bridge} color={backgroundColor} />}
+        {tab === 'background' && <BackgroundPanel bridge={bridge} background={background} />}
         {tab === 'templates'  && <TemplatesPanel bridge={bridge} wineFields={wineFields} hasObjects={layers.length > 0} />}
         {tab === 'extras'     && <ExtrasPanel bridge={bridge} />}
       </div>

@@ -1,6 +1,8 @@
 import { forwardRef } from 'react'
 import { cn } from '../../../lib/utils'
 import { mmToPx } from '../../engine/units'
+import { backgroundStyle } from '../../engine/label-background'
+import type { LabelBackground } from '../../store/types'
 
 export interface LabelBackdrop {
   /** Position + size in DOM pixels (already includes Fabric's zoom + pan). */
@@ -8,8 +10,8 @@ export interface LabelBackdrop {
   top: number
   width: number
   height: number
-  /** Hex/rgb fill — the "label paper" colour. */
-  color: string
+  /** The label paper: colour, gradient or image. */
+  background: LabelBackground
 }
 
 export interface LabelCanvasProps {
@@ -83,7 +85,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
             top:             backdrop.top,
             width:           backdrop.width,
             height:          backdrop.height,
-            backgroundColor: backdrop.color,
+            ...backgroundStyle(backdrop.background),
             boxShadow:       '0 8px 24px rgba(0, 0, 0, 0.18)',
           }}
         />

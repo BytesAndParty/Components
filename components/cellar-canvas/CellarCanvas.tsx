@@ -26,7 +26,7 @@ import { mmToPx } from './engine/units'
 // loads only on the PDF path, so a PNG export stays small too.
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
-import type { CellarCanvasState, DesignerState } from './store/types'
+import type { CellarCanvasState, DesignerState, LabelBackground } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
 // Bleed dimming around the label. Design view stays semi-transparent so
@@ -122,8 +122,8 @@ const DEFAULT_WINE_FIELDS: WineFieldValues = {
 function computeBackdrop(
   widthMm:  number,
   heightMm: number,
-  viewport: CanvasViewport,
-  color:    string,
+  viewport:   CanvasViewport,
+  background: LabelBackground,
 ): LabelBackdrop {
   const bleedPx = mmToPx(BLEED_MM)
   return {
@@ -131,7 +131,7 @@ function computeBackdrop(
     top:    viewport.ty + bleedPx * viewport.zoom,
     width:  mmToPx(widthMm)  * viewport.zoom,
     height: mmToPx(heightMm) * viewport.zoom,
-    color,
+    background,
   }
 }
 
@@ -168,7 +168,7 @@ export function CellarCanvas({
   // viewport transform, background colour. `setLayers` exists because some
   // bridge mutations (reorder/visibility/lock/rename) don't emit a Fabric
   // event the hook can subscribe to — the RightPanel mirrors locally.
-  const { activeProps, layers, setLayers, warnings, backgroundColor, viewport } =
+  const { activeProps, layers, setLayers, warnings, background, viewport } =
     useCanvasSync(bridge, { enableValidator, widthMm, heightMm })
 
   const cropperOpen     = useDesignerStore(s => s.cropperOpen)
@@ -508,7 +508,7 @@ export function CellarCanvas({
           <LabelCanvas
             ref={canvasRef}
             className="absolute inset-0"
-            backdrop={computeBackdrop(widthMm, heightMm, viewport, backgroundColor)}
+            backdrop={computeBackdrop(widthMm, heightMm, viewport, background)}
             widthMm={widthMm}
             heightMm={heightMm}
             bleedMm={BLEED_MM}
@@ -535,7 +535,7 @@ export function CellarCanvas({
         layers={layers}
         setLayers={setLayers}
         selectedIds={selectedIds}
-        backgroundColor={backgroundColor}
+        background={background}
         wineFields={initialWineFields}
       />
 

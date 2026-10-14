@@ -5,7 +5,8 @@
 // verified false: each flagged member has at least one external caller.
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
-import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
+import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties, LabelBackground } from '../store/types'
+import { gradientLine, isLabelBackground, sameBackground } from './label-background'
 import { mmToPx, pxToMm } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 import { SnapManager } from './snap-manager'
@@ -77,7 +78,9 @@ export class FabricBridge {
   widthMm: number
   heightMm: number
   bleedMm: number
-  private labelColor = '#ffffff'
+  private labelBackground: LabelBackground = '#ffffff'
+  /** Decoded image of an image background — the export renders synchronously. */
+  private paperImage: fabric.FabricImage | null = null
   /** Current wine data — wine-field text on the canvas always mirrors it. */
   private wineFields: WineFieldValues = {}
   private readonly history = new HistoryManager()
@@ -327,12 +330,16 @@ export class FabricBridge {
   /**
    * Loads a serialized scene back onto the canvas. The label backdrop is
    * rendered by React (not a Fabric object) so it needs no re-pinning; the
-   * restored bg-colour reaches React via the property-changed channel. Older
-   * snapshots without a `bg` field leave the current colour untouched.
+   * restored background reaches React via the property-changed channel.
+   * Older snapshots without a `bg` field (or an unknown shape) leave the
+   * current background untouched.
    */
-  private async loadScene(canvasState: object, bg: string | undefined): Promise<void> {
+  private async loadScene(canvasState: object, bg: unknown): Promise<void> {
     await this.canvas.loadFromJSON(canvasState)
-    if (typeof bg === 'string') this.labelColor = bg
+    if (isLabelBackground(bg)) {
+      this.labelBackground = bg
+      this.syncPaperImage()
+    }
     // A draft or an undo snapshot may carry wine-field text of an older wine.
     this.applyWineFields()
     this.canvas.requestRenderAll()
@@ -371,7 +378,7 @@ export class FabricBridge {
    */
   serializeState(): CellarCanvasState {
     const canvas = this.canvas.toObject(SERIALIZED_OBJECT_PROPS)
-    return { canvas, bg: this.labelColor }
+    return { canvas, bg: this.labelBackground }
   }
 
   /**
@@ -383,7 +390,7 @@ export class FabricBridge {
   async restoreState(state: CellarCanvasState | object): Promise<void> {
     const wrapped = (state as CellarCanvasState).canvas !== undefined
       ? (state as CellarCanvasState)
-      : { canvas: state as object, bg: this.labelColor }
+      : { canvas: state as object, bg: this.labelBackground }
     await this.history.runExclusive(() => this.loadScene(wrapped.canvas, wrapped.bg))
   }
 
@@ -980,13 +987,14 @@ export class FabricBridge {
     this.notifyStackChanged(restored)
   }
 
-  getBackground(): string {
-    return this.labelColor
+  getBackground(): LabelBackground {
+    return this.labelBackground
   }
 
-  setBackground(color: string) {
-    if (this.labelColor === color) return
-    this.labelColor = color
+  setBackground(bg: LabelBackground) {
+    if (sameBackground(this.labelBackground, bg)) return
+    this.labelBackground = bg
+    this.syncPaperImage()
     useDesignerStore.getState().setDirty(true)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(this.canvas as any).fire('cellar:property-changed', { target: null })
@@ -994,6 +1002,79 @@ export class FabricBridge {
     // Without this call setBackground would mutate the live state but leave
     // the history untouched, so Undo couldn't reverse it.
     this.saveHistory()
+  }
+
+  /**
+   * Keeps a decoded copy of an image background for `withPaper`. On screen the
+   * image is CSS; the export paints it into the canvas and cannot wait for a
+   * decode. A file that fails to decode gets the usual header hint.
+   */
+  private syncPaperImage() {
+    const bg = this.labelBackground
+    if (typeof bg === 'string' || bg.type !== 'image') {
+      this.paperImage = null
+      return
+    }
+    if (this.paperImage?.getSrc() === bg.src) return
+    const { src } = bg
+    fabric.FabricImage.fromURL(src)
+      .then(img => {
+        const current = this.labelBackground
+        if (typeof current !== 'string' && current.type === 'image' && current.src === src) this.paperImage = img
+      })
+      .catch(() => useDesignerStore.getState().setInsertError('image'))
+  }
+
+  /**
+   * Runs `render` with the label paper painted into the canvas. Normally the
+   * paper is a CSS backdrop behind a transparent canvas. It covers the label
+   * plus `printBleedMm` on every side, so colour, gradient or image run into
+   * the print bleed; the previous canvas background comes back afterwards.
+   */
+  withPaper<T>(printBleedMm: number, render: () => T): T {
+    const prevColor = this.canvas.backgroundColor
+    const prevImage = this.canvas.backgroundImage
+    const corner = mmToPx(this.bleedMm - printBleedMm)
+    const box = {
+      left: corner,
+      top: corner,
+      width: mmToPx(this.widthMm + 2 * printBleedMm),
+      height: mmToPx(this.heightMm + 2 * printBleedMm),
+    }
+    const bg = this.labelBackground
+    if (typeof bg === 'string') {
+      this.canvas.backgroundColor = bg
+    } else if (bg.type === 'gradient') {
+      this.canvas.backgroundColor = new fabric.Gradient({
+        type: 'linear',
+        gradientUnits: 'pixels',
+        coords: gradientLine(bg.angle, box),
+        colorStops: [{ offset: 0, color: bg.from }, { offset: 1, color: bg.to }],
+      })
+    } else {
+      this.canvas.backgroundColor = '#ffffff'
+      const img = this.paperImage
+      if (img) {
+        // CSS `background-size: cover`, centred on the box.
+        const scale = Math.max(box.width / img.width, box.height / img.height)
+        img.set({
+          originX: 'left',
+          originY: 'top',
+          scaleX: scale,
+          scaleY: scale,
+          left: box.left + (box.width - img.width * scale) / 2,
+          top: box.top + (box.height - img.height * scale) / 2,
+        })
+        this.canvas.backgroundImage = img
+      }
+    }
+    try {
+      return render()
+    } finally {
+      this.canvas.backgroundColor = prevColor
+      this.canvas.backgroundImage = prevImage
+      this.canvas.requestRenderAll()
+    }
   }
 
   /**

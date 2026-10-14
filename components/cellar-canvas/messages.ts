@@ -84,6 +84,14 @@ export type CellarCanvasMessages = {
   bgHeading:              string
   bgFill:                 string
   bgFillTitle:            string
+  bgModeLabel:            string
+  bgModeColor:            string
+  bgModeGradient:         string
+  bgModeImage:            string
+  bgGradientFrom:         string
+  bgGradientTo:           string
+  bgGradientAngle:        string
+  bgImageReplace:         string
 
   // Wine fields panel
   wineFieldName:          string
@@ -231,6 +239,14 @@ export const MESSAGES = {
     bgHeading:               'Hintergrund',
     bgFill:                  'Füllung',
     bgFillTitle:             'Hintergrundfarbe',
+    bgModeLabel:             'Art des Hintergrunds',
+    bgModeColor:             'Farbe',
+    bgModeGradient:          'Verlauf',
+    bgModeImage:             'Bild',
+    bgGradientFrom:          'Startfarbe',
+    bgGradientTo:            'Endfarbe',
+    bgGradientAngle:         'Winkel',
+    bgImageReplace:          'Bild ersetzen',
 
     wineFieldName:           'Weinname',
     wineFieldVintage:        'Jahrgang',
@@ -370,6 +386,14 @@ export const MESSAGES = {
     bgHeading:               'Canvas Background',
     bgFill:                  'Fill',
     bgFillTitle:             'Canvas background',
+    bgModeLabel:             'Background type',
+    bgModeColor:             'Color',
+    bgModeGradient:          'Gradient',
+    bgModeImage:             'Image',
+    bgGradientFrom:          'Start color',
+    bgGradientTo:            'End color',
+    bgGradientAngle:         'Angle',
+    bgImageReplace:          'Replace image',
 
     wineFieldName:           'Wine Name',
     wineFieldVintage:        'Vintage',

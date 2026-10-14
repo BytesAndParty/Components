@@ -15,11 +15,10 @@ export interface ExportOptions {
  * `mmToPx` works at 96 DPI; Fabric's `multiplier` upscales the rendered
  * raster to the target DPI while keeping the crop region in source pixels.
  *
- * The Fabric canvas is set to `backgroundColor: 'transparent'` at runtime —
- * the label paper colour lives in `bridge.labelColor` and is rendered as a
- * CSS backdrop. For the export we temporarily paint that colour into the
- * canvas so the PNG carries the same look the user sees; we restore the
- * transparent background immediately afterwards.
+ * The Fabric canvas is transparent at runtime — the label paper (colour,
+ * gradient or image) is a CSS backdrop. `bridge.withPaper` paints it into the
+ * canvas for the duration of the render, so the PNG carries the same look the
+ * user sees.
  *
  * `excludeFromExport: true` on the snap-manager's guide lines keeps them
  * out of the raster automatically — Fabric honours the flag in `toDataURL`.
@@ -37,21 +36,16 @@ function renderLabelPng(bridge: FabricBridge, dpi: number, printBleedMm = 0): st
   const labelH    = mmToPx(bridge.heightMm + 2 * printBleedMm)
   const zoom      = canvas.getZoom()
   const vpt       = canvas.viewportTransform
-  const prevBg    = canvas.backgroundColor
-  canvas.backgroundColor = bridge.getBackground()
-  try {
-    return canvas.toDataURL({
+  return bridge.withPaper(printBleedMm, () =>
+    canvas.toDataURL({
       format:     'png',
       left:       vpt[4] + bleedPx * zoom,
       top:        vpt[5] + bleedPx * zoom,
       width:      labelW * zoom,
       height:     labelH * zoom,
       multiplier: dpi / SCREEN_DPI / zoom,
-    })
-  } finally {
-    canvas.backgroundColor = prevBg
-    canvas.requestRenderAll()
-  }
+    }),
+  )
 }
 
 /**

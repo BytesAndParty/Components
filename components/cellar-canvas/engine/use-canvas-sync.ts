@@ -2,7 +2,7 @@ import { useEffect, useState, type RefObject } from 'react'
 import { validateCompliance } from '../wine-fields/validator'
 import type { FabricBridge } from './fabric-bridge'
 import { isSnapGuide } from './snap-manager'
-import type { FabricObjectProperties } from '../store/types'
+import type { FabricObjectProperties, LabelBackground } from '../store/types'
 import type { Layer } from '../../layer-panel/layer-panel'
 import type { ValidationWarning } from '../../validator-badge/validator-badge'
 
@@ -25,7 +25,7 @@ export interface CanvasSyncSnapshot {
    */
   setLayers:       (layers: Layer[]) => void
   warnings:        ValidationWarning[]
-  backgroundColor: string
+  background:      LabelBackground
   viewport:        CanvasViewport
 }
 
@@ -45,7 +45,7 @@ export function useCanvasSync(
   const [activeProps,     setActiveProps]     = useState<FabricObjectProperties | null>(null)
   const [layers,          setLayers]          = useState<Layer[]>([])
   const [warnings,        setWarnings]        = useState<ValidationWarning[]>([])
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
+  const [background,      setBackground]      = useState<LabelBackground>('#ffffff')
   const [viewport,        setViewport]        = useState<CanvasViewport>({ zoom: 1, tx: 0, ty: 0, width: 0, height: 0 })
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export function useCanvasSync(
       }
 
       if (mode === 'full' || mode === 'viewport') {
-        setBackgroundColor(b.getBackground())
+        setBackground(b.getBackground())
         const vpt = b.canvas.viewportTransform
         setViewport(prev => {
           const next = {
@@ -165,5 +165,5 @@ export function useCanvasSync(
     // the dimensions here the listeners stayed on the disposed one.
   }, [bridge, options.enableValidator, options.widthMm, options.heightMm])
 
-  return { activeProps, layers, setLayers, warnings, backgroundColor, viewport }
+  return { activeProps, layers, setLayers, warnings, background, viewport }
 }
