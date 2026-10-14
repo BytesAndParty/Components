@@ -518,6 +518,7 @@ export function CellarCanvas({
             // ergebnis sie nicht zeigt; im Design-Mode zeichnet sie den
             // 3mm Trim-Risiko-Streifen am Label-Rand.
             printBleedMm={previewMode ? 0 : PRINT_BLEED_MM}
+            canvasLabel={m.canvasLabel}
           />
           {showRulers && <CanvasRulers viewport={viewport} originPx={mmToPx(BLEED_MM)} />}
         </div>

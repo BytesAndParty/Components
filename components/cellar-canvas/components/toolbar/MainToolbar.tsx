@@ -5,6 +5,7 @@ import { useCellarCanvasMessages } from '../../messages-context'
 import { prepareImageSource } from '../../engine/image-source'
 import { Tooltip } from '../shared'
 import { cn } from '../../../lib/utils'
+import { toolbarArrowKeys } from './toolbar-keys'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { CellarCanvasMessages } from '../../messages'
 
@@ -31,7 +32,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   const tools = buildTools(m)
   const activeTool = useDesignerStore(s => s.activeTool)
   const setActiveTool = useDesignerStore(s => s.setActiveTool)
-  const selectedIds = useDesignerStore(s => s.selectedIds)
+  const hasSelection = useDesignerStore(s => s.selectedIds.length > 0)
   const setCropper = useDesignerStore(s => s.setCropper)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -63,7 +64,13 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
   }
 
   return (
-    <aside className="border-border bg-card flex w-16 flex-col items-center gap-2 border-r py-4">
+    <div
+      role="toolbar"
+      aria-label={m.mainToolbarLabel}
+      aria-orientation="vertical"
+      onKeyDown={toolbarArrowKeys('vertical')}
+      className="border-border bg-card flex w-16 flex-col items-center gap-2 border-r py-4"
+    >
       <input
         ref={fileInputRef}
         type="file"
@@ -78,6 +85,8 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         <Tooltip key={tool.id} content={tool.label} position="right">
           <button
             onClick={() => handleToolClick(tool.id)}
+            aria-label={tool.label}
+            aria-pressed={activeTool === tool.id}
             className={cn(
               "p-2.5 rounded-xl transition-all duration-200",
               activeTool === tool.id
@@ -93,13 +102,15 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       <div className="flex-1" />
 
       <Tooltip content={m.toolDuplicate} position="right">
+        {/* aria-disabled, not disabled: a disabled button fires no pointer or
+            focus events, so its tooltip could never explain itself. */}
         <button
-          onClick={() => void bridge.current?.duplicateSelected()}
-          disabled={selectedIds.length === 0}
+          onClick={() => { if (hasSelection) void bridge.current?.duplicateSelected() }}
+          aria-disabled={!hasSelection}
           aria-label={m.toolDuplicate}
           className={cn(
             "p-2.5 rounded-xl transition-all duration-200",
-            selectedIds.length > 0
+            hasSelection
               ? "text-muted-foreground hover:bg-muted hover:text-foreground"
               : "text-muted-foreground/30 cursor-not-allowed"
           )}
@@ -110,11 +121,12 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
 
       <Tooltip content={m.toolDelete} position="right">
         <button
-          onClick={() => bridge.current?.deleteSelected()}
-          disabled={selectedIds.length === 0}
+          onClick={() => { if (hasSelection) bridge.current?.deleteSelected() }}
+          aria-disabled={!hasSelection}
+          aria-label={m.toolDelete}
           className={cn(
             "p-2.5 rounded-xl transition-all duration-200",
-            selectedIds.length > 0
+            hasSelection
               ? "text-destructive hover:bg-destructive/10"
               : "text-muted-foreground/30 cursor-not-allowed"
           )}
@@ -122,6 +134,6 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
           <Trash2 size={20} />
         </button>
       </Tooltip>
-    </aside>
+    </div>
   )
 }

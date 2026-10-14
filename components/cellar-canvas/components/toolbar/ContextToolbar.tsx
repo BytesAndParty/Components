@@ -3,6 +3,7 @@ import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
+import { toolbarArrowKeys } from './toolbar-keys'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
@@ -63,7 +64,12 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
   }
 
   return (
-    <div className="flex h-full w-full items-center gap-4 px-4">
+    <div
+      role="toolbar"
+      aria-label={m.contextToolbarLabel}
+      onKeyDown={toolbarArrowKeys('horizontal')}
+      className="flex h-full w-full items-center gap-4 px-4"
+    >
       {isImage && (
         <div className="flex items-center gap-2">
           <input
@@ -202,6 +208,7 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
         onClick={() => bridge.current?.deleteSelected()}
         className="hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md p-2 transition-colors"
         title={m.toolDelete}
+        aria-label={m.toolDelete}
       >
         <Trash2 size={16} />
       </button>

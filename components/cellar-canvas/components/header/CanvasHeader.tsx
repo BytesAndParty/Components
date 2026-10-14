@@ -2,6 +2,7 @@ import { type RefObject } from 'react'
 import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp, Ruler } from 'lucide-react'
 import { DownloadTrigger } from '@ark-ui/react/download-trigger'
 import { cn } from '../../../lib/utils'
+import { toolbarArrowKeys } from '../toolbar/toolbar-keys'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { useDesignerStore } from '../../store/designer-store'
@@ -50,6 +51,9 @@ export function CanvasHeader({
 
   return (
     <div
+      role="toolbar"
+      aria-label={m.headerToolbarLabel}
+      onKeyDown={toolbarArrowKeys('horizontal')}
       className="border-border bg-card/50 flex h-12 items-center border-b px-4"
       style={{ gridColumn: '1 / -1' }}
     >
@@ -126,9 +130,8 @@ export function CanvasHeader({
           </DownloadTrigger>
         )}
         {startTour && (
-          <IconButton onClick={startTour} title={m.tourStartTitle} className="ml-2">
+          <IconButton onClick={startTour} title={m.tourStartTitle} label={m.tourStartButton} className="ml-2">
             <CircleHelp size={14} aria-hidden />
-            <span className="sr-only">{m.tourStartButton}</span>
           </IconButton>
         )}
       </div>
@@ -136,7 +139,7 @@ export function CanvasHeader({
       <button
         onClick={onToggleRulers}
         className={cn(
-          "p-2 rounded-md transition-colors mr-1",
+          "p-2 rounded-md transition-colors mr-1 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
           showRulers
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
             : "hover:bg-muted text-muted-foreground hover:text-foreground"
@@ -151,12 +154,13 @@ export function CanvasHeader({
       <button
         onClick={onTogglePreview}
         className={cn(
-          "p-2 rounded-md transition-colors mr-1",
+          "p-2 rounded-md transition-colors mr-1 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
           previewMode
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
             : "hover:bg-muted text-muted-foreground hover:text-foreground"
         )}
         title={previewMode ? m.previewExit : m.previewEnter}
+        aria-label={previewMode ? m.previewExit : m.previewEnter}
         aria-pressed={previewMode}
       >
         {previewMode ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -164,8 +168,10 @@ export function CanvasHeader({
 
       <button
         onClick={onToggleFullscreen}
-        className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
+        className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11"
         title={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
+        aria-label={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
+        aria-pressed={isFullscreen}
       >
         {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
       </button>
@@ -176,12 +182,15 @@ export function CanvasHeader({
 function IconButton({
   onClick,
   title,
+  label,
   children,
   className,
   disabled,
 }: {
   onClick: () => void
   title:   string
+  /** Accessible name when it should differ from the tooltip; defaults to `title`. */
+  label?:  string
   children: React.ReactNode
   className?: string
   disabled?: boolean
@@ -191,11 +200,12 @@ function IconButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors",
+        "p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
         "disabled:pointer-events-none disabled:opacity-40",
         className
       )}
       title={title}
+      aria-label={label ?? title}
     >
       {children}
     </button>

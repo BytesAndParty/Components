@@ -40,6 +40,8 @@ export interface LabelCanvasProps {
    * the label edge as before).
    */
   printBleedMm?: number
+  /** Accessible name of the canvas element (it is drawn, so screen readers get `role="img"`). */
+  canvasLabel?: string
 }
 
 /**
@@ -68,6 +70,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
   bleedMaskOpacity = 0,
   bleedMaskColor,
   printBleedMm = 0,
+  canvasLabel,
 }, ref) => {
   const showMask =
     bleedMaskOpacity > 0 &&
@@ -90,7 +93,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
           }}
         />
       )}
-      <canvas ref={ref} />
+      <canvas ref={ref} role="img" aria-label={canvasLabel} />
       {showMask && (
         <BleedMask
           backdrop={backdrop!}

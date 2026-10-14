@@ -12,6 +12,10 @@ import type { ComponentMessages } from '../i18n'
 export type CellarCanvasMessages = {
   // Header
   brand:                  string
+  headerToolbarLabel:     string
+  mainToolbarLabel:       string
+  contextToolbarLabel:    string
+  canvasLabel:            string
   labelDimensions:        string // "{w}x{h}mm"
   undoTitle:              string
   redoTitle:              string
@@ -187,6 +191,10 @@ export type CellarCanvasMessages = {
 export const MESSAGES = {
   de: {
     brand:                   'Cellar Canvas',
+    headerToolbarLabel:      'Editor-Aktionen',
+    mainToolbarLabel:        'Werkzeuge',
+    contextToolbarLabel:     'Ausgewähltes Objekt',
+    canvasLabel:             'Etikett-Arbeitsfläche. Die Objekte darauf stehen in der Ebenenliste.',
     labelDimensions:         'Standard-Etikett ({w}x{h}mm)',
     undoTitle:               'Rückgängig (Cmd+Z)',
     redoTitle:               'Wiederholen (Cmd+Shift+Z)',
@@ -346,6 +354,10 @@ export const MESSAGES = {
   },
   en: {
     brand:                   'Cellar Canvas',
+    headerToolbarLabel:      'Editor actions',
+    mainToolbarLabel:        'Tools',
+    contextToolbarLabel:     'Selected object',
+    canvasLabel:             'Label canvas. The objects on it are listed in the layer panel.',
     labelDimensions:         'Standard Label ({w}x{h}mm)',
     undoTitle:               'Undo (Cmd+Z)',
     redoTitle:               'Redo (Cmd+Shift+Z)',
