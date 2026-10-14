@@ -29,10 +29,13 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `c39699d` | Feature: entfernter QR-Code → Validator-Fehler (rot) statt Warnung; Typ-Icons im Layer-Panel gab es schon (STATUS bereinigt) | Lint, tsc, 48 Tests, Skript mit drei Fällen |
 | 2026-10-14 | `94a2f1a` | Feature: Gruppieren / Aufheben (`Mod+G` / `Mod+Shift+G` + Kontext-Toolbar); Weinfeld-Sync und Validator schauen in Gruppen | Lint, tsc, 48 Tests, Gruppenmechanik per Skript · **Browser-Check offen** |
 | 2026-10-14 | `70590ef` | Feature: Leertaste halten = temporäres Hand-Tool (nur mit Fokus auf Seite/Canvas) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `0b3463d` | Export-Buttons über Arks `DownloadTrigger`, eigener Anchor-Download entfernt (Doku-Cache `live-docs-collection/ark-ui/download-trigger.md` angelegt) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `db59b8e` | Feature: PDF optional mit Beschnitt + Schnittmarken (`pdfBleedMm`, Default 0 = Trim-only wie entschieden) | Lint, tsc, 48 Tests, Layout gerechnet + jsPDF-Lauf (110×140 mm, 8 Marken) |
+| 2026-10-14 | `b06e862` | Feature: mm-Lineal (Header-Toggle + `Shift+R`), Null an der Etikettecke | Lint, tsc, 48 Tests, Server-Render geprüft · **Browser-Check offen** |
 
 ## In Arbeit
 
-- Feature-Liste aus der Spec: als Nächstes Ark-UI-`DownloadTrigger` für die Export-Buttons.
+- Feature-Liste aus der Spec: als Nächstes Verlauf / Bild als Etiketten-Hintergrund.
 
 ## Warteschlange (in dieser Reihenfolge)
 
@@ -44,11 +47,10 @@ Restliche Bugs aus `components/cellar-canvas/STATUS.md`:
    Erst messen, dann umbauen.
 2. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
 
-Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Ark-UI-`DownloadTrigger`, PDF mit
-Beschnitt + Schnittmarken, Lineal, Verlauf/Bild als Hintergrund, Vorlagen Rustic + Bold, SignaturePad +
-Ornamente, A11y-Durchgang.
-Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren, Space+Drag
-(Typ-Icons gab es schon).
+Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Verlauf/Bild als Hintergrund,
+Vorlagen Rustic + Bold, SignaturePad + Ornamente, A11y-Durchgang.
+Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren, Space+Drag,
+`DownloadTrigger`, PDF-Beschnitt (opt-in), Lineal (Typ-Icons gab es schon).
 
 ## Offen beim User
 
@@ -74,6 +76,8 @@ Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppiere
   - Rechteck → „R" im Kontext-Toolbar → runde Ecken.
   - QR-Code einfügen, löschen → Validator-Badge rot; Undo → wieder grün/gelb.
   - Zwei Objekte → Gruppieren-Button / `Cmd+G` → eine Ebene „Group"; Weinfeld in der Gruppe ändert sich mit den Weindaten; `Cmd+Shift+G` löst auf, Positionen bleiben.
+  - PNG/PDF-Buttons laden weiterhin herunter (jetzt über Ark `DownloadTrigger`); mit `pdfBleedMm={3}` im Showcase → PDF 6 mm größer + Schnittmarken.
+  - Lineal-Button / `Shift+R` → Skalen oben/links, 0 an der Etikettecke, folgen Zoom und Verschieben.
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
 - **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
