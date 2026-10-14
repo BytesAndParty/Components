@@ -51,4 +51,5 @@ Bei Arbeit am jeweiligen Thema heranziehen (nicht automatisch geladen):
 
 - [CELLAR-CANVAS.md](./CELLAR-CANVAS.md) — Vision & Decisions Log des Wine-Label-Designers (Implementierungsstand in `components/cellar-canvas/COMPONENT.md` + `STATUS.md`).
 - [README.md](./README.md) — Architektur-Überblick AtelierUI (Provider, TanStack, i18n, Komponenten-Inventar).
+- [PROGRESS.md](./PROGRESS.md) — Sessionübergreifender Arbeitsstand: Erledigt, Warteschlange, offene User-Aufgaben, Hinweise für neue Sessions. Zu Sessionbeginn lesen, bei jedem Schritt nachführen.
 - `AGENTS.md` ist auto-generiert (`shared/base/AGENTS.base.md` + `AGENTS.local.md`) — nicht von Hand editieren.
