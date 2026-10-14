@@ -72,6 +72,11 @@ export interface CellarCanvasProps {
   // Export
   exportDpi?:       number
   enablePdfExport?: boolean
+  /**
+   * Print bleed (mm) added around the PDF, with crop marks. Default 0: exact
+   * trim size, no marks. Typical offset value: 3.
+   */
+  pdfBleedMm?:      number
 
   // Validation
   enableValidator?: boolean
@@ -137,6 +142,7 @@ export function CellarCanvas({
   storageKey        = 'cellar-canvas-draft',
   exportDpi         = 300,
   enablePdfExport   = true,
+  pdfBleedMm        = 0,
   enableValidator   = true,
   disableTour       = false,
   tourStorageKey    = 'cellar-canvas-tour-completed',
@@ -217,7 +223,7 @@ export function CellarCanvas({
     const b = bridge.current
     if (!b) throw new Error('Cellar Canvas is not mounted yet')
     const { exportLabelPng, exportLabelPdf } = await import('./engine/export-pipeline')
-    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi) : exportLabelPng(b, exportDpi)
+    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi, pdfBleedMm) : exportLabelPng(b, exportDpi)
     onExport?.({ format, blob })
     return blob
   }
