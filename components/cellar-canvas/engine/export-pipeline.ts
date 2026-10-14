@@ -53,7 +53,8 @@ function renderLabelPng(bridge: FabricBridge, dpi: number, printBleedMm = 0): st
  * PDF embeds, without the PDF wrapper. For shops/printers that want the
  * plain image.
  */
-export function exportLabelPng(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Blob {
+export async function exportLabelPng(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Promise<Blob> {
+  await bridge.whenPaperReady()
   const dataUrl = renderLabelPng(bridge, dpi)
   const base64  = dataUrl.split(',')[1]
   const bytes   = atob(base64)
@@ -119,6 +120,7 @@ export async function exportLabelPdf(
   bleedMm = 0,
 ): Promise<Blob> {
   const { jsPDF } = await import('jspdf')
+  await bridge.whenPaperReady()
   const bleed  = Math.min(Math.max(0, bleedMm), bridge.bleedMm)
   const png    = renderLabelPng(bridge, dpi, bleed)
   const layout = printLayout(bridge.widthMm, bridge.heightMm, bleed)

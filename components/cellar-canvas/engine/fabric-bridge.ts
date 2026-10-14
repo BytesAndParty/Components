@@ -85,6 +85,8 @@ export class FabricBridge {
   private labelBackground: LabelBackground = '#ffffff'
   /** Decoded image of an image background — the export renders synchronously. */
   private paperImage: fabric.FabricImage | null = null
+  /** Settles once `paperImage` matches the current background (see `whenPaperReady`). */
+  private paperReady: Promise<void> = Promise.resolve()
   /** Current wine data — wine-field text on the canvas always mirrors it. */
   private wineFields: WineFieldValues = {}
   private readonly history = new HistoryManager()
@@ -1025,16 +1027,27 @@ export class FabricBridge {
     const bg = this.labelBackground
     if (typeof bg === 'string' || bg.type !== 'image') {
       this.paperImage = null
+      this.paperReady = Promise.resolve()
       return
     }
     if (this.paperImage?.getSrc() === bg.src) return
     const { src } = bg
-    fabric.FabricImage.fromURL(src)
+    this.paperImage = null
+    this.paperReady = fabric.FabricImage.fromURL(src)
       .then(img => {
         const current = this.labelBackground
         if (typeof current !== 'string' && current.type === 'image' && current.src === src) this.paperImage = img
       })
       .catch(() => useDesignerStore.getState().setInsertError('image'))
+  }
+
+  /**
+   * Resolves once an image background is decoded (immediately otherwise).
+   * The export awaits it — right after picking an image, loading a draft or
+   * an undo, it would otherwise paint plain white paper.
+   */
+  whenPaperReady(): Promise<void> {
+    return this.paperReady
   }
 
   /**

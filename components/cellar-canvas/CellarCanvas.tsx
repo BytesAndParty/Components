@@ -240,7 +240,7 @@ function CellarCanvasEditor({
     const b = bridge.current
     if (!b) throw new Error('Cellar Canvas is not mounted yet')
     const { exportLabelPng, exportLabelPdf } = await import('./engine/export-pipeline')
-    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi, pdfBleedMm) : exportLabelPng(b, exportDpi)
+    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi, pdfBleedMm) : await exportLabelPng(b, exportDpi)
     onExport?.({ format, blob })
     return blob
   }
