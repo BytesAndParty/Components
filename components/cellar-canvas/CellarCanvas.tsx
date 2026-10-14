@@ -13,6 +13,7 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
 import { useDesignerStore, reportImageError } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
+import { CanvasRulers } from './components/canvas/CanvasRulers'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { CanvasHeader } from './components/header/CanvasHeader'
@@ -161,6 +162,7 @@ export function CellarCanvas({
 
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [previewMode,  setPreviewMode]  = useState(false)
+  const [showRulers,   setShowRulers]   = useState(false)
 
   // Fabric → React mirror. Selection, geometry, layers, validator warnings,
   // viewport transform, background colour. `setLayers` exists because some
@@ -351,6 +353,12 @@ export function CellarCanvas({
     description: m.hotkeyDuplicateDescription,
   }, { ignoreInputs: true })
 
+  useDesignEngineHotkey('Shift+R', () => setShowRulers(r => !r), {
+    label:       m.hotkeyRulersLabel,
+    category:    'Actions',
+    description: m.hotkeyRulersDescription,
+  })
+
   useDesignEngineHotkey('Mod+G', () => bridge.current?.groupSelected(), {
     label:       m.hotkeyGroupLabel,
     category:    'Actions',
@@ -447,6 +455,8 @@ export function CellarCanvas({
         onToggleFullscreen={() => setIsFullscreen(p => !p)}
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
+        showRulers={showRulers}
+        onToggleRulers={() => setShowRulers(r => !r)}
         onSave={onSave}
         exportPng={() => exportBlob('png')}
         exportPdf={enablePdfExport ? () => exportBlob('pdf') : undefined}
@@ -509,6 +519,7 @@ export function CellarCanvas({
             // 3mm Trim-Risiko-Streifen am Label-Rand.
             printBleedMm={previewMode ? 0 : PRINT_BLEED_MM}
           />
+          {showRulers && <CanvasRulers viewport={viewport} originPx={mmToPx(BLEED_MM)} />}
         </div>
 
         {enableValidator && (

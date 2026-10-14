@@ -1056,6 +1056,9 @@ export class FabricBridge {
     // run after this frame's rAF — a requested render would leave one blank
     // frame per resize step (flicker while dragging the window edge).
     this.canvas.renderAll()
+    // The rulers read the element size from the viewport snapshot.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(this.canvas as any).fire('cellar:viewport-changed')
   }
 
   /**

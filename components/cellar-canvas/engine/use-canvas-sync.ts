@@ -10,6 +10,9 @@ export interface CanvasViewport {
   zoom: number
   tx: number
   ty: number
+  /** Canvas element size in px (it fills the canvas area). */
+  width: number
+  height: number
 }
 
 export interface CanvasSyncSnapshot {
@@ -43,7 +46,7 @@ export function useCanvasSync(
   const [layers,          setLayers]          = useState<Layer[]>([])
   const [warnings,        setWarnings]        = useState<ValidationWarning[]>([])
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
-  const [viewport,        setViewport]        = useState<CanvasViewport>({ zoom: 1, tx: 0, ty: 0 })
+  const [viewport,        setViewport]        = useState<CanvasViewport>({ zoom: 1, tx: 0, ty: 0, width: 0, height: 0 })
 
   useEffect(() => {
     const b = bridge.current
@@ -76,11 +79,15 @@ export function useCanvasSync(
         setBackgroundColor(b.getBackground())
         const vpt = b.canvas.viewportTransform
         setViewport(prev => {
-          const nextZoom = b.canvas.getZoom()
-          const nextTx = vpt?.[4] ?? 0
-          const nextTy = vpt?.[5] ?? 0
-          if (prev.zoom === nextZoom && prev.tx === nextTx && prev.ty === nextTy) return prev
-          return { zoom: nextZoom, tx: nextTx, ty: nextTy }
+          const next = {
+            zoom:   b.canvas.getZoom(),
+            tx:     vpt?.[4] ?? 0,
+            ty:     vpt?.[5] ?? 0,
+            width:  b.canvas.getWidth(),
+            height: b.canvas.getHeight(),
+          }
+          const same = (Object.keys(next) as (keyof CanvasViewport)[]).every(k => prev[k] === next[k])
+          return same ? prev : next
         })
       }
     }

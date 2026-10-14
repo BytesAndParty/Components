@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp, Ruler } from 'lucide-react'
 import { DownloadTrigger } from '@ark-ui/react/download-trigger'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
@@ -17,6 +17,8 @@ export interface CanvasHeaderProps {
   onToggleFullscreen: () => void
   previewMode:      boolean
   onTogglePreview:  () => void
+  showRulers:       boolean
+  onToggleRulers:   () => void
   onSave?:          (state: CellarCanvasState) => Promise<void>
   /** Renders the PNG export; the download trigger saves the result. */
   exportPng?:       () => Promise<Blob>
@@ -37,6 +39,8 @@ export function CanvasHeader({
   onToggleFullscreen,
   previewMode,
   onTogglePreview,
+  showRulers,
+  onToggleRulers,
   onSave,
   exportPng,
   exportPdf,
@@ -128,6 +132,21 @@ export function CanvasHeader({
           </IconButton>
         )}
       </div>
+
+      <button
+        onClick={onToggleRulers}
+        className={cn(
+          "p-2 rounded-md transition-colors mr-1",
+          showRulers
+            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+        )}
+        title={showRulers ? m.rulersHide : m.rulersShow}
+        aria-label={showRulers ? m.rulersHide : m.rulersShow}
+        aria-pressed={showRulers}
+      >
+        <Ruler size={16} aria-hidden />
+      </button>
 
       <button
         onClick={onTogglePreview}

@@ -49,7 +49,7 @@
 
 ### Spec-Items aus Feature-Inventory (CELLAR-CANVAS.md)
 
-- **Ruler-Overlay** (mm-Skala an Canvas-Rändern, toggleable).
+- ~~**Ruler-Overlay**~~ — **erledigt 2026-10-14**: `CanvasRulers` (SVG, oben + links, 20 px), Nullpunkt an der linken oberen Etikettecke wie im Properties-Panel, 1-2-5-mm-Raster nach Zoom (Beschriftungen ≥ 48 px auseinander). Toggle-Button im Header (`aria-pressed`) + `Shift+R`, standardmäßig aus. Der Viewport-Snapshot trägt jetzt auch `width`/`height`; `resize()` feuert `cellar:viewport-changed`. Per Server-Render geprüft (Zoom 1: 20-mm-Raster, Zoom 3: 5 mm, Null exakt an der Kante).
 - ~~**Pan-Tool**~~ — **erledigt 2026-07-04** als eigener Pan-Mode (Hand-Tool). Space+Drag als temporärer Pan: **erledigt 2026-10-14** — Leertaste halten schaltet auf das Hand-Tool, Loslassen stellt das vorige Werkzeug wieder her (`requireReset` gegen Key-Repeat, Keyup per `useHotkey`). Greift nur mit Fokus auf `body` oder im Canvas-Bereich, damit Space auf einem fokussierten Button weiter klickt.
 - **Background Gradient + Image** — nur Solid Color ist gebaut (`ColorSwatch`); 2-Stop-Gradient und Image-Fill fehlen im `BackgroundPanel`.
 - ~~**Group / Ungroup**~~ — **erledigt 2026-10-14**: `Mod+G` / `Mod+Shift+G` und ein Button in der Kontext-Toolbar (bei Mehrfachauswahl „Gruppieren“, bei Gruppe „Aufheben“). `createGroup` mit Top-Left-Origin (Alignment und Panel lesen `left/top` als Ecke), Stapelposition des obersten Mitglieds. Weinfeld-Sync (`withGroupMembers`, danach `triggerLayout` der Gruppe) und Validator (`getValidatableObjects`, ausgeblendete Gruppe blendet Mitglieder aus) schauen in Gruppen hinein. Das Layer-Panel zeigt eine Gruppe als eine Zeile; Text in einer Gruppe ist nicht per Klick editierbar (Fabric-Default, kein `subTargetCheck`).

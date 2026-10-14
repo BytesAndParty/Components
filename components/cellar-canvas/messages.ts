@@ -18,6 +18,8 @@ export type CellarCanvasMessages = {
   fitToScreen:            string
   previewEnter:           string
   previewExit:            string
+  rulersShow:             string
+  rulersHide:             string
   fullscreenEnter:        string
   fullscreenExit:         string
   snappingTitleEnabled:   string
@@ -122,6 +124,8 @@ export type CellarCanvasMessages = {
   hotkeyUngroupDescription: string
   hotkeyPanLabel:         string
   hotkeyPanDescription:   string
+  hotkeyRulersLabel:      string
+  hotkeyRulersDescription: string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
@@ -169,6 +173,8 @@ export const MESSAGES = {
     fitToScreen:             'An Fenster anpassen',
     previewEnter:            'Vorschau (Bleed ausblenden)',
     previewExit:             'Vorschau beenden (Bleed anzeigen)',
+    rulersShow:              'Lineal einblenden (Shift+R)',
+    rulersHide:              'Lineal ausblenden (Shift+R)',
     fullscreenEnter:         'Vollbild',
     fullscreenExit:          'Vollbild beenden',
     snappingTitleEnabled:    'Snapping aktiv (S)',
@@ -262,6 +268,8 @@ export const MESSAGES = {
     hotkeyUngroupDescription: 'Ausgewählte Gruppe in ihre Objekte auflösen',
     hotkeyPanLabel:          'Ansicht verschieben (halten)',
     hotkeyPanDescription:    'Leertaste gedrückt halten und ziehen, beim Loslassen kehrt das vorige Werkzeug zurück',
+    hotkeyRulersLabel:       'Lineal umschalten',
+    hotkeyRulersDescription: 'mm-Lineal an den Rändern der Arbeitsfläche ein- oder ausblenden',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
@@ -304,6 +312,8 @@ export const MESSAGES = {
     fitToScreen:             'Fit to Screen',
     previewEnter:            'Preview (hide bleed area)',
     previewExit:             'Exit Preview (show bleed)',
+    rulersShow:              'Show rulers (Shift+R)',
+    rulersHide:              'Hide rulers (Shift+R)',
     fullscreenEnter:         'Enter Fullscreen',
     fullscreenExit:          'Exit Fullscreen',
     snappingTitleEnabled:    'Snapping enabled (S)',
@@ -397,6 +407,8 @@ export const MESSAGES = {
     hotkeyUngroupDescription: 'Split the selected group back into its objects',
     hotkeyPanLabel:          'Pan (hold)',
     hotkeyPanDescription:    'Hold Space and drag; releasing it returns to the previous tool',
+    hotkeyRulersLabel:       'Toggle rulers',
+    hotkeyRulersDescription: 'Show or hide the mm rulers along the canvas edges',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',
