@@ -16,8 +16,8 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `2c7e66d` | Cellar Canvas: X/Y im Properties-Panel bei Mehrfachauswahl auf die linke obere Ecke bezogen (`originOffset`) | Lint, tsc, 48 Tests, Skript gegen echtes Fabric |
 | 2026-10-14 | `afed502` | Cellar Canvas: PNG/PDF-Export unabhängig vom Zoom (vorher verkleinert/verschoben nach Zoom-to-Fit) | Lint, tsc, 48 Tests, Formel aus Fabric-Quelle nachgerechnet |
 | 2026-10-14 | `c446585` | Cellar Canvas: Fit to Screen — `<canvas>` füllt den Arbeitsbereich (`ResizeObserver` → `bridge.resize()`), Fit rechnet mit Label + Bleed, Hilfslinien über den sichtbaren Ausschnitt | Lint, tsc, 48 Tests · **Browser-Check offen** |
-| 2026-10-14 | `3c9a2d9` | Cellar Canvas: Stille Fehlerpfade — kaputtes Bild / QR-Fehler zeigen einen schließbaren Header-Hinweis (`insertError`), `prepareImageSource`-Ketten mit `.catch` | Lint, tsc, 48 Tests, Reject-Verhalten in Fabric-Quelle geprüft · **Browser-Check offen** |
-| 2026-10-14 | `98c9fb7` | Cellar Canvas: Tour-Neustart — Fragezeichen-Button im Header (`startTour` im Store, registriert von `OnboardingTour`) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `f61c104` | Cellar Canvas: Stille Fehlerpfade — kaputtes Bild / QR-Fehler zeigen einen schließbaren Header-Hinweis (`insertError`), `prepareImageSource`-Ketten mit `.catch` | Lint, tsc, 48 Tests, Reject-Verhalten in Fabric-Quelle geprüft · **Browser-Check offen** |
+| 2026-10-14 | `6957809` | Cellar Canvas: Tour-Neustart — Fragezeichen-Button im Header (`startTour` im Store, registriert von `OnboardingTour`) | Lint, tsc, 48 Tests · **Browser-Check offen** |
 
 ## In Arbeit
 
