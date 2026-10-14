@@ -492,8 +492,25 @@ export class FabricBridge {
 
   /** Loads an image from a src (data URL — see `imageSourceFromBlob`) and places it. */
   async addImage(src: string) {
-    const img = await fabric.FabricImage.fromURL(src)
-    this.place(configureImage(img, this.bleedPx))
+    const img = await this.loadImage(src, 'image')
+    if (img) this.place(configureImage(img, this.bleedPx))
+  }
+
+  /**
+   * A file the browser can't decode used to end in an unhandled rejection,
+   * with nothing visible on screen. The header shows a hint instead
+   * (`insertError`); the next successful insert clears it.
+   */
+  private async loadImage(src: string, kind: 'image' | 'qr'): Promise<fabric.FabricImage | null> {
+    const { setInsertError } = useDesignerStore.getState()
+    try {
+      const img = await fabric.FabricImage.fromURL(src)
+      setInsertError(null)
+      return img
+    } catch {
+      setInsertError(kind)
+      return null
+    }
   }
 
   /**
@@ -508,7 +525,15 @@ export class FabricBridge {
         | undefined
     if (!obj || obj._type !== 'image') return
 
-    await obj.setSrc(src)
+    const { setInsertError } = useDesignerStore.getState()
+    try {
+      await obj.setSrc(src)
+    } catch {
+      // Same hint as `loadImage`; the old image stays in place.
+      setInsertError('image')
+      return
+    }
+    setInsertError(null)
     this.canvas.requestRenderAll()
     this.saveHistory()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -528,10 +553,13 @@ export class FabricBridge {
 
   async addQRCode(url: string) {
     const dataUrl = await generateQRCodeDataURL(url)
-    if (!dataUrl) return
+    if (!dataUrl) {
+      useDesignerStore.getState().setInsertError('qr')
+      return
+    }
 
-    const img = await fabric.FabricImage.fromURL(dataUrl)
-    this.place(configureQRImage(img, this.bleedPx))
+    const img = await this.loadImage(dataUrl, 'qr')
+    if (img) this.place(configureQRImage(img, this.bleedPx))
   }
 
   /**

@@ -31,6 +31,9 @@ export type CellarCanvasMessages = {
   saveTitleDirty:         string
   saveTitleClean:         string
   draftSaveFailed:        string
+  imageInsertFailed:      string
+  qrInsertFailed:         string
+  dismissHint:            string
 
   // Main toolbar tools (label + shortcut hint)
   toolSelect:             string
@@ -162,6 +165,9 @@ export const MESSAGES = {
     saveTitleDirty:          'Änderungen speichern',
     saveTitleClean:          'Alle Änderungen gespeichert',
     draftSaveFailed:         'Entwurf zu groß für den lokalen Speicher — Änderungen gehen beim Neuladen verloren.',
+    imageInsertFailed:       'Bild konnte nicht geladen werden. Die Datei ist beschädigt oder das Format wird nicht unterstützt.',
+    qrInsertFailed:          'QR-Code konnte nicht erzeugt werden. Bitte die Nährwert-URL prüfen.',
+    dismissHint:             'Hinweis schließen',
 
     toolSelect:              'Auswählen',
     toolPan:                 'Ansicht verschieben',
@@ -278,6 +284,9 @@ export const MESSAGES = {
     saveTitleDirty:          'Save changes',
     saveTitleClean:          'All changes saved',
     draftSaveFailed:         'Draft too large for local storage — changes will be lost on reload.',
+    imageInsertFailed:       'Could not load the image. The file is damaged or the format is not supported.',
+    qrInsertFailed:          'Could not generate the QR code. Please check the nutrition info URL.',
+    dismissHint:             'Dismiss',
 
     toolSelect:              'Select',
     toolPan:                 'Pan',

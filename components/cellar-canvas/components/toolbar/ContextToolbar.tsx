@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent } from 'react'
-import { useDesignerStore } from '../../store/designer-store'
+import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
@@ -27,7 +27,9 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
     const targetId = useDesignerStore.getState().selectedIds[0]
     if (file && targetId) {
       // Straight swap, no cropper: keeps id, position and layer meta.
-      void prepareImageSource(file).then(src => bridge.current?.updateImageSource(targetId, src))
+      void prepareImageSource(file)
+        .then(src => bridge.current?.updateImageSource(targetId, src))
+        .catch(reportImageError)
     }
     // Reset so picking the same file twice in a row still fires change.
     e.target.value = ''

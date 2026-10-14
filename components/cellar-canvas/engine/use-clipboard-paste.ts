@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { prepareImageSource } from './image-source'
+import { reportImageError } from '../store/designer-store'
 
 /**
  * Document-level `paste` handler that intercepts image clipboard data and
@@ -34,7 +35,7 @@ export function useClipboardPaste(onImage: (dataUrl: string) => void | Promise<v
           const file = item.getAsFile()
           if (file) {
             e.preventDefault()
-            void prepareImageSource(file).then(url => cbRef.current(url))
+            void prepareImageSource(file).then(url => cbRef.current(url)).catch(reportImageError)
             return
           }
         }

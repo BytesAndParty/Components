@@ -10,7 +10,7 @@ import { useCanvasSync } from './engine/use-canvas-sync'
 import { useCanvasAutosave } from './engine/use-canvas-autosave'
 import { useCanvasRestore } from './engine/use-canvas-restore'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
-import { useDesignerStore } from './store/designer-store'
+import { useDesignerStore, reportImageError } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
@@ -196,7 +196,8 @@ export function CellarCanvas({
   async function handleCrop(blob: Blob) {
     // Data URL, not createObjectURL: Fabric serializes `src` into history and
     // autosave and re-fetches it on loadFromJSON — blob: URLs would die there.
-    const url = await prepareImageSource(blob)
+    const url = await prepareImageSource(blob).catch(reportImageError)
+    if (!url) return
     if (cropperTargetId) {
       await bridge.current?.updateImageSource(cropperTargetId, url)
     } else {
@@ -346,7 +347,7 @@ export function CellarCanvas({
     e.stopPropagation()
     const file = e.dataTransfer.files?.[0]
     if (file && file.type.startsWith('image/')) {
-      void prepareImageSource(file).then(src => setCropper({ open: true, src }))
+      void prepareImageSource(file).then(src => setCropper({ open: true, src })).catch(reportImageError)
     }
   }
 

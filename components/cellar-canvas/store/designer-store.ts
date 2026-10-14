@@ -14,6 +14,7 @@ export const useDesignerStore = create<DesignerState>()(
     canRedo: false,
     snappingEnabled: true,
     draftSaveFailed: false,
+    insertError: null,
     cropperOpen: false,
     cropperSrc: undefined,
     cropperTargetId: undefined,
@@ -26,6 +27,7 @@ export const useDesignerStore = create<DesignerState>()(
     setHistoryFlags: (canUndo: boolean, canRedo: boolean) => set({ canUndo, canRedo }),
     setSnappingEnabled: (snappingEnabled: boolean) => set({ snappingEnabled }),
     setDraftSaveFailed: (draftSaveFailed: boolean) => set({ draftSaveFailed }),
+    setInsertError: (insertError) => set({ insertError }),
     setCropper: (cropper) => set({
       cropperOpen: cropper.open,
       cropperSrc: cropper.src,
@@ -33,3 +35,9 @@ export const useDesignerStore = create<DesignerState>()(
     }),
   }))
 )
+
+/**
+ * `.catch` handler for the image-preparation chains (file picker, drop, paste,
+ * replace, cropper): shows the header hint instead of an unhandled rejection.
+ */
+export const reportImageError = () => useDesignerStore.getState().setInsertError('image')

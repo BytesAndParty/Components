@@ -60,6 +60,8 @@ export interface DesignerState {
   snappingEnabled: boolean
   /** Last autosave write failed (quota exceeded / storage blocked). */
   draftSaveFailed: boolean
+  /** Last image/QR insert failed. Cleared by the next successful insert or by dismissing the hint. */
+  insertError: 'image' | 'qr' | null
   cropperOpen: boolean
   cropperSrc?: string
   cropperTargetId?: string
@@ -73,5 +75,6 @@ export interface DesignerState {
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
   setSnappingEnabled: (enabled: boolean) => void
   setDraftSaveFailed: (failed: boolean) => void
+  setInsertError: (error: DesignerState['insertError']) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }

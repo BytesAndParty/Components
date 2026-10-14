@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
@@ -39,7 +39,7 @@ export function CanvasHeader({
   onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed } = useDesignerStore()
+  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed, insertError, setInsertError } = useDesignerStore()
 
   return (
     <div
@@ -54,6 +54,15 @@ export function CanvasHeader({
           <span role="alert" className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
             <TriangleAlert size={14} aria-hidden />
             {m.draftSaveFailed}
+          </span>
+        )}
+        {insertError && (
+          <span className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
+            <TriangleAlert size={14} aria-hidden />
+            <span role="alert">{insertError === 'qr' ? m.qrInsertFailed : m.imageInsertFailed}</span>
+            <IconButton onClick={() => setInsertError(null)} title={m.dismissHint} className="text-destructive p-1">
+              <X size={12} aria-hidden />
+            </IconButton>
           </span>
         )}
       </div>
