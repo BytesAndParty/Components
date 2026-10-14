@@ -57,6 +57,18 @@ export function readGeometryMm(raw: RawGeometry, bleedPx: number): MmGeometry {
   }
 }
 
+/**
+ * Offset (px) from an object's `left/top` to its top-left corner. Zero for our
+ * own objects, which object-factory creates with a top-left origin. A
+ * multi-selection (ActiveSelection) keeps Fabric v7's centre origin, so its
+ * `left/top` is the centre of the selection.
+ */
+export function originOffset(obj: fabric.Object): { dx: number; dy: number } {
+  if (obj.originX === 'left' && obj.originY === 'top') return { dx: 0, dy: 0 }
+  const corner = obj.getPointByOrigin('left', 'top')
+  return { dx: obj.left - corner.x, dy: obj.top - corner.y }
+}
+
 /** Maps a label-relative x (mm) to Fabric `left` (px), offset into the bleed. */
 export function xToLeft(xMm: number, bleedPx: number): number {
   return mmToPx(xMm) + bleedPx

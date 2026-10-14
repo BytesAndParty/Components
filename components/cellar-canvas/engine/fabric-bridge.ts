@@ -20,6 +20,7 @@ import {
 } from './object-factory'
 import {
   geometryKind,
+  originOffset,
   readGeometryMm,
   xToLeft,
   yToTop,
@@ -556,10 +557,11 @@ export class FabricBridge {
 
     // Geometry in mm — reported relative to the label top-left so users see the
     // same coordinate the printer will use.
+    const { dx, dy } = originOffset(obj)
     const geo = readGeometryMm(
       {
-        left: obj.left || 0,
-        top: obj.top || 0,
+        left: (obj.left || 0) - dx,
+        top: (obj.top || 0) - dy,
         width: obj.width!,
         height: obj.height!,
         scaleX: obj.scaleX || 1,
@@ -618,8 +620,9 @@ export class FabricBridge {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricProps: Record<string, any> = { ...rest }
 
-    if (x !== undefined) fabricProps.left = xToLeft(x, this.bleedPx)
-    if (y !== undefined) fabricProps.top  = yToTop(y, this.bleedPx)
+    const { dx, dy } = originOffset(obj)
+    if (x !== undefined) fabricProps.left = xToLeft(x, this.bleedPx) + dx
+    if (y !== undefined) fabricProps.top  = yToTop(y, this.bleedPx) + dy
 
     // Width / height are object-type specific (circle → radius, line → x2,
     // textbox → wrap box, everything else → scale). The per-kind math lives in
