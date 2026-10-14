@@ -12,6 +12,8 @@ export function toolbarArrowKeys(orientation: 'horizontal' | 'vertical') {
   const prev = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
   const next = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
   return (e: KeyboardEvent<HTMLElement>) => {
+    // A nested toolbar (e.g. the AlignmentBar) already moved focus.
+    if (e.defaultPrevented) return
     if (!(e.target instanceof HTMLButtonElement)) return
     if (e.key !== prev && e.key !== next && e.key !== 'Home' && e.key !== 'End') return
     const buttons = [...e.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')]

@@ -432,6 +432,9 @@ function CellarCanvasEditor({
   // No preventDefault by default: only an Escape that actually cleared a
   // selection is marked, so the fullscreen listener above leaves the others.
   useDesignEngineHotkey('Escape', (e) => {
+    // An open popover, dialog or the tour already closed itself on this
+    // Escape (Zag dismisses in the capture phase and prevents default).
+    if (e.defaultPrevented) return
     if (bridge.current?.discardSelection()) e.preventDefault()
   }, {
     label:       m.hotkeyDeselectLabel,
