@@ -44,7 +44,7 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
   }
 
   const isText      = activeProps.type === 'text' || activeProps.type === 'wine-field'
-  const isShape     = activeProps.type === 'rect' || activeProps.type === 'circle' || activeProps.type === 'line'
+  const isShape     = activeProps.type === 'rect' || activeProps.type === 'circle' || activeProps.type === 'line' || activeProps.type === 'path'
   const isImage     = activeProps.type === 'image'
   const isMulti     = selectedIds.length >= 2
 

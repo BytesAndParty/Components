@@ -95,6 +95,7 @@ import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
 - `jspdf` — PDF export, loaded via dynamic `import()` only when a PDF is exported
 - `qrcode` — client-side QR code for the nutrition-info URL
 - `emoji-picker-react` — Extras panel
+- `@ark-ui/react` `SignaturePad` — signature in the Extras panel (inserted as a vector path, layer type `path`, together with the line-art ornaments from `extras/ornaments.ts`)
 
 ## Notes
 

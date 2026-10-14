@@ -19,6 +19,8 @@ import {
   configureImage,
   configureQRImage,
   createGroup,
+  createPath,
+  type PathOptions,
 } from './object-factory'
 import type { ValidatableObject } from '../wine-fields/validator'
 import {
@@ -584,6 +586,11 @@ export class FabricBridge {
 
   addEmoji(emoji: string) {
     this.place(createEmoji(this.bleedPx, emoji))
+  }
+
+  /** Places SVG path data — a drawn signature or an ornament (see `createPath`). */
+  addPath(d: string, opts: PathOptions) {
+    this.place(createPath(this.bleedPx, d, opts))
   }
 
   /** Loads an image from a src (data URL — see `imageSourceFromBlob`) and places it. */

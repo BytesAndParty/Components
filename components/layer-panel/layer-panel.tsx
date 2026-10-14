@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
-  Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode,
+  Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode, Spline,
   Eye, EyeOff, Lock, Unlock, Trash2, GripVertical,
 } from 'lucide-react'
 import {
@@ -30,7 +30,7 @@ import { MESSAGES, type LayerPanelMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type LayerType = 'text' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'wine-field' | 'qr-code'
+export type LayerType = 'text' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'wine-field' | 'qr-code' | 'path'
 
 export interface Layer {
   id: string
@@ -68,6 +68,7 @@ const TYPE_ICON: Record<LayerType, React.ComponentType<{ size?: number; strokeWi
   group:      Layers,
   'wine-field': Tag,
   'qr-code':  QrCode,
+  path:       Spline,
 }
 
 // ── Panel ─────────────────────────────────────────────────────────────────────

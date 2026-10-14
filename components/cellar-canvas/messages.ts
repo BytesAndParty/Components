@@ -165,6 +165,16 @@ export type CellarCanvasMessages = {
   // Emoji extras panel
   emojiHeading:           string
   emojiHint:              string
+  signatureHeading:       string
+  signatureHint:          string
+  signatureClear:         string
+  signatureInsert:        string
+  signatureLayerName:     string
+  ornamentsHeading:       string
+  ornamentDivider:        string
+  ornamentLeaf:           string
+  ornamentGrapes:         string
+  ornamentFlourish:       string
 
   // Export
   exportLabel:            string
@@ -317,6 +327,16 @@ export const MESSAGES = {
 
     emojiHeading:            'Emoji einfügen',
     emojiHint:               'Wähle ein Emoji — es landet als Text-Ebene auf der Leinwand.',
+    signatureHeading:        'Unterschrift',
+    signatureHint:           'Mit Maus, Stift oder Finger ins Feld schreiben, dann einfügen.',
+    signatureClear:          'Löschen',
+    signatureInsert:         'Einfügen',
+    signatureLayerName:      'Unterschrift',
+    ornamentsHeading:        'Ornamente',
+    ornamentDivider:         'Trenner',
+    ornamentLeaf:            'Weinblatt',
+    ornamentGrapes:          'Traube',
+    ornamentFlourish:        'Ranke',
 
     exportLabel:             'PDF',
     exportTitle:             'Als PDF exportieren (Trim-Größe)',
@@ -466,6 +486,16 @@ export const MESSAGES = {
 
     emojiHeading:            'Insert emoji',
     emojiHint:               'Pick an emoji — it drops onto the canvas as a text layer.',
+    signatureHeading:        'Signature',
+    signatureHint:           'Sign in the box with mouse, pen or finger, then insert it.',
+    signatureClear:          'Clear',
+    signatureInsert:         'Insert',
+    signatureLayerName:      'Signature',
+    ornamentsHeading:        'Ornaments',
+    ornamentDivider:         'Divider',
+    ornamentLeaf:            'Vine leaf',
+    ornamentGrapes:          'Grapes',
+    ornamentFlourish:        'Flourish',
 
     exportLabel:             'PDF',
     exportTitle:             'Export as PDF (trim size)',

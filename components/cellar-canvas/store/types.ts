@@ -22,7 +22,7 @@ export interface CellarCanvasState {
 export interface FabricObjectMeta {
   id: string
   _layerName: string
-  _type: 'text' | 'wine-field' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'qr-code'
+  _type: 'text' | 'wine-field' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'qr-code' | 'path'
   _fieldKey?: string
   _locked?: boolean
   _extras?: boolean
