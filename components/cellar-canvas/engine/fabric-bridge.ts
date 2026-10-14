@@ -36,6 +36,17 @@ import { HistoryManager } from './history-manager'
 import { hasFieldValue } from '../wine-fields/field-value'
 import type { WineFieldValues } from '../CellarCanvas'
 
+/**
+ * Re-derives a rect's rx/ry from its stored mm radius for the current scale.
+ * rx/ry are pre-scale units, so each axis divides its own scale out — the
+ * corners stay round however the rect is stretched.
+ */
+function applyCornerRadius(obj: fabric.Object) {
+  const mm = (obj as fabric.Object & FabricObjectMeta)._cornerRadiusMm
+  if (!(obj instanceof fabric.Rect) || mm === undefined) return
+  obj.set({ rx: mmToPx(mm) / (obj.scaleX || 1), ry: mmToPx(mm) / (obj.scaleY || 1) })
+}
+
 /** Canvas objects plus the members of every group, depth-first. */
 function withGroupMembers(objects: fabric.Object[]): fabric.Object[] {
   return objects.flatMap(o => (o instanceof fabric.Group ? [o, ...withGroupMembers(o.getObjects())] : [o]))
@@ -62,6 +73,8 @@ export const SERIALIZED_OBJECT_PROPS = [
   'editable',
   // Template frames hit-test on their stroke only; Fabric doesn't serialize it.
   'perPixelTargetFind',
+  // Rect corner radius in mm, re-applied after every resize.
+  '_cornerRadiusMm',
 ]
 
 /**
@@ -235,6 +248,13 @@ export class FabricBridge {
       canvas.relativePan(new fabric.Point(-e.deltaX * unit, -e.deltaY * unit))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(canvas as any).fire('cellar:viewport-changed')
+    })
+
+    // Resizing a rect by its handles changes scaleX/scaleY; re-derive rx/ry
+    // so round corners stay round. Registered before useCanvasSync's
+    // object:modified listener, so the history snapshot already has it.
+    canvas.on('object:modified', (opt) => {
+      if (opt.target) applyCornerRadius(opt.target)
     })
 
     canvas.on('object:moving', (opt) => {
@@ -789,7 +809,8 @@ export class FabricBridge {
       width: geo.width,
       height: geo.height,
       rotation: obj.angle,
-      cornerRadius: obj instanceof fabric.Rect ? pxToMm((obj.rx ?? 0) * (obj.scaleX || 1)) : undefined,
+      // Older drafts have no stored radius; read it off rx then.
+      cornerRadius: obj instanceof fabric.Rect ? (obj._cornerRadiusMm ?? pxToMm((obj.rx ?? 0) * (obj.scaleX || 1))) : undefined,
       // Text specific
       ...(obj instanceof fabric.IText ? {
         text: obj.text,
@@ -850,12 +871,8 @@ export class FabricBridge {
     if (height !== undefined) {
       Object.assign(fabricProps, heightToFabricProps(height, kind, obj.height))
     }
-    // rx/ry are pre-scale units: each axis divides its own scale out, so the
-    // corners stay round on a rect stretched via scaleX/scaleY.
-    if (cornerRadius !== undefined && obj instanceof fabric.Rect) {
-      fabricProps.rx = mmToPx(cornerRadius) / (obj.scaleX || 1)
-      fabricProps.ry = mmToPx(cornerRadius) / (obj.scaleY || 1)
-    }
+    // The radius is kept in mm and re-applied after the scale changes below.
+    if (cornerRadius !== undefined && obj instanceof fabric.Rect) obj._cornerRadiusMm = cornerRadius
     // A Line repositions itself from its points whenever one changes, so a
     // dragged line (left/top moved, points not) jumped back on a width edit.
     // `set` applies keys in order — put the position last: the requested
@@ -877,6 +894,7 @@ export class FabricBridge {
 
     obj.set(fabricProps)
     if (corner) obj.setPositionByOrigin(corner, 'left', 'top')
+    applyCornerRadius(obj)
     obj.setCoords()
 
     this.canvas.renderAll()

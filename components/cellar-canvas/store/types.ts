@@ -28,6 +28,8 @@ export interface FabricObjectMeta {
   _extras?: boolean
   /** Wine field hidden by the sync because the current wine has no value for it. */
   _valueMissing?: boolean
+  /** Rect corner radius in mm; rx/ry are derived from it for the current scale. */
+  _cornerRadiusMm?: number
 }
 
 export interface FabricObjectProperties {
