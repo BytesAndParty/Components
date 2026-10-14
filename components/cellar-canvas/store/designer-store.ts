@@ -28,7 +28,9 @@ export const useDesignerStore = create<DesignerState>()(
     setHistoryFlags: (canUndo: boolean, canRedo: boolean) => set({ canUndo, canRedo }),
     setSnappingEnabled: (snappingEnabled: boolean) => set({ snappingEnabled }),
     setDraftSaveFailed: (draftSaveFailed: boolean) => set({ draftSaveFailed }),
-    setInsertError: (insertError) => set({ insertError }),
+    setInsertError: (kind) => set((s) => ({
+      insertError: kind ? { kind, id: (s.insertError?.id ?? 0) + 1 } : null,
+    })),
     setStartTour: (startTour) => set({ startTour }),
     setCropper: (cropper) => set({
       cropperOpen: cropper.open,

@@ -59,10 +59,19 @@ export function CanvasHeader({
         {insertError && (
           <span className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
             <TriangleAlert size={14} aria-hidden />
-            <span role="alert">{insertError === 'qr' ? m.qrInsertFailed : m.imageInsertFailed}</span>
-            <IconButton onClick={() => setInsertError(null)} title={m.dismissHint} className="text-destructive p-1">
-              <X size={12} aria-hidden />
-            </IconButton>
+            {/* New key per failure: a repeated error re-mounts the alert and is announced again. */}
+            <span role="alert" key={insertError.id}>
+              {insertError.kind === 'qr' ? m.qrInsertFailed : m.imageInsertFailed}
+            </span>
+            <button
+              type="button"
+              onClick={() => setInsertError(null)}
+              aria-label={m.dismissHint}
+              title={m.dismissHint}
+              className="hover:bg-muted focus-visible:ring-accent/60 inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <X size={14} aria-hidden />
+            </button>
           </span>
         )}
       </div>

@@ -28,6 +28,7 @@ This component is built on **Ark UI (Zag.js)**.
 | `imageSrc` | `string` | - | URL of the image to crop. |
 | `aspectRatio` | `number` | - | Optional fixed aspect ratio (e.g., 1 for square). |
 | `onCrop` | `(blob: Blob) => void` | - | Callback receiving the final cropped image. |
+| `onError` | `() => void` | - | Called when `imageSrc` cannot be decoded. Without it the modal stays in its loading state. |
 | `className` | `string` | - | Custom classes for the dialog content. |
 | `messages` | `Partial<ImageCropperMessages>` | - | Custom i18n overrides. |
 

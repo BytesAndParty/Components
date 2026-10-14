@@ -60,8 +60,12 @@ export interface DesignerState {
   snappingEnabled: boolean
   /** Last autosave write failed (quota exceeded / storage blocked). */
   draftSaveFailed: boolean
-  /** Last image/QR insert failed. Cleared by the next successful insert or by dismissing the hint. */
-  insertError: 'image' | 'qr' | null
+  /**
+   * Last image/QR insert failed. `id` changes with every failure so a repeat
+   * of the same error is announced again. Cleared by the next successful
+   * insert or by dismissing the hint.
+   */
+  insertError: { kind: 'image' | 'qr'; id: number } | null
   /** Restarts the onboarding tour; registered by `OnboardingTour` while it is mounted. */
   startTour: (() => void) | null
   cropperOpen: boolean
@@ -77,7 +81,7 @@ export interface DesignerState {
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
   setSnappingEnabled: (enabled: boolean) => void
   setDraftSaveFailed: (failed: boolean) => void
-  setInsertError: (error: DesignerState['insertError']) => void
+  setInsertError: (kind: 'image' | 'qr' | null) => void
   setStartTour: (start: DesignerState['startTour']) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }

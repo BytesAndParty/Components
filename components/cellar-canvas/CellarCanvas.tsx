@@ -468,6 +468,12 @@ export function CellarCanvas({
         onOpenChange={(open) => setCropper({ open, src: cropperSrc, targetId: cropperTargetId })}
         imageSrc={cropperSrc}
         onCrop={handleCrop}
+        // `prepareImageSource` passes undecodable files through; the cropper
+        // is where they fail for the file picker and drag & drop.
+        onError={() => {
+          setCropper({ open: false })
+          reportImageError()
+        }}
       />
 
       <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} includeSaveStep={!!onSave} />

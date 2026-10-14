@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { Dialog } from '@ark-ui/react/dialog'
 import { ImageCropper, useImageCropperContext } from '@ark-ui/react/image-cropper'
 import { Portal } from '@ark-ui/react/portal'
@@ -16,6 +16,8 @@ export interface ImageCropperModalProps {
   imageSrc?: string
   aspectRatio?: number
   onCrop: (blob: Blob) => void
+  /** The image could not be decoded. Without it the modal stays in its loading state. */
+  onError?: () => void
   className?: string
   messages?: Partial<ImageCropperMessages>
 }
@@ -29,6 +31,7 @@ export function ImageCropperModal({
   imageSrc,
   aspectRatio,
   onCrop,
+  onError,
   className,
   messages,
 }: ImageCropperModalProps) {
@@ -50,6 +53,8 @@ export function ImageCropperModal({
   // the very first render — anything else makes setDefaultCrop place the
   // selection over the un-shrunk image, and after a later setZoom() the
   // selection covers more than the visible bitmap.
+  // An effect event, so a new `onError` identity doesn't restart the load.
+  const reportDecodeError = useEffectEvent(() => onError?.())
   useEffect(() => {
     if (!open || !imageSrc) return
     let cancelled = false
@@ -58,6 +63,9 @@ export function ImageCropperModal({
     img.onload = () => {
       if (cancelled) return
       setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight, src: imageSrc })
+    }
+    img.onerror = () => {
+      if (!cancelled) reportDecodeError()
     }
     img.src = imageSrc
     return () => { cancelled = true }
