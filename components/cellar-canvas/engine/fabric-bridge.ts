@@ -6,7 +6,7 @@
 import * as fabric from 'fabric'
 import { useDesignerStore } from '../store/designer-store'
 import type { CellarCanvasState, FabricObjectMeta, FabricObjectProperties } from '../store/types'
-import { mmToPx } from './units'
+import { mmToPx, pxToMm } from './units'
 import { generateQRCodeDataURL } from './qr-generator'
 import { SnapManager } from './snap-manager'
 import {
@@ -682,6 +682,7 @@ export class FabricBridge {
       width: geo.width,
       height: geo.height,
       rotation: obj.angle,
+      cornerRadius: obj instanceof fabric.Rect ? pxToMm((obj.rx ?? 0) * (obj.scaleX || 1)) : undefined,
       // Text specific
       ...(obj instanceof fabric.IText ? {
         text: obj.text,
@@ -717,7 +718,7 @@ export class FabricBridge {
     // when Fabric expects pixels). Map them through, then merge whatever's
     // left as native Fabric properties (fill, stroke, opacity, angle, fontSize, …).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { x, y, width, height, ...rest } = cleanProps as any
+    const { x, y, width, height, cornerRadius, ...rest } = cleanProps as any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricProps: Record<string, any> = { ...rest }
 
@@ -741,6 +742,12 @@ export class FabricBridge {
     }
     if (height !== undefined) {
       Object.assign(fabricProps, heightToFabricProps(height, kind, obj.height))
+    }
+    // rx/ry are pre-scale units: each axis divides its own scale out, so the
+    // corners stay round on a rect stretched via scaleX/scaleY.
+    if (cornerRadius !== undefined && obj instanceof fabric.Rect) {
+      fabricProps.rx = mmToPx(cornerRadius) / (obj.scaleX || 1)
+      fabricProps.ry = mmToPx(cornerRadius) / (obj.scaleY || 1)
     }
     // A Line repositions itself from its points whenever one changes, so a
     // dragged line (left/top moved, points not) jumped back on a width edit.

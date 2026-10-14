@@ -157,6 +157,20 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
               unit="px"
             />
           </div>
+          {activeProps.type === 'rect' && (
+            <>
+              <div className="bg-border h-5 w-px shrink-0" />
+              <div className="flex h-full items-center px-2" title={m.contextCornerRadius}>
+                <NumberInput
+                  label="R"
+                  value={activeProps.cornerRadius ?? 0}
+                  onChange={(v) => bridge.current?.updateActiveObject({ cornerRadius: v })}
+                  min={0} max={50} step={0.5} decimals={1}
+                  unit="mm"
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
 

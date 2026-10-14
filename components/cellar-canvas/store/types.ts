@@ -32,6 +32,8 @@ export interface FabricObjectProperties {
   width: number
   height: number
   rotation?: number
+  /** Rect only: corner radius in mm (round corners regardless of scale). */
+  cornerRadius?: number
   text?: string
   fontSize?: number
   fontFamily?: string

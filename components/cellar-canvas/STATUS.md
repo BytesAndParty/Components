@@ -57,7 +57,7 @@
 - ~~**Strg+A** (Select-All)~~ — **erledigt 2026-10-14**: `bridge.selectAll()` baut eine `ActiveSelection` aus allen sichtbaren, nicht gesperrten User-Objekten (gesperrte würden sonst mitgezogen). `ignoreInputs: true`, damit Eingabefelder ihr natives Alles-Markieren behalten.
 - ~~**Esc**~~ — **erledigt 2026-10-14**: `bridge.discardSelection()`; ein Escape, das eine Auswahl aufgehoben hat, wird per `preventDefault` markiert, der Vollbild-Listener lässt es dann liegen. Ohne Auswahl verlässt Escape das Vollbild. Text-Edit-Mode beendet Fabric selbst (keysMap 27 → `exitEditing`, `stopImmediatePropagation`).
 - **Type-Icons pro Layer-Row** (text/image/shape/wine-field/group).
-- **Corner-Radius für Rect** in der Shape-ContextToolbar (Fill/Stroke/Stroke-Width sind verdrahtet, Radius fehlt).
+- ~~**Corner-Radius für Rect**~~ — **erledigt 2026-10-14**: Feld „R“ (mm) in der Shape-ContextToolbar, nur für Rechtecke. `cornerRadius` ist eine virtuelle Prop wie x/y: `rx = mm / scaleX`, `ry = mm / scaleY`, damit die Ecken beim Setzen rund sind. Späteres Skalieren (Anfasser oder Breite/Höhe) verzerrt die Rundung — wie bei jedem Fabric-Rect, nicht normalisiert.
 - **QR-Removal-Warning** — Entfernen eines platzierten QR-Codes soll eine starke (rote) Validator-Warnung statt nur des gelben Badges auslösen.
 - **PDF-Bleed + Crop-Marks** — aktueller Export ist Trim-only (siehe Entscheidungs-Log 2026-05-26); 3mm-Bleed mit Schnittmarken ist bewusst zurückgestellt.
 - **Ark UI `DownloadTrigger`** — Export-Buttons nutzen aktuell den Anchor/`revokeObjectURL`-Trick statt der Ark-UI-Komponente.

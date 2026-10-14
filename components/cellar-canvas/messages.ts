@@ -54,6 +54,7 @@ export type CellarCanvasMessages = {
   contextEmpty:           string
   contextFill:            string
   contextStroke:          string
+  contextCornerRadius:    string
 
   // Right panel — tabs
   tabProperties:          string
@@ -192,6 +193,7 @@ export const MESSAGES = {
     contextEmpty:            'Wähle ein Objekt aus, um Optionen zu sehen',
     contextFill:             'Füllung',
     contextStroke:           'Kontur',
+    contextCornerRadius:     'Eckenradius',
 
     tabProperties:           'Eigenschaften',
     tabWineData:             'Weindaten',
@@ -318,6 +320,7 @@ export const MESSAGES = {
     contextEmpty:            'Select an object to see options',
     contextFill:             'Fill',
     contextStroke:           'Stroke',
+    contextCornerRadius:     'Corner radius',
 
     tabProperties:           'Properties',
     tabWineData:             'Wine Data',
