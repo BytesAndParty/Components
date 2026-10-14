@@ -32,25 +32,33 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `0b3463d` | Export-Buttons über Arks `DownloadTrigger`, eigener Anchor-Download entfernt (Doku-Cache `live-docs-collection/ark-ui/download-trigger.md` angelegt) | Lint, tsc, 48 Tests · **Browser-Check offen** |
 | 2026-10-14 | `db59b8e` | Feature: PDF optional mit Beschnitt + Schnittmarken (`pdfBleedMm`, Default 0 = Trim-only wie entschieden) | Lint, tsc, 48 Tests, Layout gerechnet + jsPDF-Lauf (110×140 mm, 8 Marken) |
 | 2026-10-14 | `b06e862` | Feature: mm-Lineal (Header-Toggle + `Shift+R`), Null an der Etikettecke | Lint, tsc, 48 Tests, Server-Render geprüft · **Browser-Check offen** |
+| 2026-10-14 | `dacf57d` | Feature: Etiketten-Hintergrund Farbe / Verlauf / Bild (`LabelBackground`, Ark `SegmentGroup`, Export via `bridge.withPaper`) | Lint, tsc, 48 Tests, Gradient-Winkel gegen CSS + Fabric-Quelle geprüft · **Browser-Check offen** |
+| 2026-10-14 | `ff6c3c1` | Feature: Vorlagen Rustikal + Kräftig (Rahmen nur auf der Linie klickbar) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `e0bd216` | Feature: Unterschrift (Ark `SignaturePad`) + 4 Ornamente als neuer Ebenentyp `path` | Lint, tsc, 48 Tests, Ornamente mit Fabric geparst · **Browser-Check offen** |
+| 2026-10-14 | `e667cbe` | A11y: Layer-Panel komplett per Tastatur (↑/↓, Leertaste, Enter/F2, Entf) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `9c64648` | A11y: Toolbars mit Rolle + Pfeiltasten, benannte Buttons, `aria-disabled`, benanntes Canvas, 44 px bei Touch | Lint, tsc, 48 Tests, Pfeiltasten per jsdom · **Screenreader-Check offen** |
+| 2026-10-14 | `17118b7` | Fix: kein Hydration-Mismatch bei SSR (client-only Wrapper) | Lint, tsc, 48 Tests, `renderToString` → `""` |
 
 ## In Arbeit
 
-- Feature-Liste aus der Spec: als Nächstes Verlauf / Bild als Etiketten-Hintergrund.
+- Zweiter unabhängiger Review (Subagent) über alle Feature-Commits seit `75c0801`; Befunde danach abarbeiten.
 
-## Warteschlange (in dieser Reihenfolge)
+## Warteschlange
 
-Restliche Bugs aus `components/cellar-canvas/STATUS.md`:
+Die Spec-Feature-Liste ist vollständig. Offen bleiben:
 1. **`prepareImageSource`** dekodiert 50-MP-Fotos voll (~200 MB Spitze). **Zurückgestellt (2026-10-14):**
    Kandidat wäre Maße per `<img>` lesen + `createImageBitmap(blob, { resizeWidth, resizeHeight,
    resizeQuality: 'high' })`. MDN lässt offen, ob der Browser dabei schon beim Dekodieren verkleinert
    oder erst danach — ohne Speichermessung im Browser (DevTools → Memory) ist der Nutzen nicht belegbar.
    Erst messen, dann umbauen.
-2. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
+2. **Vorlagen-Thumbnails** und `customTemplates`-Prop (bewusst rudimentär, nicht in dieser Runde).
+3. **Roving-Tabindex** in den Toolbars (heute mehrere Tab-Stopps pro Toolbar; Pfeiltasten gehen schon).
+4. **Showcase-Demos** für die neuen Props/Features (`pdfBleedMm`, Hintergrund, Lineal …) — Pflicht laut
+   COMPONENT-GUIDELINES §10, noch nicht ergänzt.
 
-Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Verlauf/Bild als Hintergrund,
-Vorlagen Rustic + Bold, SignaturePad + Ornamente, A11y-Durchgang.
-Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren, Space+Drag,
-`DownloadTrigger`, PDF-Beschnitt (opt-in), Lineal (Typ-Icons gab es schon).
+Erledigt aus der Spec: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren,
+Space+Drag, `DownloadTrigger`, PDF-Beschnitt (opt-in), Lineal, Verlauf/Bild-Hintergrund, Vorlagen
+Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es schon).
 
 ## Offen beim User
 
@@ -78,6 +86,10 @@ Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppiere
   - Zwei Objekte → Gruppieren-Button / `Cmd+G` → eine Ebene „Group"; Weinfeld in der Gruppe ändert sich mit den Weindaten; `Cmd+Shift+G` löst auf, Positionen bleiben.
   - PNG/PDF-Buttons laden weiterhin herunter (jetzt über Ark `DownloadTrigger`); mit `pdfBleedMm={3}` im Showcase → PDF 6 mm größer + Schnittmarken.
   - Lineal-Button / `Shift+R` → Skalen oben/links, 0 an der Etikettecke, folgen Zoom und Verschieben.
+  - Hintergrund-Tab: Farbe / Verlauf (Winkel ändern) / Bild → Etikett zeigt es, PNG-Export identisch.
+  - Vorlagen „Rustikal" und „Kräftig" anwenden; Klick ins leere Etikett wählt **nicht** den Rahmen.
+  - Extras: Unterschrift zeichnen → Einfügen; Ornamente einfügen, über die Kontext-Toolbar umfärben.
+  - Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löschen (löscht nur die Ebene, nicht zusätzlich die Canvas-Auswahl).
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
 - **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
