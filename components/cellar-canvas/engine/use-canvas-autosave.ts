@@ -15,7 +15,8 @@ const DEBOUNCE_MS = 1000
 export function useCanvasAutosave(
   bridge:     RefObject<FabricBridge | null>,
   storageKey: string | null,
-  onChange?:  (state: CellarCanvasState) => void
+  onChange:   ((state: CellarCanvasState) => void) | undefined,
+  deps:       { widthMm: number; heightMm: number }
 ) {
   useEffect(() => {
     const b = bridge.current
@@ -59,5 +60,7 @@ export function useCanvasAutosave(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(canvas as any).off('cellar:property-changed', debounced)
     }
-  }, [bridge, storageKey, onChange])
+    // A new label size recreates the Fabric canvas (`useFabricCanvas`); without
+    // the dimensions here autosave kept listening to the disposed one.
+  }, [bridge, storageKey, onChange, deps.widthMm, deps.heightMm])
 }

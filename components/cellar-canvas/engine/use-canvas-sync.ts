@@ -37,7 +37,7 @@ export interface CanvasSyncSnapshot {
  */
 export function useCanvasSync(
   bridge: RefObject<FabricBridge | null>,
-  options: { enableValidator: boolean }
+  options: { enableValidator: boolean; widthMm: number; heightMm: number }
 ): CanvasSyncSnapshot {
   const [activeProps,     setActiveProps]     = useState<FabricObjectProperties | null>(null)
   const [layers,          setLayers]          = useState<Layer[]>([])
@@ -148,7 +148,9 @@ export function useCanvasSync(
       cancelled = true
       for (const [event, handler] of listeners) canvas.off(event, handler)
     }
-  }, [bridge, options.enableValidator])
+    // A new label size recreates the Fabric canvas (`useFabricCanvas`); without
+    // the dimensions here the listeners stayed on the disposed one.
+  }, [bridge, options.enableValidator, options.widthMm, options.heightMm])
 
   return { activeProps, layers, setLayers, warnings, backgroundColor, viewport }
 }

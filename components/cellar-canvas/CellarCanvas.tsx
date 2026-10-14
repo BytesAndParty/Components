@@ -160,7 +160,7 @@ export function CellarCanvas({
   // bridge mutations (reorder/visibility/lock/rename) don't emit a Fabric
   // event the hook can subscribe to — the RightPanel mirrors locally.
   const { activeProps, layers, setLayers, warnings, backgroundColor, viewport } =
-    useCanvasSync(bridge, { enableValidator })
+    useCanvasSync(bridge, { enableValidator, widthMm, heightMm })
 
   const cropperOpen     = useDesignerStore(s => s.cropperOpen)
   const cropperSrc      = useDesignerStore(s => s.cropperSrc)
@@ -168,7 +168,7 @@ export function CellarCanvas({
   const setCropper      = useDesignerStore(s => s.setCropper)
 
   useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm })
-  useCanvasAutosave(bridge, storageKey, onChange)
+  useCanvasAutosave(bridge, storageKey, onChange, { widthMm, heightMm })
 
   // The Fabric canvas fills the canvas area and follows its size (window
   // resize, fullscreen toggle). This must never re-run the restore above
