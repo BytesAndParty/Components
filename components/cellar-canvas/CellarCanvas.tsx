@@ -277,15 +277,14 @@ function CellarCanvasEditor({
   // (inline placeholder ↔ document.body). Switching between inline render and
   // portal would remount the subtree — a fresh <canvas> that Fabric never
   // initialises, leaving the editor dead after the first toggle.
+  // Client-only (see the CellarCanvas wrapper), so `document` exists here.
   const [portalHost] = useState(() => {
-    if (typeof document === 'undefined') return null
     const host = document.createElement('div')
     host.style.display = 'contents'
     return host
   })
   const placeholderRef = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
-    if (!portalHost) return
     // Moving the node blurs whatever had focus inside it — the fullscreen
     // button, or Fabric's hidden textarea mid text-edit. Give focus back.
     const focused = document.activeElement
@@ -296,7 +295,7 @@ function CellarCanvasEditor({
     // Fabric caches the canvas offset for pointer + hidden-textarea maths.
     bridge.current?.canvas.calcOffset()
   }, [portalHost, isFullscreen, bridge])
-  useLayoutEffect(() => () => portalHost?.remove(), [portalHost])
+  useLayoutEffect(() => () => portalHost.remove(), [portalHost])
 
   // Clipboard paste — image data on the clipboard lands as a Fabric image.
   useClipboardPaste(async (url) => {
@@ -596,7 +595,7 @@ function CellarCanvasEditor({
   return (
     <MessagesProvider value={m}>
       <div ref={placeholderRef} style={{ display: 'contents' }} />
-      {portalHost ? createPortal(shell, portalHost) : shell}
+      {createPortal(shell, portalHost)}
     </MessagesProvider>
   )
 }

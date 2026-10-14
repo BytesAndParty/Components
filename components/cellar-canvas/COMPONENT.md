@@ -38,7 +38,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 |---|---|---|---|
 | `widthMm` / `heightMm` | `number` | `90` / `120` | Label size in millimetres |
 | `initialWineFields` | `WineFieldValues` | demo data | Pre-fill for the wine-data inserter (name, vintage, alcoholPercent, volumeMl, region, grapes, producer, countryOfOrigin, sugarContent, energyKcal, allergenNote, nutritionalInfoUrl) |
-| `initialState` | `CellarCanvasState \| object` | — | State to restore from: `{ canvas, bg }` (`bg`: CSS colour string, `{ type: 'gradient', from, to, angle }` or `{ type: 'image', src }`) (or plain Fabric JSON from older drafts). Takes precedence over the localStorage draft. Read once on mount — a new object identity does not reload; remount with a new React `key` to load a different document |
+| `initialState` | `CellarCanvasState \| object` | — | State to restore from: `{ canvas, bg }` (`bg`: CSS colour string, `{ type: 'gradient', from, to, angle }` or `{ type: 'image', src }`). **Type change (2026-10-14):** `CellarCanvasState.bg` is `LabelBackground` now, no longer `string` — code that reads `bg` as a string must handle the gradient/image objects; stored drafts load unchanged (or plain Fabric JSON from older drafts). Takes precedence over the localStorage draft. Read once on mount — a new object identity does not reload; remount with a new React `key` to load a different document |
 | `storageKey` | `string \| null` | `'cellar-canvas-draft'` | localStorage key for the debounced autosave draft; `null` disables autosave |
 | `enableValidator` | `boolean` | `true` | Toggle EU compliance check + floating badge. `false` for showcases, non-EU markets, tests |
 | `exportDpi` | `number` | `300` | Raster resolution for PNG/PDF export |
