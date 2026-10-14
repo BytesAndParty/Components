@@ -428,23 +428,24 @@ export class FabricBridge {
       const meta = obj as fabric.Object & FabricObjectMeta
       if (meta._type !== 'wine-field' || !meta._fieldKey || !(obj instanceof fabric.Textbox)) continue
       const value = (this.wineFields as Record<string, unknown>)[meta._fieldKey]
-      const before: boolean = changed
+      let fieldChanged = false
       if (hasFieldValue(value)) {
         if (obj.text !== String(value)) {
           obj.set('text', String(value))
-          changed = true
+          fieldChanged = true
         }
         if (meta._valueMissing) {
           obj.set('visible', true)
           meta._valueMissing = false
-          changed = true
+          fieldChanged = true
         }
       } else if (!meta._valueMissing) {
         obj.set({ text: '', visible: false })
         meta._valueMissing = true
-        changed = true
+        fieldChanged = true
       }
-      if (changed !== before && obj.parent) regroup.add(obj.parent)
+      if (fieldChanged && obj.parent) regroup.add(obj.parent)
+      changed ||= fieldChanged
     }
     regroup.forEach(group => group.triggerLayout())
     return changed
@@ -711,7 +712,9 @@ export class FabricBridge {
     this.canvas.discardActiveObject()
     const copies = await Promise.all(originals.map(o => o.clone(SERIALIZED_OBJECT_PROPS)))
     for (const copy of copies) {
-      ;(copy as fabric.Object & FabricObjectMeta).id = crypto.randomUUID()
+      // Group members are cloned with their ids too; after an ungroup two
+      // layers would share one, and id lookups hit the wrong object.
+      for (const o of withGroupMembers([copy])) (o as fabric.Object & FabricObjectMeta).id = crypto.randomUUID()
       copy.set({ left: copy.left + 8, top: copy.top + 8 })
       this.canvas.add(copy)
     }
