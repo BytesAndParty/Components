@@ -6,7 +6,7 @@ import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
 import { NumberInput } from '../shared'
-import { Crop, ImageUp, Trash2 } from 'lucide-react'
+import { Crop, ImageUp, Trash2, Group, Ungroup } from 'lucide-react'
 import { prepareImageSource } from '../../engine/image-source'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectProperties } from '../../store/types'
@@ -183,6 +183,17 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
 
       {isMulti && (
         <AlignmentBar onAlign={(action) => bridge.current?.alignSelected(action)} />
+      )}
+
+      {(isMulti || activeProps.type === 'group') && (
+        <button
+          onClick={() => isMulti ? bridge.current?.groupSelected() : bridge.current?.ungroupSelected()}
+          className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
+          title={isMulti ? m.contextGroup : m.contextUngroup}
+          aria-label={isMulti ? m.contextGroup : m.contextUngroup}
+        >
+          {isMulti ? <Group size={16} aria-hidden /> : <Ungroup size={16} aria-hidden />}
+        </button>
       )}
 
       <div className="flex-1" />

@@ -49,6 +49,15 @@ export function attach<T extends fabric.Object>(
   return obj as T & FabricObjectMeta
 }
 
+/**
+ * Wraps existing canvas objects into one group, with the same top-left origin
+ * and handle style as every other object. The members keep their metadata.
+ */
+export function createGroup(objects: fabric.Object[]) {
+  const group = new fabric.Group(objects, { ...ORIGIN, ...CORNER_STYLE })
+  return attach(group, { _layerName: 'Group', _type: 'group' })
+}
+
 export function createRect(bleedPx: number) {
   const rect = new fabric.Rect({
     ...ORIGIN,

@@ -17,7 +17,9 @@ import {
   createEmoji,
   configureImage,
   configureQRImage,
+  createGroup,
 } from './object-factory'
+import type { ValidatableObject } from '../wine-fields/validator'
 import {
   geometryKind,
   originOffset,
@@ -30,6 +32,11 @@ import {
 import { HistoryManager } from './history-manager'
 import { hasFieldValue } from '../wine-fields/field-value'
 import type { WineFieldValues } from '../CellarCanvas'
+
+/** Canvas objects plus the members of every group, depth-first. */
+function withGroupMembers(objects: fabric.Object[]): fabric.Object[] {
+  return objects.flatMap(o => (o instanceof fabric.Group ? [o, ...withGroupMembers(o.getObjects())] : [o]))
+}
 
 export interface FabricBridgeOptions {
   widthMm: number
@@ -404,10 +411,13 @@ export class FabricBridge {
    */
   private applyWineFields(): boolean {
     let changed = false
-    for (const obj of this.canvas.getObjects()) {
+    // Wine fields may sit inside a group; its bounds follow the new text.
+    const regroup = new Set<fabric.Group>()
+    for (const obj of withGroupMembers(this.canvas.getObjects())) {
       const meta = obj as fabric.Object & FabricObjectMeta
       if (meta._type !== 'wine-field' || !meta._fieldKey || !(obj instanceof fabric.Textbox)) continue
       const value = (this.wineFields as Record<string, unknown>)[meta._fieldKey]
+      const before: boolean = changed
       if (hasFieldValue(value)) {
         if (obj.text !== String(value)) {
           obj.set('text', String(value))
@@ -423,8 +433,68 @@ export class FabricBridge {
         meta._valueMissing = true
         changed = true
       }
+      if (changed !== before && obj.parent) regroup.add(obj.parent)
     }
+    regroup.forEach(group => group.triggerLayout())
     return changed
+  }
+
+  /**
+   * What the validator reads: every object including group members (wine
+   * fields and the QR code may sit inside a group). A hidden group hides its
+   * members, so they don't count as printed.
+   */
+  getValidatableObjects(): ValidatableObject[] {
+    const walk = (objects: fabric.Object[], parentVisible: boolean): ValidatableObject[] =>
+      objects.flatMap(o => {
+        const meta = o as fabric.Object & FabricObjectMeta & { text?: string }
+        const visible = parentVisible && o.visible !== false
+        const self: ValidatableObject = { _fieldKey: meta._fieldKey, text: meta.text, visible }
+        return o instanceof fabric.Group ? [self, ...walk(o.getObjects(), visible)] : [self]
+      })
+    return walk(this.canvas.getObjects(), true)
+  }
+
+  /**
+   * Mod+G: turns the multi-selection into one group (layer type 'group'), at
+   * the stack position of its topmost member. Members keep their metadata;
+   * wine fields inside still sync and count for the validator.
+   */
+  groupSelected() {
+    const active = this.canvas.getActiveObject()
+    if (!(active instanceof fabric.ActiveSelection)) return
+    const members = [...active.getObjects()]
+    if (members.length < 2) return
+    const stack = this.canvas.getObjects()
+    const top = Math.max(...members.map(o => stack.indexOf(o)))
+    // Dissolve first: members of an ActiveSelection hold coordinates relative
+    // to it, and the group must take them in canvas coordinates.
+    this.canvas.discardActiveObject()
+    this.canvas.remove(...members)
+    const group = createGroup(members)
+    // Every other member sat below the topmost one, so removing them all
+    // shifts that slot down by members.length - 1.
+    this.canvas.insertAt(top - (members.length - 1), group)
+    this.canvas.setActiveObject(group)
+    this.canvas.requestRenderAll()
+    this.saveHistory()
+  }
+
+  /** Mod+Shift+G: dissolves the selected group into its members, selected together. */
+  ungroupSelected() {
+    const group = this.canvas.getActiveObject()
+    if (!(group instanceof fabric.Group) || group instanceof fabric.ActiveSelection) return
+    const index = this.canvas.getObjects().indexOf(group)
+    this.canvas.discardActiveObject()
+    // removeAll() hands the members back in canvas coordinates.
+    const members = group.removeAll()
+    this.canvas.remove(group)
+    this.canvas.insertAt(index, ...members)
+    this.canvas.setActiveObject(
+      members.length === 1 ? members[0] : new fabric.ActiveSelection(members, { canvas: this.canvas }),
+    )
+    this.canvas.requestRenderAll()
+    this.saveHistory()
   }
 
   /**

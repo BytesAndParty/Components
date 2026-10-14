@@ -351,6 +351,18 @@ export function CellarCanvas({
     description: m.hotkeyDuplicateDescription,
   }, { ignoreInputs: true })
 
+  useDesignEngineHotkey('Mod+G', () => bridge.current?.groupSelected(), {
+    label:       m.hotkeyGroupLabel,
+    category:    'Actions',
+    description: m.hotkeyGroupDescription,
+  }, { ignoreInputs: true })
+
+  useDesignEngineHotkey('Mod+Shift+G', () => bridge.current?.ungroupSelected(), {
+    label:       m.hotkeyUngroupLabel,
+    category:    'Actions',
+    description: m.hotkeyUngroupDescription,
+  }, { ignoreInputs: true })
+
   // No preventDefault by default: only an Escape that actually cleared a
   // selection is marked, so the fullscreen listener above leaves the others.
   useDesignEngineHotkey('Escape', (e) => {

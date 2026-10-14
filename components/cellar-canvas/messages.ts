@@ -55,6 +55,8 @@ export type CellarCanvasMessages = {
   contextFill:            string
   contextStroke:          string
   contextCornerRadius:    string
+  contextGroup:           string
+  contextUngroup:         string
 
   // Right panel — tabs
   tabProperties:          string
@@ -114,6 +116,10 @@ export type CellarCanvasMessages = {
   hotkeyDeselectDescription: string
   hotkeyDuplicateLabel:   string
   hotkeyDuplicateDescription: string
+  hotkeyGroupLabel:       string
+  hotkeyGroupDescription: string
+  hotkeyUngroupLabel:     string
+  hotkeyUngroupDescription: string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
@@ -194,6 +200,8 @@ export const MESSAGES = {
     contextFill:             'Füllung',
     contextStroke:           'Kontur',
     contextCornerRadius:     'Eckenradius',
+    contextGroup:            'Gruppieren (Cmd+G)',
+    contextUngroup:          'Gruppierung aufheben (Cmd+Shift+G)',
 
     tabProperties:           'Eigenschaften',
     tabWineData:             'Weindaten',
@@ -246,6 +254,10 @@ export const MESSAGES = {
     hotkeyDeselectDescription: 'Auswahl aufheben, ohne Auswahl den Vollbildmodus verlassen',
     hotkeyDuplicateLabel:    'Duplizieren',
     hotkeyDuplicateDescription: 'Ausgewählte Objekte versetzt kopieren',
+    hotkeyGroupLabel:        'Gruppieren',
+    hotkeyGroupDescription:  'Ausgewählte Objekte zu einer Gruppe zusammenfassen',
+    hotkeyUngroupLabel:      'Gruppierung aufheben',
+    hotkeyUngroupDescription: 'Ausgewählte Gruppe in ihre Objekte auflösen',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
@@ -321,6 +333,8 @@ export const MESSAGES = {
     contextFill:             'Fill',
     contextStroke:           'Stroke',
     contextCornerRadius:     'Corner radius',
+    contextGroup:            'Group (Cmd+G)',
+    contextUngroup:          'Ungroup (Cmd+Shift+G)',
 
     tabProperties:           'Properties',
     tabWineData:             'Wine Data',
@@ -373,6 +387,10 @@ export const MESSAGES = {
     hotkeyDeselectDescription: 'Clear the selection; with nothing selected, leave fullscreen',
     hotkeyDuplicateLabel:    'Duplicate',
     hotkeyDuplicateDescription: 'Copy the selected objects with a small offset',
+    hotkeyGroupLabel:        'Group',
+    hotkeyGroupDescription:  'Combine the selected objects into one group',
+    hotkeyUngroupLabel:      'Ungroup',
+    hotkeyUngroupDescription: 'Split the selected group back into its objects',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',

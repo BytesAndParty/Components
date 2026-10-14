@@ -1,5 +1,5 @@
 import { useEffect, useState, type RefObject } from 'react'
-import { validateCompliance, type ValidatableObject } from '../wine-fields/validator'
+import { validateCompliance } from '../wine-fields/validator'
 import type { FabricBridge } from './fabric-bridge'
 import { isSnapGuide } from './snap-manager'
 import type { FabricObjectProperties } from '../store/types'
@@ -65,7 +65,8 @@ export function useCanvasSync(
       if (mode === 'full') {
         setLayers(b.getLayers() ?? [])
         if (options.enableValidator) {
-          const objects = (b.canvas.getObjects() ?? []) as unknown as ValidatableObject[]
+          // Includes group members — wine fields and the QR code may be grouped.
+          const objects = b.getValidatableObjects()
           qrWasPlaced ||= objects.some(o => o._fieldKey === 'qrCode')
           setWarnings(validateCompliance(objects, { qrWasPlaced }))
         }
