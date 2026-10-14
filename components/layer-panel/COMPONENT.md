@@ -5,7 +5,7 @@ A sophisticated sidebar component for managing a stack of layers or canvas objec
 ## Features
 
 - **Drag-and-Drop Reordering:** Intuitive sorting using the `dnd-kit` library.
-- **Visual Type Indicators:** Automatic icons for text, images, shapes, wine-fields, and QR codes.
+- **Visual Type Indicators:** Automatic icons for text, images, shapes, groups, wine-fields, QR codes and vector paths (signatures, ornaments).
 - **Layer Controls:** Toggle visibility, lock/unlock, and delete layers.
 - **In-place Renaming:** Double-click a layer name to rename it.
 - **Selection State:** Supports highlighting the currently active layers.
@@ -40,7 +40,7 @@ The component uses a combination of **dnd-kit** for sorting logic and **motion/r
 interface Layer {
   id: string
   name: string
-  type: 'text' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'wine-field' | 'qr-code'
+  type: 'text' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'wine-field' | 'qr-code' | 'path'
   visible: boolean
   locked: boolean
 }
