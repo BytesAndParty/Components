@@ -610,6 +610,33 @@ export class FabricBridge {
   }
 
   /**
+   * Mod+D / toolbar: copies the selection 8 px down-right and selects the
+   * copies. Each copy gets a new id; layer name, type and wine-field binding
+   * carry over, so a copied wine field keeps mirroring the wine data.
+   *
+   * The selection is dissolved first: children of an ActiveSelection carry
+   * coordinates relative to it, and their clones would land off-canvas. The
+   * copies move by left/top — clones hold their line points relative to the
+   * centre, and the width edit re-applies the position last anyway.
+   */
+  async duplicateSelected() {
+    const originals = this.canvas.getActiveObjects()
+    if (!originals.length) return
+    this.canvas.discardActiveObject()
+    const copies = await Promise.all(originals.map(o => o.clone(SERIALIZED_OBJECT_PROPS)))
+    for (const copy of copies) {
+      ;(copy as fabric.Object & FabricObjectMeta).id = crypto.randomUUID()
+      copy.set({ left: copy.left + 8, top: copy.top + 8 })
+      this.canvas.add(copy)
+    }
+    this.canvas.setActiveObject(
+      copies.length === 1 ? copies[0] : new fabric.ActiveSelection(copies, { canvas: this.canvas }),
+    )
+    this.canvas.requestRenderAll()
+    this.saveHistory()
+  }
+
+  /**
    * Esc: drops the current selection. Returns false when nothing was
    * selected, so Escape can do something else (leave fullscreen). Text
    * editing never gets here: Fabric's hidden textarea handles Escape itself

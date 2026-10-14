@@ -46,6 +46,7 @@ export type CellarCanvasMessages = {
   toolCircle:             string
   toolLine:               string
   toolDelete:             string
+  toolDuplicate:          string
   toolCrop:               string
   toolReplace:            string
 
@@ -110,6 +111,8 @@ export type CellarCanvasMessages = {
   hotkeySelectAllDescription: string
   hotkeyDeselectLabel:    string
   hotkeyDeselectDescription: string
+  hotkeyDuplicateLabel:   string
+  hotkeyDuplicateDescription: string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
@@ -182,6 +185,7 @@ export const MESSAGES = {
     toolCircle:              'Kreis',
     toolLine:                'Linie',
     toolDelete:              'Auswahl löschen (Entf)',
+    toolDuplicate:           'Auswahl duplizieren (Cmd+D)',
     toolCrop:                'Zuschneiden',
     toolReplace:             'Ersetzen',
 
@@ -238,6 +242,8 @@ export const MESSAGES = {
     hotkeySelectAllDescription: 'Alle sichtbaren, nicht gesperrten Objekte auswählen',
     hotkeyDeselectLabel:     'Auswahl aufheben',
     hotkeyDeselectDescription: 'Auswahl aufheben, ohne Auswahl den Vollbildmodus verlassen',
+    hotkeyDuplicateLabel:    'Duplizieren',
+    hotkeyDuplicateDescription: 'Ausgewählte Objekte versetzt kopieren',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
@@ -305,6 +311,7 @@ export const MESSAGES = {
     toolCircle:              'Circle',
     toolLine:                'Line',
     toolDelete:              'Delete Selected (Del)',
+    toolDuplicate:           'Duplicate Selected (Cmd+D)',
     toolCrop:                'Crop',
     toolReplace:             'Replace',
 
@@ -361,6 +368,8 @@ export const MESSAGES = {
     hotkeySelectAllDescription: 'Select all visible, unlocked objects',
     hotkeyDeselectLabel:     'Deselect',
     hotkeyDeselectDescription: 'Clear the selection; with nothing selected, leave fullscreen',
+    hotkeyDuplicateLabel:    'Duplicate',
+    hotkeyDuplicateDescription: 'Copy the selected objects with a small offset',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',

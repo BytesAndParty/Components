@@ -53,7 +53,7 @@
 - ~~**Pan-Tool**~~ — **erledigt 2026-07-04** als eigener Pan-Mode (Hand-Tool). Space+Drag als temporärer Pan bleibt offen.
 - **Background Gradient + Image** — nur Solid Color ist gebaut (`ColorSwatch`); 2-Stop-Gradient und Image-Fill fehlen im `BackgroundPanel`.
 - **Group / Ungroup** für Layer.
-- **Duplicate** (Layer / Selection).
+- ~~**Duplicate** (Layer / Selection)~~ — **erledigt 2026-10-14**: `bridge.duplicateSelected()` über `Mod+D` und Button über „Löschen“ in der MainToolbar. Auswahl wird vor dem Klonen aufgelöst (Kinder einer `ActiveSelection` haben relative Koordinaten), Kopien +8 px über `left/top`, neue `id`, Metadaten über `SERIALIZED_OBJECT_PROPS`.
 - ~~**Strg+A** (Select-All)~~ — **erledigt 2026-10-14**: `bridge.selectAll()` baut eine `ActiveSelection` aus allen sichtbaren, nicht gesperrten User-Objekten (gesperrte würden sonst mitgezogen). `ignoreInputs: true`, damit Eingabefelder ihr natives Alles-Markieren behalten.
 - ~~**Esc**~~ — **erledigt 2026-10-14**: `bridge.discardSelection()`; ein Escape, das eine Auswahl aufgehoben hat, wird per `preventDefault` markiert, der Vollbild-Listener lässt es dann liegen. Ohne Auswahl verlässt Escape das Vollbild. Text-Edit-Mode beendet Fabric selbst (keysMap 27 → `exitEditing`, `stopImmediatePropagation`).
 - **Type-Icons pro Layer-Row** (text/image/shape/wine-field/group).

@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent } from 'react'
-import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2 } from 'lucide-react'
+import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2, Copy } from 'lucide-react'
 import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { prepareImageSource } from '../../engine/image-source'
@@ -91,6 +91,22 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       ))}
 
       <div className="flex-1" />
+
+      <Tooltip content={m.toolDuplicate} position="right">
+        <button
+          onClick={() => void bridge.current?.duplicateSelected()}
+          disabled={selectedIds.length === 0}
+          aria-label={m.toolDuplicate}
+          className={cn(
+            "p-2.5 rounded-xl transition-all duration-200",
+            selectedIds.length > 0
+              ? "text-muted-foreground hover:bg-muted hover:text-foreground"
+              : "text-muted-foreground/30 cursor-not-allowed"
+          )}
+        >
+          <Copy size={20} />
+        </button>
+      </Tooltip>
 
       <Tooltip content={m.toolDelete} position="right">
         <button

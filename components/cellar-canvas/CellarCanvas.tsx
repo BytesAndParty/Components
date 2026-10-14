@@ -343,6 +343,14 @@ export function CellarCanvas({
     description: m.hotkeySelectAllDescription,
   }, { ignoreInputs: true })
 
+  // Mod+D would open the browser's bookmark dialog; the hotkey's default
+  // preventDefault keeps it on the canvas.
+  useDesignEngineHotkey('Mod+D', () => void bridge.current?.duplicateSelected(), {
+    label:       m.hotkeyDuplicateLabel,
+    category:    'Actions',
+    description: m.hotkeyDuplicateDescription,
+  }, { ignoreInputs: true })
+
   // No preventDefault by default: only an Escape that actually cleared a
   // selection is marked, so the fullscreen listener above leaves the others.
   useDesignEngineHotkey('Escape', (e) => {
