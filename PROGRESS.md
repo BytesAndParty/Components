@@ -38,10 +38,11 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `e667cbe` | A11y: Layer-Panel komplett per Tastatur (↑/↓, Leertaste, Enter/F2, Entf) | Lint, tsc, 48 Tests · **Browser-Check offen** |
 | 2026-10-14 | `9c64648` | A11y: Toolbars mit Rolle + Pfeiltasten, benannte Buttons, `aria-disabled`, benanntes Canvas, 44 px bei Touch | Lint, tsc, 48 Tests, Pfeiltasten per jsdom · **Screenreader-Check offen** |
 | 2026-10-14 | `17118b7` | Fix: kein Hydration-Mismatch bei SSR (client-only Wrapper) | Lint, tsc, 48 Tests, `renderToString` → `""` |
+| 2026-10-14 | `9455071` | Showcase: Schalter „PDF mit 3 mm Beschnitt und Schnittmarken“ im Etiketten-Designer | Lint, tsc |
 
 ## In Arbeit
 
-- Zweiter unabhängiger Review (Subagent) über alle Feature-Commits seit `75c0801`; Befunde danach abarbeiten.
+- Zweiter unabhängiger Review über die Feature-Commits seit `75c0801`, aufgeteilt in zwei Subagenten (Tastatur/A11y/SSR und Daten/Serialisierung/Export) — der erste Lauf im Ganzen hing nach 600 s. Befunde danach abarbeiten.
 
 ## Warteschlange
 
@@ -53,8 +54,8 @@ Die Spec-Feature-Liste ist vollständig. Offen bleiben:
    Erst messen, dann umbauen.
 2. **Vorlagen-Thumbnails** und `customTemplates`-Prop (bewusst rudimentär, nicht in dieser Runde).
 3. **Roving-Tabindex** in den Toolbars (heute mehrere Tab-Stopps pro Toolbar; Pfeiltasten gehen schon).
-4. **Showcase-Demos** für die neuen Props/Features (`pdfBleedMm`, Hintergrund, Lineal …) — Pflicht laut
-   COMPONENT-GUIDELINES §10, noch nicht ergänzt.
+4. ~~**Showcase-Demos**~~ — `pdfBleedMm` per Schalter (`9455071`); Lineal, Hintergrund, Vorlagen und
+   Extras sind direkt im Editor bedienbar.
 
 Erledigt aus der Spec: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren,
 Space+Drag, `DownloadTrigger`, PDF-Beschnitt (opt-in), Lineal, Verlauf/Bild-Hintergrund, Vorlagen
