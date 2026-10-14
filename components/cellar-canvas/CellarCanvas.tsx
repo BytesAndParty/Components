@@ -387,14 +387,22 @@ function CellarCanvasEditor({
   }, { ignoreInputs: true })
 
   // Space held = temporary Hand tool (Figma convention). Keydown switches to
-  // pan once per press (requireReset swallows key repeat), keyup restores the
-  // previous tool. Only with focus on the page or the canvas: Space on a
-  // focused button must still click it, so no blanket preventDefault.
+  // pan, keyup restores the previous tool. Only with focus on the page or the
+  // canvas: Space on a focused button must still click it, so no blanket
+  // preventDefault. Every keydown — key repeats included — blocks the page
+  // scroll, which is why the repeat check sits after preventDefault rather
+  // than in a `requireReset` option (that skips the callback on repeats).
   const toolBeforeSpace = useRef<DesignerState['activeTool'] | null>(null)
+  const restoreToolAfterSpace = () => {
+    if (!toolBeforeSpace.current) return
+    useDesignerStore.getState().setActiveTool(toolBeforeSpace.current)
+    toolBeforeSpace.current = null
+  }
   useDesignEngineHotkey('Space', (e) => {
     const focus = document.activeElement
     if (focus && focus !== document.body && !canvasAreaRef.current?.contains(focus)) return
     e.preventDefault() // no page scroll
+    if (e.repeat) return
     const { activeTool, setActiveTool } = useDesignerStore.getState()
     if (activeTool === 'pan') return
     toolBeforeSpace.current = activeTool
@@ -403,13 +411,23 @@ function CellarCanvasEditor({
     label:       m.hotkeyPanLabel,
     category:    'Actions',
     description: m.hotkeyPanDescription,
-  }, { requireReset: true, preventDefault: false })
+  }, { preventDefault: false })
 
-  useHotkey('Space', () => {
-    if (!toolBeforeSpace.current) return
-    useDesignerStore.getState().setActiveTool(toolBeforeSpace.current)
-    toolBeforeSpace.current = null
-  }, { eventType: 'keyup', preventDefault: false })
+  // The keyup restores even with an input focused (the press may have
+  // started on the canvas). Same key as above on purpose: 'allow' silences
+  // the library's duplicate-registration warning, which ignores eventType.
+  useHotkey('Space', restoreToolAfterSpace, {
+    eventType: 'keyup',
+    preventDefault: false,
+    ignoreInputs: false,
+    conflictBehavior: 'allow',
+  })
+
+  // Switching apps while Space is held never delivers its keyup.
+  useEffect(() => {
+    window.addEventListener('blur', restoreToolAfterSpace)
+    return () => window.removeEventListener('blur', restoreToolAfterSpace)
+  }, [])
 
   // No preventDefault by default: only an Escape that actually cleared a
   // selection is marked, so the fullscreen listener above leaves the others.
