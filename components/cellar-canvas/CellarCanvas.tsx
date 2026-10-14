@@ -9,6 +9,7 @@ import { useClipboardPaste } from './engine/use-clipboard-paste'
 import { useCanvasSync } from './engine/use-canvas-sync'
 import { useCanvasAutosave } from './engine/use-canvas-autosave'
 import { useCanvasRestore } from './engine/use-canvas-restore'
+import { useHotkey } from '@tanstack/react-hotkeys'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
 import { useDesignerStore, reportImageError } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
@@ -24,7 +25,7 @@ import { mmToPx } from './engine/units'
 // loads only on the PDF path, so a PNG export stays small too.
 import { MESSAGES, type CellarCanvasMessages } from './messages'
 import { MessagesProvider } from './messages-context'
-import type { CellarCanvasState } from './store/types'
+import type { CellarCanvasState, DesignerState } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
 // Bleed dimming around the label. Design view stays semi-transparent so
@@ -362,6 +363,31 @@ export function CellarCanvas({
     category:    'Actions',
     description: m.hotkeyUngroupDescription,
   }, { ignoreInputs: true })
+
+  // Space held = temporary Hand tool (Figma convention). Keydown switches to
+  // pan once per press (requireReset swallows key repeat), keyup restores the
+  // previous tool. Only with focus on the page or the canvas: Space on a
+  // focused button must still click it, so no blanket preventDefault.
+  const toolBeforeSpace = useRef<DesignerState['activeTool'] | null>(null)
+  useDesignEngineHotkey('Space', (e) => {
+    const focus = document.activeElement
+    if (focus && focus !== document.body && !canvasAreaRef.current?.contains(focus)) return
+    e.preventDefault() // no page scroll
+    const { activeTool, setActiveTool } = useDesignerStore.getState()
+    if (activeTool === 'pan') return
+    toolBeforeSpace.current = activeTool
+    setActiveTool('pan')
+  }, {
+    label:       m.hotkeyPanLabel,
+    category:    'Actions',
+    description: m.hotkeyPanDescription,
+  }, { requireReset: true, preventDefault: false })
+
+  useHotkey('Space', () => {
+    if (!toolBeforeSpace.current) return
+    useDesignerStore.getState().setActiveTool(toolBeforeSpace.current)
+    toolBeforeSpace.current = null
+  }, { eventType: 'keyup', preventDefault: false })
 
   // No preventDefault by default: only an Escape that actually cleared a
   // selection is marked, so the fullscreen listener above leaves the others.

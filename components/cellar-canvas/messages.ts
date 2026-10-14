@@ -120,6 +120,8 @@ export type CellarCanvasMessages = {
   hotkeyGroupDescription: string
   hotkeyUngroupLabel:     string
   hotkeyUngroupDescription: string
+  hotkeyPanLabel:         string
+  hotkeyPanDescription:   string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
@@ -258,6 +260,8 @@ export const MESSAGES = {
     hotkeyGroupDescription:  'Ausgewählte Objekte zu einer Gruppe zusammenfassen',
     hotkeyUngroupLabel:      'Gruppierung aufheben',
     hotkeyUngroupDescription: 'Ausgewählte Gruppe in ihre Objekte auflösen',
+    hotkeyPanLabel:          'Ansicht verschieben (halten)',
+    hotkeyPanDescription:    'Leertaste gedrückt halten und ziehen, beim Loslassen kehrt das vorige Werkzeug zurück',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
@@ -391,6 +395,8 @@ export const MESSAGES = {
     hotkeyGroupDescription:  'Combine the selected objects into one group',
     hotkeyUngroupLabel:      'Ungroup',
     hotkeyUngroupDescription: 'Split the selected group back into its objects',
+    hotkeyPanLabel:          'Pan (hold)',
+    hotkeyPanDescription:    'Hold Space and drag; releasing it returns to the previous tool',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',
