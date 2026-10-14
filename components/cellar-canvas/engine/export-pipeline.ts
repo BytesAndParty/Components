@@ -23,22 +23,28 @@ export interface ExportOptions {
  *
  * `excludeFromExport: true` on the snap-manager's guide lines keeps them
  * out of the raster automatically — Fabric honours the flag in `toDataURL`.
+ *
+ * Fabric crops in viewport pixels and keeps the current zoom and pan, so the
+ * crop box is the label as it sits on screen, and the multiplier divides the
+ * zoom back out. The result is the same at any zoom level.
  */
 function renderLabelPng(bridge: FabricBridge, dpi: number): string {
   const canvas    = bridge.canvas
   const bleedPx   = mmToPx(bridge.bleedMm)
   const labelW    = mmToPx(bridge.widthMm)
   const labelH    = mmToPx(bridge.heightMm)
+  const zoom      = canvas.getZoom()
+  const vpt       = canvas.viewportTransform
   const prevBg    = canvas.backgroundColor
   canvas.backgroundColor = bridge.getBackground()
   try {
     return canvas.toDataURL({
       format:     'png',
-      left:       bleedPx,
-      top:        bleedPx,
-      width:      labelW,
-      height:     labelH,
-      multiplier: dpi / SCREEN_DPI,
+      left:       vpt[4] + bleedPx * zoom,
+      top:        vpt[5] + bleedPx * zoom,
+      width:      labelW * zoom,
+      height:     labelH * zoom,
+      multiplier: dpi / SCREEN_DPI / zoom,
     })
   } finally {
     canvas.backgroundColor = prevBg
