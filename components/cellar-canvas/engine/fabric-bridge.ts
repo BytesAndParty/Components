@@ -697,7 +697,16 @@ export class FabricBridge {
       Object.assign(fabricProps, { left, top })
     }
 
+    // A centre-origin object (a multi-selection) scales around its centre,
+    // which moved the top-left corner the panel shows. Keep that corner.
+    const corner =
+      (dx !== 0 || dy !== 0) && x === undefined && y === undefined &&
+      (width !== undefined || height !== undefined)
+        ? obj.getPositionByOrigin('left', 'top')
+        : null
+
     obj.set(fabricProps)
+    if (corner) obj.setPositionByOrigin(corner, 'left', 'top')
     obj.setCoords()
 
     this.canvas.renderAll()

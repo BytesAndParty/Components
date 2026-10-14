@@ -65,7 +65,7 @@ export function readGeometryMm(raw: RawGeometry, bleedPx: number): MmGeometry {
  */
 export function originOffset(obj: fabric.Object): { dx: number; dy: number } {
   if (obj.originX === 'left' && obj.originY === 'top') return { dx: 0, dy: 0 }
-  const corner = obj.getPointByOrigin('left', 'top')
+  const corner = obj.getPositionByOrigin('left', 'top')
   return { dx: obj.left - corner.x, dy: obj.top - corner.y }
 }
 
