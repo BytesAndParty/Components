@@ -8,6 +8,7 @@ export type LayerPanelMessages = {
   lock: string
   layersHeader: string
   noObjects: string
+  layerList: string
 }
 
 export const MESSAGES = {
@@ -19,6 +20,7 @@ export const MESSAGES = {
     lock:        'Sperre umschalten',
     layersHeader: 'Ebenen',
     noObjects: 'Noch keine Objekte. Füge Text, Bilder oder Formen hinzu.',
+    layerList: 'Ebenen (↑/↓ wechseln, Leertaste wählen, Enter umbenennen, Entf löschen)',
   },
   en: {
     deleteLayer: 'Delete layer',
@@ -28,5 +30,6 @@ export const MESSAGES = {
     lock:        'Toggle lock',
     layersHeader: 'Layers',
     noObjects: 'No objects yet. Add text, images or shapes to the canvas.',
+    layerList: 'Layers (↑/↓ move, Space select, Enter rename, Delete remove)',
   },
 } as const satisfies ComponentMessages<LayerPanelMessages>

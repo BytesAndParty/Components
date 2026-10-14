@@ -144,7 +144,7 @@ export function LayerPanel({
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={layers.map(l => l.id)} strategy={verticalListSortingStrategy}>
-            <div className="divide-border flex flex-col divide-y" role="listbox" aria-label="Layer list">
+            <div className="divide-border flex flex-col divide-y" role="listbox" aria-label={m.layerList}>
               <AnimatePresence initial={false}>
                 {layers.map((layer) => (
                   <SortableLayerRow
@@ -288,18 +288,46 @@ function LayerRow({
     setEditing(false)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const rowRef = useRef<HTMLDivElement>(null)
+
+  // Listbox keys on the focused row: ↑/↓ move focus, Shift+↑/↓ reorder,
+  // Space selects, Enter/F2 renames, Delete/Backspace deletes. Delete stops
+  // here — the editor's global Delete hotkey would also remove the canvas
+  // selection.
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowUp' && e.shiftKey) {
       e.preventDefault()
       onMove(-1)
-    } else if (e.key === 'ArrowDown' && e.shiftKey) {
+      return
+    }
+    if (e.key === 'ArrowDown' && e.shiftKey) {
       e.preventDefault()
       onMove(1)
+      return
+    }
+    // The row's own buttons and the rename input handle their keys.
+    if (e.target !== e.currentTarget) return
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      const rows = [...(e.currentTarget.closest('[role="listbox"]')?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])]
+      rows[rows.indexOf(e.currentTarget) + (e.key === 'ArrowUp' ? -1 : 1)]?.focus()
+    } else if (e.key === ' ') {
+      e.preventDefault()
+      onSelect()
+    } else if (e.key === 'Enter' || e.key === 'F2') {
+      e.preventDefault()
+      setDraft(layer.name)
+      setEditing(true)
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault()
+      e.stopPropagation()
+      onDelete()
     }
   }
 
   return (
     <div
+      ref={rowRef}
       role="option"
       aria-selected={selected}
       className={cn(
@@ -350,6 +378,8 @@ function LayerRow({
             onKeyDown={(e) => {
               if (e.key === 'Enter')  commitRename()
               if (e.key === 'Escape') { setDraft(layer.name); setEditing(false) }
+              // Back to the row, so the keyboard user keeps their place.
+              if (e.key === 'Enter' || e.key === 'Escape') rowRef.current?.focus()
               e.stopPropagation()
             }}
           />
