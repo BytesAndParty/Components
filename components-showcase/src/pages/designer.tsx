@@ -9,6 +9,7 @@ import { LayerPanel, type Layer } from '@components/layer-panel/layer-panel'
 import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper-modal'
 import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-context'
 import { NumberInput } from '@components/number-input/number-input'
+import { Checkbox } from '@components/checkbox/checkbox'
 import { Tooltip } from '@components/tooltip/tooltip'
 import { CellarCanvas, type WineFieldValues } from '@components/cellar-canvas/CellarCanvas'
 import { WINE_LABEL_TEMPLATES, type TemplateContext } from '@components/cellar-canvas/templates/templates'
@@ -48,6 +49,7 @@ function buildDefaultLabelState(wine: WineFieldValues): CellarCanvasState {
 function CellarCanvasDemo() {
   const [wineIndex, setWineIndex] = useState(0)
   const [initialState] = useState(() => buildDefaultLabelState(WINES[0]))
+  const [printBleed, setPrintBleed] = useState(false)
   const wine = WINES[wineIndex] ?? WINES[0]
 
   return (
@@ -66,6 +68,14 @@ function CellarCanvasDemo() {
             <option key={w.nutritionalInfoUrl ?? i} value={i}>{w.name}</option>
           ))}
         </select>
+        {/* pdfBleedMm is prop-only — everything else (rulers, background, extras) is in the editor UI. */}
+        <Checkbox
+          size="sm"
+          checked={printBleed}
+          onChange={setPrintBleed}
+          label="PDF mit 3 mm Beschnitt und Schnittmarken"
+          className="ml-4"
+        />
       </div>
       <div className="border-border bg-card w-full overflow-hidden rounded-2xl border shadow-2xl">
         <CellarCanvas
@@ -74,6 +84,7 @@ function CellarCanvasDemo() {
           initialState={initialState}
           initialWineFields={wine}
           storageKey={null}
+          pdfBleedMm={printBleed ? 3 : 0}
           onSave={async () => {
             // Showcase stub — a real integration wires this to e.g. a Vendure mutation.
             await new Promise((resolve) => setTimeout(resolve, 600))
