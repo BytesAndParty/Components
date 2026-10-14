@@ -434,12 +434,21 @@ export class FabricBridge {
    *
    * Every factory places new objects at the same fixed inset, so repeated
    * clicks on an insert tool (Text, Rect, …) used to stack objects on the
-   * exact same pixel — the second click looked like a no-op. Cascading by a
-   * few px per existing object keeps clicks visibly additive without moving
-   * the very first insert.
+   * exact same pixel — the second click looked like a no-op. Each insert takes
+   * the first free 8 px step of the cascade, which leaves the very first
+   * insert in place. Counting objects instead let a new one land exactly on
+   * an existing one after a delete.
    */
   private place<T extends fabric.Object>(obj: T): T {
-    const cascade = (this.canvas.getObjects().length % 10) * 8
+    const objects = this.canvas.getObjects()
+    let step = 0
+    while (
+      step < 9 &&
+      objects.some(o =>
+        Math.abs((o.left ?? 0) - ((obj.left ?? 0) + step * 8)) < 0.5 &&
+        Math.abs((o.top ?? 0) - ((obj.top ?? 0) + step * 8)) < 0.5)
+    ) step++
+    const cascade = step * 8
     if (cascade > 0 && obj instanceof fabric.Line) {
       // A Line positions itself from x1/y1/x2/y2 whenever a point changes
       // (`_setWidthHeight`). Shifting only left/top would desync the points
