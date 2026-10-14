@@ -1070,17 +1070,26 @@ export class FabricBridge {
     if (typeof bg === 'string') {
       this.canvas.backgroundColor = bg
     } else if (bg.type === 'gradient') {
+      // The gradient line spans the trim box, as on screen; its end colours
+      // pad on into the bleed.
+      const trim = {
+        left: mmToPx(this.bleedMm),
+        top: mmToPx(this.bleedMm),
+        width: mmToPx(this.widthMm),
+        height: mmToPx(this.heightMm),
+      }
       this.canvas.backgroundColor = new fabric.Gradient({
         type: 'linear',
         gradientUnits: 'pixels',
-        coords: gradientLine(bg.angle, box),
+        coords: gradientLine(bg.angle, trim),
         colorStops: [{ offset: 0, color: bg.from }, { offset: 1, color: bg.to }],
       })
     } else {
       this.canvas.backgroundColor = '#ffffff'
       const img = this.paperImage
       if (img) {
-        // CSS `background-size: cover`, centred on the box.
+        // CSS `background-size: cover`, centred — over the bleed box, so the
+        // bleed is filled; with bleed the image is a few % larger than on screen.
         const scale = Math.max(box.width / img.width, box.height / img.height)
         img.set({
           originX: 'left',
