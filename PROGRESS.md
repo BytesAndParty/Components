@@ -39,10 +39,18 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `9c64648` | A11y: Toolbars mit Rolle + Pfeiltasten, benannte Buttons, `aria-disabled`, benanntes Canvas, 44 px bei Touch | Lint, tsc, 48 Tests, Pfeiltasten per jsdom · **Screenreader-Check offen** |
 | 2026-10-14 | `17118b7` | Fix: kein Hydration-Mismatch bei SSR (client-only Wrapper) | Lint, tsc, 48 Tests, `renderToString` → `""` |
 | 2026-10-14 | `9455071` | Showcase: Schalter „PDF mit 3 mm Beschnitt und Schnittmarken“ im Etiketten-Designer | Lint, tsc |
+| 2026-10-14 | `5b89df3` | Review 2 (Daten): Gruppe nach Weindaten-Wechsel neu ausgerichtet (Flag pro Feld), duplizierte Gruppen-Mitglieder mit eigenen IDs | Lint, tsc, 48 Tests, Klon-IDs per Skript bestätigt |
+| 2026-10-14 | `7823f53` | Review 2: Export wartet auf das dekodierte Hintergrundbild (`whenPaperReady`, `exportLabelPng` jetzt async) | Lint, tsc, 48 Tests |
+| 2026-10-14 | `e0bee9d` | Review 2: Verlauf im PDF mit Beschnitt über das Endformat (deckt sich mit der Vorschau) | Lint, tsc, 48 Tests |
+| 2026-10-14 | `7a150f8` | Review 2: kein falscher QR-Fehler nach Vorlagenwechsel/Undo (Tracking in der Bridge, Reset bei Szenen-Ersatz) | Lint, tsc, 48 Tests |
+| 2026-10-14 | `a88e23a` | Review 2: Eckenradius bleibt beim Skalieren rund (`_cornerRadiusMm`, Panel + Anfasser) | Lint, tsc, 48 Tests |
+| 2026-10-14 | `16db38d` | Review 2 (Tastatur): Leertaste halten scrollt nicht, kein hängendes Hand-Tool nach App-Wechsel, keine Konsolenwarnung | Lint, tsc, 48 Tests, TanStack-Quelle geprüft |
+| 2026-10-14 | `3a90478` | Review 2: Esc im offenen Overlay hebt die Auswahl nicht mehr auf; verschachtelte Toolbars springen nicht doppelt | Lint, tsc, 48 Tests, Zag-Quelle geprüft |
+| 2026-10-14 | `0c0c402` | Tote SSR-Zweige entfernt; Typänderung `CellarCanvasState.bg` in COMPONENT.md dokumentiert | Lint, tsc, 48 Tests, SSR-Check |
 
 ## In Arbeit
 
-- Zweiter unabhängiger Review über die Feature-Commits seit `75c0801`, aufgeteilt in zwei Subagenten (Tastatur/A11y/SSR und Daten/Serialisierung/Export) — der erste Lauf im Ganzen hing nach 600 s. Befunde danach abarbeiten.
+- Nichts. Beide Reviews (Daten/Export und Tastatur/A11y/SSR) sind abgearbeitet; alle bestätigten Befunde behoben.
 
 ## Warteschlange
 
@@ -54,6 +62,12 @@ Die Spec-Feature-Liste ist vollständig. Offen bleiben:
    Erst messen, dann umbauen.
 2. **Vorlagen-Thumbnails** und `customTemplates`-Prop (bewusst rudimentär, nicht in dieser Runde).
 3. **Roving-Tabindex** in den Toolbars (heute mehrere Tab-Stopps pro Toolbar; Pfeiltasten gehen schon).
+5. **Kleinkram aus Review 2, bewusst offen:** `Cmd+D`/`Cmd+G` in einem Eingabefeld lösen die Browser-Defaults
+   aus (Lesezeichen/Weitersuchen), weil die Kürzel dort absichtlich nicht greifen. Hintergrundbild im PDF mit
+   Beschnitt ist ein paar Prozent größer als in der Vorschau (cover über die Beschnitt-Box, damit der
+   Beschnitt gefüllt ist).
+6. **Embedder-Hinweis:** `CellarCanvasState.bg` ist jetzt `LabelBackground` (String oder Objekt) — für die
+   Buchart58-Kopie relevant, falls dort nachgezogen wird.
 4. ~~**Showcase-Demos**~~ — `pdfBleedMm` per Schalter (`9455071`); Lineal, Hintergrund, Vorlagen und
    Extras sind direkt im Editor bedienbar.
 
