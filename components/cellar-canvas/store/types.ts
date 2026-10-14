@@ -62,6 +62,8 @@ export interface DesignerState {
   draftSaveFailed: boolean
   /** Last image/QR insert failed. Cleared by the next successful insert or by dismissing the hint. */
   insertError: 'image' | 'qr' | null
+  /** Restarts the onboarding tour; registered by `OnboardingTour` while it is mounted. */
+  startTour: (() => void) | null
   cropperOpen: boolean
   cropperSrc?: string
   cropperTargetId?: string
@@ -76,5 +78,6 @@ export interface DesignerState {
   setSnappingEnabled: (enabled: boolean) => void
   setDraftSaveFailed: (failed: boolean) => void
   setInsertError: (error: DesignerState['insertError']) => void
+  setStartTour: (start: DesignerState['startTour']) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }

@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
@@ -39,7 +39,7 @@ export function CanvasHeader({
   onExportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed, insertError, setInsertError } = useDesignerStore()
+  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed, insertError, setInsertError, startTour } = useDesignerStore()
 
   return (
     <div
@@ -104,6 +104,12 @@ export function CanvasHeader({
             <Download size={12} />
             {m.exportLabel}
           </button>
+        )}
+        {startTour && (
+          <IconButton onClick={startTour} title={m.tourStartTitle} className="ml-2">
+            <CircleHelp size={14} aria-hidden />
+            <span className="sr-only">{m.tourStartButton}</span>
+          </IconButton>
         )}
       </div>
 

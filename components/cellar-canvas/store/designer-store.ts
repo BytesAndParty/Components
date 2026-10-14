@@ -15,6 +15,7 @@ export const useDesignerStore = create<DesignerState>()(
     snappingEnabled: true,
     draftSaveFailed: false,
     insertError: null,
+    startTour: null,
     cropperOpen: false,
     cropperSrc: undefined,
     cropperTargetId: undefined,
@@ -28,6 +29,7 @@ export const useDesignerStore = create<DesignerState>()(
     setSnappingEnabled: (snappingEnabled: boolean) => set({ snappingEnabled }),
     setDraftSaveFailed: (draftSaveFailed: boolean) => set({ draftSaveFailed }),
     setInsertError: (insertError) => set({ insertError }),
+    setStartTour: (startTour) => set({ startTour }),
     setCropper: (cropper) => set({
       cropperOpen: cropper.open,
       cropperSrc: cropper.src,

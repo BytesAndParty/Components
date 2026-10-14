@@ -6,6 +6,7 @@ import { Tour, useTour } from '@ark-ui/react/tour'
 type StatusChangeDetails = { status: 'idle' | 'started' | 'skipped' | 'completed' | 'dismissed' | 'not-found' }
 import { X } from 'lucide-react'
 import { useCellarCanvasMessages } from '../../messages-context'
+import { useDesignerStore } from '../../store/designer-store'
 import { cn } from '../../../lib/utils'
 
 export interface OnboardingTourProps {
@@ -127,6 +128,16 @@ export function OnboardingTour({
     // effect to re-run as the step state advances.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disabled, storageKey])
+
+  // The header's help button restarts the tour. The tour instance lives
+  // here, so it registers its start function in the store while mounted.
+  useEffect(() => {
+    const { setStartTour } = useDesignerStore.getState()
+    setStartTour(() => tour.start())
+    return () => setStartTour(null)
+    // Same as above: tour.start is stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Tour.Root tour={tour}>

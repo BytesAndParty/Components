@@ -41,7 +41,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 | `enableValidator` | `boolean` | `true` | Toggle EU compliance check + floating badge. `false` for showcases, non-EU markets, tests |
 | `exportDpi` | `number` | `300` | Raster resolution for PNG/PDF export |
 | `enablePdfExport` | `boolean` | `true` | Show the PDF export button (PNG is always available) |
-| `disableTour` | `boolean` | `false` | Skip the first-run guided tour |
+| `disableTour` | `boolean` | `false` | Skip the first-run guided tour (the header's help button still restarts it) |
 | `tourStorageKey` | `string \| null` | `'cellar-canvas-tour-completed'` | localStorage key for the "tour seen" flag; `null` opts out of persisting it |
 | `messages` | `Partial<CellarCanvasMessages>` | — | Override individual UI strings (~60, `de`/`en`); the locale comes from the global `I18nProvider` |
 | `onChange` | `(state: CellarCanvasState) => void` | — | Fired on every canvas mutation |
