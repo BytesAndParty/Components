@@ -18,20 +18,27 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `c446585` | Cellar Canvas: Fit to Screen — `<canvas>` füllt den Arbeitsbereich (`ResizeObserver` → `bridge.resize()`), Fit rechnet mit Label + Bleed, Hilfslinien über den sichtbaren Ausschnitt | Lint, tsc, 48 Tests · **Browser-Check offen** |
 | 2026-10-14 | `f61c104` | Cellar Canvas: Stille Fehlerpfade — kaputtes Bild / QR-Fehler zeigen einen schließbaren Header-Hinweis (`insertError`), `prepareImageSource`-Ketten mit `.catch` | Lint, tsc, 48 Tests, Reject-Verhalten in Fabric-Quelle geprüft · **Browser-Check offen** |
 | 2026-10-14 | `6957809` | Cellar Canvas: Tour-Neustart — Fragezeichen-Button im Header (`startTour` im Store, registriert von `OnboardingTour`) | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `6e08e71` | Cellar Canvas: Einfüge-Versatz nimmt die erste freie 8-px-Stufe statt `Anzahl % 10` | Lint, tsc, 48 Tests |
+| 2026-10-14 | `f1fa1f8` | Review-Nacharbeit Fit: Maske verdeckt Validator-Badge nicht mehr (`isolate`), kein leerer Frame beim Resize (`renderAll`), Resize behält gewählten Zoom (`fitted`-Flag), Zoom feuert nur `cellar:viewport-changed` (kein Autosave/`onChange`), Vollbild ohne toten Streifen (`fitShiftX`), Grid-Zeile `minmax(0, 1fr)` | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `ce1992b` | Review-Nacharbeit Fehlerhinweis: `ImageCropperModal.onError` (Datei-Dialog/Drag & Drop), wiederholter Fehler wird neu angesagt, Schließen-Button 44 px + `aria-label` | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `e23fe0f` | Review-Nacharbeit X/Y: Größenänderung einer Mehrfachauswahl hält die linke obere Ecke; `getPositionByOrigin` statt deprecated Alias | Lint, tsc, 48 Tests, Skript gegen echtes Fabric |
+| 2026-10-14 | `8b3a5b2` | Cellar Canvas: `useCanvasSync`/`useCanvasAutosave` folgen einer neuen Etikettgröße | Lint, tsc, 48 Tests |
 
 ## In Arbeit
 
-- **Einfüge-Versatz** (siehe Warteschlange 1)
+- Feature-Liste aus der Spec, beginnend mit den Tastatur-Kürzeln (siehe Warteschlange).
 
 ## Warteschlange (in dieser Reihenfolge)
 
-Bugs aus `components/cellar-canvas/STATUS.md`:
-1. **Einfüge-Versatz** zählt Objekte statt freie Plätze.
-2. **Dimensionswechsel zur Laufzeit** — `useCanvasSync`/`useCanvasAutosave` hängen an der alten Canvas.
-3. **`prepareImageSource`** dekodiert 50-MP-Fotos voll (~200 MB Spitze).
-4. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
+Restliche Bugs aus `components/cellar-canvas/STATUS.md`:
+1. **`prepareImageSource`** dekodiert 50-MP-Fotos voll (~200 MB Spitze). **Zurückgestellt (2026-10-14):**
+   Kandidat wäre Maße per `<img>` lesen + `createImageBitmap(blob, { resizeWidth, resizeHeight,
+   resizeQuality: 'high' })`. MDN lässt offen, ob der Browser dabei schon beim Dekodieren verkleinert
+   oder erst danach — ohne Speichermessung im Browser (DevTools → Memory) ist der Nutzen nicht belegbar.
+   Erst messen, dann umbauen.
+2. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
 
-Danach die Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"): Strg+A, Esc, Duplizieren,
+Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"): Strg+A, Esc, Duplizieren,
 Gruppieren, Eckenradius, Typ-Icons im Layer-Panel, QR-Entfernen-Warnung, Lineal, Verlauf/Bild als
 Hintergrund, Vorlagen Rustic + Bold, PDF mit Beschnitt + Schnittmarken, Ark-UI-`DownloadTrigger`,
 SignaturePad + Ornamente, A11y-Durchgang.
@@ -49,6 +56,11 @@ SignaturePad + Ornamente, A11y-Durchgang.
   - Fit-to-Screen: Normalansicht, Vollbild, kleines Fenster; Hilfslinien reichen über den sichtbaren Bereich.
   - Tour abschließen, dann Fragezeichen im Header → Tour startet erneut.
   - Kaputte Bilddatei (z. B. umbenannte `.txt` → `.png`) per Ersetzen/Einfügen → roter Hinweis im Header, ✕ schließt ihn.
+  - Validator-Badge unten rechts im Preview-Modus sichtbar (nicht von der Maske verdeckt).
+  - Fensterrand ziehen → kein Flackern; erst zoomen, dann Fenster ändern → Zoom bleibt; „Fit" passt wieder ein.
+  - Vollbild → Etikett mittig im Fenster, links kein abgeschnittener Streifen.
+  - Kaputte Datei über Datei-Dialog oder Drag & Drop → Cropper schließt, Hinweis erscheint.
+  - Mehrfachauswahl: Breite im Panel ändern → linke obere Ecke bleibt stehen.
 - **Push**, wenn die Checks passen.
 - **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
   dieselben Bugs (Export-Zoom, Snap auf eigene Auswahl, X/Y bei Mehrfachauswahl; Fit vermutlich auch).
@@ -74,5 +86,10 @@ SignaturePad + Ornamente, A11y-Durchgang.
   bis auf Weiteres der User.
 - **`claude.md` ist klein geschrieben im Git.** Auf macOS (case-insensitive) heißt sie im Editor
   `CLAUDE.md`, aber `git add CLAUDE.md` nimmt nichts auf — `git add claude.md` verwenden.
+- **Review 2026-10-14** (Subagent, adversarial) — alle bestätigten Befunde sind behoben. Offen und
+  bewusst nicht angefasst: `insertError` liegt wie der restliche Designer-State im globalen Store und
+  überlebt damit einen Remount; Header-`IconButton`s sind ~28 px und nur per `title` benannt (gehört in
+  den A11y-Durchgang).
+- **Commit-Hashes in dieser Datei** erst im nächsten Commit eintragen — `--amend` ändert den Hash.
 - **Regeln (Kurzfassung):** direkt auf `main`, pro Schritt committen, Commit-Messages ohne AI-Spuren,
   kein Push ohne Auftrag, `bun run lint` grün vor jedem Commit, keine neuen Testdateien ohne Rückfrage.
