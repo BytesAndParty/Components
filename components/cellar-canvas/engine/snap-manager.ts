@@ -4,6 +4,17 @@ import { mmToPx } from './units'
 const SNAP_THRESHOLD = 5 // pixels
 const GUIDE_COLOR = '#ff00ff' // Canva-style magenta
 
+const guides = new WeakSet<object>()
+
+/**
+ * Guide lines are real canvas objects, added and removed on every drag frame.
+ * Listeners on `object:added`/`object:removed` use this to tell them apart
+ * from actual scene changes.
+ */
+export function isSnapGuide(obj: unknown): boolean {
+  return typeof obj === 'object' && obj !== null && guides.has(obj)
+}
+
 export interface SnapLine {
   type: 'h' | 'v'
   coordinate: number
@@ -47,6 +58,11 @@ export class SnapManager {
     if (isAltPressed) return false
 
     const activeObj = target
+    // The children of a multi-selection stay in canvas.getObjects(). Skipping
+    // only the selection itself let it snap to its own edges (delta 0), which
+    // ended the search before any other object was considered.
+    const moving: fabric.Object[] =
+      activeObj instanceof fabric.ActiveSelection ? activeObj.getObjects() : [activeObj]
     const objBounds = activeObj.getBoundingRect()
     
     // Interesting points on the moving object
@@ -62,7 +78,7 @@ export class SnapManager {
     
     // 2. Other Objects Snap Points
     this.canvas.getObjects().forEach(obj => {
-      if (obj === activeObj || !obj.visible || obj.evented === false) return
+      if (moving.includes(obj) || !obj.visible || obj.evented === false) return
       
       const b = obj.getBoundingRect()
       // Edges and Center
@@ -132,6 +148,7 @@ export class SnapManager {
       excludeFromExport: true,
     })
 
+    guides.add(line)
     this.canvas.add(line)
     this.guideLines.push(line)
   }

@@ -1,6 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react'
 import { validateCompliance, type ValidatableObject } from '../wine-fields/validator'
 import type { FabricBridge } from './fabric-bridge'
+import { isSnapGuide } from './snap-manager'
 import type { FabricObjectProperties } from '../store/types'
 import type { Layer } from '../../layer-panel/layer-panel'
 import type { ValidationWarning } from '../../validator-badge/validator-badge'
@@ -102,6 +103,11 @@ export function useCanvasSync(
     }
 
     const onFull     = () => scheduleUpdate('full')
+    // Snap guides come and go on every drag frame; a full update each time
+    // re-snapshotted the layers and re-ran the validator mid-drag.
+    const onStack    = (e?: { target?: unknown }) => {
+      if (!isSnapGuide(e?.target)) scheduleUpdate('full')
+    }
     const onGeometry = () => scheduleUpdate('geometry')
     const onViewport = () => scheduleUpdate('viewport')
     const onModified = () => {
@@ -116,7 +122,7 @@ export function useCanvasSync(
     // Custom channels: `cellar:property-changed` for non-event-emitting bridge
     // mutations (may touch z-order/visibility → full), `cellar:viewport-changed`
     // for programmatic viewport moves (pan drag) that emit no native event.
-    const listeners: [string, () => void][] = [
+    const listeners: [string, (e?: { target?: unknown }) => void][] = [
       ['selection:created',       onFull],
       ['selection:updated',       onFull],
       ['selection:cleared',       onFull],
@@ -124,8 +130,8 @@ export function useCanvasSync(
       ['object:moving',           onGeometry],
       ['object:scaling',          onGeometry],
       ['object:rotating',         onGeometry],
-      ['object:added',            onFull],
-      ['object:removed',          onFull],
+      ['object:added',            onStack],
+      ['object:removed',          onStack],
       ['cellar:property-changed', onFull],
       ['mouse:wheel',             onViewport],
       ['cellar:viewport-changed', onViewport],
