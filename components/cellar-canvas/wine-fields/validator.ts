@@ -59,18 +59,29 @@ function isPrinted(o: ValidatableObject): boolean {
   return o.visible !== false && (o.text === undefined || o.text.trim() !== '')
 }
 
-export function validateCompliance(objects: ValidatableObject[]): ValidationWarning[] {
+/**
+ * `qrWasPlaced`: a QR code was on the canvas earlier in this session. A
+ * missing QR code is then an error, not a warning — the nutrition link was
+ * there and got removed, far likelier a slip than a decision.
+ */
+export function validateCompliance(
+  objects: ValidatableObject[],
+  { qrWasPlaced = false }: { qrWasPlaced?: boolean } = {},
+): ValidationWarning[] {
   const presentKeys = new Set(objects.filter(isPrinted).map(o => o._fieldKey).filter(Boolean))
 
   const warnings: ValidationWarning[] = []
 
   for (const mandatory of MANDATORY_KEYS) {
     if (!presentKeys.has(mandatory.key)) {
+      const removed = mandatory.key === 'qrCode' && qrWasPlaced
       warnings.push({
         key: mandatory.key,
         label: mandatory.label,
-        description: mandatory.description,
-        severity: mandatory.severity as 'error' | 'warning',
+        description: removed
+          ? `Der platzierte QR-Code wurde entfernt. ${mandatory.description}`
+          : mandatory.description,
+        severity: removed ? 'error' : mandatory.severity,
       })
     }
   }
