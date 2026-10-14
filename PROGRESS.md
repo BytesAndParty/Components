@@ -50,7 +50,11 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 
 ## In Arbeit
 
-- Nichts. Beide Reviews (Daten/Export und Tastatur/A11y/SSR) sind abgearbeitet; alle bestätigten Befunde behoben.
+- **Buchart58-Abgleich (2026-10-14, Subagent mit Opus):** alle Cellar-Canvas-Fixes und -Features ab `b6754ce`
+  werden nach `Buchart58/storefront/src/atelier/cellar-canvas/` (+ Geschwister-Kopien) übertragen, direkt auf
+  Buchart58-`main`, ohne Push. Ausgenommen: Vorlagen Rustic/Bold (Buchart58 hat keine Vorlagen) und
+  Showcase-Änderungen. Ergebnis steht dann in Buchart58s `cellar-canvas/STATUS.md` („Upstream-Abgleich 2026-10-14“).
+- Beide Reviews (Daten/Export und Tastatur/A11y/SSR) sind abgearbeitet; alle bestätigten Befunde behoben.
 
 ## Warteschlange
 
@@ -107,9 +111,7 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
   - Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löschen (löscht nur die Ebene, nicht zusätzlich die Canvas-Auswahl).
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
-- **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
-  dieselben Bugs (Export-Zoom, Snap auf eigene Auswahl, X/Y bei Mehrfachauswahl; Fit vermutlich auch).
-  Nicht angefasst — anderes Repo, nur auf ausdrücklichen Auftrag.
+- **Buchart58:** Abgleich beauftragt (siehe „In Arbeit“); danach dort Browser-Checks und Push.
 
 ## Hinweise für weitere Sessions
 
