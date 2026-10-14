@@ -27,10 +27,12 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `2846148` | Feature: Duplizieren (`Mod+D` + Toolbar-Button), Auswahl wird vor dem Klonen aufgelöst | Lint, tsc, 48 Tests, Koordinaten per Skript geprüft · **Browser-Check offen** |
 | 2026-10-14 | `8a17858` | Feature: Eckenradius „R" (mm) für Rechtecke in der Kontext-Toolbar | Lint, tsc, 48 Tests · **Browser-Check offen** |
 | 2026-10-14 | `c39699d` | Feature: entfernter QR-Code → Validator-Fehler (rot) statt Warnung; Typ-Icons im Layer-Panel gab es schon (STATUS bereinigt) | Lint, tsc, 48 Tests, Skript mit drei Fällen |
+| 2026-10-14 | `94a2f1a` | Feature: Gruppieren / Aufheben (`Mod+G` / `Mod+Shift+G` + Kontext-Toolbar); Weinfeld-Sync und Validator schauen in Gruppen | Lint, tsc, 48 Tests, Gruppenmechanik per Skript · **Browser-Check offen** |
+| 2026-10-14 | `70590ef` | Feature: Leertaste halten = temporäres Hand-Tool (nur mit Fokus auf Seite/Canvas) | Lint, tsc, 48 Tests · **Browser-Check offen** |
 
 ## In Arbeit
 
-- Feature-Liste aus der Spec: als Nächstes Gruppieren / Gruppierung aufheben.
+- Feature-Liste aus der Spec: als Nächstes Ark-UI-`DownloadTrigger` für die Export-Buttons.
 
 ## Warteschlange (in dieser Reihenfolge)
 
@@ -42,10 +44,11 @@ Restliche Bugs aus `components/cellar-canvas/STATUS.md`:
    Erst messen, dann umbauen.
 2. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
 
-Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Gruppieren, Lineal, Verlauf/Bild
-als Hintergrund, Vorlagen Rustic + Bold, PDF mit Beschnitt + Schnittmarken, Ark-UI-`DownloadTrigger`,
-SignaturePad + Ornamente, Space+Drag zum Verschieben, A11y-Durchgang.
-Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung (Typ-Icons gab es schon).
+Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Ark-UI-`DownloadTrigger`, PDF mit
+Beschnitt + Schnittmarken, Lineal, Verlauf/Bild als Hintergrund, Vorlagen Rustic + Bold, SignaturePad +
+Ornamente, A11y-Durchgang.
+Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung, Gruppieren, Space+Drag
+(Typ-Icons gab es schon).
 
 ## Offen beim User
 
@@ -70,6 +73,8 @@ Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung (Typ-Icons
   - `Cmd+D` / Kopieren-Button → Kopie 8 px versetzt; auch bei Mehrfachauswahl an der richtigen Stelle.
   - Rechteck → „R" im Kontext-Toolbar → runde Ecken.
   - QR-Code einfügen, löschen → Validator-Badge rot; Undo → wieder grün/gelb.
+  - Zwei Objekte → Gruppieren-Button / `Cmd+G` → eine Ebene „Group"; Weinfeld in der Gruppe ändert sich mit den Weindaten; `Cmd+Shift+G` löst auf, Positionen bleiben.
+  - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
 - **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
   dieselben Bugs (Export-Zoom, Snap auf eigene Auswahl, X/Y bei Mehrfachauswahl; Fit vermutlich auch).
@@ -99,6 +104,10 @@ Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung (Typ-Icons
   bewusst nicht angefasst: `insertError` liegt wie der restliche Designer-State im globalen Store und
   überlebt damit einen Remount; Header-`IconButton`s sind ~28 px und nur per `title` benannt (gehört in
   den A11y-Durchgang).
+- **Wegwerf-Skripte mit Fabric:** `fabric` über den absoluten Pfad
+  `…/__Components__/node_modules/fabric/dist/index.mjs` importieren und Repo-Module ebenfalls absolut —
+  sonst lädt Bun aus dem Scratchpad eine zweite Fabric-Instanz und `instanceof` schlägt fehl. Text
+  (`Textbox`) braucht ein echtes Canvas zum Messen und läuft im Skript nicht.
 - **Commit-Hashes in dieser Datei** erst im nächsten Commit eintragen — `--amend` ändert den Hash.
 - **Regeln (Kurzfassung):** direkt auf `main`, pro Schritt committen, Commit-Messages ohne AI-Spuren,
   kein Push ohne Auftrag, `bun run lint` grün vor jedem Commit, keine neuen Testdateien ohne Rückfrage.
