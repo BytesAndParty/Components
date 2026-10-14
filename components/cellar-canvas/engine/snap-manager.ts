@@ -131,12 +131,13 @@ export class SnapManager {
   }
 
   private drawGuide(type: 'h' | 'v', coordinate: number) {
-    const canvasWidth = this.canvas.width || 0
-    const canvasHeight = this.canvas.height || 0
-    
+    // Span the visible area. The canvas element is as large as the canvas
+    // area, and the scene coordinates it shows shift with zoom and pan.
+    const { tl, br } = this.canvas.calcViewportBoundaries()
+
     const linePoints: [number, number, number, number] = type === 'h'
-      ? [0, coordinate, canvasWidth, coordinate]
-      : [coordinate, 0, coordinate, canvasHeight]
+      ? [tl.x, coordinate, br.x, coordinate]
+      : [coordinate, tl.y, coordinate, br.y]
 
     const line = new fabric.Line(linePoints, {
       stroke: GUIDE_COLOR,

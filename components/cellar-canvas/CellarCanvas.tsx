@@ -170,12 +170,21 @@ export function CellarCanvas({
   useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm })
   useCanvasAutosave(bridge, storageKey, onChange)
 
-  // Fullscreen resizes the wrapper, so the previous zoom-to-fit goes stale —
-  // but this must only re-fit, never re-run the restore above (that would
-  // reload initialState/the draft and silently discard the user's edits).
+  // The Fabric canvas fills the canvas area and re-fits whenever that area
+  // changes size (window resize, fullscreen toggle). This must only re-fit,
+  // never re-run the restore above (that would reload initialState/the draft
+  // and silently discard the user's edits). A new label size recreates the
+  // Fabric canvas at its initial size, hence re-observing on widthMm/heightMm.
+  const canvasAreaRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    bridge.current?.zoomToFit()
-  }, [bridge, isFullscreen])
+    const el = canvasAreaRef.current
+    if (!el) return
+    const observer = new ResizeObserver(([entry]) => {
+      bridge.current?.resize(entry.contentRect.width, entry.contentRect.height)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [bridge, widthMm, heightMm])
 
   // Wine-field text mirrors the incoming prop (e.g. the winemaker updated the
   // vintage in the DB while the editor was open). Fields whose value went
@@ -418,10 +427,10 @@ export function CellarCanvas({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        <div className="relative flex-1">
+        <div ref={canvasAreaRef} className="relative flex-1">
           <LabelCanvas
             ref={canvasRef}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="absolute inset-0"
             backdrop={computeBackdrop(widthMm, heightMm, viewport, backgroundColor)}
             widthMm={widthMm}
             heightMm={heightMm}

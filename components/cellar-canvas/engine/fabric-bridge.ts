@@ -850,25 +850,40 @@ export class FabricBridge {
   }
 
   /**
-   * Fits the whole HTML-canvas content into the viewport with a small visual
-   * padding. Because the canvas is larger than the label (bleed margin), this
-   * keeps both the label and any overflowing objects visible at the same time.
+   * Matches the canvas element to the visible canvas area (the React layer
+   * observes its size) and re-fits the view. The element used to keep the
+   * label-plus-bleed size: clipped in a small window, small in fullscreen.
+   */
+  resize(width: number, height: number) {
+    if (width <= 0 || height <= 0) return
+    this.canvas.setDimensions({ width, height })
+    this.zoomToFit()
+  }
+
+  /**
+   * Fits the label plus its bleed margin into the canvas element with a small
+   * visual padding, centred. The element fills the visible canvas area (see
+   * `resize`), so this keeps both the label and any overflowing objects in
+   * view at the same time.
    */
   zoomToFit() {
     const padding = 24
-    const canvasWidth = this.canvas.getWidth()
-    const canvasHeight = this.canvas.getHeight()
+    const sceneWidth  = mmToPx(this.widthMm + 2 * this.bleedMm)
+    const sceneHeight = mmToPx(this.heightMm + 2 * this.bleedMm)
+    const viewWidth   = this.canvas.getWidth()
+    const viewHeight  = this.canvas.getHeight()
 
-    const scale = Math.min(
-      (canvasWidth - padding * 2) / canvasWidth,
-      (canvasHeight - padding * 2) / canvasHeight,
+    const scale = Math.max(0.05, Math.min(
+      (viewWidth - padding * 2) / sceneWidth,
+      (viewHeight - padding * 2) / sceneHeight,
       2.0,
-    )
+    ))
 
-    this.canvas.setZoom(scale)
-    const vpt = this.canvas.viewportTransform!
-    vpt[4] = (canvasWidth - canvasWidth * scale) / 2
-    vpt[5] = (canvasHeight - canvasHeight * scale) / 2
+    this.canvas.setViewportTransform([
+      scale, 0, 0, scale,
+      (viewWidth - sceneWidth * scale) / 2,
+      (viewHeight - sceneHeight * scale) / 2,
+    ])
 
     this.canvas.requestRenderAll()
     useDesignerStore.getState().setZoom(scale)
