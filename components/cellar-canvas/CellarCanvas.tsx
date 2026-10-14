@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { ZoomIn, ZoomOut } from 'lucide-react'
 import { cn } from '../lib/utils'
@@ -135,7 +135,22 @@ function computeBackdrop(
   }
 }
 
-export function CellarCanvas({
+const subscribeNever = () => () => {}
+
+/**
+ * Client-only: renders nothing on the server and during hydration, then
+ * mounts the editor fresh. The editor portals its shell (fullscreen) and
+ * initialises Fabric on its `<canvas>` once, at mount — rendering it on the
+ * server could only mismatch, and switching to the portal after hydration
+ * would hand Fabric a new, never-initialised canvas. Without SSR the
+ * client snapshot applies from the first render, so nothing mounts twice.
+ */
+export function CellarCanvas(props: CellarCanvasProps) {
+  const isClient = useSyncExternalStore(subscribeNever, () => true, () => false)
+  return isClient ? <CellarCanvasEditor {...props} /> : null
+}
+
+function CellarCanvasEditor({
   widthMm           = 90,
   heightMm          = 120,
   initialWineFields = DEFAULT_WINE_FIELDS,

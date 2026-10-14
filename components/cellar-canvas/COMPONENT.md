@@ -20,6 +20,7 @@ Sub-modules and panels live alongside it as standalone components that can be re
 - **Autosave** to localStorage (debounced 1 s); a failed write (quota, blocked storage) shows a warning in the header instead of failing silently.
 - **Templates**: five starting layouts (Classic / Modern / Minimal / Rustic / Bold, `templates/templates.ts`; Rustic and Bold also place alcohol and volume at the foot) in a dedicated panel tab. Applying one replaces the canvas in a single undo-able step (`bridge.applyTemplate`); wine-field elements carry the same `_fieldKey` metadata as manual inserts, so they stay in sync with `initialWineFields` afterwards. Fields without a value are left out of the template.
 - **Accessibility**: header, main toolbar and context toolbar are `role="toolbar"` with localized labels; arrow keys and Home/End move between buttons (inputs keep their arrows). Tool buttons expose `aria-pressed`, unavailable actions use `aria-disabled` so they stay focusable and their tooltip shows. The canvas has `role="img"` with a label pointing to the layer panel, which is fully keyboard-operable. Coarse pointers get 44 px header buttons.
+- **Client-only**: renders nothing on the server and during hydration, then mounts the editor once — SSR frameworks (Astro islands, Next.js) need no `client:only` workaround and see no hydration mismatch.
 
 ## How It Works
 
