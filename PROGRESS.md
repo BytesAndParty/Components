@@ -23,10 +23,14 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 | 2026-10-14 | `ce1992b` | Review-Nacharbeit Fehlerhinweis: `ImageCropperModal.onError` (Datei-Dialog/Drag & Drop), wiederholter Fehler wird neu angesagt, Schließen-Button 44 px + `aria-label` | Lint, tsc, 48 Tests · **Browser-Check offen** |
 | 2026-10-14 | `e23fe0f` | Review-Nacharbeit X/Y: Größenänderung einer Mehrfachauswahl hält die linke obere Ecke; `getPositionByOrigin` statt deprecated Alias | Lint, tsc, 48 Tests, Skript gegen echtes Fabric |
 | 2026-10-14 | `8b3a5b2` | Cellar Canvas: `useCanvasSync`/`useCanvasAutosave` folgen einer neuen Etikettgröße | Lint, tsc, 48 Tests |
+| 2026-10-14 | `0b4cea6` | Feature: `Mod+A` wählt alle sichtbaren, nicht gesperrten Objekte; `Escape` hebt die Auswahl auf, ohne Auswahl verlässt es das Vollbild | Lint, tsc, 48 Tests, Fabric-Keymap geprüft · **Browser-Check offen** |
+| 2026-10-14 | `2846148` | Feature: Duplizieren (`Mod+D` + Toolbar-Button), Auswahl wird vor dem Klonen aufgelöst | Lint, tsc, 48 Tests, Koordinaten per Skript geprüft · **Browser-Check offen** |
+| 2026-10-14 | `8a17858` | Feature: Eckenradius „R" (mm) für Rechtecke in der Kontext-Toolbar | Lint, tsc, 48 Tests · **Browser-Check offen** |
+| 2026-10-14 | `c39699d` | Feature: entfernter QR-Code → Validator-Fehler (rot) statt Warnung; Typ-Icons im Layer-Panel gab es schon (STATUS bereinigt) | Lint, tsc, 48 Tests, Skript mit drei Fällen |
 
 ## In Arbeit
 
-- Feature-Liste aus der Spec, beginnend mit den Tastatur-Kürzeln (siehe Warteschlange).
+- Feature-Liste aus der Spec: als Nächstes Gruppieren / Gruppierung aufheben.
 
 ## Warteschlange (in dieser Reihenfolge)
 
@@ -38,10 +42,10 @@ Restliche Bugs aus `components/cellar-canvas/STATUS.md`:
    Erst messen, dann umbauen.
 2. **Fullscreen-SSR** — Hydration-Mismatch für SSR-Embedder (niedrige Priorität, Showcase/Buchart58 sind client-only).
 
-Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"): Strg+A, Esc, Duplizieren,
-Gruppieren, Eckenradius, Typ-Icons im Layer-Panel, QR-Entfernen-Warnung, Lineal, Verlauf/Bild als
-Hintergrund, Vorlagen Rustic + Bold, PDF mit Beschnitt + Schnittmarken, Ark-UI-`DownloadTrigger`,
-SignaturePad + Ornamente, A11y-Durchgang.
+Feature-Liste aus der Spec (siehe STATUS.md „Spec-Items"), offen: Gruppieren, Lineal, Verlauf/Bild
+als Hintergrund, Vorlagen Rustic + Bold, PDF mit Beschnitt + Schnittmarken, Ark-UI-`DownloadTrigger`,
+SignaturePad + Ornamente, Space+Drag zum Verschieben, A11y-Durchgang.
+Erledigt: Strg+A, Esc, Duplizieren, Eckenradius, QR-Entfernen-Warnung (Typ-Icons gab es schon).
 
 ## Offen beim User
 
@@ -61,6 +65,11 @@ SignaturePad + Ornamente, A11y-Durchgang.
   - Vollbild → Etikett mittig im Fenster, links kein abgeschnittener Streifen.
   - Kaputte Datei über Datei-Dialog oder Drag & Drop → Cropper schließt, Hinweis erscheint.
   - Mehrfachauswahl: Breite im Panel ändern → linke obere Ecke bleibt stehen.
+  - `Cmd+A` auf der Fläche → alles außer gesperrten/ausgeblendeten Ebenen ausgewählt; im Panel-Eingabefeld markiert `Cmd+A` weiter den Text.
+  - `Esc`: Textbearbeitung beenden → Auswahl aufheben → (im Vollbild) Vollbild verlassen — je ein Schritt pro Druck.
+  - `Cmd+D` / Kopieren-Button → Kopie 8 px versetzt; auch bei Mehrfachauswahl an der richtigen Stelle.
+  - Rechteck → „R" im Kontext-Toolbar → runde Ecken.
+  - QR-Code einfügen, löschen → Validator-Badge rot; Undo → wieder grün/gelb.
 - **Push**, wenn die Checks passen.
 - **Buchart58 nachziehen?** Die Kopie unter `Buchart58/storefront/src/atelier/cellar-canvas/` hat
   dieselben Bugs (Export-Zoom, Snap auf eigene Auswahl, X/Y bei Mehrfachauswahl; Fit vermutlich auch).
