@@ -170,21 +170,26 @@ export function CellarCanvas({
   useCanvasRestore(bridge, initialState, storageKey, { widthMm, heightMm })
   useCanvasAutosave(bridge, storageKey, onChange)
 
-  // The Fabric canvas fills the canvas area and re-fits whenever that area
-  // changes size (window resize, fullscreen toggle). This must only re-fit,
-  // never re-run the restore above (that would reload initialState/the draft
-  // and silently discard the user's edits). A new label size recreates the
-  // Fabric canvas at its initial size, hence re-observing on widthMm/heightMm.
+  // The Fabric canvas fills the canvas area and follows its size (window
+  // resize, fullscreen toggle). This must never re-run the restore above
+  // (that would reload initialState/the draft and silently discard the
+  // user's edits). A new label size recreates the Fabric canvas at its
+  // initial size, hence re-observing on widthMm/heightMm.
+  // Fullscreen shifts the fitted label right by half the RightPanel (300px)
+  // vs MainToolbar (64px) asymmetry, so it sits at the viewport centre.
   const canvasAreaRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = canvasAreaRef.current
     if (!el) return
+    const shiftX = isFullscreen ? (300 - 64) / 2 : 0
     const observer = new ResizeObserver(([entry]) => {
-      bridge.current?.resize(entry.contentRect.width, entry.contentRect.height)
+      // Whole pixels — a fractional backstore renders blurry.
+      const { width, height } = entry.contentRect
+      bridge.current?.resize(Math.floor(width), Math.floor(height), shiftX)
     })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [bridge, widthMm, heightMm])
+  }, [bridge, widthMm, heightMm, isFullscreen])
 
   // Wine-field text mirrors the incoming prop (e.g. the winemaker updated the
   // vintage in the DB while the editor was open). Fields whose value went
@@ -363,7 +368,9 @@ export function CellarCanvas({
         height: isFullscreen ? '100vh' : height,
         display: 'grid',
         gridTemplateColumns: 'auto 1fr 300px',
-        gridTemplateRows:    '48px 48px 1fr',
+        // minmax(0, …): a tall RightPanel must scroll, not grow the row —
+        // the canvas area would change size (and re-fit) on every selection.
+        gridTemplateRows:    '48px 48px minmax(0, 1fr)',
         ...(isFullscreen && { zIndex: 9999 }),
       }}
     >
@@ -418,13 +425,7 @@ export function CellarCanvas({
       <main
         data-tour="canvas-area"
         className="bg-muted/20 relative flex flex-col overflow-hidden"
-        style={{
-          gridRow: '3',
-          // Optical centring: RightPanel (300px) vs MainToolbar (64px) = 236px
-          // asymmetry. Without compensation the label sits left of viewport
-          // centre in fullscreen.
-          ...(isFullscreen && { paddingLeft: 236 }),
-        }}
+        style={{ gridRow: '3' }}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >

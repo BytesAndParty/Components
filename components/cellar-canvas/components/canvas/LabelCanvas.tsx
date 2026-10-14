@@ -48,10 +48,14 @@ export interface LabelCanvasProps {
  *
  * Also renders an optional bleed mask: four absolute stripes that sit ON
  * TOP of the Fabric canvas and dim everything outside the printable label
- * area. The mask is purely a CSS overlay — Fabric still draws into the
- * larger bleed canvas, so dragging objects past the label edge keeps them
- * visible (just translucent). At opacity 1 the bleed is completely hidden,
- * giving a print-accurate preview.
+ * area. The mask is purely a CSS overlay — Fabric still draws everywhere on
+ * the canvas (which fills the whole canvas area), so dragging objects past
+ * the label edge keeps them visible (just translucent). At opacity 1 the
+ * bleed is completely hidden, giving a print-accurate preview.
+ *
+ * `isolate` keeps the mask's z-index inside this wrapper. The wrapper now
+ * covers the whole canvas area, and without it the stripes (z-40) would sit
+ * above sibling overlays such as the validator badge.
  */
 export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
   className,
@@ -69,7 +73,7 @@ export const LabelCanvas = forwardRef<HTMLCanvasElement, LabelCanvasProps>(({
     widthMm !== undefined
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative isolate", className)}>
       {backdrop && (
         <div
           aria-hidden
@@ -115,8 +119,8 @@ LabelCanvas.displayName = 'LabelCanvas'
  *
  * `pointer-events: none` keeps Fabric's selection / drag handlers working
  * underneath. `z-index` is set high enough to sit above Fabric's own
- * stacked lower/upper canvases but below floating UI (validator badge,
- * toolbars, etc.).
+ * stacked lower/upper canvases; the wrapper's `isolate` keeps it below
+ * floating UI outside the wrapper (validator badge, toolbars, etc.).
  */
 function BleedMask({
   backdrop,

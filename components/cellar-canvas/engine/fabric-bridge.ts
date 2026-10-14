@@ -77,6 +77,10 @@ export class FabricBridge {
   private snapManager: SnapManager
   /** Pointer position of the ongoing pan drag; null while not panning. */
   private panLast: { x: number; y: number } | null = null
+  /** True until the user zooms or pans; only a fitted view re-fits on resize. */
+  private fitted = true
+  /** Horizontal offset of the fitted label from the canvas centre, in px. */
+  private fitShiftX = 0
   private unsubscribePanMode: () => void
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
@@ -127,6 +131,7 @@ export class FabricBridge {
       if (!point) return
       canvas.relativePan(new fabric.Point(point.x - this.panLast.x, point.y - this.panLast.y))
       this.panLast = point
+      this.fitted = false
       canvas.setCursor('grabbing')
       // Viewport-only sync — the React backdrop tracks the pan live without
       // recomputing layers/validation per frame.
@@ -191,6 +196,7 @@ export class FabricBridge {
       e.stopPropagation()
       // Firefox may report line deltas (deltaMode 1) — normalise to pixels.
       const unit = e.deltaMode === 1 ? 16 : 1
+      this.fitted = false
 
       if (e.ctrlKey || e.metaKey) {
         const current = canvas.getZoom()
@@ -201,8 +207,10 @@ export class FabricBridge {
         next = Math.max(0.05, Math.min(20, next))
         canvas.zoomToPoint(new fabric.Point(e.offsetX, e.offsetY), next)
         useDesignerStore.getState().setZoom(next)
+        // Viewport-only, like the pan below: a full sync per pinch frame
+        // re-ran layers + validator and re-armed the autosave.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(canvas as any).fire('cellar:property-changed', { target: null })
+        ;(canvas as any).fire('cellar:viewport-changed')
         return
       }
 
@@ -880,53 +888,67 @@ export class FabricBridge {
     const center = new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2)
     this.canvas.zoomToPoint(center, next)
     this.canvas.requestRenderAll()
+    this.fitted = false
     useDesignerStore.getState().setZoom(next)
-    // Notify React so the CSS-rendered label backdrop tracks Fabric's view.
+    // Viewport-only: the React backdrop tracks Fabric's view; layers,
+    // validator and autosave stay untouched.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+    ;(this.canvas as any).fire('cellar:viewport-changed')
   }
 
   /**
    * Matches the canvas element to the visible canvas area (the React layer
-   * observes its size) and re-fits the view. The element used to keep the
-   * label-plus-bleed size: clipped in a small window, small in fullscreen.
+   * observes its size). The element used to keep the label-plus-bleed size:
+   * clipped in a small window, small in fullscreen.
+   *
+   * Re-fits only while the view is still fitted — a resize must not throw
+   * away a zoom or pan the user chose. `shiftX` moves the fitted label off
+   * the element centre (fullscreen optical centring, see CellarCanvas).
    */
-  resize(width: number, height: number) {
+  resize(width: number, height: number, shiftX = 0) {
     if (width <= 0 || height <= 0) return
+    this.fitShiftX = shiftX
     this.canvas.setDimensions({ width, height })
-    this.zoomToFit()
+    if (this.fitted) this.zoomToFit()
+    // setDimensions clears the bitmap at once, and ResizeObserver callbacks
+    // run after this frame's rAF — a requested render would leave one blank
+    // frame per resize step (flicker while dragging the window edge).
+    this.canvas.renderAll()
   }
 
   /**
    * Fits the label plus its bleed margin into the canvas element with a small
-   * visual padding, centred. The element fills the visible canvas area (see
-   * `resize`), so this keeps both the label and any overflowing objects in
-   * view at the same time.
+   * visual padding, centred (plus `fitShiftX`). The element fills the visible
+   * canvas area (see `resize`), so this keeps both the label and any
+   * overflowing objects in view at the same time.
    */
   zoomToFit() {
     const padding = 24
+    const shift = this.fitShiftX
     const sceneWidth  = mmToPx(this.widthMm + 2 * this.bleedMm)
     const sceneHeight = mmToPx(this.heightMm + 2 * this.bleedMm)
     const viewWidth   = this.canvas.getWidth()
     const viewHeight  = this.canvas.getHeight()
 
     const scale = Math.max(0.05, Math.min(
-      (viewWidth - padding * 2) / sceneWidth,
+      (viewWidth - 2 * Math.abs(shift) - padding * 2) / sceneWidth,
       (viewHeight - padding * 2) / sceneHeight,
       2.0,
     ))
 
     this.canvas.setViewportTransform([
       scale, 0, 0, scale,
-      (viewWidth - sceneWidth * scale) / 2,
+      (viewWidth - sceneWidth * scale) / 2 + shift,
       (viewHeight - sceneHeight * scale) / 2,
     ])
 
     this.canvas.requestRenderAll()
+    this.fitted = true
     useDesignerStore.getState().setZoom(scale)
-    // Notify React so the CSS-rendered label backdrop tracks Fabric's view.
+    // Viewport-only: the React backdrop tracks Fabric's view; layers,
+    // validator and autosave stay untouched.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+    ;(this.canvas as any).fire('cellar:viewport-changed')
   }
 
   /**

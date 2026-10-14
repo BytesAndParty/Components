@@ -61,7 +61,7 @@ export function RightPanel({
   const refreshLayers = () => setLayers(bridge.current?.getLayers() ?? [])
 
   return (
-    <aside className="border-border bg-card flex flex-col border-l" style={{ gridRow: '3' }}>
+    <aside className="border-border bg-card flex min-h-0 flex-col border-l" style={{ gridRow: '3' }}>
       <div className="border-border flex border-b">
         {tabs.map(({ id, label }) => (
           <button

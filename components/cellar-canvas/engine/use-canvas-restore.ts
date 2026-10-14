@@ -29,8 +29,8 @@ function readDraft(storageKey: string | null): object | null {
  * Re-runs only when the dimensions (canvas is recreated) or `storageKey`
  * change. Never on view toggles like fullscreen: a re-run would reload the
  * debounced localStorage draft over the live canvas and drop the edits of the
- * last second. See the sibling effect in `CellarCanvas.tsx` for the
- * fullscreen-only re-fit.
+ * last second. Re-fitting on size changes (window, fullscreen) is the
+ * ResizeObserver effect in `CellarCanvas.tsx`.
  *
  * `initialState` is read once, on mount. A new object identity — e.g. an
  * embedder feeding every `onSave` result back as `initialState` — must not
