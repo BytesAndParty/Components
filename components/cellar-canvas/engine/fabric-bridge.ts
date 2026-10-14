@@ -87,6 +87,8 @@ export class FabricBridge {
   private paperImage: fabric.FabricImage | null = null
   /** Settles once `paperImage` matches the current background (see `whenPaperReady`). */
   private paperReady: Promise<void> = Promise.resolve()
+  /** A QR code was on the canvas since the scene was last replaced (see `getValidationInput`). */
+  private qrPlaced = false
   /** Current wine data — wine-field text on the canvas always mirrors it. */
   private wineFields: WineFieldValues = {}
   private readonly history = new HistoryManager()
@@ -342,6 +344,7 @@ export class FabricBridge {
    */
   private async loadScene(canvasState: object, bg: unknown): Promise<void> {
     await this.canvas.loadFromJSON(canvasState)
+    this.qrPlaced = false
     if (isLabelBackground(bg)) {
       this.labelBackground = bg
       this.syncPaperImage()
@@ -458,6 +461,18 @@ export class FabricBridge {
    * fields and the QR code may sit inside a group). A hidden group hides its
    * members, so they don't count as printed.
    */
+  /**
+   * Validator input: the objects (incl. group members) and whether a QR code
+   * was on the canvas since the scene was last replaced — load, undo/redo or
+   * a template. A QR code that disappears within the scene is likely a slip
+   * (an error); one that a replaced scene simply doesn't have is not.
+   */
+  getValidationInput(): { objects: ValidatableObject[]; qrWasPlaced: boolean } {
+    const objects = this.getValidatableObjects()
+    this.qrPlaced ||= objects.some(o => o._fieldKey === 'qrCode')
+    return { objects, qrWasPlaced: this.qrPlaced }
+  }
+
   getValidatableObjects(): ValidatableObject[] {
     const walk = (objects: fabric.Object[], parentVisible: boolean): ValidatableObject[] =>
       objects.flatMap(o => {
@@ -563,6 +578,7 @@ export class FabricBridge {
    * starting layout, not an addition.
    */
   applyTemplate(elements: fabric.Object[]) {
+    this.qrPlaced = false
     this.canvas.discardActiveObject()
     this.canvas.getObjects().slice().forEach((o) => this.canvas.remove(o))
     elements.forEach((el) => this.canvas.add(el))

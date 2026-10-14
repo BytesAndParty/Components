@@ -52,10 +52,6 @@ export function useCanvasSync(
     const b = bridge.current
     if (!b) return
 
-    // Whether a QR code was on the canvas since this effect started; its
-    // removal turns the validator's QR warning into an error.
-    let qrWasPlaced = false
-
     const update = (mode: 'full' | 'geometry' | 'viewport' = 'full') => {
       // Geometry updates (dragging/scaling) only need activeProps to refresh
       // the Properties Panel live. Everything else stays stable.
@@ -68,9 +64,7 @@ export function useCanvasSync(
       if (mode === 'full') {
         setLayers(b.getLayers() ?? [])
         if (options.enableValidator) {
-          // Includes group members — wine fields and the QR code may be grouped.
-          const objects = b.getValidatableObjects()
-          qrWasPlaced ||= objects.some(o => o._fieldKey === 'qrCode')
+          const { objects, qrWasPlaced } = b.getValidationInput()
           setWarnings(validateCompliance(objects, { qrWasPlaced }))
         }
       }
