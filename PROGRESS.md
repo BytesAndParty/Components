@@ -4,7 +4,7 @@ Sessionübergreifender Arbeitsstand. Hier steht, was zuletzt erledigt wurde, was
 dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben in deren
 `STATUS.md` (für Cellar Canvas: [components/cellar-canvas/STATUS.md](components/cellar-canvas/STATUS.md)).
 
-**Stand:** 2026-10-14 · Branch `main` · lokale Commits noch **nicht gepusht**
+**Stand:** 2026-10-15 · Branch `main` · lokale Commits noch **nicht gepusht** (hier und in Buchart58)
 
 ---
 
@@ -50,10 +50,12 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 
 ## In Arbeit
 
-- **Buchart58-Abgleich (2026-10-14, Subagent mit Opus):** alle Cellar-Canvas-Fixes und -Features ab `b6754ce`
-  werden nach `Buchart58/storefront/src/atelier/cellar-canvas/` (+ Geschwister-Kopien) übertragen, direkt auf
-  Buchart58-`main`, ohne Push. Ausgenommen: Vorlagen Rustic/Bold (Buchart58 hat keine Vorlagen) und
-  Showcase-Änderungen. Ergebnis steht dann in Buchart58s `cellar-canvas/STATUS.md` („Upstream-Abgleich 2026-10-14“).
+- **Buchart58-Abgleich erledigt (2026-10-15, Subagent mit Opus):** 32 Commits auf Buchart58-`main`
+  (`edd662a` … `675ec60`), **nicht gepusht**. Übersprungen: Vorlagen (`ff6c3c1`), Showcase (`9455071`).
+  Angepasst: `zoomToFit`-Padding 32 bleibt, 9-px-Tabs bleiben, kein `applyTemplate`/`perPixelTargetFind`
+  (kam upstream mit den Vorlagen). Lint grün, `astro check` 0 Fehler, `bun test` 75/75, dazu 43 Prüfungen per
+  Wegwerf-Skript gegen echte Fabric-Canvas (happy-dom). Details: Buchart58 `cellar-canvas/STATUS.md` #29.
+  Dabei gefunden und upstream behoben: verwaister JSDoc über `getValidationInput` (`856dfb1`).
 - Beide Reviews (Daten/Export und Tastatur/A11y/SSR) sind abgearbeitet; alle bestätigten Befunde behoben.
 
 ## Warteschlange
@@ -111,7 +113,9 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
   - Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löschen (löscht nur die Ebene, nicht zusätzlich die Canvas-Auswahl).
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
-- **Buchart58:** Abgleich beauftragt (siehe „In Arbeit“); danach dort Browser-Checks und Push.
+- **Buchart58:** Abgleich fertig (32 Commits, siehe „In Arbeit“) — dort Browser-Checks (Liste in Buchart58
+  `cellar-canvas/STATUS.md` #29) und Push. Hinweis: Der PDF-Beschnitt ist auf `/etiketten` nur sichtbar, wenn
+  `enablePdfExport` an ist — dort bewusst aus.
 
 ## Hinweise für weitere Sessions
 
