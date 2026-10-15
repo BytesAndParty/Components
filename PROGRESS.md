@@ -4,7 +4,7 @@ Sessionübergreifender Arbeitsstand. Hier steht, was zuletzt erledigt wurde, was
 dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben in deren
 `STATUS.md` (für Cellar Canvas: [components/cellar-canvas/STATUS.md](components/cellar-canvas/STATUS.md)).
 
-**Stand:** 2026-10-15 · Branch `main` · lokale Commits noch **nicht gepusht** (hier und in Buchart58)
+**Stand:** 2026-10-15 · Branch `main` · alles gepusht (hier und in Buchart58), gemergte Branches gelöscht
 
 ---
 
@@ -51,7 +51,7 @@ dran ist und was eine neue Session wissen muss. Details pro Komponente bleiben i
 ## In Arbeit
 
 - **Buchart58-Abgleich erledigt (2026-10-15, Subagent mit Opus):** 32 Commits auf Buchart58-`main`
-  (`edd662a` … `675ec60`), **nicht gepusht**. Übersprungen: Vorlagen (`ff6c3c1`), Showcase (`9455071`).
+  (`edd662a` … `675ec60`), gepusht. Übersprungen: Vorlagen (`ff6c3c1`), Showcase (`9455071`).
   Angepasst: `zoomToFit`-Padding 32 bleibt, 9-px-Tabs bleiben, kein `applyTemplate`/`perPixelTargetFind`
   (kam upstream mit den Vorlagen). Lint grün, `astro check` 0 Fehler, `bun test` 75/75, dazu 43 Prüfungen per
   Wegwerf-Skript gegen echte Fabric-Canvas (happy-dom). Details: Buchart58 `cellar-canvas/STATUS.md` #29.
@@ -83,11 +83,6 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
 
 ## Offen beim User
 
-- **Branches löschen** (alle bereits in `main` gemergt; der Auto-Mode-Klassifikator lässt das nicht zu):
-  ```bash
-  git branch -d chore/astro-7.0.7 feat/customer-account-area feat/storefront-publish-button mobile-section-responsive-fixes
-  git push origin --delete chore/astro-7.0.7 fix/storefront-mobile-layout mobile-section-responsive-fixes
-  ```
 - **Browser-Checks im Showcase** (Claude startet keinen Dev-Server):
   - Mehrfachauswahl ziehen → rastet an anderen Objekten ein; X/Y tippen → Auswahl landet dort.
   - PNG-Export nach „Fit" → Etikett füllt das Bild exakt, kein Bleed-Streifen.
@@ -112,9 +107,8 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
   - Extras: Unterschrift zeichnen → Einfügen; Ornamente einfügen, über die Kontext-Toolbar umfärben.
   - Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löschen (löscht nur die Ebene, nicht zusätzlich die Canvas-Auswahl).
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
-- **Push**, wenn die Checks passen.
 - **Buchart58:** Abgleich fertig (32 Commits, siehe „In Arbeit“) — dort Browser-Checks (Liste in Buchart58
-  `cellar-canvas/STATUS.md` #29) und Push. Der PDF-Export ist auf `/etiketten` seit Buchart58 `4c8425a` an
+  `cellar-canvas/STATUS.md` #29). Der PDF-Export ist auf `/etiketten` seit Buchart58 `4c8425a` an
   (Endformat; Beschnitt + Schnittmarken per `pdfBleedMm`).
 
 ## Hinweise für weitere Sessions
@@ -132,7 +126,8 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
     (`node_modules/fabric/dist/index.mjs`, Suche nach `toCanvasElement(multiplier`).
   - Kinder einer `ActiveSelection` bleiben in `canvas.getObjects()`.
 - **Auto-Mode:** Der Klassifikator blockt `git branch -d` und `git push --delete` als „Git Destructive"
-  und danach zeitweise auch harmlose Lesebefehle. Branch-Löschungen dem User überlassen.
+  (danach zeitweise auch harmlose Lesebefehle) und `git push` als „Out-of-Place Publication" — auch auf
+  ausdrücklichen Auftrag. Push und Branch-Löschungen: Befehle dem User geben.
 - **Playwright-MCP** hatte in der Session vom 2026-10-14 einen Connect-Timeout. Visuelle Checks macht
   bis auf Weiteres der User.
 - **`claude.md` ist klein geschrieben im Git.** Auf macOS (case-insensitive) heißt sie im Editor
