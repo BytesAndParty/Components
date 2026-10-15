@@ -114,8 +114,8 @@ Rustic + Bold, Unterschrift + Ornamente, A11y-Durchgang, SSR (Typ-Icons gab es s
   - Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
 - **Push**, wenn die Checks passen.
 - **Buchart58:** Abgleich fertig (32 Commits, siehe „In Arbeit“) — dort Browser-Checks (Liste in Buchart58
-  `cellar-canvas/STATUS.md` #29) und Push. Hinweis: Der PDF-Beschnitt ist auf `/etiketten` nur sichtbar, wenn
-  `enablePdfExport` an ist — dort bewusst aus.
+  `cellar-canvas/STATUS.md` #29) und Push. Der PDF-Export ist auf `/etiketten` seit Buchart58 `4c8425a` an
+  (Endformat; Beschnitt + Schnittmarken per `pdfBleedMm`).
 
 ## Hinweise für weitere Sessions
 
