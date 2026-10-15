@@ -477,11 +477,6 @@ export class FabricBridge {
   }
 
   /**
-   * What the validator reads: every object including group members (wine
-   * fields and the QR code may sit inside a group). A hidden group hides its
-   * members, so they don't count as printed.
-   */
-  /**
    * Validator input: the objects (incl. group members) and whether a QR code
    * was on the canvas since the scene was last replaced — load, undo/redo or
    * a template. A QR code that disappears within the scene is likely a slip
@@ -493,6 +488,11 @@ export class FabricBridge {
     return { objects, qrWasPlaced: this.qrPlaced }
   }
 
+  /**
+   * What the validator reads: every object including group members (wine
+   * fields and the QR code may sit inside a group). A hidden group hides its
+   * members, so they don't count as printed.
+   */
   getValidatableObjects(): ValidatableObject[] {
     const walk = (objects: fabric.Object[], parentVisible: boolean): ValidatableObject[] =>
       objects.flatMap(o => {
