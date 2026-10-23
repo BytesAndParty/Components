@@ -2,6 +2,28 @@
 
 Dieses Projekt folgt der Vision einer **Enterprise Design Engine**. Wir setzen auf tiefe Integration modernster Tools, um maximale Qualität in Performance, Barrierefreiheit und Entwickler-Experience zu garantieren.
 
+## 0. Projekt-Kontext
+
+Enterprise Design Engine — component library for BuchArt58 and related projects.
+
+### Stack
+
+- React 19 + React Compiler (no manual useMemo/useCallback)
+- TanStack Query (server-state), TanStack Form, TanStack Table
+- Ark UI for headless components (no Radix, no shadcn)
+- motion/react for animations (no framer-motion)
+- Astro for static pages, Vite for components
+
+### Priorities
+
+- A11y first — 100% keyboard navigable, correct ARIA, WAI-ARIA patterns
+- Capability overlap forbidden — one responsibility, one library (see ARTELIER.md)
+- Every component gets a COMPONENT.md
+
+### Forbidden imports (enforced via eslint no-restricted-imports)
+
+urql, @urql/*, swr, apollo-client, @radix-ui/*, @headlessui/*, framer-motion, gsap
+
 ## 1. Tooling & State of the Art
 - **TanStack Ecosystem:** Wir nutzen konsequent **TanStack Query, Form, Table und Hotkeys**. Diese Bibliotheken bieten "Headless"-Logik auf höchstem Niveau.
 - **React Compiler (React 19):** Der Code ist für den React Compiler optimiert. Manuelle Memoization (`useMemo`, `useCallback`) wird vermieden, es sei denn, es ist für externe Libs zwingend erforderlich.
@@ -43,7 +65,6 @@ Diese Dateien sind Teil der Instructions und in jeder Session aktiv:
 
 @ARTELIER.md
 @COMPONENT-GUIDELINES.md
-@AGENTS.local.md
 
 ## 7. On-Demand-Referenzen
 
@@ -52,4 +73,3 @@ Bei Arbeit am jeweiligen Thema heranziehen (nicht automatisch geladen):
 - [CELLAR-CANVAS.md](./CELLAR-CANVAS.md) — Vision & Decisions Log des Wine-Label-Designers (Implementierungsstand in `components/cellar-canvas/COMPONENT.md` + `STATUS.md`).
 - [README.md](./README.md) — Architektur-Überblick AtelierUI (Provider, TanStack, i18n, Komponenten-Inventar).
 - [PROGRESS.md](./PROGRESS.md) — Sessionübergreifender Arbeitsstand: Erledigt, Warteschlange, offene User-Aufgaben, Hinweise für neue Sessions. Zu Sessionbeginn lesen, bei jedem Schritt nachführen.
-- `AGENTS.md` ist auto-generiert (`shared/base/AGENTS.base.md` + `AGENTS.local.md`) — nicht von Hand editieren.
