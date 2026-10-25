@@ -181,7 +181,7 @@ export const DECISIONS: Decision[] = [
     why: 'Jeden Seitenabschnitt gibt es in mehreren Varianten. So lässt sich der Aufbau der Seite gemeinsam aussuchen, bevor er fest gebaut wird: per Herz und Link statt per Beschreibung.',
     tech: [
       'Die Auswahl steckt im Link: ?s=hero:v6,features:v5,… Die Reihenfolge im Parameter ist die Reihenfolge auf der Seite.',
-      'Ausgangspunkt ist die kanonische Komposition aus STYLE-GUIDE.md §1.',
+      'Ausgangspunkt ist die kanonische Komposition aus der Buchart58-Style-Guide (§1).',
     ],
   },
   {

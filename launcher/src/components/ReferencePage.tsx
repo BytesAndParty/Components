@@ -6,7 +6,8 @@ import {
 } from '../reference-content'
 
 // Feste Section-Reihenfolge + Default-Variante pro Section (angelehnt an die
-// „kanonische Komposition" aus STYLE-GUIDE.md §1). Nur eine Variante pro
+// „kanonische Komposition" aus der Buchart58-Style-Guide §1,
+// Buchart58/vault/Decisions/style-guide.md). Nur eine Variante pro
 // Section — Feintuning einzelner Varianten passiert im echten Section-Editor,
 // hier geht's nur um eine grobe Ja/Nein-Vorauswahl.
 const SECTIONS: { id: string; label: string; variant: string; defaultChecked: boolean }[] = [
