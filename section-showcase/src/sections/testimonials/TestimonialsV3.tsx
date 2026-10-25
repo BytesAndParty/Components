@@ -7,7 +7,7 @@ import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
  * Cream ground, hairline frame on the lead quote.
  *
  * NOTE: Uses the brand cream ground (#fdfcf9) intentionally; this is the
- * "artisanal minimal" treatment from CLAUDE.md §5 and does not follow the
+ * "artisanal minimal" treatment and does not follow the
  * dark/light theme toggle for the background — only theme-neutral text
  * relations are used inside the cream area.
  */

@@ -74,7 +74,7 @@
 - ~~**`canvas.off(event)` ohne Handler-Ref räumt fremde Listener mit ab**~~ — **gefixt 2026-10-05 (#27)**, Listener werden mit Handler-Referenz abgemeldet. *Ursprünglicher Befund (2026-09-29, Bug-Audit):* `use-canvas-sync.ts`s Cleanup nutzt argumentlose `canvas.off('selection:created')` etc., was ALLE Listener dieses Event-Typs entfernt, nicht nur die eigenen. Trifft aktuell auch den Bridge-eigenen `mouse:wheel`- (Zoom) und `object:moving`-Handler (Snapping), sobald `enableValidator` zur Laufzeit umgeschaltet wird — bislang nur beim Unmount beobachtet (dort harmlos, da ≈ Dispose).
 - ~~**Wein-Feld-Sync schreibt leere oder veraltete Werte**~~ — **gefixt 2026-10-06 (#28)**: Feld ohne Wert wird geleert und ausgeblendet (`_valueMissing`), mit Wert erscheint es wieder; Validator zählt nur sichtbare Felder mit Text; eine Regel `hasFieldValue()` für Panel, Templates und Sync.
 - ~~**Restore läuft bei jeder neuen `initialState`-Identität**~~ — **gefixt 2026-10-06 (#28)**: `initialState` wird einmal beim Mount gelesen; ein anderes Dokument lädt der Embedder per React-`key`.
-- **`prepareImageSource`: 50-MP-Foto wird voll dekodiert** *(2026-10-05, Review #27)* — ~200 MB Speicherspitze vor dem Verkleinern. Die übrigen Kanten sind gefixt (2026-10-06, #28): opake verlustfreie Quellen bleiben PNG bis 1,5 MB, das Original bleibt, wenn der Re-Encode nicht kleiner ist.
+- **`prepareImageSource`: 50-MP-Foto wird voll dekodiert** *(2026-10-05, Review #27)* — ~200 MB Speicherspitze vor dem Verkleinern. Die übrigen Kanten sind gefixt (2026-10-06, #28): opake verlustfreie Quellen bleiben PNG bis 1,5 MB, das Original bleibt, wenn der Re-Encode nicht kleiner ist. Zurückgestellt (2026-10-14): Kandidat wäre, die Maße per `<img>` zu lesen und `createImageBitmap(blob, { resizeWidth, resizeHeight, resizeQuality: 'high' })` zu nutzen. MDN lässt offen, ob der Browser schon beim Dekodieren verkleinert oder erst danach; ohne Speichermessung im Browser (DevTools → Memory) ist der Nutzen nicht belegt. Erst messen, dann umbauen.
 - ~~**Gezogene Linie springt bei Breitenänderung zurück**~~ — **gefixt 2026-10-06 (#28)**: `updateActiveObject` setzt bei Linien-Breite die Position zuletzt.
 - ~~**Fullscreen: SSR und Refit**~~ — **gefixt 2026-10-14**: `CellarCanvas` ist ein client-only Wrapper (`useSyncExternalStore`, Server-Snapshot `false`) um den Editor — Server und Hydration rendern nichts, danach mountet der Editor frisch (Fabric init + Portal in einem Zug). Per `renderToString` geprüft: `""`, kein `document`-Zugriff. *Ursprünglicher Befund (2026-10-05, Review #27):* ein SSR-Embedder bekäme einen Hydration-Mismatch (Showcase und Buchart58 rendern client-only). ~~Der Fullscreen-Refit-Effekt (#26) begründet sich mit „Wrapper resized", `zoomToFit` misst den Container aber nie~~ — erledigt 2026-10-14, der Effekt ist durch den `ResizeObserver` ersetzt. Der Fokusverlust beim Wechsel ist gefixt (2026-10-06, #28).
 - ~~**Undo/Redo setzen `isDirty` nicht**~~ — **gefixt 2026-10-06 (#28)**.
@@ -95,6 +95,42 @@
 - ~~ContextToolbar Redundanz~~ — **gefixt 2026-06-08**: `ContextToolbar` erhält `activeProps` direkt vom optimierten Parent-Hook; eigene Listener und interner State entfernt.
 - ~~Veraltete Weindaten auf Canvas~~ — **gefixt 2026-06-08**: `CellarCanvas` synchronisiert Text-Inhalte von `wine-field` Objekten nun automatisch mit der `initialWineFields`-Prop.
 - ~~Doppelte Wein-Felder möglich~~ — **gefixt 2026-06-08**: `WineFieldsPanel` deaktiviert Buttons für bereits platzierte Felder.
+
+### Kleinkram, bewusst offen (Review 2026-10-14)
+
+- `Cmd+D`/`Cmd+G` in einem Eingabefeld lösen die Browser-Defaults aus (Lesezeichen/Weitersuchen), weil die Kürzel dort absichtlich nicht greifen.
+- Das Hintergrundbild im PDF mit Beschnitt ist ein paar Prozent größer als in der Vorschau (cover über die Beschnitt-Box, damit der Beschnitt gefüllt ist).
+- `insertError` liegt wie der restliche Designer-State im globalen Store und überlebt damit einen Remount.
+
+### Browser-Checks (offen beim User, Stand 2026-10-15)
+
+Claude startet keinen Dev-Server; diese Punkte sind nur per Code, Tests oder Skript geprüft. Für die Buchart58-Kopie steht die Liste in deren `cellar-canvas/STATUS.md` #29.
+
+- Mehrfachauswahl ziehen → rastet an anderen Objekten ein; X/Y tippen → Auswahl landet dort. Breite im Panel ändern → linke obere Ecke bleibt stehen.
+- PNG-Export nach „Fit" → Etikett füllt das Bild exakt, kein Bleed-Streifen.
+- Fit to Screen: Normalansicht, Vollbild, kleines Fenster; Hilfslinien reichen über den sichtbaren Bereich. Fensterrand ziehen → kein Flackern; erst zoomen, dann Fenster ändern → Zoom bleibt; „Fit" passt wieder ein. Vollbild → Etikett mittig, links kein abgeschnittener Streifen.
+- Tour abschließen, dann Fragezeichen im Header → Tour startet erneut.
+- Kaputte Bilddatei (z. B. umbenannte `.txt` → `.png`) per Ersetzen/Einfügen, Datei-Dialog oder Drag & Drop → roter Hinweis im Header, ✕ schließt ihn; der Cropper schließt sich.
+- Validator-Badge unten rechts im Preview-Modus sichtbar (nicht von der Maske verdeckt).
+- `Cmd+A` auf der Fläche → alles außer gesperrten/ausgeblendeten Ebenen; im Panel-Eingabefeld markiert `Cmd+A` weiter den Text.
+- `Esc`: Textbearbeitung beenden → Auswahl aufheben → (im Vollbild) Vollbild verlassen, je ein Schritt pro Druck.
+- `Cmd+D` / Kopieren-Button → Kopie 8 px versetzt, auch bei Mehrfachauswahl an der richtigen Stelle.
+- Rechteck → „R" in der Kontext-Toolbar → runde Ecken.
+- QR-Code einfügen, löschen → Validator-Badge rot; Undo → wieder grün/gelb.
+- Zwei Objekte → Gruppieren / `Cmd+G` → eine Ebene „Group"; Weinfeld in der Gruppe folgt den Weindaten; `Cmd+Shift+G` löst auf, Positionen bleiben.
+- PNG/PDF-Buttons laden herunter (Ark `DownloadTrigger`); mit `pdfBleedMm={3}` → PDF 6 mm größer + Schnittmarken.
+- Lineal-Button / `Shift+R` → Skalen oben/links, 0 an der Etikettecke, folgen Zoom und Verschieben.
+- Hintergrund-Tab: Farbe / Verlauf (Winkel ändern) / Bild → Etikett zeigt es, PNG-Export identisch.
+- Vorlagen „Rustikal" und „Kräftig" anwenden; Klick ins leere Etikett wählt nicht den Rahmen.
+- Extras: Unterschrift zeichnen → Einfügen; Ornamente einfügen und über die Kontext-Toolbar umfärben.
+- Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löscht nur die Ebene.
+- Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
+
+### Arbeitshinweise
+
+- Tests: `bunx vitest run components/cellar-canvas`. `node-canvas` ist nicht installiert, Fabric rendert in Tests also nicht. Geometrie lässt sich mit einem Wegwerf-Skript per `bun` prüfen: Fabric-Objekte und `ActiveSelection` funktionieren ohne Canvas, `Textbox` braucht ein echtes Canvas zum Messen.
+- Wegwerf-Skripte importieren `fabric` über den absoluten Pfad `…/__Components__/node_modules/fabric/dist/index.mjs` und Repo-Module ebenfalls absolut. Sonst lädt Bun aus dem Scratchpad eine zweite Fabric-Instanz und `instanceof` schlägt fehl.
+- Fabric 7.4.0: Standard-Bezugspunkt ist `center`. Eigene Objekte entstehen mit `left/top` (`ORIGIN` in `engine/object-factory.ts`), eine `ActiveSelection` bleibt `center`. `toCanvasElement`/`toDataURL` schneidet in Viewport-Pixeln aus und behält Zoom + Pan (`node_modules/fabric/dist/index.mjs`, Suche nach `toCanvasElement(multiplier`). Kinder einer `ActiveSelection` bleiben in `canvas.getObjects()`.
 
 ---
 

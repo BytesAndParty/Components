@@ -10,7 +10,7 @@ import { CountUp } from '../count-up'
  * and a vertical meta rail anchors the left edge. Deliberately breaks the
  * two-column hero convention: type and image share the same space.
  *
- * Cream ground (#fdfcf9) — "artisanal minimal" treatment from CLAUDE.md §5.
+ * Cream ground (#fdfcf9) — "artisanal minimal" treatment.
  */
 export function HeroV6() {
   return (

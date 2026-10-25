@@ -97,7 +97,7 @@ function BrushCallout({ children, color, rotate, seed, reduce, className, style 
       className={cn('relative w-fit max-w-88 text-[1.7rem] leading-[1.15]', className)}
       style={{ transform: `rotate(${rotate}deg)`, fontFamily: FONT.caveat, ...style }}
     >
-      {/* clip-path liegt auf dem inneren Wrapper, nie auf dem Beobachtungs-Element (STYLE-GUIDE §11) */}
+      {/* clip-path liegt auf dem inneren Wrapper, nie auf dem Beobachtungs-Element (COMPONENT-GUIDELINES §11) */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-0"

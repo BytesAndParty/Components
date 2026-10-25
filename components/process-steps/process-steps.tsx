@@ -148,7 +148,7 @@ function TrailSteps({ steps, reduce }: { steps: ProcessStep[]; reduce: boolean }
 
   return (
     <div ref={ref} className="relative">
-      {/* clip-path auf dem inneren Wrapper, nie auf dem Beobachtungs-Element (STYLE-GUIDE §11) */}
+      {/* clip-path auf dem inneren Wrapper, nie auf dem Beobachtungs-Element (COMPONENT-GUIDELINES §11) */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 hidden h-18 @2xl:block"

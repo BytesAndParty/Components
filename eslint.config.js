@@ -77,7 +77,7 @@ export default defineConfig(
       ],
 
       // One capability → one library. Prevents two deps owning the same job
-      // (e.g. urql + TanStack Query both caching). See ARTELIER.md §6.
+      // (e.g. urql + TanStack Query both caching). See CLAUDE.md (Stack).
       'no-restricted-imports': [
         'warn',
         {

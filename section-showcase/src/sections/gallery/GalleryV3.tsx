@@ -8,7 +8,7 @@ import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
  * deliberate asymmetric column heights.
  *
  * NOTE: Uses the brand cream ground (#fdfcf9) intentionally; this is the
- * "artisanal minimal" treatment from CLAUDE.md §5.
+ * "artisanal minimal" treatment.
  */
 
 interface Plate {
