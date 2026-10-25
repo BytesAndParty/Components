@@ -14,4 +14,4 @@ test-results/
 components-showcase/src/data/wines.json
 
 # Maschinenspezifische Claude-Code-Settings
-.claude/settings.local.json
+**/.claude/settings.local.json
