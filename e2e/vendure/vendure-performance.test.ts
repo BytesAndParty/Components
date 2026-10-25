@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-// This test assumes the vendure-showcase storefront is running at http://localhost:5173
+// Runs against the storefront dev server started by playwright.vendure.config.ts.
 // It specifically tests for FOUC prevention and hydration stability.
 
 test.describe('Vendure Showcase - Performance & Hydration', () => {
@@ -16,7 +16,7 @@ test.describe('Vendure Showcase - Performance & Hydration', () => {
 
   test('Theme is applied immediately (FOUC Prevention)', async ({ page }) => {
     // We navigate to the page
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
 
     // The AtelierInitScript should have run immediately.
     // We check the <html> tag.
@@ -38,7 +38,7 @@ test.describe('Vendure Showcase - Performance & Hydration', () => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
 
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
     
     // Wait for hydration (Header is client:load)
     const header = page.locator('header');
@@ -50,7 +50,7 @@ test.describe('Vendure Showcase - Performance & Hydration', () => {
   });
 
   test('Accent color is reactive after hydration', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
     
     // Open accent picker
     const accentPicker = page.getByRole('button', { name: /Akzent/i });
