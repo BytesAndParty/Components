@@ -40,8 +40,9 @@ test.describe('Vendure Showcase - Performance & Hydration', () => {
 
     await page.goto('/');
     
-    // Wait for hydration (Header is client:load)
-    const header = page.locator('header');
+    // Wait for hydration (Header is client:load). getByRole('banner') picks the
+    // site header; the filter drawer has a <header> of its own.
+    const header = page.getByRole('banner');
     await expect(header).toBeVisible();
 
     // Check if there are any hydration-related errors
