@@ -13,5 +13,5 @@ Gecachte Referenz für TanStack Query v5 — Artelier-Standard für Server-State
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view @tanstack/react-query version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info @tanstack/react-query version` prüfen, die im Projekt installierte steht in `node_modules/@tanstack/react-query/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/tanstack-query/tanstack-query.md`, gepflegt über `/live-docs-update`.

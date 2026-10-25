@@ -13,6 +13,6 @@ Gecachte Referenz für Tailwind CSS v4.3 — inkrementell über die v4.0-Engine,
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view tailwindcss version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info tailwindcss version` prüfen, die im Projekt installierte steht in `node_modules/tailwindcss/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/tailwindcss/tailwindcss.md`, gepflegt über `/live-docs-update`.
 - Artelier-Standard ist Tailwind v4 mit `@theme`-Block und oklch-Tokens — kein Tailwind-Default-Graupalette, kein `dark:`-Variant, falls das Projekt bewusst nur ein Theme fährt.

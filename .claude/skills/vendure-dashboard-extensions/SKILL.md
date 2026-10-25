@@ -17,5 +17,5 @@ Gecachte Referenz für das aktuelle, React-basierte Vendure-Dashboard. Der Nachf
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view @vendure/dashboard version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info @vendure/dashboard version` prüfen, die im Projekt installierte steht in `node_modules/@vendure/dashboard/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/vendure-dashboard-extensions/vendure-dashboard-extensions.md`, gepflegt über `/live-docs-update`.

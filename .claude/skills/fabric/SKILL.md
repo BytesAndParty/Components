@@ -13,5 +13,5 @@ Gecachte Referenz für Fabric.js v7 mit Fokus auf das, was sich von v6→v7 geä
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view fabric version` prüfen und gegen das GitHub-Changelog abgleichen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info fabric version` prüfen (die im Projekt installierte steht in `node_modules/fabric/package.json`, Feld `version`) und gegen das GitHub-Changelog abgleichen.
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/fabric/fabric.md`, gepflegt über `/live-docs-update`.

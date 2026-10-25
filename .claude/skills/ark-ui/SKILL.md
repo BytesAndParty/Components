@@ -15,5 +15,5 @@ Bei jeder Aufgabe, die eine Ark-UI-Komponente anlegt, erweitert oder debuggt, de
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: installierte Version prüfen (`npm view @ark-ui/react version`) und gegen die Live-Doku (ark-ui.com) abgleichen, statt der Referenz blind zu vertrauen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: installierte Version im Projekt (`node_modules/@ark-ui/react/package.json`, Feld `version`) und neueste veröffentlichte Version (`bun info @ark-ui/react version`) prüfen und gegen die Live-Doku (ark-ui.com) abgleichen, statt der Referenz blind zu vertrauen.
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/ark-ui/` (`ark-ui.md`, `download-trigger.md`, `segment-group.md`), gepflegt über `/live-docs-update`. Änderungen dort fließen nicht automatisch hierher — nach einem Update dieser Datei neu generieren.

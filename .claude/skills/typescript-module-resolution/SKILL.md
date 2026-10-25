@@ -13,6 +13,6 @@ Gecachte Referenz für `moduleResolution` in modernen Bundler-Setups, plus TypeS
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view typescript version` und `npm view typescript-eslint peerDependencies` prüfen (letzteres bestimmt, ob TS 7 überhaupt schon nutzbar ist).
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info typescript version` und `bun info typescript-eslint peerDependencies` prüfen (letzteres bestimmt, ob TS 7 überhaupt schon nutzbar ist), die im Projekt installierte steht in `node_modules/typescript/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/typescript-module-resolution/typescript-module-resolution.md`, gepflegt über `/live-docs-update`.
 - TS 7 nicht adoptieren, nur weil die reine CLI-Geschwindigkeit lockt — die Tooling-Kompatibilität (ESLint, Astro/Vue/Svelte-Sprachserver) entscheidet, nicht der Speed-Gewinn.

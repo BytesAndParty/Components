@@ -13,5 +13,5 @@ Gecachte Referenz für den WASM-basierten Lottie-Player von LottieFiles (dem For
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view @lottiefiles/dotlottie-react version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info @lottiefiles/dotlottie-react version` prüfen, die im Projekt installierte steht in `node_modules/@lottiefiles/dotlottie-react/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/dotlottie-react/dotlottie-react.md`, gepflegt über `/live-docs-update`.

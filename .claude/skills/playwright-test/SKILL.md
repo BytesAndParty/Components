@@ -15,6 +15,6 @@ Vor jeder Entscheidung „brauche ich hier einen Test oder nur Browser-Steuerung
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view @playwright/test version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info @playwright/test version` prüfen, die im Projekt installierte steht in `node_modules/@playwright/test/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/playwright-test/playwright-test.md`, gepflegt über `/live-docs-update`.
 - Nutzt ein Projekt nur das bare `playwright`-Paket (kein `@playwright/test` in den Dependencies), ist dieser Skill nur für den Gotchas-Abschnitt relevant — nicht die volle Test-Runner-API adoptieren, ohne dass sie gebraucht wird.

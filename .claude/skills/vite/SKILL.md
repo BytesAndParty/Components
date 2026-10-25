@@ -13,6 +13,6 @@ Gecachte Referenz für Vite 8 — der erste Release mit Rolldown (Rust-Bundler s
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view vite version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info vite version` prüfen, die im Projekt installierte steht in `node_modules/vite/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/vite/vite.md`, gepflegt über `/live-docs-update`.
 - Vite auto-konvertiert die deprecateten `rollupOptions`/`esbuild`-Keys — ein Projekt mit alten Keys baut also weiter, aber neue Configs sollten direkt die `rolldownOptions`/`oxc`-Form nutzen.

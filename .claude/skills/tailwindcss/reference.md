@@ -1,4 +1,4 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/tailwindcss/tailwindcss.md) am 2026-10-23. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/tailwindcss/tailwindcss.md) am 2026-10-25. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # Tailwind CSS v4.3 — Cached Reference
 
@@ -65,8 +65,7 @@ oklch tokens, `@custom-variant hover`). No breaking changes to those directives 
   for the out-of-root `components/**` workspace.
 - Under Vite 8, Tailwind's CSS is minified by **Lightning CSS** (not esbuild) — output may
   be marginally larger; no config change needed.
-- New `mauve/olive/mist/taupe` palettes are oklch-based and fit the project's earthy
-  "artisanal minimalism" palette — candidates for accent tokens.
+- The `mauve/olive/mist/taupe` neutral palettes are new in 4.2 and oklch-based.
 
 ## Gotcha: `@theme inline` backt Literalwerte ein (Praxis-Befund 2026-08-18)
 

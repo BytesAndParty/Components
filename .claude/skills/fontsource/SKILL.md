@@ -13,5 +13,5 @@ Gecachte Referenz für Fontsource — Google-Fonts-Distribution als npm-Pakete s
 
 ## Notes
 
-- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: `npm view @fontsource/<familie> version` prüfen.
+- Gecachter Snapshot, Stand siehe `reference.md`-Kopfzeile. Bei Verdacht auf Veraltung: neueste veröffentlichte Version per `bun info @fontsource/<familie> version` prüfen, die im Projekt installierte steht in `node_modules/@fontsource/<familie>/package.json` (Feld `version`).
 - Master-Quelle ist `__AI-Workflow__/skills/live-docs-collection/fontsource/fontsource.md`, gepflegt über `/live-docs-update`.
