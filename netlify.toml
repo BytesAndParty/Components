@@ -3,10 +3,10 @@
   publish = "dist"
 
 [build.environment]
-  BUN_VERSION  = "1.3.12"
+  BUN_VERSION  = "1.4.4"
   # Astro 7 (storefront) refuses to run on Node < 22.12. `bun run build` starts
   # the astro CLI via its node shebang, so this version is the one that counts.
-  NODE_VERSION = "22"
+  NODE_VERSION = "24"
 
 # ── Vendure Shop-API proxy ──────────────────────────────────────────────────
 # The storefront under /shop/ is static (real files, no rule needed). Its cart
