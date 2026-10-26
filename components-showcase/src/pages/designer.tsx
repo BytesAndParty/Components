@@ -439,7 +439,7 @@ export function DesignerPage() {
           <AlignmentBarDemo />
         </Section>
 
-        <Section title="Layer Panel" description="Ebenen-Liste mit Drag-to-Reorder, Visibility, Lock, Rename, Delete. Framer Motion Reorder.Group.">
+        <Section title="Layer Panel" description="Ebenen-Liste mit Drag-to-Reorder, Visibility, Lock, Rename, Delete. Sortierung über dnd-kit.">
           <LayerPanelDemo />
         </Section>
 
