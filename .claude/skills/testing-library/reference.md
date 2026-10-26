@@ -1,4 +1,4 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/testing-library/testing-library.md) am 2026-09-16. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/testing-library/testing-library.md) am 2026-10-26. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # React Testing Library
 
@@ -33,6 +33,12 @@ test('ruft onClick beim Klick auf', async () => {
 `getByRole` > `getByLabelText` > `getByText` > `getByTestId` (nur als Escape-Hatch, wenn A11y-Queries nicht praktikabel sind).
 
 **Interaktion:** `userEvent` (aus `@testing-library/user-event`, simuliert echtes Nutzerverhalten inkl. Fokus/Events-Reihenfolge) bevorzugt vor `fireEvent` (rohe DOM-Events, niedrigere Ebene).
+
+## jest-dom 7 und jsdom 30 (Stand 2026-10-26)
+
+`@testing-library/jest-dom` 7.0.x ist ein „repaired release" von 6.10.0 mit denselben Features, also kein Funktionsgewinn. Breaking: `@testing-library/dom` ist jetzt Pflicht-Peer und muss explizit installiert sein (die Install-Zeile oben enthält es bereits), Node ≥ 22. 7.0.1 deklariert `vitest` als optionalen Peer. Quelle: https://github.com/testing-library/jest-dom/releases/tag/v7.0.0
+
+`jsdom` 30 (aktuell 30.1.3): einziger Breaking Change ist der Node-Floor `^22.22.2 || ^24.15.0 || >=26.0.0`. Die Regressionen aus 30.0/30.1 sind bis 30.1.3 gefixt, also direkt auf 30.1.3 gehen. Quelle: https://github.com/jsdom/jsdom/releases
 
 ## Gotchas
 

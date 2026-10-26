@@ -1,4 +1,4 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/typescript-module-resolution/typescript-module-resolution.md) am 2026-09-16. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/typescript-module-resolution/typescript-module-resolution.md) am 2026-10-26. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # TypeScript `moduleResolution` — bundler ist der neue Default für Vite/Bun/esbuild
 
@@ -95,6 +95,13 @@ TS 6.0 ist die letzte 5.x-Stil-Version vor dem nativen Go-Port (7.0). Es entfern
 > `typescript-eslint@8.70.0` schreibt weiterhin explizit `typescript: '>=4.8.4 <6.1.0'` im
 > `package.json` fest — der unten beschriebene Blocker gilt also unverändert, nicht nur als
 > Vermutung, sondern als verifizierte Peer-Range.
+>
+> **Stand 2026-10-26:** `typescript-eslint@8.72.0` verlangt weiterhin `typescript >=4.8.4 <6.1.0`.
+> `typescript@7.0.2` exportiert keine klassische Compiler-API: `exports["."]` zeigt nur auf
+> `./lib/version.cjs`, die API liegt unter `unstable/*`. Damit ist der Blocker unten am Paket selbst
+> belegt. Neu erschienen ist eine `7.1.0-beta`, weiterhin kein stabiles Minor. Das Alias-Paket
+> `@typescript/typescript6` steht auf 6.0.2, nicht 6.0.3 (per `bun info @typescript/typescript6 version`
+> geprüft). Quelle: npm-Registry.
 
 TS 7 ist der **native Go-Port** des Compilers ("10x faster", 8–12x Speedup bei Full-Builds laut
 Microsoft). Kein inkrementelles Update — eigener Release-Strang neben 6.x.

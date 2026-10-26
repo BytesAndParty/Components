@@ -1,6 +1,15 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/vendure-dashboard-extensions/vendure-dashboard-extensions.md) am 2026-09-16. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/vendure-dashboard-extensions/vendure-dashboard-extensions.md) am 2026-10-26. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # Vendure Dashboard Extensions (React)
+
+## 3.8 (Stand 2026-10-26)
+
+Quelle: https://github.com/vendurehq/vendure/releases/tag/v3.8.0 · aktuell 3.8.1.
+
+- Das Dashboard bekommt Design-System v2. Eigene Extensions nach dem Upgrade neu bauen und im Dashboard sichtprüfen.
+- `widgets` ist deprecated, Ersatz ist `insights.widgets`.
+- Build-Stack bleibt `vite ^7.3.1` und `@vitejs/plugin-react ^5.2.0`, also nicht Vite 8.
+- Übriges Upgrade (Schema, Security, Nest 12): [../vendure/vendure-3.8-changes.md](../vendure/vendure-3.8-changes.md).
 
 ## Neu in 3.7.0 — was tatsächlich Arbeit spart
 
