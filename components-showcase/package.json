@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ark-ui/react": "^5.39.3",
-    "@chenglou/pretext": "^0.0.5",
+    "@chenglou/pretext": "^1.0.0",
     "@fontsource/caveat": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/kalam": "^5.3.0",

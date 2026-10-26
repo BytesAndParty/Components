@@ -168,14 +168,24 @@ export function Paragraph({
     loadPretext().then((pretext) => {
       if (cancelled) return;
 
-      let lineCount: number;
-      if (pretext) {
-        const prepared = pretext.prepare(text, font);
-        lineCount = pretext.layout(prepared, width, lineHeightPx).lineCount;
-      } else {
+      const estimateLineCount = () => {
         const avgCharWidth = parseFloat(cs.fontSize) * 0.55;
         const charsPerLine = Math.floor(width / avgCharWidth);
-        lineCount = Math.ceil(text.length / Math.max(1, charsPerLine));
+        return Math.ceil(text.length / Math.max(1, charsPerLine));
+      };
+
+      let lineCount: number;
+      if (pretext) {
+        // pretext >= 1.0 wirft RangeError, wenn Canvas den font-String ignoriert
+        // (z. B. font-variant-Werte wie tabular-nums) – dann zählt die Schätzung.
+        try {
+          const prepared = pretext.prepare(text, font);
+          lineCount = pretext.layout(prepared, width, lineHeightPx).lineCount;
+        } catch {
+          lineCount = estimateLineCount();
+        }
+      } else {
+        lineCount = estimateLineCount();
       }
 
       const truncated = lineCount > clamp;

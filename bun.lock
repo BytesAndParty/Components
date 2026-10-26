@@ -34,7 +34,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@ark-ui/react": "^5.39.3",
-        "@chenglou/pretext": "^0.0.5",
+        "@chenglou/pretext": "^1.0.0",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
@@ -71,7 +71,7 @@
       "name": "components-showcase",
       "dependencies": {
         "@ark-ui/react": "^5.39.3",
-        "@chenglou/pretext": "^0.0.5",
+        "@chenglou/pretext": "^1.0.0",
         "@fontsource/caveat": "^5.3.0",
         "@fontsource/cormorant-garamond": "^5.3.0",
         "@fontsource/kalam": "^5.3.0",
@@ -311,7 +311,7 @@
 
     "@capsizecss/unpack": ["@capsizecss/unpack@4.0.1", "", { "dependencies": { "fontkitten": "^1.0.3" } }, "sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ=="],
 
-    "@chenglou/pretext": ["@chenglou/pretext@0.0.5", "", {}, "sha512-A8GZN10REdFGsyuiUgLV8jjPDDFMg5GmgxGWV0I3igxBOnzj+jgz2VMmVD7g+SFyoctfeqHFxbNatKSzVRWtRg=="],
+    "@chenglou/pretext": ["@chenglou/pretext@1.0.0", "", {}, "sha512-BxKiDMxWJhyzL8asvcgg3T9YnUU7OUFsKO8oRaR2SYAPX4Sh2wM9gqTBjrBaZ4fnl84cEQ8czC0Q1M83z3chsA=="],
 
     "@clack/core": ["@clack/core@1.5.1", "", { "dependencies": { "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ=="],
 
