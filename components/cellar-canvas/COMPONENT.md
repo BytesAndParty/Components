@@ -90,6 +90,7 @@ import { CellarCanvas } from '@components/cellar-canvas/CellarCanvas'
 
 - `fabric@^7` — canvas engine (Canvas-API z-order, `FabricImage.fromURL`, `FabricObjectProps`)
 - `zustand@^5` — designer store (`subscribeWithSelector` selectors)
+- `@tanstack/react-hotkeys@^0.17` (alpha) — Space keyup for the temporary Hand tool; all other shortcuts go through `useDesignEngineHotkey`
 - `@ark-ui/react@^5` — `ImageCropper`, `Dialog`, `Portal`, color picker
 - `@dnd-kit/core` + `@dnd-kit/sortable` — layer-panel drag reorder
 - `motion` (`motion/react`) — enter/exit fades on layer rows

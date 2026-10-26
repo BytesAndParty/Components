@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useHotkey } from '@tanstack/react-hotkeys'
+import { formatForDisplay, useHotkey } from '@tanstack/react-hotkeys'
 import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-context'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
@@ -117,12 +117,12 @@ export function ShortcutOverview({
                           )}
                         </div>
                         <div className="flex shrink-0 gap-1">
-                          {item.key.split('+').map((k, i) => (
+                          {formatForDisplay(item.key, { parts: true }).map((k, i) => (
                             <kbd
                               key={i}
                               className="bg-muted border-border text-foreground flex h-6 min-w-[24px] items-center justify-center rounded-md border px-1.5 text-[10px] font-bold"
                             >
-                              {k === 'Mod' ? '⌘' : k}
+                              {k}
                             </kbd>
                           ))}
                         </div>

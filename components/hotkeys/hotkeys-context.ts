@@ -1,5 +1,10 @@
 import React, { createContext, useContext } from 'react'
-import { useHotkey, HotkeyOptions } from '@tanstack/react-hotkeys'
+import {
+  normalizeHotkey,
+  useHotkey,
+  type RegisterableHotkeyChord,
+  type UseHotkeyChordOptions,
+} from '@tanstack/react-hotkeys'
 import { useDeviceCapabilities } from '../lib/use-device-capabilities'
 
 export interface HotkeyMetadata {
@@ -37,31 +42,15 @@ function useHotkeysActions() {
   return context
 }
 
-type RegisterableHotkey = Parameters<typeof useHotkey>[0]
-
 /**
- * Display string for the ShortcutOverview. Handles the string syntax and the
- * RawHotkey object form (kept as a general escape hatch for keys the string
- * syntax cannot express).
+ * Wraps TanStack useHotkey, registers metadata for ShortcutOverview, and auto-disables on touch devices.
+ * Takes one chord: a string (`'Mod+K'`) or a RawHotkeyChord object (`{ key: 'K', mod: true }`).
  */
-function hotkeyDisplayString(key: RegisterableHotkey): string {
-  if (typeof key === 'string') return key
-  return [
-    key.mod && 'Mod',
-    key.ctrl && 'Control',
-    key.shift && 'Shift',
-    key.alt && 'Alt',
-    key.meta && 'Meta',
-    key.key,
-  ].filter(Boolean).join('+')
-}
-
-/** Wraps TanStack useHotkey, registers metadata for ShortcutOverview, and auto-disables on touch devices. */
 export function useDesignEngineHotkey(
-  key: RegisterableHotkey,
+  key: RegisterableHotkeyChord,
   callback: (event: KeyboardEvent) => void,
   metadata: Omit<HotkeyMetadata, 'key'>,
-  options?: HotkeyOptions
+  options?: UseHotkeyChordOptions
 ) {
   const { register, unregister } = useHotkeysActions()
   const { hasFinePointer } = useDeviceCapabilities()
@@ -69,9 +58,9 @@ export function useDesignEngineHotkey(
 
   useHotkey(key, callback, { ...options, enabled: hasFinePointer && (options?.enabled ?? true) })
 
-  // `key` may be an inline object literal — depend on the derived display
-  // string so re-renders don't churn the registration.
-  const displayKey = hotkeyDisplayString(key)
+  // `key` may be an inline object literal — depend on the normalized chord
+  // string (e.g. 'Mod+Shift+Z') so re-renders don't churn the registration.
+  const displayKey = normalizeHotkey(key)
 
   // Decompose `metadata` deps so callers can pass new object literals
   // without triggering re-registration. The rule wants the whole

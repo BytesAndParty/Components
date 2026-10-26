@@ -15,8 +15,8 @@ A global shortcut registry and management system built on top of TanStack Hotkey
 The system consists of three main parts:
 
 1. **`HotkeysProvider`:** Maintains a `Map` of active shortcuts.
-2. **`useDesignEngineHotkey`:** A wrapper around TanStack's `useHotkey`. It handles the functional shortcut registration while simultaneously pushing metadata to the provider's registry. It also checks for fine-pointer capabilities (via `useDeviceCapabilities`) to prevent registration on touch devices.
-3. **`ShortcutOverview`:** A visual component that consumes the registry and renders a categorized list of all active shortcuts.
+2. **`useDesignEngineHotkey`:** A wrapper around TanStack's `useHotkey`. It handles the functional shortcut registration while simultaneously pushing metadata to the provider's registry. It also checks for fine-pointer capabilities (via `useDeviceCapabilities`) to prevent registration on touch devices. It takes one chord (string or `RawHotkeyChord` object, no sequences); the registry stores it as the normalized chord string from `normalizeHotkey` (e.g. `Mod+Shift+Z`).
+3. **`ShortcutOverview`:** A visual component that consumes the registry and renders a categorized list of all active shortcuts. Key labels come from the library's `formatForDisplay`, so they match the platform (`⇧ ⌘ Z` on macOS, `Ctrl Shift Z` on Windows/Linux).
 
 Categories supported: `Global`, `Navigation`, `Actions`, `Context`.
 
@@ -27,6 +27,15 @@ Categories supported: `Global`, `Navigation`, `Actions`, `Context`.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | — | The application tree. |
+
+### useDesignEngineHotkey (hook)
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `key` | `RegisterableHotkeyChord` | — | One chord: string (`'Mod+K'`) or object (`{ key: 'K', mod: true }`). |
+| `callback` | `(event: KeyboardEvent) => void` | — | Runs when the chord fires. |
+| `metadata` | `{ label, description?, category }` | — | Entry for the `ShortcutOverview`. |
+| `options` | `UseHotkeyChordOptions` | — | Passed to `useHotkey` (`ignoreInputs`, `preventDefault`, `eventType`, `target`, …). `enabled` is combined with the fine-pointer check. |
 
 ### ShortcutOverview
 
@@ -75,7 +84,7 @@ export function SearchButton() {
 
 | Package | Purpose |
 |---|---|
-| `@tanstack/react-hotkeys` | Core hotkey management |
+| `@tanstack/react-hotkeys` `^0.17.0` (alpha) | Core hotkey management, `normalizeHotkey`/`formatForDisplay` for the overview |
 | `react` | UI Library |
 | `@components/lib` | Device capabilities check |
 | `@components/i18n` | UI strings management |
