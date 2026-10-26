@@ -14,7 +14,9 @@ const base = process.env.DEPLOY_SUBPATH || undefined;
 // https://astro.build/config
 export default defineConfig({
   base,
-  integrations: [react()],
+  // React Compiler über Oxc (devDep oxc-transform-react, Version folgt dem Peer
+  // von @astrojs/react). Memoisiert nur Client-Code der Islands.
+  integrations: [react({ compiler: true })],
   vite: {
     plugins: [tailwindcss()],
     resolve: {
