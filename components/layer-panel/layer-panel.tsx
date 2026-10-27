@@ -325,6 +325,9 @@ function LayerRow({
   }
 
   const rowRef = useRef<HTMLDivElement>(null)
+  // True only while Enter/Escape move focus from the rename input back to
+  // the row: that blur must not commit (again, or the discarded draft).
+  const skipBlurCommit = useRef(false)
 
   // Listbox keys on the focused row: ↑/↓ move focus, Shift+↑/↓ reorder,
   // Space selects, Enter/F2 renames, Delete/Backspace deletes. Delete stops
@@ -411,12 +414,18 @@ function LayerRow({
             aria-label={messages.renameLayer}
             className="bg-input border-ring text-foreground w-full rounded border px-1 py-0.5 text-xs focus:outline-none"
             onChange={(e) => setDraft(e.target.value)}
-            onBlur={commitRename}
+            onBlur={() => { if (!skipBlurCommit.current) commitRename() }}
             onKeyDown={(e) => {
               if (e.key === 'Enter')  commitRename()
               if (e.key === 'Escape') { setDraft(layer.name); setEditing(false) }
-              // Back to the row, so the keyboard user keeps their place.
-              if (e.key === 'Enter' || e.key === 'Escape') rowRef.current?.focus()
+              // Back to the row, so the keyboard user keeps their place. The
+              // focus move blurs the input synchronously, before the state
+              // updates above apply.
+              if (e.key === 'Enter' || e.key === 'Escape') {
+                skipBlurCommit.current = true
+                rowRef.current?.focus()
+                skipBlurCommit.current = false
+              }
               e.stopPropagation()
             }}
           />
