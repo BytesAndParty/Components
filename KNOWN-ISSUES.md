@@ -1,6 +1,6 @@
 # Bekannte Probleme
 
-Stand: 2026-10-27. Alle Punkte bestanden schon vor den Dependency-Updates vom 25.–27.10. und sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log.
+Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–13 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -13,6 +13,10 @@ Stand: 2026-10-27. Alle Punkte bestanden schon vor den Dependency-Updates vom 25
 | 7 | fallow: 12 Befunde, davon 3 Fehlalarme | Repo-weit | niedrig | 0,5 h |
 | 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
 | 9 | Shortcut-Übersicht nennt `?`, gebunden ist `Mod+/` | `components/hotkeys/shortcut-overview.tsx` | niedrig | 0,5 h |
+| 10 | Ebenenliste: `Esc` beim Umbenennen übernimmt den Entwurf, statt ihn zu verwerfen | `components/layer-panel/layer-panel.tsx` | mittel | 0,5 h |
+| 11 | Cellar-Canvas-Fixes vom 27.10. fehlen in der Buchart58-Kopie | Buchart58 `storefront/src/atelier/` | mittel | 1–2 h |
+| 12 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
+| 13 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 
 ---
 
@@ -109,8 +113,45 @@ Stand: 2026-10-27. Alle Punkte bestanden schon vor den Dependency-Updates vom 25
 
 ## 9. Shortcut-Übersicht nennt die falsche Taste
 
-**Symptom.** Die `ShortcutOverview` zeigt als Öffnen-Hinweis `?` (`components/hotkeys/shortcut-overview.tsx:90`, `<kbd>?</kbd> {m.openHint}`), und der Designer-Showcase sagt „press ? to see them all" (`components-showcase/src/pages/designer.tsx:391`, Kommentar). Gebunden ist aber `Mod+/` (`shortcut-overview.tsx:28–30`).
+**Symptom.** Die `ShortcutOverview` zeigt als Öffnen-Hinweis `?` (`components/hotkeys/shortcut-overview.tsx:90`, `<kbd>?</kbd> {m.openHint}`), und der Designer-Showcase sagt „press ? to see them all" (`components-showcase/src/pages/designer.tsx:408`, Kommentar). Gebunden ist aber `Mod+/` (`shortcut-overview.tsx:28–30`).
 
 **Auswirkung.** Wer `?` drückt, sieht nichts – die Übersicht ist nur über `Mod+/` erreichbar.
 
 **Lösung.** Den Hinweis aus der tatsächlichen Bindung erzeugen (`formatForDisplay('Mod+/')`, zeigt ⌘ / bzw. Ctrl /) statt `?` fest zu schreiben, Kommentar im Designer anpassen. Alternativ zusätzlich `?` binden – dann aber prüfen, dass es in Eingabefeldern nicht feuert. Bei einem späteren Wechsel auf Ark UI Hotkeys (Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag) gleich mit erledigen.
+
+## 10. Ebenenliste: `Esc` beim Umbenennen übernimmt den Entwurf
+
+**Symptom.** Zeile fokussieren, `Enter`, Text tippen, `Esc`: Der getippte Name wird übernommen (im Browser-Test „Image“ → „ImageXYZ“), statt verworfen zu werden. Betrifft den Editor und die Showcase-Demo.
+
+**Ursache.** `components/layer-panel/layer-panel.tsx`, Zeilen 414–419: Bei `Escape` setzt der Handler `setDraft(layer.name)` und `setEditing(false)` und fokussiert sofort `rowRef.current`. Der Fokuswechsel löst synchron `onBlur={commitRename}` aus, noch bevor React den Entwurf zurückgesetzt hat; `commitRename` übernimmt den alten, getippten Entwurf.
+
+**Lösung.** Den Abbruch vor dem Fokuswechsel markieren (z. B. Ref `cancelled`, den `commitRename` prüft) oder die Zeile erst nach dem Re-Render fokussieren. Danach im Browser: `Enter`, tippen, `Esc` → Name unverändert; `Enter`, tippen, `Enter` → übernommen; Klick daneben → übernommen.
+
+**Mit beheben.** Buchart58 hat das Layer-Panel als Kopie (siehe Punkt 11).
+
+## 11. Cellar-Canvas-Fixes vom 27.10. fehlen in Buchart58
+
+**Symptom.** Die sieben Fixes aus `components/cellar-canvas/STATUS.md` #30 (Snapping, Unterschrift, Tour, Winkel-Feld, „Hinweis schließen“, Fokus in der Ebenenliste) sind nur hier umgesetzt. Buchart58 kopiert Komponenten (`Buchart58/storefront/src/atelier/cellar-canvas` und das Layer-Panel), Änderungen kommen dort nicht von selbst an. Der Showcase-Fix (Demo-Kürzel) betrifft Buchart58 nicht.
+
+**Lösung.** Pro Fix nachziehen wie beim Abgleich #27/#29: Diff aus dem jeweiligen Commit übernehmen, Abweichungen der Kopie beachten, danach Lint, `astro check`, `bun test` und die Browser-Punkte aus #30 in Buchart58 prüfen.
+
+## 12. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
+
+**Panel-Tabs.** Die fünf Tabs (Eigenschaften, Weindaten, Hintergrund, Vorlagen, Extras) passen nicht nebeneinander: bei 1440 px angeschnitten, bei 900 px im Vollbild fehlt „Extras“ ganz und die Labels laufen ineinander (`components/cellar-canvas/components/panels/RightPanel.tsx`). Buchart58 nutzt 9-px-Labels, gerechnet für vier Tabs. Optionen: Icons mit Tooltip, scrollbare Tab-Leiste, kürzere Labels oder zwei Zeilen – Gestaltungsentscheidung offen.
+
+**Vorlage „Classic“.** Ein langer Weinname (z. B. „Grüner Veltliner Ried Loibenberg“) bricht in zwei Zeilen um und überdeckt den Jahrgang, weil `templates/templates.ts` die Felder an festen Positionen platziert. Optionen: Jahrgang/Region unter die tatsächliche Höhe des Namens setzen, Schrift für lange Namen verkleinern oder Zeilenlimit – Entscheidung offen. Buchart58 plant ohnehin einen eigenen Konfigurator für Vorlagen.
+
+## 13. Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test
+
+Einzeln behebbar, beim Erledigen den jeweiligen Punkt löschen.
+
+- **Fehlerhinweis im Header bei schmalem Fenster abgeschnitten** (`components/header/CanvasHeader.tsx`): Bei 900 px wird der Text zu einer schmalen Spalte gequetscht und oben/unten abgeschnitten. Option: als Toast statt im Header.
+- **Duplizieren erzeugt ein zweites Weinfeld** (`Mod+D`/Kopieren-Button), obwohl das Weindaten-Panel doppelte Felder sonst verhindert. Entscheiden: erlauben, sperren oder die Kopie in normalen Text umwandeln.
+- **Rahmenlinie der Vorlage „Rustikal“ bei „Fit“ kaum anklickbar**: Bei Zoom ≈ 0,48 ist die Linie unter einem Pixel breit, `targetFindTolerance` ist 0. Erhöhen wirkt auf alle Objekte; Alternative: Auswahl über die Ebenenliste genügt.
+- **Ebenennamen von Weinfeldern uneinheitlich**: Aus dem Weindaten-Panel heißt die Ebene wie der Wert („12.5%“, „750“), aus Vorlagen wie die Bedeutung („Alkoholgehalt“, „Füllmenge“).
+- **Emoji-Picker auf deutscher Oberfläche englisch** (`components/panels/ExtrasPanel.tsx`, `emoji-picker-react`): Kategorien, „Skin tone“, „Frequently Used“. Prüfen, welche Texte die Lib per Prop übersetzen lässt.
+- **Vollbild-Ausstieg hängt an `!e.defaultPrevented`** (`CellarCanvas.tsx`, Listener für `Escape`): Jede Host-Seite mit eigenem `Escape`-Hotkey (TanStack-Default `preventDefault: true`) blockiert ihn. Im Showcase behoben (#30), die Komponente bleibt anfällig.
+- **Label-Stil der Zahlenfelder**: Das Winkel-Feld im Hintergrund-Tab zeigt sein Label seit #30 im `NumberInput`-Stil („WINKEL“, 10 px, Großbuchstaben) statt wie „Von“/„Bis“; gleiche Optik bräuchte einen Prop an `components/number-input/number-input.tsx`. Das Deckkraft-Feld im Eigenschaften-Panel (`PropertiesPanel.tsx`) hat noch ein unverknüpftes `<span>` als Label.
+- **Tour**: Der Schritt „Canvas“ (Typ `floating`) sitzt in der Viewport-Mitte, nicht exakt über der Arbeitsfläche (Zag liefert dafür kein Ziel-Rechteck); im Vollbild ca. 120 px rechts der Canvas-Mitte. Bei Tooltip-Schritten ist der Backdrop von Zag `absolute` gesetzt; auf gescrollter Seite bleibt unten ein schmaler Streifen ohne Abdunklung.
+- **Farbfeld weicht ab**: Das Swatch #722f37 im Kontur-Picker kommt als #732f37 an, vermutlich Rundung im gemeinsamen ColorPicker (`components/color-picker/`), nicht untersucht.
+- **Tippfehler im Cropper**: `components/image-cropper-modal/messages.ts:24` – „Verkleinerern“ statt „Verkleinern“.

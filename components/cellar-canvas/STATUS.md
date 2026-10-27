@@ -102,35 +102,17 @@
 - Das Hintergrundbild im PDF mit Beschnitt ist ein paar Prozent größer als in der Vorschau (cover über die Beschnitt-Box, damit der Beschnitt gefüllt ist).
 - `insertError` liegt wie der restliche Designer-State im globalen Store und überlebt damit einen Remount.
 
-### Browser-Checks (offen beim User, Stand 2026-10-15)
+### Browser-Checks
 
-Claude startet keinen Dev-Server; diese Punkte sind nur per Code, Tests oder Skript geprüft. Für die Buchart58-Kopie steht die Liste in deren `cellar-canvas/STATUS.md` #29.
-
-- Mehrfachauswahl ziehen → rastet an anderen Objekten ein; X/Y tippen → Auswahl landet dort. Breite im Panel ändern → linke obere Ecke bleibt stehen.
-- PNG-Export nach „Fit" → Etikett füllt das Bild exakt, kein Bleed-Streifen.
-- Fit to Screen: Normalansicht, Vollbild, kleines Fenster; Hilfslinien reichen über den sichtbaren Bereich. Fensterrand ziehen → kein Flackern; erst zoomen, dann Fenster ändern → Zoom bleibt; „Fit" passt wieder ein. Vollbild → Etikett mittig, links kein abgeschnittener Streifen.
-- Tour abschließen, dann Fragezeichen im Header → Tour startet erneut.
-- Kaputte Bilddatei (z. B. umbenannte `.txt` → `.png`) per Ersetzen/Einfügen, Datei-Dialog oder Drag & Drop → roter Hinweis im Header, ✕ schließt ihn; der Cropper schließt sich.
-- Validator-Badge unten rechts im Preview-Modus sichtbar (nicht von der Maske verdeckt).
-- `Cmd+A` auf der Fläche → alles außer gesperrten/ausgeblendeten Ebenen; im Panel-Eingabefeld markiert `Cmd+A` weiter den Text.
-- `Esc`: Textbearbeitung beenden → Auswahl aufheben → (im Vollbild) Vollbild verlassen, je ein Schritt pro Druck.
-- `Cmd+D` / Kopieren-Button → Kopie 8 px versetzt, auch bei Mehrfachauswahl an der richtigen Stelle.
-- Rechteck → „R" in der Kontext-Toolbar → runde Ecken.
-- QR-Code einfügen, löschen → Validator-Badge rot; Undo → wieder grün/gelb.
-- Zwei Objekte → Gruppieren / `Cmd+G` → eine Ebene „Group"; Weinfeld in der Gruppe folgt den Weindaten; `Cmd+Shift+G` löst auf, Positionen bleiben.
-- PNG/PDF-Buttons laden herunter (Ark `DownloadTrigger`); mit `pdfBleedMm={3}` → PDF 6 mm größer + Schnittmarken.
-- Lineal-Button / `Shift+R` → Skalen oben/links, 0 an der Etikettecke, folgen Zoom und Verschieben.
-- Hintergrund-Tab: Farbe / Verlauf (Winkel ändern) / Bild → Etikett zeigt es, PNG-Export identisch.
-- Vorlagen „Rustikal" und „Kräftig" anwenden; Klick ins leere Etikett wählt nicht den Rahmen.
-- Extras: Unterschrift zeichnen → Einfügen; Ornamente einfügen und über die Kontext-Toolbar umfärben.
-- Tastatur: Tab in die Werkzeugleiste, ↑/↓ wechselt; im Layer-Panel ↑/↓, Enter umbenennen, Entf löscht nur die Ebene.
-- Leertaste halten + ziehen → Ansicht verschiebt sich, Loslassen → voriges Werkzeug; Tab auf einen Button + Leertaste → Button klickt.
+Die Checkliste vom 2026-10-15 ist am 2026-10-25/27 per Playwright im Showcase abgearbeitet (Chromium, 1440 × 900), siehe #30. Offen beim User bleibt der Screenreader-Lauf (Toolbars, Ebenenliste, Tour, Hinweis im Header). Für die Buchart58-Kopie steht die Liste in deren `cellar-canvas/STATUS.md` #29; die Fixes aus #30 fehlen dort noch (`KNOWN-ISSUES.md`).
 
 ### Arbeitshinweise
 
 - Tests: `bunx vitest run components/cellar-canvas`. `node-canvas` ist nicht installiert, Fabric rendert in Tests also nicht. Geometrie lässt sich mit einem Wegwerf-Skript per `bun` prüfen: Fabric-Objekte und `ActiveSelection` funktionieren ohne Canvas, `Textbox` braucht ein echtes Canvas zum Messen.
 - Wegwerf-Skripte importieren `fabric` über den absoluten Pfad `…/__Components__/node_modules/fabric/dist/index.mjs` und Repo-Module ebenfalls absolut. Sonst lädt Bun aus dem Scratchpad eine zweite Fabric-Instanz und `instanceof` schlägt fehl.
 - Fabric 7.4.0: Standard-Bezugspunkt ist `center`. Eigene Objekte entstehen mit `left/top` (`ORIGIN` in `engine/object-factory.ts`), eine `ActiveSelection` bleibt `center`. `toCanvasElement`/`toDataURL` schneidet in Viewport-Pixeln aus und behält Zoom + Pan (`node_modules/fabric/dist/index.mjs`, Suche nach `toCanvasElement(multiplier`). Kinder einer `ActiveSelection` bleiben in `canvas.getObjects()`.
+- Browser-Test per Playwright-MCP: Die Bridge steckt in einem React-Ref. Vom `canvas.lower-canvas` über `__reactFiber$…` die `.return`-Kette hochlaufen und in `memoizedState` den Ref suchen, dessen `current.canvas.getObjects` existiert. Nach Undo/Redo (`loadFromJSON`) oder einem Vite-Reload neu suchen. Szenen-Maße: 1 mm = 3,7795 px, Beschnittrand 40 mm = 151,18 px.
+- Playwright-MCP fängt Datei-Dialoge und `window.confirm` ab: Dateien per `browser_file_upload` (nur unter `.playwright-mcp/`), `confirm` im Skript überschreiben. Ein `mousedown` kurz nach einem Klick auf dasselbe Textobjekt wertet Fabric als Doppelklick (Objekt bewegt sich nicht). Bei „Fit“ (Zoom ≈ 0,48) ist ein CSS-Pixel ≈ 2,1 Szenen-Pixel.
 
 ---
 
@@ -217,6 +199,20 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 ---
 
 ## Entscheidungs-Log
+
+### #30 — Browser-Test der Checkliste, sieben Fixes *(2026-10-27 — gefixt)*
+
+Die Checkliste vom 2026-10-15 lief am 2026-10-25/26 erstmals im Browser (Playwright-MCP gegen `/designer`). Die meisten Punkte bestanden; sieben Fehler wurden behoben und am 2026-10-27 auf dem aktuellen Paketstand (Ark 5.39.3/Zag 1.45, React 19.3, motion 14.6, TanStack Hotkeys 0.17) komplett nachgetestet:
+
+- **Snapping sprang beim Ziehen zurück** (`snap-manager.ts`): Fabrics `dragHandler` setzt nur `left`/`top`, `getBoundingRect()` liest die gecachten `aCoords`. `handleMoving` rechnete mit der Position vom letzten `setCoords()`. Jetzt `setCoords()` davor; Rechteck ohne Rücksprung, Mehrfachauswahl rastet stabil ein.
+- **Unterschrift verschwand beim Loslassen** (`ExtrasPanel.tsx`): Mit controlled `paths` speichert Zag den neuen Strich nicht und meldet aus `onDrawEnd` den alten Prop-Wert `[]`. Jetzt uncontrolled über `useSignaturePad` + `SignaturePad.RootProvider`; „Löschen“/„Einfügen“ nutzen `clear()`, `paths`, `empty`.
+- **Tour unbedienbar** (`OnboardingTour.tsx`): Zags Inline-`z-index` am Positioner überschrieb `z-50`, der Inhalt lag unter dem Backdrop; Dialog- und Floating-Schritte bekommen von Zag keine Position. Jetzt `--tour-z-index: 10000` für Backdrop/Spotlight/Positioner (über der Vollbild-Shell mit 9999), Dialog-/Floating-Schritte per `data-[type=…]` mittig im Viewport, Spotlight nur bei Tooltip-Schritten, Fortschritt übersetzt (`tourProgress`).
+- **Winkel-Feld ohne zugänglichen Namen** (`BackgroundPanel.tsx`): `label` am `NumberInput` statt eines losen `<span>`.
+- **„Hinweis schließen“ schrumpfte auf 14 px Breite** (`CanvasHeader.tsx`): `size-11` als Flex-Item ohne Padding; jetzt Muster der Nachbar-Buttons (30 × 30 Maus, 44 × 44 bei `pointer-coarse`).
+- **Ebenenliste verlor nach `Entf` den Fokus** (`layer-panel.tsx`): Fokus springt nach dem Löschen auf die nächste Zeile, am Ende auf die vorige, bei leerer Liste auf den Empty-State; auch über den Lösch-Button.
+- **Showcase: Vollbild ließ sich nicht per `Esc` verlassen** (`components-showcase/src/pages/designer.tsx`): Die Layer-Panel-Demo registrierte `Escape`/`Delete` seitenweit mit TanStacks Default `preventDefault` (in 0.17 unverändert); jedes `Escape` kam `defaultPrevented` beim Vollbild-Listener an, jedes `Entf` im Editor löschte zusätzlich eine Demo-Ebene. Die Kürzel wirken jetzt nur bei Fokus in der Demo. Bewusst nicht per `target`: Der Listener am Element liefe vor Reacts Root-Delegation und nähme der fokussierten Zeile `Delete` und dem Umbenennen-Feld `Escape` weg.
+
+Neu gefunden und nicht behoben (Entscheidung offen oder größer): siehe `KNOWN-ISSUES.md`.
 
 ### #28 — Review-Befunde aus #27 umgesetzt, Tests, Browser-Smoke *(2026-10-06 — gefixt)*
 
