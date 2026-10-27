@@ -27,5 +27,5 @@ Am Ende die angelegten bzw. geänderten Dateien auflisten und die Browser-Checks
 
 - **components-verify** – Prüfschritte nach dem Bauen.
 - **artelier** – welche Lib für welche Capability.
-- **ark-ui**, **motion-animate**, **tailwindcss**, **tanstack-query**, **tanstack-form** – Lib-Referenzen beim Bauen.
+- **ark-ui**, **motion-animate**, **tailwindcss**, **tanstack-query**, **tanstack-form**, **tanstack-table**, **tanstack-hotkeys** – Lib-Referenzen beim Bauen.
 - **frontend-design** – nur, wenn der User ausdrücklich eine gestalterische Richtung erarbeiten will.

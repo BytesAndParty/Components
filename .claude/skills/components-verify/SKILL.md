@@ -41,4 +41,4 @@ Prüfschritte nach Änderungen an Komponenten, Showcases, Launcher oder Storefro
 ## Related skills
 
 - **new-component** – legt eine Komponente an. Dieser Skill prüft sie danach.
-- **vitest**, **fallow**, **playwright-test**, **testing-library**, **tailwindcss** – Lib-Referenzen, wenn ein Prüfschritt an einer API-Frage hängt.
+- **vitest**, **fallow**, **playwright-test**, **testing-library**, **tailwindcss**, **eslint**, **astro** – Lib-Referenzen, wenn ein Prüfschritt an einer API-Frage hängt.
