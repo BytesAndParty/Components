@@ -1,13 +1,22 @@
+# Eigener Projektname: Ohne ihn hieße das Projekt nach dem Ordner „server“, genau wie die
+# lokale Buchart58-DB, und beide teilten sich das Volume server_pgdata (down -v löschte es).
+name: vendure-showcase-dev
+
 services:
   db:
-    image: postgres:16-alpine
+    # Gleiche Major wie compose.prod.yaml. Ein Volume aus einer älteren Major (etwa
+    # postgres:16) startet mit 18 nicht, das Log meldet „there appears to be PostgreSQL
+    # data in /var/lib/postgresql“. Dann `podman compose down -v` und neu seeden.
+    image: docker.io/library/postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: wine_server
       POSTGRES_USER: vendure
       POSTGRES_PASSWORD: vendure_pw
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # postgres:18-Image: PGDATA liegt unter /var/lib/postgresql/18/docker,
+      # Volume deshalb auf das Parent-Verzeichnis mounten (nicht mehr …/data).
+      - pgdata:/var/lib/postgresql
     ports:
       - "5432:5432"
     healthcheck:
