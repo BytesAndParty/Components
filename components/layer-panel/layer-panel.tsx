@@ -122,8 +122,40 @@ export function LayerPanel({
     onReorder(nextLayers)
   }
 
+  // Deleting (Delete key or the row's delete button) removes the focused
+  // element, which would drop keyboard focus on <body>. Remember the
+  // neighbour — the next row, the previous one at the end of the list — and
+  // focus it once the consumer has removed the layer: `layers` is controlled,
+  // so that only shows up in a later render. No neighbour left: the empty
+  // state takes focus, which keeps the user's place in the tab order and
+  // announces that the list is empty.
+  const rootRef = useRef<HTMLDivElement>(null)
+  const emptyRef = useRef<HTMLDivElement>(null)
+  const focusAfterDelete = useRef<{ deletedId: string; nextId?: string } | null>(null)
+
+  const handleDelete = (id: string) => {
+    if (!onDelete) return
+    const idx = layers.findIndex(l => l.id === id)
+    focusAfterDelete.current = { deletedId: id, nextId: (layers[idx + 1] ?? layers[idx - 1])?.id }
+    onDelete(id)
+  }
+
+  useEffect(() => {
+    const pending = focusAfterDelete.current
+    if (!pending || layers.some(l => l.id === pending.deletedId)) return
+    focusAfterDelete.current = null
+    // Don't pull focus back if the user has moved on elsewhere meanwhile.
+    const active = document.activeElement
+    if (active && active !== document.body && !rootRef.current?.contains(active)) return
+    const target = pending.nextId
+      ? [...(rootRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])]
+          .find(el => el.dataset.layerId === pending.nextId)
+      : emptyRef.current
+    target?.focus()
+  }, [layers])
+
   return (
-    <div className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
+    <div ref={rootRef} className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
       {/* Header */}
       <div className="border-border flex items-center justify-between border-b px-3 py-2">
         <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
@@ -134,7 +166,11 @@ export function LayerPanel({
 
       {/* Layer list */}
       {layers.length === 0 ? (
-        <div className="text-muted-foreground flex items-center justify-center px-4 py-8 text-center text-xs">
+        <div
+          ref={emptyRef}
+          tabIndex={-1}
+          className="text-muted-foreground flex items-center justify-center px-4 py-8 text-center text-xs outline-none focus-visible:bg-accent/5"
+        >
           {m.noObjects}
         </div>
       ) : (
@@ -156,7 +192,7 @@ export function LayerPanel({
                     onVisibilityToggle={() => onVisibilityToggle?.(layer.id)}
                     onLockToggle={() => onLockToggle?.(layer.id)}
                     onRename={(name) => onRename?.(layer.id, name)}
-                    onDelete={() => onDelete?.(layer.id)}
+                    onDelete={() => handleDelete(layer.id)}
                     onMove={(dir) => handleMove(layer.id, dir)}
                   />
                 ))}
@@ -330,6 +366,7 @@ function LayerRow({
       ref={rowRef}
       role="option"
       aria-selected={selected}
+      data-layer-id={layer.id}
       className={cn(
         'group flex items-center gap-1.5 px-2 py-1.5 cursor-pointer transition-colors outline-none focus-visible:bg-accent/5',
         selected ? 'bg-accent/10' : 'hover:bg-muted/40',
