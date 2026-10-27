@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react'
 import EmojiPicker, { EmojiStyle, Theme } from 'emoji-picker-react'
-import { SignaturePad } from '@ark-ui/react/signature-pad'
+import { SignaturePad, useSignaturePad } from '@ark-ui/react/signature-pad'
 import { useArkTranslations } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { ORNAMENTS, type Ornament } from '../../extras/ornaments'
@@ -60,15 +60,20 @@ export function ExtrasPanel({ bridge }: ExtrasPanelProps) {
   const m = useCellarCanvasMessages()
   const theme = useDocTheme()
   const signatureTranslations = useArkTranslations('signaturePad')
-  const [paths, setPaths] = useState<string[]>([])
+  // Uncontrolled: with a `paths` prop Zag stores no new stroke and reports the
+  // old prop value from onDrawEnd, so the signature vanished on pointer-up.
+  const signaturePad = useSignaturePad({
+    drawing: { fill: 'currentColor', size: 3, simulatePressure: true },
+    translations: signatureTranslations,
+  })
 
   function insertSignature() {
-    bridge.current?.addPath(paths.join(' '), {
+    bridge.current?.addPath(signaturePad.paths.join(' '), {
       layerName: m.signatureLayerName,
       widthMm: SIGNATURE_WIDTH_MM,
       fill: INK,
     })
-    setPaths([])
+    signaturePad.clear()
   }
 
   const actionClass =
@@ -81,23 +86,18 @@ export function ExtrasPanel({ bridge }: ExtrasPanelProps) {
           <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.signatureHeading}</h4>
           <p className="text-muted-foreground text-xs">{m.signatureHint}</p>
         </div>
-        <SignaturePad.Root
-          paths={paths}
-          onDrawEnd={(d) => setPaths(d.paths)}
-          drawing={{ fill: 'currentColor', size: 3, simulatePressure: true }}
-          translations={signatureTranslations}
-        >
+        <SignaturePad.RootProvider value={signaturePad}>
           <SignaturePad.Label className="sr-only">{m.signatureHeading}</SignaturePad.Label>
           <SignaturePad.Control className="bg-muted/40 border-border text-foreground relative h-28 touch-none rounded-lg border">
             <SignaturePad.Segment />
             <SignaturePad.Guide className="border-border pointer-events-none absolute right-4 bottom-6 left-4 border-b border-dashed" />
           </SignaturePad.Control>
-        </SignaturePad.Root>
+        </SignaturePad.RootProvider>
         <div className="flex gap-2">
-          <button type="button" onClick={() => setPaths([])} disabled={paths.length === 0} className={actionClass}>
+          <button type="button" onClick={() => signaturePad.clear()} disabled={signaturePad.empty} className={actionClass}>
             {m.signatureClear}
           </button>
-          <button type="button" onClick={insertSignature} disabled={paths.length === 0} className={actionClass}>
+          <button type="button" onClick={insertSignature} disabled={signaturePad.empty} className={actionClass}>
             {m.signatureInsert}
           </button>
         </div>
