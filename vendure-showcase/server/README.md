@@ -10,7 +10,7 @@ Vendure-basierter E-Commerce-Backend für den Wine Showcase. Stellt Shop-API und
 |---|---|
 | Framework | [Vendure](https://vendure.io) v3.8.1 (NestJS-basiert) |
 | Datenbank (Lokal) | SQLite via `better-sqlite3` — kein Setup nötig |
-| Datenbank (Produktion) | PostgreSQL 16 |
+| Datenbank (Produktion) | PostgreSQL 18 |
 | Container | Podman (`podman compose`) |
 | Sprache | TypeScript (ESM) |
 

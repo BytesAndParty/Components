@@ -5,11 +5,11 @@
 # „Rollup failed to resolve import "clsx"" — `podman run` hat das Problem nicht.
 # Image-Refs voll qualifiziert — Podman auf dem VPS hat keine unqualified-search-registries.
 
-# ── Basis: Bun-Binary auf Node 22 ────────────────────────────────────────────
+# ── Basis: Bun-Binary auf Node 24 ────────────────────────────────────────────
 # Install-Skripte nativer Module (better-sqlite3) laufen so unter derselben Node-Version
 # wie die Runtime und finden vorgebaute Binaries. Unter reinem Bun meldet sich der
 # Install als Node 26 → kein Prebuild → node-gyp ohne Python bricht ab.
-FROM docker.io/library/node:22-slim AS base
+FROM docker.io/library/node:24-slim AS base
 COPY --from=docker.io/oven/bun:1-slim /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
 
@@ -26,7 +26,7 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 
 # ── Runtime Stage ────────────────────────────────────────────────────────────
-FROM docker.io/library/node:22-slim
+FROM docker.io/library/node:24-slim
 ENV NODE_ENV=production
 WORKDIR /app
 
