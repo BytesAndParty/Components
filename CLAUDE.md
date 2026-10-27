@@ -17,7 +17,7 @@ Hier stehen Regeln, nicht ihre Geschichte. Begründungen und Bug-Verlauf einer K
 - **`components-showcase/`** — Vite-SPA mit Demos aller Komponenten. `src/styles.css` ist die Quelle der Theme-Tokens.
 - **`section-showcase/`** — Vite-SPA für Seiten-Sections und ihre Komposition.
 - **`launcher/`** — Einstiegsseite, verlinkt Showcases und Shop.
-- **`vendure-showcase/`** — `server/` (Vendure 3.7, eigenständig, kein Bun-Workspace) und `storefront/` (Astro, Produkte build-time). Architektur und Styling in den `.md`-Dateien dort.
+- **`vendure-showcase/`** — `server/` (Vendure 3.8, eigenständig, kein Bun-Workspace) und `storefront/` (Astro, Produkte build-time). Architektur und Styling in den `.md`-Dateien dort.
 - **`e2e/`** — Playwright: `showcase` (`bun run test:e2e`), `mobile` (`bun run test:mobile`) und `vendure` (`bun run test:e2e:vendure`, braucht einen erreichbaren Vendure-Server).
 - **`bun run build:all`** baut Launcher, beide Showcases und die Storefront nach `dist/` (Netlify). Die Storefront zieht dabei die Weine vom Vendure-Server auf dem VPS.
 - **`CELLAR-CANVAS.md`** — Vision und Entscheidungs-Log des Etiketten-Designers; der Stand steht in `components/cellar-canvas/COMPONENT.md` und `STATUS.md`.

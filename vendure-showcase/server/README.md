@@ -8,7 +8,7 @@ Vendure-basierter E-Commerce-Backend für den Wine Showcase. Stellt Shop-API und
 
 | Komponente | Details |
 |---|---|
-| Framework | [Vendure](https://vendure.io) v3.7.4 (NestJS-basiert) |
+| Framework | [Vendure](https://vendure.io) v3.8.1 (NestJS-basiert) |
 | Datenbank (Lokal) | SQLite via `better-sqlite3` — kein Setup nötig |
 | Datenbank (Produktion) | PostgreSQL 16 |
 | Container | Podman (`podman compose`) |
@@ -212,6 +212,29 @@ ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
 # Superadmin-Passwort nachsehen: nur selbst, nie in einen Chat
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 "grep SUPERADMIN_ ~/vendure-showcase/.env.prod"
 ```
+
+### Vendure-Upgrade mit Schema-Änderung (z. B. 3.7 → 3.8)
+
+`synchronize: true` zieht eine bestehende DB nicht zuverlässig nach. 3.8 legt unter anderem einen
+Unique-Constraint `(languageCode, baseId)` auf jede Übersetzungstabelle, das Aufräumen doppelter
+Übersetzungen läuft aber nur in Migrationen. Deshalb vor Schritt 3 die Volumes löschen:
+
+```bash
+# 0. Sicherung der alten DB, solange der alte Stack noch läuft
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  'podman exec vendure-showcase-db sh -c "pg_dump -U \$POSTGRES_USER -d \$POSTGRES_DB" | gzip > ~/vendure-showcase/backup-$(date +%F).sql.gz && ls -l ~/vendure-showcase/backup-*'
+
+# Schritte 1 und 2 wie oben. Dann Stack samt Volumes (DB und Assets) entfernen, Output verwerfen
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  "cd ~/vendure-showcase && podman compose -f compose.prod.yaml --env-file .env.prod down -v >/dev/null 2>&1; podman volume ls"
+
+# Danach Schritte 3 und 4 wie oben (up, Seed)
+```
+
+Danach ist alles weg, was nur im Dashboard angelegt wurde (weitere Admins, eigene Produkte,
+Bestellungen). Der Superadmin entsteht aus `.env.prod` neu. Seit 3.8 sind Admin-Sessions an die
+Admin-API gebunden, im Dashboard also einmal neu einloggen. Zum Schluss über „Veröffentlichen"
+(Dashboard, Produktliste) die Storefront neu bauen lassen, damit sie den neuen Datenstand zeigt.
 
 **Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
 nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
