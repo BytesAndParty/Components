@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { Portal } from '@ark-ui/react/portal'
-import { Tour, useTour } from '@ark-ui/react/tour'
+import { Tour, useTour, type TourIntlTranslations } from '@ark-ui/react/tour'
 
 // Ark UI v5 doesn't re-export StatusChangeDetails; inline the shape (sourced from @zag-js/tour 1.40.0).
 type StatusChangeDetails = { status: 'idle' | 'started' | 'skipped' | 'completed' | 'dismissed' | 'not-found' }
 import { X } from 'lucide-react'
+import { interpolate } from '../../../i18n'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { useDesignerStore } from '../../store/designer-store'
 import { cn } from '../../../lib/utils'
@@ -27,6 +28,13 @@ export interface OnboardingTourProps {
 }
 
 const DEFAULT_STORAGE_KEY = 'cellar-canvas-tour-completed'
+
+// Stacking for backdrop, spotlight and positioner, as Zag's docs prescribe:
+// Zag sets `--tour-layer` per part (0, 1, 2) and gives tooltip steps an inline
+// `z-index: calc(var(--tour-layer) + var(--tour-z-index))` on the positioner,
+// which overrides any z-index class. 10000 keeps the tour above CellarCanvas's
+// fullscreen shell (inline z-index 9999).
+const TOUR_Z_INDEX = '[--tour-z-index:10000] z-[calc(var(--tour-layer)_+_var(--tour-z-index))]'
 
 /**
  * First-run guided tour. Five steps walking new users through canvas,
@@ -85,11 +93,14 @@ export function OnboardingTour({
     }] : []),
   ]
 
-  const translations = {
+  const translations: TourIntlTranslations = {
     nextStep: m.tourNext,
     prevStep: m.tourBack,
     skip:     m.tourSkip,
     close:    m.tourSkip,
+    // Zag passes the zero-based step index as `current`.
+    progressText: ({ current, total }) =>
+      interpolate(m.tourProgress, { current: current + 1, total }),
   }
 
   const tour = useTour({
@@ -142,12 +153,26 @@ export function OnboardingTour({
   return (
     <Tour.Root tour={tour}>
       <Portal>
-        <Tour.Backdrop className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]" />
-        <Tour.Spotlight className="ring-primary/60 ring-offset-background rounded-xl ring-2 ring-offset-2" />
-        <Tour.Positioner className="z-50">
+        <Tour.Backdrop className={cn("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-black/40 backdrop-blur-[2px]", TOUR_Z_INDEX)} />
+        {/* Zag only measures the target for tooltip steps; on the floating
+            step the spotlight would show a stale rect from an earlier step. */}
+        {tour.step?.type === 'tooltip' && (
+          <Tour.Spotlight className={cn("ring-primary/60 ring-offset-background rounded-xl ring-2 ring-offset-2", TOUR_Z_INDEX)} />
+        )}
+        <Tour.Positioner
+          className={cn(
+            TOUR_Z_INDEX,
+            // Zag only positions tooltip steps; dialog and floating steps get
+            // no position at all. Both use placement `center` here, so centre
+            // them in the viewport. The full-size layer lets clicks through,
+            // only the card catches them (the floating step has no backdrop).
+            "data-[type=dialog]:pointer-events-none data-[type=dialog]:fixed data-[type=dialog]:inset-0 data-[type=dialog]:flex data-[type=dialog]:items-center data-[type=dialog]:justify-center data-[type=dialog]:p-4",
+            "data-[type=floating]:pointer-events-none data-[type=floating]:fixed data-[type=floating]:inset-0 data-[type=floating]:flex data-[type=floating]:items-center data-[type=floating]:justify-center data-[type=floating]:p-4",
+          )}
+        >
           <Tour.Content
             className={cn(
-              "bg-card border border-border rounded-2xl shadow-2xl max-w-sm p-5 flex flex-col gap-3",
+              "bg-card border border-border rounded-2xl shadow-2xl max-w-sm p-5 flex flex-col gap-3 pointer-events-auto",
               "data-[state=open]:animate-in data-[state=closed]:animate-out",
               "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
               "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",

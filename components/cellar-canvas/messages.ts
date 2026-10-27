@@ -153,6 +153,7 @@ export type CellarCanvasMessages = {
   tourBack:               string
   tourNext:               string
   tourDone:               string
+  tourProgress:           string
   tourStartButton:        string
   tourStartTitle:         string
   tourWelcomeTitle:       string
@@ -320,6 +321,7 @@ export const MESSAGES = {
     tourBack:                'Zurück',
     tourNext:                'Weiter',
     tourDone:                'Fertig',
+    tourProgress:            '{current} von {total}',
     tourStartButton:         'Tour starten',
     tourStartTitle:          'Geführte Tour öffnen',
     tourWelcomeTitle:        'Willkommen bei Cellar Canvas',
@@ -483,6 +485,7 @@ export const MESSAGES = {
     tourBack:                'Back',
     tourNext:                'Next',
     tourDone:                'Done',
+    tourProgress:            '{current} of {total}',
     tourStartButton:         'Start tour',
     tourStartTitle:          'Open guided tour',
     tourWelcomeTitle:        'Welcome to Cellar Canvas',
