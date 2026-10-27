@@ -1,4 +1,4 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/tanstack-table/tanstack-table.md) am 2026-10-26. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/tanstack-table/tanstack-table.md) am 2026-10-27. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # TanStack Table (React)
 
@@ -18,7 +18,7 @@ const table = useTable({ features, columns, data })
 
 ## Migration Notes
 
-**⚠️ Major-Version-Sprung ggü. aktuell installierten Ständen:** `components`/`components-showcase` in `__Components__` haben `^8.21.3` installiert, aktuelle Version ist **9.3.1** (Stand 2026-10-26) — ein ganzer Major dazwischen. Die v8-API (`useReactTable({ columns, data, getCoreRowModel: getCoreRowModel() })`, einzelne `getXRowModel()`-Imports pro Feature) ist **nicht** identisch mit der oben gezeigten v9-API (`useTable({ features, columns, data })`). v8 hat seit rund 18 Monaten kein Release mehr bekommen. Mapping für den Umstieg siehe nächster Abschnitt.
+**Major-Version-Sprung v8 → v9:** `__Components__` ist seit 2026-10-27 auf **9.3.1** migriert (`components/data-table/`, Tabelle per `'use no memo'` vom React Compiler ausgenommen). Die v8-API (`useReactTable({ columns, data, getCoreRowModel: getCoreRowModel() })`, einzelne `getXRowModel()`-Imports pro Feature) ist **nicht** identisch mit der oben gezeigten v9-API (`useTable({ features, columns, data })`). v8 hat seit rund 18 Monaten kein Release mehr bekommen. Mapping für den Umstieg siehe nächster Abschnitt.
 
 ### v8 → v9 (Stand 2026-10-26)
 

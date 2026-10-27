@@ -12,6 +12,7 @@ Stand: 2026-10-27. Alle Punkte bestanden schon vor den Dependency-Updates vom 25
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
 | 7 | fallow: 12 Befunde, davon 3 Fehlalarme | Repo-weit | niedrig | 0,5 h |
 | 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
+| 9 | Shortcut-Übersicht nennt `?`, gebunden ist `Mod+/` | `components/hotkeys/shortcut-overview.tsx` | niedrig | 0,5 h |
 
 ---
 
@@ -105,3 +106,11 @@ Stand: 2026-10-27. Alle Punkte bestanden schon vor den Dependency-Updates vom 25
 **Auswirkung.** Ausfall bis jemand manuell startet; Netlify-Builds von `artilier-ui` scheitern in der Zeit, weil die Storefront die Weine beim Build vom VPS holt.
 
 **Lösung.** Pro Stack eine systemd-User-Unit (Quadlet oder `podman generate systemd`) plus `loginctl enable-linger deploy`, danach einen Test-Reboot. Muss auf dem VPS eingerichtet werden.
+
+## 9. Shortcut-Übersicht nennt die falsche Taste
+
+**Symptom.** Die `ShortcutOverview` zeigt als Öffnen-Hinweis `?` (`components/hotkeys/shortcut-overview.tsx:90`, `<kbd>?</kbd> {m.openHint}`), und der Designer-Showcase sagt „press ? to see them all" (`components-showcase/src/pages/designer.tsx:391`, Kommentar). Gebunden ist aber `Mod+/` (`shortcut-overview.tsx:28–30`).
+
+**Auswirkung.** Wer `?` drückt, sieht nichts – die Übersicht ist nur über `Mod+/` erreichbar.
+
+**Lösung.** Den Hinweis aus der tatsächlichen Bindung erzeugen (`formatForDisplay('Mod+/')`, zeigt ⌘ / bzw. Ctrl /) statt `?` fest zu schreiben, Kommentar im Designer anpassen. Alternativ zusätzlich `?` binden – dann aber prüfen, dass es in Eingabefeldern nicht feuert. Bei einem späteren Wechsel auf Ark UI Hotkeys (Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag) gleich mit erledigen.
