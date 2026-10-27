@@ -116,15 +116,14 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
               title={m.bgGradientTo}
             />
           </div>
-          <div className="flex items-center justify-between pl-2">
-            <span className="text-muted-foreground text-xs">{m.bgGradientAngle}</span>
-            <NumberInput
-              value={background.angle}
-              onChange={(angle) => set({ ...background, angle })}
-              min={0} max={360} step={15}
-              unit="°"
-            />
-          </div>
+          <NumberInput
+            label={m.bgGradientAngle}
+            value={background.angle}
+            onChange={(angle) => set({ ...background, angle })}
+            min={0} max={360} step={15}
+            unit="°"
+            className="justify-between pl-2"
+          />
         </div>
       )}
 
