@@ -1,4 +1,4 @@
-import { useState, useEffect, type ChangeEvent } from 'react'
+import { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import { Section } from '../components/section'
 import { ColorPickerPanel } from '@components/color-picker/color-picker'
 import { TextToolOptions } from '@components/text-tool-options/text-tool-options'
@@ -249,24 +249,41 @@ function LayerPanelDemo() {
     setLayers((prev: Layer[]) => prev.map((l: Layer) => l.id === id ? { ...l, [key]: !l[key] } : l))
   }
 
+  // Both shortcuts act only while focus is inside this demo. Otherwise Delete
+  // in the Cellar Canvas editor would also remove a layer here, and every
+  // Escape on the page would arrive defaultPrevented, which the editor's
+  // fullscreen exit ignores. They stay on the document instead of
+  // `target: demoRef`: a listener on the wrapper would run before React's
+  // root-delegated handlers and steal Delete from the focused row and Escape
+  // from the rename input. So no default preventDefault/stopPropagation;
+  // the callbacks mark only the keys they handle.
+  const demoRef = useRef<HTMLDivElement>(null)
+
   useDesignEngineHotkey(
     'Delete',
-    () => {
-      if (selected.length === 0) return
+    (e) => {
+      if (!demoRef.current?.contains(document.activeElement) || selected.length === 0) return
+      e.preventDefault()
       setLayers((prev: Layer[]) => prev.filter((l: Layer) => !selected.includes(l.id)))
       setSelected([])
     },
-    { label: 'Ebene löschen', description: 'Ausgewählte Ebene(n) entfernen', category: 'Actions' }
+    { label: 'Ebene löschen', description: 'Ausgewählte Ebene(n) entfernen', category: 'Actions' },
+    { preventDefault: false, stopPropagation: false }
   )
 
   useDesignEngineHotkey(
     'Escape',
-    () => setSelected([]),
-    { label: 'Auswahl aufheben', description: 'Alle Ebenen deselektieren', category: 'Navigation' }
+    (e) => {
+      if (!demoRef.current?.contains(document.activeElement)) return
+      e.preventDefault()
+      setSelected([])
+    },
+    { label: 'Auswahl aufheben', description: 'Alle Ebenen deselektieren', category: 'Navigation' },
+    { preventDefault: false, stopPropagation: false }
   )
 
   return (
-    <div className="flex max-w-xs flex-col gap-2">
+    <div ref={demoRef} className="flex max-w-xs flex-col gap-2">
       <LayerPanel
         layers={layers}
         selectedIds={selected}
