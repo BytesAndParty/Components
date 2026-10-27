@@ -63,6 +63,9 @@ export class SnapManager {
     // ended the search before any other object was considered.
     const moving: fabric.Object[] =
       activeObj instanceof fabric.ActiveSelection ? activeObj.getObjects() : [activeObj]
+    // Fabric's drag handler only sets left/top; getBoundingRect() reads the
+    // cached aCoords from the last setCoords() (drag start or last snap).
+    activeObj.setCoords()
     const objBounds = activeObj.getBoundingRect()
     
     // Interesting points on the moving object
