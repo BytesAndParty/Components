@@ -4,10 +4,10 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 
 ## Features
 
-- **TanStack Table Core**: Leverages the gold standard for headless table logic (React Table v8).
+- **TanStack Table Core**: Leverages the gold standard for headless table logic (TanStack Table v9, `useTable` with an explicit feature set).
 - **Sorting**: Built-in support for column sorting with visual indicators and accessible toggles.
 - **Pagination**: Client-side pagination with customizable page sizes and "First/Prev/Next/Last" controls.
-- **Flexible Columns**: Uses `ColumnDef` for deep control over cell rendering, formatting, and alignment.
+- **Flexible Columns**: Uses `DataTableColumnDef<TData>` (TanStack's `ColumnDef` bound to the table's features) for deep control over cell rendering, formatting, and alignment.
 - **Responsive**: Horizontal overflow handling ensures data remains accessible on mobile and small viewports.
 - **Empty States**: Integrated "No Results" messaging when data is filtered out or empty.
 - **Row Selection (opt-in)**: Header + per-row checkboxes via the project `Checkbox`. Controllable or uncontrolled; emits `RowSelectionState`.
@@ -19,7 +19,8 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 
 ## How It Works
 
-1. **Headless Logic**: Uses the `useReactTable` hook to manage complex state (sorting, pagination indices) without dictating the DOM structure.
+1. **Headless Logic**: Uses the `useTable` hook to manage complex state (sorting, pagination indices) without dictating the DOM structure. The feature set is a static `tableFeatures({...})` object: sorting, pagination, row selection, column sizing and resizing, plus the sorted and paginated row models. `'auto'` sorting only resolves registered functions, so `alphanumeric`, `text` and `datetime` are registered (unregistered cases fall back to `basic`); columns can name these in `sortFn` or pass their own function.
+   The component opts out of the React Compiler with `'use no memo'`: TanStack Table's builder methods read mutable internal state the compiler cannot track (TanStack/table#6577, #6524), and with v9 the compiler no longer skips the component on its own.
 2. **UI Mapping**: Iterates through `getHeaderGroups()` and `getRowModel()` to render standard HTML `<table>` elements with design-system-compliant classes.
 3. **Decoupled Rendering**: Utilizes `flexRender` to allow both simple strings and complex React components within column definitions.
 4. **Themed Styling**: Uses Tailwind CSS for consistent borders, rounded corners (`xl`), and interactive hover states (`hover:bg-muted/30`).
@@ -29,7 +30,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `columns` | `ColumnDef<TData, TValue>[]` | — | TanStack Table column definitions. Defines data mapping and header labels. |
+| `columns` | `DataTableColumnDef<TData>[]` | — | TanStack Table column definitions (exported alias from `data-table.tsx`). Defines data mapping and header labels. |
 | `data` | `TData[]` | — | The array of objects to be displayed. |
 | `pageSize` | `number` | `10` | Initial number of rows per page (used when `pagination` is uncontrolled). |
 | `className` | `string` | — | Additional CSS classes for the outer wrapper. |
@@ -51,8 +52,7 @@ A feature-rich, accessible data table powered by TanStack Table. Designed for hi
 ### Basic Example
 
 ```tsx
-import { DataTable } from '@components/data-table/data-table'
-import { ColumnDef } from '@tanstack/react-table'
+import { DataTable, type DataTableColumnDef } from '@components/data-table/data-table'
 
 interface User {
   id: string
@@ -60,7 +60,7 @@ interface User {
   role: string
 }
 
-const columns: ColumnDef<User>[] = [
+const columns: DataTableColumnDef<User>[] = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'role', header: 'Position' }
 ]
@@ -124,7 +124,7 @@ const selectedRows = users.filter((u) => selection[u.id])
 ### With Custom Cell Rendering
 
 ```tsx
-const columns: ColumnDef<User>[] = [
+const columns: DataTableColumnDef<User>[] = [
   {
     accessorKey: 'role',
     header: 'Access Level',
@@ -139,7 +139,7 @@ const columns: ColumnDef<User>[] = [
 
 ## Dependencies
 
-- `@tanstack/react-table` — Table engine
+- `@tanstack/react-table` `^9.3.1` — Table engine
 - `motion` — Row spring/layout transitions; honors `prefers-reduced-motion` via `useReducedMotion`
 - `lucide-react` — Navigation and sort icons
 - `clsx` & `tailwind-merge` — Style utility (`cn`)

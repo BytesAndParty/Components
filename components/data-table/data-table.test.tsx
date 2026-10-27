@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
-import { DataTable } from './data-table'
-import { ColumnDef } from '@tanstack/react-table'
+import { DataTable, type DataTableColumnDef } from './data-table'
 
 interface TestData {
   id: string
@@ -9,7 +8,7 @@ interface TestData {
   age: number
 }
 
-const columns: ColumnDef<TestData>[] = [
+const columns: DataTableColumnDef<TestData>[] = [
   {
     accessorKey: 'name',
     header: 'Name',

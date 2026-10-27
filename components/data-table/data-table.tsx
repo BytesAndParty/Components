@@ -1,14 +1,24 @@
 import {
-  useReactTable,
-  getCoreRowModel,
+  useTable,
+  tableFeatures,
+  rowSortingFeature,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  createSortedRowModel,
+  createPaginatedRowModel,
+  sortFn_alphanumeric,
+  sortFn_datetime,
+  sortFn_text,
   flexRender,
-  ColumnDef,
-  getSortedRowModel,
-  SortingState,
-  getPaginationRowModel,
-  PaginationState,
-  RowSelectionState,
-  ColumnSizingState,
+  type CellData,
+  type ColumnDef,
+  type RowData,
+  type SortingState,
+  type PaginationState,
+  type RowSelectionState,
+  type ColumnSizingState,
 } from '@tanstack/react-table'
 // eslint-disable-next-line no-restricted-imports -- useMemo is load-bearing for stable column defs/data refs that drive TanStack Table memo.
 import { useMemo, useState } from 'react'
@@ -19,10 +29,30 @@ import { useComponentMessages } from '../i18n'
 import { Checkbox } from '../checkbox/checkbox'
 import { MESSAGES, type DataTableMessages } from './messages'
 
+// ── Table setup ───────────────────────────────────────────────────────────────
+
+// Static, so the feature set stays stable across renders. columnSizingFeature must
+// come before columnResizingFeature. 'auto' sorting only resolves registered
+// functions: these are the three it picks from (anything else falls back to basic).
+const dataTableFeatures = tableFeatures({
+  rowSortingFeature,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortFns: { alphanumeric: sortFn_alphanumeric, datetime: sortFn_datetime, text: sortFn_text },
+})
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+/** Column definition bound to the DataTable feature set. */
+export type DataTableColumnDef<TData extends RowData, TValue extends CellData = CellData> =
+  ColumnDef<typeof dataTableFeatures, TData, TValue>
+
+export interface DataTableProps<TData extends RowData> {
+  columns: DataTableColumnDef<TData>[]
   data: TData[]
   className?: string
   messages?: Partial<DataTableMessages>
@@ -59,7 +89,7 @@ export interface DataTableProps<TData, TValue> {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   className,
@@ -76,7 +106,10 @@ export function DataTable<TData, TValue>({
   enableColumnResizing = false,
   columnSizing: controlledColumnSizing,
   onColumnSizingChange,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
+  // Kept out of the React Compiler: TanStack Table builder methods read mutable
+  // internal state the compiler cannot track (TanStack/table#6577, #6524).
+  'use no memo'
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const [internalPagination, setInternalPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -114,7 +147,7 @@ export function DataTable<TData, TValue>({
 
   const tableColumns = useMemo(() => {
     const base = enableRowSelection
-      ? [buildSelectionColumn<TData, TValue>(m), ...columns]
+      ? [buildSelectionColumn<TData>(m), ...columns]
       : columns
     if (!enableAutoColumnSize) return base
     return base.map((col) => {
@@ -125,11 +158,10 @@ export function DataTable<TData, TValue>({
     })
   }, [columns, columnMinWidths, enableAutoColumnSize, enableRowSelection, m])
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table's API is intentionally non-memoizable
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns: tableColumns,
-    getCoreRowModel: getCoreRowModel(),
     enableRowSelection,
     enableColumnResizing,
     columnResizeMode: 'onChange',
@@ -149,8 +181,6 @@ export function DataTable<TData, TValue>({
       const next = typeof updater === 'function' ? updater(columnSizing) : updater
       handleColumnSizingChange(next)
     },
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       pagination,
@@ -307,7 +337,7 @@ export function DataTable<TData, TValue>({
                         className="hover:bg-muted/30 data-[state=selected]:bg-accent/5 transition-colors"
                         data-state={row.getIsSelected() ? 'selected' : undefined}
                       >
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getAllCells().map((cell) => (
                           <td
                             key={cell.id}
                             className={cn(
@@ -348,7 +378,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between px-2 py-1">
         <div className="text-muted-foreground flex-1 text-xs">
           {m.pageOf
-            .replace('{current}', String(table.getState().pagination.pageIndex + 1))
+            .replace('{current}', String(table.state.pagination.pageIndex + 1))
             .replace('{total}', String(table.getPageCount()))}
         </div>
         <div className="flex items-center gap-2">
@@ -462,9 +492,9 @@ function PaginationBtn({
  * values are sorted/paginated in or out of view. Uses canvas `measureText`
  * (cheap, no layout flush). Skipped when `enabled === false` or no DOM.
  */
-function useColumnMinWidths<TData, TValue>(
+function useColumnMinWidths<TData extends RowData>(
   data: TData[],
-  columns: ColumnDef<TData, TValue>[],
+  columns: DataTableColumnDef<TData>[],
   enabled: boolean,
 ): Record<string, number> {
   return useMemo(() => {
@@ -507,7 +537,7 @@ function useColumnMinWidths<TData, TValue>(
   }, [data, columns, enabled])
 }
 
-function buildSelectionColumn<TData, TValue>(m: DataTableMessages): ColumnDef<TData, TValue> {
+function buildSelectionColumn<TData extends RowData>(m: DataTableMessages): DataTableColumnDef<TData> {
   return {
     id: '__select__',
     enableSorting: false,

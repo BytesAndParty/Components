@@ -1,6 +1,6 @@
 import { Section } from '../components/section'
-import { DataTable } from '@components/data-table/data-table'
-import type { ColumnDef, SortingState, PaginationState, RowSelectionState } from '@tanstack/react-table'
+import { DataTable, type DataTableColumnDef } from '@components/data-table/data-table'
+import type { SortingState, PaginationState, RowSelectionState } from '@tanstack/react-table'
 import { useSearchParams } from 'react-router'
 import { useState } from 'react'
 
@@ -85,7 +85,7 @@ const inventoryData: WineInventory[] = [
 // Reduced 5-row slice used by the row-selection showcase.
 const selectionSample = inventoryData.slice(0, 5)
 
-const selectionColumns: ColumnDef<WineInventory>[] = [
+const selectionColumns: DataTableColumnDef<WineInventory>[] = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'year', header: 'Year' },
   { accessorKey: 'type', header: 'Type' },
@@ -135,7 +135,7 @@ export function DataPage() {
     setSearchParams(nextParams, { replace: true })
   }
 
-  const columns: ColumnDef<WineInventory>[] = [
+  const columns: DataTableColumnDef<WineInventory>[] = [
     {
       accessorKey: 'name',
       header: 'Name',
