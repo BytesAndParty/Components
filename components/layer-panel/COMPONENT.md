@@ -9,7 +9,7 @@ A sophisticated sidebar component for managing a stack of layers or canvas objec
 - **Layer Controls:** Toggle visibility, lock/unlock, and delete layers.
 - **In-place Renaming:** Double-click a layer name to rename it.
 - **Selection State:** Supports highlighting the currently active layers.
-- **Keyboard Navigation:** Every row is a tab stop. ↑/↓ move focus between rows, Shift + ↑/↓ reorder, Space selects, Enter or F2 renames (Enter/Escape return focus to the row), Delete/Backspace removes the layer — stopped at the row, so a host's global Delete hotkey does not fire as well. After a delete (key or the row's delete button) focus moves to the next row, the previous one at the end of the list, or the empty-state message once the list is empty; it waits until the consumer has removed the layer from `layers`. The listbox label is localized (`layerList`).
+- **Keyboard Navigation:** Every row is a tab stop. ↑/↓ move focus between rows, Shift + ↑/↓ reorder, Space selects, Enter or F2 renames (Enter keeps the new name, Escape discards it; both return focus to the row), Delete/Backspace removes the layer — stopped at the row, so a host's global Delete hotkey does not fire as well. After a delete (key or the row's delete button) focus moves to the next row, the previous one at the end of the list, or the empty-state message once the list is empty; it waits until the consumer has removed the layer from `layers`. The listbox label is localized (`layerList`).
 - **Smooth Animations:** `motion/react` transitions for adding and removing layers.
 
 ## How It Works

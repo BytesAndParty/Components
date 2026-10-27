@@ -44,7 +44,7 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 | 4 | Signature Pad | **"Extras" insert panel** — low priority section alongside decorative dividers, ornaments, etc. Signature is one of several extras. Not a main toolbar tool. |
 | 5 | i18n | ~~`i18n` prop object with English defaults~~ — *superseded (2026-05-26):* `messages.ts` ships `de` + `en`, the locale comes from the global `I18nProvider`, single strings are overridden via the `messages` prop (project-wide pattern, see COMPONENT-GUIDELINES §6). Still no coupling to i18next/next-intl. |
 | 6 | Watermark | **Not needed.** |
-| 7 | QR Code | **Mandatory overlay, generated client-side.** EU Reg. 2023/2977 requires nutritional info — QR is the allowed alternative. URL from `initialWineFields.nutritionalInfoUrl`. Generated via `qrcode` package, inserted as canvas image. Removing it should trigger a strong EU validator warning — *still open* (STATUS.md, „QR-Removal-Warning“). |
+| 7 | QR Code | **Mandatory overlay, generated client-side.** EU Reg. 2023/2977 requires nutritional info — QR is the allowed alternative. URL from `initialWineFields.nutritionalInfoUrl`. Generated via `qrcode` package, inserted as canvas image. Removing it turns the EU validator red (error) once a QR code had been placed — *done 2026-10-14* (STATUS.md, „QR-Removal-Warning“). |
 | 8 | Aspect ratio lock | **Locked by default on images, Shift to unlock.** Shapes unlocked by default. |
 
 ---
@@ -66,6 +66,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-10-06*
+*Last updated: 2026-10-27*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*
