@@ -20,6 +20,7 @@ Hier stehen Regeln, nicht ihre Geschichte. Begründungen und Bug-Verlauf einer K
 - **`vendure-showcase/`** — `server/` (Vendure 3.8, eigenständig, kein Bun-Workspace) und `storefront/` (Astro, Produkte build-time). Architektur und Styling in den `.md`-Dateien dort.
 - **`e2e/`** — Playwright: `showcase` (`bun run test:e2e`), `mobile` (`bun run test:mobile`) und `vendure` (`bun run test:e2e:vendure`, braucht einen erreichbaren Vendure-Server).
 - **`bun run build:all`** baut Launcher, beide Showcases und die Storefront nach `dist/` (Netlify). Die Storefront zieht dabei die Weine vom Vendure-Server auf dem VPS.
+- **`KNOWN-ISSUES.md`** — bekannte, bewusst offene Probleme mit Ursache und Lösungsvorschlag; Behobenes dort löschen.
 - **`CELLAR-CANVAS.md`** — Vision und Entscheidungs-Log des Etiketten-Designers; der Stand steht in `components/cellar-canvas/COMPONENT.md` und `STATUS.md`.
 
 ## Komponenten-Regeln
