@@ -79,7 +79,7 @@ export function CanvasHeader({
               onClick={() => setInsertError(null)}
               aria-label={m.dismissHint}
               title={m.dismissHint}
-              className="hover:bg-muted focus-visible:ring-accent/60 inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="hover:bg-muted focus-visible:ring-accent/60 inline-flex items-center justify-center rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11"
             >
               <X size={14} aria-hidden />
             </button>
