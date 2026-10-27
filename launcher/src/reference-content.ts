@@ -188,7 +188,7 @@ export const DECISIONS: Decision[] = [
     title: 'Shop-Technik mit fertigem Kern',
     why: 'Warenkorb, Kasse, Bestellungen, Kundenkonten und eine Verwaltung bringt das Shop-System fertig mit. Selbst gebaut wird nur, was das Weingut besonders macht: Erlebnisse, Rebstock-Abo, Wein-Angaben. Die Weinseiten werden vorab fertig erzeugt. Sie laden schnell, werden gut gefunden und bleiben erreichbar, auch wenn das Backend einmal ausfällt.',
     tech: [
-      'Backend: Vendure 3.7 (NestJS, GraphQL) mit eigenen Plugins. Zahlung über Nexi XPay Global (in Arbeit).',
+      'Backend: Vendure 3.8 (NestJS, GraphQL) mit eigenen Plugins. Zahlung über Nexi XPay Global (in Arbeit).',
       'Storefront: Astro 7, statisch für Katalog und Produktseiten, serverseitig für Konto und Events, React-19-Islands für Warenkorb und Filter.',
     ],
   },
