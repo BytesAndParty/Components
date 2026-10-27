@@ -257,6 +257,6 @@ prefetch: { prefetchAll: true, defaultStrategy: 'hover' }
 - [ ] Container Queries-Refactor für GlowCard, Cart-Layout, Detail-Page
 - [ ] Skeleton + SkeletonCard-Komponente
 - [ ] TanStack Query Setup mit Senior-Patterns
-- [x] Manueller Publish-Button (Dashboard → `triggerStorefrontRebuild` → Netlify Build Hook) — `StorefrontDeployPlugin`
+- [x] Manueller Publish-Button (Dashboard → `triggerStorefrontRebuild` → Netlify Build Hook) — `StorefrontDeployPlugin`; die Hook-URL bleibt serverseitig (Env), nie im Client-Bundle, damit niemand Builds über die unauthentifizierte URL auslösen kann
 - [ ] Automatischer Webhook-Trigger Vendure EventBus → Astro-Rebuild (mit Debounce)
 - [ ] Lighthouse-CI im CI-Setup
