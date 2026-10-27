@@ -188,30 +188,63 @@ sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo sy
 
 ### Deployen (vom Repo-Root auf dem Laptop)
 
+Normales Deploy für Code-Änderungen ohne Schema-Änderung; die Daten bleiben erhalten. Unter jedem
+Schritt steht, was erscheinen sollte. Weicht etwas ab: nicht weitermachen, Ausgabe ansehen.
+
 ```bash
-# 1. Code auf den Server (ohne node_modules, Builds, Daten, .env)
+# 0. SSH-Key laden (einmal pro Terminal)
+ssh-add --apple-use-keychain ~/.ssh/buchart58_vps
+
+# 1. Code auf den Server (ohne node_modules, Builds, Daten, .env). Erwartet: keine Ausgabe
 rsync -az --delete --exclude node_modules --exclude dist --exclude data --exclude .vendure \
   --exclude .tanstack --exclude .env --exclude src/gql --exclude .DS_Store \
   -e "ssh -i ~/.ssh/buchart58_vps" vendure-showcase/server/ deploy@169.58.203.37:/home/deploy/vendure-showcase-build/
 
 # 2. Image auf dem Server bauen (nicht lokal: Cross-Build auf Apple Silicon läuft in Speichermangel).
-#    --ulimit ist Pflicht, sonst scheitert der Dashboard-Build (siehe Kopf des Containerfile)
+#    --ulimit ist Pflicht, sonst scheitert der Dashboard-Build (siehe Kopf des Containerfile).
+#    Erwartet am Ende: "Successfully tagged localhost/vendure-showcase-server:latest"
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
   "cd ~/vendure-showcase-build && podman build --ulimit nofile=65536:65536 -f Containerfile -t vendure-showcase-server ."
 
-# 3. Stack neu erzeugen. Output verwerfen: podman-compose gibt Secrets im Klartext aus
+# 3. Stack neu erzeugen. Output verwerfen: podman-compose gibt Secrets im Klartext aus.
+#    Erwartet: vendure-showcase-db und vendure-showcase-server mit "Up"
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
   "cp ~/vendure-showcase-build/compose.prod.yaml ~/vendure-showcase/ && cd ~/vendure-showcase \
-   && podman compose -f compose.prod.yaml --env-file .env.prod up -d --force-recreate >/dev/null 2>&1; podman ps"
+   && podman compose -f compose.prod.yaml --env-file .env.prod up -d --force-recreate >/dev/null 2>&1; sleep 30; podman ps --format '{{.Names}} | {{.Status}}'"
 
-# 4. Seed (idempotent). Läuft im Server-Container: tsc hat seed.ts nach dist/seed.js gebaut,
+# 4. Version prüfen. Erwartet: "Vendure server (vX.Y.Z) now running on port 3000"
+#    (noch leer: 30 s warten und wiederholen)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 'podman logs vendure-showcase-server 2>&1 | grep -i "vendure server"'
+
+# 5. Seed (idempotent). Läuft im Server-Container: tsc hat seed.ts nach dist/seed.js gebaut,
 #    Superadmin-Login und localhost:3000 sind dort schon gesetzt. Kein bun install auf dem Host
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
   "podman exec vendure-showcase-server node dist/seed.js"
 
-# Superadmin-Passwort nachsehen: nur selbst, nie in einen Chat
+# 6. Von außen prüfen. Erwartet: {"data":{"products":{"totalItems":8}}}
+curl -s -X POST -H 'content-type: application/json' --data '{"query":"{ products { totalItems } }"}' \
+  https://vendure-showcase.169-58-203-37.sslip.io/shop-api; echo
+```
+
+Zum Schluss im Dashboard (Produktliste) auf „Veröffentlichen" klicken, damit Netlify die Storefront
+mit dem neuen Datenstand baut, und nach ein paar Minuten https://artilier-ui.netlify.app/shop/ prüfen.
+
+### Login ins Dashboard
+
+Das Login-Feld heißt „E-Mail", erwartet aber den Benutzernamen des Superadmins aus `.env.prod`
+(`SUPERADMIN_USERNAME`, Standard `superadmin`). Zugangsdaten nur selbst nachsehen, nie in einen Chat:
+
+```bash
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 "grep SUPERADMIN_ ~/vendure-showcase/.env.prod"
 ```
+
+### „Veröffentlichen" mehrfach klicken
+
+Das Plugin sperrt den Button serverseitig für 30 s nach jedem Auslösen (`REBUILD_COOLDOWN_MS` in
+`src/plugins/storefront-deploy/`); ein zweiter Klick in dieser Zeit meldet „Build läuft bereits — bitte
+Ns warten" und löst nichts aus. Ein Klick nach Ablauf der Sperre stößt einen weiteren Netlify-Build an,
+der denselben Datenstand noch einmal baut: unschädlich, kostet nur Build-Minuten. Die Sperre lebt im
+Speicher des Server-Prozesses und beginnt nach einem Neustart von vorn.
 
 ### Vendure-Upgrade mit Schema-Änderung (z. B. 3.7 → 3.8)
 
@@ -220,21 +253,36 @@ Unique-Constraint `(languageCode, baseId)` auf jede Übersetzungstabelle, das Au
 Übersetzungen läuft aber nur in Migrationen. Deshalb vor Schritt 3 die Volumes löschen:
 
 ```bash
-# 0. Sicherung der alten DB, solange der alte Stack noch läuft
+# 0. Sicherung der Volumes als Archiv (funktioniert auch, wenn die Container fehlen)
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
-  'podman exec vendure-showcase-db sh -c "pg_dump -U \$POSTGRES_USER -d \$POSTGRES_DB" | gzip > ~/vendure-showcase/backup-$(date +%F).sql.gz && ls -l ~/vendure-showcase/backup-*'
+  'for v in $(podman volume ls -q | grep vendure-showcase); do podman volume export $v | gzip > ~/vendure-showcase/$v-$(date +%F).tar.gz; done; ls -l ~/vendure-showcase/*.tar.gz'
 
-# Schritte 1 und 2 wie oben. Dann Stack samt Volumes (DB und Assets) entfernen, Output verwerfen
+# Schritte 1 und 2 wie oben. Dann Stack und Showcase-Volumes (DB, Assets) entfernen, Output verwerfen.
+# Erwartet: keine Volumes mit "vendure-showcase" mehr in der Liste (die von staging bleiben)
 ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
-  "cd ~/vendure-showcase && podman compose -f compose.prod.yaml --env-file .env.prod down -v >/dev/null 2>&1; podman volume ls"
+  'cd ~/vendure-showcase && podman compose -f compose.prod.yaml --env-file .env.prod down -v >/dev/null 2>&1; for v in $(podman volume ls -q | grep vendure-showcase); do podman volume rm $v; done; podman volume ls'
 
-# Danach Schritte 3 und 4 wie oben (up, Seed)
+# Danach Schritte 3 bis 6 wie oben (up, Version, Seed, Prüfen)
 ```
 
 Danach ist alles weg, was nur im Dashboard angelegt wurde (weitere Admins, eigene Produkte,
 Bestellungen). Der Superadmin entsteht aus `.env.prod` neu. Seit 3.8 sind Admin-Sessions an die
 Admin-API gebunden, im Dashboard also einmal neu einloggen. Zum Schluss über „Veröffentlichen"
 (Dashboard, Produktliste) die Storefront neu bauen lassen, damit sie den neuen Datenstand zeigt.
+
+### Nach einem Reboot oder wenn die Container fehlen
+
+```bash
+# Zustand ansehen (ändert nichts)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 'uptime -s; podman ps -a --format "{{.Names}} | {{.Status}}"; podman images | grep vendure-showcase'
+
+# Container stehen auf "Created"/"Exited" oder fehlen, das Image ist aber da: ohne Neubau starten,
+# die Daten in den Volumes bleiben erhalten
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  "cd ~/vendure-showcase && podman compose -f compose.prod.yaml --env-file .env.prod up -d >/dev/null 2>&1; sleep 30; podman ps --format '{{.Names}} | {{.Status}}'"
+```
+
+Fehlt auch das Image, das normale Deploy ab Schritt 1 durchlaufen. Danach Schritte 4 und 6 als Prüfung.
 
 **Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
 nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
