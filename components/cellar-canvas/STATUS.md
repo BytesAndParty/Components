@@ -104,7 +104,7 @@
 
 ### Browser-Checks
 
-Die Checkliste vom 2026-10-15 ist am 2026-10-25/27 per Playwright im Showcase abgearbeitet (Chromium, 1440 × 900), siehe #30. Offen beim User bleibt der Screenreader-Lauf (Toolbars, Ebenenliste, Tour, Hinweis im Header). Für die Buchart58-Kopie steht die Liste in deren `cellar-canvas/STATUS.md` #29; die Fixes aus #30 fehlen dort noch (`KNOWN-ISSUES.md`).
+Die Checkliste vom 2026-10-15 ist am 2026-10-25/27 per Playwright im Showcase abgearbeitet (Chromium, 1440 × 900), siehe #30. Offen beim User bleibt der Screenreader-Lauf (Toolbars, Ebenenliste, Tour, Hinweis im Header). In die Buchart58-Kopie sind die Fixes aus #30 am 2026-10-27 übernommen und unter `/etiketten` im Browser geprüft (dort `cellar-canvas/STATUS.md` #30).
 
 ### Arbeitshinweise
 

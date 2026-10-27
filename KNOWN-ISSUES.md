@@ -1,6 +1,6 @@
 # Bekannte Probleme
 
-Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–12 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log.
+Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -13,9 +13,8 @@ Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates v
 | 7 | fallow: 12 Befunde, davon 3 Fehlalarme | Repo-weit | niedrig | 0,5 h |
 | 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
 | 9 | Shortcut-Übersicht nennt `?`, gebunden ist `Mod+/` | `components/hotkeys/shortcut-overview.tsx` | niedrig | 0,5 h |
-| 10 | Cellar-Canvas-Fixes vom 27.10. fehlen in der Buchart58-Kopie | Buchart58 `storefront/src/atelier/` | mittel | 1–2 h |
-| 11 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
-| 12 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
+| 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
+| 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 
 ---
 
@@ -118,19 +117,13 @@ Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates v
 
 **Lösung.** Den Hinweis aus der tatsächlichen Bindung erzeugen (`formatForDisplay('Mod+/')`, zeigt ⌘ / bzw. Ctrl /) statt `?` fest zu schreiben, Kommentar im Designer anpassen. Alternativ zusätzlich `?` binden – dann aber prüfen, dass es in Eingabefeldern nicht feuert. Bei einem späteren Wechsel auf Ark UI Hotkeys (Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag) gleich mit erledigen.
 
-## 10. Cellar-Canvas-Fixes vom 27.10. fehlen in Buchart58
-
-**Symptom.** Die sieben Fixes aus `components/cellar-canvas/STATUS.md` #30 (Snapping, Unterschrift, Tour, Winkel-Feld, „Hinweis schließen“, Fokus in der Ebenenliste) und der Fix im Layer-Panel, dass `Esc` beim Umbenennen den Entwurf verwirft, sind nur hier umgesetzt. Buchart58 kopiert Komponenten (`Buchart58/storefront/src/atelier/cellar-canvas` und das Layer-Panel), Änderungen kommen dort nicht von selbst an. Der Showcase-Fix (Demo-Kürzel) betrifft Buchart58 nicht.
-
-**Lösung.** Pro Fix nachziehen wie beim Abgleich #27/#29: Diff aus dem jeweiligen Commit übernehmen, Abweichungen der Kopie beachten, danach Lint, `astro check`, `bun test` und die Browser-Punkte aus #30 in Buchart58 prüfen.
-
-## 11. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
+## 10. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
 
 **Panel-Tabs.** Die fünf Tabs (Eigenschaften, Weindaten, Hintergrund, Vorlagen, Extras) passen nicht nebeneinander: bei 1440 px angeschnitten, bei 900 px im Vollbild fehlt „Extras“ ganz und die Labels laufen ineinander (`components/cellar-canvas/components/panels/RightPanel.tsx`). Buchart58 nutzt 9-px-Labels, gerechnet für vier Tabs. Optionen: Icons mit Tooltip, scrollbare Tab-Leiste, kürzere Labels oder zwei Zeilen – Gestaltungsentscheidung offen.
 
 **Vorlage „Classic“.** Ein langer Weinname (z. B. „Grüner Veltliner Ried Loibenberg“) bricht in zwei Zeilen um und überdeckt den Jahrgang, weil `templates/templates.ts` die Felder an festen Positionen platziert. Optionen: Jahrgang/Region unter die tatsächliche Höhe des Namens setzen, Schrift für lange Namen verkleinern oder Zeilenlimit – Entscheidung offen. Buchart58 plant ohnehin einen eigenen Konfigurator für Vorlagen.
 
-## 12. Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test
+## 11. Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test
 
 Einzeln behebbar, beim Erledigen den jeweiligen Punkt löschen.
 
