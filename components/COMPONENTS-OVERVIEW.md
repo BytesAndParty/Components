@@ -88,7 +88,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **stepper:** Horizontaler und vertikaler Mehrschritt-Wizard.
 - **circular-progress / bounce-loader:** Lade- und Fortschrittszustände.
 - **countdown:** Dringlichkeit für limitierte Angebote.
-- **hotkeys:** Tastatursteuerung für Power-User (Registry + `?`-Übersicht).
+- **hotkeys:** Tastatursteuerung für Power-User (Registry + Shortcut-Übersicht per `Mod+/`).
 - **atelier / i18n:** Zentraler Theme-, Akzent- und Sprach-State.
 - **language-switcher / accent-switcher / animated-theme-toggler:** Globalisierung und Personalisierung.
 

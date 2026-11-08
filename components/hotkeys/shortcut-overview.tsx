@@ -10,6 +10,8 @@ export interface ShortcutOverviewProps {
   messages?: Partial<ShortcutOverviewMessages>;
 }
 
+const OVERVIEW_HOTKEY = 'Mod+/'
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function ShortcutOverview({
@@ -27,7 +29,7 @@ export function ShortcutOverview({
 
   // Mod+/ toggles the overview — also registers itself in the shortcut list
   useDesignEngineHotkey(
-    'Mod+/',
+    OVERVIEW_HOTKEY,
     () => setIsVisible((visible: boolean) => !visible),
     { label: 'Shortcuts anzeigen', description: 'Übersicht öffnen / schließen', category: 'Global' }
   )
@@ -87,7 +89,7 @@ export function ShortcutOverview({
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <span className="bg-muted border-border text-muted-foreground rounded-full border px-3 py-1.5 text-xs font-medium">
-                <kbd className="text-foreground font-bold">?</kbd> {m.openHint}
+                <kbd className="text-foreground font-bold">{formatForDisplay(OVERVIEW_HOTKEY)}</kbd> {m.openHint}
               </span>
             </div>
           </div>

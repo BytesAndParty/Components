@@ -111,7 +111,7 @@ useDesignEngineHotkey('Mod+k', openSearch, {
 })
 ```
 
-`useDesignEngineHotkey` wrappt TanStack's `useHotkey` und registriert die Metadaten gleichzeitig in der globalen Registry. Das `ShortcutOverview`-Panel (`?` drücken) befüllt sich damit automatisch — seitenspezifisch, weil Hooks sich beim Unmount deregistrieren.
+`useDesignEngineHotkey` wrappt TanStack's `useHotkey` und registriert die Metadaten gleichzeitig in der globalen Registry. Das `ShortcutOverview`-Panel (`Mod+/` drücken) befüllt sich damit automatisch — seitenspezifisch, weil Hooks sich beim Unmount deregistrieren.
 
 ---
 

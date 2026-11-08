@@ -5,7 +5,7 @@ A global shortcut registry and management system built on top of TanStack Hotkey
 ## Features
 
 - **Global Registry:** Automatically tracks all active shortcuts across the application.
-- **Visual Overview:** A modal dialog (triggered by `?`) showing all registered shortcuts grouped by category.
+- **Visual Overview:** A modal dialog (triggered by `Mod+/`) showing all registered shortcuts grouped by category.
 - **Intelligent Disabling:** Shortcuts are automatically disabled on touch-only devices where keyboard interaction is unavailable.
 - **Rich Metadata:** Supports labels, descriptions, and categories for better user orientation.
 - **Context-Aware:** Shortcuts registered within components are automatically added to the registry on mount and removed on unmount.

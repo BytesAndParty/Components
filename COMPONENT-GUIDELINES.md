@@ -100,7 +100,7 @@ Barrierefreiheit ist das Fundament jeder Komponente, nicht ein Zusatz.
 ## 8. Komponenten-API
 
 - **Props** direkt in der Funktionssignatur destrukturieren.
-- **Mitgebrachte Intelligenz:** Shortcuts registriert die Komponente selbst über `useDesignEngineHotkey` (taucht damit in der `?`-Übersicht auf, auf Touch-Geräten automatisch aus), UI-Texte kommen über i18n (§6), Formularfelder nutzen die native Validierung (`required` & Co.).
+- **Mitgebrachte Intelligenz:** Shortcuts registriert die Komponente selbst über `useDesignEngineHotkey` (taucht damit in der Shortcut-Übersicht auf, auf Touch-Geräten automatisch aus), UI-Texte kommen über i18n (§6), Formularfelder nutzen die native Validierung (`required` & Co.).
 - **Controlled/Uncontrolled:** Form- und Selection-Komponenten können beides (siehe [`Checkbox`](./components/checkbox/checkbox.tsx), [`Slider`](./components/slider/slider.tsx)):
   ```tsx
   const isControlled = value !== undefined;

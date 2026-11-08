@@ -405,7 +405,7 @@ function TooltipDemo() {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function DesignerPage() {
-  // Page-level designer shortcuts — press ? to see them all
+  // Page-level designer shortcuts — open the shortcut overview (Mod+/) to see them all
   useDesignEngineHotkey('Mod+Z', () => {}, {
     label: 'Rückgängig', description: 'Letzte Aktion rückgängig machen', category: 'Actions'
   })
