@@ -19,7 +19,7 @@
  *   <AtelierProvider defaultTheme="light" defaultAccent="amber" defaultLocale="en">
  */
 
-import { useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, useSyncExternalStore, ReactNode } from 'react'
 import { I18nProvider } from '../i18n/provider'
 import { en } from '../i18n/locales/en'
 import { de } from '../i18n/locales/de'
@@ -46,6 +46,9 @@ function writeStorage(key: string, value: string) {
   try { localStorage.setItem(key, value) } catch { /* noop */ }
 }
 
+// Nothing to subscribe to: the snapshot below is constant per environment.
+const noopSubscribe = () => () => {}
+
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 export interface AtelierProviderProps {
@@ -63,28 +66,42 @@ export function AtelierProvider({
   overrides,
   children,
 }: AtelierProviderProps) {
-  const [theme,  setThemeState]  = useState<Theme>(
-    () => readStorage(ATELIER_KEYS.theme, defaultTheme) as Theme
-  )
-  const [accent, setAccentState] = useState<string>(
-    () => readStorage(ATELIER_KEYS.accent, defaultAccent)
-  )
-  const [locale, setLocaleState] = useState<Locale>(
-    () => readStorage(ATELIER_KEYS.locale, defaultLocale) as Locale
-  )
+  // False while hydrating, true on every other client render. The server has no
+  // localStorage, so hydration must render the defaults; the stored values are
+  // adopted only once this flips, which avoids a hydration mismatch.
+  const isClient = useSyncExternalStore(noopSubscribe, () => true, () => false)
 
-  // Initial DOM sync after mount. Subsequent updates flow through the
-  // setters below (setTheme/setAccent/setLocale), so re-running this
-  // effect on every change would be redundant and would clobber any
-  // imperative DOM tweaks made between renders.
+  const [theme,  setThemeState]  = useState<Theme>(defaultTheme)
+  const [accent, setAccentState] = useState<string>(defaultAccent)
+  const [locale, setLocaleState] = useState<Locale>(defaultLocale)
+
+  // Adopt the stored values exactly once, right after hydration (or on the first client
+  // render when there is none). Setting state while rendering is React's way to adjust
+  // state to a changed value: it re-renders at once, so the defaults are never committed
+  // on the client. From then on the state is the single source of truth.
+  const [adopted, setAdopted] = useState(false)
+  if (isClient && !adopted) {
+    setAdopted(true)
+    setThemeState(readStorage(ATELIER_KEYS.theme, defaultTheme) as Theme)
+    setAccentState(readStorage(ATELIER_KEYS.accent, defaultAccent))
+    setLocaleState(readStorage(ATELIER_KEYS.locale, defaultLocale) as Locale)
+  }
+
+  // Initial DOM sync once the client values are known (right after hydration, or
+  // on the first render when there is none). Skipped while hydrating, otherwise the
+  // defaults would overwrite what AtelierInitScript set before the first paint.
+  // Subsequent updates flow through the setters below (setTheme/setAccent/setLocale),
+  // so re-running this effect on every change would be redundant and would clobber
+  // any imperative DOM tweaks made between renders.
   useEffect(() => {
+    if (!isClient) return
     const d = document.documentElement
     d.setAttribute('data-theme',  theme)
     d.setAttribute('data-accent', accent)
     d.setAttribute('data-locale', locale)
     d.lang = locale
     d.classList.toggle('dark', theme === 'dark')
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isClient]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Setters ────────────────────────────────────────────────────────────────
 

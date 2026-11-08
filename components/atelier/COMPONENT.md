@@ -15,7 +15,7 @@ The backbone of the AtelierUI Design Engine. A unified context provider that syn
 
 `AtelierProvider` acts as the single source of truth for the design system's identity. Instead of having separate providers for theme, accent, and language, they are collapsed into one to reduce boilerplate and enable atomic updates.
 
-On mount, the provider reads from `localStorage`. When state changes, it performs a surgical update to the `<html>` element's attributes. This allows CSS variables and Tailwind utilities to react instantly to the new state.
+On the client, the provider reads from `localStorage`. While React hydrates server-rendered markup it renders the defaults instead (the server has no `localStorage`) and switches to the stored values right after, so there is no hydration mismatch. When state changes, it performs a surgical update to the `<html>` element's attributes. This allows CSS variables and Tailwind utilities to react instantly to the new state.
 
 `AtelierInitScript` is a tiny, synchronous inline script (<200 bytes) that should be placed in the `<head>` of your document. It replicates the reading of `localStorage` before the first paint, ensuring the page loads with the correct visual state.
 
