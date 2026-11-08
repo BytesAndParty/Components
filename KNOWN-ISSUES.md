@@ -1,62 +1,27 @@
 # Bekannte Probleme
 
-Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log.
+Stand: 2026-11-08. Die Punkte 3–8 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
-| 1 | Hydration-Mismatch durch `localStorage` im ersten Render | `components/atelier/provider.tsx` (+ Kopie in Buchart58) | mittel | 1–2 h |
-| 2 | Mobile-Suite: 18 Fehlschläge (Schrift < 9 px, Tap-Ziel < 44 px) | `section-showcase` | niedrig | 1 h |
-| 3 | Falsche Herkunft „Wachau · seit 1958" in Showcase-Sections | `section-showcase` | niedrig | 0,5 h |
-| 4 | Vendure-Showcase-Server ohne Scheduler | `vendure-showcase/server` | mittel | 0,5 h |
+| 3 | Falsche Herkunft „Wachau · seit 1958“ in weiteren Showcase-Sections | `section-showcase` | niedrig | Entscheidung offen |
+| 4 | Vendure-Showcase-Server ohne Scheduler (braucht getrennten Worker) | `vendure-showcase/server` | mittel | ca. 2 h, Schätzung |
 | 5 | Login-CSRF möglich (`csrfPrevention` aus) | beide Vendure-Server | mittel | 1 h |
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
-| 7 | fallow: 12 Befunde, davon 3 Fehlalarme | Repo-weit | niedrig | 0,5 h |
+| 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | Entscheidung offen |
 | 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
-| 9 | Shortcut-Übersicht nennt `?`, gebunden ist `Mod+/` | `components/hotkeys/shortcut-overview.tsx` | niedrig | 0,5 h |
 | 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 
 ---
 
-## 1. Hydration-Mismatch im `AtelierProvider`
+## 3. Falsche Herkunftsangaben in weiteren Showcase-Sections
 
-**Symptom.** Beim Laden der Storefront meldet React dreimal einen Hydration-Mismatch, sichtbar in der Konsole und im WebServer-Log der Vendure-E2E-Suite. Betroffen ist `aria-selected` in `vendure-showcase/storefront/src/components/react/AccentPicker.tsx`: Der Server rendert den Standard-Akzent als ausgewählt, der Client den gespeicherten. Die Tests bestehen trotzdem; visuell fällt es nicht auf, weil `AtelierInitScript` die DOM-Attribute (`data-theme`, `data-accent`) schon vor dem ersten Paint setzt.
+**Symptom.** `nav/NavV3.tsx`, `hero/HeroNachtblau.tsx` und `hero/HeroGastgeber.tsx` sind korrigiert („Sooss · Thermenregion", „Hauptstraße 58"). In `HeroNachtblau` und `HeroGastgeber` sind nur die Orts- und Jahreszeilen korrigiert: Rieden (`REGISTER` mit Ried Kreutles, Loibenberg, Steinriegl), Fließtext und Bildtexte reden weiter von der Donau und der Wachau (`HeroNachtblau.tsx:45,57,73,97`, `HeroGastgeber.tsx:151`) und widersprechen damit der neuen Ortszeile. An rund 25 weiteren Stellen unter `section-showcase/src/sections/` stehen noch „Wachau", „Dürnstein", „Unterloiben" oder „seit 1958"/„Anno 1958": `footer/FooterV2` bis `FooterV5`, `footer/FooterCinematic`, `hero/HeroV1`, `HeroV4`, `HeroV6` bis `HeroV8`, `nav/NavV6`, `features/FeaturesV7`, `FeaturesGenussgut` und `FeaturesNachtblau`. Vollständig: `grep -rn "Wachau\|1958" section-showcase/src`.
 
-**Ursache.** `components/atelier/provider.tsx`, Zeilen 66–74: Theme, Akzent und Locale werden im Lazy-Initializer von `useState` aus `localStorage` gelesen (`readStorage(...)`). Auf dem Server gibt es kein `localStorage` → Fallback auf `defaultTheme`/`defaultAccent`/`defaultLocale`. Im ersten Client-Render (= Hydration) liest der Initializer aber den gespeicherten Wert. Server- und Client-Markup weichen ab, sobald der Nutzer etwas anderes als den Default gespeichert hat.
+**Ursache.** Platzhaltertexte aus der frühen Design-Phase, vermutlich für ein fiktives Weingut. Fakten laut buchart58.at: Weingut in **Sooss, Thermenregion** (nicht Wachau); „58" ist die **Hausnummer** (Hauptstraße 58), kein Gründungsjahr – das Gründungsjahr ist online nirgends belegt und muss von der Familie kommen.
 
-**Reproduktion.** Storefront öffnen, Akzent ändern (wird in `localStorage` gespeichert), Seite neu laden → Konsole zeigt den Mismatch. Automatisiert: `bun run test:e2e:vendure` (der Test setzt `atelier-accent` per `addInitScript` und provoziert genau das).
-
-**Auswirkung.** React verwirft bei einem Mismatch den Server-Teilbaum und rendert ihn neu: unnötige Arbeit, im Worst Case kurzes Flackern in Komponenten, die vom Akzent/Theme abhängen. Fehler in der Konsole verdecken echte Probleme.
-
-**Lösung (Vorschlag).** Den gespeicherten Wert nicht im Initializer lesen, sondern über `useSyncExternalStore` mit `getServerSnapshot`, der die Defaults liefert. React rendert dann bei der Hydration bewusst den Server-Wert und schaltet direkt danach ohne Mismatch auf den gespeicherten um. Alternative mit weniger Umbau: Initializer auf die Defaults setzen und den gespeicherten Wert in einem `useEffect` nach dem Mount übernehmen (kostet einen zusätzlichen Render, die DOM-Attribute stimmen dank Init-Script trotzdem sofort). Kein `suppressHydrationWarning` – das versteckt nur das Symptom.
-
-**Mit beheben.** Buchart58 hat dieselbe Stelle in seiner Kopie: `Buchart58/storefront/src/atelier/atelier/provider.tsx` (Zeile 70). Nach dem Fix hier dort nachziehen (Buchart58 kopiert Komponenten, Änderungen kommen nicht von selbst an).
-
-**Prüfen.** `bun run test:e2e:vendure` ohne Hydration-Meldungen im `[WebServer]`-Log; Storefront mit geändertem Akzent neu laden, Konsole sauber.
-
-## 2. Mobile-Suite: 18 Fehlschläge
-
-**Symptom.** `bun run test:mobile` (`e2e/mobile/touch-targets.test.ts`) scheitert mit 18 von 216 Tests – auf allen 6 Geräteprofilen dieselben drei Prüfungen:
-
-| Route | Prüfung | Befund |
-|---|---|---|
-| `/footer` | CTAs ≥ 44 px (`MIN_TAP`) | Link „Impressum" ist 36 px hoch |
-| `/footer` | Text ≥ 9 px (`MIN_FONT`) | 8 px „Weingut" |
-| `/hero` | Text ≥ 9 px | 8 px „Wachau · Österreich" |
-
-**Ursache.** Einzelne Labels nutzen `text-[8px]` (Fundstellen u. a. `section-showcase/src/sections/buchart-kit.tsx`, `hero/HeroGastgeber.tsx`, `etiketten/EtikettenBuchArt.tsx`), und der „Impressum"-Link in einer Footer-Variante hat kein `min-h-11` (anders als z. B. `footer/FooterCinematic.tsx:100`, der es richtig macht; Kandidaten: `footer/FooterBuchArt.tsx`, `footer/FooterV4.tsx`). Welche Variante `/footer` rendert, steht in der Route bzw. im Composition-State des Section-Showcase.
-
-**Auswirkung.** Lesbarkeit und Bedienbarkeit auf dem Handy (COMPONENT-GUIDELINES §7: Touch-Ziele mind. 44 × 44 px). Die Suite läuft nicht in der CI, deshalb fällt es dort nicht auf.
-
-**Lösung.** 8-px-Labels auf mindestens 9 px heben (die Test-Untergrenze ist laut Kommentar im Test die Marken-Untergrenze für Eyebrow-Labels), dem „Impressum"-Link `inline-flex min-h-11 items-center` geben wie in `FooterCinematic`. Danach `bun run test:mobile` → 0 Fehlschläge.
-
-## 3. Falsche Herkunftsangaben in Showcase-Sections
-
-**Symptom.** Mehrere Sections zeigen „Wachau · Österreich" bzw. „Wachau · Österreich — Weingut seit 1958": `section-showcase/src/sections/nav/NavV3.tsx:34`, `hero/HeroNachtblau.tsx:81`, `hero/HeroGastgeber.tsx:77`.
-
-**Ursache.** Platzhaltertexte aus der frühen Design-Phase. Fakten laut buchart58.at: Weingut in **Sooss, Thermenregion** (nicht Wachau); „58" ist die **Hausnummer** (Hauptstraße 58), kein Gründungsjahr – das Gründungsjahr ist online nirgends belegt und muss von der Familie kommen.
-
-**Lösung.** „Sooss · Thermenregion" o. Ä.; „seit 1958" streichen, bis das echte Jahr bekannt ist. In Buchart58 sind die Wachauer Riede/Stufe in den Demodaten bereits ersetzt (Commit „Demodaten mit echter Riede…"); dieselben Fakten hier übernehmen.
+**Lösung.** Entscheidung offen: als bewusste Platzhalter lassen oder wie die drei korrigierten Dateien auf die echten Fakten bringen („Sooss · Thermenregion", „Hauptstraße 58", „seit 1958" streichen). In `FeaturesNachtblau` hängen ganze Texte an den Wachau-Lagen, das wäre ein Inhaltsumbau und keine Textersetzung. In Buchart58 sind die Wachauer Riede/Stufe in den Demodaten bereits ersetzt (Commit „Demodaten mit echter Riede…").
 
 ## 4. Vendure-Showcase-Server ohne Scheduler
 
@@ -66,7 +31,9 @@ Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates v
 
 **Auswirkung.** Vendures geplante Aufgaben laufen nicht, u. a. das Aufräumen abgelaufener Sessions und alter Job-Datensätze. Die Tabellen wachsen unbegrenzt; abgelaufene Session-Tokens bleiben in der DB liegen (relevant im Zusammenhang mit den Vendure-Advisories zu Tokens in Job-Daten, siehe `live-docs-collection/vendure/vendure-3.8-changes.md`).
 
-**Lösung.** `DefaultSchedulerPlugin.init()` in die Plugin-Liste aufnehmen, wie in Buchart58. Danach beim Start keine Scheduler-Warnung mehr.
+**Lösung.** Das Plugin allein reicht nicht: `DefaultSchedulerPlugin.init()` in die Plugin-Liste aufzunehmen lässt den Start abstürzen (getestet am 2026-11-08 mit Vendure 3.8.1). `src/index.ts` bootstrappt Server und Worker im selben Prozess, Vendures `SchedulerService` legt pro Bootstrap benannte Cron-Jobs an, und `croner` führt diese Namen prozessweit: `Tried to initialize new named job 'clean-sessions', but name already taken`. Auf dem VPS läuft `CMD ["node", "dist/index.js"]`, der Container würde also nach dem Start abstürzen.
+
+Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-worker.ts` mit `bootstrapWorker`, Scripts `dev:worker` und `start:worker`, ein zweiter Container in `compose.prod.yaml`. Das ist ein Umbau auf dem VPS und kein Ein-Zeiler. Erst danach `DefaultSchedulerPlugin.init()` ergänzen. `synchronize: true` legt die Tabelle des Plugins (`ScheduledTaskRecord`) selbst an. Vor einem Test die lokale `data/vendure.sqlite` sichern. Danach beim Start keine Scheduler-Warnung mehr.
 
 ## 5. Login-CSRF möglich (beide Vendure-Server)
 
@@ -90,14 +57,15 @@ Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates v
 
 **Lösung.** Vor einem späteren `pg`-Major-Update eingrenzen (Stacktrace mit `NODE_OPTIONS=--trace-deprecation`), ggf. bei Vendure melden. Bis dahin `pg` auf 8.x halten.
 
-## 7. fallow: 12 Befunde
+## 7. fallow: 10 Befunde
 
-`bunx fallow dead-code` meldet:
+`bunx fallow dead-code` (fallow 3.41.0) meldet noch:
 
 - **7 ungenutzte Exports** in `section-showcase/src/sections/lineage/lineage-graph.ts` (`incomingOf`, `ancestorsOf`, `descendantsOf`, `pathCount`, `depthOf`) und `lineage-layout.ts` (`DEFAULT_LAYOUT`, `egoIds`). Entweder Graph-API, die bewusst vorgehalten wird (dann per `// fallow-ignore-next-line unused-export` mit Begründung markieren), oder entfernen.
 - **2 ungenutzte Typ-Exports:** `HandAction` (`components/highlighter/hand-mark.tsx:10`), `MarkerCalloutColor` (`components/marker-callout/marker-callout.tsx:8`). Laut Triage-Regel (Skill `components-verify`) meist gewollte Deep-Import-API – bewusst lassen oder markieren.
-- **Fehlalarme:** `better-sqlite3` und `pg` im Server gelten als ungenutzt, TypeORM lädt die Treiber aber dynamisch. In `.fallowrc.jsonc` unter `ignoreDependencies` aufnehmen. `tailwindcss` im Root wird als ungenutzt gemeldet, weil es nur in den Workspaces importiert wird – prüfen, ob es im Root überhaupt gebraucht wird (ESLint/Tailwind-Tooling), sonst aus den Root-devDependencies entfernen.
-- **Config-Hinweise:** Das Entry-Pattern für `vendure-showcase/server/src/index.ts` ist überflüssig; mehrere `ignoreDependencies`-Einträge (`@vendure/*`) verdecken nichts mehr – aufräumen.
+- **1 Dev-Dependency:** `tailwindcss` im Root-`package.json` wird dort nicht importiert, nur in den Workspaces `components-showcase`, `launcher`, `section-showcase` und `vendure-showcase/storefront`, die es selbst deklarieren. Prüfen, ob das Root es braucht (ESLint/Tooling), sonst aus den Root-devDependencies entfernen (ändert `bun.lock`).
+
+Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Exports und Typen nicht entschieden sind. Die CI führt fallow nicht aus. Die beiden Hinweise „boundaries/rule packs not configured" sind reine Advisories.
 
 ## 8. VPS-Stacks starten nach einem Reboot nicht von selbst
 
@@ -108,14 +76,6 @@ Stand: 2026-10-27. Die Punkte 1–9 bestanden schon vor den Dependency-Updates v
 **Auswirkung.** Ausfall bis jemand manuell startet; Netlify-Builds von `artilier-ui` scheitern in der Zeit, weil die Storefront die Weine beim Build vom VPS holt.
 
 **Lösung.** Pro Stack eine systemd-User-Unit (Quadlet oder `podman generate systemd`) plus `loginctl enable-linger deploy`, danach einen Test-Reboot. Muss auf dem VPS eingerichtet werden.
-
-## 9. Shortcut-Übersicht nennt die falsche Taste
-
-**Symptom.** Die `ShortcutOverview` zeigt als Öffnen-Hinweis `?` (`components/hotkeys/shortcut-overview.tsx:90`, `<kbd>?</kbd> {m.openHint}`), und der Designer-Showcase sagt „press ? to see them all" (`components-showcase/src/pages/designer.tsx:408`, Kommentar). Gebunden ist aber `Mod+/` (`shortcut-overview.tsx:28–30`).
-
-**Auswirkung.** Wer `?` drückt, sieht nichts – die Übersicht ist nur über `Mod+/` erreichbar.
-
-**Lösung.** Den Hinweis aus der tatsächlichen Bindung erzeugen (`formatForDisplay('Mod+/')`, zeigt ⌘ / bzw. Ctrl /) statt `?` fest zu schreiben, Kommentar im Designer anpassen. Alternativ zusätzlich `?` binden – dann aber prüfen, dass es in Eingabefeldern nicht feuert. Bei einem späteren Wechsel auf Ark UI Hotkeys (Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag) gleich mit erledigen.
 
 ## 10. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
 
@@ -136,4 +96,3 @@ Einzeln behebbar, beim Erledigen den jeweiligen Punkt löschen.
 - **Label-Stil der Zahlenfelder**: Das Winkel-Feld im Hintergrund-Tab zeigt sein Label seit #30 im `NumberInput`-Stil („WINKEL“, 10 px, Großbuchstaben) statt wie „Von“/„Bis“; gleiche Optik bräuchte einen Prop an `components/number-input/number-input.tsx`. Das Deckkraft-Feld im Eigenschaften-Panel (`PropertiesPanel.tsx`) hat noch ein unverknüpftes `<span>` als Label.
 - **Tour**: Der Schritt „Canvas“ (Typ `floating`) sitzt in der Viewport-Mitte, nicht exakt über der Arbeitsfläche (Zag liefert dafür kein Ziel-Rechteck); im Vollbild ca. 120 px rechts der Canvas-Mitte. Bei Tooltip-Schritten ist der Backdrop von Zag `absolute` gesetzt; auf gescrollter Seite bleibt unten ein schmaler Streifen ohne Abdunklung.
 - **Farbfeld weicht ab**: Das Swatch #722f37 im Kontur-Picker kommt als #732f37 an, vermutlich Rundung im gemeinsamen ColorPicker (`components/color-picker/`), nicht untersucht.
-- **Tippfehler im Cropper**: `components/image-cropper-modal/messages.ts:24` – „Verkleinerern“ statt „Verkleinern“.
