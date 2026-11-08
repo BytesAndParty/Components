@@ -21,7 +21,7 @@ export const MESSAGES = {
     apply:         'Zuschnitt anwenden',
     cancel:        'Abbrechen',
     zoomIn:        'Vergrößern',
-    zoomOut:       'Verkleinerern',
+    zoomOut:       'Verkleinern',
     zoom:          'Zoom',
     resetRotation: 'Rotation zurücksetzen',
     flipH:         'Horizontal spiegeln',
