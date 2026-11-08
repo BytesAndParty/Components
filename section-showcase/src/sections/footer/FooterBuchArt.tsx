@@ -59,19 +59,19 @@ export function FooterBuchArt() {
             <ul className="mt-5 space-y-2 text-[14.5px]">
               {CONTACTS.map(c => (
                 <li key={c.name}>
-                  <a href={telHref(c.phone)} className={`inline-flex min-h-9 flex-wrap items-baseline gap-x-2 hover:text-[#f0e8c3] ${FOCUS}`}>
+                  <a href={telHref(c.phone)} className={`inline-flex min-h-11 flex-wrap items-baseline gap-x-2 hover:text-[#f0e8c3] ${FOCUS}`}>
                     <span className="text-[#f0e8c3]">{c.name}</span>
                     <span className="tabular-nums">{c.phone}</span>
                   </a>
                 </li>
               ))}
               <li>
-                <a href={`mailto:${ADDRESS.email}`} className={`inline-flex min-h-9 items-center underline decoration-[#be9f55]/60 underline-offset-4 hover:text-[#f0e8c3] ${FOCUS}`}>
+                <a href={`mailto:${ADDRESS.email}`} className={`inline-flex min-h-11 items-center underline decoration-[#be9f55]/60 underline-offset-4 hover:text-[#f0e8c3] ${FOCUS}`}>
                   {ADDRESS.email}
                 </a>
               </li>
               <li>
-                <a href={ADDRESS.instagram} className={`inline-flex min-h-9 items-center hover:text-[#f0e8c3] ${FOCUS}`}>
+                <a href={ADDRESS.instagram} className={`inline-flex min-h-11 items-center hover:text-[#f0e8c3] ${FOCUS}`}>
                   Instagram · @buchart58
                 </a>
               </li>
@@ -96,7 +96,7 @@ export function FooterBuchArt() {
             <ul className="mt-5 space-y-1 text-[14.5px]">
               {LEGAL.map(l => (
                 <li key={l.href}>
-                  <a href={l.href} className={`group inline-flex min-h-9 items-center gap-2 hover:text-[#f0e8c3] ${FOCUS}`}>
+                  <a href={l.href} className={`group inline-flex min-h-11 items-center gap-2 hover:text-[#f0e8c3] ${FOCUS}`}>
                     <span aria-hidden="true" className="h-px w-3 bg-[#be9f55]/60 transition-all duration-500 group-hover:w-5 group-hover:bg-[#be9f55]" />
                     {l.label}
                   </a>

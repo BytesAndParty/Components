@@ -99,7 +99,7 @@ function SignetGlyph({ transform, color, strokeWidth = 3 }: { transform: string;
 
 /** Die Wortmarke wie im Logo: Signet, Haarlinie, „Weingut“ über „Buchart 58“. */
 export function Wordmark({ className, signetClassName, size = 'md' }: { className?: string; signetClassName?: string; size?: 'sm' | 'md' | 'lg' }) {
-  const s = { sm: { signet: 'h-7 w-10', word: 'text-[1.15rem]', kicker: 'text-[7px]' }, md: { signet: 'h-9 w-[3.25rem]', word: 'text-[1.5rem]', kicker: 'text-[8px]' }, lg: { signet: 'h-14 w-20', word: 'text-[2.4rem]', kicker: 'text-[10px]' } }[size]
+  const s = { sm: { signet: 'h-7 w-10', word: 'text-[1.15rem]', kicker: 'text-[7px]' }, md: { signet: 'h-9 w-[3.25rem]', word: 'text-[1.5rem]', kicker: 'text-[9px]' }, lg: { signet: 'h-14 w-20', word: 'text-[2.4rem]', kicker: 'text-[10px]' } }[size]
   return (
     <span className={cn('inline-flex items-center gap-3 lining-nums', className)}>
       <Signet className={`${s.signet} shrink-0 ${signetClassName ?? ''}`} />

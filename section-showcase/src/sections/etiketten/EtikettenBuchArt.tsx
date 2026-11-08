@@ -287,7 +287,7 @@ export function EtikettenBuchArt() {
                     <span className="font-display text-[0.95rem]">
                       {wine.name} {wine.vintage ?? ''}
                     </span>
-                    <span className="mt-1 text-[8px] tracking-[0.2em] uppercase opacity-80">Weinland Österreich · {size}</span>
+                    <span className="mt-1 text-[9px] tracking-[0.2em] uppercase opacity-80">Weinland Österreich · {size}</span>
                   </motion.div>
                 </div>
                 <Bottle

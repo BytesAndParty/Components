@@ -73,7 +73,7 @@ export function HeroGastgeber() {
                 <span className="text-[1.32em] leading-none text-[#c03a2c]">B</span>uchart
                 <span className="align-super text-[0.44em] tracking-[0.14em]">58</span>
               </span>
-              <span className="mt-1.5 text-[8px] font-semibold tracking-[0.34em] text-[#626262] uppercase">
+              <span className="mt-1.5 text-[9px] font-semibold tracking-[0.34em] text-[#626262] uppercase">
                 Sooss · Thermenregion
               </span>
             </a>
