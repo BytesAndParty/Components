@@ -31,10 +31,10 @@ export function NavV3() {
         {/* Meta row between hairlines */}
         <div className="flex items-baseline justify-between border-y border-zinc-200 py-2.5">
           <span className="text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
-            Wachau · Österreich
+            Sooss · Thermenregion
           </span>
           <span className="hidden text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase sm:block">
-            Seit 1958
+            Hauptstraße 58
           </span>
           <span className="text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase">
             Édition <NumeralReveal numeral="MMXXVI" />

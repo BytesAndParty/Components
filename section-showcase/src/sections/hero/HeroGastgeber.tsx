@@ -74,7 +74,7 @@ export function HeroGastgeber() {
                 <span className="align-super text-[0.44em] tracking-[0.14em]">58</span>
               </span>
               <span className="mt-1.5 text-[8px] font-semibold tracking-[0.34em] text-[#626262] uppercase">
-                Wachau · Österreich
+                Sooss · Thermenregion
               </span>
             </a>
 
@@ -122,7 +122,7 @@ export function HeroGastgeber() {
         <div className="mx-auto mt-16 max-w-3xl text-center lg:mt-24">
           <BlurFade delay={340} direction="up">
             <p className="font-display text-[clamp(0.95rem,1.7vw,1.3rem)] font-medium tracking-[0.19em] text-[#c03a2c] uppercase">
-              Seit 1958 in Spitz an der Donau
+              Hauptstraße 58 in Sooss
             </p>
           </BlurFade>
 

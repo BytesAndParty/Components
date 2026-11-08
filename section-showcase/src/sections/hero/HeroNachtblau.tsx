@@ -78,7 +78,7 @@ export function HeroNachtblau() {
         <div className="flex flex-col justify-center bg-[#002450] px-6 py-16 sm:px-10 sm:py-24 lg:px-16 lg:py-28">
           <BlurFade delay={0} direction="up">
             <span className="block text-[10px] font-semibold tracking-[0.4em] text-[#d9d9d9] uppercase">
-              Wachau · Österreich — Weingut seit 1958
+              Sooss · Thermenregion — Weingut
             </span>
           </BlurFade>
 
