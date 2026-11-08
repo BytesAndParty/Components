@@ -4,6 +4,8 @@ Komponentenbibliothek „AtelierUI" für Buchart58 und verwandte Projekte: React
 
 Hier stehen Regeln, nicht ihre Geschichte. Begründungen und Bug-Verlauf einer Komponente stehen in ihrer `COMPONENT.md` bzw. `STATUS.md`, die Entstehung im git log.
 
+**Zuerst lesen:** [KNOWN-ISSUES.md](KNOWN-ISSUES.md). Entscheidungen, offene Fragen und Annahmen sofort dort eintragen (Subagenten: im Bericht melden, nicht selbst eintragen), Übergabe am Sessionende: Skill session-handoff.
+
 ## Stack
 
 - React 19 mit React Compiler, Tailwind v4, `motion/react`, Ark UI, TanStack (Query, Form, Table, Hotkeys), Vite 8, Bun-Workspaces. Astro nur in `vendure-showcase/storefront`.
