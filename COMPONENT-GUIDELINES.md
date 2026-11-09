@@ -77,6 +77,7 @@ function injectStyles() {
 - **`prefers-reduced-motion`** ist Pflicht, über genau einen Weg pro Komponente:
   - In motion-Komponenten: `useReducedMotion()` (siehe [`footer-section.tsx`](./components/footer-section/footer-section.tsx)), Variants/Layout/Transitions konditional abschalten.
   - Bei reinem CSS: `@media (prefers-reduced-motion: reduce) { … animation: none !important; }` im injizierten Style-Block (siehe [`timeline.tsx`](./components/timeline/timeline.tsx)).
+  - In Komponenten ohne motion, die serverseitig gerendert werden (Astro-Islands): `usePrefersReducedMotion()` aus [`components/lib/use-prefers-reduced-motion.ts`](./components/lib/use-prefers-reduced-motion.ts) (siehe [`blur-fade.tsx`](./components/blur-fade/blur-fade.tsx)). `matchMedia` nie in einem `useState`-Initializer oder im Render lesen: Der Server rendert den Standardzustand, der Client einen anderen, und React gleicht abweichende Attribute bei der Hydration nicht an, die Server-Styles blieben stehen.
 - **Stagger-Delays** (`delay: i * 0.01`) pro Property setzen (`opacity`, `x`), nicht auf der obersten Ebene des `transition`-Objekts: Dort vererben sie sich an `layout` und verschlucken Reorder-Animationen.
 - **`AnimatePresence`** für Mount/Unmount-Sequenzen. `initial={false}`, wenn die Komponente beim ersten Render nicht mitanimieren soll.
 

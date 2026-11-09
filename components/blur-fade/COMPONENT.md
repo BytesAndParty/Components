@@ -14,7 +14,7 @@ A viewport-controlled reveal wrapper that fades in and blurs from a specified di
 
 1. **Native CSS Transitions**: High performance reveal using standard CSS `opacity`, `filter: blur()`, and `transform`.
 2. **IntersectionObserver**: Only animates when visible. Supports `once` (one-time reveal) or repeating on scroll.
-3. **Accessibility**: Respects `prefers-reduced-motion` by skipping animations and showing content immediately.
+3. **Accessibility**: Respects `prefers-reduced-motion` by skipping animations and showing content immediately. The preference comes from `usePrefersReducedMotion` (`../lib/use-prefers-reduced-motion`), which reports `false` while hydrating. Server markup and the first client render therefore match, and reduced-motion users get the visible state right after hydration. Reading `matchMedia` in a `useState` initializer would leave the server's `opacity: 0` in place after SSR, because React does not patch up attribute mismatches.
 
 ## Props
 
@@ -31,4 +31,4 @@ A viewport-controlled reveal wrapper that fades in and blurs from a specified di
 
 ## Dependencies
 
-None (standard React).
+None (standard React). Uses `usePrefersReducedMotion` from `components/lib/`.
