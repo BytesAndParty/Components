@@ -2,13 +2,23 @@
 
 Stand: 2026-11-08. Die Punkte 3–8 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
+## Offene Fragen an den User (Stand 2026-11-08)
+
+Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entscheidung in den passenden Punkt unten oder wird gelöscht.
+
+1. **Hydrations-Check als echter Test?** Der bestehende Test `components/atelier/__tests__/performance.test.tsx` rendert nur auf dem Client und deckt keine Hydration ab. Der Check, mit dem #1 und 12.1 geprüft wurden (`renderToString`, dann `hydrateRoot` in jsdom mit abweichendem `localStorage` bzw. `matchMedia`), lag nur im Scratchpad der Session. Empfehlung: ja, als kleiner Vitest-Test, direkt nach dem Fix für 12.1, weil der dieselbe Stelle berührt. Neue Tests entstehen nur nach ausdrücklichem Ja.
+2. **Scan der übrigen Komponenten?** Nicht geprüft sind `cellar-canvas/engine`, `store`, `templates`, `extras`, `wine-fields`, die übrigen Panels, `header`, `canvas`, alle Tests und die rund 70 Komponenten, die Buchart58 nicht kopiert hat. Empfehlung: `cellar-canvas` zuerst (größtes Risiko, Buchart58 nutzt es im Etiketten-Designer), den Rest später in Stücken. Jeder Lauf kostet einen Opus-Reviewer.
+3. **Weitere SSR-Fallen vom Typ 12.1?** Gesucht würde nach `window.matchMedia` und `localStorage` in State-Initializern (`useState(() => …)`) und im Render. Empfehlung: ja, das ist billig und lesend.
+4. **Drift-Check zwischen `components/` und Buchart58?** Buchart58 kopiert Komponenten, Änderungen kommen nicht von selbst an, und der Scan fand in beiden Kopien denselben Fehler. Ein `diff -rq` je Ordner (Liste: `Buchart58/storefront/src/atelier/`) zeigt die Abweichungen in Sekunden. Empfehlung: ja, als kleines Skript oder Skill, das nur meldet und nichts kopiert.
+5. **Wechsel von TanStack Hotkeys auf Ark UI Hotkeys?** Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag. Der Hinweis hing bis zum 2026-11-08 an Punkt 9 (Shortcut-Hinweis), der behoben ist; die Empfehlung gilt weiter.
+
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
-| 3 | Falsche Herkunft „Wachau · seit 1958“ in weiteren Showcase-Sections | `section-showcase` | niedrig | Entscheidung offen |
-| 4 | Vendure-Showcase-Server ohne Scheduler (braucht getrennten Worker) | `vendure-showcase/server` | mittel | ca. 2 h, Schätzung |
+| 3 | Falsche Herkunft „Wachau · seit 1958“ in weiteren Showcase-Sections | `section-showcase` | niedrig | später, Platzhalter (User, 8.11.) |
+| 4 | Vendure-Showcase-Server ohne Scheduler (braucht getrennten Worker) | `vendure-showcase/server` | mittel | später (User, 8.11.), ca. 2 h Schätzung |
 | 5 | Login-CSRF möglich (`csrfPrevention` aus) | beide Vendure-Server | mittel | 1 h |
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
-| 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | Entscheidung offen |
+| 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | bleibt vorerst (User, 8.11.) |
 | 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
 | 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
@@ -22,7 +32,7 @@ Stand: 2026-11-08. Die Punkte 3–8 bestanden schon vor den Dependency-Updates v
 
 **Ursache.** Platzhaltertexte aus der frühen Design-Phase, vermutlich für ein fiktives Weingut. Fakten laut buchart58.at: Weingut in **Sooss, Thermenregion** (nicht Wachau); „58" ist die **Hausnummer** (Hauptstraße 58), kein Gründungsjahr – das Gründungsjahr ist online nirgends belegt und muss von der Familie kommen.
 
-**Lösung.** Entscheidung offen: als bewusste Platzhalter lassen oder wie die drei korrigierten Dateien auf die echten Fakten bringen („Sooss · Thermenregion", „Hauptstraße 58", „seit 1958" streichen). In `FeaturesNachtblau` hängen ganze Texte an den Wachau-Lagen, das wäre ein Inhaltsumbau und keine Textersetzung. In Buchart58 sind die Wachauer Riede/Stufe in den Demodaten bereits ersetzt (Commit „Demodaten mit echter Riede…").
+**Lösung.** Entscheidung (User, 2026-11-08): Es sind Platzhalter, sie bleiben vorerst, müssen aber irgendwann weg. Dann wie die drei korrigierten Dateien auf die echten Fakten bringen („Sooss · Thermenregion", „Hauptstraße 58", „seit 1958" streichen). In `FeaturesNachtblau` hängen ganze Texte an den Wachau-Lagen, das wäre ein Inhaltsumbau und keine Textersetzung. In Buchart58 sind die Wachauer Riede/Stufe in den Demodaten bereits ersetzt (Commit „Demodaten mit echter Riede…").
 
 ## 4. Vendure-Showcase-Server ohne Scheduler
 
@@ -34,7 +44,7 @@ Stand: 2026-11-08. Die Punkte 3–8 bestanden schon vor den Dependency-Updates v
 
 **Lösung.** Das Plugin allein reicht nicht: `DefaultSchedulerPlugin.init()` in die Plugin-Liste aufzunehmen lässt den Start abstürzen (getestet am 2026-11-08 mit Vendure 3.8.1). `src/index.ts` bootstrappt Server und Worker im selben Prozess, Vendures `SchedulerService` legt pro Bootstrap benannte Cron-Jobs an, und `croner` führt diese Namen prozessweit: `Tried to initialize new named job 'clean-sessions', but name already taken`. Auf dem VPS läuft `CMD ["node", "dist/index.js"]`, der Container würde also nach dem Start abstürzen.
 
-Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-worker.ts` mit `bootstrapWorker`, Scripts `dev:worker` und `start:worker`, ein zweiter Container in `compose.prod.yaml`. Das ist ein Umbau auf dem VPS und kein Ein-Zeiler. Erst danach `DefaultSchedulerPlugin.init()` ergänzen. `synchronize: true` legt die Tabelle des Plugins (`ScheduledTaskRecord`) selbst an. Vor einem Test die lokale `data/vendure.sqlite` sichern. Danach beim Start keine Scheduler-Warnung mehr.
+Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-worker.ts` mit `bootstrapWorker`, Scripts `dev:worker` und `start:worker`, ein zweiter Container in `compose.prod.yaml`. Das ist ein Umbau auf dem VPS und kein Ein-Zeiler. Erst danach `DefaultSchedulerPlugin.init()` ergänzen. `synchronize: true` legt die Tabelle des Plugins (`ScheduledTaskRecord`) selbst an. Vor einem Test die lokale `data/vendure.sqlite` sichern. Danach beim Start keine Scheduler-Warnung mehr. Entscheidung (User, 2026-11-08): später.
 
 ## 5. Login-CSRF möglich (beide Vendure-Server)
 
@@ -66,7 +76,7 @@ Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-w
 - **2 ungenutzte Typ-Exports:** `HandAction` (`components/highlighter/hand-mark.tsx:10`), `MarkerCalloutColor` (`components/marker-callout/marker-callout.tsx:8`). Laut Triage-Regel (Skill `components-verify`) meist gewollte Deep-Import-API – bewusst lassen oder markieren.
 - **1 Dev-Dependency:** `tailwindcss` im Root-`package.json` wird dort nicht importiert, nur in den Workspaces `components-showcase`, `launcher`, `section-showcase` und `vendure-showcase/storefront`, die es selbst deklarieren. Prüfen, ob das Root es braucht (ESLint/Tooling), sonst aus den Root-devDependencies entfernen (ändert `bun.lock`).
 
-Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Exports und Typen nicht entschieden sind. Die CI führt fallow nicht aus. Die beiden Hinweise „boundaries/rule packs not configured" sind reine Advisories.
+Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Exports und Typen nicht entschieden sind. Die CI führt fallow nicht aus. Die beiden Hinweise „boundaries/rule packs not configured“ sind reine Advisories. Entscheidung (User, 2026-11-08): Exports, Typen und `tailwindcss` bleiben vorerst so.
 
 ## 8. VPS-Stacks starten nach einem Reboot nicht von selbst
 
