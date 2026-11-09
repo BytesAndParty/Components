@@ -284,10 +284,50 @@ ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
 
 Fehlt auch das Image, das normale Deploy ab Schritt 1 durchlaufen. Danach Schritte 4 und 6 als Prüfung.
 
+### Autostart nach einem Reboot (systemd-User-Unit)
+
+Rootless Podman hat keinen Daemon, `restart: unless-stopped` startet die Container nach einem Reboot
+nicht. Der Stack hat deshalb wie die Buchart58-Stacks (`buchart58-staging.service`,
+`buchart58-prod.service`) eine systemd-User-Unit: [`vendure-showcase.service`](./vendure-showcase.service)
+(`Type=oneshot`, `podman compose up -d`). Die Ausgabe wird verworfen, weil `podman-compose` Secrets im
+Klartext loggt. Voraussetzung ist `loginctl enable-linger deploy` (auf dem VPS gesetzt, am 2026-11-09 geprüft).
+
+```bash
+# Einmalig einrichten (Datei aus dem Repo übertragen, dann aktivieren und starten)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  'mkdir -p ~/.config/systemd/user && cat > ~/.config/systemd/user/vendure-showcase.service' \
+  < vendure-showcase/server/vendure-showcase.service
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  'export XDG_RUNTIME_DIR=/run/user/$(id -u); systemctl --user daemon-reload && systemctl --user enable --now vendure-showcase.service; systemctl --user is-enabled vendure-showcase.service; systemctl --user is-active vendure-showcase.service'
+
+# Prüfen, was läuft (ändert nichts)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  'export XDG_RUNTIME_DIR=/run/user/$(id -u); systemctl --user list-unit-files | grep -E "buchart58|showcase"; podman ps --format "{{.Names}} | {{.Status}}"'
+
+# Abschalten (stoppt die Container nicht)
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 \
+  'export XDG_RUNTIME_DIR=/run/user/$(id -u); systemctl --user disable --now vendure-showcase.service; rm ~/.config/systemd/user/vendure-showcase.service; systemctl --user daemon-reload'
+```
+
+**Reboot-Test** (rund 60 Sekunden Ausfall, auch für die Buchart58-Stacks und Caddy; der Sudo-User ist laut
+Buchart58-Runbook `ops`):
+
+```bash
+ssh -i ~/.ssh/buchart58_vps ops@169.58.203.37 'sudo reboot'
+# nach 60 bis 90 Sekunden
+ssh -i ~/.ssh/buchart58_vps deploy@169.58.203.37 'uptime -s; podman ps --format "{{.Names}} | {{.Status}}"'
+curl -sS -o /dev/null -w "Shop-API: HTTP %{http_code}\n" -X POST -H 'content-type: application/json' \
+  --data '{"query":"{__typename}"}' https://vendure-showcase.169-58-203-37.sslip.io/shop-api
+```
+
+Bestanden, wenn `uptime -s` eine neue Boot-Zeit zeigt, alle Container ohne Eingriff `Up` sind und die API
+`200` liefert. **Stand:** Die Unit ist seit 2026-11-09 eingerichtet (`enabled`, `active`). Der Reboot-Test
+steht noch aus.
+
 **Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
 nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
-Reboot des VPS startet der Stack nicht von selbst (rootless Podman ohne systemd-Unit, offen wie
-bei Buchart58). Der Netlify-Build der Storefront braucht diesen Server: ist er nicht erreichbar,
+Reboot des VPS soll der Stack über die systemd-User-Unit von selbst starten (siehe oben, ein echter
+Reboot-Test steht noch aus). Der Netlify-Build der Storefront braucht diesen Server: ist er nicht erreichbar,
 scheitert der ganze kombinierte Build, und Netlify lässt den vorherigen Deploy online.
 
 ---

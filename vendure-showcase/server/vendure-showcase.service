@@ -1,0 +1,13 @@
+[Unit]
+Description=Vendure Showcase Stack (podman compose)
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=%h/vendure-showcase
+ExecStart=/bin/sh -c 'podman compose -f compose.prod.yaml --env-file .env.prod up -d >/dev/null 2>&1'
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=default.target
