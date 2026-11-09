@@ -322,12 +322,14 @@ curl -sS -o /dev/null -w "Shop-API: HTTP %{http_code}\n" -X POST -H 'content-typ
 
 Bestanden, wenn `uptime -s` eine neue Boot-Zeit zeigt, alle Container ohne Eingriff `Up` sind und die API
 `200` liefert. **Stand:** Die Unit ist seit 2026-11-09 eingerichtet (`enabled`, `active`). Der Reboot-Test
-steht noch aus.
+ist am selben Tag bestanden: Boot 13:48:40 UTC, die Unit startete den Stack um 13:48:59, alle acht Container
+(Showcase, Buchart58-Staging und -Prod) liefen ab 13:49:09 ohne Eingriff, Shop-API 200, die Daten blieben
+erhalten (Showcase 9, Staging und Prod je 60 Produkte).
 
 **Bekannte Grenzen:** Die DB-Tabellen entstehen per `synchronize: true` (keine Migrationen),
 nach einem Vendure-Upgrade mit Schema-Änderung also Volume löschen und neu seeden. Nach einem
-Reboot des VPS soll der Stack über die systemd-User-Unit von selbst starten (siehe oben, ein echter
-Reboot-Test steht noch aus). Der Netlify-Build der Storefront braucht diesen Server: ist er nicht erreichbar,
+Reboot des VPS startet der Stack über die systemd-User-Unit von selbst (siehe oben, Reboot-Test am
+2026-11-09 bestanden). Der Netlify-Build der Storefront braucht diesen Server: ist er nicht erreichbar,
 scheitert der ganze kombinierte Build, und Netlify lässt den vorherigen Deploy online.
 
 ---
