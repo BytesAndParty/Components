@@ -19,7 +19,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 5 | Login-CSRF möglich (`csrfPrevention` aus) | beide Vendure-Server | mittel | 1 h |
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
 | 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | bleibt vorerst (User, 8.11.) |
-| 8 | VPS-Stacks starten nach Reboot nicht von selbst | VPS (beide Stacks) | hoch | 1 h |
+| 8 | Showcase-Autostart auf dem VPS: Unit eingerichtet, Reboot-Test steht aus | VPS (Showcase) | mittel | Reboot-Test (nur nach OK) |
 | 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 | 12 | Code-Quality-Scan: 12 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
@@ -78,15 +78,15 @@ Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-w
 
 Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Exports und Typen nicht entschieden sind. Die CI führt fallow nicht aus. Die beiden Hinweise „boundaries/rule packs not configured“ sind reine Advisories. Entscheidung (User, 2026-11-08): Exports, Typen und `tailwindcss` bleiben vorerst so.
 
-## 8. VPS-Stacks starten nach einem Reboot nicht von selbst
+## 8. Showcase-Autostart auf dem VPS: Unit eingerichtet, Reboot-Test steht aus
 
-**Symptom.** Nach dem VPS-Reboot am 18.10. standen alle Container auf „Created", Showcase und Buchart58-Staging waren eine Woche lang down (Shop-API 502). Zusätzlich waren die Showcase-Container am 27.10. ganz verschwunden (Ursache ungeklärt, kein neuer Reboot). Stand 2026-11-09: Die Shop-API des Showcase auf dem VPS (`https://vendure-showcase.169-58-203-37.sslip.io/shop-api`) antwortete zuerst mit HTTP 502, `bun run test:e2e:vendure` lief deshalb gegen einen lokalen Server (`VENDURE_SHOP_API_URL=http://localhost:3000/shop-api`, 3 von 3 bestanden). Danach hat der User den Stack manuell neu gestartet. Geprüft von außen und per lesendem SSH: Shop-API 200 mit 9 Produkten, Dashboard und `/health` 200, beide Container `Up`, Linger an. **Der Kern von #8 ist damit noch offen:** Die Unit `vendure-showcase.service` existiert nicht (`is-enabled: not-found`), und der VPS ist seit 2026-10-28 16:25 nicht neu gestartet worden, nach dem nächsten Reboot bleibt der Showcase also wieder liegen. Die Buchart58-Units `buchart58-staging.service` und `buchart58-prod.service` sind `enabled`.
+**Symptom.** Nach dem VPS-Reboot am 18.10. standen alle Container auf „Created", Showcase und Buchart58-Staging waren eine Woche lang down (Shop-API 502). Zusätzlich waren die Showcase-Container am 27.10. ganz verschwunden (Ursache ungeklärt, kein neuer Reboot). Stand 2026-11-09: Die Shop-API des Showcase auf dem VPS (`https://vendure-showcase.169-58-203-37.sslip.io/shop-api`) antwortete zuerst mit HTTP 502, `bun run test:e2e:vendure` lief deshalb gegen einen lokalen Server (`VENDURE_SHOP_API_URL=http://localhost:3000/shop-api`, 3 von 3 bestanden). Danach hat der User den Stack manuell neu gestartet. Geprüft von außen und per lesendem SSH: Shop-API 200 mit 9 Produkten, Dashboard und `/health` 200, beide Container `Up`, Linger an. Danach hat der User am 2026-11-09 die Unit `vendure-showcase.service` angelegt (oneshot, `podman compose up -d`, Datei im Repo: `vendure-showcase/server/vendure-showcase.service`). Per lesendem SSH bestätigt: `enabled`, `active` (`Result=success`), Datei byte-gleich zur Repo-Datei, Linger an. Die Buchart58-Units `buchart58-staging.service` und `buchart58-prod.service` sind `enabled`. **Offen:** Der VPS ist seit 2026-10-28 16:25 nicht neu gestartet worden, dass der Stack einen echten Reboot übersteht, ist also nicht belegt.
 
 **Ursache.** Rootless Podman hat keinen Daemon; `restart: unless-stopped` greift nach einem Reboot nicht, solange keine systemd-User-Unit die Stacks startet. Bekannte Grenze, steht in `vendure-showcase/server/README.md` und in Buchart58 `vault/Learnings/podman/podman-auf-dem-vps.md`.
 
 **Auswirkung.** Ausfall bis jemand manuell startet; Netlify-Builds von `artilier-ui` scheitern in der Zeit, weil die Storefront die Weine beim Build vom VPS holt.
 
-**Lösung.** Pro Stack eine systemd-User-Unit (Quadlet oder `podman generate systemd`) plus `loginctl enable-linger deploy`, danach einen Test-Reboot. Muss auf dem VPS eingerichtet werden.
+**Lösung.** Pro Stack eine systemd-User-Unit plus `loginctl enable-linger deploy`, danach ein Test-Reboot. Eingerichtet sind Buchart58 (seit 2026-10-28, Reboot bestanden) und der Showcase (2026-11-09, Befehle im Showcase-README, Abschnitt „Autostart nach einem Reboot“). Es fehlt der Reboot-Test für den Showcase. Er betrifft alle Stacks auf dem VPS für rund 60 Sekunden und läuft nur nach OK des Users. Danach #8 löschen.
 
 ## 10. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
 
