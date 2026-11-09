@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { cn } from '../lib/utils'
+import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -57,13 +58,11 @@ export function RevealImage({
   style,
 }: RevealImageProps) {
   const ref = useRef<HTMLDivElement>(null)
-  // prefers-reduced-motion: Sample once on mount via lazy initial state —
-  // matchMedia in render would be impure (react-hooks/purity).
-  const [prefersReduced] = useState(() =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-  const [visible, setVisible] = useState(prefersReduced)
+  // Reduced-motion users get the final state right away. The hook reports `false`
+  // while hydrating, so the markup matches the server HTML.
+  const prefersReduced = usePrefersReducedMotion()
+  const [inView, setInView] = useState(false)
+  const visible = prefersReduced || inView
 
   useEffect(() => {
     if (prefersReduced) return
@@ -77,17 +76,17 @@ export function RevealImage({
     const r = el.getBoundingClientRect()
     const alreadyInView = r.top < window.innerHeight && r.bottom > 0
     if (alreadyInView) {
-      setVisible(true)
+      setInView(true)
       if (once) return
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true)
+          setInView(true)
           if (once) observer.disconnect()
         } else if (!once) {
-          setVisible(false)
+          setInView(false)
         }
       },
       { threshold: 0.15 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -45,15 +46,11 @@ export function BlurFade({
   style,
 }: BlurFadeProps) {
   const ref = useRef<HTMLDivElement>(null)
-  // prefers-reduced-motion: Sample once on mount via lazy initial state.
-  // matchMedia in render would be impure (react-hooks/purity); doing it
-  // here means visible can start as `true` for reduced-motion users
-  // without a setState-in-effect.
-  const [prefersReduced] = useState(() =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-  const [visible, setVisible] = useState(prefersReduced)
+  // Reduced-motion users get the final state right away. The hook reports `false`
+  // while hydrating, so the markup matches the server HTML.
+  const prefersReduced = usePrefersReducedMotion()
+  const [inView, setInView] = useState(false)
+  const visible = prefersReduced || inView
 
   useEffect(() => {
     if (prefersReduced) return
@@ -64,10 +61,10 @@ export function BlurFade({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true)
+          setInView(true)
           if (once) observer.disconnect()
         } else if (!once) {
-          setVisible(false)
+          setInView(false)
         }
       },
       { threshold: 0.1 }
