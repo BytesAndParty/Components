@@ -25,12 +25,17 @@ Other considered names: Cuvée, Label Atelier, Pressmark, Vintner Studio.
 
 ## Vision
 
-A self-contained React component that drops into any storefront (Vendure, Shopify, custom) and lets customers design wine labels end-to-end:
-- Pick a template or start blank
-- Place, style, and arrange text, images, and shapes
-- Insert pre-filled wine data overlays (name, vintage, alcohol, QR code, etc.)
+A self-contained React component that drops into any storefront (Vendure, Shopify, custom) and lets customers finish their own wine label.
+
+**Focus since 2026-11-10: the basics.** Most customers who design a label already own an image editor. They arrive with finished artwork and only need small adjustments:
+- Upload the label artwork (it fills the label), or start from a template
+- Small adjustments: text, a few shapes, crop or replace the image, paper colour
+- Switch pre-filled wine data overlays on and off (name, vintage, mandatory particulars, QR code)
+- See the result on a 3D bottle that can be turned
 - Export a print-ready 300dpi PNG / PDF with crop marks
 - Save progress to localStorage (auto) and to account DB (manual, via `onSave` callback)
+
+A full design tool (emoji, signature, ornaments, rulers, grouping, gradients) is out of scope, see decision 9.
 
 ---
 
@@ -46,6 +51,9 @@ A self-contained React component that drops into any storefront (Vendure, Shopif
 | 6 | Watermark | **Not needed.** |
 | 7 | QR Code | **Mandatory overlay, generated client-side.** EU Reg. 2023/2977 requires nutritional info — QR is the allowed alternative. URL from `initialWineFields.nutritionalInfoUrl`. Generated via `qrcode` package, inserted as canvas image. Removing it turns the EU validator red (error) once a QR code had been placed — *done 2026-10-14* (STATUS.md, „QR-Removal-Warning“). |
 | 8 | Aspect ratio lock | **Locked by default on images, Shift to unlock.** Shapes unlocked by default. |
+| 9 | Scope *(2026-11-10)* | **Basics plus shapes and templates.** Stays: image upload (fills the label), crop / replace, text (font, size, colour, bold / italic, alignment), rect / circle / line, paper colour or image, templates, wine data overlays, a compact layer list, undo, zoom, save, PNG / PDF. Removed: emoji picker, signature pad, ornaments (decision 4), rulers, the hand tool button, grouping, gradient paper, the guided tour; the mm inputs move from their own tab into a collapsible section. |
+| 10 | Wine data overlays *(2026-11-10)* | **Printed building blocks with a switch each** (name, vintage, region, producer, mandatory particulars, QR code). Switched on they sit ready-formatted at a sensible place, can be moved and are part of the print. |
+| 11 | Bottle preview *(2026-11-10)* | **Yes, as a view switch "Label / Bottle"** above the canvas. `BottleStage` carries the current label and turns with the mouse. |
 
 ---
 
@@ -66,6 +74,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-10-27*
+*Last updated: 2026-11-10*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*
