@@ -9,7 +9,8 @@ import {
   heightToFabricProps,
 } from './object-properties'
 
-// mmToPx rounds: mmToPx(20) = 76, mmToPx(10) = 38. pxToMm(76) = 20.
+// The write path is exact (mmToPxExact), the read path rounds to 0.1 mm (pxToMm): 76 px = 20.1 mm.
+const PX_PER_MM = 3.7795275591
 
 // jsdom ships no 2D canvas, but constructing a fabric Textbox measures its text
 // on init. Stub a permissive 2D context (no-op methods, swallowed property sets,
@@ -47,36 +48,36 @@ describe('readGeometryMm', () => {
       { left: 176, top: 176, width: 152, height: 76, scaleX: 0.5, scaleY: 1 },
       100,
     )
-    expect(geo).toEqual({ x: 20, y: 20, width: 20, height: 20 })
+    expect(geo).toEqual({ x: 20.1, y: 20.1, width: 20.1, height: 20.1 })
   })
 })
 
 describe('xToLeft / yToTop', () => {
   it('offsets mm into the bleed margin', () => {
-    expect(xToLeft(20, 100)).toBe(176)
-    expect(yToTop(20, 151)).toBe(227)
+    expect(xToLeft(20, 100)).toBeCloseTo(100 + 20 * PX_PER_MM)
+    expect(yToTop(20, 151)).toBeCloseTo(151 + 20 * PX_PER_MM)
   })
 })
 
 describe('widthToFabricProps', () => {
   it('circle: width → radius (half diameter, divided by scale)', () => {
-    expect(widthToFabricProps(20, 'circle', { scaleX: 1 })).toEqual({ radius: 38 })
-    expect(widthToFabricProps(20, 'circle', { scaleX: 2 })).toEqual({ radius: 19 })
+    expect(widthToFabricProps(20, 'circle', { scaleX: 1 }).radius).toBeCloseTo(10 * PX_PER_MM)
+    expect(widthToFabricProps(20, 'circle', { scaleX: 2 }).radius).toBeCloseTo(5 * PX_PER_MM)
   })
 
   it('line: width → x2 offset from x1 (pre-scale)', () => {
-    expect(widthToFabricProps(20, 'line', { scaleX: 1, x1: 10 })).toEqual({ x2: 86 })
-    expect(widthToFabricProps(20, 'line', { scaleX: 1 })).toEqual({ x2: 76 })
+    expect(widthToFabricProps(20, 'line', { scaleX: 1, x1: 10 }).x2).toBeCloseTo(10 + 20 * PX_PER_MM)
+    expect(widthToFabricProps(20, 'line', { scaleX: 1 }).x2).toBeCloseTo(20 * PX_PER_MM)
   })
 
   it('textbox: width → wrap box (divided by scale)', () => {
-    expect(widthToFabricProps(20, 'textbox', { scaleX: 1 })).toEqual({ width: 76 })
+    expect(widthToFabricProps(20, 'textbox', { scaleX: 1 }).width).toBeCloseTo(20 * PX_PER_MM)
   })
 
   it('scalable: width → scaleX against intrinsic width', () => {
-    expect(widthToFabricProps(20, 'scalable', { scaleX: 1, intrinsicWidth: 152 })).toEqual({
-      scaleX: 0.5,
-    })
+    expect(
+      widthToFabricProps(20, 'scalable', { scaleX: 1, intrinsicWidth: 152 }).scaleX,
+    ).toBeCloseTo((20 * PX_PER_MM) / 152)
   })
 
   it('scalable: returns {} when intrinsic width is missing or zero', () => {
@@ -87,7 +88,7 @@ describe('widthToFabricProps', () => {
 
 describe('heightToFabricProps', () => {
   it('scalable: height → scaleY against intrinsic height', () => {
-    expect(heightToFabricProps(10, 'scalable', 76)).toEqual({ scaleY: 0.5 })
+    expect(heightToFabricProps(10, 'scalable', 76).scaleY).toBeCloseTo((10 * PX_PER_MM) / 76)
   })
 
   it('scalable: returns {} when intrinsic height is missing or zero', () => {

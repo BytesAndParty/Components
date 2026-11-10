@@ -1,5 +1,5 @@
 import * as fabric from 'fabric'
-import { mmToPx } from '../engine/units'
+import { mmToPxExact } from '../engine/units'
 import { attach, CORNER_STYLE } from '../engine/object-factory'
 import { hasFieldValue } from '../wine-fields/field-value'
 import type { WineFieldValues } from '../CellarCanvas'
@@ -54,9 +54,9 @@ function labelText(ctx: TemplateContext, yMm: number, text: string, opts: TextOp
   const textbox = new fabric.Textbox(text, {
     originX: 'left',
     originY: 'top',
-    left: bleedPx + mmToPx(leftMm),
-    top: bleedPx + mmToPx(yMm),
-    width: mmToPx(boxWidthMm),
+    left: bleedPx + mmToPxExact(leftMm),
+    top: bleedPx + mmToPxExact(yMm),
+    width: mmToPxExact(boxWidthMm),
     fontSize: opts.fontSize,
     fontFamily: opts.fontFamily ?? 'sans-serif',
     fontWeight: opts.fontWeight ?? 'normal',
@@ -87,9 +87,9 @@ function fieldText(
 
 function rule(ctx: TemplateContext, yMm: number, widthMmLine: number, color = '#722f37'): fabric.Line {
   const { bleedPx, widthMm } = ctx
-  const xStart = bleedPx + mmToPx((widthMm - widthMmLine) / 2)
-  const y = bleedPx + mmToPx(yMm)
-  const line = new fabric.Line([xStart, y, xStart + mmToPx(widthMmLine), y], {
+  const xStart = bleedPx + mmToPxExact((widthMm - widthMmLine) / 2)
+  const y = bleedPx + mmToPxExact(yMm)
+  const line = new fabric.Line([xStart, y, xStart + mmToPxExact(widthMmLine), y], {
     originX: 'left',
     originY: 'top',
     stroke: color,
@@ -104,10 +104,10 @@ function accentBar(ctx: TemplateContext, color = '#722f37'): fabric.Rect {
   const rect = new fabric.Rect({
     originX: 'left',
     originY: 'top',
-    left: bleedPx + mmToPx(8),
-    top: bleedPx + mmToPx(8),
-    width: mmToPx(3),
-    height: mmToPx(heightMm - 16),
+    left: bleedPx + mmToPxExact(8),
+    top: bleedPx + mmToPxExact(8),
+    width: mmToPxExact(3),
+    height: mmToPxExact(heightMm - 16),
     fill: color,
     ...CORNER_STYLE,
   })
@@ -171,10 +171,10 @@ function frame(ctx: TemplateContext, insetMm: number, strokeWidth: number, color
   const rect = new fabric.Rect({
     originX: 'left',
     originY: 'top',
-    left: bleedPx + mmToPx(insetMm),
-    top: bleedPx + mmToPx(insetMm),
-    width: mmToPx(widthMm - 2 * insetMm),
-    height: mmToPx(heightMm - 2 * insetMm),
+    left: bleedPx + mmToPxExact(insetMm),
+    top: bleedPx + mmToPxExact(insetMm),
+    width: mmToPxExact(widthMm - 2 * insetMm),
+    height: mmToPxExact(heightMm - 2 * insetMm),
     fill: 'transparent',
     stroke: color,
     strokeWidth,
@@ -196,8 +196,8 @@ function colorBlock(ctx: TemplateContext, heightShare: number, color: string): f
     originY: 'top',
     left: bleedPx,
     top: bleedPx,
-    width: mmToPx(widthMm),
-    height: mmToPx(heightMm * heightShare),
+    width: mmToPxExact(widthMm),
+    height: mmToPxExact(heightMm * heightShare),
     fill: color,
     ...CORNER_STYLE,
   })

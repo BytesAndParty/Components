@@ -1,5 +1,5 @@
 import * as fabric from 'fabric'
-import { mmToPx } from './units'
+import { mmToPxExact } from './units'
 import type { FabricObjectMeta } from '../store/types'
 
 /**
@@ -86,7 +86,7 @@ export function createPath(bleedPx: number, d: string, opts: PathOptions) {
     strokeUniform: true,
     ...CORNER_STYLE,
   })
-  const scale = mmToPx(opts.widthMm) / (path.width || 1)
+  const scale = mmToPxExact(opts.widthMm) / (path.width || 1)
   path.set({ scaleX: scale, scaleY: scale })
   return attach(path, { _layerName: opts.layerName, _type: 'path' })
 }
@@ -97,8 +97,8 @@ export function createRect(bleedPx: number) {
     left: bleedPx + INSET_PX,
     top: bleedPx + INSET_PX,
     fill: SHAPE_FILL,
-    width: mmToPx(20),
-    height: mmToPx(20),
+    width: mmToPxExact(20),
+    height: mmToPxExact(20),
     ...CORNER_STYLE,
   })
   return attach(rect, { _layerName: 'Rectangle', _type: 'rect' })
@@ -110,7 +110,7 @@ export function createCircle(bleedPx: number) {
     left: bleedPx + INSET_PX,
     top: bleedPx + INSET_PX,
     fill: SHAPE_FILL,
-    radius: mmToPx(10),
+    radius: mmToPxExact(10),
     ...CORNER_STYLE,
   })
   return attach(circle, { _layerName: 'Circle', _type: 'circle' })
@@ -119,7 +119,7 @@ export function createCircle(bleedPx: number) {
 export function createLine(bleedPx: number) {
   const x = bleedPx + INSET_PX
   const y = bleedPx + INSET_PX
-  const length = mmToPx(30)
+  const length = mmToPxExact(30)
   const line = new fabric.Line([x, y, x + length, y], {
     ...ORIGIN,
     stroke: SHAPE_FILL,
@@ -140,7 +140,7 @@ export function createText(bleedPx: number, text: string, fieldKey?: string) {
     ...ORIGIN,
     left: bleedPx + INSET_PX,
     top: bleedPx + INSET_PX,
-    width: mmToPx(50),
+    width: mmToPxExact(50),
     fontSize: 24,
     fontFamily: 'sans-serif',
     fill: '#000000',
@@ -163,7 +163,7 @@ export function createEmoji(bleedPx: number, emoji: string) {
     ...ORIGIN,
     left: bleedPx + INSET_PX,
     top: bleedPx + INSET_PX,
-    width: mmToPx(20),
+    width: mmToPxExact(20),
     fontSize: 48,
     fontFamily: 'sans-serif',
     fill: '#000000',
@@ -177,12 +177,12 @@ export function createEmoji(bleedPx: number, emoji: string) {
  * Loading (`FabricImage.fromURL`) stays async in the bridge.
  */
 export function configureImage(img: fabric.FabricImage, bleedPx: number) {
-  const maxPx = mmToPx(40)
+  const maxPx = mmToPxExact(40)
   const scale = Math.min(maxPx / (img.width ?? maxPx), maxPx / (img.height ?? maxPx), 1)
   img.set({
     ...ORIGIN,
-    left: bleedPx + mmToPx(10),
-    top: bleedPx + mmToPx(10),
+    left: bleedPx + mmToPxExact(10),
+    top: bleedPx + mmToPxExact(10),
     scaleX: scale,
     scaleY: scale,
     ...CORNER_STYLE,

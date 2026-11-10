@@ -74,7 +74,7 @@
 - ~~**`canvas.off(event)` ohne Handler-Ref räumt fremde Listener mit ab**~~ — **gefixt 2026-10-05 (#27)**, Listener werden mit Handler-Referenz abgemeldet. *Ursprünglicher Befund (2026-09-29, Bug-Audit):* `use-canvas-sync.ts`s Cleanup nutzt argumentlose `canvas.off('selection:created')` etc., was ALLE Listener dieses Event-Typs entfernt, nicht nur die eigenen. Trifft aktuell auch den Bridge-eigenen `mouse:wheel`- (Zoom) und `object:moving`-Handler (Snapping), sobald `enableValidator` zur Laufzeit umgeschaltet wird — bislang nur beim Unmount beobachtet (dort harmlos, da ≈ Dispose).
 - ~~**Wein-Feld-Sync schreibt leere oder veraltete Werte**~~ — **gefixt 2026-10-06 (#28)**: Feld ohne Wert wird geleert und ausgeblendet (`_valueMissing`), mit Wert erscheint es wieder; Validator zählt nur sichtbare Felder mit Text; eine Regel `hasFieldValue()` für Panel, Templates und Sync.
 - ~~**Restore läuft bei jeder neuen `initialState`-Identität**~~ — **gefixt 2026-10-06 (#28)**: `initialState` wird einmal beim Mount gelesen; ein anderes Dokument lädt der Embedder per React-`key`.
-- **`prepareImageSource`: 50-MP-Foto wird voll dekodiert** *(2026-10-05, Review #27)* — ~200 MB Speicherspitze vor dem Verkleinern. Die übrigen Kanten sind gefixt (2026-10-06, #28): opake verlustfreie Quellen bleiben PNG bis 1,5 MB, das Original bleibt, wenn der Re-Encode nicht kleiner ist. Zurückgestellt (2026-10-14): Kandidat wäre, die Maße per `<img>` zu lesen und `createImageBitmap(blob, { resizeWidth, resizeHeight, resizeQuality: 'high' })` zu nutzen. MDN lässt offen, ob der Browser schon beim Dekodieren verkleinert oder erst danach; ohne Speichermessung im Browser (DevTools → Memory) ist der Nutzen nicht belegt. Erst messen, dann umbauen.
+- **`prepareImageSource`: 50-MP-Foto wird voll dekodiert** *(2026-10-05, Review #27; 2026-11-09 in #31 gemessen: Resize-on-decode spart in Chromium keinen Speicher, Umstellung verworfen)* — ~200 MB Speicherspitze vor dem Verkleinern. Die übrigen Kanten sind gefixt (2026-10-06, #28): opake verlustfreie Quellen bleiben PNG bis 1,5 MB, das Original bleibt, wenn der Re-Encode nicht kleiner ist. Zurückgestellt (2026-10-14): Kandidat wäre, die Maße per `<img>` zu lesen und `createImageBitmap(blob, { resizeWidth, resizeHeight, resizeQuality: 'high' })` zu nutzen. MDN lässt offen, ob der Browser schon beim Dekodieren verkleinert oder erst danach; ohne Speichermessung im Browser (DevTools → Memory) ist der Nutzen nicht belegt. Erst messen, dann umbauen.
 - ~~**Gezogene Linie springt bei Breitenänderung zurück**~~ — **gefixt 2026-10-06 (#28)**: `updateActiveObject` setzt bei Linien-Breite die Position zuletzt.
 - ~~**Fullscreen: SSR und Refit**~~ — **gefixt 2026-10-14**: `CellarCanvas` ist ein client-only Wrapper (`useSyncExternalStore`, Server-Snapshot `false`) um den Editor — Server und Hydration rendern nichts, danach mountet der Editor frisch (Fabric init + Portal in einem Zug). Per `renderToString` geprüft: `""`, kein `document`-Zugriff. *Ursprünglicher Befund (2026-10-05, Review #27):* ein SSR-Embedder bekäme einen Hydration-Mismatch (Showcase und Buchart58 rendern client-only). ~~Der Fullscreen-Refit-Effekt (#26) begründet sich mit „Wrapper resized", `zoomToFit` misst den Container aber nie~~ — erledigt 2026-10-14, der Effekt ist durch den `ResizeObserver` ersetzt. Der Fokusverlust beim Wechsel ist gefixt (2026-10-06, #28).
 - ~~**Undo/Redo setzen `isDirty` nicht**~~ — **gefixt 2026-10-06 (#28)**.
@@ -199,6 +199,38 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 ---
 
 ## Entscheidungs-Log
+
+### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
+
+- **mm-Rundung:** `mmToPx` rundete auf ganze px, `pxToMm` auf ganze mm. Das Properties-Panel arbeitete damit im
+  1-mm-Raster: aus der Eingabe 12,5 mm wurde die Anzeige 12. Jetzt gibt es `mmToPxExact` (ungerundet) für den
+  Schreibpfad der Nutzereingaben (`xToLeft`, `yToTop`, `widthToFabricProps`, `heightToFabricProps`), und `pxToMm`
+  rundet auf 0,1 mm. `mmToPx` bleibt ganzzahlig für Canvas- und Label-Maße, weil ein Canvas nicht gebrochen sein kann.
+- **Standardformen exakt angelegt:** `object-factory.ts` und `templates.ts` nutzen ebenfalls `mmToPxExact`. Sonst
+  läse ein frisch eingefügtes 20-mm-Rechteck 20,1 mm (76 px), was die alte Rundung bisher verdeckt hat.
+- **Im Browser bestätigt** (Playwright, 1440 px): Eingabe 12,5 / 7,3 / 33,3 / 21,7 mm zeigt vorher 12 / 7 / 33 / 22,
+  jetzt exakt die Eingabe; der Pfeiltasten-Schritt funktioniert (13,5); ein neues Rechteck zeigt wieder 20 mm.
+- **50-MP-Foto: Umstellung verworfen.** Versucht war, die Maße per `<img>` zu lesen und mit `createImageBitmap(blob,
+  { resizeWidth | resizeHeight })` direkt skaliert zu dekodieren. Gemessen in headless Chromium (Playwright 1.64,
+  Summe des RSS aller Browser-Prozesse, Spitze minus Ausgangswert, zwei Läufe je Variante, 8000×6250 JPEG, 17,6 MB):
+
+  | Variante | Spitze |
+  |---|---|
+  | bisher: `createImageBitmap(blob)` | +210 MB |
+  | `createImageBitmap` mit `resizeWidth`, Qualität `high` | +257 MB |
+  | `createImageBitmap` mit `resizeWidth`, Qualität `low` | +210 MB |
+  | nur die `<img>`-Probe der Maße (Blob-URL, `onload`) | +38 MB |
+  | `<img>` direkt skaliert auf ein Canvas zeichnen | +359 MB |
+  | `<img>` mit `decode()`, dann skaliert zeichnen | +550 MB |
+
+  Im Editor Ende-zu-Ende (Datei wählen bis Zuschnitt-Dialog): bisher +221 MB, mit der Umstellung +296 MB; schon ein
+  1200×800-Bild kostete +88 statt +55 MB. **Chromium dekodiert trotz Resize-Optionen das volle Bild**, und keine
+  Variante schlägt die einfache Dekodierung. `image-source.ts` ist deshalb wieder auf dem Stand vor dem Versuch.
+  Nur Chromium gemessen; Firefox und Safari offen. Die EXIF-Drehung wurde im Versuch richtig behandelt (Orientation 6
+  ergab 1600×2400), das ist also kein Hindernis. Die Speicherspitze bleibt ein bekannter Rest.
+- **Tests:** Erwartungen in `object-properties.test.ts` an die exakte Umrechnung angepasst (vorher 76 px und 20 mm,
+  jetzt 75,59 px und 20,1 mm in der Gegenrichtung). Keine neuen Tests.
+- **Geprüft:** vitest 48/48, ESLint auf den geänderten Dateien sauber.
 
 ### #30 — Browser-Test der Checkliste, sieben Fixes *(2026-10-27 — gefixt)*
 

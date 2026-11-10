@@ -1,5 +1,5 @@
 import * as fabric from 'fabric'
-import { mmToPx, pxToMm } from './units'
+import { mmToPxExact, pxToMm } from './units'
 
 /**
  * Pure geometry mapping between Fabric's px object model and the label-relative
@@ -71,12 +71,12 @@ export function originOffset(obj: fabric.Object): { dx: number; dy: number } {
 
 /** Maps a label-relative x (mm) to Fabric `left` (px), offset into the bleed. */
 export function xToLeft(xMm: number, bleedPx: number): number {
-  return mmToPx(xMm) + bleedPx
+  return mmToPxExact(xMm) + bleedPx
 }
 
 /** Maps a label-relative y (mm) to Fabric `top` (px), offset into the bleed. */
 export function yToTop(yMm: number, bleedPx: number): number {
-  return mmToPx(yMm) + bleedPx
+  return mmToPxExact(yMm) + bleedPx
 }
 
 /** Extra inputs the per-kind width mapping needs. */
@@ -103,7 +103,7 @@ export function widthToFabricProps(
   kind: GeometryKind,
   ctx: WidthContext,
 ): Record<string, number> {
-  const targetPx = mmToPx(widthMm)
+  const targetPx = mmToPxExact(widthMm)
   const s = ctx.scaleX || 1
   switch (kind) {
     case 'circle':
@@ -131,6 +131,6 @@ export function heightToFabricProps(
 ): Record<string, number> {
   if (kind !== 'scalable') return {}
   return intrinsicHeight && intrinsicHeight > 0
-    ? { scaleY: mmToPx(heightMm) / intrinsicHeight }
+    ? { scaleY: mmToPxExact(heightMm) / intrinsicHeight }
     : {}
 }
