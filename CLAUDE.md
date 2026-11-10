@@ -9,7 +9,7 @@ Hier stehen Regeln, nicht ihre Geschichte. Begründungen und Bug-Verlauf einer K
 ## Stack
 
 - React 19 mit React Compiler, Tailwind v4, `motion/react`, Ark UI, TanStack (Query, Form, Table, Hotkeys), Vite 8, Bun-Workspaces. Astro nur in `vendure-showcase/storefront`.
-- Welche Lib für welche Capability: Skill `artelier`. Zusätzlich gilt hier: Drag & Drop/Sortable mit `@dnd-kit` (nicht motion `Reorder.Group`, nicht `react-dnd`), GraphQL-Transport mit `graphql-request`, der Editor-State von `cellar-canvas` mit `zustand`.
+- Welche Lib für welche Capability: Skill `artelier`. Zusätzlich gilt hier: Drag & Drop/Sortable mit `@dnd-kit` (nicht motion `Reorder.Group`, nicht `react-dnd`), GraphQL-Transport mit `graphql-request`, der Editor-State von `cellar-canvas` mit `zustand`, 3D-Szenen mit `three` + `@react-three/fiber` (immer per `lazy()` laden, Referenz: `components/bottle-stage/`; reine Shader-Flächen ohne Lib wie `shader-backdrop` und `light-rays`).
 - Verboten, weil die Capability schon besetzt ist: `urql`/`@urql/*`, `swr`, `apollo-client` (→ TanStack Query), `@radix-ui/*`, `@headlessui/*`, shadcn (→ Ark UI), `framer-motion`, `gsap` (→ `motion/react`), `react-dnd`, motion `Reorder.Group` (→ `@dnd-kit`). Ein Teil davon warnt zusätzlich über `no-restricted-imports` in `eslint.config.js`.
 - Shop-Backend ist Vendure (GraphQL). Medusa ist abgelöst, dafür keine APIs oder Muster vorschlagen.
 
@@ -33,5 +33,5 @@ Die Regeln für Komponenten-Code stehen in `COMPONENT-GUIDELINES.md`. Sie laden 
 
 - Mehrstufige Arbeiten (Migration, Phasen) bekommen einen Commit pro logischem Schritt, damit sich jeder einzeln reviewen und zurücknehmen lässt. Committet wird erst, wenn der User die Änderung gesehen und den Commit angestoßen hat.
 - Vor jedem Commit den Skill `components-verify` durchlaufen; die CI (`.github/workflows/ci.yml`) prüft dasselbe und wird sonst rot.
-- Den Dev-Server startet der User selbst. Braucht eine Prüfung einen laufenden Server (z. B. Storefront-Build gegen die Shop-API): ansagen, im Hintergrund starten, prüfen, sofort beenden (`pkill -f …`) und per `lsof -i :<port>` bestätigen, dass der Port frei ist. Visuelle Checks sonst als Liste an den User geben.
+- Den Dev-Server startet der User selbst. Braucht eine Prüfung einen laufenden Server (z. B. Storefront-Build gegen die Shop-API): ansagen, als Hintergrund-Task starten, prüfen, genau diesen Task sofort wieder beenden und per `lsof -i :<port>` bestätigen, dass der Port frei ist. Kein `pkill -f vite` o. Ä.: Ein breites Muster trifft auch Server, die der User oder eine andere Session gestartet hat. Visuelle Checks sonst als Liste an den User geben.
 - Das Projekt hat keine eigene Design-Richtung. Den Skill `frontend-design` deshalb nur laden, wenn der User ausdrücklich eine Gestaltungsrichtung erarbeiten will.

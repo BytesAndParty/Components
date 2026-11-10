@@ -1,8 +1,8 @@
 # Bekannte Probleme
 
-Stand: 2026-11-09. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
+Stand: 2026-11-10. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
-## Offene Fragen an den User (Stand 2026-11-08)
+## Offene Fragen an den User (Stand 2026-11-10)
 
 Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entscheidung in den passenden Punkt unten oder wird gelöscht.
 
@@ -11,6 +11,10 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 3. **Weitere SSR-Fallen vom Typ 12.1 beheben?** Die Suche nach `window.matchMedia` und `localStorage` ist gelaufen (2026-11-09), geändert wurde dabei nichts. `circular-progress/circular-progress.tsx:53`, `morphing-text/morphing-text.tsx:35` und `cursor-glow/cursor-glow.tsx:36` lesen `matchMedia` direkt im Render (`typeof window !== 'undefined' && window.matchMedia(…)`); ob das bei SSR sichtbare Attribute verändert, ist nicht geprüft. Unkritisch, weil erst zur Event- oder Effektzeit gelesen: `hover-3d-card`, `bounce-cards`, `particles`, `confetti/fire.ts`. `localStorage` kommt außerhalb des Atelier-Providers in `cellar-canvas/components/tour/OnboardingTour.tsx:118,130` und `cellar-canvas/engine/image-source.ts` vor, ob im Render, ist nicht geprüft. Der neue Hook `components/lib/use-prefers-reduced-motion.ts` passt für die drei Render-Fälle. Empfehlung: ja, die drei erst mit dem Check nachstellen, dann umstellen.
 4. **Drift-Check zwischen `components/` und Buchart58?** Buchart58 kopiert Komponenten, Änderungen kommen nicht von selbst an, und der Scan fand in beiden Kopien denselben Fehler. Ein `diff -rq` je Ordner (Liste: `Buchart58/storefront/src/atelier/`) zeigt die Abweichungen in Sekunden. Einmal gelaufen am 2026-11-09 (nichts kopiert): 22 Code-Dateien in 11 Ordnern haben Inhaltsunterschiede (`ambient-image`, `atelier/provider.tsx`, `cellar-canvas` mit `fabric-bridge.ts` und Tests, `color-picker`, `hotkeys`, `i18n/provider.tsx`, `image-cropper-modal/messages.ts`, `layer-panel`, `reveal-image`, `shiny-text`, `tooltip`), einzeln nicht eingestuft; manche sind harmlos wie ein `type`-Modifier im Import. Ein echter Fund war `reveal-image.tsx`: Buchart58 trägt das `clip-path` noch am beobachteten Element, hier sitzt es seit dem Deadlock-Fix am inneren Wrapper (am 2026-11-09 im Browser bestätigt: Beim normalen Scrollen der Startseite blieben 4 von 6 Bildern unsichtbar; der Upstream-Stand ist dort inzwischen übernommen, die Datei ist identisch). In Buchart58 fehlen außerdem `cellar-canvas/components/panels/TemplatesPanel.tsx`, `hotkeys/messages.ts`, `hotkeys/shortcut-overview.tsx`, `lib/scrapbook.ts`, `lib/use-disclosure-dismiss.ts` und Tests. Nachtrag 2026-11-09: In Buchart58 ist der Ordner `atelier/atelier` (Provider, Kontext, Init-Script) inzwischen entfernt, weil dort nur die Sprache genutzt wurde, die Islands nutzen `I18nProvider` mit der Route-Sprache, und `language-switcher.tsx` liest dort `useI18n()` statt `useAtelier()`. Der Eintrag `atelier/provider.tsx` in der Liste oben ist damit überholt, die neue bewusste Abweichung ist genau diese eine Zeile. Ohne Filter ist die Zahl verrauscht (24 von 26 Ordnern, weil auch fehlende `COMPONENT.md` zählen): Ein Skript sollte nur Code-Dateien vergleichen. Empfehlung: ja, als kleines Skript oder Skill, das nur meldet und nichts kopiert.
 5. **Wechsel von TanStack Hotkeys auf Ark UI Hotkeys?** Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag. Der Hinweis hing bis zum 2026-11-08 an Punkt 9 (Shortcut-Hinweis), der behoben ist; die Empfehlung gilt weiter.
+6. **3D-Flasche: echtes Buchart58-Etikett und schwarzer Verschluss?** (2026-11-10) Die Form stammt schon von der echten Flasche, Etikett („Atelier · Cuvée Nº 7“) und akzentfarbener Verschluss sind Platzhalter. Der Hero ist als markenfreie Demo entschieden. Empfehlung: den Hero so lassen und eine zweite Variante in der Buch·Art-Familie bauen, statt die Demo umzufärben.
+7. **3D-Vorschau im Etiketten-Designer?** (2026-11-10) `BottleStage` nimmt jedes Bild als `labelSrc`, also auch `canvas.toDataURL()` aus `cellar-canvas`. Der Kunde sähe sein Etikett auf der Flasche, bevor er bestellt. Empfehlung: ja, als nächster 3D-Schritt; vorher klären, wo die Vorschau im Layout sitzt (Punkt 10 ist dort noch offen).
+8. **Standbild als Fallback ohne WebGL?** (2026-11-10) Heute bleibt die Bühne dann leer. Empfehlung: erst, wenn die Bühne auf eine echte Shop-Seite kommt; für die Showcase-Demo nicht nötig.
+9. **Komponentenzahl in README und Übersicht?** (2026-11-10) Beide nennen 95, im Ordner liegen 100 `COMPONENT.md`. Empfehlung: die Zahl streichen statt nachzuziehen, sie veraltet mit jeder neuen Komponente.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -22,6 +26,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 | 12 | Code-Quality-Scan: 12 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
+| 13 | 3D-Bühne (`bottle-stage`, `shader-backdrop`, Hero „Flaschenbühne“): offene Punkte nach dem ersten Bau | `components/`, `section-showcase` | niedrig | je Punkt |
 
 ---
 
@@ -133,3 +138,29 @@ Ein Reviewer (Opus, nur lesend) hat den Diff dieser Runde und die 26 Ordner gepr
 - Buchart58: ja für diese fünf Punkte.
 - Zusätzlich nachgelesen, nicht gegen Buchart58 geprüft: `components/add-to-cart-button/add-to-cart-button.tsx:160–161` (beide Zweige des Ternärs gleich, `3.4s` fest verdrahtet statt der Prop `duration`), `components/language-switcher/language-switcher.tsx:5,189` (Kopfkommentar nennt `design-engine-locale` statt `atelier-locale`, `role="listbox"` ohne Escape und Pfeiltasten), `components/alignment-bar/alignment-bar.tsx:81` (`disabled` setzt nur `pointer-events-none`, die Tastatur löst weiter `onAlign` aus), `components/color-picker/color-picker.tsx:159,436` (Eingabefelder ohne zugeordnetes Label) und `:281,:544` (englische ARIA-Texte).
 - Hex-Fallbacks wie `var(--accent, #6366f1)` stehen in `tooltip`, `rating`, `add-to-cart-button`, `shiny-text` und `backlight` (formaler Verstoß gegen §2, nicht einzeln aufgeführt).
+
+## 13. 3D-Bühne: Entscheidungen und offene Punkte (2026-11-10)
+
+Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`, `components/lib/css-color.ts` und der Hero `section-showcase/src/sections/hero/HeroBottle3D.tsx` (Variante `bottle-3d`).
+
+**Entscheidungen (User, 10.11.):** Einsatz als Showcase-Demo, nicht für Buchart58. Motiv Flasche plus Shader-Hintergrund. `three` + `@react-three/fiber` sind die feste Lib für 3D (in `CLAUDE.md` eingetragen). Der Shader-Hintergrund nutzt bewusst kein three, damit er ohne den großen Chunk sofort steht.
+
+**Flaschenform (User, 10.11.):** Die Proportionen sind aus einem Produktfoto des Buchart58-Shops gemessen (Merlot 0,75 l, schlanke Bordeauxflasche mit Schraubverschluss; Quelle: `Buchart58/storefront/dist/_astro/merlot-sooss__preview_*.webp`), Werte in `components/bottle-stage/COMPONENT.md`. Bekannt sind nur Verhältnisse, keine Millimeter. Farben sind bewusst nicht übernommen: Im Shop ist der Verschluss schwarz, hier folgt er dem Akzent.
+
+**Offen:**
+
+- **Kein Standbild ohne WebGL:** `BottleStage` rendert dann nichts (interne Error Boundary, auch bei einem Etikett, das nicht lädt), `ShaderBackdrop` zeigt nur den CSS-Hintergrund des Elternelements. Für eine echte Shop-Seite bräuchte die Bühne ein Standbild (Frage 8).
+- **Nur auf Desktop-Chromium geprüft** (Playwright, 1440 px und 390 px, dazu Reduced Motion). Nicht geprüft: echte Mobilgeräte (Framerate, Akku), Safari, Firefox, Light-Theme-Seiten rund um die fest dunkle Sektion.
+- **Konsolenwarnung `THREE.Clock: This module has been deprecated`:** kommt aus `@react-three/fiber` 9.8.2 selbst, nicht aus unserem Code (die Komponente zählt ihre Zeit über `delta`). Verschwindet erst mit einem R3F-Update.
+- **Etikett ist ein Platzhalter:** SVG als Data-URL mit Systemschrift, weil ein als Bild geladenes SVG keine Webfonts lädt. Nächster sinnvoller Schritt wäre das Etikett aus `cellar-canvas` als Textur (`canvas.toDataURL()` an `labelSrc`), dieselbe Komponente als 3D-Vorschau im Etiketten-Designer.
+- **Theme-Wechsel nur über `<html>` und `<head>`:** Beide Komponenten lesen ihre Farben neu, wenn sich Attribute an `<html>` oder der Inhalt von `<head>` ändern (dort schreibt der `AccentSwitcher` beim Überblenden). Ein Token, das an anderer Stelle oder über `@media (prefers-color-scheme)` wechselt, wird erst bei einer Prop-Änderung übernommen.
+- **Offene Befunde aus dem Code-Review vom 10.11.** (per Lesen gefunden, keiner im Browser nachgestellt; behoben sind: nicht klickbare Hero-Links, Absturz ohne WebGL, veralteter Akzent nach `AccentSwitcher`, Canvas fängt Klicks, durchscheinende Farben in `cssColorToRgb`, veralteter IntersectionObserver-Eintrag):
+  - `ShaderBackdrop` behandelt keinen Kontextverlust (`webglcontextlost`): Nach einem GPU-Reset bleibt die Fläche leer, und ein späterer Effekt-Lauf auf dem verlorenen Kontext wirft. Auch ein Shader, der nicht kompiliert, wirft aus dem Effekt. Außerdem gibt die Komponente ihren Kontext beim Unmount nicht frei (Chrome erlaubt 16); dafür müsste das Canvas wie bei `light-rays` im Effekt entstehen.
+  - Hero: Die ausgeblendeten Intro-Links bleiben per Tastatur fokussierbar (Shift+Tab von unten landet auf einem unsichtbaren Link). Abhilfe: `inert` am ausgeblendeten Block.
+  - Hero auf kleinen Telefonen (375 × 667): Buttons und Eckdaten überlappen vermutlich die Flasche, geprüft ist nur 390 × 844. `h-screen` sollte auf Mobil `h-svh` sein.
+  - Reduced Motion zur Laufzeit umschalten: Die Flasche friert in ihrer letzten Pose ein, und der Hero liest die Einstellung über motion nur beim Mount.
+  - Eine Änderung von `speed`, `scale` oder `grain` baut das Shader-Programm neu und setzt die Zeit auf 0 (sichtbarer Sprung).
+  - Benennung: `capsuleColor`, `capsuleProfile` usw. meinen inzwischen den Schraubverschluss. Die Kommentare in `HeroBottle3D.tsx` sind deutsch wie in den anderen Heroes, die globale Regel verlangt Englisch.
+- **Komponentenzahl in der Doku veraltet:** siehe Frage 9 oben.
+- **Messskript nicht aufbewahrt:** Die Silhouette wurde mit einem Wegwerf-Skript vermessen (PNG zeilenweise lesen, Breite je Zeile über den Alphakanal, Etikett über die Farbe). Es lag im Scratchpad der Session und ist weg. Für eine zweite Flaschenform (z. B. die Magnum) müsste es neu entstehen, Aufwand ca. 15 Minuten; das Vorgehen und die Ergebniswerte stehen in `components/bottle-stage/COMPONENT.md`.
+- **Größenschätzung lag daneben:** Angekündigt waren 150 bis 200 KB gzip für three, gemessen sind 246 KB. Künftige Schätzungen für neue Libs vor der Zusage mit einem Probe-Build belegen.

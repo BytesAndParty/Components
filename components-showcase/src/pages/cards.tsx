@@ -18,8 +18,27 @@ import { ParticlesCard } from '@components/particles/particles-card'
 import { CursorGlow } from '@components/cursor-glow/cursor-glow'
 import { Lens } from '@components/lens/lens'
 import { ImagesSlider } from '@components/images-slider/images-slider'
-import { useState } from 'react'
+import { ShaderBackdrop } from '@components/shader-backdrop/shader-backdrop'
+import { lazy, Suspense, useState } from 'react'
 import { Link } from 'react-router'
+
+/* ── BottleStage ────────────────────────────────────────── */
+
+// three.js is large: the stage loads as its own chunk.
+const BottleStage = lazy(() =>
+  import('@components/bottle-stage/bottle-stage').then(module => ({ default: module.BottleStage })),
+)
+
+const DEMO_LABEL_SRC = `data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="570" height="800" viewBox="0 0 570 800">
+  <rect width="570" height="800" fill="#f1ebdd"/>
+  <rect x="30" y="30" width="510" height="740" fill="none" stroke="#1c1a17" stroke-width="2"/>
+  <g fill="#1c1a17" text-anchor="middle" font-family="Georgia, serif">
+    <text x="285" y="170" font-size="30" letter-spacing="14">ATELIER</text>
+    <text x="285" y="430" font-size="120" font-style="italic">Demo</text>
+    <text x="285" y="640" font-size="44" letter-spacing="10">2023</text>
+  </g>
+</svg>`)}`
 
 /* ── ShapeCard helpers ──────────────────────────────────── */
 
@@ -496,6 +515,60 @@ export function CardsPage() {
               />
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section
+        title="ShaderBackdrop"
+        description="Flowing WebGL backdrop without dependencies. Colors are CSS colors and follow theme and accent; under reduced motion it shows a still frame."
+      >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="border-border relative h-72 overflow-hidden rounded-xl border">
+            <ShaderBackdrop className="absolute inset-0" />
+            <p className="text-foreground absolute bottom-5 left-5 text-sm font-medium">Default: background → accent</p>
+          </div>
+          <div className="border-border relative h-72 overflow-hidden rounded-xl border">
+            <ShaderBackdrop
+              colors={['oklch(0.16 0.03 60)', 'oklch(0.42 0.11 55)', 'oklch(0.86 0.12 85)']}
+              speed={2}
+              scale={1.8}
+              grain={0.12}
+              className="absolute inset-0"
+            />
+            <p className="absolute bottom-5 left-5 text-sm font-medium text-white">
+              Custom colors, faster, smaller folds, more grain
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        title="BottleStage"
+        description="Real-time 3D wine bottle (three.js + React Three Fiber), lazy-loaded. Move the mouse: the bottle leans toward the pointer."
+      >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="border-border bg-card h-96 overflow-hidden rounded-xl border">
+            <Suspense fallback={null}>
+              <BottleStage labelSrc={DEMO_LABEL_SRC} className="h-full w-full" />
+            </Suspense>
+          </div>
+          <div className="border-border relative h-96 overflow-hidden rounded-xl border">
+            <ShaderBackdrop className="absolute inset-0" />
+            <Suspense fallback={null}>
+              <BottleStage labelSrc={DEMO_LABEL_SRC} capsuleColor="var(--foreground)" className="absolute inset-0" />
+            </Suspense>
+          </div>
+          <div className="border-border bg-card h-96 overflow-hidden rounded-xl border">
+            <Suspense fallback={null}>
+              {/* Edge case: no label, amber glass, no pointer tracking */}
+              <BottleStage
+                glassColor="oklch(0.22 0.07 60)"
+                capsuleColor="oklch(0.3 0.02 60)"
+                followPointer={false}
+                className="h-full w-full"
+              />
+            </Suspense>
+          </div>
         </div>
       </Section>
 

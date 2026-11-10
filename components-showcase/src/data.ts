@@ -5,7 +5,7 @@ export const groups = [
     descKey: 'desc.cards',
     title: 'Cards & Buttons',
     description: 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
-    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'JellyButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'SplashCursor', 'Backlight', 'PixelImage', 'AmbientImage', 'Lens', 'ImagesSlider'],
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'JellyButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'ShaderBackdrop', 'BottleStage', 'SplashCursor', 'Backlight', 'PixelImage', 'AmbientImage', 'Lens', 'ImagesSlider'],
   },
   {
     path: '/text',

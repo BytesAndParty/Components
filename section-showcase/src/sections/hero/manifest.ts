@@ -11,6 +11,7 @@ import { HeroGenussgut } from './HeroGenussgut'
 import { HeroSchwarzweiss } from './HeroSchwarzweiss'
 import { HeroGastgeber } from './HeroGastgeber'
 import { HeroBuchArt } from './HeroBuchArt'
+import { HeroBottle3D } from './HeroBottle3D'
 
 export const heroSection: SectionDef = {
   id: 'hero',
@@ -88,6 +89,12 @@ export const heroSection: SectionDef = {
       label: 'Buch·Art',
       description: 'Claim der Original-Seite in Goudy, daneben die drei Etikettenfarben als Flaschen vor dem Buch-Signet, das sich mit Feder zeichnet; Faktenzeile aus den alten Bannern.',
       Component: HeroBuchArt,
+    },
+    {
+      id: 'bottle-3d',
+      label: 'Flaschenbühne (3D)',
+      description: 'In Echtzeit gerenderte 3D-Flasche vor fließendem Shader-Hintergrund; die Bühne bleibt beim Scrollen stehen, die Flasche dreht das Etikett nach vorn und wandert in die Mitte, die Headline weicht den Eckdaten.',
+      Component: HeroBottle3D,
     },
   ],
 }

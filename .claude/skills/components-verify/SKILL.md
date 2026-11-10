@@ -34,6 +34,17 @@ Prüfschritte nach Änderungen an Komponenten, Showcases, Launcher oder Storefro
   - Reduced Motion (DevTools → Rendering): keine Springs.
   - Touch-Geräte: Ziele mindestens 44 × 44 px.
 
+## Selbst im Browser nachsehen
+
+Für einen eigenen Sichtcheck vor der Übergabe an den User (ersetzt dessen Prüfung nicht):
+
+- Den Dev-Server als Hintergrund-Task starten und danach genau diesen Task wieder beenden (Regel in `CLAUDE.md`, „Arbeitsweise").
+- Eine einzelne Section-Variante ohne Showcase-Rahmen: `http://localhost:5174/preview?s=<section>:<variante>`, z. B. `?s=hero:bottle-3d`.
+- Screenshots des Playwright-MCP lassen sich nur unter `.playwright-mcp/` im Repo speichern (steht in `.gitignore`), nicht im Scratchpad.
+- Reduced Motion über `browser_emulate_media` (`reducedMotion: 'reduce'`), Akzentwechsel über `document.documentElement.setAttribute('data-accent', 'rose')`.
+- Nach dem Laden zwei bis drei Sekunden warten, bevor der Screenshot entsteht: `BlurFade` und lazy geladene Chunks sind sonst noch nicht sichtbar.
+- Änderungen an Dependencies oder an lazy geladenem Code zusätzlich mit `bun run build` im Showcase prüfen: Die Ausgabe zeigt die Chunk-Größen, und `grep -l react.memo_cache_sentinel dist/assets/*.js` zeigt, ob der React Compiler den neuen Chunk kompiliert hat.
+
 ## Fallen
 
 - Eine Klasse steht im Markup, wirkt aber nicht (Element fällt auf 0 px zusammen, keine Konsolenfehler): Der `@source`-Eintrag für `components/**` fehlt in der `styles.css` des Showcases (COMPONENT-GUIDELINES §2).

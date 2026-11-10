@@ -27,7 +27,8 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **cursor-glow / glow-card / hover-3d-card:** Subtile Licht- und Tiefeneffekte, die dem Pointer folgen.
 - **magnetic-button / jelly-button:** Physisch wirkende Buttons.
 - **morphing-text / text-rotate / text-scramble:** Dynamische Typografie.
-- **particles / light-rays:** Atmosphärische Hintergrundeffekte.
+- **particles / light-rays / shader-backdrop:** Atmosphärische Hintergrundeffekte; `shader-backdrop` ist eine fließende WebGL-Fläche in Theme- und Akzentfarben.
+- **bottle-stage:** In Echtzeit gerenderte 3D-Weinflasche mit Etikett, Studiolicht, Cursor-Neigung und Scroll-Drehung (three.js + React Three Fiber, lazy laden).
 - **pixel-image / bounce-cards / lens:** Bild-Reveal, auseinanderfedernde Bildkarten, Lupe.
 - **animated-icons / animated-weather-icons:** Lottie- und CSS-animierte Icons.
 
