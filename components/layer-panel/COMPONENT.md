@@ -32,6 +32,7 @@ The component uses a combination of **dnd-kit** for sorting logic and **motion/r
 | `onRename` | `(id: string, name: string) => void` | - | Callback for layer renaming. |
 | `onDelete` | `(id: string) => void` | - | Callback to delete a layer. |
 | `onMove` | `(id: string, dir: 1 \| -1) => void` | - | Programmatic move up/down. |
+| `showHeader` | `boolean` | `true` | Title row with the layer count. Turn off where the host already has a heading. |
 | `className` | `string` | - | Custom container classes. |
 | `messages` | `Partial<LayerPanelMessages>` | - | Custom i18n overrides. |
 

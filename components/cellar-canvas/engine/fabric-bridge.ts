@@ -109,8 +109,6 @@ export class FabricBridge {
   private panLast: { x: number; y: number } | null = null
   /** True until the user zooms or pans; only a fitted view re-fits on resize. */
   private fitted = true
-  /** Horizontal offset of the fitted label from the canvas centre, in px. */
-  private fitShiftX = 0
   private unsubscribePanMode: () => void
 
   constructor(canvas: fabric.Canvas, opts: FabricBridgeOptions) {
@@ -633,17 +631,17 @@ export class FabricBridge {
 
   /**
    * A file the browser can't decode used to end in an unhandled rejection,
-   * with nothing visible on screen. The header shows a hint instead
-   * (`insertError`); the next successful insert clears it.
+   * with nothing visible on screen. A notice above the canvas says so instead
+   * (`notice` in the store); the next successful insert clears it.
    */
   private async loadImage(src: string, kind: 'image' | 'qr'): Promise<fabric.FabricImage | null> {
-    const { setInsertError } = useDesignerStore.getState()
+    const { setNotice } = useDesignerStore.getState()
     try {
       const img = await fabric.FabricImage.fromURL(src)
-      setInsertError(null)
+      setNotice(null)
       return img
     } catch {
-      setInsertError(kind)
+      setNotice(kind)
       return null
     }
   }
@@ -660,15 +658,15 @@ export class FabricBridge {
         | undefined
     if (!obj || obj._type !== 'image') return
 
-    const { setInsertError } = useDesignerStore.getState()
+    const { setNotice } = useDesignerStore.getState()
     try {
       await obj.setSrc(src)
     } catch {
-      // Same hint as `loadImage`; the old image stays in place.
-      setInsertError('image')
+      // Same notice as `loadImage`; the old image stays in place.
+      setNotice('image')
       return
     }
-    setInsertError(null)
+    setNotice(null)
     this.canvas.requestRenderAll()
     this.saveHistory()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -689,7 +687,7 @@ export class FabricBridge {
   async addQRCode(url: string) {
     const dataUrl = await generateQRCodeDataURL(url)
     if (!dataUrl) {
-      useDesignerStore.getState().setInsertError('qr')
+      useDesignerStore.getState().setNotice('qr')
       return
     }
 
@@ -1030,6 +1028,27 @@ export class FabricBridge {
     this.notifyStackChanged(restored)
   }
 
+  /**
+   * Moves the selection to the middle of the label along one axis ('h':
+   * left ↔ right, 'v': top ↔ bottom). Measured on the bounding box, so it
+   * also holds for rotated objects and for a multi-selection as a whole.
+   */
+  centerOnLabel(axis: 'h' | 'v') {
+    const obj = this.canvas.getActiveObject()
+    if (!obj) return
+    obj.setCoords()
+    const box = obj.getBoundingRect()
+    if (axis === 'h') {
+      obj.set('left', obj.left + this.bleedPx + mmToPx(this.widthMm) / 2 - (box.left + box.width / 2))
+    } else {
+      obj.set('top', obj.top + this.bleedPx + mmToPx(this.heightMm) / 2 - (box.top + box.height / 2))
+    }
+    obj.setCoords()
+    this.canvas.requestRenderAll()
+    this.saveHistory()
+    this.notifyStackChanged(obj)
+  }
+
   getBackground(): LabelBackground {
     return this.labelBackground
   }
@@ -1050,7 +1069,7 @@ export class FabricBridge {
   /**
    * Keeps a decoded copy of an image background for `withPaper`. On screen the
    * image is CSS; the export paints it into the canvas and cannot wait for a
-   * decode. A file that fails to decode gets the usual header hint.
+   * decode. A file that fails to decode gets the usual notice.
    */
   private syncPaperImage() {
     const bg = this.labelBackground
@@ -1067,7 +1086,7 @@ export class FabricBridge {
         const current = this.labelBackground
         if (typeof current !== 'string' && current.type === 'image' && current.src === src) this.paperImage = img
       })
-      .catch(() => useDesignerStore.getState().setInsertError('image'))
+      .catch(() => useDesignerStore.getState().setNotice('image'))
   }
 
   /**
@@ -1188,12 +1207,10 @@ export class FabricBridge {
    * clipped in a small window, small in fullscreen.
    *
    * Re-fits only while the view is still fitted — a resize must not throw
-   * away a zoom or pan the user chose. `shiftX` moves the fitted label off
-   * the element centre (fullscreen optical centring, see CellarCanvas).
+   * away a zoom or pan the user chose.
    */
-  resize(width: number, height: number, shiftX = 0) {
+  resize(width: number, height: number) {
     if (width <= 0 || height <= 0) return
-    this.fitShiftX = shiftX
     this.canvas.setDimensions({ width, height })
     if (this.fitted) this.zoomToFit()
     // setDimensions clears the bitmap at once, and ResizeObserver callbacks
@@ -1204,27 +1221,26 @@ export class FabricBridge {
 
   /**
    * Fits the label plus its bleed margin into the canvas element with a small
-   * visual padding, centred (plus `fitShiftX`). The element fills the visible
-   * canvas area (see `resize`), so this keeps both the label and any
-   * overflowing objects in view at the same time.
+   * visual padding, centred. The element fills the visible canvas area (see
+   * `resize`), so this keeps both the label and any overflowing objects in
+   * view at the same time.
    */
   zoomToFit() {
     const padding = 24
-    const shift = this.fitShiftX
     const sceneWidth  = mmToPx(this.widthMm + 2 * this.bleedMm)
     const sceneHeight = mmToPx(this.heightMm + 2 * this.bleedMm)
     const viewWidth   = this.canvas.getWidth()
     const viewHeight  = this.canvas.getHeight()
 
     const scale = Math.max(0.05, Math.min(
-      (viewWidth - 2 * Math.abs(shift) - padding * 2) / sceneWidth,
+      (viewWidth - padding * 2) / sceneWidth,
       (viewHeight - padding * 2) / sceneHeight,
       2.0,
     ))
 
     this.canvas.setViewportTransform([
       scale, 0, 0, scale,
-      (viewWidth - sceneWidth * scale) / 2 + shift,
+      (viewWidth - sceneWidth * scale) / 2,
       (viewHeight - sceneHeight * scale) / 2,
     ])
 
@@ -1257,6 +1273,14 @@ export class FabricBridge {
           locked: !!o.lockMovementX, // Basic lock check
         }
       }).reverse()
+  }
+
+  /** Layer list → canvas: makes the object with this id the selection. */
+  selectLayer(id: string) {
+    const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)
+    if (!obj) return
+    this.canvas.setActiveObject(obj)
+    this.canvas.requestRenderAll()
   }
 
   setLayerVisibility(id: string, visible: boolean) {

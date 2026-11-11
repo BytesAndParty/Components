@@ -13,7 +13,8 @@ export const useDesignerStore = create<DesignerState>()(
     canUndo: false,
     canRedo: false,
     draftSaveFailed: false,
-    insertError: null,
+    draftNoticeDismissed: false,
+    notice: null,
     cropperOpen: false,
     cropperSrc: undefined,
     cropperTargetId: undefined,
@@ -24,9 +25,13 @@ export const useDesignerStore = create<DesignerState>()(
     setSelectedIds: (selectedIds: string[]) => set({ selectedIds }),
     setDirty: (isDirty: boolean) => set({ isDirty }),
     setHistoryFlags: (canUndo: boolean, canRedo: boolean) => set({ canUndo, canRedo }),
-    setDraftSaveFailed: (draftSaveFailed: boolean) => set({ draftSaveFailed }),
-    setInsertError: (kind) => set((s) => ({
-      insertError: kind ? { kind, id: (s.insertError?.id ?? 0) + 1 } : null,
+    setDraftSaveFailed: (draftSaveFailed: boolean) => set((s) => ({
+      draftSaveFailed,
+      draftNoticeDismissed: draftSaveFailed && s.draftNoticeDismissed,
+    })),
+    dismissDraftNotice: () => set({ draftNoticeDismissed: true }),
+    setNotice: (kind) => set((s) => ({
+      notice: kind ? { kind, id: (s.notice?.id ?? 0) + 1 } : null,
     })),
     setCropper: (cropper) => set({
       cropperOpen: cropper.open,
@@ -38,6 +43,6 @@ export const useDesignerStore = create<DesignerState>()(
 
 /**
  * `.catch` handler for the image-preparation chains (file picker, drop, paste,
- * replace, cropper): shows the header hint instead of an unhandled rejection.
+ * replace, cropper): shows a notice instead of an unhandled rejection.
  */
-export const reportImageError = () => useDesignerStore.getState().setInsertError('image')
+export const reportImageError = () => useDesignerStore.getState().setNotice('image')

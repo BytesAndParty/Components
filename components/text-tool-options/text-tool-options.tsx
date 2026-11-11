@@ -25,13 +25,19 @@ export type { TextFormatValues } from './types'
 export interface TextToolOptionsProps {
   value?: Partial<TextFormatValues>
   onChange?: (patch: Partial<TextFormatValues>) => void
+  /**
+   * Only the everyday controls: font, size, bold, italic, left / centre /
+   * right, colour. Leaves out underline, justify, letter spacing and line
+   * height. Default: false
+   */
+  basic?: boolean
   className?: string
   messages?: Partial<TextToolOptionsMessages>
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function TextToolOptions({ value, onChange, className, messages }: TextToolOptionsProps) {
+export function TextToolOptions({ value, onChange, basic = false, className, messages }: TextToolOptionsProps) {
   const fmt = { ...defaultTextFormat, ...value }
   const m = useComponentMessages(MESSAGES, messages)
 
@@ -95,20 +101,22 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
         >
           <Italic size={13} strokeWidth={2.5} />
         </ToggleBtn>
-        <ToggleBtn
-          active={fmt.underline}
-          onClick={() => set('underline', !fmt.underline)}
-          title={m.underline}
-        >
-          <Underline size={13} strokeWidth={2.5} />
-        </ToggleBtn>
+        {!basic && (
+          <ToggleBtn
+            active={fmt.underline}
+            onClick={() => set('underline', !fmt.underline)}
+            title={m.underline}
+          >
+            <Underline size={13} strokeWidth={2.5} />
+          </ToggleBtn>
+        )}
       </div>
 
       <Divider />
 
       {/* ── Alignment ─────────────────────────────────────────── */}
       <div className="flex h-full items-center">
-        {(['left', 'center', 'right', 'justify'] as const).map((align) => {
+        {(basic ? (['left', 'center', 'right'] as const) : (['left', 'center', 'right', 'justify'] as const)).map((align) => {
           const Icon = { left: AlignLeft, center: AlignCenter, right: AlignRight, justify: AlignJustify }[align]
           return (
             <ToggleBtn
@@ -125,27 +133,31 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
 
       <Divider />
 
-      {/* ── Letter Spacing ────────────────────────────────────── */}
-      <div className="hover:bg-muted/50 flex h-full items-center px-2 transition-colors">
-        <NumberInput
-          value={fmt.charSpacing}
-          onChange={(v) => set('charSpacing', v)}
-          min={-200} max={800} step={10}
-          label="LS"
-        />
-      </div>
+      {!basic && (
+        <>
+          {/* ── Letter Spacing ────────────────────────────────────── */}
+          <div className="hover:bg-muted/50 flex h-full items-center px-2 transition-colors">
+            <NumberInput
+              value={fmt.charSpacing}
+              onChange={(v) => set('charSpacing', v)}
+              min={-200} max={800} step={10}
+              label="LS"
+            />
+          </div>
 
-      {/* ── Line Height ───────────────────────────────────────── */}
-      <div className="hover:bg-muted/50 border-border flex h-full items-center border-l px-2 transition-colors">
-        <NumberInput
-          value={fmt.lineHeight}
-          onChange={(v) => set('lineHeight', v)}
-          min={0.5} max={4} step={0.1} decimals={1}
-          label="LH"
-        />
-      </div>
+          {/* ── Line Height ───────────────────────────────────────── */}
+          <div className="hover:bg-muted/50 border-border flex h-full items-center border-l px-2 transition-colors">
+            <NumberInput
+              value={fmt.lineHeight}
+              onChange={(v) => set('lineHeight', v)}
+              min={0.5} max={4} step={0.1} decimals={1}
+              label="LH"
+            />
+          </div>
 
-      <Divider />
+          <Divider />
+        </>
+      )}
 
       {/* ── Color ─────────────────────────────────────────────── */}
       <ColorSwatch value={fmt.color} onChange={(v) => set('color', v)} title={m.textColor} label="A" />

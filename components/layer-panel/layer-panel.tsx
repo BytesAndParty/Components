@@ -51,6 +51,8 @@ export interface LayerPanelProps {
   onRename?:           (id: string, name: string) => void
   onDelete?:           (id: string) => void
   onMove?:             (id: string, dir: 1 | -1) => void
+  /** Show the title row with the layer count. Turn off where the host already has a heading. Default: true */
+  showHeader?: boolean
   className?: string
   messages?: Partial<LayerPanelMessages>
 }
@@ -83,6 +85,7 @@ export function LayerPanel({
   onRename,
   onDelete,
   onMove,
+  showHeader = true,
   className,
   messages,
 }: LayerPanelProps) {
@@ -156,13 +159,14 @@ export function LayerPanel({
 
   return (
     <div ref={rootRef} className={cn('flex flex-col bg-card border border-border rounded-xl overflow-hidden', className)}>
-      {/* Header */}
-      <div className="border-border flex items-center justify-between border-b px-3 py-2">
-        <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-          {m.layersHeader}
-        </span>
-        <span className="text-muted-foreground text-xs">{layers.length}</span>
-      </div>
+      {showHeader && (
+        <div className="border-border flex items-center justify-between border-b px-3 py-2">
+          <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            {m.layersHeader}
+          </span>
+          <span className="text-muted-foreground text-xs">{layers.length}</span>
+        </div>
+      )}
 
       {/* Layer list */}
       {layers.length === 0 ? (

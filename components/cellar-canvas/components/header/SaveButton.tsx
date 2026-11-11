@@ -1,6 +1,7 @@
 import { useState, type RefObject } from 'react'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Save } from 'lucide-react'
 import { cn } from '../../../lib/utils'
+import { barButtonCls } from '../shared/button-styles'
 import { useDesignerStore } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
@@ -47,24 +48,28 @@ export function SaveButton({ bridge, onSave }: SaveButtonProps) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={disabled}
       className={cn(
-        "ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider border transition-colors",
+        barButtonCls,
+        'border px-3 disabled:opacity-100',
         status === 'success'
-          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600"
+          ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-600'
           : status === 'error'
-            ? "border-destructive/40 bg-destructive/10 text-destructive"
+            ? 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/10 hover:text-destructive'
             : isDirty
-              ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
-              : "border-border text-muted-foreground opacity-60",
+              ? 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground'
+              : 'border-border text-muted-foreground/70',
       )}
       title={isDirty ? m.saveTitleDirty : m.saveTitleClean}
     >
-      {status === 'saving' && (<><Loader2 size={12} className="animate-spin" /> {m.saveSaving}</>)}
-      {status === 'success' && (<><Check size={12} /> {m.saveSaved}</>)}
+      {status === 'saving' && (<><Loader2 size={14} className="animate-spin" aria-hidden /> {m.saveSaving}</>)}
+      {status === 'success' && (<><Check size={14} aria-hidden /> {m.saveSaved}</>)}
       {status === 'error' && m.saveRetry}
-      {status === 'idle' && (isDirty ? m.saveIdle : m.saveSaved)}
+      {status === 'idle' && (isDirty
+        ? (<><Save size={14} aria-hidden /> {m.saveIdle}</>)
+        : (<><Check size={14} aria-hidden /> {m.saveSaved}</>))}
     </button>
   )
 }

@@ -22,9 +22,9 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 5 | Login-CSRF möglich (`csrfPrevention` aus) | beide Vendure-Server | mittel | 1 h |
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
 | 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | bleibt vorerst (User, 8.11.) |
-| 10 | Etiketten-Designer: Panel-Tabs und Vorlage „Classic“ brechen das Layout | `components/cellar-canvas/` | mittel | Entscheidung offen |
+| 10 | Etiketten-Designer: Vorlage „Classic“ überdeckt bei langem Namen den Jahrgang | `components/cellar-canvas/` | mittel | mit #14, Schritt 7 |
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
-| 12 | Code-Quality-Scan: 12 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
+| 12 | Code-Quality-Scan: 11 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
 | 13 | 3D-Bühne (`bottle-stage`, `shader-backdrop`, Hero „Flaschenbühne“): offene Punkte nach dem ersten Bau | `components/`, `section-showcase` | niedrig | je Punkt |
 | 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit |
 
@@ -82,9 +82,9 @@ Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-w
 
 Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Exports und Typen nicht entschieden sind. Die CI führt fallow nicht aus. Die beiden Hinweise „boundaries/rule packs not configured“ sind reine Advisories. Entscheidung (User, 2026-11-08): Exports, Typen und `tailwindcss` bleiben vorerst so.
 
-## 10. Etiketten-Designer: Layout bricht bei Tabs und Vorlage „Classic“
+## 10. Etiketten-Designer: Vorlage „Classic“ überdeckt den Jahrgang
 
-**Panel-Tabs.** Die fünf Tabs (Eigenschaften, Weindaten, Hintergrund, Vorlagen, Extras) passen nicht nebeneinander: bei 1440 px angeschnitten, bei 900 px im Vollbild fehlt „Extras“ ganz und die Labels laufen ineinander (`components/cellar-canvas/components/panels/RightPanel.tsx`). Buchart58 nutzt 9-px-Labels, gerechnet für vier Tabs. Optionen: Icons mit Tooltip, scrollbare Tab-Leiste, kürzere Labels oder zwei Zeilen – Gestaltungsentscheidung offen.
+Die Panel-Tabs aus diesem Punkt gibt es seit dem Umbau (#14) nicht mehr, die rechte Seite besteht aus einklappbaren Abschnitten.
 
 **Vorlage „Classic“.** Ein langer Weinname (z. B. „Grüner Veltliner Ried Loibenberg“) bricht in zwei Zeilen um und überdeckt den Jahrgang, weil `templates/templates.ts` die Felder an festen Positionen platziert. Optionen: Jahrgang/Region unter die tatsächliche Höhe des Namens setzen, Schrift für lange Namen verkleinern oder Zeilenlimit – Entscheidung offen. Buchart58 plant ohnehin einen eigenen Konfigurator für Vorlagen.
 
@@ -92,17 +92,15 @@ Das fallow-Gate bleibt rot (Exit 1, 9 Befunde auf Error-Stufe), solange die Expo
 
 Einzeln behebbar, beim Erledigen den jeweiligen Punkt löschen.
 
-- **Fehlerhinweis im Header bei schmalem Fenster abgeschnitten** (`components/header/CanvasHeader.tsx`): Bei 900 px wird der Text zu einer schmalen Spalte gequetscht und oben/unten abgeschnitten. Option: als Toast statt im Header.
 - **Duplizieren erzeugt ein zweites Weinfeld** (`Mod+D`/Kopieren-Button), obwohl das Weindaten-Panel doppelte Felder sonst verhindert. Entscheiden: erlauben, sperren oder die Kopie in normalen Text umwandeln.
 - **Rahmenlinie der Vorlage „Rustikal“ bei „Fit“ kaum anklickbar**: Bei Zoom ≈ 0,48 ist die Linie unter einem Pixel breit, `targetFindTolerance` ist 0. Erhöhen wirkt auf alle Objekte; Alternative: Auswahl über die Ebenenliste genügt.
 - **Ebenennamen von Weinfeldern uneinheitlich**: Aus dem Weindaten-Panel heißt die Ebene wie der Wert („12.5%“, „750“), aus Vorlagen wie die Bedeutung („Alkoholgehalt“, „Füllmenge“).
 - **Vollbild-Ausstieg hängt an `!e.defaultPrevented`** (`CellarCanvas.tsx`, Listener für `Escape`): Jede Host-Seite mit eigenem `Escape`-Hotkey (TanStack-Default `preventDefault: true`) blockiert ihn. Im Showcase behoben (#30), die Komponente bleibt anfällig.
-- **Label-Stil der Zahlenfelder**: Das Winkel-Feld im Hintergrund-Tab zeigt sein Label seit #30 im `NumberInput`-Stil („WINKEL“, 10 px, Großbuchstaben) statt wie „Von“/„Bis“; gleiche Optik bräuchte einen Prop an `components/number-input/number-input.tsx`. Das Deckkraft-Feld im Eigenschaften-Panel (`PropertiesPanel.tsx`) hat noch ein unverknüpftes `<span>` als Label.
 - **Farbfeld weicht ab**: Das Swatch #722f37 im Kontur-Picker kommt als #732f37 an, vermutlich Rundung im gemeinsamen ColorPicker (`components/color-picker/`), nicht untersucht.
 
 ## 12. Befunde aus dem Code-Quality-Scan vom 2026-11-08
 
-Ein Reviewer (Opus, nur lesend) hat den Diff dieser Runde und die 26 Ordner geprüft, die Buchart58 aus der Bibliothek kopiert hat. Jede zitierte Stelle wurde danach von Hand nachgelesen und stimmt. Der schwerste Befund (12.1, `BlurFade` und `RevealImage` bleiben bei Reduced Motion nach SSR unsichtbar) war per Hydrations-Test bestätigt und ist am 2026-11-09 behoben und gelöscht; seine Nummer bleibt frei. `cellar-canvas` ist nur zum Teil gelesen (`CellarCanvas.tsx` bis Zeile 440, `RightPanel.tsx`, `MainToolbar.tsx`, `components/shared/index.ts`). Nicht geprüft sind `cellar-canvas/engine`, `store`, `templates`, `extras`, `wine-fields`, die übrigen Panels, `header`, `canvas`, alle Tests und die rund 70 Komponenten, die Buchart58 nicht kopiert hat. „Buchart58: ja“ heißt, dieselbe Stelle steht in der Kopie dort. Behoben ist außer 12.1 nichts davon.
+Ein Reviewer (Opus, nur lesend) hat den Diff dieser Runde und die 26 Ordner geprüft, die Buchart58 aus der Bibliothek kopiert hat. Jede zitierte Stelle wurde danach von Hand nachgelesen und stimmt. Der schwerste Befund (12.1, `BlurFade` und `RevealImage` bleiben bei Reduced Motion nach SSR unsichtbar) war per Hydrations-Test bestätigt und ist am 2026-11-09 behoben und gelöscht; seine Nummer bleibt frei. `cellar-canvas` ist nur zum Teil gelesen (`CellarCanvas.tsx` bis Zeile 440, `RightPanel.tsx`, `MainToolbar.tsx`, `components/shared/index.ts`). Nicht geprüft sind `cellar-canvas/engine`, `store`, `templates`, `extras`, `wine-fields`, die übrigen Panels, `header`, `canvas`, alle Tests und die rund 70 Komponenten, die Buchart58 nicht kopiert hat. „Buchart58: ja“ heißt, dieselbe Stelle steht in der Kopie dort. Behoben und gelöscht sind 12.1, 12.11 (Panel-Tabs ohne Tab-Semantik, mit dem Umbau #14 durch Arks `Accordion` ersetzt) und ein Unterpunkt von 12.13; ihre Nummern bleiben frei.
 
 **12.2 ShortcutOverview rendert plattformabhängigen Text (niedrig, latent).** `components/hotkeys/shortcut-overview.tsx:92`. `formatForDisplay(OVERVIEW_HOTKEY)` liest `navigator`, und der Dialog wird auch geschlossen gerendert. Ein Server liefert „Ctrl+/“ (ohne `navigator` fällt die Plattform auf Linux zurück), ein Mac-Client „⌘ /“: bei SSR ein Text-Mismatch. Heute nur in der Vite-SPA eingebunden (`components-showcase/src/layout.tsx`), deshalb latent. Entstanden mit dem Fix für #9. Fix: den Hinweis erst rendern, wenn der Dialog offen ist, oder die Plattform per `useSyncExternalStore` mit Server-Snapshot bestimmen. Buchart58: nein, die Datei ist dort nicht kopiert.
 
@@ -122,18 +120,15 @@ Ein Reviewer (Opus, nur lesend) hat den Diff dieser Runde und die 26 Ordner gepr
 
 **12.10 LayerPanel: motion ohne `useReducedMotion`, Umschalter ohne Zustand (niedrig).** `components/layer-panel/layer-panel.tsx:263–270,449–454`. Höhenanimation und Spring-Reorder laufen bei Reduced Motion weiter (kein `useReducedMotion`, kein `MotionConfig`). „Sichtbarkeit umschalten“ und „Sperre umschalten“ haben kein `aria-pressed`. Buchart58: ja.
 
-**12.11 Etiketten-Designer: Panel-Tabs ohne Tab-Semantik (niedrig).** `components/cellar-canvas/components/panels/RightPanel.tsx:65–80`. Der aktive Tab ist nur an Farbe und Border erkennbar: kein `role="tablist"`, `"tab"` oder `"tabpanel"`, kein `aria-selected`, keine Pfeiltasten (#10 betrifft nur das Layout). Fix: Ark `Tabs`. Buchart58: ja.
-
 **12.12 AmbientImage: `animated` ist wirkungslos (niedrig).** `components/ambient-image/ambient-image.tsx:149–166`. Die Glow-Layer werden erst gemountet, wenn `showGlow` true ist; der Zweig mit `opacity: 0` wird nie erreicht, und die Transition hat beim Mounten keinen Startwert. Dazu vier fast identische Style-Blöcke. Buchart58: ja (`pages/sortiment/components/CaveNocturne.tsx:547`).
 
 **12.13 Regelverstöße und toter Code (niedrig).**
 
-- `components/cellar-canvas/components/shared/index.ts`: Index-Reexport im Komponentenordner (§3), von vier Dateien importiert.
 - `components/color-picker/messages.ts:11` (`presetsLabel`): Key, der nirgends verwendet wird (§6).
 - `components/product-tag/product-tag.tsx:124`: `injectCssOnce()` greift im Render in den DOM ein, §4c verlangt `useEffect` und `STYLE_ID`.
 - `components/hotkeys/hotkeys-provider.tsx:28–29`: `React.useMemo` per Namespace-Zugriff, der Compiler memoisiert selbst (§9).
 - `components/image-cropper-modal/image-cropper-modal.tsx:129–136`: `animate-in` und `zoom-in-95` sind in `components-showcase/src/styles.css` und `package.json` nicht definiert, der Dialog öffnet vermutlich ohne Animation.
-- Buchart58: ja für diese fünf Punkte.
+- Buchart58: ja für diese vier Punkte. Dort steht außerdem noch der Index-Reexport `cellar-canvas/components/shared/index.ts` (§3), der hier seit dem Umbau (#14) entfernt ist.
 - Zusätzlich nachgelesen, nicht gegen Buchart58 geprüft: `components/add-to-cart-button/add-to-cart-button.tsx:160–161` (beide Zweige des Ternärs gleich, `3.4s` fest verdrahtet statt der Prop `duration`), `components/language-switcher/language-switcher.tsx:5,189` (Kopfkommentar nennt `design-engine-locale` statt `atelier-locale`, `role="listbox"` ohne Escape und Pfeiltasten), `components/alignment-bar/alignment-bar.tsx:81` (`disabled` setzt nur `pointer-events-none`, die Tastatur löst weiter `onAlign` aus), `components/color-picker/color-picker.tsx:159,436` (Eingabefelder ohne zugeordnetes Label) und `:281,:544` (englische ARIA-Texte).
 - Hex-Fallbacks wie `var(--accent, #6366f1)` stehen in `tooltip`, `rating`, `add-to-cart-button`, `shiny-text` und `backlight` (formaler Verstoß gegen §2, nicht einzeln aufgeführt).
 
@@ -183,9 +178,8 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 **Befunde aus dem Browser-Test vom 10.11.** (Chromium, 1440 × 900 und 1024 × 768, `/designer`). Sie werden mit dem Umbau behoben und dann hier gelöscht, der Fortschritt steht in `components/cellar-canvas/STATUS.md` #32:
 
-- **Layout:** Tab „Extras“ ist bei 1440 px nicht erreichbar (#10). Die Kontext-Leiste läuft bei Textauswahl über, bei 1024 px liegen Zoom und „Anpassen“ außerhalb des Fensters. Die Werkzeugleiste endet auf halber Höhe, „Ebenen“ steht doppelt.
 - **Weindaten:** Felder landen gestapelt an derselben Stelle, als Rohwert („750“, „12.5%“). Der Validator meldet danach „EU-konform“.
 - **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab. Das Bild landet als 40-mm-Kasten in der Ecke, Einrasten gibt es nur zur Etikettmitte.
 - **Einpassen:** Der 40-mm-Arbeitsrand zählt mit, das Etikett belegt ca. 300 von 1030 px Breite.
 - **Texte:** „Bleed“, „Snapping“, „Rot“, „LS/LH/SW/OP“, „Cmd+…“ auf jeder Plattform. Validator nur deutsch, Ebenennamen nur englisch, Text-Ebenen heißen dauerhaft „Neuer Text“.
-- **Handy (390 px):** Die Arbeitsfläche ist nicht sichtbar.
+- **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Wird in Schritt 9 mit der Showcase-Seite behoben.

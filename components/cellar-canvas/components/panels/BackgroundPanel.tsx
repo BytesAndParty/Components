@@ -55,9 +55,7 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
   ]
 
   return (
-    <section className="space-y-3">
-      <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.bgHeading}</h4>
-
+    <div className="space-y-3">
       <SegmentGroup.Root
         value={mode}
         onValueChange={(d) => switchMode(d.value)}
@@ -68,7 +66,7 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
           <SegmentGroup.Item
             key={value}
             value={value}
-            className="text-muted-foreground data-[state=checked]:bg-muted data-[state=checked]:text-foreground has-[input:focus-visible]:ring-accent/60 flex-1 cursor-pointer rounded-md px-2 py-1.5 text-center text-xs transition-colors has-[input:focus-visible]:ring-2"
+            className="text-muted-foreground data-[state=checked]:bg-muted data-[state=checked]:text-foreground has-[input:focus-visible]:ring-accent/60 flex-1 cursor-pointer rounded-md px-2 py-1.5 text-center text-xs transition-colors has-[input:focus-visible]:ring-2 pointer-coarse:py-3"
           >
             <SegmentGroup.ItemText>{label}</SegmentGroup.ItemText>
             <SegmentGroup.ItemControl />
@@ -104,13 +102,13 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-accent/60 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-accent/60 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs transition-[color,background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98] pointer-coarse:min-h-11"
           >
             <ImageUp size={14} aria-hidden />
             {m.bgImageReplace}
           </button>
         </div>
       )}
-    </section>
+    </div>
   )
 }

@@ -1,24 +1,38 @@
-import { useRef, type ChangeEvent } from 'react'
+import { useRef, type ChangeEvent, type RefObject } from 'react'
+import { AlignCenterHorizontal, AlignCenterVertical, Copy, Crop, ImageUp, Trash2 } from 'lucide-react'
 import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { TextToolOptions, type TextFormatValues } from '../../../text-tool-options/text-tool-options'
 import { AlignmentBar } from '../../../alignment-bar/alignment-bar'
-import { toolbarArrowKeys } from './toolbar-keys'
 import { StackOrderControls } from '../../../stack-order-controls/stack-order-controls'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
-import { NumberInput } from '../shared'
-import { Crop, ImageUp, Trash2 } from 'lucide-react'
+import { NumberInput } from '../../../number-input/number-input'
+import { cn } from '../../../lib/utils'
+import { toolbarArrowKeys } from './toolbar-keys'
+import { barButtonCls } from '../shared/button-styles'
+import { useShortcutTitle } from '../shared/use-shortcut-title'
 import { prepareImageSource } from '../../engine/image-source'
 import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { FabricObjectProperties } from '../../store/types'
 
 export interface ContextToolbarProps {
-  bridge:      React.MutableRefObject<FabricBridge | null>
+  bridge:      RefObject<FabricBridge | null>
   activeProps: FabricObjectProperties | null
 }
 
+const groupCls = 'bg-card border-border flex h-9 shrink-0 items-center rounded-lg border'
+const textButtonCls = cn(barButtonCls, 'border-border border px-3')
+
+/**
+ * Bar above the canvas for the selected element: what can be changed about
+ * it (text format, shape colours, crop / replace), where it sits (centre on
+ * the label, stacking, alignment of a multi-selection) and duplicate /
+ * delete. One row; it scrolls sideways when the editor is narrower than its
+ * content, so the canvas below never changes size with the selection.
+ */
 export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
   const m = useCellarCanvasMessages()
+  const shortcutTitle = useShortcutTitle()
   const selectedIds = useDesignerStore(s => s.selectedIds)
   const setCropper = useDesignerStore(s => s.setCropper)
   const replaceInputRef = useRef<HTMLInputElement>(null)
@@ -38,40 +52,42 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
 
   if (!activeProps) {
     return (
-      <div className="text-muted-foreground flex h-full items-center px-4 text-xs italic">
+      <p className="text-muted-foreground flex h-full min-w-0 items-center truncate px-4 text-xs">
         {m.contextEmpty}
-      </div>
+      </p>
     )
   }
 
-  const isText      = activeProps.type === 'text' || activeProps.type === 'wine-field'
-  const isShape     = activeProps.type === 'rect' || activeProps.type === 'circle' || activeProps.type === 'line' || activeProps.type === 'path'
-  const isImage     = activeProps.type === 'image'
-  const isMulti     = selectedIds.length >= 2
+  const isText  = activeProps.type === 'text' || activeProps.type === 'wine-field'
+  const isShape = activeProps.type === 'rect' || activeProps.type === 'circle' || activeProps.type === 'line' || activeProps.type === 'path'
+  const isImage = activeProps.type === 'image'
+  const isMulti = selectedIds.length >= 2
 
-  const handleTextChange = (newFmt: Partial<TextFormatValues>) => {
+  const update = (props: Partial<FabricObjectProperties>) => bridge.current?.updateActiveObject(props)
+
+  const handleTextChange = (fmt: Partial<TextFormatValues>) => {
     const fabricProps: Partial<FabricObjectProperties> = {}
-    if (newFmt.bold        !== undefined) fabricProps.fontWeight  = newFmt.bold ? 'bold' : 'normal'
-    if (newFmt.italic      !== undefined) fabricProps.fontStyle   = newFmt.italic ? 'italic' : 'normal'
-    if (newFmt.color       !== undefined) fabricProps.fill        = newFmt.color
-    if (newFmt.fontFamily  !== undefined) fabricProps.fontFamily  = newFmt.fontFamily
-    if (newFmt.fontSize    !== undefined) fabricProps.fontSize    = newFmt.fontSize
-    if (newFmt.underline   !== undefined) fabricProps.underline   = newFmt.underline
-    if (newFmt.textAlign   !== undefined) fabricProps.textAlign   = newFmt.textAlign
-    if (newFmt.charSpacing !== undefined) fabricProps.charSpacing = newFmt.charSpacing
-    if (newFmt.lineHeight  !== undefined) fabricProps.lineHeight  = newFmt.lineHeight
-    bridge.current?.updateActiveObject(fabricProps)
+    if (fmt.bold        !== undefined) fabricProps.fontWeight  = fmt.bold ? 'bold' : 'normal'
+    if (fmt.italic      !== undefined) fabricProps.fontStyle   = fmt.italic ? 'italic' : 'normal'
+    if (fmt.color       !== undefined) fabricProps.fill        = fmt.color
+    if (fmt.fontFamily  !== undefined) fabricProps.fontFamily  = fmt.fontFamily
+    if (fmt.fontSize    !== undefined) fabricProps.fontSize    = fmt.fontSize
+    if (fmt.textAlign   !== undefined) fabricProps.textAlign   = fmt.textAlign
+    update(fabricProps)
   }
+
+  const duplicateTitle = shortcutTitle(m.hotkeyDuplicateLabel, 'Mod+D')
+  const deleteTitle = shortcutTitle(m.hotkeyDeleteLabel, 'Delete')
 
   return (
     <div
       role="toolbar"
       aria-label={m.contextToolbarLabel}
       onKeyDown={toolbarArrowKeys('horizontal')}
-      className="flex h-full w-full items-center gap-4 px-4"
+      className="flex h-full min-w-0 items-center gap-2 overflow-x-auto px-3 [scrollbar-width:none]"
     >
       {isImage && (
-        <div className="flex items-center gap-2">
+        <>
           <input
             ref={replaceInputRef}
             type="file"
@@ -82,64 +98,47 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
             tabIndex={-1}
           />
           <button
+            type="button"
             onClick={() => {
               const src = bridge.current?.getSelectedImageSrc()
-              if (src) {
-                setCropper({ open: true, src, targetId: selectedIds[0] })
-              }
+              if (src) setCropper({ open: true, src, targetId: selectedIds[0] })
             }}
-            className="bg-card border-border hover:bg-muted flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
+            className={textButtonCls}
           >
-            <Crop size={14} />
+            <Crop size={14} aria-hidden />
             {m.toolCrop}
           </button>
-          <button
-            onClick={() => replaceInputRef.current?.click()}
-            className="bg-card border-border hover:bg-muted flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
-          >
-            <ImageUp size={14} />
+          <button type="button" onClick={() => replaceInputRef.current?.click()} className={textButtonCls}>
+            <ImageUp size={14} aria-hidden />
             {m.toolReplace}
           </button>
-          <div className="bg-border mx-2 h-5 w-px" />
-          <div className="bg-card border-border flex h-9 items-center rounded-lg border px-2">
-             <NumberInput
-                label="OP"
-                value={(activeProps.opacity ?? 1) * 100}
-                onChange={(v) => bridge.current?.updateActiveObject({ opacity: v / 100 })}
-                min={0} max={100} step={5} decimals={0}
-                unit="%"
-              />
-          </div>
-        </div>
+        </>
       )}
 
       {isText && (
-        <div className="flex items-center gap-4">
-          <TextToolOptions
-            value={{
-              fontFamily:  activeProps.fontFamily,
-              fontSize:    activeProps.fontSize,
-              bold:        activeProps.fontWeight === 'bold',
-              italic:      activeProps.fontStyle === 'italic',
-              underline:   activeProps.underline,
-              textAlign:   activeProps.textAlign,
-              charSpacing: activeProps.charSpacing,
-              lineHeight:  activeProps.lineHeight,
-              color:       activeProps.fill,
-            }}
-            onChange={handleTextChange}
-          />
-        </div>
+        <TextToolOptions
+          basic
+          className="shrink-0"
+          value={{
+            fontFamily: activeProps.fontFamily,
+            fontSize:   activeProps.fontSize,
+            bold:       activeProps.fontWeight === 'bold',
+            italic:     activeProps.fontStyle === 'italic',
+            textAlign:  activeProps.textAlign,
+            color:      activeProps.fill,
+          }}
+          onChange={handleTextChange}
+        />
       )}
 
       {isShape && (
-        <div className="bg-card border-border flex h-9 items-center rounded-lg border">
+        <div className={groupCls}>
           {activeProps.type !== 'line' && (
             <>
               <ColorSwatch
                 value={activeProps.fill ?? '#000000'}
-                onChange={(v) => bridge.current?.updateActiveObject({ fill: v })}
-                label="■"
+                onChange={(v) => update({ fill: v })}
+                label={m.contextFill}
                 title={m.contextFill}
                 showAlpha
               />
@@ -147,18 +146,18 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
             </>
           )}
           <ColorSwatch
-            value={(activeProps.stroke as string) ?? '#000000'}
-            onChange={(v) => bridge.current?.updateActiveObject({ stroke: v })}
-            label="◯"
+            value={activeProps.stroke ?? '#000000'}
+            onChange={(v) => update({ stroke: v })}
+            label={m.contextStroke}
             title={m.contextStroke}
             showAlpha
           />
           <div className="bg-border h-5 w-px shrink-0" />
           <div className="flex h-full items-center px-2">
             <NumberInput
-              label="SW"
+              label={m.contextStrokeWidth}
               value={activeProps.strokeWidth ?? 0}
-              onChange={(v) => bridge.current?.updateActiveObject({ strokeWidth: v })}
+              onChange={(v) => update({ strokeWidth: v })}
               min={0} max={20} step={0.5} decimals={1}
               unit="px"
             />
@@ -166,11 +165,11 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
           {activeProps.type === 'rect' && (
             <>
               <div className="bg-border h-5 w-px shrink-0" />
-              <div className="flex h-full items-center px-2" title={m.contextCornerRadius}>
+              <div className="flex h-full items-center px-2">
                 <NumberInput
-                  label="R"
+                  label={m.contextCornerRadius}
                   value={activeProps.cornerRadius ?? 0}
-                  onChange={(v) => bridge.current?.updateActiveObject({ cornerRadius: v })}
+                  onChange={(v) => update({ cornerRadius: v })}
                   min={0} max={50} step={0.5} decimals={1}
                   unit="mm"
                 />
@@ -180,27 +179,63 @@ export function ContextToolbar({ bridge, activeProps }: ContextToolbarProps) {
         </div>
       )}
 
-      <StackOrderControls
-        onBringToFront={() => bridge.current?.bringToFront()}
-        onBringForward={() => bridge.current?.bringForward()}
-        onSendBackward={() => bridge.current?.sendBackward()}
-        onSendToBack={()   => bridge.current?.sendToBack()}
-      />
+      <div className={groupCls}>
+        <button
+          type="button"
+          onClick={() => bridge.current?.centerOnLabel('h')}
+          title={m.contextCenterH}
+          aria-label={m.contextCenterH}
+          className={cn(iconButtonCls, 'border-border border-r')}
+        >
+          <AlignCenterVertical size={14} aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => bridge.current?.centerOnLabel('v')}
+          title={m.contextCenterV}
+          aria-label={m.contextCenterV}
+          className={iconButtonCls}
+        >
+          <AlignCenterHorizontal size={14} aria-hidden />
+        </button>
+      </div>
 
-      {isMulti && (
-        <AlignmentBar onAlign={(action) => bridge.current?.alignSelected(action)} />
+      {isMulti ? (
+        <AlignmentBar className="shrink-0" onAlign={(action) => bridge.current?.alignSelected(action)} />
+      ) : (
+        // Stacking moves one object; a multi-selection has no place in the stack.
+        <StackOrderControls
+          className="shrink-0"
+          onBringToFront={() => bridge.current?.bringToFront()}
+          onBringForward={() => bridge.current?.bringForward()}
+          onSendBackward={() => bridge.current?.sendBackward()}
+          onSendToBack={()   => bridge.current?.sendToBack()}
+        />
       )}
 
       <div className="flex-1" />
 
       <button
-        onClick={() => bridge.current?.deleteSelected()}
-        className="hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md p-2 transition-colors"
-        title={m.toolDelete}
-        aria-label={m.toolDelete}
+        type="button"
+        onClick={() => void bridge.current?.duplicateSelected()}
+        title={duplicateTitle}
+        aria-label={duplicateTitle}
+        className={barButtonCls}
       >
-        <Trash2 size={16} />
+        <Copy size={16} aria-hidden />
+      </button>
+      <button
+        type="button"
+        onClick={() => bridge.current?.deleteSelected()}
+        title={deleteTitle}
+        aria-label={deleteTitle}
+        className={cn(barButtonCls, 'hover:bg-destructive/10 hover:text-destructive')}
+      >
+        <Trash2 size={16} aria-hidden />
       </button>
     </div>
   )
 }
+
+const iconButtonCls =
+  'text-muted-foreground hover:bg-muted/50 hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground flex h-full w-8 items-center justify-center transition-colors outline-none'

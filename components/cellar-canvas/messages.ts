@@ -1,27 +1,24 @@
 import type { ComponentMessages } from '../i18n'
 
 /**
- * Surface of user-facing strings used across CellarCanvas and its
- * subcomponents. Symbolic single-letter labels (X / Y / W / H / SW) stay
- * hardcoded in the components — they're not language-specific.
+ * User-facing strings of CellarCanvas and its subcomponents.
  *
- * Interpolation: `labelDimensions` and `layersCount` use `{w}`/`{h}` and
- * `{count}` placeholders, replaced via the `interpolate` helper from
- * `../i18n`.
+ * Placeholders are filled with `interpolate` from `../i18n`:
+ * - `{label}` / `{keys}` in `shortcutHint`: a button name plus its shortcut as
+ *   the current platform writes it (`formatForDisplay` from
+ *   `@tanstack/react-hotkeys`: "⌘ Z" on a Mac, "Ctrl+Z" elsewhere).
+ * - `{w}` / `{h}` in `labelDimensions`, `{percent}` in `zoomLevel`,
+ *   `{name}` in `toolInsertTitle`.
+ *
+ * The `hotkey…Label` strings double as the names of the matching buttons
+ * (undo, redo, duplicate, delete, zoom in / out).
  */
 export type CellarCanvasMessages = {
   // Header
-  brand:                  string
   headerToolbarLabel:     string
-  mainToolbarLabel:       string
-  contextToolbarLabel:    string
-  canvasLabel:            string
-  labelDimensions:        string // "{w}x{h}mm"
-  undoTitle:              string
-  redoTitle:              string
-  fitToScreen:            string
-  previewEnter:           string
-  previewExit:            string
+  labelDimensions:        string
+  shortcutHint:           string
+  panelToggle:            string
   fullscreenEnter:        string
   fullscreenExit:         string
 
@@ -32,61 +29,84 @@ export type CellarCanvasMessages = {
   saveRetry:              string
   saveTitleDirty:         string
   saveTitleClean:         string
+
+  // Export
+  exportPngLabel:         string
+  exportPngTitle:         string
+  exportPdfLabel:         string
+  exportPdfTitle:         string
+  exportFilename:         string
+
+  // Notices above the canvas
   draftSaveFailed:        string
   imageInsertFailed:      string
   qrInsertFailed:         string
+  exportFailed:           string
   dismissHint:            string
 
-  // Main toolbar tools (label + shortcut hint)
+  // Insert bar (left)
+  mainToolbarLabel:       string
+  toolImage:              string
+  toolImageTitle:         string
   toolText:               string
   /** Content of a freshly inserted text box. */
   defaultText:            string
-  toolImage:              string
   toolRect:               string
   toolCircle:             string
   toolLine:               string
-  toolDelete:             string
-  toolDuplicate:          string
+  toolInsertTitle:        string
+
+  // Bar for the selected element (top)
+  contextToolbarLabel:    string
+  contextEmpty:           string
   toolCrop:               string
   toolReplace:            string
-
-  // Context toolbar
-  contextEmpty:           string
   contextFill:            string
   contextStroke:          string
+  contextStrokeWidth:     string
   contextCornerRadius:    string
+  contextCenterH:         string
+  contextCenterV:         string
 
-  // Right panel — tabs
-  tabProperties:          string
-  tabWineData:            string
-  tabBackground:          string
-  tabTemplates:           string
+  // Canvas
+  canvasLabel:            string
+  zoomFit:                string
+  zoomFitTitle:           string
+  zoomLevel:              string
 
-  // Templates panel
+  // Right panel
+  panelLabel:             string
+  sectionWineData:        string
+  sectionBackground:      string
+  sectionTemplates:       string
+  sectionLayers:          string
+  sectionGeometry:        string
+
+  // Templates
   templateClassicName:    string
   templateModernName:     string
   templateMinimalName:    string
   templateRusticName:     string
   templateBoldName:       string
   templatesHint:          string
-  templatesConfirmReplace: string
+  templatesConfirm:       string
 
-  // Properties panel
-  propsGeometry:          string
-  propsAppearance:        string
+  // Position & size
+  propsWidth:             string
+  propsHeight:            string
+  propsRotation:          string
   propsOpacity:           string
   propsEmpty:             string
 
-  // Background panel
-  bgHeading:              string
-  bgFill:                 string
-  bgFillTitle:            string
+  // Background
   bgModeLabel:            string
   bgModeColor:            string
   bgModeImage:            string
+  bgFill:                 string
+  bgFillTitle:            string
   bgImageReplace:         string
 
-  // Wine fields panel
+  // Wine data
   wineFieldName:          string
   wineFieldVintage:       string
   wineFieldAlcohol:       string
@@ -99,10 +119,6 @@ export type CellarCanvasMessages = {
   wineFieldQrTitle:       string
   wineFieldQrHint:        string
   wineFieldQrMissingUrl:  string
-
-  // Layers section
-  layersHeading:          string
-  layersCount:            string // "{count} total"
 
   // Hotkeys (registered with the global ShortcutOverview)
   hotkeyUndoLabel:        string
@@ -123,30 +139,14 @@ export type CellarCanvasMessages = {
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
   hotkeyZoomOutDescription: string
-  zoomInTitle:            string
-  zoomOutTitle:           string
-
-  // Export
-  exportLabel:            string
-  exportTitle:            string
-  exportPngLabel:         string
-  exportPngTitle:         string
-  exportFilename:         string
 }
 
 export const MESSAGES = {
   de: {
-    brand:                   'Cellar Canvas',
     headerToolbarLabel:      'Editor-Aktionen',
-    mainToolbarLabel:        'Werkzeuge',
-    contextToolbarLabel:     'Ausgewähltes Objekt',
-    canvasLabel:             'Etikett-Arbeitsfläche. Die Objekte darauf stehen in der Ebenenliste.',
-    labelDimensions:         'Standard-Etikett ({w}x{h}mm)',
-    undoTitle:               'Rückgängig (Cmd+Z)',
-    redoTitle:               'Wiederholen (Cmd+Shift+Z)',
-    fitToScreen:             'An Fenster anpassen',
-    previewEnter:            'Vorschau (Bleed ausblenden)',
-    previewExit:             'Vorschau beenden (Bleed anzeigen)',
+    labelDimensions:         'Etikett {w} × {h} mm',
+    shortcutHint:            '{label} ({keys})',
+    panelToggle:             'Einstellungen',
     fullscreenEnter:         'Vollbild',
     fullscreenExit:          'Vollbild beenden',
 
@@ -156,52 +156,72 @@ export const MESSAGES = {
     saveRetry:               'Erneut versuchen',
     saveTitleDirty:          'Änderungen speichern',
     saveTitleClean:          'Alle Änderungen gespeichert',
-    draftSaveFailed:         'Entwurf zu groß für den lokalen Speicher — Änderungen gehen beim Neuladen verloren.',
-    imageInsertFailed:       'Bild konnte nicht geladen werden. Die Datei ist beschädigt oder das Format wird nicht unterstützt.',
-    qrInsertFailed:          'QR-Code konnte nicht erzeugt werden. Bitte die Nährwert-URL prüfen.',
+
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Als Bild (PNG) in Druckauflösung speichern',
+    exportPdfLabel:          'PDF',
+    exportPdfTitle:          'Als PDF für den Druck speichern',
+    exportFilename:          'weinetikett',
+
+    draftSaveFailed:         'Der Entwurf ist zu groß für den Zwischenspeicher des Browsers. Beim Neuladen gehen Änderungen verloren.',
+    imageInsertFailed:       'Das Bild konnte nicht geladen werden. Die Datei ist beschädigt oder das Format wird nicht unterstützt.',
+    qrInsertFailed:          'Der QR-Code konnte nicht erzeugt werden. Bitte die Adresse der Nährwertangaben prüfen.',
+    exportFailed:            'Der Export ist fehlgeschlagen. Bitte noch einmal versuchen.',
     dismissHint:             'Hinweis schließen',
 
+    mainToolbarLabel:        'Einfügen',
+    toolImage:               'Bild',
+    toolImageTitle:          'Bild oder fertiges Etikett hochladen',
     toolText:                'Text',
     defaultText:             'Neuer Text',
-    toolImage:               'Bild',
     toolRect:                'Rechteck',
     toolCircle:              'Kreis',
     toolLine:                'Linie',
-    toolDelete:              'Auswahl löschen (Entf)',
-    toolDuplicate:           'Auswahl duplizieren (Cmd+D)',
+    toolInsertTitle:         '{name} einfügen',
+
+    contextToolbarLabel:     'Ausgewähltes Element',
+    contextEmpty:            'Klicke ein Element auf dem Etikett an, um es zu bearbeiten.',
     toolCrop:                'Zuschneiden',
     toolReplace:             'Ersetzen',
-
-    contextEmpty:            'Wähle ein Objekt aus, um Optionen zu sehen',
     contextFill:             'Füllung',
-    contextStroke:           'Kontur',
-    contextCornerRadius:     'Eckenradius',
+    contextStroke:           'Rand',
+    contextStrokeWidth:      'Stärke',
+    contextCornerRadius:     'Ecken',
+    contextCenterH:          'Waagrecht auf dem Etikett zentrieren',
+    contextCenterV:          'Senkrecht auf dem Etikett zentrieren',
 
-    tabProperties:           'Eigenschaften',
-    tabWineData:             'Weindaten',
-    tabBackground:           'Hintergrund',
-    tabTemplates:            'Vorlagen',
+    canvasLabel:             'Etikett-Arbeitsfläche. Die Elemente darauf stehen in der Ebenenliste.',
+    zoomFit:                 'Einpassen',
+    zoomFitTitle:            'Ganzes Etikett zeigen',
+    zoomLevel:               'Zoom {percent} %',
 
-    templateClassicName:    'Klassisch',
-    templateModernName:     'Modern',
-    templateMinimalName:    'Minimal',
-    templateRusticName:     'Rustikal',
-    templateBoldName:       'Kräftig',
-    templatesHint:          'Ersetzt den aktuellen Inhalt der Leinwand mit einem vorgefertigten Layout — Weindaten werden automatisch eingesetzt.',
-    templatesConfirmReplace: 'Aktuellen Entwurf durch die Vorlage ersetzen? Diese Aktion lässt sich mit Cmd+Z rückgängig machen.',
+    panelLabel:              'Einstellungen des Etiketts',
+    sectionWineData:         'Weindaten',
+    sectionBackground:       'Hintergrund',
+    sectionTemplates:        'Vorlagen',
+    sectionLayers:           'Ebenen',
+    sectionGeometry:         'Position & Größe',
 
-    propsGeometry:           'Geometrie',
-    propsAppearance:         'Darstellung',
+    templateClassicName:     'Klassisch',
+    templateModernName:      'Modern',
+    templateMinimalName:     'Minimal',
+    templateRusticName:      'Rustikal',
+    templateBoldName:        'Kräftig',
+    templatesHint:           'Eine Vorlage ersetzt den Inhalt des Etiketts. Die Weindaten werden eingesetzt.',
+    templatesConfirm:        'Inhalt ersetzen?',
+
+    propsWidth:              'B',
+    propsHeight:             'H',
+    propsRotation:           'Drehung',
     propsOpacity:            'Deckkraft',
-    propsEmpty:              'Wähle ein Objekt auf der Leinwand aus, um Eigenschaften zu bearbeiten.',
+    propsEmpty:              'Wähle ein Element aus, um Position und Größe zu sehen.',
 
-    bgHeading:               'Hintergrund',
-    bgFill:                  'Füllung',
-    bgFillTitle:             'Hintergrundfarbe',
     bgModeLabel:             'Art des Hintergrunds',
     bgModeColor:             'Farbe',
     bgModeImage:             'Bild',
-    bgImageReplace:          'Bild ersetzen',
+    bgFill:                  'Papierfarbe',
+    bgFillTitle:             'Papierfarbe wählen',
+    bgImageReplace:          'Anderes Bild wählen',
 
     wineFieldName:           'Weinname',
     wineFieldVintage:        'Jahrgang',
@@ -216,50 +236,32 @@ export const MESSAGES = {
     wineFieldQrHint:         'EU-Pflichtangabe',
     wineFieldQrMissingUrl:   'Keine Nährwert-URL gesetzt',
 
-    layersHeading:           'Ebenen',
-    layersCount:             '{count} gesamt',
-
     hotkeyUndoLabel:         'Rückgängig',
     hotkeyUndoDescription:   'Letzte Änderung rückgängig machen',
     hotkeyRedoLabel:         'Wiederholen',
     hotkeyRedoDescription:   'Rückgängig gemachte Änderung wiederherstellen',
     hotkeyDeleteLabel:       'Löschen',
-    hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
+    hotkeyDeleteDescription: 'Ausgewähltes Element entfernen',
     hotkeySelectAllLabel:    'Alles auswählen',
-    hotkeySelectAllDescription: 'Alle sichtbaren, nicht gesperrten Objekte auswählen',
+    hotkeySelectAllDescription: 'Alle sichtbaren, nicht gesperrten Elemente auswählen',
     hotkeyDeselectLabel:     'Auswahl aufheben',
     hotkeyDeselectDescription: 'Auswahl aufheben, ohne Auswahl den Vollbildmodus verlassen',
     hotkeyDuplicateLabel:    'Duplizieren',
-    hotkeyDuplicateDescription: 'Ausgewählte Objekte versetzt kopieren',
+    hotkeyDuplicateDescription: 'Ausgewählte Elemente versetzt kopieren',
     hotkeyPanLabel:          'Ansicht verschieben (halten)',
-    hotkeyPanDescription:    'Leertaste gedrückt halten und ziehen, beim Loslassen kehrt das vorige Werkzeug zurück',
-    hotkeyZoomInLabel:       'Hineinzoomen',
-    hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
-    hotkeyZoomOutLabel:      'Herauszoomen',
-    hotkeyZoomOutDescription: 'Ansicht verkleinern (Canvas-Mitte)',
-    zoomInTitle:             'Hineinzoomen (=)',
-    zoomOutTitle:            'Herauszoomen (−)',
-
-    exportLabel:             'PDF',
-    exportTitle:             'Als PDF exportieren (Trim-Größe)',
-    exportPngLabel:          'PNG',
-    exportPngTitle:          'Als PNG exportieren (Druckauflösung)',
-    exportFilename:          'weinetikett',
+    hotkeyPanDescription:    'Leertaste gedrückt halten und ziehen',
+    hotkeyZoomInLabel:       'Vergrößern',
+    hotkeyZoomInDescription: 'Ansicht vergrößern',
+    hotkeyZoomOutLabel:      'Verkleinern',
+    hotkeyZoomOutDescription: 'Ansicht verkleinern',
   },
   en: {
-    brand:                   'Cellar Canvas',
     headerToolbarLabel:      'Editor actions',
-    mainToolbarLabel:        'Tools',
-    contextToolbarLabel:     'Selected object',
-    canvasLabel:             'Label canvas. The objects on it are listed in the layer panel.',
-    labelDimensions:         'Standard Label ({w}x{h}mm)',
-    undoTitle:               'Undo (Cmd+Z)',
-    redoTitle:               'Redo (Cmd+Shift+Z)',
-    fitToScreen:             'Fit to Screen',
-    previewEnter:            'Preview (hide bleed area)',
-    previewExit:             'Exit Preview (show bleed)',
-    fullscreenEnter:         'Enter Fullscreen',
-    fullscreenExit:          'Exit Fullscreen',
+    labelDimensions:         'Label {w} × {h} mm',
+    shortcutHint:            '{label} ({keys})',
+    panelToggle:             'Settings',
+    fullscreenEnter:         'Fullscreen',
+    fullscreenExit:          'Exit fullscreen',
 
     saveIdle:                'Save',
     saveSaved:               'Saved',
@@ -267,52 +269,72 @@ export const MESSAGES = {
     saveRetry:               'Retry',
     saveTitleDirty:          'Save changes',
     saveTitleClean:          'All changes saved',
-    draftSaveFailed:         'Draft too large for local storage — changes will be lost on reload.',
-    imageInsertFailed:       'Could not load the image. The file is damaged or the format is not supported.',
-    qrInsertFailed:          'Could not generate the QR code. Please check the nutrition info URL.',
+
+    exportPngLabel:          'PNG',
+    exportPngTitle:          'Save as an image (PNG) in print resolution',
+    exportPdfLabel:          'PDF',
+    exportPdfTitle:          'Save as a PDF for printing',
+    exportFilename:          'wine-label',
+
+    draftSaveFailed:         'The draft is too large for the browser storage. Changes will be lost on reload.',
+    imageInsertFailed:       'The image could not be loaded. The file is damaged or the format is not supported.',
+    qrInsertFailed:          'The QR code could not be generated. Please check the nutrition info address.',
+    exportFailed:            'The export failed. Please try again.',
     dismissHint:             'Dismiss',
 
-    toolText:                'Text',
-    defaultText:             'New Text',
+    mainToolbarLabel:        'Insert',
     toolImage:               'Image',
-    toolRect:                'Rect',
+    toolImageTitle:          'Upload an image or your finished label',
+    toolText:                'Text',
+    defaultText:             'New text',
+    toolRect:                'Rectangle',
     toolCircle:              'Circle',
     toolLine:                'Line',
-    toolDelete:              'Delete Selected (Del)',
-    toolDuplicate:           'Duplicate Selected (Cmd+D)',
+    toolInsertTitle:         'Insert {name}',
+
+    contextToolbarLabel:     'Selected element',
+    contextEmpty:            'Click an element on the label to edit it.',
     toolCrop:                'Crop',
     toolReplace:             'Replace',
-
-    contextEmpty:            'Select an object to see options',
     contextFill:             'Fill',
-    contextStroke:           'Stroke',
-    contextCornerRadius:     'Corner radius',
+    contextStroke:           'Border',
+    contextStrokeWidth:      'Width',
+    contextCornerRadius:     'Corners',
+    contextCenterH:          'Centre horizontally on the label',
+    contextCenterV:          'Centre vertically on the label',
 
-    tabProperties:           'Properties',
-    tabWineData:             'Wine Data',
-    tabBackground:           'Background',
-    tabTemplates:            'Templates',
+    canvasLabel:             'Label canvas. The elements on it are listed in the layer list.',
+    zoomFit:                 'Fit',
+    zoomFitTitle:            'Show the whole label',
+    zoomLevel:               'Zoom {percent} %',
 
-    templateClassicName:    'Classic',
-    templateModernName:     'Modern',
-    templateMinimalName:    'Minimal',
-    templateRusticName:     'Rustic',
-    templateBoldName:       'Bold',
-    templatesHint:          'Replaces the current canvas content with a pre-built layout — wine data is filled in automatically.',
-    templatesConfirmReplace: 'Replace the current draft with this template? This can be undone with Cmd+Z.',
+    panelLabel:              'Label settings',
+    sectionWineData:         'Wine data',
+    sectionBackground:       'Background',
+    sectionTemplates:        'Templates',
+    sectionLayers:           'Layers',
+    sectionGeometry:         'Position & size',
 
-    propsGeometry:           'Geometry',
-    propsAppearance:         'Appearance',
+    templateClassicName:     'Classic',
+    templateModernName:      'Modern',
+    templateMinimalName:     'Minimal',
+    templateRusticName:      'Rustic',
+    templateBoldName:        'Bold',
+    templatesHint:           'A template replaces the content of the label. The wine data is filled in.',
+    templatesConfirm:        'Replace content?',
+
+    propsWidth:              'W',
+    propsHeight:             'H',
+    propsRotation:           'Rotation',
     propsOpacity:            'Opacity',
-    propsEmpty:              'Select an object on the canvas to edit its properties.',
+    propsEmpty:              'Select an element to see its position and size.',
 
-    bgHeading:               'Canvas Background',
-    bgFill:                  'Fill',
-    bgFillTitle:             'Canvas background',
     bgModeLabel:             'Background type',
-    bgModeColor:             'Color',
+    bgModeColor:             'Colour',
     bgModeImage:             'Image',
-    bgImageReplace:          'Replace image',
+    bgFill:                  'Paper colour',
+    bgFillTitle:             'Choose the paper colour',
+    bgImageReplace:          'Choose another image',
 
     wineFieldName:           'Wine Name',
     wineFieldVintage:        'Vintage',
@@ -327,35 +349,23 @@ export const MESSAGES = {
     wineFieldQrHint:         'EU compliance requirement',
     wineFieldQrMissingUrl:   'No nutrition URL set',
 
-    layersHeading:           'Layers',
-    layersCount:             '{count} total',
-
     hotkeyUndoLabel:         'Undo',
     hotkeyUndoDescription:   'Reverse the last change',
     hotkeyRedoLabel:         'Redo',
     hotkeyRedoDescription:   'Reapply a reversed change',
     hotkeyDeleteLabel:       'Delete',
-    hotkeyDeleteDescription: 'Remove selected object',
+    hotkeyDeleteDescription: 'Remove the selected element',
     hotkeySelectAllLabel:    'Select all',
-    hotkeySelectAllDescription: 'Select all visible, unlocked objects',
+    hotkeySelectAllDescription: 'Select all visible, unlocked elements',
     hotkeyDeselectLabel:     'Deselect',
     hotkeyDeselectDescription: 'Clear the selection; with nothing selected, leave fullscreen',
     hotkeyDuplicateLabel:    'Duplicate',
-    hotkeyDuplicateDescription: 'Copy the selected objects with a small offset',
+    hotkeyDuplicateDescription: 'Copy the selected elements with a small offset',
     hotkeyPanLabel:          'Pan (hold)',
-    hotkeyPanDescription:    'Hold Space and drag; releasing it returns to the previous tool',
+    hotkeyPanDescription:    'Hold Space and drag',
     hotkeyZoomInLabel:       'Zoom in',
-    hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
+    hotkeyZoomInDescription: 'Magnify the view',
     hotkeyZoomOutLabel:      'Zoom out',
-    hotkeyZoomOutDescription: 'Shrink the view (canvas centre)',
-    zoomInTitle:             'Zoom in (=)',
-    zoomOutTitle:            'Zoom out (−)',
-
-    exportLabel:             'PDF',
-    exportTitle:             'Export as PDF (trim size)',
-    exportPngLabel:          'PNG',
-    exportPngTitle:          'Export as PNG (print resolution)',
-    exportFilename:          'wine-label',
+    hotkeyZoomOutDescription: 'Shrink the view',
   },
 } as const satisfies ComponentMessages<CellarCanvasMessages>
-

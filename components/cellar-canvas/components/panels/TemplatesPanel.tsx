@@ -47,31 +47,30 @@ export function TemplatesPanel({ bridge, wineFields, hasObjects }: TemplatesPane
     // Templates leave out wine fields without a value; one made only of such
     // fields (Minimal without name + vintage) would just wipe the canvas.
     if (elements.length === 0) return
-    if (hasObjects && !window.confirm(m.templatesConfirmReplace)) return
+    if (hasObjects && !window.confirm(m.templatesConfirm)) return
     b.applyTemplate(elements)
   }
 
   return (
-    <section className="space-y-3">
-      <div className="space-y-1">
-        <h4 className="text-muted-foreground/60 text-[10px] font-bold uppercase">{m.tabTemplates}</h4>
-        <p className="text-muted-foreground text-xs">{m.templatesHint}</p>
-      </div>
+    <div className="space-y-3">
+      <p className="text-muted-foreground text-xs">{m.templatesHint}</p>
       <div className="grid grid-cols-1 gap-2">
         {WINE_LABEL_TEMPLATES.map(({ id }) => (
           <button
             key={id}
+            type="button"
             onClick={() => apply(id)}
             className={cn(
-              "group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all",
+              "group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all pointer-coarse:min-h-11",
               "bg-muted/50 hover:bg-muted border-transparent hover:border-border active:scale-[0.98]",
+              "focus-visible:ring-accent/60 focus-visible:ring-2 focus-visible:outline-none",
             )}
           >
-            <LayoutTemplate size={16} className="text-muted-foreground group-hover:text-foreground shrink-0 transition-colors" />
+            <LayoutTemplate size={16} aria-hidden className="text-muted-foreground group-hover:text-foreground shrink-0 transition-colors" />
             <span className="text-foreground text-xs font-medium">{templateName(m, id)}</span>
           </button>
         ))}
       </div>
-    </section>
+    </div>
   )
 }

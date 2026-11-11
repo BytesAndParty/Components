@@ -19,6 +19,9 @@ export interface CellarCanvasState {
   bg: LabelBackground
 }
 
+/** What a notice above the canvas reports: a failed image or QR insert, or a failed export. */
+export type NoticeKind = 'image' | 'qr' | 'export'
+
 export interface FabricObjectMeta {
   id: string
   _layerName: string
@@ -71,12 +74,14 @@ export interface DesignerState {
   canRedo: boolean
   /** Last autosave write failed (quota exceeded / storage blocked). */
   draftSaveFailed: boolean
+  /** The autosave warning was closed. A successful write re-arms it for the next failure. */
+  draftNoticeDismissed: boolean
   /**
-   * Last image/QR insert failed. `id` changes with every failure so a repeat
-   * of the same error is announced again. Cleared by the next successful
-   * insert or by dismissing the hint.
+   * What last went wrong (see `NoticeKind`). `id` changes with every failure
+   * so a repeat of the same error is announced again. Cleared by the next
+   * successful insert or export, or by closing the notice.
    */
-  insertError: { kind: 'image' | 'qr'; id: number } | null
+  notice: { kind: NoticeKind; id: number } | null
   cropperOpen: boolean
   cropperSrc?: string
   cropperTargetId?: string
@@ -89,6 +94,7 @@ export interface DesignerState {
   setDirty: (dirty: boolean) => void
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
   setDraftSaveFailed: (failed: boolean) => void
-  setInsertError: (kind: 'image' | 'qr' | null) => void
+  dismissDraftNotice: () => void
+  setNotice: (kind: NoticeKind | null) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }

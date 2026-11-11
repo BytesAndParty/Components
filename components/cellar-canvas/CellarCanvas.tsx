@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
-import { ZoomIn, ZoomOut } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { OverlayContainerProvider } from '../lib/overlay-container'
 import { useComponentMessages } from '../i18n'
@@ -14,6 +13,8 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
 import { useDesignerStore, reportImageError } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
+import { Notices } from './components/canvas/Notices'
+import { ZoomBar } from './components/canvas/ZoomBar'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { CanvasHeader } from './components/header/CanvasHeader'
@@ -28,15 +29,12 @@ import { MessagesProvider } from './messages-context'
 import type { CellarCanvasState, DesignerState, LabelBackground } from './store/types'
 import type { CanvasViewport } from './engine/use-canvas-sync'
 
-// Bleed dimming around the label. Design view stays semi-transparent so
-// objects bleeding out are still readable; preview goes fully opaque to
-// emulate the actual print result (everything outside the printable area
-// is hidden, only the label itself shows through).
-const BLEED_MASK_OPACITY_DESIGN  = 0.55
-const BLEED_MASK_OPACITY_PREVIEW = 1
+// Dimming of the workspace around the label. Semi-transparent, so whatever
+// hangs over the label edge stays readable while it is clearly "outside".
+const BLEED_MASK_OPACITY = 0.55
 
-// EU-standard 3mm print-bleed safety margin. Visualised as a translucent strip
-// at the label boundary to warn designers that content placed here might be lost.
+// 3 mm safety margin at the label edge: the cutter may take it off. The
+// dimming reaches this far into the label to mark the strip.
 const PRINT_BLEED_MM = 3
 
 export type { ValidationWarning }
@@ -167,7 +165,10 @@ function CellarCanvasEditor({
   const selectedIds = useDesignerStore(s => s.selectedIds)
 
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [previewMode,  setPreviewMode]  = useState(false)
+  // Narrow editors only (see the grid below): the settings panel lies over
+  // the canvas and is closed until the header toggle opens it.
+  const [panelOpen, setPanelOpen] = useState(false)
+  const panelId = useId()
 
   // Fabric → React mirror. Selection, geometry, layers, validator warnings,
   // viewport transform, background colour. `setLayers` exists because some
@@ -189,21 +190,18 @@ function CellarCanvasEditor({
   // (that would reload initialState/the draft and silently discard the
   // user's edits). A new label size recreates the Fabric canvas at its
   // initial size, hence re-observing on widthMm/heightMm.
-  // Fullscreen shifts the fitted label right by half the RightPanel (300px)
-  // vs MainToolbar (64px) asymmetry, so it sits at the viewport centre.
   const canvasAreaRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = canvasAreaRef.current
     if (!el) return
-    const shiftX = isFullscreen ? (300 - 64) / 2 : 0
     const observer = new ResizeObserver(([entry]) => {
       // Whole pixels — a fractional backstore renders blurry.
       const { width, height } = entry.contentRect
-      bridge.current?.resize(Math.floor(width), Math.floor(height), shiftX)
+      bridge.current?.resize(Math.floor(width), Math.floor(height))
     })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [bridge, widthMm, heightMm, isFullscreen])
+  }, [bridge, widthMm, heightMm])
 
   // Wine-field text mirrors the incoming prop (e.g. the winemaker updated the
   // vintage in the DB while the editor was open). Fields whose value went
@@ -227,12 +225,24 @@ function CellarCanvasEditor({
   // Renders the export for the header's download triggers (Ark UI saves the
   // file) and hands the same blob to `onExport` for a server upload.
   async function exportBlob(format: 'png' | 'pdf'): Promise<Blob> {
-    const b = bridge.current
-    if (!b) throw new Error('Cellar Canvas is not mounted yet')
-    const { exportLabelPng, exportLabelPdf } = await import('./engine/export-pipeline')
-    const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi, pdfBleedMm) : await exportLabelPng(b, exportDpi)
-    onExport?.({ format, blob })
-    return blob
+    const { setNotice } = useDesignerStore.getState()
+    try {
+      const b = bridge.current
+      if (!b) throw new Error('Cellar Canvas is not mounted yet')
+      const { exportLabelPng, exportLabelPdf } = await import('./engine/export-pipeline')
+      const blob = format === 'pdf' ? await exportLabelPdf(b, exportDpi, pdfBleedMm) : await exportLabelPng(b, exportDpi)
+      setNotice(null)
+      onExport?.({ format, blob })
+      return blob
+    } catch (error) {
+      // E.g. the PDF chunk did not load (offline) or the canvas is tainted by
+      // an image without CORS headers. The user gets a notice.
+      console.error('Cellar Canvas: export failed', error)
+      setNotice('export')
+      // Ark's DownloadTrigger saves whatever this resolves with and has no
+      // error path; a promise that never settles is how to save nothing.
+      return new Promise<Blob>(() => {})
+    }
   }
 
   // Report compliance changes to the embedding app. Full syncs rebuild the
@@ -452,110 +462,88 @@ function CellarCanvasEditor({
 
   const shell = (
     <div
-      className={cn(
-        "bg-background transition-all duration-300",
-        className,
-        isFullscreen && "fixed inset-0 p-4",
-      )}
+      className={cn('bg-background relative', className, isFullscreen && 'fixed inset-0')}
       style={{
         ...style,
-        height: isFullscreen ? '100vh' : height,
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr 300px',
-        // minmax(0, …): a tall RightPanel must scroll, not grow the row —
-        // the canvas area would change size (and re-fit) on every selection.
-        gridTemplateRows:    '48px 48px minmax(0, 1fr)',
+        // Fullscreen takes its size from `inset-0`.
+        height: isFullscreen ? undefined : height,
         ...(isFullscreen && { zIndex: 9999 }),
       }}
     >
-      <CanvasHeader
-        bridge={bridge}
-        widthMm={widthMm}
-        heightMm={heightMm}
-        isFullscreen={isFullscreen}
-        onToggleFullscreen={() => setIsFullscreen(p => !p)}
-        previewMode={previewMode}
-        onTogglePreview={() => setPreviewMode(p => !p)}
-        onSave={onSave}
-        exportPng={() => exportBlob('png')}
-        exportPdf={enablePdfExport ? () => exportBlob('pdf') : undefined}
-      />
-
-      <div
-        className="border-border bg-card flex items-center justify-between border-b pr-4"
-        style={{ gridColumn: '2 / -1' }}
-      >
-        <ContextToolbar bridge={bridge} activeProps={activeProps} />
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => bridge.current?.zoomBy(1 / 1.2)}
-            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
-            title={m.zoomOutTitle}
-            aria-label={m.zoomOutTitle}
-          >
-            <ZoomOut size={14} />
-          </button>
-          <button
-            onClick={() => bridge.current?.zoomBy(1.2)}
-            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground rounded border p-1 transition-colors"
-            title={m.zoomInTitle}
-            aria-label={m.zoomInTitle}
-          >
-            <ZoomIn size={14} />
-          </button>
-          <button
-            onClick={() => bridge.current?.zoomToFit()}
-            className="hover:bg-muted border-border text-muted-foreground hover:text-foreground ml-1 rounded border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors"
-          >
-            {m.fitToScreen}
-          </button>
-        </div>
-      </div>
-
-      <div style={{ gridRow: '2 / -1' }}>
-        <MainToolbar bridge={bridge} />
-      </div>
-
-      <main
-        className="bg-muted/20 relative flex flex-col overflow-hidden"
-        style={{ gridRow: '3' }}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        <div ref={canvasAreaRef} className="relative flex-1">
-          <LabelCanvas
-            ref={canvasRef}
-            className="absolute inset-0"
-            backdrop={computeBackdrop(widthMm, heightMm, viewport, background)}
+      {/*
+        The layout follows the width of the editor, not of the window (it may
+        sit in a narrow column): from 56rem on the settings panel is a third
+        column, below that it lies over the canvas and the header toggles it.
+        minmax(0, …) on the last row: a tall panel must scroll, not grow the
+        row — the canvas area would change size (and re-fit) on every selection.
+      */}
+      <div className="@container/editor h-full">
+        <div className="grid h-full grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_3rem_minmax(0,1fr)] @4xl/editor:grid-cols-[auto_minmax(0,1fr)_300px]">
+          <CanvasHeader
+            bridge={bridge}
             widthMm={widthMm}
             heightMm={heightMm}
-            bleedMm={BLEED_MM}
-            bleedMaskOpacity={previewMode ? BLEED_MASK_OPACITY_PREVIEW : BLEED_MASK_OPACITY_DESIGN}
-            bleedMaskColor="var(--background)"
-            // Preview-Mode versteckt die Safety-Zone, weil das echte Druck-
-            // ergebnis sie nicht zeigt; im Design-Mode zeichnet sie den
-            // 3mm Trim-Risiko-Streifen am Label-Rand.
-            printBleedMm={previewMode ? 0 : PRINT_BLEED_MM}
-            canvasLabel={m.canvasLabel}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={() => setIsFullscreen(p => !p)}
+            panelId={panelId}
+            panelOpen={panelOpen}
+            onTogglePanel={() => setPanelOpen(p => !p)}
+            onSave={onSave}
+            exportPng={() => exportBlob('png')}
+            exportPdf={enablePdfExport ? () => exportBlob('pdf') : undefined}
+          />
+
+          <MainToolbar bridge={bridge} />
+
+          <div className="border-border bg-card col-start-2 -col-end-1 row-start-2 min-w-0 border-b">
+            <ContextToolbar bridge={bridge} activeProps={activeProps} />
+          </div>
+
+          <main
+            className="bg-muted/20 relative col-start-2 row-start-3 flex min-w-0 flex-col overflow-hidden"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            <div ref={canvasAreaRef} className="relative flex-1">
+              <LabelCanvas
+                ref={canvasRef}
+                className="absolute inset-0"
+                backdrop={computeBackdrop(widthMm, heightMm, viewport, background)}
+                widthMm={widthMm}
+                heightMm={heightMm}
+                bleedMm={BLEED_MM}
+                bleedMaskOpacity={BLEED_MASK_OPACITY}
+                bleedMaskColor="var(--background)"
+                printBleedMm={PRINT_BLEED_MM}
+                canvasLabel={m.canvasLabel}
+              />
+            </div>
+
+            <Notices />
+            {/* Zoom left, validator right; on a narrow canvas the badge moves above the zoom bar. */}
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 flex flex-wrap-reverse items-end gap-2">
+              <ZoomBar bridge={bridge} />
+              {enableValidator && (
+                <div className="pointer-events-auto ml-auto">
+                  <ValidatorBadge warnings={warnings} />
+                </div>
+              )}
+            </div>
+          </main>
+
+          <RightPanel
+            id={panelId}
+            open={panelOpen}
+            bridge={bridge}
+            activeProps={activeProps}
+            layers={layers}
+            setLayers={setLayers}
+            selectedIds={selectedIds}
+            background={background}
+            wineFields={initialWineFields}
           />
         </div>
-
-        {enableValidator && (
-          <div className="pointer-events-auto absolute right-4 bottom-4 z-10">
-            <ValidatorBadge warnings={warnings} />
-          </div>
-        )}
-      </main>
-
-      <RightPanel
-        bridge={bridge}
-        activeProps={activeProps}
-        layers={layers}
-        setLayers={setLayers}
-        selectedIds={selectedIds}
-        background={background}
-        wineFields={initialWineFields}
-      />
+      </div>
 
       <ImageCropperModal
         open={cropperOpen}

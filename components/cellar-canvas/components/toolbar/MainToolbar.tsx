@@ -1,49 +1,29 @@
-import { useRef, type ChangeEvent } from 'react'
-import { Type, Square, Circle, Minus, Image as ImageIcon, Trash2, Copy } from 'lucide-react'
+import { useRef, type ChangeEvent, type RefObject } from 'react'
+import { Type, Square, Circle, Minus, ImageUp, type LucideIcon } from 'lucide-react'
 import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { prepareImageSource } from '../../engine/image-source'
-import { Tooltip } from '../shared'
+import { interpolate } from '../../../i18n'
 import { cn } from '../../../lib/utils'
 import { toolbarArrowKeys } from './toolbar-keys'
 import type { FabricBridge } from '../../engine/fabric-bridge'
-import type { CellarCanvasMessages } from '../../messages'
 
 interface MainToolbarProps {
-  bridge: React.MutableRefObject<FabricBridge | null>
+  bridge: RefObject<FabricBridge | null>
 }
 
-type ToolId = 'text' | 'image' | 'rect' | 'circle' | 'line'
-
-function buildTools(m: CellarCanvasMessages) {
-  return [
-    { id: 'text',   icon: Type,          label: m.toolText },
-    { id: 'image',  icon: ImageIcon,     label: m.toolImage },
-    { id: 'rect',   icon: Square,        label: m.toolRect },
-    { id: 'circle', icon: Circle,        label: m.toolCircle },
-    { id: 'line',   icon: Minus,         label: m.toolLine },
-  ] as const
-}
-
+/**
+ * Insert bar on the left. Every button inserts one object, which gets
+ * selected. There are no drawing modes; the view is moved with the wheel or
+ * with Space held. Uploading comes first: most labels start from finished
+ * artwork.
+ */
 export function MainToolbar({ bridge }: MainToolbarProps) {
   const m = useCellarCanvasMessages()
-  const tools = buildTools(m)
-  const hasSelection = useDesignerStore(s => s.selectedIds.length > 0)
   const setCropper = useDesignerStore(s => s.setCropper)
-
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Every button inserts one object, which gets selected. There are no
-  // drawing modes; the view is moved with the wheel or with Space held.
-  function handleToolClick(toolId: ToolId) {
-    switch (toolId) {
-      case 'text':   bridge.current?.addText(m.defaultText); break
-      case 'image':  fileInputRef.current?.click(); break
-      case 'rect':   bridge.current?.addRect();     break
-      case 'circle': bridge.current?.addCircle();   break
-      case 'line':   bridge.current?.addLine();     break
-    }
-  }
+  const insertTitle = (name: string) => interpolate(m.toolInsertTitle, { name })
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -59,7 +39,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
       aria-label={m.mainToolbarLabel}
       aria-orientation="vertical"
       onKeyDown={toolbarArrowKeys('vertical')}
-      className="border-border bg-card flex w-16 flex-col items-center gap-2 border-r py-4"
+      className="border-border bg-card col-start-1 row-span-2 row-start-2 flex w-16 flex-col items-center gap-1 overflow-y-auto border-r px-1.5 py-2"
     >
       <input
         ref={fileInputRef}
@@ -71,53 +51,42 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
         tabIndex={-1}
       />
 
-      {tools.map((tool) => (
-        <Tooltip key={tool.id} content={tool.label} position="right">
-          <button
-            onClick={() => handleToolClick(tool.id)}
-            aria-label={tool.label}
-            className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl p-2.5 transition-all duration-200"
-          >
-            <tool.icon size={20} strokeWidth={2.5} />
-          </button>
-        </Tooltip>
-      ))}
-
-      <div className="flex-1" />
-
-      <Tooltip content={m.toolDuplicate} position="right">
-        {/* aria-disabled, not disabled: a disabled button fires no pointer or
-            focus events, so its tooltip could never explain itself. */}
-        <button
-          onClick={() => { if (hasSelection) void bridge.current?.duplicateSelected() }}
-          aria-disabled={!hasSelection}
-          aria-label={m.toolDuplicate}
-          className={cn(
-            "p-2.5 rounded-xl transition-all duration-200",
-            hasSelection
-              ? "text-muted-foreground hover:bg-muted hover:text-foreground"
-              : "text-muted-foreground/30 cursor-not-allowed"
-          )}
-        >
-          <Copy size={20} />
-        </button>
-      </Tooltip>
-
-      <Tooltip content={m.toolDelete} position="right">
-        <button
-          onClick={() => { if (hasSelection) bridge.current?.deleteSelected() }}
-          aria-disabled={!hasSelection}
-          aria-label={m.toolDelete}
-          className={cn(
-            "p-2.5 rounded-xl transition-all duration-200",
-            hasSelection
-              ? "text-destructive hover:bg-destructive/10"
-              : "text-muted-foreground/30 cursor-not-allowed"
-          )}
-        >
-          <Trash2 size={20} />
-        </button>
-      </Tooltip>
+      <ToolButton icon={ImageUp} label={m.toolImage} title={m.toolImageTitle} primary onClick={() => fileInputRef.current?.click()} />
+      <ToolButton icon={Type} label={m.toolText} title={insertTitle(m.toolText)} onClick={() => bridge.current?.addText(m.defaultText)} />
+      <ToolButton icon={Square} label={m.toolRect} title={insertTitle(m.toolRect)} onClick={() => bridge.current?.addRect()} />
+      <ToolButton icon={Circle} label={m.toolCircle} title={insertTitle(m.toolCircle)} onClick={() => bridge.current?.addCircle()} />
+      <ToolButton icon={Minus} label={m.toolLine} title={insertTitle(m.toolLine)} onClick={() => bridge.current?.addLine()} />
     </div>
+  )
+}
+
+function ToolButton({
+  icon: Icon,
+  label,
+  title,
+  primary = false,
+  onClick,
+}: {
+  icon: LucideIcon
+  label: string
+  title: string
+  primary?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={cn(
+        'focus-visible:ring-accent/60 flex min-h-12 w-full flex-col items-center justify-center gap-1 rounded-lg px-0.5 py-1.5 text-[10px] leading-none font-medium transition-[color,background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:scale-95',
+        primary
+          ? 'bg-accent/10 text-accent hover:bg-accent/20'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+      )}
+    >
+      <Icon size={18} strokeWidth={2} aria-hidden />
+      <span className="max-w-full truncate">{label}</span>
+    </button>
   )
 }

@@ -1,9 +1,11 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Download, TriangleAlert, X } from 'lucide-react'
+import { Maximize2, Minimize2, Download, Undo2, Redo2, SlidersHorizontal } from 'lucide-react'
 import { DownloadTrigger } from '@ark-ui/react/download-trigger'
 import { cn } from '../../../lib/utils'
-import { toolbarArrowKeys } from '../toolbar/toolbar-keys'
 import { interpolate } from '../../../i18n'
+import { toolbarArrowKeys } from '../toolbar/toolbar-keys'
+import { barButtonCls, barDividerCls } from '../shared/button-styles'
+import { useShortcutTitle } from '../shared/use-shortcut-title'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { useDesignerStore } from '../../store/designer-store'
 import { SaveButton } from './SaveButton'
@@ -11,24 +13,29 @@ import type { FabricBridge } from '../../engine/fabric-bridge'
 import type { CellarCanvasState } from '../../store/types'
 
 export interface CanvasHeaderProps {
-  bridge:           RefObject<FabricBridge | null>
-  widthMm:          number
-  heightMm:         number
-  isFullscreen:     boolean
+  bridge:             RefObject<FabricBridge | null>
+  widthMm:            number
+  heightMm:           number
+  isFullscreen:       boolean
   onToggleFullscreen: () => void
-  previewMode:      boolean
-  onTogglePreview:  () => void
-  onSave?:          (state: CellarCanvasState) => Promise<void>
+  /** The settings panel: an overlay the header toggles while the editor is narrow. */
+  panelId:            string
+  panelOpen:          boolean
+  onTogglePanel:      () => void
+  onSave?:            (state: CellarCanvasState) => Promise<void>
   /** Renders the PNG export; the download trigger saves the result. */
-  exportPng?:       () => Promise<Blob>
+  exportPng?:         () => Promise<Blob>
   /** Renders the PDF export; the download trigger saves the result. */
-  exportPdf?:       () => Promise<Blob>
+  exportPdf?:         () => Promise<Blob>
 }
 
+const exportButtonCls = cn(barButtonCls, 'border-border border px-3')
+
 /**
- * Top bar above the canvas: brand + label dims + undo/redo + save + preview
- * toggle + fullscreen toggle. All actions thin pass-throughs to the bridge
- * (or local toggles for view modes); no business logic lives here.
+ * Top bar: label size on the left, then undo / redo, save, the two downloads,
+ * the settings toggle (narrow editors only) and fullscreen. All actions are
+ * thin pass-throughs to the bridge; no business logic lives here. The row
+ * wraps when the editor is narrower than its buttons.
  */
 export function CanvasHeader({
   bridge,
@@ -36,70 +43,66 @@ export function CanvasHeader({
   heightMm,
   isFullscreen,
   onToggleFullscreen,
-  previewMode,
-  onTogglePreview,
+  panelId,
+  panelOpen,
+  onTogglePanel,
   onSave,
   exportPng,
   exportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { canUndo, canRedo, draftSaveFailed, insertError, setInsertError } = useDesignerStore()
+  const shortcutTitle = useShortcutTitle()
+  const canUndo = useDesignerStore(s => s.canUndo)
+  const canRedo = useDesignerStore(s => s.canRedo)
+  const undoTitle = shortcutTitle(m.hotkeyUndoLabel, 'Mod+Z')
+  const redoTitle = shortcutTitle(m.hotkeyRedoLabel, 'Mod+Shift+Z')
+  const fullscreenTitle = isFullscreen ? m.fullscreenExit : m.fullscreenEnter
 
   return (
     <div
       role="toolbar"
       aria-label={m.headerToolbarLabel}
       onKeyDown={toolbarArrowKeys('horizontal')}
-      className="border-border bg-card/50 flex h-12 items-center border-b px-4"
-      style={{ gridColumn: '1 / -1' }}
+      className="border-border bg-card col-span-full flex min-h-12 flex-wrap items-center gap-x-3 gap-y-1 border-b px-3 py-1.5"
     >
-      <h2 className="text-xs font-bold tracking-widest uppercase opacity-50">{m.brand}</h2>
-      <div className="bg-border mx-6 h-4 w-px" />
-      <div className="text-muted-foreground flex flex-1 items-center gap-4 text-[10px] font-bold tracking-wider uppercase">
+      <p className="text-muted-foreground hidden min-w-0 flex-1 truncate text-xs @2xl/editor:block">
         {interpolate(m.labelDimensions, { w: widthMm, h: heightMm })}
-        {draftSaveFailed && (
-          <span role="alert" className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
-            <TriangleAlert size={14} aria-hidden />
-            {m.draftSaveFailed}
-          </span>
-        )}
-        {insertError && (
-          <span className="text-destructive inline-flex items-center gap-1.5 text-xs font-medium tracking-normal normal-case">
-            <TriangleAlert size={14} aria-hidden />
-            {/* New key per failure: a repeated error re-mounts the alert and is announced again. */}
-            <span role="alert" key={insertError.id}>
-              {insertError.kind === 'qr' ? m.qrInsertFailed : m.imageInsertFailed}
-            </span>
-            <button
-              type="button"
-              onClick={() => setInsertError(null)}
-              aria-label={m.dismissHint}
-              title={m.dismissHint}
-              className="hover:bg-muted focus-visible:ring-accent/60 inline-flex items-center justify-center rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11"
-            >
-              <X size={14} aria-hidden />
-            </button>
-          </span>
-        )}
-      </div>
+      </p>
 
-      <div className="mr-4 flex items-center gap-1">
-        <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle} disabled={!canUndo}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-        </IconButton>
-        <IconButton onClick={() => bridge.current?.redo()} title={m.redoTitle} disabled={!canRedo}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg>
-        </IconButton>
+      <div className="flex flex-1 flex-wrap items-center justify-end gap-1 @2xl/editor:flex-none">
+        <button
+          type="button"
+          onClick={() => bridge.current?.undo()}
+          disabled={!canUndo}
+          title={undoTitle}
+          aria-label={undoTitle}
+          className={barButtonCls}
+        >
+          <Undo2 size={16} aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => bridge.current?.redo()}
+          disabled={!canRedo}
+          title={redoTitle}
+          aria-label={redoTitle}
+          className={barButtonCls}
+        >
+          <Redo2 size={16} aria-hidden />
+        </button>
+
+        <span aria-hidden className={barDividerCls} />
+
         {onSave && <SaveButton bridge={bridge} onSave={onSave} />}
         {exportPng && (
           <DownloadTrigger
             data={exportPng}
             fileName={`${m.exportFilename}.png`}
             mimeType="image/png"
-            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
+            className={exportButtonCls}
             title={m.exportPngTitle}
           >
-            <Download size={12} />
+            <Download size={14} aria-hidden />
             {m.exportPngLabel}
           </DownloadTrigger>
         )}
@@ -108,69 +111,38 @@ export function CanvasHeader({
             data={exportPdf}
             fileName={`${m.exportFilename}.pdf`}
             mimeType="application/pdf"
-            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted ml-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
-            title={m.exportTitle}
+            className={exportButtonCls}
+            title={m.exportPdfTitle}
           >
-            <Download size={12} />
-            {m.exportLabel}
+            <Download size={14} aria-hidden />
+            {m.exportPdfLabel}
           </DownloadTrigger>
         )}
+
+        <span aria-hidden className={barDividerCls} />
+
+        <button
+          type="button"
+          onClick={onTogglePanel}
+          aria-expanded={panelOpen}
+          aria-controls={panelId}
+          title={m.panelToggle}
+          aria-label={m.panelToggle}
+          className={cn(barButtonCls, '@4xl/editor:hidden', panelOpen && 'bg-muted text-foreground')}
+        >
+          <SlidersHorizontal size={16} aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={onToggleFullscreen}
+          aria-pressed={isFullscreen}
+          title={fullscreenTitle}
+          aria-label={fullscreenTitle}
+          className={barButtonCls}
+        >
+          {isFullscreen ? <Minimize2 size={16} aria-hidden /> : <Maximize2 size={16} aria-hidden />}
+        </button>
       </div>
-
-      <button
-        onClick={onTogglePreview}
-        className={cn(
-          "p-2 rounded-md transition-colors mr-1 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
-          previewMode
-            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-        )}
-        title={previewMode ? m.previewExit : m.previewEnter}
-        aria-label={previewMode ? m.previewExit : m.previewEnter}
-        aria-pressed={previewMode}
-      >
-        {previewMode ? <EyeOff size={16} /> : <Eye size={16} />}
-      </button>
-
-      <button
-        onClick={onToggleFullscreen}
-        className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11"
-        title={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
-        aria-label={isFullscreen ? m.fullscreenExit : m.fullscreenEnter}
-        aria-pressed={isFullscreen}
-      >
-        {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-      </button>
     </div>
-  )
-}
-
-function IconButton({
-  onClick,
-  title,
-  children,
-  className,
-  disabled,
-}: {
-  onClick: () => void
-  title:   string
-  children: React.ReactNode
-  className?: string
-  disabled?: boolean
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "p-2 hover:bg-muted rounded-md text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
-        "disabled:pointer-events-none disabled:opacity-40",
-        className
-      )}
-      title={title}
-      aria-label={title}
-    >
-      {children}
-    </button>
   )
 }

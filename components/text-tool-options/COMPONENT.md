@@ -28,6 +28,7 @@ A host that draws text on a canvas must not measure it before the font is there:
 | :--- | :--- | :--- | :--- |
 | `value` | `Partial<TextFormatValues>` | `defaultTextFormat` | Current formatting values. |
 | `onChange` | `(patch: Partial<TextFormatValues>) => void` | - | Callback when a value changes. |
+| `basic` | `boolean` | `false` | Only the everyday controls: font, size, bold, italic, left / centre / right, colour. Leaves out underline, justify, letter spacing and line height. |
 | `className` | `string` | - | Custom classes for the toolbar. |
 | `messages` | `Partial<TextToolOptionsMessages>` | - | Custom i18n overrides. |
 
