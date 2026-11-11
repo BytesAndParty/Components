@@ -25,7 +25,6 @@ export interface FabricObjectMeta {
   _type: 'text' | 'wine-field' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'qr-code' | 'path'
   _fieldKey?: string
   _locked?: boolean
-  _extras?: boolean
   /** Wine field hidden by the sync because the current wine has no value for it. */
   _valueMissing?: boolean
   /** Rect corner radius in mm; rx/ry are derived from it for the current scale. */
@@ -70,7 +69,6 @@ export interface DesignerState {
   // History availability — the stack itself lives in the bridge's HistoryManager.
   canUndo: boolean
   canRedo: boolean
-  snappingEnabled: boolean
   /** Last autosave write failed (quota exceeded / storage blocked). */
   draftSaveFailed: boolean
   /**
@@ -79,8 +77,6 @@ export interface DesignerState {
    * insert or by dismissing the hint.
    */
   insertError: { kind: 'image' | 'qr'; id: number } | null
-  /** Restarts the onboarding tour; registered by `OnboardingTour` while it is mounted. */
-  startTour: (() => void) | null
   cropperOpen: boolean
   cropperSrc?: string
   cropperTargetId?: string
@@ -92,9 +88,7 @@ export interface DesignerState {
   setSelectedIds: (ids: string[]) => void
   setDirty: (dirty: boolean) => void
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void
-  setSnappingEnabled: (enabled: boolean) => void
   setDraftSaveFailed: (failed: boolean) => void
   setInsertError: (kind: 'image' | 'qr' | null) => void
-  setStartTour: (start: DesignerState['startTour']) => void
   setCropper: (state: { open: boolean; src?: string; targetId?: string }) => void
 }

@@ -14,12 +14,10 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useDesignEngineHotkey } from '../hotkeys/hotkeys-context'
 import { useDesignerStore, reportImageError } from './store/designer-store'
 import { LabelCanvas, type LabelBackdrop } from './components/canvas/LabelCanvas'
-import { CanvasRulers } from './components/canvas/CanvasRulers'
 import { MainToolbar } from './components/toolbar/MainToolbar'
 import { ContextToolbar } from './components/toolbar/ContextToolbar'
 import { CanvasHeader } from './components/header/CanvasHeader'
 import { RightPanel } from './components/panels/RightPanel'
-import { OnboardingTour } from './components/tour/OnboardingTour'
 import { ImageCropperModal } from '../image-cropper-modal/image-cropper-modal'
 import { ValidatorBadge, type ValidationWarning } from '../validator-badge/validator-badge'
 import { mmToPx } from './engine/units'
@@ -82,12 +80,6 @@ export interface CellarCanvasProps {
 
   // Validation
   enableValidator?: boolean
-
-  // Onboarding
-  /** Skip the first-run guided tour. Default: false (tour auto-starts once). */
-  disableTour?:    boolean
-  /** localStorage key for the "tour seen" flag. Pass `null` to opt out. Default: `'cellar-canvas-tour-completed'`. */
-  tourStorageKey?: string | null
 
   // i18n
   /** Override individual strings. Locale comes from the global I18nProvider. */
@@ -161,8 +153,6 @@ function CellarCanvasEditor({
   enablePdfExport   = true,
   pdfBleedMm        = 0,
   enableValidator   = true,
-  disableTour       = false,
-  tourStorageKey    = 'cellar-canvas-tour-completed',
   messages,
   onChange,
   onSave,
@@ -178,7 +168,6 @@ function CellarCanvasEditor({
 
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [previewMode,  setPreviewMode]  = useState(false)
-  const [showRulers,   setShowRulers]   = useState(false)
 
   // Fabric → React mirror. Selection, geometry, layers, validator warnings,
   // viewport transform, background colour. `setLayers` exists because some
@@ -391,24 +380,6 @@ function CellarCanvasEditor({
     description: m.hotkeyDuplicateDescription,
   }, { ignoreInputs: true })
 
-  useDesignEngineHotkey('Shift+R', () => setShowRulers(r => !r), {
-    label:       m.hotkeyRulersLabel,
-    category:    'Actions',
-    description: m.hotkeyRulersDescription,
-  })
-
-  useDesignEngineHotkey('Mod+G', () => bridge.current?.groupSelected(), {
-    label:       m.hotkeyGroupLabel,
-    category:    'Actions',
-    description: m.hotkeyGroupDescription,
-  }, { ignoreInputs: true })
-
-  useDesignEngineHotkey('Mod+Shift+G', () => bridge.current?.ungroupSelected(), {
-    label:       m.hotkeyUngroupLabel,
-    category:    'Actions',
-    description: m.hotkeyUngroupDescription,
-  }, { ignoreInputs: true })
-
   // Space held = temporary Hand tool (Figma convention). Keydown switches to
   // pan, keyup restores the previous tool. Only with focus on the page or the
   // canvas: Space on a focused button must still click it, so no blanket
@@ -465,15 +436,6 @@ function CellarCanvasEditor({
     description: m.hotkeyDeselectDescription,
   }, { ignoreInputs: true, preventDefault: false })
 
-  useDesignEngineHotkey('S', () => {
-    const { snappingEnabled, setSnappingEnabled } = useDesignerStore.getState()
-    setSnappingEnabled(!snappingEnabled)
-  }, {
-    label:       m.hotkeySnappingLabel,
-    category:    'Actions',
-    description: m.hotkeySnappingDescription,
-  })
-
   function handleDragOver(e: React.DragEvent) {
     e.preventDefault()
     e.stopPropagation()
@@ -514,8 +476,6 @@ function CellarCanvasEditor({
         onToggleFullscreen={() => setIsFullscreen(p => !p)}
         previewMode={previewMode}
         onTogglePreview={() => setPreviewMode(p => !p)}
-        showRulers={showRulers}
-        onToggleRulers={() => setShowRulers(r => !r)}
         onSave={onSave}
         exportPng={() => exportBlob('png')}
         exportPdf={enablePdfExport ? () => exportBlob('pdf') : undefined}
@@ -557,7 +517,6 @@ function CellarCanvasEditor({
       </div>
 
       <main
-        data-tour="canvas-area"
         className="bg-muted/20 relative flex flex-col overflow-hidden"
         style={{ gridRow: '3' }}
         onDragOver={handleDragOver}
@@ -579,7 +538,6 @@ function CellarCanvasEditor({
             printBleedMm={previewMode ? 0 : PRINT_BLEED_MM}
             canvasLabel={m.canvasLabel}
           />
-          {showRulers && <CanvasRulers viewport={viewport} originPx={mmToPx(BLEED_MM)} />}
         </div>
 
         {enableValidator && (
@@ -611,8 +569,6 @@ function CellarCanvasEditor({
           reportImageError()
         }}
       />
-
-      <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} includeSaveStep={!!onSave} />
 
       {/* Mount point for overlays in fullscreen; out of the grid flow. */}
       <div ref={overlayRef} style={{ position: 'absolute', top: 0, left: 0 }} />

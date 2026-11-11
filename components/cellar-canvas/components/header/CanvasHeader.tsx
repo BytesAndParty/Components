@@ -1,5 +1,5 @@
 import { type RefObject } from 'react'
-import { Maximize2, Minimize2, Eye, EyeOff, Magnet, Download, TriangleAlert, X, CircleHelp, Ruler } from 'lucide-react'
+import { Maximize2, Minimize2, Eye, EyeOff, Download, TriangleAlert, X } from 'lucide-react'
 import { DownloadTrigger } from '@ark-ui/react/download-trigger'
 import { cn } from '../../../lib/utils'
 import { toolbarArrowKeys } from '../toolbar/toolbar-keys'
@@ -18,8 +18,6 @@ export interface CanvasHeaderProps {
   onToggleFullscreen: () => void
   previewMode:      boolean
   onTogglePreview:  () => void
-  showRulers:       boolean
-  onToggleRulers:   () => void
   onSave?:          (state: CellarCanvasState) => Promise<void>
   /** Renders the PNG export; the download trigger saves the result. */
   exportPng?:       () => Promise<Blob>
@@ -40,14 +38,12 @@ export function CanvasHeader({
   onToggleFullscreen,
   previewMode,
   onTogglePreview,
-  showRulers,
-  onToggleRulers,
   onSave,
   exportPng,
   exportPdf,
 }: CanvasHeaderProps) {
   const m = useCellarCanvasMessages()
-  const { snappingEnabled, setSnappingEnabled, canUndo, canRedo, draftSaveFailed, insertError, setInsertError, startTour } = useDesignerStore()
+  const { canUndo, canRedo, draftSaveFailed, insertError, setInsertError } = useDesignerStore()
 
   return (
     <div
@@ -88,16 +84,6 @@ export function CanvasHeader({
       </div>
 
       <div className="mr-4 flex items-center gap-1">
-        <IconButton
-          onClick={() => setSnappingEnabled(!snappingEnabled)}
-          title={snappingEnabled ? m.snappingTitleEnabled : m.snappingTitleDisabled}
-          className={cn(snappingEnabled && "text-primary")}
-        >
-          <Magnet size={14} className={cn(!snappingEnabled && "opacity-40")} />
-        </IconButton>
-
-        <div className="bg-border/50 mx-2 h-4 w-px" />
-
         <IconButton onClick={() => bridge.current?.undo()} title={m.undoTitle} disabled={!canUndo}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
         </IconButton>
@@ -129,27 +115,7 @@ export function CanvasHeader({
             {m.exportLabel}
           </DownloadTrigger>
         )}
-        {startTour && (
-          <IconButton onClick={startTour} title={m.tourStartTitle} label={m.tourStartButton} className="ml-2">
-            <CircleHelp size={14} aria-hidden />
-          </IconButton>
-        )}
       </div>
-
-      <button
-        onClick={onToggleRulers}
-        className={cn(
-          "p-2 rounded-md transition-colors mr-1 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none pointer-coarse:min-h-11 pointer-coarse:min-w-11",
-          showRulers
-            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-        )}
-        title={showRulers ? m.rulersHide : m.rulersShow}
-        aria-label={showRulers ? m.rulersHide : m.rulersShow}
-        aria-pressed={showRulers}
-      >
-        <Ruler size={16} aria-hidden />
-      </button>
 
       <button
         onClick={onTogglePreview}
@@ -182,15 +148,12 @@ export function CanvasHeader({
 function IconButton({
   onClick,
   title,
-  label,
   children,
   className,
   disabled,
 }: {
   onClick: () => void
   title:   string
-  /** Accessible name when it should differ from the tooltip; defaults to `title`. */
-  label?:  string
   children: React.ReactNode
   className?: string
   disabled?: boolean
@@ -205,7 +168,7 @@ function IconButton({
         className
       )}
       title={title}
-      aria-label={label ?? title}
+      aria-label={title}
     >
       {children}
     </button>

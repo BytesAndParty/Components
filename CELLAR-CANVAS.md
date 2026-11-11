@@ -65,10 +65,9 @@ Every Fabric.js object in Cellar Canvas carries these custom properties:
 interface FabricObjectMeta {
   id: string           // UUID — stable across history snapshots
   _layerName: string   // displayed name in Layer Panel
-  _type: 'text' | 'wine-field' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'qr-code'
+  _type: 'text' | 'wine-field' | 'image' | 'rect' | 'circle' | 'line' | 'group' | 'qr-code' | 'path'
   _fieldKey?: string   // wine-field and qr-code objects: 'name' | 'vintage' | 'qrCode' | ...
   _locked?: boolean    // mirrors Layer Panel lock state
-  _extras?: boolean    // marks objects added from Extras panel
 }
 ```
 

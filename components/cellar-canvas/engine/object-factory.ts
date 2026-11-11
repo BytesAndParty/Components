@@ -50,48 +50,6 @@ export function attach<T extends fabric.Object>(
   return obj as T & FabricObjectMeta
 }
 
-/**
- * Wraps existing canvas objects into one group, with the same top-left origin
- * and handle style as every other object. The members keep their metadata.
- */
-export function createGroup(objects: fabric.Object[]) {
-  const group = new fabric.Group(objects, { ...ORIGIN, ...CORNER_STYLE })
-  return attach(group, { _layerName: 'Group', _type: 'group' })
-}
-
-export interface PathOptions {
-  layerName: string
-  /** Width the path is scaled to, in mm (height follows the aspect ratio). */
-  widthMm:   number
-  fill?:     string
-  stroke?:   string
-  strokeWidth?: number
-}
-
-/**
- * SVG path data (a signature, an ornament) as one Fabric path, scaled to
- * `widthMm` and placed at the usual inset. Filled shapes pass `fill`,
- * line-art passes `stroke`; `strokeUniform` keeps the line weight when the
- * path is resized.
- */
-export function createPath(bleedPx: number, d: string, opts: PathOptions) {
-  const path = new fabric.Path(d, {
-    ...ORIGIN,
-    left: bleedPx + INSET_PX,
-    top: bleedPx + INSET_PX,
-    fill: opts.fill ?? '',
-    stroke: opts.stroke,
-    strokeWidth: opts.stroke ? (opts.strokeWidth ?? 1.5) : 0,
-    strokeLineCap: 'round',
-    strokeLineJoin: 'round',
-    strokeUniform: true,
-    ...CORNER_STYLE,
-  })
-  const scale = mmToPxExact(opts.widthMm) / (path.width || 1)
-  path.set({ scaleX: scale, scaleY: scale })
-  return attach(path, { _layerName: opts.layerName, _type: 'path' })
-}
-
 export function createRect(bleedPx: number) {
   const rect = new fabric.Rect({
     ...ORIGIN,
@@ -153,24 +111,6 @@ export function createText(bleedPx: number, text: string, fieldKey?: string) {
     _type: fieldKey ? 'wine-field' : 'text',
     _fieldKey: fieldKey,
   })
-}
-
-/**
- * Emojis render via the browser's emoji font, so the result stays vector-clean
- * at any zoom and stores as a single codepoint instead of a binary blob. The
- * default size is roughly double the regular text default — a label-sized emoji.
- */
-export function createEmoji(bleedPx: number, emoji: string) {
-  const textbox = new fabric.Textbox(emoji, {
-    ...ORIGIN,
-    left: bleedPx + INSET_PX,
-    top: bleedPx + INSET_PX,
-    width: mmToPxExact(20),
-    fontSize: 48,
-    fontFamily: 'sans-serif',
-    fill: '#000000',
-  })
-  return attach(textbox, { _layerName: `Emoji ${emoji}`, _type: 'text', _extras: true })
 }
 
 /**

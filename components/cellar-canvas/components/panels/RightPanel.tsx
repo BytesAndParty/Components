@@ -6,7 +6,6 @@ import { LayerPanel, type Layer } from '../../../layer-panel/layer-panel'
 import { PropertiesPanel } from './PropertiesPanel'
 import { BackgroundPanel } from './BackgroundPanel'
 import { WineFieldsPanel } from './WineFieldsPanel'
-import { ExtrasPanel } from './ExtrasPanel'
 import { TemplatesPanel } from './TemplatesPanel'
 import { useCellarCanvasMessages } from '../../messages-context'
 import type { FabricBridge } from '../../engine/fabric-bridge'
@@ -14,7 +13,7 @@ import type { FabricObjectMeta, FabricObjectProperties, LabelBackground } from '
 import type { CellarCanvasMessages } from '../../messages'
 import type { WineFieldValues } from '../../CellarCanvas'
 
-type Tab = 'props' | 'fields' | 'background' | 'templates' | 'extras'
+type Tab = 'props' | 'fields' | 'background' | 'templates'
 
 function buildTabs(m: CellarCanvasMessages): { id: Tab; label: string }[] {
   return [
@@ -22,7 +21,6 @@ function buildTabs(m: CellarCanvasMessages): { id: Tab; label: string }[] {
     { id: 'fields',     label: m.tabWineData },
     { id: 'background', label: m.tabBackground },
     { id: 'templates',  label: m.tabTemplates },
-    { id: 'extras',     label: m.tabExtras },
   ]
 }
 
@@ -66,7 +64,6 @@ export function RightPanel({
         {tabs.map(({ id, label }) => (
           <button
             key={id}
-            data-tour={id === 'fields' ? 'wine-data-tab' : undefined}
             onClick={() => setTab(id)}
             className={cn(
               "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors border-b-2",
@@ -85,10 +82,9 @@ export function RightPanel({
         {tab === 'fields'     && <WineFieldsPanel bridge={bridge} values={wineFields} layers={layers} />}
         {tab === 'background' && <BackgroundPanel bridge={bridge} background={background} />}
         {tab === 'templates'  && <TemplatesPanel bridge={bridge} wineFields={wineFields} hasObjects={layers.length > 0} />}
-        {tab === 'extras'     && <ExtrasPanel bridge={bridge} />}
       </div>
 
-      <div data-tour="layers-section" className="border-border bg-muted/10 border-t p-4">
+      <div className="border-border bg-muted/10 border-t p-4">
         <div className="mb-2 flex items-center justify-between px-1">
           <span className="text-muted-foreground text-[10px] font-bold uppercase">{m.layersHeading}</span>
           <span className="text-muted-foreground font-mono text-[10px]">{interpolate(m.layersCount, { count: layers.length })}</span>

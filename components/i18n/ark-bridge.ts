@@ -1,8 +1,8 @@
 import { useI18n } from './i18n-context'
 
 // Ark UI v5 / Zag 1.40 translation shapes. Keys verified against
-// @zag-js/popover/dist/popover.types.d.ts, @zag-js/image-cropper/dist/image-cropper.types.d.ts and
-// @zag-js/signature-pad/dist/signature-pad.types.d.ts (IntlTranslations).
+// @zag-js/popover/dist/popover.types.d.ts and @zag-js/image-cropper/dist/image-cropper.types.d.ts
+// (IntlTranslations).
 // Dialog has no translations prop in v5 — set aria-label on Dialog.Root or per-element instead.
 
 interface Rect { x: number; y: number; width: number; height: number }
@@ -25,10 +25,6 @@ const ARK_DE = {
     selectionValueText: ({ width, height }: SelectionValueTextDetails) =>
       `${Math.round(width)} mal ${Math.round(height)} Pixel`,
   },
-  signaturePad: {
-    control: 'Unterschriftenfeld',
-    clearTrigger: 'Unterschrift löschen',
-  },
 } as const
 
 const ARK_EN = {
@@ -46,10 +42,6 @@ const ARK_EN = {
     selectionInstructions: 'Use arrow keys to move, drag the handles to resize.',
     selectionValueText: ({ width, height }: SelectionValueTextDetails) =>
       `${Math.round(width)} by ${Math.round(height)} pixels`,
-  },
-  signaturePad: {
-    control: 'Signature pad',
-    clearTrigger: 'Clear signature',
   },
 } as const
 

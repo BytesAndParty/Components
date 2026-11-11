@@ -2,7 +2,6 @@ import { useRef, type ChangeEvent, type RefObject } from 'react'
 import { SegmentGroup } from '@ark-ui/react/segment-group'
 import { ImageUp } from 'lucide-react'
 import { ColorSwatch } from '../../../color-swatch/color-swatch'
-import { NumberInput } from '../shared'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { prepareImageSource } from '../../engine/image-source'
 import { reportImageError } from '../../store/designer-store'
@@ -14,20 +13,21 @@ export interface BackgroundPanelProps {
   background: LabelBackground
 }
 
-type Mode = 'color' | 'gradient' | 'image'
-
-/** Second gradient stop when switching from a plain colour — a warm paper tone. */
-const DEFAULT_GRADIENT_TO = '#e8e1d4'
+type Mode = 'color' | 'image'
 
 /**
- * Label-paper controls: solid colour, two-stop linear gradient or an image
- * (cover). Choosing "Image" opens the file picker; the mode switches only once
- * a file is picked, so cancelling keeps the current paper.
+ * Label-paper controls: solid colour or an image (cover). Choosing "Image"
+ * opens the file picker; the mode switches only once a file is picked, so
+ * cancelling keeps the current paper.
+ *
+ * A gradient paper can still arrive from an older draft or `initialState`
+ * (the engine keeps rendering and exporting it). It shows as "Colour" with its
+ * start colour; picking a colour replaces it.
  */
 export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
   const m = useCellarCanvasMessages()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const mode: Mode = typeof background === 'string' ? 'color' : background.type
+  const mode: Mode = typeof background !== 'string' && background.type === 'image' ? 'image' : 'color'
   // The colour a mode switch starts from.
   const baseColor =
     typeof background === 'string' ? background : background.type === 'gradient' ? background.from : '#ffffff'
@@ -37,7 +37,6 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
   function switchMode(next: string | null) {
     if (next === mode) return
     if (next === 'color') set(baseColor)
-    if (next === 'gradient') set({ type: 'gradient', from: baseColor, to: DEFAULT_GRADIENT_TO, angle: 180 })
     if (next === 'image') fileInputRef.current?.click()
   }
 
@@ -51,9 +50,8 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
   }
 
   const modes: { value: Mode; label: string }[] = [
-    { value: 'color',    label: m.bgModeColor },
-    { value: 'gradient', label: m.bgModeGradient },
-    { value: 'image',    label: m.bgModeImage },
+    { value: 'color', label: m.bgModeColor },
+    { value: 'image', label: m.bgModeImage },
   ]
 
   return (
@@ -89,41 +87,10 @@ export function BackgroundPanel({ bridge, background }: BackgroundPanelProps) {
         tabIndex={-1}
       />
 
-      {typeof background === 'string' && (
+      {mode === 'color' && (
         <div className="bg-card border-border flex h-9 items-center justify-between rounded-lg border px-1">
           <span className="text-muted-foreground pl-2 text-xs">{m.bgFill}</span>
-          <ColorSwatch value={background} onChange={set} label="■" title={m.bgFillTitle} />
-        </div>
-      )}
-
-      {typeof background !== 'string' && background.type === 'gradient' && (
-        <div className="space-y-2">
-          <div className="bg-card border-border flex h-9 items-center justify-between rounded-lg border px-1">
-            <span className="text-muted-foreground pl-2 text-xs">{m.bgGradientFrom}</span>
-            <ColorSwatch
-              value={background.from}
-              onChange={(from) => set({ ...background, from })}
-              label="■"
-              title={m.bgGradientFrom}
-            />
-          </div>
-          <div className="bg-card border-border flex h-9 items-center justify-between rounded-lg border px-1">
-            <span className="text-muted-foreground pl-2 text-xs">{m.bgGradientTo}</span>
-            <ColorSwatch
-              value={background.to}
-              onChange={(to) => set({ ...background, to })}
-              label="■"
-              title={m.bgGradientTo}
-            />
-          </div>
-          <NumberInput
-            label={m.bgGradientAngle}
-            value={background.angle}
-            onChange={(angle) => set({ ...background, angle })}
-            min={0} max={360} step={15}
-            unit="°"
-            className="justify-between pl-2"
-          />
+          <ColorSwatch value={baseColor} onChange={set} label="■" title={m.bgFillTitle} />
         </div>
       )}
 

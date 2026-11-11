@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent } from 'react'
-import { Type, Square, Circle, Minus, Image as ImageIcon, Hand, MousePointer2, Trash2, Copy } from 'lucide-react'
+import { Type, Square, Circle, Minus, Image as ImageIcon, Trash2, Copy } from 'lucide-react'
 import { useDesignerStore, reportImageError } from '../../store/designer-store'
 import { useCellarCanvasMessages } from '../../messages-context'
 import { prepareImageSource } from '../../engine/image-source'
@@ -13,12 +13,10 @@ interface MainToolbarProps {
   bridge: React.MutableRefObject<FabricBridge | null>
 }
 
-type ToolId = 'select' | 'pan' | 'text' | 'image' | 'rect' | 'circle' | 'line'
+type ToolId = 'text' | 'image' | 'rect' | 'circle' | 'line'
 
 function buildTools(m: CellarCanvasMessages) {
   return [
-    { id: 'select', icon: MousePointer2, label: m.toolSelect },
-    { id: 'pan',    icon: Hand,          label: m.toolPan },
     { id: 'text',   icon: Type,          label: m.toolText },
     { id: 'image',  icon: ImageIcon,     label: m.toolImage },
     { id: 'rect',   icon: Square,        label: m.toolRect },
@@ -30,28 +28,20 @@ function buildTools(m: CellarCanvasMessages) {
 export function MainToolbar({ bridge }: MainToolbarProps) {
   const m = useCellarCanvasMessages()
   const tools = buildTools(m)
-  const activeTool = useDesignerStore(s => s.activeTool)
-  const setActiveTool = useDesignerStore(s => s.setActiveTool)
   const hasSelection = useDesignerStore(s => s.selectedIds.length > 0)
   const setCropper = useDesignerStore(s => s.setCropper)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Every button inserts one object, which gets selected. There are no
+  // drawing modes; the view is moved with the wheel or with Space held.
   function handleToolClick(toolId: ToolId) {
     switch (toolId) {
-      // Real modes — stay active until switched.
-      case 'select':
-      case 'pan':
-        setActiveTool(toolId)
-        break
-      // Stamp actions — insert one object (which gets selected) and return
-      // to select mode. Keeping the button highlighted would suggest a
-      // persistent drawing mode that doesn't exist.
-      case 'text':   setActiveTool('select'); bridge.current?.addText(m.defaultText); break
-      case 'image':  setActiveTool('select'); fileInputRef.current?.click(); break
-      case 'rect':   setActiveTool('select'); bridge.current?.addRect();     break
-      case 'circle': setActiveTool('select'); bridge.current?.addCircle();   break
-      case 'line':   setActiveTool('select'); bridge.current?.addLine();     break
+      case 'text':   bridge.current?.addText(m.defaultText); break
+      case 'image':  fileInputRef.current?.click(); break
+      case 'rect':   bridge.current?.addRect();     break
+      case 'circle': bridge.current?.addCircle();   break
+      case 'line':   bridge.current?.addLine();     break
     }
   }
 
@@ -86,13 +76,7 @@ export function MainToolbar({ bridge }: MainToolbarProps) {
           <button
             onClick={() => handleToolClick(tool.id)}
             aria-label={tool.label}
-            aria-pressed={activeTool === tool.id}
-            className={cn(
-              "p-2.5 rounded-xl transition-all duration-200",
-              activeTool === tool.id
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
+            className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl p-2.5 transition-all duration-200"
           >
             <tool.icon size={20} strokeWidth={2.5} />
           </button>

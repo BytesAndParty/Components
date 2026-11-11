@@ -15,12 +15,8 @@ import {
   createCircle,
   createLine,
   createText,
-  createEmoji,
   configureImage,
   configureQRImage,
-  createGroup,
-  createPath,
-  type PathOptions,
 } from './object-factory'
 import type { ValidatableObject } from '../wine-fields/validator'
 import {
@@ -66,7 +62,7 @@ export interface FabricBridgeOptions {
  * serialize with this same list, so nothing gets lost on restore.
  */
 export const SERIALIZED_OBJECT_PROPS = [
-  'id', '_layerName', '_type', '_fieldKey', '_extras', '_valueMissing',
+  'id', '_layerName', '_type', '_fieldKey', '_valueMissing',
   'lockMovementX', 'lockMovementY', 'lockScalingX', 'lockScalingY', 'lockRotation',
   'hasControls',
   // Wine-fields are non-editable; without this they turn editable again
@@ -260,10 +256,8 @@ export class FabricBridge {
       if (opt.target) applyCornerRadius(opt.target)
     })
 
+    // Smart guides are always on; holding Alt suppresses them for one drag.
     canvas.on('object:moving', (opt) => {
-      const { snappingEnabled } = useDesignerStore.getState()
-      if (!snappingEnabled) return
-      
       const e = opt.e as MouseEvent | TouchEvent | undefined
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const isAltPressed = e && (e as any).altKey
@@ -553,48 +547,6 @@ export class FabricBridge {
   }
 
   /**
-   * Mod+G: turns the multi-selection into one group (layer type 'group'), at
-   * the stack position of its topmost member. Members keep their metadata;
-   * wine fields inside still sync and count for the validator.
-   */
-  groupSelected() {
-    const active = this.canvas.getActiveObject()
-    if (!(active instanceof fabric.ActiveSelection)) return
-    const members = [...active.getObjects()]
-    if (members.length < 2) return
-    const stack = this.canvas.getObjects()
-    const top = Math.max(...members.map(o => stack.indexOf(o)))
-    // Dissolve first: members of an ActiveSelection hold coordinates relative
-    // to it, and the group must take them in canvas coordinates.
-    this.canvas.discardActiveObject()
-    this.canvas.remove(...members)
-    const group = createGroup(members)
-    // Every other member sat below the topmost one, so removing them all
-    // shifts that slot down by members.length - 1.
-    this.canvas.insertAt(top - (members.length - 1), group)
-    this.canvas.setActiveObject(group)
-    this.canvas.requestRenderAll()
-    this.saveHistory()
-  }
-
-  /** Mod+Shift+G: dissolves the selected group into its members, selected together. */
-  ungroupSelected() {
-    const group = this.canvas.getActiveObject()
-    if (!(group instanceof fabric.Group) || group instanceof fabric.ActiveSelection) return
-    const index = this.canvas.getObjects().indexOf(group)
-    this.canvas.discardActiveObject()
-    // removeAll() hands the members back in canvas coordinates.
-    const members = group.removeAll()
-    this.canvas.remove(group)
-    this.canvas.insertAt(index, ...members)
-    this.canvas.setActiveObject(
-      members.length === 1 ? members[0] : new fabric.ActiveSelection(members, { canvas: this.canvas }),
-    )
-    this.canvas.requestRenderAll()
-    this.saveHistory()
-  }
-
-  /**
    * Syncs the store's selection state whenever Fabric's selection changes.
    */
   updateStoreSelection() {
@@ -671,15 +623,6 @@ export class FabricBridge {
 
   addText(text = 'New Text', fieldKey?: string) {
     this.place(createText(this.bleedPx, text, fieldKey))
-  }
-
-  addEmoji(emoji: string) {
-    this.place(createEmoji(this.bleedPx, emoji))
-  }
-
-  /** Places SVG path data — a drawn signature or an ornament (see `createPath`). */
-  addPath(d: string, opts: PathOptions) {
-    this.place(createPath(this.bleedPx, d, opts))
   }
 
   /** Loads an image from a src (data URL — see `imageSourceFromBlob`) and places it. */
@@ -1257,9 +1200,6 @@ export class FabricBridge {
     // run after this frame's rAF — a requested render would leave one blank
     // frame per resize step (flicker while dragging the window edge).
     this.canvas.renderAll()
-    // The rulers read the element size from the viewport snapshot.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(this.canvas as any).fire('cellar:viewport-changed')
   }
 
   /**

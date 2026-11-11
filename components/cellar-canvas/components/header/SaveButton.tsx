@@ -47,7 +47,6 @@ export function SaveButton({ bridge, onSave }: SaveButtonProps) {
 
   return (
     <button
-      data-tour="save-button"
       onClick={handleClick}
       disabled={disabled}
       className={cn(

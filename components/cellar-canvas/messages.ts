@@ -22,12 +22,8 @@ export type CellarCanvasMessages = {
   fitToScreen:            string
   previewEnter:           string
   previewExit:            string
-  rulersShow:             string
-  rulersHide:             string
   fullscreenEnter:        string
   fullscreenExit:         string
-  snappingTitleEnabled:   string
-  snappingTitleDisabled:  string
 
   // Save button
   saveIdle:               string
@@ -42,8 +38,6 @@ export type CellarCanvasMessages = {
   dismissHint:            string
 
   // Main toolbar tools (label + shortcut hint)
-  toolSelect:             string
-  toolPan:                string
   toolText:               string
   /** Content of a freshly inserted text box. */
   defaultText:            string
@@ -61,14 +55,11 @@ export type CellarCanvasMessages = {
   contextFill:            string
   contextStroke:          string
   contextCornerRadius:    string
-  contextGroup:           string
-  contextUngroup:         string
 
   // Right panel — tabs
   tabProperties:          string
   tabWineData:            string
   tabBackground:          string
-  tabExtras:              string
   tabTemplates:           string
 
   // Templates panel
@@ -92,11 +83,7 @@ export type CellarCanvasMessages = {
   bgFillTitle:            string
   bgModeLabel:            string
   bgModeColor:            string
-  bgModeGradient:         string
   bgModeImage:            string
-  bgGradientFrom:         string
-  bgGradientTo:           string
-  bgGradientAngle:        string
   bgImageReplace:         string
 
   // Wine fields panel
@@ -124,62 +111,20 @@ export type CellarCanvasMessages = {
   hotkeyRedoDescription:  string
   hotkeyDeleteLabel:      string
   hotkeyDeleteDescription: string
-  hotkeySnappingLabel:    string
-  hotkeySnappingDescription: string
   hotkeySelectAllLabel:   string
   hotkeySelectAllDescription: string
   hotkeyDeselectLabel:    string
   hotkeyDeselectDescription: string
   hotkeyDuplicateLabel:   string
   hotkeyDuplicateDescription: string
-  hotkeyGroupLabel:       string
-  hotkeyGroupDescription: string
-  hotkeyUngroupLabel:     string
-  hotkeyUngroupDescription: string
   hotkeyPanLabel:         string
   hotkeyPanDescription:   string
-  hotkeyRulersLabel:      string
-  hotkeyRulersDescription: string
   hotkeyZoomInLabel:      string
   hotkeyZoomInDescription: string
   hotkeyZoomOutLabel:     string
   hotkeyZoomOutDescription: string
   zoomInTitle:            string
   zoomOutTitle:           string
-  hotkeyCategory:         string
-
-  // Onboarding Tour
-  tourSkip:               string
-  tourBack:               string
-  tourNext:               string
-  tourDone:               string
-  tourProgress:           string
-  tourStartButton:        string
-  tourStartTitle:         string
-  tourWelcomeTitle:       string
-  tourWelcomeBody:        string
-  tourCanvasTitle:        string
-  tourCanvasBody:         string
-  tourWineFieldsTitle:    string
-  tourWineFieldsBody:     string
-  tourLayersTitle:        string
-  tourLayersBody:         string
-  tourSaveTitle:          string
-  tourSaveBody:           string
-
-  // Emoji extras panel
-  emojiHeading:           string
-  emojiHint:              string
-  signatureHeading:       string
-  signatureHint:          string
-  signatureClear:         string
-  signatureInsert:        string
-  signatureLayerName:     string
-  ornamentsHeading:       string
-  ornamentDivider:        string
-  ornamentLeaf:           string
-  ornamentGrapes:         string
-  ornamentFlourish:       string
 
   // Export
   exportLabel:            string
@@ -202,12 +147,8 @@ export const MESSAGES = {
     fitToScreen:             'An Fenster anpassen',
     previewEnter:            'Vorschau (Bleed ausblenden)',
     previewExit:             'Vorschau beenden (Bleed anzeigen)',
-    rulersShow:              'Lineal einblenden (Shift+R)',
-    rulersHide:              'Lineal ausblenden (Shift+R)',
     fullscreenEnter:         'Vollbild',
     fullscreenExit:          'Vollbild beenden',
-    snappingTitleEnabled:    'Snapping aktiv (S)',
-    snappingTitleDisabled:   'Snapping aus (S)',
 
     saveIdle:                'Speichern',
     saveSaved:               'Gespeichert',
@@ -220,8 +161,6 @@ export const MESSAGES = {
     qrInsertFailed:          'QR-Code konnte nicht erzeugt werden. Bitte die Nährwert-URL prüfen.',
     dismissHint:             'Hinweis schließen',
 
-    toolSelect:              'Auswählen',
-    toolPan:                 'Ansicht verschieben',
     toolText:                'Text',
     defaultText:             'Neuer Text',
     toolImage:               'Bild',
@@ -237,13 +176,10 @@ export const MESSAGES = {
     contextFill:             'Füllung',
     contextStroke:           'Kontur',
     contextCornerRadius:     'Eckenradius',
-    contextGroup:            'Gruppieren (Cmd+G)',
-    contextUngroup:          'Gruppierung aufheben (Cmd+Shift+G)',
 
     tabProperties:           'Eigenschaften',
     tabWineData:             'Weindaten',
     tabBackground:           'Hintergrund',
-    tabExtras:               'Extras',
     tabTemplates:            'Vorlagen',
 
     templateClassicName:    'Klassisch',
@@ -264,11 +200,7 @@ export const MESSAGES = {
     bgFillTitle:             'Hintergrundfarbe',
     bgModeLabel:             'Art des Hintergrunds',
     bgModeColor:             'Farbe',
-    bgModeGradient:          'Verlauf',
     bgModeImage:             'Bild',
-    bgGradientFrom:          'Startfarbe',
-    bgGradientTo:            'Endfarbe',
-    bgGradientAngle:         'Winkel',
     bgImageReplace:          'Bild ersetzen',
 
     wineFieldName:           'Weinname',
@@ -293,60 +225,20 @@ export const MESSAGES = {
     hotkeyRedoDescription:   'Rückgängig gemachte Änderung wiederherstellen',
     hotkeyDeleteLabel:       'Löschen',
     hotkeyDeleteDescription: 'Ausgewähltes Objekt entfernen',
-    hotkeySnappingLabel:     'Snapping umschalten',
-    hotkeySnappingDescription: 'Drag-Snapping zu Kanten und Mittellinien an- oder ausschalten',
     hotkeySelectAllLabel:    'Alles auswählen',
     hotkeySelectAllDescription: 'Alle sichtbaren, nicht gesperrten Objekte auswählen',
     hotkeyDeselectLabel:     'Auswahl aufheben',
     hotkeyDeselectDescription: 'Auswahl aufheben, ohne Auswahl den Vollbildmodus verlassen',
     hotkeyDuplicateLabel:    'Duplizieren',
     hotkeyDuplicateDescription: 'Ausgewählte Objekte versetzt kopieren',
-    hotkeyGroupLabel:        'Gruppieren',
-    hotkeyGroupDescription:  'Ausgewählte Objekte zu einer Gruppe zusammenfassen',
-    hotkeyUngroupLabel:      'Gruppierung aufheben',
-    hotkeyUngroupDescription: 'Ausgewählte Gruppe in ihre Objekte auflösen',
     hotkeyPanLabel:          'Ansicht verschieben (halten)',
     hotkeyPanDescription:    'Leertaste gedrückt halten und ziehen, beim Loslassen kehrt das vorige Werkzeug zurück',
-    hotkeyRulersLabel:       'Lineal umschalten',
-    hotkeyRulersDescription: 'mm-Lineal an den Rändern der Arbeitsfläche ein- oder ausblenden',
     hotkeyZoomInLabel:       'Hineinzoomen',
     hotkeyZoomInDescription: 'Ansicht vergrößern (Canvas-Mitte)',
     hotkeyZoomOutLabel:      'Herauszoomen',
     hotkeyZoomOutDescription: 'Ansicht verkleinern (Canvas-Mitte)',
     zoomInTitle:             'Hineinzoomen (=)',
     zoomOutTitle:            'Herauszoomen (−)',
-    hotkeyCategory:          'Aktionen',
-
-    tourSkip:                'Überspringen',
-    tourBack:                'Zurück',
-    tourNext:                'Weiter',
-    tourDone:                'Fertig',
-    tourProgress:            '{current} von {total}',
-    tourStartButton:         'Tour starten',
-    tourStartTitle:          'Geführte Tour öffnen',
-    tourWelcomeTitle:        'Willkommen bei Cellar Canvas',
-    tourWelcomeBody:         'Gestalte dein eigenes Weinetikett — Text, Bilder, Formen, alles in deiner Hand. Eine kurze Tour zeigt dir die wichtigsten Werkzeuge.',
-    tourCanvasTitle:         'Die Leinwand',
-    tourCanvasBody:          'Das Etikett liegt zentral. Drumherum siehst du den Bleed-Bereich — Objekte, die hier reinragen, bleiben sichtbar, sind aber außerhalb des druckbaren Bereichs.',
-    tourWineFieldsTitle:     'Weindaten einfügen',
-    tourWineFieldsBody:      'Name, Jahrgang, Volumen — vorausgefüllte Felder fügst du per Klick als Textobjekt ein. Der QR-Code ist EU-Pflicht und steht ganz unten.',
-    tourLayersTitle:         'Ebenen verwalten',
-    tourLayersBody:          'Alle Objekte landen als Ebene rechts unten. Drag-and-Drop ändert die Reihenfolge, das Auge schaltet sie aus, das Schloss sperrt sie.',
-    tourSaveTitle:           'Speichern',
-    tourSaveBody:            'Änderungen werden automatisch in deinem Browser gesichert. Der Speichern-Button oben schickt sie zusätzlich an dein Konto.',
-
-    emojiHeading:            'Emoji einfügen',
-    emojiHint:               'Wähle ein Emoji — es landet als Text-Ebene auf der Leinwand.',
-    signatureHeading:        'Unterschrift',
-    signatureHint:           'Mit Maus, Stift oder Finger ins Feld schreiben, dann einfügen.',
-    signatureClear:          'Löschen',
-    signatureInsert:         'Einfügen',
-    signatureLayerName:      'Unterschrift',
-    ornamentsHeading:        'Ornamente',
-    ornamentDivider:         'Trenner',
-    ornamentLeaf:            'Weinblatt',
-    ornamentGrapes:          'Traube',
-    ornamentFlourish:        'Ranke',
 
     exportLabel:             'PDF',
     exportTitle:             'Als PDF exportieren (Trim-Größe)',
@@ -366,12 +258,8 @@ export const MESSAGES = {
     fitToScreen:             'Fit to Screen',
     previewEnter:            'Preview (hide bleed area)',
     previewExit:             'Exit Preview (show bleed)',
-    rulersShow:              'Show rulers (Shift+R)',
-    rulersHide:              'Hide rulers (Shift+R)',
     fullscreenEnter:         'Enter Fullscreen',
     fullscreenExit:          'Exit Fullscreen',
-    snappingTitleEnabled:    'Snapping enabled (S)',
-    snappingTitleDisabled:   'Snapping disabled (S)',
 
     saveIdle:                'Save',
     saveSaved:               'Saved',
@@ -384,8 +272,6 @@ export const MESSAGES = {
     qrInsertFailed:          'Could not generate the QR code. Please check the nutrition info URL.',
     dismissHint:             'Dismiss',
 
-    toolSelect:              'Select',
-    toolPan:                 'Pan',
     toolText:                'Text',
     defaultText:             'New Text',
     toolImage:               'Image',
@@ -401,13 +287,10 @@ export const MESSAGES = {
     contextFill:             'Fill',
     contextStroke:           'Stroke',
     contextCornerRadius:     'Corner radius',
-    contextGroup:            'Group (Cmd+G)',
-    contextUngroup:          'Ungroup (Cmd+Shift+G)',
 
     tabProperties:           'Properties',
     tabWineData:             'Wine Data',
     tabBackground:           'Background',
-    tabExtras:               'Extras',
     tabTemplates:            'Templates',
 
     templateClassicName:    'Classic',
@@ -428,11 +311,7 @@ export const MESSAGES = {
     bgFillTitle:             'Canvas background',
     bgModeLabel:             'Background type',
     bgModeColor:             'Color',
-    bgModeGradient:          'Gradient',
     bgModeImage:             'Image',
-    bgGradientFrom:          'Start color',
-    bgGradientTo:            'End color',
-    bgGradientAngle:         'Angle',
     bgImageReplace:          'Replace image',
 
     wineFieldName:           'Wine Name',
@@ -457,60 +336,20 @@ export const MESSAGES = {
     hotkeyRedoDescription:   'Reapply a reversed change',
     hotkeyDeleteLabel:       'Delete',
     hotkeyDeleteDescription: 'Remove selected object',
-    hotkeySnappingLabel:     'Toggle snapping',
-    hotkeySnappingDescription: 'Turn drag-snapping to edges and center lines on or off',
     hotkeySelectAllLabel:    'Select all',
     hotkeySelectAllDescription: 'Select all visible, unlocked objects',
     hotkeyDeselectLabel:     'Deselect',
     hotkeyDeselectDescription: 'Clear the selection; with nothing selected, leave fullscreen',
     hotkeyDuplicateLabel:    'Duplicate',
     hotkeyDuplicateDescription: 'Copy the selected objects with a small offset',
-    hotkeyGroupLabel:        'Group',
-    hotkeyGroupDescription:  'Combine the selected objects into one group',
-    hotkeyUngroupLabel:      'Ungroup',
-    hotkeyUngroupDescription: 'Split the selected group back into its objects',
     hotkeyPanLabel:          'Pan (hold)',
     hotkeyPanDescription:    'Hold Space and drag; releasing it returns to the previous tool',
-    hotkeyRulersLabel:       'Toggle rulers',
-    hotkeyRulersDescription: 'Show or hide the mm rulers along the canvas edges',
     hotkeyZoomInLabel:       'Zoom in',
     hotkeyZoomInDescription: 'Magnify the view (canvas centre)',
     hotkeyZoomOutLabel:      'Zoom out',
     hotkeyZoomOutDescription: 'Shrink the view (canvas centre)',
     zoomInTitle:             'Zoom in (=)',
     zoomOutTitle:            'Zoom out (−)',
-    hotkeyCategory:          'Actions',
-
-    tourSkip:                'Skip',
-    tourBack:                'Back',
-    tourNext:                'Next',
-    tourDone:                'Done',
-    tourProgress:            '{current} of {total}',
-    tourStartButton:         'Start tour',
-    tourStartTitle:          'Open guided tour',
-    tourWelcomeTitle:        'Welcome to Cellar Canvas',
-    tourWelcomeBody:         'Design your own wine label — text, images, shapes, all in your hands. A quick tour will show you the most important tools.',
-    tourCanvasTitle:         'The canvas',
-    tourCanvasBody:          'Your label sits in the center. The surrounding bleed area keeps overflowing objects visible while marking what falls outside the printable area.',
-    tourWineFieldsTitle:     'Insert wine data',
-    tourWineFieldsBody:      'Name, vintage, volume — pre-filled fields drop onto the canvas as text objects with one click. The QR code at the bottom is EU-mandatory.',
-    tourLayersTitle:         'Manage layers',
-    tourLayersBody:          'Every object becomes a layer at the bottom right. Drag-and-drop reorders, the eye toggles visibility, the lock prevents accidental edits.',
-    tourSaveTitle:           'Save',
-    tourSaveBody:            'Your changes are auto-saved in this browser. The Save button at the top also pushes them to your account.',
-
-    emojiHeading:            'Insert emoji',
-    emojiHint:               'Pick an emoji — it drops onto the canvas as a text layer.',
-    signatureHeading:        'Signature',
-    signatureHint:           'Sign in the box with mouse, pen or finger, then insert it.',
-    signatureClear:          'Clear',
-    signatureInsert:         'Insert',
-    signatureLayerName:      'Signature',
-    ornamentsHeading:        'Ornaments',
-    ornamentDivider:         'Divider',
-    ornamentLeaf:            'Vine leaf',
-    ornamentGrapes:          'Grapes',
-    ornamentFlourish:        'Flourish',
 
     exportLabel:             'PDF',
     exportTitle:             'Export as PDF (trim size)',
