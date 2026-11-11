@@ -23,6 +23,7 @@ export const defaultTextFormat: TextFormatValues = {
 }
 
 export interface TextToolOptionsMessages {
+  fontFamily: string
   bold: string
   italic: string
   underline: string

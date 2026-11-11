@@ -3,6 +3,7 @@ import type { TextToolOptionsMessages } from './types'
 
 export const MESSAGES = {
   de: {
+    fontFamily: 'Schriftart',
     bold: 'Fett (Strg+B)',
     italic: 'Kursiv (Strg+I)',
     underline: 'Unterstrichen (Strg+U)',
@@ -13,6 +14,7 @@ export const MESSAGES = {
     textColor: 'Textfarbe',
   },
   en: {
+    fontFamily: 'Font',
     bold: 'Bold (Ctrl+B)',
     italic: 'Italic (Ctrl+I)',
     underline: 'Underline (Ctrl+U)',

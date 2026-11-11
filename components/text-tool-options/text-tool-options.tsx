@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef, useId, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Portal } from '@ark-ui/react/portal'
+import { Select } from '@ark-ui/react/select'
+import { createListCollection } from '@ark-ui/react/collection'
 import {
   Bold, Italic, Underline,
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
@@ -10,9 +12,9 @@ import { NumberInput } from '../number-input/number-input'
 import { ColorSwatch } from '../color-swatch/color-swatch'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES } from './messages'
+import { ensureFontStylesheet } from './font-loader'
 import {
   FONTS,
-  GOOGLE_FONTS_URL,
   defaultTextFormat,
   type TextFormatValues,
   type TextToolOptionsMessages,
@@ -44,15 +46,9 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
     justify: m.alignJustify,
   }
 
-  // Load Google Fonts once
+  // The font list previews every family in its own face.
   useEffect(() => {
-    const id = 'cellar-canvas-fonts'
-    if (document.getElementById(id)) return
-    const link = document.createElement('link')
-    link.id = id
-    link.rel = 'stylesheet'
-    link.href = GOOGLE_FONTS_URL
-    document.head.appendChild(link)
+    void ensureFontStylesheet()
   }, [])
 
   return (
@@ -66,6 +62,7 @@ export function TextToolOptions({ value, onChange, className, messages }: TextTo
       <FontSelect
         value={fmt.fontFamily}
         onChange={(v) => set('fontFamily', v)}
+        label={m.fontFamily}
       />
 
       <Divider />
@@ -191,93 +188,93 @@ function ToggleBtn({
   )
 }
 
+const FONT_CATEGORIES = ['Serif', 'Display', 'Script', 'Sans-serif'] as const
+
+interface FontItem {
+  family: string
+  /** `null`: a font outside the list, shown ungrouped at the top. */
+  category: string | null
+}
+
+const fontItemCls =
+  'text-foreground data-highlighted:bg-muted/60 data-[state=checked]:text-accent data-[state=checked]:bg-accent/10 flex w-full cursor-pointer items-center px-3 py-2 text-left text-sm outline-none transition-colors'
+
+/**
+ * Font picker on Ark UI's Select: arrow keys, Home/End, type-ahead and Escape
+ * come with it. The list mounts on open only, so its previews do not fetch
+ * all ten families up front.
+ */
 function FontSelect({
   value,
   onChange,
+  label,
 }: {
   value: string
   onChange: (v: string) => void
+  label: string
 }) {
-  const [open, setOpen] = useState(false)
-  const [pos, setPos] = useState({ top: 0, left: 0 })
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const current = FONTS.find(f => f.family === value) ?? FONTS[0]
-  const listboxId = useId()
   const overlayContainer = useOverlayContainer()
-
-  function handleOpen() {
-    if (triggerRef.current) {
-      const r = triggerRef.current.getBoundingClientRect()
-      setPos({ top: r.bottom + 4, left: r.left })
-    }
-    setOpen((prev: boolean) => !prev)
-  }
+  // A text may be set in a font outside the list (system fonts on older
+  // labels). It is listed as what it is; falling back to the first entry
+  // claimed "Playfair Display" for a sans-serif text.
+  const unlisted: FontItem[] = FONTS.some(f => f.family === value) ? [] : [{ family: value, category: null }]
+  const collection = createListCollection<FontItem>({
+    items: [...unlisted, ...FONTS],
+    itemToValue: (font) => font.family,
+    itemToString: (font) => font.family,
+  })
 
   return (
-    <div className="h-full">
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={handleOpen}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={open ? listboxId : undefined}
-        className="hover:bg-muted/50 flex h-full max-w-[200px] min-w-[160px] items-center gap-1.5 px-3 transition-colors"
-        style={{ fontFamily: current.family }}
-      >
-        <span className="text-foreground flex-1 truncate text-left text-sm">
-          {current.family}
-        </span>
-        <svg
-          width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
-          className={cn('text-muted-foreground shrink-0 transition-transform', open && 'rotate-180')}
+    <Select.Root
+      collection={collection}
+      value={[value]}
+      onValueChange={(details) => {
+        const next = details.value[0]
+        if (next) onChange(next)
+      }}
+      positioning={{ placement: 'bottom-start', gutter: 4 }}
+      lazyMount
+      unmountOnExit
+      className="h-full"
+    >
+      <Select.Label className="sr-only">{label}</Select.Label>
+      <Select.Control className="h-full">
+        <Select.Trigger
+          className="hover:bg-muted/50 focus-visible:ring-accent/60 flex h-full max-w-50 min-w-40 items-center gap-1.5 px-3 transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+          style={{ fontFamily: value }}
         >
-          <path d="M5 6.5L1.5 3h7L5 6.5z" />
-        </svg>
-      </button>
+          <Select.ValueText className="text-foreground flex-1 truncate text-left text-sm" />
+          <Select.Indicator className="text-muted-foreground shrink-0 transition-transform data-[state=open]:rotate-180">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden>
+              <path d="M5 6.5L1.5 3h7L5 6.5z" />
+            </svg>
+          </Select.Indicator>
+        </Select.Trigger>
+      </Select.Control>
 
-      {open && (
-        <Portal container={overlayContainer}>
-          {/* Backdrop closes the popover on outside click; keyboard users
-              close via Escape on the listbox trigger. */}
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div
-            id={listboxId}
-            role="listbox"
-            className="bg-card border-border fixed z-50 min-w-[200px] overflow-hidden rounded-lg border shadow-xl"
-            style={{ top: pos.top, left: pos.left }}
-          >
-            {(['Serif', 'Display', 'Script', 'Sans-serif'] as const).map(cat => {
-              const fontsInCat = FONTS.filter(f => f.category === cat)
-              if (!fontsInCat.length) return null
-              return (
-                <div key={cat} role="presentation">
-                  <div className="text-muted-foreground bg-muted/30 px-3 py-1 text-[10px] font-semibold tracking-widest uppercase">
-                    {cat}
-                  </div>
-                  {fontsInCat.map(font => (
-                    <button
-                      key={font.family}
-                      type="button"
-                      role="option"
-                      aria-selected={value === font.family}
-                      onClick={() => { onChange(font.family); setOpen(false) }}
-                      className={cn(
-                        'w-full flex items-center px-3 py-2 text-sm text-left transition-colors hover:bg-muted/60',
-                        value === font.family ? 'text-accent bg-accent/10' : 'text-foreground',
-                      )}
-                      style={{ fontFamily: font.family }}
-                    >
-                      {font.family}
-                    </button>
-                  ))}
-                </div>
-              )
-            })}
-          </div>
-        </Portal>
-      )}
-    </div>
+      <Portal container={overlayContainer}>
+        <Select.Positioner style={{ zIndex: 50 }}>
+          <Select.Content className="bg-card border-border max-h-80 min-w-50 overflow-y-auto rounded-lg border shadow-xl outline-none">
+            {unlisted.map(font => (
+              <Select.Item key={font.family} item={font} className={fontItemCls} style={{ fontFamily: font.family }}>
+                <Select.ItemText>{font.family}</Select.ItemText>
+              </Select.Item>
+            ))}
+            {FONT_CATEGORIES.map(category => (
+              <Select.ItemGroup key={category}>
+                <Select.ItemGroupLabel className="text-muted-foreground bg-muted/30 px-3 py-1 text-[10px] font-semibold tracking-widest uppercase">
+                  {category}
+                </Select.ItemGroupLabel>
+                {FONTS.filter(font => font.category === category).map(font => (
+                  <Select.Item key={font.family} item={font} className={fontItemCls} style={{ fontFamily: font.family }}>
+                    <Select.ItemText>{font.family}</Select.ItemText>
+                  </Select.Item>
+                ))}
+              </Select.ItemGroup>
+            ))}
+          </Select.Content>
+        </Select.Positioner>
+      </Portal>
+    </Select.Root>
   )
 }

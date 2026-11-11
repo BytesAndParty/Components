@@ -114,7 +114,7 @@ Ein Reviewer (Opus, nur lesend) hat den Diff dieser Runde und die 26 Ordner gepr
 
 **12.5 Backlight ohne Reduced-Motion-Behandlung (mittel).** `components/backlight/backlight.tsx:38–54,162`. Der injizierte Style-Block hat keine `@media (prefers-reduced-motion)`, die Animation läuft endlos. In Buchart58 setzt die globale Regel (`storefront/src/styles.css:123–127`) nur `animation-duration: 0.01ms !important`, ohne `animation-iteration-count`; die Animation läuft dort also mit 0,01 ms weiter. Ob das sichtbar flackert, ist nicht geprüft. Fix: im injizierten Block `@media (prefers-reduced-motion: reduce) { … animation: none !important }`. Buchart58: ja (`WineDetail.tsx:133`, `ProductShowcase.tsx:84`).
 
-**12.6 FontSelect (TextToolOptions) ist per Tastatur kaum bedienbar (mittel).** `components/text-tool-options/text-tool-options.tsx:216–250`. Es gibt keinen `onKeyDown`: Escape schließt nichts und Pfeiltasten bewegen nichts, obwohl der Kommentar Escape nennt (Z. 239–240). Die Optionen liegen in einem `Portal` am Ende von `<body>`. Außerdem lädt der Effekt (Z. 47–55) `fonts.googleapis.com`; das ist in Buchart58 als B5 in `CELLAR-CANVAS-PLAN.md` bekannt (DSGVO). Fix: Ark `Select`, Schriften über `@fontsource` selbst hosten. Buchart58: ja.
+**12.6 TextToolOptions lädt Schriften von Google (mittel).** `components/text-tool-options/font-loader.ts`. Die Schriften kommen von `fonts.googleapis.com`; das ist in Buchart58 als B5 in `CELLAR-CANVAS-PLAN.md` bekannt (DSGVO). Fix: Schriften über `@fontsource` selbst hosten, der Lader (`ensureFontStylesheet`, `loadFonts`) bleibt dabei gleich. Die Tastaturbedienung der Schriftliste ist seit 2026-11-11 behoben (Ark `Select`, STATUS.md #32 der Komponente `cellar-canvas`). Buchart58: ja, dort noch mit der alten Liste ohne Tastatur.
 
 **12.7 Rating markiert mehrere Radios als ausgewählt (mittel).** `components/rating/rating.tsx:124–131`. `aria-checked={i < currentValue}` markiert bei Wert 3 die Sterne 1 bis 3 als ausgewählt. Jeder Stern ist ein eigener Tab-Stopp, Pfeiltasten tun nichts. Fix: `aria-checked={i + 1 === currentValue}`, Roving-`tabIndex`, Pfeiltasten. Buchart58: ja, dort aber nicht eingebunden.
 
@@ -185,7 +185,6 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 **Befunde aus dem Browser-Test vom 10.11.** (Chromium, 1440 × 900 und 1024 × 768, `/designer`). Sie werden mit dem Umbau behoben und dann hier gelöscht, der Fortschritt steht in `components/cellar-canvas/STATUS.md` #32:
 
-- **Schriften:** Der Google-Fonts-Link entsteht erst, wenn `TextToolOptions` mountet. Nach Laden oder Undo misst Fabric mit der Ersatzschrift und behält die Maße (gemessen 225 statt 200 px). Das Dropdown zeigt „Playfair Display“ für Texte in `sans-serif`.
 - **Layout:** Tab „Extras“ ist bei 1440 px nicht erreichbar (#10). Die Kontext-Leiste läuft bei Textauswahl über, bei 1024 px liegen Zoom und „Anpassen“ außerhalb des Fensters. Die Werkzeugleiste endet auf halber Höhe, „Ebenen“ steht doppelt.
 - **Weindaten:** Felder landen gestapelt an derselben Stelle, als Rohwert („750“, „12.5%“). Der Validator meldet danach „EU-konform“.
 - **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab. Das Bild landet als 40-mm-Kasten in der Ecke, Einrasten gibt es nur zur Etikettmitte.

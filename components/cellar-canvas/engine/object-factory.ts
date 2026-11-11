@@ -1,5 +1,6 @@
 import * as fabric from 'fabric'
 import { mmToPxExact } from './units'
+import { defaultTextFormat } from '../../text-tool-options/types'
 import type { FabricObjectMeta } from '../store/types'
 
 /**
@@ -142,7 +143,8 @@ export function createText(bleedPx: number, text: string, fieldKey?: string) {
     top: bleedPx + INSET_PX,
     width: mmToPxExact(50),
     fontSize: 24,
-    fontFamily: 'sans-serif',
+    // The font the toolbar's picker starts with, so it shows what is set.
+    fontFamily: defaultTextFormat.fontFamily,
     fill: '#000000',
     editable: !fieldKey,
   })

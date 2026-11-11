@@ -54,7 +54,7 @@ function renderLabelPng(bridge: FabricBridge, dpi: number, printBleedMm = 0): st
  * plain image.
  */
 export async function exportLabelPng(bridge: FabricBridge, dpi = DEFAULT_EXPORT_DPI): Promise<Blob> {
-  await bridge.whenPaperReady()
+  await Promise.all([bridge.whenPaperReady(), bridge.whenFontsReady()])
   const dataUrl = renderLabelPng(bridge, dpi)
   const base64  = dataUrl.split(',')[1]
   const bytes   = atob(base64)
@@ -120,7 +120,7 @@ export async function exportLabelPdf(
   bleedMm = 0,
 ): Promise<Blob> {
   const { jsPDF } = await import('jspdf')
-  await bridge.whenPaperReady()
+  await Promise.all([bridge.whenPaperReady(), bridge.whenFontsReady()])
   const bleed  = Math.min(Math.max(0, bleedMm), bridge.bleedMm)
   const png    = renderLabelPng(bridge, dpi, bleed)
   const layout = printLayout(bridge.widthMm, bridge.heightMm, bleed)

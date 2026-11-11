@@ -34,6 +34,7 @@ import {
 } from './object-properties'
 import { HistoryManager } from './history-manager'
 import { hasFieldValue } from '../wine-fields/field-value'
+import { loadFonts } from '../../text-tool-options/font-loader'
 import type { WineFieldValues } from '../CellarCanvas'
 
 /**
@@ -102,6 +103,8 @@ export class FabricBridge {
   private paperReady: Promise<void> = Promise.resolve()
   /** A QR code was on the canvas since the scene was last replaced (see `getValidationInput`). */
   private qrPlaced = false
+  /** Settles once every text is measured in its real font (see `settleFonts`). */
+  private fontsReady: Promise<void> = Promise.resolve()
   /** Current wine data — wine-field text on the canvas always mirrors it. */
   private wineFields: WineFieldValues = {}
   private readonly history = new HistoryManager()
@@ -371,6 +374,7 @@ export class FabricBridge {
     }
     // A draft or an undo snapshot may carry wine-field text of an older wine.
     this.applyWineFields()
+    this.settleFonts()
     this.canvas.requestRenderAll()
     this.updateStoreSelection()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -421,6 +425,50 @@ export class FabricBridge {
       ? (state as CellarCanvasState)
       : { canvas: state as object, bg: this.labelBackground }
     await this.history.runExclusive(() => this.loadScene(wrapped.canvas, wrapped.bg))
+  }
+
+  /**
+   * Fabric measures a text the moment it is created or changed. While its web
+   * font is still loading it measures the fallback font, caches those widths
+   * and never looks again — wrapping and centring stayed wrong, in the export
+   * too. This loads the fonts in use and measures the affected texts again.
+   * Call it after anything that adds text or changes a font.
+   */
+  private settleFonts() {
+    const texts = () =>
+      withGroupMembers(this.canvas.getObjects()).filter((o): o is fabric.IText => o instanceof fabric.IText)
+    const faces = texts().map(t => ({
+      family: t.fontFamily,
+      weight: t.fontWeight,
+      style: t.fontStyle,
+      text: t.text,
+    }))
+    if (!faces.length) return
+    const settled = loadFonts(faces).then((loaded) => {
+      if (!loaded.length) return
+      loaded.forEach(family => fabric.cache.clearFontCache(family))
+      const groups = new Set<fabric.Group>()
+      for (const text of texts()) {
+        if (!loaded.includes(text.fontFamily)) continue
+        text.initDimensions()
+        text.setCoords()
+        if (text.parent) groups.add(text.parent)
+      }
+      groups.forEach(group => group.triggerLayout())
+      this.canvas.requestRenderAll()
+      // Text heights may have changed — the panel shows them.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(this.canvas as any).fire('cellar:property-changed', { target: null })
+    })
+    this.fontsReady = Promise.all([this.fontsReady, settled]).then(() => undefined)
+  }
+
+  /**
+   * Resolves once every text is measured in its real font. The export awaits
+   * it — right after loading a draft it would otherwise print fallback fonts.
+   */
+  whenFontsReady(): Promise<void> {
+    return this.fontsReady
   }
 
   /**
@@ -587,6 +635,7 @@ export class FabricBridge {
     this.canvas.add(obj)
     this.canvas.setActiveObject(obj)
     this.canvas.renderAll()
+    this.settleFonts()
     this.saveHistory()
     return obj
   }
@@ -603,6 +652,7 @@ export class FabricBridge {
     this.canvas.getObjects().slice().forEach((o) => this.canvas.remove(o))
     elements.forEach((el) => this.canvas.add(el))
     this.canvas.renderAll()
+    this.settleFonts()
     this.updateStoreSelection()
     this.saveHistory()
   }
@@ -896,6 +946,8 @@ export class FabricBridge {
     if (corner) obj.setPositionByOrigin(corner, 'left', 'top')
     applyCornerRadius(obj)
     obj.setCoords()
+    // The new face may still be loading; the text is measured again once it is there.
+    if ('fontFamily' in fabricProps || 'fontWeight' in fabricProps || 'fontStyle' in fabricProps) this.settleFonts()
 
     this.canvas.renderAll()
     useDesignerStore.getState().setDirty(true)

@@ -208,7 +208,7 @@ Ein Commit je Schritt, diese Liste wandert mit.
 | # | Schritt | Stand |
 |---|---|---|
 | 1 | Zuschnitt-Vorschau, Overlays im Vollbild, Esc, Seiten-Scroll | ✅ 2026-11-11 |
-| 2 | Schriften: vor dem Messen laden, nach Laden und Undo neu messen, Dropdown zeigt die echte Schrift | offen |
+| 2 | Schriften: nach dem Laden neu messen (Laden, Undo, Einfügen, Schriftwechsel), Export wartet, Schriftliste per Tastatur und mit der echten Schrift | ✅ 2026-11-11 |
 | 3 | Entfernen: Extras (Emoji, Unterschrift, Ornamente), Lineal, Tour, Gruppieren, Verlauf, Hand-Button, Snapping-Schalter | offen |
 | 4 | Neue Oberfläche: Kopf, Werkzeugleiste, Kontext-Leiste ohne Überlauf, rechte Seite als Abschnitte, Hinweise als Banner, Zoom-Leiste | offen |
 | 5 | Hochladen zuerst: Bild füllt das Etikett, Zuschnitt optional, Einrasten an den Etikettkanten, größeres Einpassen, leeres Etikett mit Ablagefläche | offen |
@@ -232,6 +232,26 @@ Ein Commit je Schritt, diese Liste wandert mit.
 - **Esc:** Ein Esc, das Dialog, Popover oder Liste schließt, verließ zugleich das Vollbild (Zag markiert das Event
   nicht). Ein Capture-Listener am `window` merkt sich, ob ein Overlay offen war.
 - **Seiten-Scroll:** Im Vollbild trägt `<html>` `overflow: hidden`, der Scrollbalken der Seite schien vorher durch.
+
+**Schritt 2 (2026-11-11, im Browser geprüft):**
+
+- **Ursache:** Fabric misst einen Text beim Anlegen oder Ändern. Lädt seine Webschrift da noch, misst es die
+  Ersatzschrift, merkt sich die Zeichenbreiten (`fabric.cache`) und schaut nie wieder hin. Der Google-Fonts-Link entstand
+  außerdem erst, wenn `TextToolOptions` mountete, nach einem Neuladen also erst beim ersten angeklickten Text.
+- **`FabricBridge.settleFonts()`:** lädt die Schriften aller Texte (`loadFonts` aus `text-tool-options/font-loader.ts`,
+  inkl. Gewicht, Stil und Textinhalt für die Unicode-Teilmengen), leert für neu geladene Familien Fabrics Zeichen-Cache
+  und misst die betroffenen Texte neu (`initDimensions`, Gruppen per `triggerLayout`). Läuft nach jedem Scene-Load
+  (Restore, Undo/Redo), nach `place()`, `applyTemplate()` und nach einem Wechsel von Schrift, Gewicht oder Stil.
+  Bewusst „erst anwenden, dann nachmessen“ statt vorab zu laden: Die Auswahl reagiert sofort.
+- **Export:** `exportLabelPng`/`exportLabelPdf` warten auf `bridge.whenFontsReady()`.
+- **Schriftliste:** `FontSelect` läuft auf Arks `Select` (Pfeiltasten, Pos1/Ende, Tippen, Esc; KNOWN-ISSUES 12.6 zur
+  Tastatur erledigt). Eine Schrift außerhalb der Liste wird als das angezeigt, was sie ist: vorher stand
+  „Playfair Display“ über jedem Text in `sans-serif`. Neuer Text entsteht in `defaultTextFormat.fontFamily`.
+- **Gemessen** mit künstlich um 1,5 s verzögerten Schriftdateien (Playwright `route`), Text in Cinzel: direkt nach dem
+  Restore 225,3 px (Ersatzschrift), nach `whenFontsReady()` (1522 ms) 308,3 px, gleich der echten Breite. Vorher blieb
+  der falsche Wert auch nach 3 s stehen. Tastatur im Vollbild: Enter, zweimal Pfeil ab, Enter wählt „Lora“.
+- **Offen:** Die Schriften kommen weiter von Google (12.6). Die Vorlagen setzen noch `sans-serif`/Georgia, das ändert
+  Schritt 7.
 
 ### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
 
