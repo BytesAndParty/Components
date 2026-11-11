@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Popover } from '@ark-ui/react/popover'
 import { Portal } from '@ark-ui/react/portal'
 import { cn } from '../lib/utils'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { ColorPickerPanel, type PaletteGroup } from '../color-picker/color-picker'
 import { useComponentMessages, useArkTranslations } from '../i18n'
 import { MESSAGES, type ColorSwatchMessages } from './messages'
@@ -49,6 +50,7 @@ export function ColorSwatch({
 }: ColorSwatchProps) {
   const m = useComponentMessages(MESSAGES, messages)
   const popoverTranslations = useArkTranslations('popover')
+  const overlayContainer = useOverlayContainer()
 
   return (
     <Popover.Root translations={popoverTranslations}>
@@ -74,7 +76,7 @@ export function ColorSwatch({
         </button>
       </Popover.Trigger>
 
-      <Portal>
+      <Portal container={overlayContainer}>
         <Popover.Positioner style={{ zIndex: 50 }}>
           <Popover.Content>
             <div className="bg-card border-border w-72 rounded-xl border p-3 shadow-xl">

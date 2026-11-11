@@ -183,14 +183,12 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - Flaschenhöhe ca. 300 mm für die Umrechnung der Etikettmaße auf die 3D-Flasche. Gemessen sind nur Verhältnisse (Punkt 13).
 - Buchart58 behält seine Kopie, der Umbau kommt dort nicht von selbst an.
 
-**Befunde aus dem Browser-Test vom 10.11.** (Chromium, 1440 × 900 und 1024 × 768, `/designer`). Sie werden mit dem Umbau behoben und dann hier gelöscht:
+**Befunde aus dem Browser-Test vom 10.11.** (Chromium, 1440 × 900 und 1024 × 768, `/designer`). Sie werden mit dem Umbau behoben und dann hier gelöscht, der Fortschritt steht in `components/cellar-canvas/STATUS.md` #32:
 
-- **Vollbild:** Zuschnitt-Dialog, Schriftliste und Farbwähler öffnen hinter dem Editor (Shell mit `z-index` 9999, Portale am `body` mit 40 bzw. 50). Beim Zuschnitt-Dialog friert der Editor ein (`pointer-events: none` am `body`), Esc schließt Dialog und Vollbild zugleich.
-- **`ImageCropperModal`:** Das Bild trägt `max-width: 100%` aus dem Tailwind-Preflight. Bilder breiter als die Arbeitsfläche (ca. 570 px) erscheinen zu klein, der Rahmen passt nicht zum Bild. Der Standard-Zuschnitt von 95 % schneidet ohne Zutun 5 % ab.
 - **Schriften:** Der Google-Fonts-Link entsteht erst, wenn `TextToolOptions` mountet. Nach Laden oder Undo misst Fabric mit der Ersatzschrift und behält die Maße (gemessen 225 statt 200 px). Das Dropdown zeigt „Playfair Display“ für Texte in `sans-serif`.
 - **Layout:** Tab „Extras“ ist bei 1440 px nicht erreichbar (#10). Die Kontext-Leiste läuft bei Textauswahl über, bei 1024 px liegen Zoom und „Anpassen“ außerhalb des Fensters. Die Werkzeugleiste endet auf halber Höhe, „Ebenen“ steht doppelt.
 - **Weindaten:** Felder landen gestapelt an derselben Stelle, als Rohwert („750“, „12.5%“). Der Validator meldet danach „EU-konform“.
-- **Upload:** Der Zuschnitt ist Pflicht, das Bild landet als 40-mm-Kasten in der Ecke, Einrasten gibt es nur zur Etikettmitte.
+- **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab. Das Bild landet als 40-mm-Kasten in der Ecke, Einrasten gibt es nur zur Etikettmitte.
 - **Einpassen:** Der 40-mm-Arbeitsrand zählt mit, das Etikett belegt ca. 300 von 1030 px Breite.
 - **Texte:** „Bleed“, „Snapping“, „Rot“, „LS/LH/SW/OP“, „Cmd+…“ auf jeder Plattform. Validator nur deutsch, Ebenennamen nur englisch, Text-Ebenen heißen dauerhaft „Neuer Text“.
 - **Handy (390 px):** Die Arbeitsfläche ist nicht sichtbar.

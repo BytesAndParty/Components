@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } fr
 import { createPortal } from 'react-dom'
 import { ZoomIn, ZoomOut } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { OverlayContainerProvider } from '../lib/overlay-container'
 import { useComponentMessages } from '../i18n'
 import { useFabricCanvas, BLEED_MM } from './engine/use-fabric-canvas'
 import { prepareImageSource } from './engine/image-source'
@@ -257,18 +258,41 @@ function CellarCanvasEditor({
     onValidationChange(warnings)
   }, [warnings, onValidationChange])
 
+  // In fullscreen the shell sits above the page (z-index 9999). Overlays that
+  // portal to <body> — the cropper dialog, colour pickers, the font list —
+  // would open behind it: invisible, and the modal dialog still blocked every
+  // click. They mount into this element inside the shell instead.
+  const overlayRef = useRef<HTMLDivElement>(null)
+
   // CSS fullscreen instead of the browser Fullscreen API: requestFullscreen
   // restricts focus to descendants of the fullscreen element, which Fabric's
   // hiddenTextarea cannot reliably satisfy across reparenting attempts —
   // typing into edited text silently drops. Escape exits the visual mode.
   useEffect(() => {
     if (!isFullscreen) return
+    // An Escape that closes a dialog, popover or list must not also leave
+    // fullscreen. Zag closes them on this same keydown without marking the
+    // event, so the capture phase notes whether one was open beforehand.
+    let overlayWasOpen = false
+    const onKeyCapture = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      overlayWasOpen = !!overlayRef.current?.querySelector('[data-state="open"], [role="listbox"]')
+    }
     const onKey = (e: KeyboardEvent) => {
       // The Escape hotkey below marks an Escape that cleared a selection.
-      if (e.key === 'Escape' && !e.defaultPrevented) setIsFullscreen(false)
+      if (e.key === 'Escape' && !e.defaultPrevented && !overlayWasOpen) setIsFullscreen(false)
     }
+    window.addEventListener('keydown', onKeyCapture, true)
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    // The page behind must not scroll (its scrollbar showed through).
+    const root = document.documentElement
+    const previousOverflow = root.style.overflow
+    root.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKeyCapture, true)
+      document.removeEventListener('keydown', onKey)
+      root.style.overflow = previousOverflow
+    }
   }, [isFullscreen])
 
   // Fullscreen must escape ancestor stacking contexts (host navbars, floating
@@ -589,13 +613,18 @@ function CellarCanvasEditor({
       />
 
       <OnboardingTour disabled={disableTour} storageKey={tourStorageKey} includeSaveStep={!!onSave} />
+
+      {/* Mount point for overlays in fullscreen; out of the grid flow. */}
+      <div ref={overlayRef} style={{ position: 'absolute', top: 0, left: 0 }} />
     </div>
   )
 
   return (
     <MessagesProvider value={m}>
-      <div ref={placeholderRef} style={{ display: 'contents' }} />
-      {createPortal(shell, portalHost)}
+      <OverlayContainerProvider value={isFullscreen ? overlayRef : undefined}>
+        <div ref={placeholderRef} style={{ display: 'contents' }} />
+        {createPortal(shell, portalHost)}
+      </OverlayContainerProvider>
     </MessagesProvider>
   )
 }

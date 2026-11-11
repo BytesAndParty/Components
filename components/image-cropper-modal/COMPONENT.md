@@ -17,6 +17,8 @@ This component is built on **Ark UI (Zag.js)**.
 - The `ImageCropper.Root` provides the state engine for cropping logic.
 - Before the cropper mounts, the image's natural size (hidden `new Image()`) and the viewport size (`ResizeObserver`) are measured. From both it derives `defaultZoom` (fit) and an `initialCrop` covering 95 % of the visible image, so Zag's first default crop already matches what the user sees. A short loading skeleton covers the measuring phase.
 - The measurement carries the `src` it belongs to; the cropper only mounts when it matches the current `imageSrc`, so sequential uploads never reuse the previous image's numbers.
+- The image must lay out at its natural size, because Zag's crop maths assumes 1 viewport pixel = 1 natural pixel at zoom 1. `maxWidth: 'none'` on `ImageCropper.Image` undoes Tailwind's preflight (`img { max-width: 100% }`), which otherwise shrinks every image wider than the viewport while the selection keeps the natural-size maths.
+- The dialog portals to `<body>`. Inside a host that provides an overlay container (`components/lib/overlay-container.ts`, e.g. the fullscreen label editor) it mounts there instead, so it never opens behind the host.
 - The `ApplyButton` does **not** use Zag's `getCroppedImage()` (it renders in viewport pixels, far below print resolution). Instead `renderHighResCrop()` redraws the selection with the same zoom/crop/rotation/flip math onto a canvas in source-pixel resolution.
 
 ## Props

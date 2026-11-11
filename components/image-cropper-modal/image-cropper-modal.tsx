@@ -4,6 +4,7 @@ import { ImageCropper, useImageCropperContext } from '@ark-ui/react/image-croppe
 import { Portal } from '@ark-ui/react/portal'
 import { X, RotateCcw, FlipHorizontal, FlipVertical, ZoomIn, ZoomOut } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { useComponentMessages, useArkTranslations } from '../i18n'
 import { MESSAGES, type ImageCropperMessages } from './messages'
 
@@ -37,6 +38,7 @@ export function ImageCropperModal({
 }: ImageCropperModalProps) {
   const m = useComponentMessages(MESSAGES, messages)
   const cropperTranslations = useArkTranslations('imageCropper')
+  const overlayContainer = useOverlayContainer()
 
   const measureRef = useRef<HTMLDivElement>(null)
   // naturalSize carries the src it was measured for so a sequential upload
@@ -125,7 +127,7 @@ export function ImageCropperModal({
       onOpenChange={(d: { open: boolean }) => onOpenChange(d.open)}
       modal
     >
-      <Portal>
+      <Portal container={overlayContainer}>
         <Dialog.Backdrop className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <Dialog.Content
@@ -173,11 +175,16 @@ export function ImageCropperModal({
                         CSS transform on top. We pre-compute fitZoom and pass
                         it as defaultZoom so the very first setDefaultCrop
                         sees the already-scaled visible region.
+                        `maxWidth: none` undoes Tailwind's preflight
+                        (`img { max-width: 100% }`): it capped the layout box
+                        at the viewport width, so every image wider than the
+                        viewport showed too small while the selection kept
+                        the natural-size maths.
                       */}
                       <ImageCropper.Image
                         src={imageSrc}
                         crossOrigin="anonymous"
-                        style={{ flexShrink: 0 }}
+                        style={{ flexShrink: 0, maxWidth: 'none' }}
                       />
                       <ImageCropper.Selection className="border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
                         <ImageCropper.Handle position="nw" className={handleCls} />

@@ -2,6 +2,7 @@ import { Popover } from '@ark-ui/react/popover'
 import { Portal } from '@ark-ui/react/portal'
 import { AlertTriangle, AlertCircle, CheckCircle2, X } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { useComponentMessages, interpolate, useArkTranslations } from '../i18n'
 import { MESSAGES, type ValidatorBadgeMessages } from './messages'
 
@@ -23,6 +24,7 @@ export interface ValidatorBadgeProps {
 export function ValidatorBadge({ warnings, className, messages }: ValidatorBadgeProps) {
   const m = useComponentMessages(MESSAGES, messages)
   const popoverTranslations = useArkTranslations('popover')
+  const overlayContainer = useOverlayContainer()
   const errors   = warnings.filter(w => w.severity === 'error')
   const hasError = errors.length > 0
   const count    = warnings.length
@@ -60,7 +62,7 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
         </button>
       </Popover.Trigger>
 
-      <Portal>
+      <Portal container={overlayContainer}>
         <Popover.Positioner style={{ zIndex: 50 }}>
           <Popover.Content>
             <div className="bg-card border-border w-72 overflow-hidden rounded-xl border shadow-xl">

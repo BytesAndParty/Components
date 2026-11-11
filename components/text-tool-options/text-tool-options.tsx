@@ -5,6 +5,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
 } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { NumberInput } from '../number-input/number-input'
 import { ColorSwatch } from '../color-swatch/color-swatch'
 import { useComponentMessages } from '../i18n'
@@ -202,6 +203,7 @@ function FontSelect({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const current = FONTS.find(f => f.family === value) ?? FONTS[0]
   const listboxId = useId()
+  const overlayContainer = useOverlayContainer()
 
   function handleOpen() {
     if (triggerRef.current) {
@@ -235,7 +237,7 @@ function FontSelect({
       </button>
 
       {open && (
-        <Portal>
+        <Portal container={overlayContainer}>
           {/* Backdrop closes the popover on outside click; keyboard users
               close via Escape on the listbox trigger. */}
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}

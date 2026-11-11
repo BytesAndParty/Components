@@ -200,6 +200,39 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 
 ## Entscheidungs-Log
 
+### #32 — Umbau auf Basics: Hochladen, Overlays, Flaschenansicht *(seit 2026-11-10, in Arbeit)*
+
+Auftrag, Entscheidungen und Annahmen stehen in `KNOWN-ISSUES.md` #14 und in `/CELLAR-CANVAS.md` (Entscheidungen 9 bis 11).
+Ein Commit je Schritt, diese Liste wandert mit.
+
+| # | Schritt | Stand |
+|---|---|---|
+| 1 | Zuschnitt-Vorschau, Overlays im Vollbild, Esc, Seiten-Scroll | ✅ 2026-11-11 |
+| 2 | Schriften: vor dem Messen laden, nach Laden und Undo neu messen, Dropdown zeigt die echte Schrift | offen |
+| 3 | Entfernen: Extras (Emoji, Unterschrift, Ornamente), Lineal, Tour, Gruppieren, Verlauf, Hand-Button, Snapping-Schalter | offen |
+| 4 | Neue Oberfläche: Kopf, Werkzeugleiste, Kontext-Leiste ohne Überlauf, rechte Seite als Abschnitte, Hinweise als Banner, Zoom-Leiste | offen |
+| 5 | Hochladen zuerst: Bild füllt das Etikett, Zuschnitt optional, Einrasten an den Etikettkanten, größeres Einpassen, leeres Etikett mit Ablagefläche | offen |
+| 6 | Texte und Sprache: Klartext statt Jargon, Kürzel je Plattform, Validator und Ebenennamen in de/en, Text-Ebenen heißen wie ihr Inhalt | offen |
+| 7 | Weindaten-Overlays als Schalter, formatierte Werte, Pflichtangaben-Block, Vorlagen darauf umgestellt (inkl. Überlappung in „Klassisch“) | offen |
+| 8 | Flaschenansicht: `BottleStage` drehbar und mit Etikettmaßen, Umschalter „Etikett / Flasche“ | offen |
+| 9 | Showcase-Seite, `COMPONENT.md`, unabhängiger Review, Abschluss | offen |
+
+**Schritt 1 (2026-11-11, im Browser geprüft, Chromium 1440 × 900):**
+
+- **Zuschnitt-Vorschau:** `ImageCropper.Image` trug `max-width: 100%` aus dem Tailwind-Preflight. Die Layout-Box war damit
+  auf die Breite der Arbeitsfläche (ca. 570 px) begrenzt, Zag rechnet aber mit der natürlichen Größe: Jedes breitere Bild
+  erschien zu klein, der Rahmen passte nicht dazu. Jetzt `maxWidth: 'none'`. Geprüft mit 1063 × 1417 px: Bild 255 × 340,
+  Rahmen 242 × 323 (95 %), vorher Bild 145 × 193 bei gleichem Rahmen.
+- **Overlays im Vollbild:** Die Vollbild-Hülle liegt mit `z-index` 9999 über der Seite, Zuschnitt-Dialog, Farbwähler,
+  Schriftliste und Validator-Popover portalten an den `body` (40 bzw. 50) und öffneten dahinter. Beim Dialog fror der
+  Editor ein, weil Zag `pointer-events: none` an den `body` setzt. Neu: `components/lib/overlay-container.ts`
+  (`OverlayContainerProvider`, `useOverlayContainer`). `ImageCropperModal`, `ColorSwatch`, `TextToolOptions` und
+  `ValidatorBadge` reichen den Container an Arks `Portal` durch, der Editor stellt im Vollbild ein Element in der Hülle
+  bereit. Ohne Provider bleibt es beim `body`.
+- **Esc:** Ein Esc, das Dialog, Popover oder Liste schließt, verließ zugleich das Vollbild (Zag markiert das Event
+  nicht). Ein Capture-Listener am `window` merkt sich, ob ein Overlay offen war.
+- **Seiten-Scroll:** Im Vollbild trägt `<html>` `overflow: hidden`, der Scrollbalken der Seite schien vorher durch.
+
 ### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
 
 - **mm-Rundung:** `mmToPx` rundete auf ganze px, `pxToMm` auf ganze mm. Das Properties-Panel arbeitete damit im
@@ -573,4 +606,4 @@ Audit auf „UI vorhanden, Funktion fehlt" — sieben Befunde, alle behoben (ein
 
 ---
 
-*Last updated: 2026-10-06*
+*Last updated: 2026-11-11*
