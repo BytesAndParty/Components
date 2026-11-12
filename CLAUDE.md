@@ -6,6 +6,14 @@ Hier stehen Regeln, nicht ihre Geschichte. Begründungen und Bug-Verlauf einer K
 
 **Zuerst lesen:** [KNOWN-ISSUES.md](KNOWN-ISSUES.md). Entscheidungen, offene Fragen und Annahmen sofort dort eintragen (Subagenten: im Bericht melden, nicht selbst eintragen), Übergabe am Sessionende: Skill session-handoff.
 
+## Ziel
+
+Entscheidung (User, 2026-11-12): Das erste Ziel war die Komponentenbibliothek. **Das aktuelle Ziel sind die Sections im `section-showcase`.** Die Familie Buchart (Weingut Buchart 58, Sooss) bekommt dort eine Auswahl an Section-Varianten und stellt ihre Website selbst zusammen: je Section eine Variante per Herz wählen, die Reihenfolge festlegen, die fertige Seite unter `/preview?s=…` als Link teilen. Jede Variante muss deshalb als echte Option für ihre Website taugen, nicht nur als Technik-Demo.
+
+- **Gestaltung:** hochwertig, entweder schlicht oder cinematisch (Beispiel für cinematisch: Hero „Flaschenbühne (3D)“). Bisheriger Favorit des Users ist der Hero „Maison Editorial“ (`section-showcase/src/sections/hero/HeroV6.tsx`), ergänzt um kleine Easter Eggs und sehr viele Microinteractions.
+- **Texte** sind ein eigenes Thema und werden getrennt erarbeitet. Bekannte Platzhalter und die belegten Fakten zum Weingut: `KNOWN-ISSUES.md` #3.
+- **Wozu die Website dient** (vier Säulen: Weinshop, Events, Rebstockmiete, Etiketten-Designer): `../Buchart58/vault/BIG-PICTURE.md`.
+
 ## Stack
 
 - React 19 mit React Compiler, Tailwind v4, `motion/react`, Ark UI, TanStack (Query, Form, Table, Hotkeys), Vite 8, Bun-Workspaces. Astro nur in `vendure-showcase/storefront`.
@@ -34,4 +42,4 @@ Die Regeln für Komponenten-Code stehen in `COMPONENT-GUIDELINES.md`. Sie laden 
 - Mehrstufige Arbeiten (Migration, Phasen) bekommen einen Commit pro logischem Schritt, damit sich jeder einzeln reviewen und zurücknehmen lässt. Committet wird erst, wenn der User die Änderung gesehen und den Commit angestoßen hat.
 - Vor jedem Commit den Skill `components-verify` durchlaufen; die CI (`.github/workflows/ci.yml`) prüft dasselbe und wird sonst rot.
 - Den Dev-Server startet der User selbst. Braucht eine Prüfung einen laufenden Server (z. B. Storefront-Build gegen die Shop-API): ansagen, als Hintergrund-Task starten, prüfen, genau diesen Task sofort wieder beenden und per `lsof -i :<port>` bestätigen, dass der Port frei ist. Kein `pkill -f vite` o. Ä.: Ein breites Muster trifft auch Server, die der User oder eine andere Session gestartet hat. Visuelle Checks sonst als Liste an den User geben.
-- Das Projekt hat keine eigene Design-Richtung. Den Skill `frontend-design` deshalb nur laden, wenn der User ausdrücklich eine Gestaltungsrichtung erarbeiten will.
+- Die Design-Richtung steht unter „Ziel“. Den Skill `frontend-design` nur laden, wenn der User ausdrücklich eine neue Gestaltungsrichtung erarbeiten will.
