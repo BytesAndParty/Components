@@ -10,10 +10,11 @@ import { HeartLike } from '@components/heart-like/heart-like'
 import { runViewTransition } from '@components/view-transition/run-view-transition'
 import { sections, findSection } from '../sections/registry'
 import {
-  SHOWCASE_ACCENTS, accentSwatch, useShowcase,
+  PREVIEW_HIGHLIGHT_AT, SHOWCASE_ACCENTS, accentSwatch, useShowcase,
 } from '../showcase-state'
 import { encodeComposition } from '../composition-url'
 import { CompositionTray } from './composition-tray'
+import { PreviewHint } from './preview-hint'
 
 // Reserved view-transition-names keep the floating chrome (bar, hidden-state
 // toggle, and their mobile equivalents) out of the document-level root
@@ -26,6 +27,18 @@ const PIN_MOBILE_SCRIM_STYLE = { viewTransitionName: 'showcase-command-bar-mobil
 const PIN_MOBILE_PANEL_STYLE = { viewTransitionName: 'showcase-command-bar-mobile-panel' } as CSSProperties
 
 interface DragOffset { x: number; y: number }
+
+const PREVIEW_HINT_MS = 7000
+
+interface StripEdges { start: boolean; end: boolean }
+
+const STRIP_FADE = '28px'
+
+/** Fades the strip's clipped edge(s), so hidden chips announce themselves. */
+function stripMask({ start, end }: StripEdges): string | undefined {
+  if (!start && !end) return undefined
+  return `linear-gradient(to right, transparent, black ${start ? STRIP_FADE : '0px'}, black calc(100% - ${end ? STRIP_FADE : '0px'}), transparent)`
+}
 
 export function CommandBar() {
   const { sectionId } = useParams()
@@ -51,6 +64,26 @@ export function CommandBar() {
   // Active variant the heart toggles — the one on screen in single mode.
   const activeVariantId = showcase.variantId ?? section?.variants[0]?.id ?? null
   const favoriteCount = showcase.composition.order.length
+  const previewHighlighted = favoriteCount >= PREVIEW_HIGHLIGHT_AT
+
+  // Hearting the sixth section opens the hint once. Loading or importing a
+  // composition does not (no single-step crossing); dropping below re-arms it.
+  const [hintOpen, setHintOpen] = useState(false)
+  const [prevFavoriteCount, setPrevFavoriteCount] = useState(favoriteCount)
+  if (favoriteCount !== prevFavoriteCount) {
+    setPrevFavoriteCount(favoriteCount)
+    if (prevFavoriteCount === PREVIEW_HIGHLIGHT_AT - 1 && favoriteCount === PREVIEW_HIGHLIGHT_AT) {
+      setHintOpen(true)
+    } else if (favoriteCount < PREVIEW_HIGHLIGHT_AT) {
+      setHintOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!hintOpen) return
+    const timer = setTimeout(() => setHintOpen(false), PREVIEW_HINT_MS)
+    return () => clearTimeout(timer)
+  }, [hintOpen])
 
   // Flip the section menu to open downward when there isn't enough space above
   // the trigger (e.g. user dragged the bar near the top of the viewport).
@@ -133,6 +166,46 @@ export function CommandBar() {
     })
   }, [showcase.variantId, reduceMotion])
 
+  // A plain mouse wheel only scrolls vertically, so an overflowing strip was
+  // reachable by trackpad alone. Turn the wheel sideways while the pointer is
+  // over the strip, and hand it back to the page at either end. The strip
+  // exists only with a section, a visible bar and outside the preview.
+  const [stripEdges, setStripEdges] = useState<StripEdges>({ start: false, end: false })
+  useEffect(() => {
+    const strip = variantStripRef.current
+    if (!strip) return
+    const el = strip
+
+    function updateEdges() {
+      const max = el.scrollWidth - el.clientWidth
+      const start = el.scrollLeft > 1
+      const end = el.scrollLeft < max - 1
+      setStripEdges(prev => (prev.start === start && prev.end === end ? prev : { start, end }))
+    }
+
+    function onWheel(e: WheelEvent) {
+      // Trackpad swipes and Shift+wheel already scroll sideways natively.
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return
+      const max = el.scrollWidth - el.clientWidth
+      if (max <= 0) return
+      const delta = e.deltaMode === WheelEvent.DOM_DELTA_LINE ? e.deltaY * 16 : e.deltaY
+      if ((delta < 0 && el.scrollLeft <= 0) || (delta > 0 && el.scrollLeft >= max - 1)) return
+      e.preventDefault()
+      el.scrollLeft += delta
+    }
+
+    updateEdges()
+    el.addEventListener('wheel', onWheel, { passive: false })
+    el.addEventListener('scroll', updateEdges, { passive: true })
+    const resizeObserver = new ResizeObserver(updateEdges)
+    resizeObserver.observe(el)
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('scroll', updateEdges)
+      resizeObserver.disconnect()
+    }
+  }, [section?.id, showcase.barHidden, isPreview])
+
   // The design each section is currently set to — shown in the section menus so
   // you always see the active/chosen variant, not just a count. The active
   // section reflects the live variant on screen; others show their favorited
@@ -177,6 +250,7 @@ export function CommandBar() {
 
   function openPreview() {
     setPanelOpen(false)
+    setHintOpen(false)
     const s = encodeComposition(showcase.composition)
     navigate(s ? `/preview?s=${s}` : '/preview')
   }
@@ -387,6 +461,33 @@ export function CommandBar() {
               {trayOpen && <CompositionTray onClose={() => setTrayOpen(false)} />}
             </div>
 
+            {favoriteCount > 0 && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={openPreview}
+                  aria-label={`Deine Seite ansehen (${favoriteCount} Sections)`}
+                  title="Deine Seite ansehen"
+                  className={`group focus-visible:ring-ring flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm font-medium transition-[color,background-color,border-color,transform] duration-200 hover:-translate-y-px focus-visible:ring-2 focus-visible:outline-none active:translate-y-0 ${
+                    previewHighlighted
+                      ? 'bg-accent text-accent-foreground border-transparent shadow-md shadow-black/20'
+                      : 'border-border hover:border-accent/40'
+                  }`}
+                >
+                  <Eye size={14} />
+                  <span className="hidden md:inline">Seite ansehen</span>
+                  <ArrowRight size={13} className="hidden transition-transform group-hover:translate-x-0.5 md:block" />
+                </button>
+                <PreviewHint
+                  open={hintOpen}
+                  count={favoriteCount}
+                  onOpenPreview={openPreview}
+                  onClose={() => setHintOpen(false)}
+                  className="absolute right-0 bottom-full mb-3"
+                />
+              </div>
+            )}
+
             <div className="bg-border hidden h-5 w-px sm:block" />
 
             <div className="border-border flex items-center gap-1 rounded-full border p-1 max-sm:gap-1.5 max-sm:p-1.5">
@@ -442,7 +543,11 @@ export function CommandBar() {
             >
               <ChevronLeft size={16} />
             </button>
-            <div ref={variantStripRef} className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto">
+            <div
+              ref={variantStripRef}
+              style={{ maskImage: stripMask(stripEdges) }}
+              className="no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto"
+            >
               {section.variants.map((v, idx) => {
                 const active = showcase.variantId === v.id
                 return (
@@ -497,6 +602,14 @@ export function CommandBar() {
           )}
         </button>
       )}
+
+      <PreviewHint
+        open={hintOpen && !panelOpen}
+        count={favoriteCount}
+        onOpenPreview={openPreview}
+        onClose={() => setHintOpen(false)}
+        className="fixed right-4 bottom-20 z-50"
+      />
 
       <AnimatePresence>
         {panelOpen && (

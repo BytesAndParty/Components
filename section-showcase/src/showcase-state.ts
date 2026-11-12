@@ -20,6 +20,10 @@ export interface Composition {
 
 export const EMPTY_COMPOSITION: Composition = { favorites: {}, order: [] }
 
+/** From this many favorited sections on, the preview entry turns prominent and
+ *  a one-off hint points at it: enough of a page to judge as a whole. */
+export const PREVIEW_HIGHLIGHT_AT = 6
+
 export interface ShowcaseState {
   variantId: string | null
   setVariantId: (id: string | null) => void
