@@ -17,6 +17,7 @@ import {
   createText,
   configureImage,
   configureQRImage,
+  fitImageToLabel,
 } from './object-factory'
 import type { ValidatableObject } from '../wine-fields/validator'
 import {
@@ -564,10 +565,13 @@ export class FabricBridge {
    * insert in place. Counting objects instead let a new one land exactly on
    * an existing one after a delete.
    */
-  private place<T extends fabric.Object>(obj: T): T {
+  private place<T extends fabric.Object>(obj: T, { behind = false } = {}): T {
     const objects = this.canvas.getObjects()
     let step = 0
+    // `behind` is artwork that covers the label: it has to stay exactly on it
+    // (a cascade step would push it off the edge) and goes below everything.
     while (
+      !behind &&
       step < 9 &&
       objects.some(o =>
         Math.abs((o.left ?? 0) - ((obj.left ?? 0) + step * 8)) < 0.5 &&
@@ -583,6 +587,7 @@ export class FabricBridge {
       obj.set({ left: (obj.left ?? 0) + cascade, top: (obj.top ?? 0) + cascade })
     }
     this.canvas.add(obj)
+    if (behind) this.canvas.sendObjectToBack(obj)
     this.canvas.setActiveObject(obj)
     this.canvas.renderAll()
     this.settleFonts()
@@ -623,10 +628,17 @@ export class FabricBridge {
     this.place(createText(this.bleedPx, text, fieldKey))
   }
 
-  /** Loads an image from a src (data URL — see `imageSourceFromBlob`) and places it. */
+  /**
+   * Loads an image from a src (data URL — see `prepareImageSource`) and puts it
+   * on the label as `fitImageToLabel` decides: artwork in the label's format
+   * covers it and goes behind everything else, any other image sits inside it
+   * on top, like the other inserts.
+   */
   async addImage(src: string) {
     const img = await this.loadImage(src, 'image')
-    if (img) this.place(configureImage(img, this.bleedPx))
+    if (!img) return
+    const placement = fitImageToLabel(img.width, img.height, mmToPx(this.widthMm), mmToPx(this.heightMm))
+    this.place(configureImage(img, this.bleedPx, placement), { behind: placement.fills })
   }
 
   /**

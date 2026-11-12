@@ -114,19 +114,60 @@ export function createText(bleedPx: number, text: string, fieldKey?: string) {
 }
 
 /**
- * Configures an already-loaded image: scales it to fit a 40mm bounding box so
- * it never blows past the label, pins origin/corner style and attaches meta.
- * Loading (`FabricImage.fromURL`) stays async in the bridge.
+ * How far an image's aspect ratio may differ from the label's and still count
+ * as "the label's format". 4 % covers artwork that brings its own print bleed
+ * (3 mm around 90 × 120 mm is 1.6 %) without cropping visibly into a design
+ * made for another format.
  */
-export function configureImage(img: fabric.FabricImage, bleedPx: number) {
-  const maxPx = mmToPxExact(40)
-  const scale = Math.min(maxPx / (img.width ?? maxPx), maxPx / (img.height ?? maxPx), 1)
+const FILL_RATIO_TOLERANCE = 0.04
+
+export interface ImagePlacement {
+  /** Uniform scale of the image. */
+  scale: number
+  /** Top-left corner relative to the label's top-left corner, in px. */
+  left: number
+  top: number
+  /** The image covers the whole label; otherwise it sits inside it. */
+  fills: boolean
+}
+
+/**
+ * Where a freshly uploaded image goes. One in the label's format is taken for
+ * finished artwork and covers the label, so no paper shows at the edges. Any
+ * other image is fitted inside the label, never enlarged past its own pixels:
+ * nothing of it is cut off unasked. Both are centred.
+ */
+export function fitImageToLabel(
+  imageWidth: number,
+  imageHeight: number,
+  labelWidth: number,
+  labelHeight: number,
+): ImagePlacement {
+  const ratio = (imageWidth / imageHeight) / (labelWidth / labelHeight)
+  const fills = Math.abs(ratio - 1) <= FILL_RATIO_TOLERANCE
+  const scale = fills
+    ? Math.max(labelWidth / imageWidth, labelHeight / imageHeight)
+    : Math.min(labelWidth / imageWidth, labelHeight / imageHeight, 1)
+  return {
+    scale,
+    left: (labelWidth - imageWidth * scale) / 2,
+    top: (labelHeight - imageHeight * scale) / 2,
+    fills,
+  }
+}
+
+/**
+ * Configures an already-loaded image: applies the placement from
+ * `fitImageToLabel`, pins origin/corner style and attaches meta. Loading
+ * (`FabricImage.fromURL`) stays async in the bridge.
+ */
+export function configureImage(img: fabric.FabricImage, bleedPx: number, placement: ImagePlacement) {
   img.set({
     ...ORIGIN,
-    left: bleedPx + mmToPxExact(10),
-    top: bleedPx + mmToPxExact(10),
-    scaleX: scale,
-    scaleY: scale,
+    left: bleedPx + placement.left,
+    top: bleedPx + placement.top,
+    scaleX: placement.scale,
+    scaleY: placement.scale,
     ...CORNER_STYLE,
   })
   return attach(img, { _layerName: 'Image', _type: 'image' })

@@ -19,13 +19,13 @@
 | Rechte Seite         | Einklappbare Abschnitte statt Tabs (Ark `Accordion`, mehrere zugleich offen, #32): Weindaten, Hintergrund, Vorlagen, Position & Größe, Ebenen. Ab 56rem Editor-Breite (Container-Query `@4xl/editor`, nicht Fensterbreite) eine eigene Spalte, darunter eine Überlagerung über der Arbeitsfläche, die der Kopf ein- und ausblendet. |
 | Position & Größe     | x / y / Drehung / Deckkraft verdrahtet; B / H pro Objekttyp (Rect via scale, Circle via radius, Line via x2, Textbox direkt). Seit #32 ein Abschnitt der rechten Seite. |
 | Kontext-Leiste       | Eine Zeile über der Arbeitsfläche, seitlich scrollbar statt umzubrechen (#32). Text: `TextToolOptions basic` (Schrift, Größe, fett, kursiv, links/mittig/rechts, Farbe). Form: Füllung, Rand, Stärke, Ecken. Bild: Zuschneiden, Ersetzen. Für alles: auf dem Etikett zentrieren (`bridge.centerOnLabel`), Reihenfolge (`StackOrderControls`, nur Einzelauswahl) bzw. `AlignmentBar` (Mehrfachauswahl), Duplizieren, Löschen. |
-| Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte + Label-Center. Immer an, Alt unterdrückt Snapping pro Drag; Schalter und `S`-Hotkey sind entfernt (#32). Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
+| Snap-to-Grid         | ✅ `SnapManager` (engine/snap-manager.ts) zeichnet Smart Guides bei `object:moving`, snappt zu Kanten/Mittellinien anderer Objekte sowie zu Mitte und allen vier Kanten des Etiketts (Kanten seit #32, Schritt 5). Immer an, Alt unterdrückt Snapping pro Drag; Schalter und `S`-Hotkey sind entfernt (#32). Guides werden bei `mouse:up` und `selection:cleared` weggeräumt. |
 | Background           | ✅ Panel-Tab `Background` mit Ark `SegmentGroup`: **Farbe** (ColorSwatch) oder **Bild** (Datei → `prepareImageSource`, cover; erst nach Dateiwahl umgeschaltet). Die Verlaufs-Bedienung ist entfernt (#32); die Engine rendert und exportiert einen Verlauf aus älteren Entwürfen weiter, im Panel erscheint er als „Farbe“ mit seiner Startfarbe. Modell `LabelBackground` (`store/types.ts`): Farbe bleibt ein String, Verlauf/Bild sind Objekte. Persistiert als `bg` in `{ canvas, bg }`, nimmt an Undo/Redo teil. Bildschirm: CSS-Backdrop (`backgroundStyle`); Export: `bridge.withPaper()` malt Farbe / `fabric.Gradient` (`gradientLine`) / vorab dekodiertes Bild in den Canvas-Hintergrund, inkl. Druck-Beschnitt. |
 | Wine Fields          | 8 Felder (inkl. Allergenhinweis + Herkunftsland — deckt alle Validator-Pflichtfelder ab) + QR-Code, `_fieldKey` Metadata. QR-Button disabled ohne `nutritionalInfoUrl` (kein `example.com`-Fallback mehr). Felder ohne Wert sind gesperrt, Wein-Felder `editable: false` (serialisiert, Click-to-Edit respektiert es) — Text kommt nur aus den Weindaten (#27). Fehlt dem Wein ein Wert, wird das Feld ausgeblendet statt veraltet gedruckt; der Sync läuft auch nach Restore/Undo (#28). |
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
-| Bild-Eingänge        | ✅ Alle fünf (Datei, Drag&Drop, Paste, Ersetzen, Cropper-Output) laufen über `prepareImageSource`: lange Kante ≤ 2400 px; Transparenz → PNG, verlustbehaftete Quellen → JPEG q0,9, opake verlustfreie → PNG bis 1,5 MB, sonst JPEG; nie größer als das Original; SVG unverändert (#27, #28). |
+| Bild-Eingänge        | ✅ Alle fünf (Datei, Drag&Drop, Paste, Ersetzen, Cropper-Output) laufen über `prepareImageSource`: lange Kante ≤ 2400 px; Transparenz → PNG, verlustbehaftete Quellen → JPEG q0,9, opake verlustfreie → PNG bis 1,5 MB, sonst JPEG; nie größer als das Original; SVG unverändert (#27, #28). Platziert wird ein neues Bild von `fitImageToLabel` (`engine/object-factory.ts`, #32 Schritt 5): im Etikettformat (±4 %) deckt es das Etikett ab und liegt ganz hinten, sonst ist es mittig eingepasst und liegt obenauf. Datei und Drag & Drop gehen vorerst weiter durch den Zuschnitt (Pflicht, wird in Schritt 5 abgelöst). |
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas, direkt im Effekt (kein Timer, #27); `initialState` wird nur beim Mount gelesen (#28). Serialisierter State = `{ canvas, bg }`, Objekt-Props aus `SERIALIZED_OBJECT_PROPS`. `storageKey`-Prop overridable, `null` deaktiviert. Gescheiterter Autosave (Quota, gesperrter Storage) → `draftSaveFailed` + schließbarer Hinweis über der Arbeitsfläche (`Notices`). |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. **Re-Crop:** Über ContextToolbar für selektierte Bilder möglich; behält ID und Position bei. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich, positioniert am Backdrop-Rechteck — folgen damit Zoom und Pan (#27). Die Maske ist ~55 % opak (überlaufende Objekte bleiben lesbar). Der Vorschau-Schalter (Auge im Kopf) ist entfernt (#32, Schritt 4), das Druckergebnis zeigt künftig die Flaschenansicht (Schritt 8). **3 mm Print-Bleed-Indikator:** Die Maske reicht 3 mm INS Label hinein — der entstehende dunklere Randstreifen markiert die Trim-Risiko-Zone (kein wichtiger Inhalt). |
@@ -212,7 +212,7 @@ Ein Commit je Schritt, diese Liste wandert mit.
 | 2 | Schriften: nach dem Laden neu messen (Laden, Undo, Einfügen, Schriftwechsel), Export wartet, Schriftliste per Tastatur und mit der echten Schrift | ✅ 2026-11-11 |
 | 3 | Entfernen: Extras (Emoji, Unterschrift, Ornamente), Lineal, Tour, Gruppieren, Verlauf, Hand-Button, Snapping-Schalter | ✅ 2026-11-11 |
 | 4 | Neue Oberfläche: Kopf, Werkzeugleiste, Kontext-Leiste ohne Überlauf, rechte Seite als Abschnitte, Hinweise als Banner, Zoom-Leiste | ✅ 2026-11-11 |
-| 5 | Hochladen zuerst: Bild füllt das Etikett, Zuschnitt optional, Einrasten an den Etikettkanten, größeres Einpassen, leeres Etikett mit Ablagefläche | offen |
+| 5 | Hochladen zuerst: Bild füllt das Etikett, Zuschnitt optional, Einrasten an den Etikettkanten, größeres Einpassen, leeres Etikett mit Ablagefläche | begonnen 2026-11-12: Teil 1 (Platzierung, Einrasten) im Code, Rest offen |
 | 6 | Texte und Sprache: Klartext statt Jargon, Kürzel je Plattform, Validator und Ebenennamen in de/en, Text-Ebenen heißen wie ihr Inhalt | offen |
 | 7 | Weindaten-Overlays als Schalter, formatierte Werte, Pflichtangaben-Block, Vorlagen darauf umgestellt (inkl. Überlappung in „Klassisch“) | offen |
 | 8 | Flaschenansicht: `BottleStage` drehbar und mit Etikettmaßen, Umschalter „Etikett / Flasche“ | offen |
@@ -302,6 +302,33 @@ Ein Commit je Schritt, diese Liste wandert mit.
 - **Geteilte Komponenten:** `LayerPanel` hat `showHeader`, `TextToolOptions` hat `basic`.
 - **Offen aus diesem Schritt:** Der 3-mm-Randstreifen sieht auf dem Etikett wie ein grauer Rahmen aus und ist ohne den
   Vorschau-Schalter immer da. Schritt 5 ersetzt ihn durch eine gestrichelte Linie.
+
+**Schritt 5, Teil 1 (2026-11-12; Lint, Typecheck und 48 Tests grün, nicht im Browser gesehen):**
+
+- **`fitImageToLabel` (`engine/object-factory.ts`):** Liegt das Seitenverhältnis des Bildes innerhalb von ±4 % am Etikett
+  (`FILL_RATIO_TOLERANCE`), gilt es als „im Format des Etiketts“ (fertiger Entwurf, auch mit 3 mm Beschnitt: 1,6 bis
+  1,8 % Abweichung). Dann deckt es das Etikett ab (`scale = max(Etikettbreite / Bildbreite, Etiketthöhe / Bildhöhe)`),
+  sitzt mittig und liegt ganz hinten (`place(…, { behind: true })` in der Bridge, ohne den 8-px-Versatz, der ein zweites
+  Bild vom Rand geschoben hätte). Jedes andere Bild wird eingepasst (`min(…, 1)`: nie größer als seine Pixel), mittig und
+  obenauf. `configureImage` bekommt die Platzierung als dritten Parameter. Mit `bun` durchgerechnet (Etikett 340 × 454 px):
+  1063 × 1417 deckt (340,6 × 454), 1134 × 1488 deckt (346 × 454, je 3 px Überstand links und rechts), 2400 × 1800 wird
+  340 × 255, 1000 × 1000 wird 340 × 340, 50 × 50 bleibt 50 px, 90 × 120 deckt mit 3,8-facher Vergrößerung, ein Bild ohne
+  Maße ergibt kein NaN (bleibt unsichtbar wie vorher).
+- **Eingänge:** alles läuft über `bridge.addImage`: das Ergebnis des Zuschnitts (`CellarCanvas.handleCrop`) und das Einfügen
+  aus der Zwischenablage (`use-clipboard-paste.ts`). „Ersetzen“ (`updateImageSource`, Fabric `setSrc`) ist nicht angefasst:
+  `setSrc` setzt Breite und Höhe auf die Pixelmaße des neuen Bildes, den Skalierungsfaktor behält es. Ein Ersatzbild mit
+  anderen Pixelmaßen erscheint deshalb in anderer Größe (Annahme aus dem Fabric-Quelltext, nicht im Browser geprüft).
+- **Einrasten:** `SnapManager` rastet an Etikettmitte und allen vier Etikettkanten ein (vorher nur Mitte).
+- **Warum diese Lösung:** Kunden bringen meist einen fertigen Entwurf mit (Ziel in `KNOWN-ISSUES.md` #14). Im Etikettformat
+  soll er ohne Zutun exakt sitzen. „Immer abdecken“ schneidet ein Foto in fremdem Format unbemerkt an, „immer einpassen“
+  lässt auf fertigen Entwürfen einen Rand stehen. Die Entscheidung trifft allein das Seitenverhältnis.
+- **Warum sie klappen sollte:** Der Beschnitt, den Druckdaten üblicherweise mitbringen, verschiebt das Verhältnis um 1,6 bis
+  2,6 % (3 bis 5 mm), die Toleranz liegt darüber. Die Rechnung ist rein und durchgerechnet. Annahme: Ein Foto, das bis zu
+  4 % vom Etikettformat abweicht und deshalb leicht angeschnitten wird, fällt nicht auf.
+- **Woran sie scheitern kann:** Ein Entwurf mit mehr als etwa 8 mm Beschnitt rundum (10 mm ergeben 4,8 %) wird eingepasst und
+  lässt einen Rand stehen; der Kunde skaliert dann von Hand. Ein zu kleines Bild im Etikettformat wird abdeckend
+  vergrößert und ist unscharf, eine Auflösungswarnung gibt es nicht (Frage 10 in `KNOWN-ISSUES.md`). Man merkt beides
+  beim ersten Hochladen eines echten Kundenentwurfs; ein solcher Test steht noch aus.
 
 ### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
 

@@ -23,8 +23,8 @@ export interface SnapLine {
 
 /**
  * SnapManager handles "Smart Guides" during object dragging.
- * It identifies alignment points (canvas center, other object edges)
- * and "snaps" the moving object if it's within a threshold.
+ * It identifies alignment points (label centre and edges, other objects'
+ * edges and centres) and "snaps" the moving object if it's within a threshold.
  */
 export class SnapManager {
   private canvas: fabric.Canvas
@@ -75,10 +75,13 @@ export class SnapManager {
     const snapPointsH: SnapLine[] = []
     const snapPointsV: SnapLine[] = []
 
-    // 1. Canvas Snap Points (Centers)
-    snapPointsH.push({ type: 'v', coordinate: this.bleedPx + this.labelWidthPx / 2, origin: 'canvas' })
-    snapPointsV.push({ type: 'h', coordinate: this.bleedPx + this.labelHeightPx / 2, origin: 'canvas' })
-    
+    // 1. Label snap points: centre lines first, then the edges — artwork
+    // that fills the label has to line up with them exactly.
+    for (const share of [0.5, 0, 1]) {
+      snapPointsH.push({ type: 'v', coordinate: this.bleedPx + this.labelWidthPx * share, origin: 'canvas' })
+      snapPointsV.push({ type: 'h', coordinate: this.bleedPx + this.labelHeightPx * share, origin: 'canvas' })
+    }
+
     // 2. Other Objects Snap Points
     this.canvas.getObjects().forEach(obj => {
       if (moving.includes(obj) || !obj.visible || obj.evented === false) return
