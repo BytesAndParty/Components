@@ -1,8 +1,10 @@
 # Bekannte Probleme
 
-Stand: 2026-11-10. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
+Stand: 2026-11-12. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
-## Offene Fragen an den User (Stand 2026-11-10)
+**Laufende, unterbrochene Arbeit:** Der Umbau des Etiketten-Designers (Punkt 14) steht bei Schritt 5 von 9. Stand, Prüfliste und Plan für den Rest: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
+
+## Offene Fragen an den User (Stand 2026-11-12)
 
 Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entscheidung in den passenden Punkt unten oder wird gelöscht.
 
@@ -12,8 +14,10 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 4. **Drift-Check zwischen `components/` und Buchart58?** Buchart58 kopiert Komponenten, Änderungen kommen nicht von selbst an, und der Scan fand in beiden Kopien denselben Fehler. Ein `diff -rq` je Ordner (Liste: `Buchart58/storefront/src/atelier/`) zeigt die Abweichungen in Sekunden. Einmal gelaufen am 2026-11-09 (nichts kopiert): 22 Code-Dateien in 11 Ordnern haben Inhaltsunterschiede (`ambient-image`, `atelier/provider.tsx`, `cellar-canvas` mit `fabric-bridge.ts` und Tests, `color-picker`, `hotkeys`, `i18n/provider.tsx`, `image-cropper-modal/messages.ts`, `layer-panel`, `reveal-image`, `shiny-text`, `tooltip`), einzeln nicht eingestuft; manche sind harmlos wie ein `type`-Modifier im Import. Ein echter Fund war `reveal-image.tsx`: Buchart58 trägt das `clip-path` noch am beobachteten Element, hier sitzt es seit dem Deadlock-Fix am inneren Wrapper (am 2026-11-09 im Browser bestätigt: Beim normalen Scrollen der Startseite blieben 4 von 6 Bildern unsichtbar; der Upstream-Stand ist dort inzwischen übernommen, die Datei ist identisch). In Buchart58 fehlen außerdem `cellar-canvas/components/panels/TemplatesPanel.tsx`, `hotkeys/messages.ts`, `hotkeys/shortcut-overview.tsx`, `lib/scrapbook.ts`, `lib/use-disclosure-dismiss.ts` und Tests. Nachtrag 2026-11-09: In Buchart58 ist der Ordner `atelier/atelier` (Provider, Kontext, Init-Script) inzwischen entfernt, weil dort nur die Sprache genutzt wurde, die Islands nutzen `I18nProvider` mit der Route-Sprache, und `language-switcher.tsx` liest dort `useI18n()` statt `useAtelier()`. Der Eintrag `atelier/provider.tsx` in der Liste oben ist damit überholt, die neue bewusste Abweichung ist genau diese eine Zeile. Ohne Filter ist die Zahl verrauscht (24 von 26 Ordnern, weil auch fehlende `COMPONENT.md` zählen): Ein Skript sollte nur Code-Dateien vergleichen. Empfehlung: ja, als kleines Skript oder Skill, das nur meldet und nichts kopiert.
 5. **Wechsel von TanStack Hotkeys auf Ark UI Hotkeys?** Empfehlung vom 2026-10-27: beim nächsten Anlass, Aufwand ca. 1 Tag. Der Hinweis hing bis zum 2026-11-08 an Punkt 9 (Shortcut-Hinweis), der behoben ist; die Empfehlung gilt weiter.
 6. **3D-Flasche: echtes Buchart58-Etikett und schwarzer Verschluss?** (2026-11-10) Die Form stammt schon von der echten Flasche, Etikett („Atelier · Cuvée Nº 7“) und akzentfarbener Verschluss sind Platzhalter. Der Hero ist als markenfreie Demo entschieden. Empfehlung: den Hero so lassen und eine zweite Variante in der Buch·Art-Familie bauen, statt die Demo umzufärben.
-7. **Standbild als Fallback ohne WebGL?** (2026-11-10) Heute bleibt die Bühne dann leer. Empfehlung: erst, wenn die Bühne auf eine echte Shop-Seite kommt; für die Showcase-Demo nicht nötig.
+7. **Standbild als Fallback ohne WebGL?** (2026-11-10) Heute bleibt die Bühne dann leer. Empfehlung: erst, wenn die Bühne auf eine echte Shop-Seite kommt; für die Showcase-Demo nicht nötig. Im Etiketten-Designer (Umbau, Schritt 8) ist es anders: Dort zeigt der Umschalter ohne WebGL eine flache Etikettvorschau (Annahme, Punkt 14).
 8. **Komponentenzahl in README und Übersicht?** (2026-11-10) Beide nennen 95, im Ordner liegen 100 `COMPONENT.md`. Empfehlung: die Zahl streichen statt nachzuziehen, sie veraltet mit jeder neuen Komponente.
+9. **Tests für die neuen Kernfunktionen des Umbaus?** (2026-11-12) Neue Tests entstehen nur nach ausdrücklichem Ja. Empfehlung: ja, klein und rein: `fitImageToLabel` (die sieben Fälle stehen in `components/cellar-canvas/STATUS.md` #32, Schritt 5, schon durchgerechnet), die Formatierer und der Pflichtangaben-Block der Overlays (Schritt 7) sowie „Overlay an/aus mit Undo“ in `fabric-bridge.test.ts`. Die Flaschenansicht (WebGL) lässt sich ohne Browser nicht sinnvoll testen.
+10. **Auflösungshinweis für zu kleine Bilder?** (2026-11-12) Ein Bild im Etikettformat deckt das Etikett auch dann, wenn es dafür stark vergrößert werden muss, und wird unscharf gedruckt (ein 90 × 120 px kleines Bild wird auf dem Bildschirm 3,8-fach, im Druck bei 300 dpi rund 12-fach vergrößert). Bisher gibt es keine Warnung. Empfehlung: ja, aber nach dem Umbau und nicht als Teil davon: ein nicht blockierender Hinweis am Bild („nur 96 dpi bei dieser Größe“) ab etwa 150 dpi.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -26,7 +30,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 11 | Etiketten-Designer: kleinere Auffälligkeiten aus dem Browser-Test | `components/cellar-canvas/` u. a. | niedrig | je 0,5 h |
 | 12 | Code-Quality-Scan: 11 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
 | 13 | 3D-Bühne (`bottle-stage`, `shader-backdrop`, Hero „Flaschenbühne“): offene Punkte nach dem ersten Bau | `components/`, `section-showcase` | niedrig | je Punkt |
-| 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit |
+| 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit, bei Schritt 5 von 9 unterbrochen (STATUS.md #32) |
 
 ---
 
@@ -160,13 +164,15 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 ## 14. Etiketten-Designer: Umbau auf Basics (2026-11-10)
 
+**Stand 2026-11-12:** unterbrochen. Die Schritte 1 bis 4 und Teil 1 von Schritt 5 sind committet (letzter Commit `ab942d5`, nichts gepusht). Offen sind der Rest von Schritt 5 und die Schritte 6 bis 9. Fortsetzung, Prüfliste und Plan: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
+
 **Ziel (User, 10.11.):** Kunden laden ihr meist fertig gestaltetes Etikett hoch, passen nur Kleinigkeiten an, blenden Weindaten ein und sehen das Ergebnis auf einer drehbaren Flasche.
 
 **Entscheidungen (User, 10.11.):**
 
 - **Umfang „Basics plus Formen und Vorlagen“:** Es bleiben Bild hochladen (füllt das Etikett), Zuschneiden und Ersetzen, Text (Schrift, Größe, Farbe, fett/kursiv, Ausrichtung), Rechteck, Kreis und Linie, Hintergrund als Farbe oder Bild, Vorlagen, Weindaten-Overlays, eine kompakte Ebenenliste, Rückgängig, Zoom, Speichern, PNG und PDF. Raus fliegen Emoji-Picker, Unterschrift, Ornamente, Lineal, das Hand-Werkzeug als Button, Gruppieren, Verlaufs-Hintergrund, die geführte Tour und die mm-Eingabe als eigener Tab (wird ein einklappbarer Abschnitt).
 - **Overlays sind gedruckte Bausteine mit Schalter** (Weinname, Jahrgang, Region, Erzeuger, Pflichtangaben-Block, QR-Code): eingeschaltet liegen sie fertig formatiert an einer sinnvollen Stelle, lassen sich verschieben und werden mitgedruckt.
-- **Flaschenansicht:** ja, als Umschalter „Etikett | Flasche“ über der Arbeitsfläche. `BottleStage` trägt das aktuelle Etikett und lässt sich mit der Maus drehen (war Frage 7).
+- **Flaschenansicht:** ja, als Umschalter „Etikett | Flasche“ über der Arbeitsfläche. `BottleStage` trägt das aktuelle Etikett und lässt sich mit der Maus drehen.
 - **Commits:** ein Commit je logischem Schritt direkt auf `main`, jeweils nach Lint, Typecheck und Tests, ohne Push.
 
 **Annahmen (nicht bestätigt):**
@@ -175,11 +181,15 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - Google Fonts bleiben die Schriftquelle. Selbst gehostete Schriften (12.6) sind ein eigener Schritt.
 - Flaschenhöhe ca. 300 mm für die Umrechnung der Etikettmaße auf die 3D-Flasche. Gemessen sind nur Verhältnisse (Punkt 13).
 - Buchart58 behält seine Kopie, der Umbau kommt dort nicht von selbst an.
+- Hochladen (2026-11-12, Teil 1 in `ab942d5`): Ein Bild im Etikettformat (±4 %) deckt das Etikett und liegt ganz hinten, jedes andere Bild wird mittig eingepasst und liegt obenauf. Den Zuschnitt gibt es dann nur noch über „Zuschneiden“ (noch nicht umgesetzt, Schritt 5).
+- 3-mm-Rand (2026-11-12, Schritt 5): eine gestrichelte Linie statt der grauen Maske, die 3 mm ins Etikett reicht.
+- Overlays (2026-11-12, Schritt 7): Schalter aus heißt, das Objekt wird entfernt (Position und Format gehen verloren), nicht ausgeblendet. Der Pflichtangaben-Block ist ein einzelnes Textfeld mit mehreren Zeilen, keine Gruppe. Ein neues Etikett startet ohne Bausteine.
+- Flaschenansicht (2026-11-12, Schritt 8): Die Textur kommt aus dem Canvas-Render (höchstens 1024 px breit); ohne WebGL zeigt der Umschalter eine flache Etikettvorschau.
 
 **Befunde aus dem Browser-Test vom 10.11.** (Chromium, 1440 × 900 und 1024 × 768, `/designer`). Sie werden mit dem Umbau behoben und dann hier gelöscht, der Fortschritt steht in `components/cellar-canvas/STATUS.md` #32:
 
 - **Weindaten:** Felder landen gestapelt an derselben Stelle, als Rohwert („750“, „12.5%“). Der Validator meldet danach „EU-konform“.
-- **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab. Das Bild landet als 40-mm-Kasten in der Ecke, Einrasten gibt es nur zur Etikettmitte.
+- **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab (Schritt 5, Rest).
 - **Einpassen:** Der 40-mm-Arbeitsrand zählt mit, das Etikett belegt ca. 300 von 1030 px Breite.
-- **Texte:** „Bleed“, „Snapping“, „Rot“, „LS/LH/SW/OP“, „Cmd+…“ auf jeder Plattform. Validator nur deutsch, Ebenennamen nur englisch, Text-Ebenen heißen dauerhaft „Neuer Text“.
-- **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Wird in Schritt 9 mit der Showcase-Seite behoben.
+- **Texte:** Der Validator spricht nur deutsch, Ebenennamen sind gemischt englisch und deutsch, Text-Ebenen heißen dauerhaft „Neuer Text“, `text-tool-options` nennt „Strg+B/I/U“ fest (auch am Mac, obwohl die Kürzel nirgends verdrahtet sind). Schritt 6.
+- **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Die Stummel-Hotkeys am Ende der Seite beschreiben zum Teil entfernte Funktionen („Mod+G“ Gruppieren). Wird in Schritt 9 mit der Showcase-Seite behoben.

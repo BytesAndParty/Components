@@ -3,6 +3,9 @@
 > Lebendes Dokument zum aktuellen Stand des Minimal-Editors für Weinetiketten.
 > Bugs, Entscheidungen, Workarounds werden hier kurz festgehalten.
 > High-Level-Vision und Roadmap liegen in `/CELLAR-CANVAS.md` im Repo-Root.
+>
+> **Laufende Arbeit:** Der Umbau auf Basics (Hochladen, Overlays, Flaschenansicht) ist unterbrochen. Er steht bei Schritt 5 von 9,
+> Stand, Prüfliste und Plan für den Rest stehen im Entscheidungs-Log unter **#32**, Block „Übergabe“.
 
 ---
 
@@ -201,10 +204,10 @@ Group/Ungroup) erst **nach** Schritt 4 — sie setzen sonst auf dem Doppel-Besit
 
 ## Entscheidungs-Log
 
-### #32 — Umbau auf Basics: Hochladen, Overlays, Flaschenansicht *(seit 2026-11-10, in Arbeit)*
+### #32 — Umbau auf Basics: Hochladen, Overlays, Flaschenansicht *(seit 2026-11-10, in Arbeit; Stand 2026-11-12: Schritte 1 bis 4 fertig, Schritt 5 begonnen)*
 
 Auftrag, Entscheidungen und Annahmen stehen in `KNOWN-ISSUES.md` #14 und in `/CELLAR-CANVAS.md` (Entscheidungen 9 bis 11).
-Ein Commit je Schritt, diese Liste wandert mit.
+Ein Commit je Schritt, diese Liste wandert mit. **Wer weitermacht: zuerst den Block „Übergabe“ unter der Tabelle lesen.**
 
 | # | Schritt | Stand |
 |---|---|---|
@@ -217,6 +220,191 @@ Ein Commit je Schritt, diese Liste wandert mit.
 | 7 | Weindaten-Overlays als Schalter, formatierte Werte, Pflichtangaben-Block, Vorlagen darauf umgestellt (inkl. Überlappung in „Klassisch“) | offen |
 | 8 | Flaschenansicht: `BottleStage` drehbar und mit Etikettmaßen, Umschalter „Etikett / Flasche“ | offen |
 | 9 | Showcase-Seite, `COMPONENT.md`, unabhängiger Review, Abschluss | offen |
+
+**Übergabe (Stand 2026-11-12):** Der Umbau ist nicht fertig, die Session endete mitten in Schritt 5 (Session-Limit).
+Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-ISSUES.md` #14.
+
+- **Commits auf `main` (nichts gepusht):** Schritt 1 `e5a8d1b`, 2 `4b773a6`, 3 `eb67749`, 4 `a1d7c33`, 5 Teil 1 `ab942d5`;
+  davor `c572a4c` (#31) und `ebff576` (Entscheidungen). Der Arbeitsbaum ist sauber bis auf `Tempchat.txt` im Repo-Root:
+  nicht von dieser Arbeit, nie stagen.
+- **Weiter bei:** dem Rest von Schritt 5 (unten), danach 6, 7, 8, 9 in dieser Reihenfolge. Die Reihenfolge hat Gründe:
+  Schritt 7 braucht die Sprache aus 6 (Zahlenformat nach Locale), Schritt 8 braucht das fertige Etikett aus 5 bis 7.
+- **Vorgehen je Schritt (Entscheidung des Users, 2026-11-10):** `bun run lint`, Typecheck (`cd components-showcase &&
+  ./node_modules/.bin/tsc --noEmit`), `bunx vitest run components/cellar-canvas`, Browser-Check mit Playwright (Dev-Server
+  nur als Hintergrund-Task, danach genau diesen Task beenden und `lsof -i :5171` prüfen; zum Bridge-Zugriff im Browser
+  siehe „Arbeitshinweise“ oben), Tabellenzeile auf ✅ mit Datum, Notizen unter der Tabelle, dann **ein Commit je Schritt**
+  direkt auf `main`, Message aus einer Datei (`git commit -F`), **ohne Push**. Neue Tests nur nach ausdrücklichem Ja des
+  Users (Frage 9 in `KNOWN-ISSUES.md`).
+- **Zuerst im Browser prüfen, Teil 1 von Schritt 5 wurde nur gerechnet, nicht gesehen** (`/designer`, Vollbild 1440 × 900;
+  die Demo startet mit der Vorlage „Classic“ und einem Entwurf in `localStorage` unter `cellar-canvas-draft`, für saubere
+  Tests löschen):
+  1. „Bild“, Datei im Etikettformat (z. B. 1063 × 1417), im Zuschnitt bestätigen: Das Bild deckt das Etikett (Position &
+     Größe: X ≈ 0, Y 0, Breite ≈ 90, Höhe ≈ 120) und liegt in der Ebenenliste ganz unten, Text darüber bleibt sichtbar.
+  2. Dasselbe mit einem Querformat (z. B. 2400 × 1800): Breite 90 mm, mittig, obenauf.
+  3. Bild aus der Zwischenablage einfügen (Strg/Cmd+V).
+  4. Ein Rechteck an eine Etikettkante ziehen: Hilfslinie, es rastet exakt ein.
+  5. Ein zweites deckendes Bild: liegt wieder exakt auf dem Etikett (kein 8-px-Versatz).
+  Findet man dabei etwas, zuerst hier und in `KNOWN-ISSUES.md` #14 eintragen.
+
+**Rest von Schritt 5** (mit Ort im Code; Plan, vom User nicht bestätigt, soweit nicht anders vermerkt):
+
+1. **Zuschnitt beim Hochladen nicht mehr erzwingen.** Heute öffnen `MainToolbar.handleFileChange`
+   (`components/toolbar/MainToolbar.tsx`, Zeile 28 bis 31) und `CellarCanvas.handleDrop` (Zeile 454 bis 459) den Zuschnitt
+   (`setCropper({ open: true, src })`); erst `handleCrop` (Zeile 213) ruft `bridge.addImage`. Neu rufen beide direkt
+   `prepareImageSource(file).then(src => bridge.current?.addImage(src)).catch(reportImageError)`. Den Zuschnitt erreicht man
+   über „Zuschneiden“ in der Kontext-Leiste (der `cropperTargetId`-Pfad mit `updateImageSource`); der `addImage`-Zweig in
+   `handleCrop` ist danach tot und fliegt raus. Der Standardrahmen des Zuschnitts (95 %) schneidet heute ohne Zutun 5 % ab
+   (Befund 10.11.): Beim Zuschneiden eines vorhandenen Bildes soll der Rahmen das ganze Bild umfassen (`initialCrop` in
+   `components/image-cropper-modal/`). *Warum:* Kunden mit fertigem Entwurf wollen hochladen und fertig sein, der
+   Pflicht-Zuschnitt war der größte Reibungspunkt im Test vom 10.11. *Woran es scheitern kann:* Ein Foto im falschen Format
+   landet jetzt eingepasst mit Rand statt zugeschnitten. Das ist gewollt, gehört aber mit einem echten Foto angesehen.
+2. **„Ersetzen“ erhält die Größe nicht** (siehe Teil 1): Das Ersatzbild in die bisherige Anzeigebox (`width × scaleX`,
+   `height × scaleY`) einpassen, bei einem deckenden Bild wieder nach `fitImageToLabel` platzieren. Erst im Browser mit zwei
+   Bildern verschiedener Pixelmaße bestätigen, dass es wirklich springt.
+3. **Größeres Einpassen:** `FabricBridge.zoomToFit` (`engine/fabric-bridge.ts`) rechnet mit Etikett + 2 × 40 mm Arbeitsrand
+   (`sceneWidth = mmToPx(widthMm + 2 * bleedMm)`); das Etikett belegt bei 1030 px Breite nur etwa 300 px (Befund 10.11.).
+   Neu: das Etikett allein (`mmToPx(widthMm)` × `mmToPx(heightMm)`), Versatz so, dass es mittig steht:
+   `tx = (viewWidth - labelWidth * scale) / 2 - bleedPx * scale` (das Etikett liegt in der Szene bei `bleedPx`), `ty`
+   entsprechend; Padding 24 px und Höchstmaß 2,0 bleiben. Überstehende Objekte im Arbeitsrand bleiben per Zoom und
+   Verschieben erreichbar. Maske und Backdrop in `CellarCanvas.tsx` hängen am Viewport und folgen von selbst, trotzdem
+   ansehen. `resize()` und der Vollbild-Wechsel rufen `zoomToFit` ebenfalls auf.
+4. **Leeres Etikett mit Ablagefläche** (Ersatz für die entfernte Tour): Solange `layers.length === 0`, zeigt
+   `components/canvas/LabelCanvas.tsx` auf dem Etikett einen Hinweis „Bild hierher ziehen oder hochladen“ mit den Knöpfen
+   „Bild hochladen“ (derselbe Datei-Dialog wie in `MainToolbar`) und „Vorlage wählen“ (öffnet den Abschnitt `templates`;
+   `RightPanel` hält den Accordion-Zustand unkontrolliert, `defaultValue={['wine', 'layers']}`, er müsste dafür kontrolliert
+   werden), dazu eine Hervorhebung beim Ziehen einer Datei über die Fläche (`onDragOver`/`onDrop` hängen schon in
+   `CellarCanvas.tsx`, Zeile 504). `pointer-events: none` außer auf den Knöpfen. Neue Texte in `messages.ts` (de + en, kein
+   ungenutzter Key), Touch-Ziele 44 px. *Woran es scheitern kann:* Vorlage oder Weinfelder füllen das Etikett sofort, dann
+   ist der Hinweis weg (gewollt); auf dem Handy ist die Fläche klein, der Hinweis muss kurz bleiben.
+5. **3-mm-Rand als gestrichelte Linie:** `CellarCanvas.tsx` (`BLEED_MASK_OPACITY = 0.55`, `PRINT_BLEED_MM = 3`) lässt die
+   Maske 3 mm ins Etikett reichen; das sieht wie ein grauer Rahmen aus und ist seit dem Wegfall des Vorschau-Schalters immer
+   da. Neu: Maske nur außerhalb des Etiketts (oder ganz weg, weil der Arbeitsrand nach Punkt 3 kaum noch im Bild ist), dazu
+   eine gestrichelte Linie 3 mm im Etikett (`border-dashed`, semantischer Farb-Token, `pointer-events: none`). Danach
+   `/CELLAR-CANVAS.md` Entscheidung 3, den Eintrag „2026-05-26 — 3 mm Print-Bleed-Indikator“ im Entscheidungs-Log unten und
+   die Zeile „Bleed Mask + Preview“ oben nachziehen.
+6. **Abschluss:** Tabellenzeile 5 auf ✅, Notizen, `KNOWN-ISSUES.md` #14 (Befunde „Upload“ und „Einpassen“ löschen,
+   Tabellenzeile), `COMPONENT.md` (Features: Einpassen, Hochladen, leeres Etikett), Lint, Typecheck, Tests, Browser
+   (Vollbild 1440 × 900, Showcase-Spalte, 390 × 844), Commit.
+
+**Schritt 6, Texte und Sprache (Plan):**
+
+- **Validator zweisprachig:** `wine-fields/validator.ts` trägt `label` und `description` fest auf Deutsch (Zeile 16 bis 45
+  und 80/81). Der Validator soll nur Schlüssel liefern, die Texte kommen aus `messages.ts` (de + en) und werden für
+  `ValidatorBadge` und `onValidationChange` in der aktuellen Sprache zusammengesetzt (die Prop gibt `label`/`description`
+  an Einbetter weiter, ihre Form ändert sich nicht). Die Verweise auf die Verordnungen bleiben wörtlich. Annahme: Kurze
+  englische Beschreibungen genügen; die rechtliche Prüfung der Texte bleibt beim User.
+- **Ebenennamen** kommen aus fünf Stellen: `engine/object-factory.ts` (`'Rectangle'`, `'Circle'`, `'Line'`, `'Image'`,
+  `'QR Code'`; ein Text heißt wie sein Anfangstext, also dauerhaft „Neuer Text“), `templates/templates.ts` (deutsch:
+  „Trennlinie“, „Akzentbalken“, „Rahmen“, „Farbblock“), `getLayers()` (`_layerName || text || 'Unnamed Layer'`),
+  `renameLayer` und das Weindaten-Panel (die Ebene heißt wie der Wert, „12.5%“). Plan: den Anzeigenamen beim Lesen
+  bestimmen: vom User umbenannt (neues Meta-Feld `_nameCustom` in `SERIALIZED_OBJECT_PROPS`, `renameLayer` setzt es) →
+  übersetzter Feldname bei `_fieldKey` → Textinhalt, gekürzt → übersetzter Typname. Alte Entwürfe tragen `_layerName` ohne
+  `_nameCustom`: Annahme, dass ein früher von Hand umbenannter Name dabei verloren geht (selten); Alternative: jeden Namen,
+  der kein Standardname ist, als eigenen übernehmen. *Woran es scheitern kann:* Sprachwechsel zur Laufzeit (die Namen
+  müssen beim Lesen übersetzt werden, nicht beim Anlegen); `LayerPanel` ist eine geteilte Komponente und bekommt nur Strings.
+- **`text-tool-options/messages.ts`** nennt „Fett (Strg+B)“, „Kursiv (Strg+I)“, „Unterstrichen (Strg+U)“ fest, auch am Mac.
+  Diese Kürzel sind nirgends verdrahtet (kein `Mod+B` im Code, Fabric kennt sie nicht, geprüft 2026-11-12): verdrahten
+  (dann plattformgerecht über `useShortcutTitle`) oder aus den Titeln streichen. Empfehlung: streichen, es sind Basics.
+- **Rest-Jargon:** „Bleed“, „Snapping“, „Rot“ stehen in den `messages.ts` von Designer, Validator-Badge, Layer-Panel, Zuschnitt
+  und Farbwähler nicht mehr (geprüft 2026-11-12). Noch durchsehen: die Hotkey-Beschreibungen (`hotkey…Description`) und die
+  Showcase-Seite.
+- **Prüfen:** Sprache umschalten (Sprachumschalter im Showcase) und Validator-Popover, Ebenenliste, Kontext-Leiste und
+  Dialoge in beiden Sprachen ansehen.
+
+**Schritt 7, Weindaten-Overlays als Schalter (Plan; „Schalter, gedruckt, verschiebbar“ hat der User entschieden,
+`/CELLAR-CANVAS.md` Nr. 10, der Rest ist Annahme):**
+
+- **Heute:** `components/panels/WineFieldsPanel.tsx` hat je Feld einen Einfügen-Knopf (`bridge.addText(String(value), key)`,
+  Rohwert wie „12.5%“ und „750“), der QR-Code geht über `bridge.addQRCode(url)`. Felder ohne Wert sind gesperrt, ein schon
+  platziertes Feld sperrt seinen Knopf. Alle Einfügungen landen an derselben Stelle (nur der 8-px-Versatz trennt sie), die
+  Ebene heißt wie der Wert. `FabricBridge.applyWineFields` (rund Zeile 489) schreibt bei jeder Prop-Änderung und nach jedem
+  Laden `String(value)` in die Textfelder (`_type: 'wine-field'`, `_fieldKey`).
+- **Soll:** Je Baustein (Name, Jahrgang, Region, Erzeuger, Pflichtangaben, QR-Code) ein Schalter
+  (`components/switch/switch.tsx`). Eingeschaltet liegt der Baustein formatiert an einem festen Platz, ist verschiebbar und
+  wird mitgedruckt. Aus = Objekt entfernen (Annahme; Alternative: ausblenden), ein Undo-Schritt je Schalter.
+- **Eine Quelle für die Formatierung:** eine neue reine Datei, z. B. `wine-fields/overlays.ts`, mit Formatierern (`12,5 % vol`
+  bzw. `12.5% vol`, `750 ml`, ab 1000 ml in Litern; Zahlenformat nach Locale über `Intl.NumberFormat`) und den Bausteinen
+  (Feldschlüssel, Baufunktion, Platz). **`applyWineFields` muss denselben Formatierer benutzen**, sonst überschreibt der Sync
+  bei der nächsten Prop-Änderung oder dem nächsten Laden den formatierten Text wieder mit dem Rohwert. Bei einem
+  Sprachwechsel muss der Sync neu laufen.
+- **Pflichtangaben-Block:** Empfehlung: **ein** Textfeld mit mehreren Zeilen (Alkohol, Füllmenge, Allergen, Herkunftsland)
+  statt einer Gruppe, mit einem neuen Meta-Feld (z. B. `_covers: ['alcoholPercent', …]`), das der Validator in einzelne
+  Einträge auflöst. Dann wirken Schrift, Größe und Farbe aus den normalen Textwerkzeugen auf den ganzen Block, und das
+  Layer-Panel zeigt eine Zeile. Eine `fabric.Group` (Validator, Sync und Schrift-Nachmessen schauen schon in Gruppen,
+  `withGroupMembers`) bräuchte keine Validator-Änderung, aber die Textwerkzeuge der Kontext-Leiste wirken nicht auf Gruppen,
+  und die Fabrik `createGroup` ist seit Schritt 3 weg.
+- **Platz ohne Stapeln:** feste Plätze (Name oben mittig, darunter Jahrgang und Region, unten die Pflichtangaben, der QR-Code
+  rechts unten) mit Fluss nach gemessener Höhe, damit ein zweizeiliger Name den Jahrgang nicht überdeckt (die
+  „Classic“-Überlappung, `KNOWN-ISSUES.md` 10): Höhen erst nach `settleFonts()` lesen, dann untereinander setzen. Von Hand
+  verschobene Bausteine nicht zurückholen (Flag am Objekt; neu setzen nur beim Einschalten und bei Namensänderung ohne
+  Verschiebung).
+- **Lesbarkeit:** je Baustein zwei Textfarben-Voreinstellungen (hell/dunkel), damit die Schrift auf dunklen und hellen
+  Entwürfen lesbar bleibt (Annahme; die normale Farbwahl in der Kontext-Leiste bleibt).
+- **Vorlagen** (`templates/templates.ts`, 5 Stück) bauen ihre Weinfelder aus denselben Bausteinen statt mit eigenen
+  Positionen. Die Schriften dort ändern: heute `sans-serif` und Georgia, besser Schriften aus der Liste in
+  `text-tool-options/` (laden über `loadFonts`).
+- **Validator:** bleibt die Wahrheit für „EU-konform“. Der Pflichtangaben-Block zählt, solange er an ist und die Werte da
+  sind; ein Baustein ohne Wert hat einen gesperrten Schalter mit Hinweis, welcher Wert fehlt. Ein neues, leeres Etikett
+  startet ohne Bausteine (Annahme), der Validator bleibt dann gelb, bis Pflichtangaben und QR-Code an sind.
+- **Woran es scheitern kann:** (1) Sync ohne Formatierer (s. o.); (2) alte Entwürfe in `localStorage` mit Rohwert-Texten: sie
+  laden weiter, der Sync nach dem Laden setzt den formatierten Text; (3) Fluss-Layout und Schriftladen: `settleFonts` ändert
+  Höhen nachträglich, der Fluss muss danach noch einmal laufen; (4) ein QR-Code ohne `nutritionalInfoUrl` (Schalter
+  gesperrt, wie der Knopf heute).
+
+**Schritt 8, Flaschenansicht (Plan; „Umschalter ‚Etikett | Flasche‘, `BottleStage` trägt das Etikett und dreht per Maus“
+hat der User entschieden, `KNOWN-ISSUES.md` #14, der Rest ist Annahme):**
+
+- **Umschalter** über der Arbeitsfläche (Ark `SegmentGroup`, wie im `BackgroundPanel`), Zustand z. B. `view: 'label' | 'bottle'`
+  im Store. Der Fabric-Canvas bleibt gemountet (nur verdeckt), damit Zustand, Auswahl und Undo nicht neu aufgebaut werden.
+  Werkzeug- und Kontext-Leiste sind in der Flaschenansicht aus, die Einstellungen rechts bleiben bedienbar (Overlays
+  erscheinen sofort auf der Flasche).
+- **Etikett-Textur:** eine neue Bridge-Methode (z. B. `renderLabelDataUrl(maxWidthPx)`) über den Weg des Exports
+  (`engine/export-pipeline.ts` `renderLabelPng`, Papier über `bridge.withPaper()`, vorher `await bridge.whenFontsReady()`),
+  höchstens 1024 px breit, ohne Beschnitt. Neu rendern beim Wechsel und, solange die Flaschenansicht offen ist, bei
+  Änderungen (`cellar:property-changed`, entprellt).
+- **`BottleStage` (`components/bottle-stage/bottle-stage.tsx`) braucht zwei Änderungen:** (a) Drehen per Ziehen (Maus und
+  Touch). Heute `pointer-events: none` und `aria-hidden`, nur Pendeln über `progress`/`turns` und Zeigerneigung
+  (`followPointer`); neue Prop (z. B. `draggable`) mit Pointer-Handlern, Trägheit, Pfeiltasten für Tastaturnutzer und einem
+  Zurücksetzen. (b) Etikettmaße: Die Etikettfläche auf dem Glas ist fest etwa 5:7 (86 × 120 mm). Neue Props für Breite und
+  Höhe des Etiketts (und die Flaschenhöhe, Annahme 300 mm, gemessen sind nur Verhältnisse, `bottle-stage/COMPONENT.md`),
+  damit ein 90 × 120-Etikett nicht verzerrt.
+- **Laden:** `React.lazy(() => import('../../bottle-stage/bottle-stage'))` im `Suspense`, erst beim ersten Klick auf „Flasche“
+  (three + R3F wiegen 246 KB gzip; Regel in `CLAUDE.md` und `COMPONENT-GUIDELINES.md` §11; Referenz: `HeroBottle3D.tsx`).
+  Danach `bun run build` im `components-showcase` (Chunk-Größe; `grep -l react.memo_cache_sentinel dist/assets/*.js` zeigt,
+  ob der Compiler lief).
+- **Ohne WebGL oder bei einem Ladefehler** rendert `BottleStage` nichts (eigene Error Boundary). Annahme: Der Umschalter zeigt
+  dann die flache Etikettvorschau (dasselbe Bild) mit einem Hinweis; erkennen per `getContext('webgl2')` oder über die
+  Boundary. Das beantwortet Frage 7 in `KNOWN-ISSUES.md` nur für den Designer.
+- **Warum diese Lösung:** Die Bühne gibt es schon (kein zweiter 3D-Weg); die Textur aus demselben Render wie der Export zeigt,
+  was gedruckt wird, mit Papierfarbe. **Warum sie klappen sollte:** `labelSrc` nimmt Data-URLs (`bottle-stage/COMPONENT.md`),
+  die Export-Pipeline rendert deterministisch. **Woran sie scheitern kann:** Etiketten weit weg vom Verhältnis der
+  Etikettfläche verzerren (daher (b)); das Rendern der Textur blockiert bei großen Etiketten kurz den Hauptthread; das
+  WebGL-Kontextlimit (Chrome erlaubt 16) bei häufigem Neu-Mounten; Safari, Firefox und Mobilgeräte sind ungeprüft
+  (`KNOWN-ISSUES.md` 13); der Farbraum der Textur (sRGB) ist zu prüfen.
+
+**Schritt 9, Showcase, Doku, Review, Abschluss (Plan):**
+
+- **`components-showcase/src/pages/designer.tsx`:** `CellarCanvasDemo` (Zeile 49 bis 104) steht in der 720 px breiten
+  Textspalte der Seite, der Editor zeigt dort immer die schmale Ansicht; die Demo soll die Seitenbreite füllen. Die
+  Stummel-Hotkeys am Ende (Zeile 409 bis 427: `Mod+Z`, `Mod+Shift+Z`, `Mod+D`, `Mod+A`, `Mod+G`, `[`, `]`, leere Handler nur
+  für die Shortcut-Übersicht) beschreiben zum Teil entfernte Funktionen (`Mod+G` Gruppieren): streichen. Die Einzel-Demos der
+  geteilten Komponenten (LayerPanel, Cropper, TextToolOptions) gegen die geänderten Props (`showHeader`, `basic`) prüfen.
+- **`COMPONENT.md`** (Features, Props, Dependencies mit lazy `three`/`@react-three/fiber`, How it works) und
+  `bottle-stage/COMPONENT.md` (Drehen, Etikettmaße) auf den Endstand bringen, ebenso die Zustandstabelle oben in dieser
+  Datei (Zeilen Tools, Image Crop, Wine Fields, Templates, Zoom, Bleed Mask).
+- **Weitere Doku:** `KNOWN-ISSUES.md` (erledigte Befunde von #14 löschen, Tabellenzeile, Fragen 7, 9, 10), `/CELLAR-CANVAS.md`
+  (Entscheidung 3, „Last updated“), `components/COMPONENTS-OVERVIEW.md`, falls die Zeile zu `cellar-canvas` beschreibend ist.
+- **Unabhängiger Review** (globale Regel: ein frischer Subagent, `model: "opus"`, adversarial, **eng geschnitten**, vier
+  Kernfunktionen): (1) Hochladen und Platzieren (`fitImageToLabel`, `addImage`, Datei, Drop, Paste, Ersetzen);
+  (2) Overlay-Schalter (an/aus, Undo, Wertänderung, Sprachwechsel, Laden aus dem Entwurf, Validator); (3) Flaschenansicht
+  (Textur, Drehen, Fallback ohne WebGL, Lazy-Laden); (4) Export unverändert (PNG und PDF, Papier, Beschnitt). Kein
+  Stil-Rundumschlag.
+- **Abschlussbericht an den User** auf Deutsch. Nennen: Buchart58 behält seine Kopie (nichts kommt von selbst an), API-Bruch
+  `disableTour`/`tourStorageKey`, Google Fonts (12.6) bleibt offen, `exportBlob` löst bei einem Fehler nie auf (Entscheidung
+  aus Schritt 4, weil Arks `DownloadTrigger` keinen Fehlerpfad hat).
+
+**Außerhalb der Schritte offen:** Schriften selbst hosten (`KNOWN-ISSUES.md` 12.6, `@fontsource`, eigener Schritt), Drift-Check
+zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User), Auflösungshinweis für zu kleine Bilder (Frage 10).
 
 **Schritt 1 (2026-11-11, im Browser geprüft, Chromium 1440 × 900):**
 
