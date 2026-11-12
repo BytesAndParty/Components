@@ -54,6 +54,7 @@ A full design tool (emoji, signature, ornaments, rulers, grouping, gradients) is
 | 9 | Scope *(2026-11-10)* | **Basics plus shapes and templates.** Stays: image upload (fills the label), crop / replace, text (font, size, colour, bold / italic, alignment), rect / circle / line, paper colour or image, templates, wine data overlays, a compact layer list, undo, zoom, save, PNG / PDF. Removed: emoji picker, signature pad, ornaments (decision 4), rulers, the hand tool button, grouping, gradient paper, the guided tour; the mm inputs move from their own tab into a collapsible section. |
 | 10 | Wine data overlays *(2026-11-10)* | **Printed building blocks with a switch each** (name, vintage, region, producer, mandatory particulars, QR code). Switched on they sit ready-formatted at a sensible place, can be moved and are part of the print. |
 | 11 | Bottle preview *(2026-11-10)* | **Yes, as a view switch "Label / Bottle"** above the canvas. `BottleStage` carries the current label and turns with the mouse. |
+| 12 | Resolution hint *(2026-11-12)* | **Yes, after the redesign.** A hint that blocks nothing appears at an image that falls below about 150 dpi at its size on the label (e.g. "only 96 dpi at this size"). |
 
 ---
 
@@ -73,6 +74,6 @@ interface FabricObjectMeta {
 
 ---
 
-*Last updated: 2026-11-10*
+*Last updated: 2026-11-12*
 *Component location: `components/cellar-canvas/`*
 *Showcase route: `/designer`*

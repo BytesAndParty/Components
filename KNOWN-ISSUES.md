@@ -16,8 +16,6 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 6. **3D-Flasche: echtes Buchart58-Etikett und schwarzer Verschluss?** (2026-11-10) Die Form stammt schon von der echten Flasche, Etikett („Atelier · Cuvée Nº 7“) und akzentfarbener Verschluss sind Platzhalter. Der Hero ist als markenfreie Demo entschieden. Empfehlung: den Hero so lassen und eine zweite Variante in der Buch·Art-Familie bauen, statt die Demo umzufärben.
 7. **Standbild als Fallback ohne WebGL?** (2026-11-10) Heute bleibt die Bühne dann leer. Empfehlung: erst, wenn die Bühne auf eine echte Shop-Seite kommt; für die Showcase-Demo nicht nötig. Im Etiketten-Designer (Umbau, Schritt 8) ist es anders: Dort zeigt der Umschalter ohne WebGL eine flache Etikettvorschau (Annahme, Punkt 14).
 8. **Komponentenzahl in README und Übersicht?** (2026-11-10) Beide nennen 95, im Ordner liegen 100 `COMPONENT.md`. Empfehlung: die Zahl streichen statt nachzuziehen, sie veraltet mit jeder neuen Komponente.
-9. **Tests für die neuen Kernfunktionen des Umbaus?** (2026-11-12) Neue Tests entstehen nur nach ausdrücklichem Ja. Empfehlung: ja, klein und rein: `fitImageToLabel` (die sieben Fälle stehen in `components/cellar-canvas/STATUS.md` #32, Schritt 5, schon durchgerechnet), die Formatierer und der Pflichtangaben-Block der Overlays (Schritt 7) sowie „Overlay an/aus mit Undo“ in `fabric-bridge.test.ts`. Die Flaschenansicht (WebGL) lässt sich ohne Browser nicht sinnvoll testen.
-10. **Auflösungshinweis für zu kleine Bilder?** (2026-11-12) Ein Bild im Etikettformat deckt das Etikett auch dann, wenn es dafür stark vergrößert werden muss, und wird unscharf gedruckt (ein 90 × 120 px kleines Bild wird auf dem Bildschirm 3,8-fach, im Druck bei 300 dpi rund 12-fach vergrößert). Bisher gibt es keine Warnung. Empfehlung: ja, aber nach dem Umbau und nicht als Teil davon: ein nicht blockierender Hinweis am Bild („nur 96 dpi bei dieser Größe“) ab etwa 150 dpi.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -164,7 +162,7 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 ## 14. Etiketten-Designer: Umbau auf Basics (2026-11-10)
 
-**Stand 2026-11-12:** unterbrochen. Die Schritte 1 bis 4 und Teil 1 von Schritt 5 sind committet (letzter Code-Commit `ab942d5`, nichts gepusht; Teil 1 ist über Bridge-Aufrufe im Browser geprüft, nicht über die Oberfläche). Offen sind der Rest von Schritt 5 und die Schritte 6 bis 9. Fortsetzung, Prüfliste und Plan: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
+**Stand 2026-11-12:** unterbrochen. Die Schritte 1 bis 4 und Teil 1 von Schritt 5 sind committet (letzter Code-Commit `ab942d5`, nichts gepusht; Teil 1 ist über Bridge-Aufrufe im Browser geprüft, nicht über die Oberfläche). Offen sind der Rest von Schritt 5 und die Schritte 6 bis 9, danach Schritt 10 (Auflösungshinweis). Fortsetzung, Prüfliste und Plan: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
 
 **Ziel (User, 10.11.):** Kunden laden ihr meist fertig gestaltetes Etikett hoch, passen nur Kleinigkeiten an, blenden Weindaten ein und sehen das Ergebnis auf einer drehbaren Flasche.
 
@@ -174,6 +172,8 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - **Overlays sind gedruckte Bausteine mit Schalter** (Weinname, Jahrgang, Region, Erzeuger, Pflichtangaben-Block, QR-Code): eingeschaltet liegen sie fertig formatiert an einer sinnvollen Stelle, lassen sich verschieben und werden mitgedruckt.
 - **Flaschenansicht:** ja, als Umschalter „Etikett | Flasche“ über der Arbeitsfläche. `BottleStage` trägt das aktuelle Etikett und lässt sich mit der Maus drehen.
 - **Commits:** ein Commit je logischem Schritt direkt auf `main`, jeweils nach Lint, Typecheck und Tests, ohne Push.
+- **Tests (User, 12.11.):** Für die neuen Kernfunktionen des Umbaus gibt es Tests, ein Opus-Subagent schreibt sie (Abdeckung: `components/cellar-canvas/STATUS.md` #32). Weitere neue Tests nur nach ausdrücklichem Ja.
+- **Auflösungshinweis (User, 12.11.):** Ja, nach dem Umbau (Schritt 10 in STATUS.md #32): ein Hinweis, der nichts blockiert, an einem Bild, das bei seiner Größe auf dem Etikett unter etwa 150 dpi liegt.
 
 **Annahmen (nicht bestätigt):**
 

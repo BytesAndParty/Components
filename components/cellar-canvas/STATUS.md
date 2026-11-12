@@ -220,6 +220,7 @@ Ein Commit je Schritt, diese Liste wandert mit. **Wer weitermacht: zuerst den Bl
 | 7 | Weindaten-Overlays als Schalter, formatierte Werte, Pflichtangaben-Block, Vorlagen darauf umgestellt (inkl. Überlappung in „Klassisch“) | offen |
 | 8 | Flaschenansicht: `BottleStage` drehbar und mit Etikettmaßen, Umschalter „Etikett / Flasche“ | offen |
 | 9 | Showcase-Seite, `COMPONENT.md`, unabhängiger Review, Abschluss | offen |
+| 10 | Auflösungshinweis am Bild: nicht blockierend, wenn ein Bild bei seiner Größe unter etwa 150 dpi liegt | offen, nach Schritt 9 (User, 2026-11-12) |
 
 **Übergabe (Stand 2026-11-12):** Der Umbau ist nicht fertig, die Session endete mitten in Schritt 5 (Session-Limit).
 Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-ISSUES.md` #14.
@@ -227,14 +228,14 @@ Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-I
 - **Commits auf `main` (nichts gepusht):** Schritt 1 `e5a8d1b`, 2 `4b773a6`, 3 `eb67749`, 4 `a1d7c33`, 5 Teil 1 `ab942d5`;
   davor `c572a4c` (#31) und `ebff576` (Entscheidungen). Der Arbeitsbaum ist sauber bis auf `Tempchat.txt` im Repo-Root:
   nicht von dieser Arbeit, nie stagen.
-- **Weiter bei:** dem Rest von Schritt 5 (unten), danach 6, 7, 8, 9 in dieser Reihenfolge. Die Reihenfolge hat Gründe:
+- **Weiter bei:** dem Rest von Schritt 5 (unten), danach 6, 7, 8, 9 und 10 in dieser Reihenfolge. Die Reihenfolge hat Gründe:
   Schritt 7 braucht die Sprache aus 6 (Zahlenformat nach Locale), Schritt 8 braucht das fertige Etikett aus 5 bis 7.
 - **Vorgehen je Schritt (Entscheidung des Users, 2026-11-10):** `bun run lint`, Typecheck (`cd components-showcase &&
   ./node_modules/.bin/tsc --noEmit`), `bunx vitest run components/cellar-canvas`, Browser-Check mit Playwright (Dev-Server
   nur als Hintergrund-Task, danach genau diesen Task beenden und `lsof -i :5171` prüfen; zum Bridge-Zugriff im Browser
   siehe „Arbeitshinweise“ oben), Tabellenzeile auf ✅ mit Datum, Notizen unter der Tabelle, dann **ein Commit je Schritt**
-  direkt auf `main`, Message aus einer Datei (`git commit -F`), **ohne Push**. Neue Tests nur nach ausdrücklichem Ja des
-  Users (Frage 9 in `KNOWN-ISSUES.md`).
+  direkt auf `main`, Message aus einer Datei (`git commit -F`), **ohne Push**. Tests für die Kernfunktionen des Umbaus sind
+  freigegeben (User, 2026-11-12), weitere neue Tests nur nach ausdrücklichem Ja des Users.
 - **Zuerst im Browser prüfen: Teil 1 von Schritt 5 ist nur über Bridge-Aufrufe bestätigt, nicht über die Oberfläche** (`/designer`, Vollbild 1440 × 900;
   die Demo startet mit der Vorlage „Classic“ und einem Entwurf in `localStorage` unter `cellar-canvas-draft`, für saubere
   Tests löschen):
@@ -397,7 +398,7 @@ hat der User entschieden, `KNOWN-ISSUES.md` #14, der Rest ist Annahme):**
 - **`COMPONENT.md`** (Features, Props, Dependencies mit lazy `three`/`@react-three/fiber`, How it works) und
   `bottle-stage/COMPONENT.md` (Drehen, Etikettmaße) auf den Endstand bringen, ebenso die Zustandstabelle oben in dieser
   Datei (Zeilen Tools, Image Crop, Wine Fields, Templates, Zoom, Bleed Mask).
-- **Weitere Doku:** `KNOWN-ISSUES.md` (erledigte Befunde von #14 löschen, Tabellenzeile, Fragen 7, 9, 10), `/CELLAR-CANVAS.md`
+- **Weitere Doku:** `KNOWN-ISSUES.md` (erledigte Befunde von #14 löschen, Tabellenzeile, Frage 7), `/CELLAR-CANVAS.md`
   (Entscheidung 3, „Last updated“), `components/COMPONENTS-OVERVIEW.md`, falls die Zeile zu `cellar-canvas` beschreibend ist.
 - **Unabhängiger Review** (globale Regel: ein frischer Subagent, `model: "opus"`, adversarial, **eng geschnitten**, vier
   Kernfunktionen): (1) Hochladen und Platzieren (`fitImageToLabel`, `addImage`, Datei, Drop, Paste, Ersetzen);
@@ -408,8 +409,27 @@ hat der User entschieden, `KNOWN-ISSUES.md` #14, der Rest ist Annahme):**
   `disableTour`/`tourStorageKey`, Google Fonts (12.6) bleibt offen, `exportBlob` löst bei einem Fehler nie auf (Entscheidung
   aus Schritt 4, weil Arks `DownloadTrigger` keinen Fehlerpfad hat).
 
+**Schritt 10, Auflösungshinweis am Bild (Plan; „ja, nach dem Umbau“ hat der User am 2026-11-12 entschieden, der Rest ist
+Annahme):**
+
+- **Rechnung:** Effektive Auflösung = Pixelbreite des Bildes / angezeigte Breite in Zoll, also
+  `img.width / (pxToMm(img.getScaledWidth()) / 25.4)`. `pxToMm` rundet auf 0,1 mm, das genügt hier. Eine reine Funktion, z. B.
+  `effectiveDpi(imagePx, displayedMm)` in `engine/`, damit sie sich testen lässt. Beispiele: 340 px auf 90 mm sind 96 dpi,
+  1063 px auf 90 mm sind 300 dpi, 2400 px auf 90 mm sind 677 dpi (die Obergrenze von `prepareImageSource`).
+- **Schwelle:** Hinweis unter etwa 150 dpi (Annahme: im Druck gelten meist 300 dpi als Ziel und 150 dpi als Untergrenze, ein
+  Erfahrungswert, nicht belegt; vor dem Bau gegen die Angaben der Druckerei prüfen). Der Hinweis blockiert nichts, der Export
+  bleibt möglich.
+- **Ort:** Kontext-Leiste beim ausgewählten Bild, ein kurzer Text mit Warnsymbol und einem Titel, der es erklärt (Annahme;
+  optional ein Zeichen in der Ebenenliste). Der Wert wird beim Anzeigen berechnet, nicht gespeichert, damit Skalieren,
+  Zuschneiden und Ersetzen ihn von selbst nachziehen.
+- **Texte:** neue Keys in `messages.ts` (de + en, mit `{dpi}`), kein ungenutzter Key.
+- **Woran es scheitern kann:** SVG ist Vektor und hat keine sinnvolle Auflösung (`prepareImageSource` lässt SVG unverändert):
+  überspringen. Ein Bild, das auf Etikettgröße 2400 px hat, löst nie aus. Maßgeblich ist die angezeigte Größe in mm, nicht
+  `widthMm`/`heightMm` des Etiketts. Ein gedrehtes Bild ändert die Rechnung nicht.
+- **Tests:** `effectiveDpi` als reine Funktion (die Beispiele oben, Grenzfälle Breite 0 und sehr klein).
+
 **Außerhalb der Schritte offen:** Schriften selbst hosten (`KNOWN-ISSUES.md` 12.6, `@fontsource`, eigener Schritt), Drift-Check
-zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User), Auflösungshinweis für zu kleine Bilder (Frage 10).
+zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User).
 
 **Schritt 1 (2026-11-11, im Browser geprüft, Chromium 1440 × 900):**
 
@@ -520,7 +540,7 @@ zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User), Auflösu
   4 % vom Etikettformat abweicht und deshalb leicht angeschnitten wird, fällt nicht auf.
 - **Woran sie scheitern kann:** Ein Entwurf mit mehr als etwa 8 mm Beschnitt rundum (10 mm ergeben 4,8 %) wird eingepasst und
   lässt einen Rand stehen; der Kunde skaliert dann von Hand. Ein zu kleines Bild im Etikettformat wird abdeckend
-  vergrößert und ist unscharf, eine Auflösungswarnung gibt es nicht (Frage 10 in `KNOWN-ISSUES.md`). Man merkt beides
+  vergrößert und ist unscharf, eine Auflösungswarnung gibt es noch nicht (kommt in Schritt 10). Man merkt beides
   beim ersten Hochladen eines echten Kundenentwurfs; ein solcher Test steht noch aus.
 - **Im Browser geprüft** (Chromium 1440 × 900, `/designer`, per `bridge.addImage` mit im Skript erzeugten PNGs, nicht über
   den Datei-Dialog; Etikett 340 × 454 px, `bleedPx` 151, Zoom 0,76): Bild 1063 × 1417 liegt auf Index 0 hinter dem Text, bei
