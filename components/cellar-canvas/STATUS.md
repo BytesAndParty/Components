@@ -235,7 +235,7 @@ Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-I
   siehe „Arbeitshinweise“ oben), Tabellenzeile auf ✅ mit Datum, Notizen unter der Tabelle, dann **ein Commit je Schritt**
   direkt auf `main`, Message aus einer Datei (`git commit -F`), **ohne Push**. Neue Tests nur nach ausdrücklichem Ja des
   Users (Frage 9 in `KNOWN-ISSUES.md`).
-- **Zuerst im Browser prüfen, Teil 1 von Schritt 5 wurde nur gerechnet, nicht gesehen** (`/designer`, Vollbild 1440 × 900;
+- **Zuerst im Browser prüfen: Teil 1 von Schritt 5 ist nur über Bridge-Aufrufe bestätigt, nicht über die Oberfläche** (`/designer`, Vollbild 1440 × 900;
   die Demo startet mit der Vorlage „Classic“ und einem Entwurf in `localStorage` unter `cellar-canvas-draft`, für saubere
   Tests löschen):
   1. „Bild“, Datei im Etikettformat (z. B. 1063 × 1417), im Zuschnitt bestätigen: Das Bild deckt das Etikett (Position &
@@ -244,7 +244,9 @@ Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-I
   3. Bild aus der Zwischenablage einfügen (Strg/Cmd+V).
   4. Ein Rechteck an eine Etikettkante ziehen: Hilfslinie, es rastet exakt ein.
   5. Ein zweites deckendes Bild: liegt wieder exakt auf dem Etikett (kein 8-px-Versatz).
-  Findet man dabei etwas, zuerst hier und in `KNOWN-ISSUES.md` #14 eintragen.
+  Die Punkte 2, 4 und 5 sind über Bridge-Aufrufe schon bestätigt (Zahlen unter Teil 1), offen sind die Wege über die Oberfläche
+  (1 und 3) und der Eindruck mit einem echten Entwurf. Findet man dabei etwas, zuerst hier und in `KNOWN-ISSUES.md` #14
+  eintragen.
 
 **Rest von Schritt 5** (mit Ort im Code; Plan, vom User nicht bestätigt, soweit nicht anders vermerkt):
 
@@ -387,7 +389,10 @@ hat der User entschieden, `KNOWN-ISSUES.md` #14, der Rest ist Annahme):**
 - **`components-showcase/src/pages/designer.tsx`:** `CellarCanvasDemo` (Zeile 49 bis 104) steht in der 720 px breiten
   Textspalte der Seite, der Editor zeigt dort immer die schmale Ansicht; die Demo soll die Seitenbreite füllen. Die
   Stummel-Hotkeys am Ende (Zeile 409 bis 427: `Mod+Z`, `Mod+Shift+Z`, `Mod+D`, `Mod+A`, `Mod+G`, `[`, `]`, leere Handler nur
-  für die Shortcut-Übersicht) beschreiben zum Teil entfernte Funktionen (`Mod+G` Gruppieren): streichen. Die Einzel-Demos der
+  für die Shortcut-Übersicht) beschreiben zum Teil entfernte Funktionen (`Mod+G` Gruppieren): streichen. Beim Öffnen von
+  `/designer` warnt die Konsole außerdem „'Escape' is already registered“, ebenso für `Delete`, `Mod+Z`, `Mod+Shift+Z`,
+  `Mod+D` und `Mod+A`: Editor und Demos der Seite melden dieselben Kürzel an (gesehen 2026-11-12, die Quellen sind nicht
+  einzeln geprüft). Die Einzel-Demos der
   geteilten Komponenten (LayerPanel, Cropper, TextToolOptions) gegen die geänderten Props (`showHeader`, `basic`) prüfen.
 - **`COMPONENT.md`** (Features, Props, Dependencies mit lazy `three`/`@react-three/fiber`, How it works) und
   `bottle-stage/COMPONENT.md` (Drehen, Etikettmaße) auf den Endstand bringen, ebenso die Zustandstabelle oben in dieser
@@ -491,7 +496,7 @@ zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User), Auflösu
 - **Offen aus diesem Schritt:** Der 3-mm-Randstreifen sieht auf dem Etikett wie ein grauer Rahmen aus und ist ohne den
   Vorschau-Schalter immer da. Schritt 5 ersetzt ihn durch eine gestrichelte Linie.
 
-**Schritt 5, Teil 1 (2026-11-12; Lint, Typecheck und 48 Tests grün, nicht im Browser gesehen):**
+**Schritt 5, Teil 1 (2026-11-12; Lint, Typecheck und 48 Tests grün, im Browser über die Bridge geprüft, siehe letzter Punkt):**
 
 - **`fitImageToLabel` (`engine/object-factory.ts`):** Liegt das Seitenverhältnis des Bildes innerhalb von ±4 % am Etikett
   (`FILL_RATIO_TOLERANCE`), gilt es als „im Format des Etiketts“ (fertiger Entwurf, auch mit 3 mm Beschnitt: 1,6 bis
@@ -517,6 +522,14 @@ zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User), Auflösu
   lässt einen Rand stehen; der Kunde skaliert dann von Hand. Ein zu kleines Bild im Etikettformat wird abdeckend
   vergrößert und ist unscharf, eine Auflösungswarnung gibt es nicht (Frage 10 in `KNOWN-ISSUES.md`). Man merkt beides
   beim ersten Hochladen eines echten Kundenentwurfs; ein solcher Test steht noch aus.
+- **Im Browser geprüft** (Chromium 1440 × 900, `/designer`, per `bridge.addImage` mit im Skript erzeugten PNGs, nicht über
+  den Datei-Dialog; Etikett 340 × 454 px, `bleedPx` 151, Zoom 0,76): Bild 1063 × 1417 liegt auf Index 0 hinter dem Text, bei
+  x 150,71 und y 151, 340,58 × 454 px. Bild 2400 × 1800 liegt obenauf, bei x 151 und y 250,5, 340 × 255 px (mittig). Bild
+  1134 × 1488 (3 mm Beschnitt) liegt ganz hinten, bei x 148, 345,99 × 454 px (3 px Überstand links und rechts). Ein zweites
+  Bild im Etikettformat sitzt wieder exakt bei 150,71 / 151 (kein 8-px-Versatz), die Reihenfolge von hinten nach vorn ist
+  danach: drei deckende Bilder, Text, Querformat. Einrasten: ein Rechteck von 76,6 px, jeweils 3 px vor eine Etikettkante
+  gezogen, sitzt danach exakt auf links 151, rechts 491, oben 151, unten 605. **Nicht gesehen:** der Weg über den Datei-Dialog
+  mit Zuschnitt, das Einfügen aus der Zwischenablage und das Aussehen mit einem echten Kundenentwurf.
 
 ### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
 

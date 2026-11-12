@@ -164,7 +164,7 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 ## 14. Etiketten-Designer: Umbau auf Basics (2026-11-10)
 
-**Stand 2026-11-12:** unterbrochen. Die Schritte 1 bis 4 und Teil 1 von Schritt 5 sind committet (letzter Commit `ab942d5`, nichts gepusht). Offen sind der Rest von Schritt 5 und die Schritte 6 bis 9. Fortsetzung, Prüfliste und Plan: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
+**Stand 2026-11-12:** unterbrochen. Die Schritte 1 bis 4 und Teil 1 von Schritt 5 sind committet (letzter Code-Commit `ab942d5`, nichts gepusht; Teil 1 ist über Bridge-Aufrufe im Browser geprüft, nicht über die Oberfläche). Offen sind der Rest von Schritt 5 und die Schritte 6 bis 9. Fortsetzung, Prüfliste und Plan: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
 
 **Ziel (User, 10.11.):** Kunden laden ihr meist fertig gestaltetes Etikett hoch, passen nur Kleinigkeiten an, blenden Weindaten ein und sehen das Ergebnis auf einer drehbaren Flasche.
 
@@ -192,4 +192,4 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - **Upload:** Der Zuschnitt ist Pflicht und schneidet mit seinem Standardrahmen von 95 % ohne Zutun 5 % ab (Schritt 5, Rest).
 - **Einpassen:** Der 40-mm-Arbeitsrand zählt mit, das Etikett belegt ca. 300 von 1030 px Breite.
 - **Texte:** Der Validator spricht nur deutsch, Ebenennamen sind gemischt englisch und deutsch, Text-Ebenen heißen dauerhaft „Neuer Text“, `text-tool-options` nennt „Strg+B/I/U“ fest (auch am Mac, obwohl die Kürzel nirgends verdrahtet sind). Schritt 6.
-- **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Die Stummel-Hotkeys am Ende der Seite beschreiben zum Teil entfernte Funktionen („Mod+G“ Gruppieren). Wird in Schritt 9 mit der Showcase-Seite behoben.
+- **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Die Stummel-Hotkeys am Ende der Seite beschreiben zum Teil entfernte Funktionen („Mod+G“ Gruppieren), und die Konsole warnt dort mehrfach „'Escape' is already registered“ (auch `Delete`, `Mod+Z`, `Mod+D`, `Mod+A`). Wird in Schritt 9 mit der Showcase-Seite behoben.
