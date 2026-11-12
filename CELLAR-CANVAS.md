@@ -55,6 +55,7 @@ A full design tool (emoji, signature, ornaments, rulers, grouping, gradients) is
 | 10 | Wine data overlays *(2026-11-10)* | **Printed building blocks with a switch each** (name, vintage, region, producer, mandatory particulars, QR code). Switched on they sit ready-formatted at a sensible place, can be moved and are part of the print. |
 | 11 | Bottle preview *(2026-11-10)* | **Yes, as a view switch "Label / Bottle"** above the canvas. `BottleStage` carries the current label and turns with the mouse. |
 | 12 | Resolution hint *(2026-11-12)* | **Yes, after the redesign.** A hint that blocks nothing appears at an image that falls below about 150 dpi at its size on the label (e.g. "only 96 dpi at this size"). |
+| 13 | Carry over to Buchart58 *(2026-11-12)* | **Yes, once the redesign is done** (STATUS.md #32, step 11). Buchart58 vendors its own copy of the components; nothing arrives there by itself. |
 
 ---
 

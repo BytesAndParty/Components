@@ -221,6 +221,7 @@ Ein Commit je Schritt, diese Liste wandert mit. **Wer weitermacht: zuerst den Bl
 | 8 | Flaschenansicht: `BottleStage` drehbar und mit Etikettmaßen, Umschalter „Etikett / Flasche“ | offen |
 | 9 | Showcase-Seite, `COMPONENT.md`, unabhängiger Review, Abschluss | offen |
 | 10 | Auflösungshinweis am Bild: nicht blockierend, wenn ein Bild bei seiner Größe unter etwa 150 dpi liegt | offen, nach Schritt 9 (User, 2026-11-12) |
+| 11 | Umbau in Buchart58 nachziehen (deren Kopie unter `storefront/src/atelier/`) | offen, nach Schritt 9 (User, 2026-11-12) |
 
 **Übergabe (Stand 2026-11-12):** Der Umbau ist nicht fertig, die Session endete mitten in Schritt 5 (Session-Limit).
 Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-ISSUES.md` #14.
@@ -228,7 +229,7 @@ Wer weitermacht, braucht diesen Block, die Schritt-Notizen darunter und `KNOWN-I
 - **Commits auf `main` (nichts gepusht):** Schritt 1 `e5a8d1b`, 2 `4b773a6`, 3 `eb67749`, 4 `a1d7c33`, 5 Teil 1 `ab942d5`;
   davor `c572a4c` (#31) und `ebff576` (Entscheidungen). Der Arbeitsbaum ist sauber bis auf `Tempchat.txt` im Repo-Root:
   nicht von dieser Arbeit, nie stagen.
-- **Weiter bei:** dem Rest von Schritt 5 (unten), danach 6, 7, 8, 9 und 10 in dieser Reihenfolge. Die Reihenfolge hat Gründe:
+- **Weiter bei:** dem Rest von Schritt 5 (unten), danach 6, 7, 8, 9 und 10 in dieser Reihenfolge; Schritt 11 (Buchart58) folgt nach 9, und nach 10, falls der bis dahin gebaut ist. Die Reihenfolge hat Gründe:
   Schritt 7 braucht die Sprache aus 6 (Zahlenformat nach Locale), Schritt 8 braucht das fertige Etikett aus 5 bis 7.
 - **Vorgehen je Schritt (Entscheidung des Users, 2026-11-10):** `bun run lint`, Typecheck (`cd components-showcase &&
   ./node_modules/.bin/tsc --noEmit`), `bunx vitest run components/cellar-canvas`, Browser-Check mit Playwright (Dev-Server
@@ -405,7 +406,7 @@ hat der User entschieden, `KNOWN-ISSUES.md` #14, der Rest ist Annahme):**
   (2) Overlay-Schalter (an/aus, Undo, Wertänderung, Sprachwechsel, Laden aus dem Entwurf, Validator); (3) Flaschenansicht
   (Textur, Drehen, Fallback ohne WebGL, Lazy-Laden); (4) Export unverändert (PNG und PDF, Papier, Beschnitt). Kein
   Stil-Rundumschlag.
-- **Abschlussbericht an den User** auf Deutsch. Nennen: Buchart58 behält seine Kopie (nichts kommt von selbst an), API-Bruch
+- **Abschlussbericht an den User** auf Deutsch. Nennen: Buchart58 wird in Schritt 11 nachgezogen (nichts kommt von selbst an), API-Bruch
   `disableTour`/`tourStorageKey`, Google Fonts (12.6) bleibt offen, `exportBlob` löst bei einem Fehler nie auf (Entscheidung
   aus Schritt 4, weil Arks `DownloadTrigger` keinen Fehlerpfad hat).
 
@@ -427,6 +428,58 @@ Annahme):**
   überspringen. Ein Bild, das auf Etikettgröße 2400 px hat, löst nie aus. Maßgeblich ist die angezeigte Größe in mm, nicht
   `widthMm`/`heightMm` des Etiketts. Ein gedrehtes Bild ändert die Rechnung nicht.
 - **Tests:** `effectiveDpi` als reine Funktion (die Beispiele oben, Grenzfälle Breite 0 und sehr klein).
+
+**Schritt 11, Umbau in Buchart58 nachziehen (Plan; „das müssen wir auch in Buchart58 nachziehen“ hat der User am 2026-11-12
+entschieden, Zeitpunkt und Vorgehen sind Annahme):**
+
+- **Ausgangslage (gemessen 2026-11-12, nur gelesen, in Buchart58 wurde nichts geändert):** Buchart58
+  (`/Users/robert.stickler/Development/Buchart58`) hält 12 Ordner als Kopie unter `storefront/src/atelier/`: `cellar-canvas`,
+  `alignment-bar`, `color-picker`, `color-swatch`, `hotkeys`, `image-cropper-modal`, `layer-panel`, `number-input`,
+  `stack-order-controls`, `text-tool-options`, `tooltip`, `validator-badge`, dazu `lib/use-device-capabilities.ts`. Eingebettet
+  ist der Editor in `storefront/src/pages/etiketten/components/EtikettenDesigner.tsx` (Route `/etiketten`, Astro-Insel mit
+  `client:only="react"`, `LayoutBare.astro`). Letzter Abgleich: Stand #31 (2026-11-09). Abweichung heute, ohne `.md` und Tests:
+  `cellar-canvas` 31 Dateien und 2779 Diff-Zeilen, `text-tool-options` 285 Zeilen, `hotkeys` 65, `layer-panel` 29,
+  `image-cropper-modal` 24, `i18n` 22, `color-picker` 11, `color-swatch` 9, `validator-badge` 9, `tooltip` 5, `lib` 4 Dateien;
+  `alignment-bar`, `number-input` und `stack-order-controls` sind gleich. Buchart58 hat noch, was hier entfernt ist (`extras/`,
+  `tour/`, `CanvasRulers.tsx`, `ExtrasPanel.tsx`, `shared/index.ts`), und es fehlt dort, was hier neu ist (`templates/`,
+  `TemplatesPanel.tsx`, `Notices.tsx`, `ZoomBar.tsx`, `button-styles.ts`, `use-shortcut-title.ts`). Pakete dort: `fabric` ^7.4,
+  `zustand` ^5.0, `@ark-ui/react` ^5.39, `@tanstack/react-hotkeys` ^0.17 und noch `emoji-picker-react`; `three` fehlt.
+- **Zeitpunkt (Annahme):** einmal, nach Schritt 9 (und 10, falls gebaut), nicht Schritt für Schritt. *Warum:* Schritt 5 bis 9
+  fassen dieselben Dateien noch einmal an (Hochladen, Panels, Bridge, Texte), und `/etiketten` ist eine Vorführung ohne
+  Kunden: Laut Buchart58 (Stand 2026-09-26, eine Tendenz) kommt der Editor frühestens mit Go-live Phase 3 hinter einen
+  Kunden-Login, bis dahin gibt es keinen öffentlichen Editor. Warten kostet also wenig, jeder Zwischenstand doppelt die Arbeit.
+  *Woran es scheitern kann:* Die Abweichung wächst weiter; ein dringender Fix muss dann einzeln hinübergezogen werden.
+- **Vorher lesen:** `Buchart58/CELLAR-CANVAS-PLAN.md` und `Buchart58/CLAUDE.md`. Dort steht die Richtung (Konfigurator für
+  Kund:innen, Kunden-Login, internes Template-Studio). Der Umbau auf Basics passt zum Ziel „Kleinigkeiten anpassen“, ein fester
+  Konfigurator ohne freie Gestaltung wäre aber etwas anderes als das, was hier gebaut wird. Das vor dem Hinüberziehen mit dem
+  User klären.
+- **Vorgehen:**
+  1. Abweichung je Ordner neu messen (`diff -rq --exclude='*.md' --exclude='*.test.*' <hier> <dort>`) und die Diffs lesen,
+     nicht blind überschreiben.
+  2. Ordner aus `__Components__/components/` kopieren: die 12 vorhandenen plus die, die Schritt 6 bis 9 neu einführen (`switch`
+     für die Overlay-Schalter, `bottle-stage` samt `lib/css-color.ts`, `lib/overlay-container.ts` und was sonst neu importiert
+     wird). Den Import-Graphen auflösen: Die erste Schätzung für den Umfang war in Buchart58 schon einmal deutlich zu klein.
+  3. Bewusste Abweichungen von Buchart58 neu bewerten: `RightPanel` mit 9-px-Tabs und deutsche Kommentare in `LabelCanvas`
+     entfallen mit dem neuen Aufbau; Vorlagen gibt es dort nicht (Buchart58 plant einen eigenen Konfigurator, vorher klären, ob
+     `templates/` und `TemplatesPanel` überhaupt hinüber sollen); die `import type`-Fixes für Vite/rolldown brauchen neue Dateien
+     vermutlich wieder; Buchart58 testet mit `bun:test` und happy-dom statt Vitest, die 92 Tests hier brauchen Anpassungen
+     (`vi.spyOn`, Fake-Timer, Stub für `getContext`).
+  4. Pakete in `storefront/package.json`: `emoji-picker-react` entfernen, `three` und `@react-three/fiber` in den Versionen aus
+     `components/package.json` ergänzen, `bun install`.
+  5. Den Wrapper `EtikettenDesigner.tsx` prüfen: `disableTour` und `tourStorageKey` kommen außerhalb der Kopie nicht vor
+     (geprüft 2026-11-12), neue Props prüfen.
+  6. Prüfen: `bun run typecheck` (`astro check`), die Tests, `bun run build` (Größe des three-Chunks, nur lazy), Browser unter
+     `/etiketten` (Playwright, Dev-Server als Hintergrund-Task und danach beenden).
+  7. Doku in Buchart58 nach deren Regeln: `vault/Features/Storefront/etiketten-designer.md` (Stand-Block und Change-History),
+     `storefront/src/atelier/cellar-canvas/STATUS.md` (neuer Eintrag), `CELLAR-CANVAS-PLAN.md` (Frage 8, wie Fixes künftig
+     zurückfließen, ist dort noch offen: jetzt entscheiden).
+  8. Ein Commit je logischem Schritt im Buchart58-Repo auf `main`, ohne Push.
+- **Woran es scheitern kann:** (1) Fixes, die nur in Buchart58 stehen und hier fehlen, gehen beim Überschreiben verloren (der
+  Abgleich vom 2026-10-05 hat sie nach oben gezogen, danach wurde nicht mehr geprüft: darum die Diffs lesen). (2) rolldown ist
+  strenger als der Engine-Bundler, neue Dateien können die Insel brechen (`MISSING_EXPORT`). (3) `three` vergrößert den Build,
+  die Flaschenansicht muss lazy bleiben. (4) Entwürfe im `localStorage` bestehender Besucher mit Objekten entfernter Funktionen
+  (Emoji, Unterschrift, Ornament, Gruppe) laden hier weiter, das gehört dort im Browser nachgeprüft. (5) `bun:test` verhält
+  sich bei Fake-Timern und `spyOn` anders als Vitest.
 
 **Außerhalb der Schritte offen:** Schriften selbst hosten (`KNOWN-ISSUES.md` 12.6, `@fontsource`, eigener Schritt), Drift-Check
 zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User).
