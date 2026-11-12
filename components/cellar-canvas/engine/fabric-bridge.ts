@@ -569,7 +569,9 @@ export class FabricBridge {
     const objects = this.canvas.getObjects()
     let step = 0
     // `behind` is artwork that covers the label: it has to stay exactly on it
-    // (a cascade step would push it off the edge) and goes below everything.
+    // (a cascade step would push it off the edge) and goes below everything
+    // except earlier artwork, which it would otherwise vanish behind.
+    const artworkIndex = behind ? this.indexAboveArtwork() : 0
     while (
       !behind &&
       step < 9 &&
@@ -587,12 +589,35 @@ export class FabricBridge {
       obj.set({ left: (obj.left ?? 0) + cascade, top: (obj.top ?? 0) + cascade })
     }
     this.canvas.add(obj)
-    if (behind) this.canvas.sendObjectToBack(obj)
+    if (behind) this.canvas.moveObjectTo(obj, artworkIndex)
     this.canvas.setActiveObject(obj)
     this.canvas.renderAll()
     this.settleFonts()
     this.saveHistory()
     return obj
+  }
+
+  /**
+   * Stack index right above the topmost image that covers the whole label (0
+   * when there is none): where a new covering image goes, so it shows instead
+   * of vanishing behind the artwork already there. One pixel of slack, as
+   * artwork seldom lines up to the pixel.
+   */
+  private indexAboveArtwork(): number {
+    const left = this.bleedPx
+    const top = this.bleedPx
+    const right = left + mmToPx(this.widthMm)
+    const bottom = top + mmToPx(this.heightMm)
+    let index = 0
+    this.canvas.getObjects().forEach((o, i) => {
+      if (!(o instanceof fabric.FabricImage)) return
+      o.setCoords() // dragging moves left/top without refreshing the corner cache
+      const box = o.getBoundingRect()
+      if (box.left <= left + 1 && box.top <= top + 1 && box.left + box.width >= right - 1 && box.top + box.height >= bottom - 1) {
+        index = i + 1
+      }
+    })
+    return index
   }
 
   /**

@@ -16,6 +16,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 6. **3D-Flasche: echtes Buchart58-Etikett und schwarzer Verschluss?** (2026-11-10) Die Form stammt schon von der echten Flasche, Etikett („Atelier · Cuvée Nº 7“) und akzentfarbener Verschluss sind Platzhalter. Der Hero ist als markenfreie Demo entschieden. Empfehlung: den Hero so lassen und eine zweite Variante in der Buch·Art-Familie bauen, statt die Demo umzufärben.
 7. **Standbild als Fallback ohne WebGL?** (2026-11-10) Heute bleibt die Bühne dann leer. Empfehlung: erst, wenn die Bühne auf eine echte Shop-Seite kommt; für die Showcase-Demo nicht nötig. Im Etiketten-Designer (Umbau, Schritt 8) ist es anders: Dort zeigt der Umschalter ohne WebGL eine flache Etikettvorschau (Annahme, Punkt 14).
 8. **Komponentenzahl in README und Übersicht?** (2026-11-10) Beide nennen 95, im Ordner liegen 100 `COMPONENT.md`. Empfehlung: die Zahl streichen statt nachzuziehen, sie veraltet mit jeder neuen Komponente.
+11. **Typecheck auch für Test-Dateien?** (2026-11-12) `components-showcase/tsconfig.json` schließt `../components/**/*.test.ts` und `*.test.tsx` aus. Der Typecheck aus dem Skill `components-verify` prüft Tests deshalb nicht, Typfehler darin fängt nur ESLint zum Teil. Die Tests des Umbaus wurden einmal mit einer vorübergehenden tsconfig geprüft (grün). Empfehlung: ja, eine kleine eigene `tsconfig` für die Tests (oder `vitest --typecheck`) und ihr Aufruf in `components-verify`. Aufwand ca. 0,5 h.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -181,7 +182,7 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - Google Fonts bleiben die Schriftquelle. Selbst gehostete Schriften (12.6) sind ein eigener Schritt.
 - Flaschenhöhe ca. 300 mm für die Umrechnung der Etikettmaße auf die 3D-Flasche. Gemessen sind nur Verhältnisse (Punkt 13).
 - Buchart58 behält seine Kopie, der Umbau kommt dort nicht von selbst an.
-- Hochladen (2026-11-12, Teil 1 in `ab942d5`): Ein Bild im Etikettformat (±4 %) deckt das Etikett und liegt ganz hinten, jedes andere Bild wird mittig eingepasst und liegt obenauf. Den Zuschnitt gibt es dann nur noch über „Zuschneiden“ (noch nicht umgesetzt, Schritt 5).
+- Hochladen (2026-11-12, Teil 1 in `ab942d5`): Ein Bild im Etikettformat (±4 %) deckt das Etikett und liegt hinter allen anderen Objekten (über einem früheren deckenden Bild), jedes andere Bild wird mittig eingepasst und liegt obenauf. Den Zuschnitt gibt es dann nur noch über „Zuschneiden“ (noch nicht umgesetzt, Schritt 5).
 - 3-mm-Rand (2026-11-12, Schritt 5): eine gestrichelte Linie statt der grauen Maske, die 3 mm ins Etikett reicht.
 - Overlays (2026-11-12, Schritt 7): Schalter aus heißt, das Objekt wird entfernt (Position und Format gehen verloren), nicht ausgeblendet. Der Pflichtangaben-Block ist ein einzelnes Textfeld mit mehreren Zeilen, keine Gruppe. Ein neues Etikett startet ohne Bausteine.
 - Flaschenansicht (2026-11-12, Schritt 8): Die Textur kommt aus dem Canvas-Render (höchstens 1024 px breit); ohne WebGL zeigt der Umschalter eine flache Etikettvorschau.

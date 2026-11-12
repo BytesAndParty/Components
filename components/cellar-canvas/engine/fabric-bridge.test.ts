@@ -254,6 +254,32 @@ describe('FabricBridge addImage placement', () => {
     }
   })
 
+  it('stacks a second label-format image right above the first, still below other objects', async () => {
+    imagesLoadAs([1063, 1417], [1063, 1417])
+    await bridge.addImage(SRC)
+    const first = bridge.canvas.getObjects()[0]
+    bridge.addRect()
+    await bridge.addImage(SRC)
+
+    const objects = bridge.canvas.getObjects()
+    expect(objects).toHaveLength(3)
+    expect(objects[0]).toBe(first)
+    expect(objects[1]).toBe(bridge.canvas.getActiveObject())
+    expect(objects[1]).not.toBe(first)
+    expect(objects[2]).toBeInstanceOf(fabric.Rect)
+  })
+
+  it('does not take a photo that merely fits inside the label for artwork', async () => {
+    imagesLoadAs([2400, 1800], [1063, 1417])
+    await bridge.addImage(SRC)
+    const photo = bridge.canvas.getObjects()[0]
+    await bridge.addImage(SRC)
+
+    const objects = bridge.canvas.getObjects()
+    expect(objects[0]).toBe(bridge.canvas.getActiveObject())
+    expect(objects[1]).toBe(photo)
+  })
+
   it('adds nothing and shows an image notice when the image fails to load', async () => {
     vi.spyOn(fabric.FabricImage, 'fromURL').mockRejectedValue(new Error('decode failed'))
     useDesignerStore.getState().setNotice(null)

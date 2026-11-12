@@ -28,7 +28,7 @@
 | Validator            | EU-Reg. 2023/2977 — alcohol, volume, allergen, QR.                     |
 | Layer Panel          | Listet alle User-Objekte (Backdrop ist DOM, nicht im Stack). Rename / Visibility / Lock / Delete / Reorder. Programmatic Reorder (Bring-to-Front etc.) wird via `framer-motion layout="position"` sanft animiert, dnd-kit owns die Animation während aktiver Drags. |
 | Clipboard Paste      | ✅ `Cmd/Ctrl+V` mit Bilddaten landet direkt auf der Canvas (kein Cropper). |
-| Bild-Eingänge        | ✅ Alle fünf (Datei, Drag&Drop, Paste, Ersetzen, Cropper-Output) laufen über `prepareImageSource`: lange Kante ≤ 2400 px; Transparenz → PNG, verlustbehaftete Quellen → JPEG q0,9, opake verlustfreie → PNG bis 1,5 MB, sonst JPEG; nie größer als das Original; SVG unverändert (#27, #28). Platziert wird ein neues Bild von `fitImageToLabel` (`engine/object-factory.ts`, #32 Schritt 5): im Etikettformat (±4 %) deckt es das Etikett ab und liegt ganz hinten, sonst ist es mittig eingepasst und liegt obenauf. Datei und Drag & Drop gehen vorerst weiter durch den Zuschnitt (Pflicht, wird in Schritt 5 abgelöst). |
+| Bild-Eingänge        | ✅ Alle fünf (Datei, Drag&Drop, Paste, Ersetzen, Cropper-Output) laufen über `prepareImageSource`: lange Kante ≤ 2400 px; Transparenz → PNG, verlustbehaftete Quellen → JPEG q0,9, opake verlustfreie → PNG bis 1,5 MB, sonst JPEG; nie größer als das Original; SVG unverändert (#27, #28). Platziert wird ein neues Bild von `fitImageToLabel` (`engine/object-factory.ts`, #32 Schritt 5): im Etikettformat (±4 %) deckt es das Etikett ab und liegt hinter allen anderen Objekten (über einem früheren deckenden Bild), sonst ist es mittig eingepasst und liegt obenauf. Datei und Drag & Drop gehen vorerst weiter durch den Zuschnitt (Pflicht, wird in Schritt 5 abgelöst). |
 | Persistence          | ✅ Debounced (1 s) localStorage-Autosave + `onSave`-Callback (async, Idle/Saving/Success/Error-Button). Restore aus `initialState` → localStorage → leerer Canvas, direkt im Effekt (kein Timer, #27); `initialState` wird nur beim Mount gelesen (#28). Serialisierter State = `{ canvas, bg }`, Objekt-Props aus `SERIALIZED_OBJECT_PROPS`. `storageKey`-Prop overridable, `null` deaktiviert. Gescheiterter Autosave (Quota, gesperrter Storage) → `draftSaveFailed` + schließbarer Hinweis über der Arbeitsfläche (`Notices`). |
 | Image Crop           | ✅ Pre-measured `naturalSize` + `viewportSize` vor Mount, korrekter `defaultZoom` + `initialCrop`. `naturalSize` ist src-gegated, damit sequenzielle Uploads keine stale Messungen weiterreichen (Bug #24). Apply rendert eigene High-Res-Canvas in **Source-Pixel-Auflösung** (`crop.width / zoom`, capped bei 4096 px) statt Zags Viewport-Pixel-Output — keine Quality-Loss beim Übergang Cropper → Canvas. **Re-Crop:** Über ContextToolbar für selektierte Bilder möglich; behält ID und Position bei. |
 | Bleed Mask + Preview | ✅ Vier semi-transparente CSS-Stripes (`pointer-events:none`, `z-40`) überlagern den Bleed-Bereich, positioniert am Backdrop-Rechteck — folgen damit Zoom und Pan (#27). Die Maske ist ~55 % opak (überlaufende Objekte bleiben lesbar). Der Vorschau-Schalter (Auge im Kopf) ist entfernt (#32, Schritt 4), das Druckergebnis zeigt künftig die Flaschenansicht (Schritt 8). **3 mm Print-Bleed-Indikator:** Die Maske reicht 3 mm INS Label hinein — der entstehende dunklere Randstreifen markiert die Trim-Risiko-Zone (kein wichtiger Inhalt). |
@@ -521,7 +521,7 @@ zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User).
 - **`fitImageToLabel` (`engine/object-factory.ts`):** Liegt das Seitenverhältnis des Bildes innerhalb von ±4 % am Etikett
   (`FILL_RATIO_TOLERANCE`), gilt es als „im Format des Etiketts“ (fertiger Entwurf, auch mit 3 mm Beschnitt: 1,6 bis
   1,8 % Abweichung). Dann deckt es das Etikett ab (`scale = max(Etikettbreite / Bildbreite, Etiketthöhe / Bildhöhe)`),
-  sitzt mittig und liegt ganz hinten (`place(…, { behind: true })` in der Bridge, ohne den 8-px-Versatz, der ein zweites
+  sitzt mittig und liegt hinten, über einem früheren deckenden Bild (`place(…, { behind: true })` in der Bridge, ohne den 8-px-Versatz, der ein zweites
   Bild vom Rand geschoben hätte). Jedes andere Bild wird eingepasst (`min(…, 1)`: nie größer als seine Pixel), mittig und
   obenauf. `configureImage` bekommt die Platzierung als dritten Parameter. Mit `bun` durchgerechnet (Etikett 340 × 454 px):
   1063 × 1417 deckt (340,6 × 454), 1134 × 1488 deckt (346 × 454, je 3 px Überstand links und rechts), 2400 × 1800 wird
@@ -547,9 +547,28 @@ zu Buchart58 (Frage 4), Screenreader-Lauf im Browser (offen beim User).
   x 150,71 und y 151, 340,58 × 454 px. Bild 2400 × 1800 liegt obenauf, bei x 151 und y 250,5, 340 × 255 px (mittig). Bild
   1134 × 1488 (3 mm Beschnitt) liegt ganz hinten, bei x 148, 345,99 × 454 px (3 px Überstand links und rechts). Ein zweites
   Bild im Etikettformat sitzt wieder exakt bei 150,71 / 151 (kein 8-px-Versatz), die Reihenfolge von hinten nach vorn ist
-  danach: drei deckende Bilder, Text, Querformat. Einrasten: ein Rechteck von 76,6 px, jeweils 3 px vor eine Etikettkante
+  danach: drei deckende Bilder, Text, Querformat (damals lag das neueste deckende Bild ganz hinten, siehe „Korrektur“ unten). Einrasten: ein Rechteck von 76,6 px, jeweils 3 px vor eine Etikettkante
   gezogen, sitzt danach exakt auf links 151, rechts 491, oben 151, unten 605. **Nicht gesehen:** der Weg über den Datei-Dialog
   mit Zuschnitt, das Einfügen aus der Zwischenablage und das Aussehen mit einem echten Kundenentwurf.
+- **Tests (2026-11-12, Freigabe des Users, geschrieben von einem Opus-Subagenten, Commit `11e8f4b`):** 90 Tests in 8 Dateien
+  (vorher 48 in 6), mit den zwei Tests der Korrektur unten 92. `engine/object-factory.test.ts` (23): `fitImageToLabel` mit den
+  Rechenbeispielen, den Toleranzgrenzen auf beiden Seiten und den Eigenschaften „mittig“, „deckt“ bzw. „passt hinein, nie größer
+  als die eigenen Pixel“. `engine/snap-manager.test.ts` (12): Etikettmitte und die vier Kanten rasten innerhalb von 5 px exakt
+  ein, außerhalb nicht. `engine/fabric-bridge.test.ts` (+9): Platzierung in `addImage` (Reihenfolge, Position, kein
+  Einfügeversatz, Fehlerfall mit Hinweis) und `centerOnLabel` (waagrecht, senkrecht bei gedrehtem Objekt, Mehrfachauswahl).
+  17 Mutationen am Produktionscode machten je mindestens einen Test rot, die zwei Tests der Korrektur wurden ebenso geprüft.
+  Nicht getestet: `zoomToFit` (wird in Schritt 5 umgebaut), Schriftladen, Export, Cropper, Flaschenansicht, UI.
+  - *Bekannt:* Beim Lauf von `fabric-bridge.test.ts` steht einmal „Not implemented: HTMLCanvasElement's getContext()“ in der
+    Ausgabe, die Tests sind grün. Ursache ist ein Render per `requestAnimationFrame` aus dem alten Block `wine-field sync`
+    (echte Timer), der nach `afterAll` feuert, wenn der Stub für `getContext` schon zurückgesetzt ist; die längere Laufzeit der
+    Datei macht es sichtbar. Abhilfe: in dem Block Fake-Timer verwenden oder im `afterAll` kurz warten.
+  - *Bekannt:* Der Showcase-Typecheck aus `components-verify` schließt Test-Dateien aus (`components-showcase/tsconfig.json`). Die
+    neuen Tests wurden einmal mit einer vorübergehenden tsconfig geprüft (grün). Siehe Frage 11 in `KNOWN-ISSUES.md`.
+- **Korrektur nach den Tests (2026-11-12):** Der Subagent fand, dass ein zweites deckendes Bild hinter dem ersten landete und
+  damit unsichtbar war, obwohl es ausgewählt war (ein falsch hochgeladener Entwurf hätte sich so nicht ersetzen lassen). Jetzt
+  geht ein deckendes Bild direkt über das oberste Bild, das das ganze Etikett deckt (`FabricBridge.indexAboveArtwork`, 1 px
+  Toleranz, über die Begrenzungsbox), sonst ganz nach hinten; alles andere bleibt darüber. Zwei Tests dazu. Die Reihenfolge nach
+  der Korrektur ist nur per Test geprüft, nicht im Browser.
 
 ### #31 — mm-Eingaben auf 0,1 mm genau; 50-MP-Umstellung gemessen und verworfen *(2026-11-09 — gefixt, im Browser geprüft)*
 
