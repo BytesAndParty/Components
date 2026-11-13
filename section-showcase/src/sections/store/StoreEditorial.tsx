@@ -56,7 +56,8 @@ export function StoreEditorial() {
                     alt={w.wine.imageAlt}
                     direction={reversed ? 'right' : 'left'}
                     duration={1200}
-                    className="aspect-4/3 w-full"
+                    className="aspect-4/3 w-full bg-zinc-900"
+                    imgClassName="object-contain p-6"
                   />
                   <span className="absolute bottom-3 left-4 text-[10px] font-bold tracking-[0.3em] text-white/80 uppercase [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]">
                     {w.plate}

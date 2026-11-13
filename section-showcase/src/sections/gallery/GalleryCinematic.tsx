@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Particles } from '@components/particles/particles'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import cabernetSauvignon from '../assets/weine/cabernet-sauvignon.webp'
 
 /**
  * Cinematic Atmosphere — drei atmosphärische Weitwinkel-Stills als Reel,
@@ -30,8 +31,9 @@ const STILLS = [
   {
     label: 'Dritte Einstellung',
     caption: 'Ein Glas, ein Moment, kein Wort.',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80',
-    alt: 'Weinglas im letzten Licht des Tages',
+    image: cabernetSauvignon,
+    alt: 'Flasche Cabernet Sauvignon von Buchart 58',
+    cutout: true,
   },
 ]
 
@@ -77,12 +79,12 @@ export function GalleryCinematic() {
                   direction="up"
                   delay={i * 150}
                   duration={1300}
-                  className="aspect-3/4 w-full"
+                  className={`aspect-3/4 w-full${still.cutout ? ' bg-zinc-900' : ''}`}
                   /* transition-all! ist nötig, nicht Kosmetik: RevealImage setzt
                      inline `transition: transform …`, Tailwind v4 kompiliert
                      scale-105 aber zur eigenständigen `scale`-Property — ohne
                      `all` wäre der Hover-Zoom ein harter Sprung. */
-                  imgClassName="opacity-80 saturate-[1.1] transition-all! duration-700! group-hover:scale-105!"
+                  imgClassName={`${still.cutout ? 'object-contain p-8 ' : ''}opacity-80 saturate-[1.1] transition-all! duration-700! group-hover:scale-105!`}
                 />
                 <div
                   aria-hidden="true"

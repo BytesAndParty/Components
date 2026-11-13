@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+import gruenerVeltliner from '../assets/weine/gruener-veltliner.webp'
 
 /**
  * Editorial Spread — an opened magazine double page. Left page is
@@ -52,11 +53,12 @@ export function ProductV3({ onBack }: ProductV3Props) {
         {/* Left page — photography */}
         <div className="relative">
           <RevealImage
-            src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
-            alt="Flasche Grüner Veltliner im Streiflicht auf Steinmauer"
+            src={gruenerVeltliner}
+            alt="Flasche Grüner Veltliner von Buchart 58"
             direction="up"
             duration={1500}
-            className="h-full min-h-[60vh] w-full lg:min-h-[85vh]"
+            className="h-full min-h-[60vh] w-full bg-zinc-800 lg:min-h-[85vh]"
+            imgClassName="object-contain p-12"
           />
           {/* Vertical caption rail on the photo */}
           <span className="absolute bottom-8 left-6 text-[9px] font-bold tracking-[0.4em] text-white/70 uppercase [writing-mode:vertical-rl]">

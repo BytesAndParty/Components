@@ -3,6 +3,8 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Particles } from '@components/particles/particles'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { ProductCinematic } from '../showcase/ProductCinematic'
+import riesling from '../assets/weine/riesling.webp'
+import stLaurent from '../assets/weine/st-laurent.webp'
 
 /**
  * Cinematic Atmosphere — das Regal als vertikales Reel. StoreNocturne stellt
@@ -31,7 +33,7 @@ const WINES: Wine[] = [
     vintage: 'Steinriegl 2021',
     meta: 'Nasser Stein · weißer Pfirsich',
     price: '64,00 €',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400&q=80',
+    image: riesling,
     alt: 'Riesling Steinriegl 2021',
   },
   {
@@ -58,7 +60,7 @@ const WINES: Wine[] = [
     vintage: 'Reserve 2020',
     meta: 'Weichsel · Tabak · kühl',
     price: '85,00 €',
-    image: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=400&q=80',
+    image: stLaurent,
     alt: 'St. Laurent Reserve 2020',
   },
   {

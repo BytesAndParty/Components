@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
+import merlot from '../assets/weine/merlot.webp'
 
 export function HeroV4() {
   return (
@@ -50,12 +51,12 @@ export function HeroV4() {
         <div className="relative flex justify-center lg:justify-end">
           <BlurFade delay={500} direction="right">
             <AmbientImage 
-              src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1200&q=80" 
-              alt="Bottles in a minimalist setting" 
+              src={merlot}
+              alt="Flasche Merlot von Buchart 58"
               borderRadius="0"
               intensity={0.15}
               blur={80}
-              className="aspect-4/5 w-full max-w-[500px] shadow-[40px_40px_80px_-20px_rgba(0,0,0,0.1)]"
+              className="aspect-4/5 w-full max-w-[500px] bg-white p-12 shadow-[40px_40px_80px_-20px_rgba(0,0,0,0.1)]"
             />
           </BlurFade>
           

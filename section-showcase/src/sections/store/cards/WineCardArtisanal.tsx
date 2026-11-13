@@ -20,7 +20,7 @@ export function WineCardArtisanal({ wine, onSelect }: WineCardArtisanalProps) {
           <img
             src={wine.imageSrc}
             alt={wine.imageAlt}
-            className="relative z-10 w-36 transition-transform duration-500 group-hover:-translate-y-2"
+            className="relative z-10 w-56 transition-transform duration-500 group-hover:-translate-y-2"
           />
         </div>
 

@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Particles } from '@components/particles/particles'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
+import riesling from '../assets/weine/riesling.webp'
 
 /**
  * Cinematic Atmosphere — die Detailseite als Standbild aus dem Film. Wo
@@ -80,8 +81,8 @@ export function ProductCinematic({ onBack }: ProductCinematicProps) {
             <figure className="relative mx-auto w-full max-w-md">
               <div className="flex aspect-3/4 items-end justify-center overflow-hidden bg-radial from-white/[0.07] via-white/[0.02] to-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
-                  alt="Riesling Steinriegl 2021 — Flasche vor den Terrassen"
+                  src={riesling}
+                  alt="Flasche Riesling von Buchart 58"
                   className="h-[92%] object-contain drop-shadow-[0_36px_48px_rgba(0,0,0,0.65)]"
                 />
               </div>

@@ -87,7 +87,7 @@ export function StoreGastgeber() {
                     duration={1400}
                     delay={i * 110}
                     className="aspect-4/5 w-full"
-                    imgClassName={WARM}
+                    imgClassName={`object-contain ${WARM}`}
                   />
                 </div>
 

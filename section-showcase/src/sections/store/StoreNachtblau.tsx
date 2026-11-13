@@ -67,7 +67,7 @@ export function StoreNachtblau() {
             direction="up"
             duration={1600}
             className="absolute inset-0 h-full w-full"
-            imgClassName="opacity-90 saturate-[0.5] brightness-[0.72] contrast-[1.06]"
+            imgClassName="object-contain p-10 opacity-90 saturate-[0.5] contrast-[1.06]"
           />
           <div aria-hidden="true" className="absolute inset-0 bg-[#002450]/35" />
           <div

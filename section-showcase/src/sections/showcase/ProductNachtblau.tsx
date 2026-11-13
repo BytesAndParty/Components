@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
+import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 /**
  * Nachtblau — eine einzelne Flasche im kühlen Streiflicht. Navy-Feld mit der
@@ -105,12 +106,12 @@ export function ProductNachtblau({ onBack }: ProductNachtblauProps) {
 
         <div className="relative order-1 min-h-[60vh] overflow-hidden lg:order-2 lg:min-h-0">
           <RevealImage
-            src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
-            alt="Flasche Loibenberg Smaragd im Streiflicht auf einer Steinplatte"
+            src={veltlinerElias}
+            alt="Flasche Grüner Veltliner Elias von Buchart 58"
             direction="up"
             duration={1600}
             className="absolute inset-0 h-full w-full"
-            imgClassName="opacity-90 saturate-[0.5] brightness-[0.72] contrast-[1.06]"
+            imgClassName="object-contain p-10 opacity-90 saturate-[0.5] contrast-[1.06]"
           />
           {/* Dieselbe kühle Angleichung wie im Hero — kein Foto der Familie
               fällt aus dem Navy-Raum. */}

@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
+import coorbeauNoir from '../assets/weine/coorbeau-noir.webp'
 
 const images = [
   {
@@ -18,9 +19,10 @@ const images = [
     className: 'col-span-1 row-span-2',
   },
   {
-    src: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
-    alt: 'Bottle Pour',
-    className: 'col-span-2 row-span-1',
+    src: coorbeauNoir,
+    alt: 'Flasche Coorbeau noir von Buchart 58',
+    // Cut-out bottle: AmbientImage sets object-fit inline, so contain needs the important flag.
+    className: 'col-span-2 row-span-1 rounded-3xl bg-muted [&_img]:object-contain! [&_img]:p-6',
   },
 ]
 

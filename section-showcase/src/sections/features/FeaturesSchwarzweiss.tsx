@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { SCHWARZWEISS_FONTS } from '../family-fonts'
+import gruenerVeltliner from '../assets/weine/gruener-veltliner.webp'
 
 /**
  * Schwarzweiß — der Dreitakt in Reinform: schmale zentrierte Textspalte,
@@ -14,7 +15,6 @@ import { SCHWARZWEISS_FONTS } from '../family-fonts'
 const TERRASSEN = 'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=1600&q=80'
 const REBZEILEN = 'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1400&q=80'
 const KELLER = 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1400&q=80'
-const FLASCHE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80'
 
 /** Bildunterschrift: kleine Sans, mit Haarlinie darüber. */
 function Caption({ children }: { children: string }) {
@@ -131,12 +131,12 @@ export function FeaturesSchwarzweiss() {
         <div className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-12">
           <div className="md:col-span-6 md:col-start-1">
             <RevealImage
-              src={FLASCHE}
-              alt="Abgefüllte Flasche vor weißer Kellermauer"
+              src={gruenerVeltliner}
+              alt="Flasche Grüner Veltliner von Buchart 58"
               direction="up"
               duration={1400}
-              className="aspect-4/5 w-full"
-              imgClassName="grayscale"
+              className="aspect-4/5 w-full bg-[#000101]/5"
+              imgClassName="object-contain grayscale"
             />
             <Caption>Abfüllung — 2.400 Flaschen, von Hand etikettiert</Caption>
           </div>

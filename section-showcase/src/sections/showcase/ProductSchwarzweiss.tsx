@@ -1,6 +1,7 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { SCHWARZWEISS_FONTS } from '../family-fonts'
+import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 /**
  * Schwarzweiß — ein einzelner Wein auf reinem Weiß. Entsättigte Reportage-
@@ -56,12 +57,12 @@ export function ProductSchwarzweiss({ onBack }: ProductSchwarzweissProps) {
           {/* Flasche — helle Reportagefotografie, entsättigt. */}
           <div className="md:col-span-5 md:col-start-1">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
-              alt="Flasche Loibenberg Smaragd vor heller Kellermauer"
+              src={veltlinerElias}
+              alt="Flasche Grüner Veltliner Elias von Buchart 58"
               direction="up"
               duration={1500}
               className="aspect-4/5 w-full"
-              imgClassName="grayscale"
+              imgClassName="object-contain grayscale"
             />
             <p className="mt-4 border-t border-[#000101]/20 pt-3 text-[10px] font-semibold tracking-[0.24em] text-[#5f5f5f] uppercase">
               Kellermauer, Vormittagslicht

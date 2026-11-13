@@ -24,7 +24,7 @@ export function WineCardModern({ wine, rating, onSelect }: WineCardModernProps) 
             borderRadius="1rem"
             intensity={0.4}
             blur={40}
-            className="aspect-3/4 w-44 shadow-lg"
+            className="aspect-3/4 w-44 p-2"
           />
         </div>
 

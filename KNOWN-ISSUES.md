@@ -1,6 +1,6 @@
 # Bekannte Probleme
 
-Stand: 2026-11-12. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
+Stand: 2026-11-12. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11., Punkt 15 die offenen Fotos nach dem Tausch der Flaschenfotos vom 12.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
 **Laufende, unterbrochene Arbeit:** Der Umbau des Etiketten-Designers (Punkt 14) steht bei Schritt 5 von 9. Stand, Prüfliste und Plan für den Rest: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
 
@@ -35,6 +35,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 12 | Code-Quality-Scan: 11 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
 | 13 | 3D-Bühne (`bottle-stage`, `shader-backdrop`, Hero „Flaschenbühne“): offene Punkte nach dem ersten Bau | `components/`, `section-showcase` | niedrig | je Punkt |
 | 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit, bei Schritt 5 von 9 unterbrochen (STATUS.md #32) |
+| 15 | Fremde und falsche Fotos nach dem Tausch der Flaschenfotos | `section-showcase` | niedrig | je Punkt |
 
 ---
 
@@ -199,3 +200,17 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - **Einpassen:** Der 40-mm-Arbeitsrand zählt mit, das Etikett belegt ca. 300 von 1030 px Breite.
 - **Texte:** Der Validator spricht nur deutsch, Ebenennamen sind gemischt englisch und deutsch, Text-Ebenen heißen dauerhaft „Neuer Text“, `text-tool-options` nennt „Strg+B/I/U“ fest (auch am Mac, obwohl die Kürzel nirgends verdrahtet sind). Schritt 6.
 - **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Die Stummel-Hotkeys am Ende der Seite beschreiben zum Teil entfernte Funktionen („Mod+G“ Gruppieren), und die Konsole warnt dort mehrfach „'Escape' is already registered“ (auch `Delete`, `Mod+Z`, `Mod+D`, `Mod+A`). Wird in Schritt 9 mit der Showcase-Seite behoben.
+
+## 15. Fotos nach dem Tausch der Flaschenfotos (2026-11-12)
+
+**Entscheidung (User, 12.11.):** Fremde Flaschenfotos in den Varianten außerhalb der Buch·Art-Linie sind durch echte Produktfotos von buchart58.at ersetzt (`section-showcase/src/sections/assets/weine/`, WebP, per Import eingebunden). Die gezeichneten Buch·Art-Flaschen bleiben. Sichtbare Texte bleiben ebenfalls; erfundene Weinnamen neben echten Flaschen gehören zu #3. Die 3D-Flasche trägt das echte Merlot-Etikett.
+
+**Offen:**
+
+- **Stimmungsbilder mit fremden Etiketten, bewusst nicht getauscht:** Ein Regalfoto zeigt fremde Etiketten in `cta/CTAV5.tsx:20`, `events/EventsEinladung.tsx:73`, `features/FeaturesV6.tsx:67`, `features/FeaturesV8.tsx:28`, `hero/HeroGenussgut.tsx:32` und `timeline/TimelineV5.tsx:31` (Pfade unter `section-showcase/src/sections/`). Lösung: eigene Fotos von Keller, Verkostung und Vinothek.
+- **Buch·Art-Galerie:** `gallery/GalleryBuchArt.tsx:62` und `:100` zeigen weiter fremde Flaschen, weil die Buch·Art-Linie ausgenommen war.
+- **Wasserflasche als Rebe:** Unsplash `photo-1523362628745` zeigt eine Plastik-Wasserflasche (nachgeprüft), wird aber als Reben- bzw. Landschaftsbild genutzt: `lineage/lineage-graph.ts:150` (`vine`) und `features/FeaturesCinematic.tsx:49`.
+- **StoreCinematic:** Der Kontaktabzug mischt 2 Flaschen und 4 Stimmungsfotos. Offen, ob alle sechs Positionen Flaschen zeigen sollen.
+- **3D-Etikett:** aus dem Produktfoto ausgeschnitten und mittig auf 5:7 aufgefüllt, die perspektivische Stauchung des Fotos bleibt. Eine Abrollung des Zylinders (arcsin) ergäbe eine korrekte Textur. Die Hero-Texte nennen weiter „Cuvée Nº 7 · 2023 · 13,5 %“, das Etikett zeigt Merlot 2024.
+- **`GalleryV1`** überschreibt das inline gesetzte `object-fit` von `AmbientImage` mit `[&_img]:object-contain!`. Sauberer wäre eine Prop an `components/ambient-image`.
+- **Buchart58:** Wer Sections mit Flaschenfotos kopiert, muss `section-showcase/src/sections/assets/weine/` mitnehmen.

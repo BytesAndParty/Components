@@ -2,6 +2,10 @@ import { lazy, Suspense, useRef, type CSSProperties } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { ShaderBackdrop } from '@components/shader-backdrop/shader-backdrop'
+// The real Merlot label, cut from the Buchart 58 product photo the bottle shape
+// was measured from. The cut-out is narrower than 5:7, so it sits centred on a
+// field in the label's ground colour (sampled from its edge) instead of being stretched.
+import merlotLabel from '../assets/weine/merlot-etikett.webp'
 
 /**
  * Flaschenbühne — die Flasche ist kein Foto, sondern ein in Echtzeit
@@ -26,24 +30,6 @@ const BACKDROP_COLORS: [string, string, string] = [
   `color-mix(in oklch, var(--accent) 32%, ${GROUND})`,
   'var(--accent-lifted)',
 ]
-
-// Das Etikett ist ein SVG als Data-URL. Ein als Bild geladenes SVG kann keine
-// Webfonts nachladen, deshalb eine Systemschrift.
-const LABEL_SRC = `data:image/svg+xml,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="850" height="1200" viewBox="0 0 850 1200">
-  <rect width="850" height="1200" fill="#f1ebdd"/>
-  <rect x="44" y="44" width="762" height="1112" fill="none" stroke="#1c1a17" stroke-width="3"/>
-  <rect x="60" y="60" width="730" height="1080" fill="none" stroke="#1c1a17" stroke-width="1"/>
-  <g fill="#1c1a17" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif">
-    <text x="425" y="230" font-size="44" letter-spacing="22">ATELIER</text>
-    <line x1="305" y1="280" x2="545" y2="280" stroke="#1c1a17" stroke-width="2"/>
-    <text x="425" y="560" font-size="150" font-style="italic">Cuvée</text>
-    <text x="425" y="740" font-size="170">Nº 7</text>
-    <line x1="305" y1="860" x2="545" y2="860" stroke="#1c1a17" stroke-width="2"/>
-    <text x="425" y="960" font-size="64" letter-spacing="14">2023</text>
-    <text x="425" y="1060" font-size="28" letter-spacing="7">ROTWEIN · TROCKEN · 0,75 L</text>
-  </g>
-</svg>`)}`
 
 const FACTS = [
   ['Jahrgang', '2023'],
@@ -85,7 +71,7 @@ export function HeroBottle3D() {
         >
           <Suspense fallback={null}>
             <BottleStage
-              labelSrc={LABEL_SRC}
+              labelSrc={merlotLabel}
               progress={scrollYProgress}
               capsuleColor="var(--accent-lifted)"
               className="h-full w-full"

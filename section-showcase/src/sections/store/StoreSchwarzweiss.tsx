@@ -50,8 +50,8 @@ function Position({
               alt={`${wine.name} ${wine.vintage} — Flasche vor heller Wand`}
               direction="up"
               duration={1300}
-              className={`${ratio} w-full`}
-              imgClassName="grayscale"
+              className={`${ratio} w-full bg-[#000101]/5`}
+              imgClassName="object-contain p-6 grayscale"
             />
           </div>
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ProductV4 } from '../showcase/ProductV4'
+import riesling from '../assets/weine/riesling.webp'
 
 /**
  * La Cave — Domaine Privée storefront. The shop is not a card grid but a
@@ -75,11 +76,12 @@ export function StoreCave() {
         <BlurFade delay={400} direction="up">
           <article className="mt-16 grid grid-cols-1 items-center gap-10 border border-[#ddd5c4] bg-[#fbf9f3] p-8 sm:grid-cols-[minmax(11rem,14rem)_1fr] lg:gap-14 lg:p-12">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80"
+              src={riesling}
               alt="Riesling Steinriegl 2021 — Cuvée des Hauses"
               direction="up"
               duration={1400}
-              className="mx-auto aspect-[3/4.2] w-full max-w-56 rounded-t-full"
+              className="mx-auto aspect-[3/4.2] w-full max-w-56 rounded-t-full bg-[#ddd5c4]"
+              imgClassName="object-contain object-bottom"
             />
             <div>
               <span className="mb-3 block text-[10px] font-bold tracking-[0.35em] text-[#5c2331] uppercase">

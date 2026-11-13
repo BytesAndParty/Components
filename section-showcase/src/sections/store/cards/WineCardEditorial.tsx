@@ -24,7 +24,7 @@ export function WineCardEditorial({ wine, plate, fiche, onSelect }: WineCardEdit
           <img
             src={wine.imageSrc}
             alt={wine.imageAlt}
-            className="h-full w-full object-cover opacity-90 transition-opacity duration-300 hover:opacity-100"
+            className="h-full w-full object-contain px-4 pt-4 pb-8 opacity-90 transition-opacity duration-300 hover:opacity-100"
           />
           {plate && (
             <span className="absolute bottom-2 left-3 text-[10px] font-bold tracking-[0.3em] text-zinc-400 uppercase">

@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Lens } from '@components/lens/lens'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
+import riesling from '../assets/weine/riesling.webp'
 
 /**
  * Grand Cru Detail — Domaine Privée product page. The bottle stands in an
@@ -62,13 +63,13 @@ export function ProductV4({ onBack }: ProductV4Props) {
                   ’21
                 </span>
                 <Lens zoom={2.2} lensSize={190} ringColor="#5c2331">
-                  {/* Foto verglast den Bogen vollständig — object-contain ließe
-                      das Rechteck des Fotos sichtbar im Rahmen schweben. */}
+                  {/* Cut-out bottle stands at the foot of the arch; the gradient
+                      fills the niche around it. */}
                   <div className="aspect-[3/4.4] w-full overflow-hidden rounded-t-full bg-gradient-to-b from-[#ece7db] to-[#e2dccc]">
                     <img
-                      src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
-                      alt="Riesling Steinriegl 2021 — Flasche mit handgeschöpftem Etikett"
-                      className="h-full w-full object-cover"
+                      src={riesling}
+                      alt="Flasche Riesling von Buchart 58"
+                      className="h-full w-full object-contain object-bottom"
                     />
                   </div>
                 </Lens>

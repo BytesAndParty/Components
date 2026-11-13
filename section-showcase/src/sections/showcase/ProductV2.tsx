@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AuroraText } from '@components/aurora-text/aurora-text'
+import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 export interface ProductV2Props {
   onBack?: () => void
@@ -44,7 +45,7 @@ export function ProductV2({ onBack }: ProductV2Props) {
               <div className="group relative">
                 <div className="absolute -bottom-10 left-1/2 h-8 w-[60%] -translate-x-1/2 rounded-[50%] bg-black/5 blur-2xl" />
                 <img 
-                  src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80" 
+                  src={veltlinerElias} 
                   alt="Réserve Particulière 2018" 
                   className="relative z-10 w-full transition-transform duration-700 group-hover:translate-y-[-10px]"
                 />

@@ -4,6 +4,7 @@ import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ArrowLeft } from 'lucide-react'
 import { Rating } from '@components/rating/rating'
+import cabernetSauvignon from '../assets/weine/cabernet-sauvignon.webp'
 
 export interface ProductV1Props {
   onBack?: () => void
@@ -31,12 +32,12 @@ export function ProductV1({ onBack }: ProductV1Props) {
           <div className="w-full lg:w-1/2">
             <BlurFade delay={100} direction="right">
               <AmbientImage
-                src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+                src={cabernetSauvignon}
                 alt="Premium Red Wine Bottle"
                 borderRadius="1.5rem"
                 intensity={0.5}
                 blur={60}
-                className="mx-auto aspect-3/4 max-w-md shadow-2xl"
+                className="bg-card mx-auto aspect-3/4 max-w-md rounded-3xl p-10 shadow-2xl"
               />
             </BlurFade>
           </div>

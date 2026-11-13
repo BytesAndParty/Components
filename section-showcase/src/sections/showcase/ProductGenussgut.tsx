@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { GENUSSGUT_FONTS } from '../family-fonts'
+import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 /**
  * Genussgut — ein Wein als ruhige Warenkunde auf Creme: die Flasche steht im
@@ -74,11 +75,12 @@ export function ProductGenussgut({ onBack }: ProductGenussgutProps) {
           <div>
             <div className="bg-[#fee0c9] p-6 sm:p-10">
               <RevealImage
-                src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
-                alt="Flasche loibenberg smaragd 2021 vor heller Wand"
+                src={veltlinerElias}
+                alt="Flasche Grüner Veltliner Elias von Buchart 58"
                 direction="up"
                 duration={1500}
                 className="aspect-3/4 w-full"
+                imgClassName="object-contain"
               />
             </div>
             <BlurFade delay={900} className="mt-4 flex flex-wrap items-baseline justify-between gap-3">

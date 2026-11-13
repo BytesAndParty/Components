@@ -1,5 +1,6 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+import gemischterSatz from '../assets/weine/gemischter-satz.webp'
 
 /**
  * Editorial Plates — magazine-style index of photographic plates. Each
@@ -22,6 +23,8 @@ interface Plate {
   cell: string
   /** Aspect ratio of the printed plate. */
   aspect: string
+  /** Cut-out bottle photo: shown whole on the plate instead of filling it. */
+  cutout?: boolean
 }
 
 const plates: Plate[] = [
@@ -57,8 +60,9 @@ const plates: Plate[] = [
   },
   {
     numeral: 'IV',
-    src: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80',
-    alt: 'Geöffnete Flasche im Streiflicht',
+    src: gemischterSatz,
+    alt: 'Flasche Gemischter Satz von Buchart 58',
+    cutout: true,
     caption: 'Die erste Verkostung.',
     location: 'Probierraum, Hofzimmer',
     season: 'März · MMXXVI',
@@ -123,7 +127,7 @@ export function GalleryV3() {
                     src={plate.src}
                     alt={plate.alt}
                     loading="lazy"
-                    className="h-full w-full object-cover grayscale-15 transition-all duration-1200 hover:scale-[1.02] hover:grayscale-0"
+                    className={`h-full w-full ${plate.cutout ? 'object-contain p-8' : 'object-cover'} grayscale-15 transition-all duration-1200 hover:scale-[1.02] hover:grayscale-0`}
                   />
                 </div>
 

@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { WaveText } from '@components/wave-text/wave-text'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
+import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 /**
  * Maison Editorial — ein einzelner Wein als geschichteter Magazin-Held. Aus HeroV6/
@@ -52,11 +53,12 @@ export function ProductV6({ onBack }: ProductV6Props) {
           {/* Primary plate — bottle, anchored right */}
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[46%]">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
-              alt="Flasche Loibenberg Smaragd im Streiflicht"
+              src={veltlinerElias}
+              alt="Flasche Grüner Veltliner Elias von Buchart 58"
               direction="up"
               duration={1500}
               className="aspect-4/5 w-full"
+              imgClassName="object-contain"
             />
             <BlurFade delay={1000} className="mt-4 flex items-baseline justify-between">
               <span className="font-display text-sm font-light text-zinc-400 italic">

@@ -2,6 +2,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Particles } from '@components/particles/particles'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
+import chardonnay from '../assets/weine/chardonnay.webp'
 
 /**
  * Cinematic Atmosphere — alternierendes Filmstreifen-Layout (Kontrast zu
@@ -31,8 +32,9 @@ const MOMENTS = [
     year: '2009',
     title: 'Das Licht ändert sich',
     text: 'Neue Rebsorten, gleiche Geduld. Der Wein wird heller, die Abende länger.',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1000&q=80',
-    alt: 'Weinglas im letzten Licht des Tages',
+    image: chardonnay,
+    alt: 'Flasche Chardonnay von Buchart 58',
+    cutout: true,
   },
   {
     year: 'Heute',
@@ -106,8 +108,8 @@ export function TimelineCinematic() {
                         alt={moment.alt}
                         direction={imageLeft ? 'left' : 'right'}
                         duration={1300}
-                        className="aspect-4/3 w-full"
-                        imgClassName="opacity-70 saturate-[1.1] grayscale-[0.4] transition-all! duration-700! group-hover:opacity-90 group-hover:grayscale-0"
+                        className={`aspect-4/3 w-full${moment.cutout ? ' bg-zinc-900' : ''}`}
+                        imgClassName={`${moment.cutout ? 'object-contain p-6 ' : ''}opacity-70 saturate-[1.1] grayscale-[0.4] transition-all! duration-700! group-hover:opacity-90 group-hover:grayscale-0`}
                       />
                     </div>
                   </article>

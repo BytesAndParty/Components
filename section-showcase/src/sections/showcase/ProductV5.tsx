@@ -3,6 +3,7 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { Backlight } from '@components/backlight/backlight'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
+import stLaurent from '../assets/weine/st-laurent.webp'
 
 /**
  * Chiaroscuro — cinematic product page. One bottle in a candle-gold
@@ -57,8 +58,8 @@ export function ProductV5({ onBack }: ProductV5Props) {
               <Backlight color="#c9a25e" intensity={0.35} blur={90} blobs={2} speed={0.5}>
                 <div className="flex aspect-3/4 items-end justify-center bg-radial from-[#2a2019] via-[#171210] to-transparent">
                   <img
-                    src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
-                    alt="St. Laurent Reserve 2020 — Flasche im Kerzenlicht"
+                    src={stLaurent}
+                    alt="Flasche St. Laurent von Buchart 58"
                     className="h-[94%] object-contain drop-shadow-[0_36px_48px_rgba(0,0,0,0.7)]"
                   />
                 </div>
