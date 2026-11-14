@@ -2,12 +2,12 @@ import { useRef, useState, type KeyboardEvent } from 'react'
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react'
 import { Plus } from 'lucide-react'
 import { BUCHART_FONTS } from '../family-fonts'
-import { Bottle, Ribbon, RunningHead } from '../buchart-kit'
+import { Ribbon, RunningHead } from '../buchart-kit'
 import { CATEGORIES, LABEL, WINES, formatEuro, type LabelCode, type WineCategory } from '../buchart-data'
 
 /**
  * Buch·Art — der Online-Shop: dieselben Kategorien wie auf buchart58.at, die Weine
- * als gezeichnete Flaschen im Etiketten-Farbcode. Statt eines Warenkorb-Badges
+ * als Karten mit Flaschenfoto. Statt eines Warenkorb-Badges
  * füllt sich oben ein 12er-Karton — weil im Original nur volle 12er-Kartons
  * versandkostenfrei reisen, ist das die Information, die beim Einkaufen zählt.
  */
@@ -23,6 +23,14 @@ const LEGEND: { code: LabelCode; text: string }[] = [
 ]
 
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e1919] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f3e8]'
+
+/** Platzhalterfotos, reihum je Wein, solange es keine echten Produktfotos gibt. */
+const PHOTOS = [
+  'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=700&q=80',
+  'https://images.unsplash.com/photo-1769140243164-b677642e9279?w=700&q=80',
+  'https://images.unsplash.com/photo-1561906814-23da9a8bfee0?w=700&q=80',
+  'https://images.unsplash.com/photo-1761489179799-c8ecad6ec719?w=700&q=80',
+]
 
 export function StoreBuchArt() {
   const [filter, setFilter] = useState<Filter>('alle')
@@ -133,15 +141,11 @@ export function StoreBuchArt() {
                   exit={reduce ? undefined : { opacity: 0, scale: 0.96 }}
                   className="group flex flex-col"
                 >
-                  <div className="relative flex h-64 items-end justify-center bg-linear-to-b from-transparent from-40% to-[#efe9da] pb-4">
-                    <Bottle
-                      code={w.label}
-                      glass={w.glass}
-                      name={w.name}
-                      sub={w.sub}
-                      vintage={w.vintage}
-                      size={w.size ? '0,375 l' : '0,75 l'}
-                      className="h-60 w-auto drop-shadow-[8px_14px_12px_rgba(28,26,23,0.22)] transition-transform duration-500 group-hover:-translate-y-2 group-hover:-rotate-1"
+                  <div className="relative aspect-3/4 overflow-hidden bg-[#efe9da]">
+                    <img
+                      src={PHOTOS[WINES.indexOf(w) % PHOTOS.length]}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
                   </div>
                   <h3 className="font-display mt-5 text-[1.4rem] leading-tight">

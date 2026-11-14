@@ -1,8 +1,6 @@
-import { useId } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@components/lib/utils'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
-import { BA, LABEL, type Glass, type LabelCode } from './buchart-data'
 
 /**
  * Buch·Art — gemeinsame Bausteine der Familie. Abgeleitet aus der Original-CI von
@@ -83,20 +81,6 @@ export function Signet({ className, label, draw = false, strokeWidth = 1.25 }: {
   )
 }
 
-/** Das Signet als reine SVG-Gruppe — für die Verwendung innerhalb anderer Zeichnungen (Etikett, Urkunde). */
-function SignetGlyph({ transform, color, strokeWidth = 3 }: { transform: string; color: string; strokeWidth?: number }) {
-  return (
-    <g transform={transform} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-      {SIGNET_PATHS.map(d => (
-        <path key={d} d={d} />
-      ))}
-      {GRAPES.map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="1.9" />
-      ))}
-    </g>
-  )
-}
-
 /** Die Wortmarke wie im Logo: Signet, Haarlinie, „Weingut“ über „Buchart 58“. */
 export function Wordmark({ className, signetClassName, size = 'md' }: { className?: string; signetClassName?: string; size?: 'sm' | 'md' | 'lg' }) {
   const s = { sm: { signet: 'h-7 w-10', word: 'text-[1.15rem]', kicker: 'text-[7px]' }, md: { signet: 'h-9 w-[3.25rem]', word: 'text-[1.5rem]', kicker: 'text-[9px]' }, lg: { signet: 'h-14 w-20', word: 'text-[2.4rem]', kicker: 'text-[10px]' } }[size]
@@ -113,130 +97,6 @@ export function Wordmark({ className, signetClassName, size = 'md' }: { classNam
         </span>
       </span>
     </span>
-  )
-}
-
-const GLASS: Record<Glass, { base: string; light: string }> = {
-  gruen: { base: '#2c3a17', light: '#5b6e33' },
-  dunkel: { base: '#15120e', light: '#3b342b' },
-  klar: { base: '#d9b9ae', light: '#f4e4dc' },
-}
-
-export interface BottleProps {
-  code: LabelCode
-  name: string
-  sub?: string
-  vintage?: number
-  glass?: Glass
-  /** Freier Etikettentext — ersetzt Sorte/Jahrgang (persönliches Etikett). */
-  dedication?: string
-  /** Größenangabe unten am Etikett. */
-  size?: string
-  className?: string
-  /** Ohne Label ist die Flasche dekorativ (aria-hidden). */
-  label?: string
-}
-
-/**
- * Flasche als Zeichnung, Etikett im Farbcode. Ersetzt Produktfotos nicht,
- * sondern zeigt das Etikettensystem — gleiche Komposition wie die echten Etiketten:
- * Signet oben, Namensband „Buchart 58“ mit Doppellinie, darunter Sorte und Jahrgang.
- */
-export function Bottle({ code, name, sub, vintage, glass = 'gruen', dedication, size = '0,75 l', className, label }: BottleProps) {
-  const uid = useId().replace(/\W/g, '')
-  const l = LABEL[code]
-  const g = GLASS[glass]
-  const longName = name.length > 12
-  return (
-    <svg
-      viewBox="0 0 100 340"
-      className={className}
-      role={label ? 'img' : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
-    >
-      <defs>
-        <linearGradient id={`glass-${uid}`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stopColor={g.base} />
-          <stop offset="0.28" stopColor={g.light} />
-          <stop offset="0.5" stopColor={g.base} />
-          <stop offset="1" stopColor={g.base} stopOpacity="0.92" />
-        </linearGradient>
-        <linearGradient id={`sheen-${uid}`} x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stopColor="#000" stopOpacity="0.18" />
-          <stop offset="0.3" stopColor="#fff" stopOpacity="0.1" />
-          <stop offset="0.7" stopColor="#000" stopOpacity="0" />
-          <stop offset="1" stopColor="#000" stopOpacity="0.28" />
-        </linearGradient>
-      </defs>
-
-      {/* Glas */}
-      <path
-        d="M41 44h18v48c0 20 29 26 29 50v184q0 8-8 8H20q-8 0-8-8V142c0-24 29-30 29-50Z"
-        fill={`url(#glass-${uid})`}
-      />
-      {/* Kapsel */}
-      <rect x="40" y="2" width="20" height="44" rx="2.5" fill="#141312" />
-      <path d="M40 38h20" stroke="#2a2826" strokeWidth="1" />
-
-      {/* Etikett */}
-      <rect x="16" y="172" width="68" height="124" fill={l.ground} />
-      <rect x="16" y="172" width="68" height="124" fill={`url(#sheen-${uid})`} />
-      <SignetGlyph transform="translate(42.3 178.5) scale(0.24)" color={code === 'weiss' ? BA.goldInk : BA.gold} />
-      <rect x="21" y="196" width="58" height="13" fill={l.band} />
-      <text x="50" y="205.6" textAnchor="middle" fontSize="8" fill={l.bandText} style={{ fontFamily: DISPLAY, ...LINING }}>
-        Buchart 58
-      </text>
-      <path d={`M21 212h58M21 214h58`} stroke={l.band} strokeWidth="0.7" />
-
-      {dedication ? (
-        <foreignObject x="19" y="222" width="62" height="56">
-          <p
-            className="flex h-full items-center justify-center text-center leading-[1.15] italic"
-            style={{ fontFamily: DISPLAY, color: l.text, fontSize: '6.6px' }}
-          >
-            {dedication}
-          </p>
-        </foreignObject>
-      ) : (
-        <>
-          <text
-            x="50"
-            y="238"
-            textAnchor="middle"
-            fontSize={longName ? 7.4 : 9}
-            fill={l.text}
-            style={{ fontFamily: DISPLAY, ...LINING }}
-            {...(name.length > 15 ? { textLength: 58, lengthAdjust: 'spacingAndGlyphs' } : {})}
-          >
-            {name}
-          </text>
-          {sub && (
-            <text
-              x="50"
-              y="250"
-              textAnchor="middle"
-              fontSize="5"
-              fontStyle="italic"
-              fill={l.text}
-              opacity="0.9"
-              style={{ fontFamily: DISPLAY, ...LINING }}
-              {...(sub.length > 22 ? { textLength: 58, lengthAdjust: 'spacingAndGlyphs' } : {})}
-            >
-              {sub}
-            </text>
-          )}
-          {vintage && (
-            <text x="50" y="266" textAnchor="middle" fontSize="6.4" fill={l.text} style={{ fontFamily: DISPLAY, ...LINING }}>
-              {vintage}
-            </text>
-          )}
-        </>
-      )}
-      <text x="50" y="288" textAnchor="middle" fontSize="3.3" letterSpacing="0.6" fill={l.text} opacity="0.8" style={{ fontFamily: SANS, ...LINING }}>
-        WEINLAND ÖSTERREICH · {size}
-      </text>
-    </svg>
   )
 }
 

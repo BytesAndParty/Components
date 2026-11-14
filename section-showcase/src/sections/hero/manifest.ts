@@ -87,7 +87,7 @@ export const heroSection: SectionDef = {
     {
       id: 'buchart',
       label: 'Buch·Art',
-      description: 'Claim der Original-Seite in Goudy, daneben die drei Etikettenfarben als Flaschen vor dem Buch-Signet, das sich mit Feder zeichnet; Faktenzeile aus den alten Bannern.',
+      description: 'Claim der Original-Seite in Goudy, daneben ein Weinberg-Foto im Rundbogen; Faktenzeile aus den alten Bannern.',
       Component: HeroBuchArt,
     },
     {

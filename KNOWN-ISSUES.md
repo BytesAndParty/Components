@@ -208,6 +208,8 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 
 **Entscheidung (User, 14.11.):** Der Tausch der Stockfotos gegen die Produktfotos von buchart58.at (Commit `e1d6fc2`, 13.11.) ist rückgängig gemacht: Mit diesen Fotos wirken die Sections billig. Die Produktfotos nicht noch einmal einsetzen; die 14 WebP stehen im Git-Verlauf von `e1d6fc2`. Als Ersatz für die schwächsten Stockfotos gilt „irgendein Platzhalterfoto, das gut aussieht“, bis eigene Fotos der Familie da sind.
 
+**Keine gezeichneten Flaschen im Showcase (User, 14.11.):** Die SVG-Flaschen der Buch·Art-Linie (`Bottle` in `buchart-kit.tsx`) wirken „mega hässlich“; „nichts der Art im Showcase“. Die Komponente ist entfernt. An ihren vier Stellen stehen jetzt Fotos: `HeroBuchArt` (Weinberg im Rundbogen statt drei Flaschen vor dem großen Signet), `ProductBuchArt` (Flaschenfoto, das Zierwort „noir“ dahinter entfällt, weil es das Rechteck verdeckt hätte), `StoreBuchArt` (vier Platzhalterfotos reihum je Wein; die Legende „Die Etiketten lesen“ bleibt) und `EtikettenBuchArt` (nur noch das Etikettenmuster). Offen, weil nicht gefragt: Weitere gezeichnete Elemente sind die Kellertür als Bildmarke und der Flaschen-Reiter in `HeroSchwarzweiss` sowie die Lagen-Karte als Inline-SVG in `features/` (siehe dessen Manifest). Das Signet bleibt als Logo (Nav, Footer, Wortmarke).
+
 **Getauscht am 14.11.** (40 Dateien in `section-showcase` und `components-showcase`, nur die Unsplash-ID, Maße und Zuschnitt blieben):
 
 | Vorher | Problem | Nachher |

@@ -8,7 +8,7 @@
  */
 
 /** Farben, abgenommen vom Logo (Gold) und von den Etiketten (Bänder, Gründe). */
-export const BA = {
+const BA = {
   /** Seitengrund — heller als das Etikett, damit Etiketten darauf als Fläche lesbar bleiben. */
   paper: '#f7f3e8',
   /** Etikettencreme der Weißweine. */

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Check, Minus, Plus } from 'lucide-react'
 import { BUCHART_FONTS } from '../family-fonts'
-import { Bottle, RibbonFill, RunningHead } from '../buchart-kit'
+import { RibbonFill, RunningHead } from '../buchart-kit'
 import { formatEuro } from '../buchart-data'
 
 /**
@@ -66,11 +66,8 @@ export function ProductBuchArt() {
         <RunningHead tone="dark" chapter="I" title="Rotwein · Bordeaux-Etikett" />
 
         <div className="mt-14 grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
-          {/* Flasche vor dem Wort „noir“ — das Etikett ist der Held, nicht ein Foto. */}
+          {/* Das Flaschenfoto; wechselt mit der Auswahl trocken/lieblich. */}
           <div className="relative flex justify-center lg:col-span-5">
-            <span aria-hidden="true" className="font-display pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(8rem,22vw,17rem)] leading-none italic text-[#a01f1e] select-none">
-              noir
-            </span>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={style}
@@ -80,15 +77,10 @@ export function ProductBuchArt() {
                 transition={{ type: 'spring', stiffness: 150, damping: 20 }}
                 className="relative"
               >
-                <Bottle
-                  code="rot"
-                  glass="dunkel"
-                  name="Coorbeau noir"
-                  sub="Der schwarze Rabe"
-                  vintage={s.vintage}
-                  size={f.label}
-                  label={`Coorbeau noir ${s.vintage}, ${style}`}
-                  className="h-[min(34rem,70vw)] w-auto drop-shadow-[18px_30px_30px_rgba(0,0,0,0.45)]"
+                <img
+                  src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=900&q=80"
+                  alt={`Flasche Coorbeau noir ${s.vintage}, ${style}`}
+                  className="h-[min(34rem,70vw)] w-auto shadow-[18px_30px_30px_-12px_rgba(0,0,0,0.45)]"
                 />
               </motion.div>
             </AnimatePresence>

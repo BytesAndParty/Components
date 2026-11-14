@@ -93,7 +93,7 @@ export const storeSection: SectionDef = {
     {
       id: 'buchart',
       label: 'Buch·Art — Weinshop',
-      description: 'Original-Kategorien als Tabs mit Lesebändchen, Flaschen im Etiketten-Farbcode, ein 12er-Karton füllt sich statt Warenkorb-Badge.',
+      description: 'Original-Kategorien als Tabs mit Lesebändchen, Flaschenfoto je Karte, ein 12er-Karton füllt sich statt Warenkorb-Badge.',
       Component: StoreBuchArt,
     },
   ],

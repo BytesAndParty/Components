@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Check, ImagePlus, Mail, Minus, Plus, Printer, Send, Truck } from 'lucide-react'
 import { ProcessSteps } from '@components/process-steps/process-steps'
 import { BUCHART_FONTS } from '../family-fonts'
-import { Bottle, RibbonFill, RunningHead, Signet } from '../buchart-kit'
+import { RibbonFill, RunningHead, Signet } from '../buchart-kit'
 import { formatEuro } from '../buchart-data'
 
 /**
@@ -290,14 +290,6 @@ export function EtikettenBuchArt() {
                     <span className="mt-1 text-[9px] tracking-[0.2em] uppercase opacity-80">Weinland Österreich · {size}</span>
                   </motion.div>
                 </div>
-                <Bottle
-                  code={dark ? 'schwarz' : 'weiss'}
-                  glass={wine.id === 'gv' ? 'gruen' : wine.id === 'frizzante' ? 'klar' : 'dunkel'}
-                  name={wine.name}
-                  dedication={text}
-                  size={size}
-                  className="hidden h-72 w-auto shrink-0 drop-shadow-[8px_14px_12px_rgba(28,26,23,0.25)] sm:block"
-                />
               </div>
 
               {/* Die Rechnung nach dem Rechenbeispiel der Original-Seite. */}
