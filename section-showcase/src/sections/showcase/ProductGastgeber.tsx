@@ -2,7 +2,6 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { RevealImage } from '@components/reveal-image/reveal-image'
 import { GASTGEBER_FONTS } from '../family-fonts'
 import { CrateStamp, StampFrame } from '../gastgeber-kit'
-import veltlinerElias from '../assets/weine/veltliner-elias.webp'
 
 /**
  * Gastgeber — ein Wein auf der Mittelachse: roter Serif-Kicker über der
@@ -102,12 +101,12 @@ export function ProductGastgeber({ onBack }: ProductGastgeberProps) {
         <BlurFade delay={380} className="mx-auto mt-14 max-w-lg lg:mt-16">
           <div className="bg-[#fff1df] px-6 py-8 sm:px-12 sm:py-12">
             <RevealImage
-              src={veltlinerElias}
-              alt="Flasche Grüner Veltliner Elias von Buchart 58"
+              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+              alt="Flasche Loibenberg Smaragd 2021 im warmen Streiflicht"
               direction="up"
               duration={1500}
               className="aspect-4/5 w-full"
-              imgClassName={`object-contain ${WARM}`}
+              imgClassName={WARM}
             />
           </div>
           <div className="mt-5 flex flex-col items-center gap-1.5 text-center">

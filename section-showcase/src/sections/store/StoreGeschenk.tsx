@@ -1,6 +1,5 @@
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { HangTag } from '@components/hang-tag/hang-tag'
-import zweigelt from '../assets/weine/zweigelt.webp'
 
 /**
  * Das Geschenk — eine einzelne Flasche als Hero, am Hals ein Kraftkarton-
@@ -9,9 +8,9 @@ import zweigelt from '../assets/weine/zweigelt.webp'
  * ein freier HangTag (loose) bietet den Gutschein als Alternative an.
  */
 
-// Cut-out Zweigelt bottle from the Buchart 58 shop (800 × 800). Measured in image pixels from
-// the alpha channel: bottle outline, knot where the neck meets the shoulder, neck width there.
-const BOTTLE = { x: 307, y: 10, w: 188, h: 780, knotX: 400.5, knotY: 212, neck: 82 }
+// Freigestellte Rotweinflasche aus _public_ (1024 × 1536). Maße in Bildpixeln, aus dem Alpha-Kanal
+// vermessen: Umriss der Flasche, Knoten am Übergang Hals → Schulter, Halsbreite dort.
+const BOTTLE = { x: 390, y: 253, w: 246, h: 986, knotX: 513.5, knotY: 514, neck: 92 }
 const BOTTLE_H = 560
 const S = BOTTLE_H / BOTTLE.h
 
@@ -35,10 +34,10 @@ export function StoreGeschenk() {
           />
           <div className="absolute inset-0 overflow-hidden">
             <img
-              src={zweigelt}
-              alt="Flasche Zweigelt von Buchart 58"
+              src="/wine-default.png"
+              alt="Flasche Zweigelt 2022"
               className="absolute max-w-none"
-              style={{ width: 800 * S, left: -BOTTLE.x * S, top: -BOTTLE.y * S }}
+              style={{ width: 1024 * S, left: -BOTTLE.x * S, top: -BOTTLE.y * S }}
             />
           </div>
           <HangTag

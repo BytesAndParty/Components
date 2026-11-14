@@ -136,7 +136,6 @@ export function StoreGenussgut() {
                           delay={i * 110}
                           duration={1300}
                           className="aspect-3/4 w-full"
-                          imgClassName="object-contain"
                         />
                       </div>
                     </div>

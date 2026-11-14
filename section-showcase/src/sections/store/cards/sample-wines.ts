@@ -1,10 +1,4 @@
 import type { WineCardData } from './types'
-import veltlinerElias from '../../assets/weine/veltliner-elias.webp'
-import gruenerVeltliner from '../../assets/weine/gruener-veltliner.webp'
-import riesling from '../../assets/weine/riesling.webp'
-import zweigeltHolzfass from '../../assets/weine/zweigelt-holzfass.webp'
-import zweigelt from '../../assets/weine/zweigelt.webp'
-import rose from '../../assets/weine/rose.webp'
 
 /** Ein Beispiel-Sortiment, geteilt von den Einzeldesign-Storefronts. */
 export interface SampleWine {
@@ -17,6 +11,8 @@ export interface SampleWine {
   rating: string
 }
 
+const BOTTLE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80'
+
 export const SAMPLE_WINES: SampleWine[] = [
   {
     wine: {
@@ -25,7 +21,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Ried Loibenberg',
       price: '€ 38,—',
       description: 'Rauch über nassem Stein, Quitte und weißer Pfeffer. Charakter aus alten Reben.',
-      imageSrc: veltlinerElias,
+      imageSrc: BOTTLE,
       imageAlt: 'Loibenberg Smaragd',
     },
     plate: 'Platte I · Loibenberg',
@@ -40,7 +36,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Ried Kreutles',
       price: '€ 19,—',
       description: 'Weißer Pfeffer, grüner Apfel, knackige Frische — der Alltagsklassiker.',
-      imageSrc: gruenerVeltliner,
+      imageSrc: BOTTLE,
       imageAlt: 'Grüner Veltliner',
     },
     plate: 'Platte II · Kreutles',
@@ -54,7 +50,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Ried Pfaffenberg',
       price: '€ 22,—',
       description: 'Zitrus, Pfirsich, Feuerstein. Straffer Terrassenwein mit Länge.',
-      imageSrc: riesling,
+      imageSrc: BOTTLE,
       imageAlt: 'Riesling Federspiel',
     },
     plate: 'Platte III · Pfaffenberg',
@@ -68,7 +64,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Leithaberg',
       price: '€ 32,—',
       description: 'Brombeere, Schokolade, feine Tannine. Achtzehn Monate im Barrique.',
-      imageSrc: zweigeltHolzfass,
+      imageSrc: BOTTLE,
       imageAlt: 'Blaufränkisch Reserve',
     },
     plate: 'Platte IV · Leithaberg',
@@ -82,7 +78,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Ried Steinriegl',
       price: '€ 16,—',
       description: 'Kirsche, Pflaume, weich und fruchtbetont. Der offene Allrounder.',
-      imageSrc: zweigelt,
+      imageSrc: BOTTLE,
       imageAlt: 'Zweigelt vom Urgestein',
     },
     plate: 'Platte V · Steinriegl',
@@ -96,7 +92,7 @@ export const SAMPLE_WINES: SampleWine[] = [
       lage: 'Ried Höhereck',
       price: '€ 17,—',
       description: 'Erdbeere, Wassermelone, trocken und belebend. Sommer in der Flasche.',
-      imageSrc: rose,
+      imageSrc: BOTTLE,
       imageAlt: 'Rosé de Saignée',
     },
     plate: 'Platte VI · Höhereck',

@@ -4,12 +4,6 @@ import { ProductV6 } from '../showcase/ProductV6'
 import { WineCardEditorial } from './cards/WineCardEditorial'
 import type { WineCardData } from './cards/types'
 import { WaveText } from '@components/wave-text/wave-text'
-import veltlinerElias from '../assets/weine/veltliner-elias.webp'
-import gruenerVeltliner from '../assets/weine/gruener-veltliner.webp'
-import riesling from '../assets/weine/riesling.webp'
-import zweigeltHolzfass from '../assets/weine/zweigelt-holzfass.webp'
-import zweigelt from '../assets/weine/zweigelt.webp'
-import rose from '../assets/weine/rose.webp'
 
 /**
  * Maison Editorial — das Sortiment als Magazin-Register. Cream-Grund, Maison-Kopf mit
@@ -17,6 +11,8 @@ import rose from '../assets/weine/rose.webp'
  * herausgelöst). Jede Position öffnet die ProductV6-Detailseite. Distinkt zu
  * StorePage (3 Designs) und StoreCave/Nocturne.
  */
+
+const BOTTLE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80'
 
 const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
   {
@@ -26,7 +22,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Ried Loibenberg',
       price: '€ 38,—',
       description: 'Rauch über nassem Stein, Quitte und weißer Pfeffer. Charakter aus alten Reben.',
-      imageSrc: veltlinerElias,
+      imageSrc: BOTTLE,
       imageAlt: 'Loibenberg Smaragd',
     },
     plate: 'Platte I · Loibenberg',
@@ -39,7 +35,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Ried Kreutles',
       price: '€ 19,—',
       description: 'Weißer Pfeffer, grüner Apfel, knackige Frische — der Alltagsklassiker.',
-      imageSrc: gruenerVeltliner,
+      imageSrc: BOTTLE,
       imageAlt: 'Grüner Veltliner',
     },
     plate: 'Platte II · Kreutles',
@@ -52,7 +48,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Ried Pfaffenberg',
       price: '€ 22,—',
       description: 'Zitrus, Pfirsich, Feuerstein. Straffer Terrassenwein mit Länge.',
-      imageSrc: riesling,
+      imageSrc: BOTTLE,
       imageAlt: 'Riesling Federspiel',
     },
     plate: 'Platte III · Pfaffenberg',
@@ -65,7 +61,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Leithaberg',
       price: '€ 32,—',
       description: 'Brombeere, Schokolade, feine Tannine. Achtzehn Monate im Barrique.',
-      imageSrc: zweigeltHolzfass,
+      imageSrc: BOTTLE,
       imageAlt: 'Blaufränkisch Reserve',
     },
     plate: 'Platte IV · Leithaberg',
@@ -78,7 +74,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Ried Steinriegl',
       price: '€ 16,—',
       description: 'Kirsche, Pflaume, weich und fruchtbetont. Der offene Allrounder.',
-      imageSrc: zweigelt,
+      imageSrc: BOTTLE,
       imageAlt: 'Zweigelt vom Urgestein',
     },
     plate: 'Platte V · Steinriegl',
@@ -91,7 +87,7 @@ const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
       lage: 'Ried Höhereck',
       price: '€ 17,—',
       description: 'Erdbeere, Wassermelone, trocken und belebend. Sommer in der Flasche.',
-      imageSrc: rose,
+      imageSrc: BOTTLE,
       imageAlt: 'Rosé de Saignée',
     },
     plate: 'Platte VI · Höhereck',

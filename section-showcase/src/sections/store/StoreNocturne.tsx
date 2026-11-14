@@ -3,9 +3,6 @@ import { BlurFade } from '@components/blur-fade/blur-fade'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { ShinyText } from '@components/shiny-text/shiny-text'
 import { ProductV5 } from '../showcase/ProductV5'
-import stLaurent from '../assets/weine/st-laurent.webp'
-import blauerPortugieser from '../assets/weine/blauer-portugieser.webp'
-import riesling from '../assets/weine/riesling.webp'
 
 /**
  * Cave Nocturne — cinematic storefront. The shop is a night walk through
@@ -29,7 +26,7 @@ const SPOTLIGHTS: Spot[] = [
     vintage: 'Reserve 2020',
     note: 'Weichsel, Tabak, kühle Salzspur',
     price: '85,00 €',
-    image: stLaurent,
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
     alt: 'St. Laurent Reserve 2020 im Spotlight',
   },
   {
@@ -37,7 +34,7 @@ const SPOTLIGHTS: Spot[] = [
     vintage: 'Terrassen 2021',
     note: 'Ganztrauben, ungefiltert, leise',
     price: '72,00 €',
-    image: blauerPortugieser,
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
     alt: 'Pinot Noir Terrassen 2021 im Spotlight',
   },
   {
@@ -45,7 +42,7 @@ const SPOTLIGHTS: Spot[] = [
     vintage: 'Steinriegl 2021',
     note: 'Nasser Stein, weißer Pfirsich',
     price: '64,00 €',
-    image: riesling,
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
     alt: 'Riesling Steinriegl 2021 im Spotlight',
   },
 ]
