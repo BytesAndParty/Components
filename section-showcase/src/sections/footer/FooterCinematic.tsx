@@ -11,7 +11,7 @@ export function FooterCinematic() {
     <footer className="relative overflow-hidden bg-zinc-950 text-zinc-300">
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1600&q=80"
+          src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1600&q=80"
           alt=""
           aria-hidden="true"
           className="h-full w-full object-cover opacity-20 saturate-[1.1]"

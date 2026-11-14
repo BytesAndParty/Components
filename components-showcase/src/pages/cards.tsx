@@ -746,7 +746,7 @@ export function CardsPage() {
       <Section title="PixelImage" description="Pixelate-to-sharp cell-by-cell image reveal on scroll.">
         <div className="grid grid-cols-2 gap-4">
           <PixelImage
-            src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80"
+            src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=600&q=80"
             alt="Wine bottles"
             grid={{ rows: 5, cols: 7 }}
             stagger={50}
@@ -786,7 +786,7 @@ export function CardsPage() {
           </div>
           <div className="flex flex-col gap-2">
             <RevealImage
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=600&q=80"
               alt="Weinflaschen im Regal"
               direction="right"
               delay={150}
@@ -807,7 +807,7 @@ export function CardsPage() {
           </div>
           <div className="flex flex-col gap-2">
             <RevealImage
-              src="https://images.unsplash.com/photo-1504279589104-dbdf49c73cbc?w=600&q=80"
+              src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&q=80"
               alt="Reife Trauben am Stock"
               direction="left"
               delay={450}
@@ -823,7 +823,7 @@ export function CardsPage() {
       <Section title="AmbientImage" description="Ambilight-style glow extracted from image edge colors – like LED TV backlighting.">
         <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
           <AmbientImage
-            src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80"
+            src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=400&q=80"
             alt="Weinflaschen"
             blur={45}
             intensity={0.55}
@@ -856,7 +856,7 @@ export function CardsPage() {
         <div className="flex items-center justify-center" style={{ minHeight: '400px', margin: '40px 0' }}>
           <BounceCards
             images={[
-              'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80',
+              'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=400&q=80',
               'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80',
               'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&q=80',
               'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=400&q=80',
@@ -897,7 +897,7 @@ export function CardsPage() {
         <div className="flex flex-col gap-6">
           <ImagesSlider
             images={[
-              'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1600&q=80',
+              'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1600&q=80',
               'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1600&q=80',
               'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1600&q=80',
               'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=1600&q=80',

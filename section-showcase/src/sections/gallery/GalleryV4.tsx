@@ -54,7 +54,7 @@ export function GalleryV4() {
           {/* Plate 1 — large, slightly rotated left */}
           <figure className="lg:absolute lg:top-0 lg:left-0 lg:w-[46%] lg:-rotate-2">
             <RevealImage
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1400&q=80"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1400&q=80"
               alt="Flaschenlager im Gewölbekeller"
               direction="up"
               duration={1500}

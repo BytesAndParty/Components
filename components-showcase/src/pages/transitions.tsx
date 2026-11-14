@@ -9,7 +9,7 @@ const SCENES = [
     title: 'Château Rouge 2023',
     subtitle: 'Bordeaux Blend · 14.5% vol.',
     note: 'Dichte Frucht, Eiche, Veilchen. 12 Monate im Fass.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=900&q=80',
     gradient: 'linear-gradient(135deg, #4a0e1c 0%, #1a0508 100%)',
     accent: '#d4a574',
     badge: 'ROUGE',

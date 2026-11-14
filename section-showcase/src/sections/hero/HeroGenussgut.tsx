@@ -29,7 +29,7 @@ const BEREICHE = [
     label: 'verkostung',
     note: 'im gewölbe, nach anmeldung',
     href: '/verkostung',
-    image: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=900&q=80',
     alt: 'Weinglas im Gegenlicht während einer Verkostung',
   },
   {

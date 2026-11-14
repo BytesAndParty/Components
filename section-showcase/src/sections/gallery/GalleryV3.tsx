@@ -37,7 +37,7 @@ const plates: Plate[] = [
   },
   {
     numeral: 'II',
-    src: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80',
+    src: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1200&q=80',
     alt: 'Eichenfässer im historischen Keller',
     caption: 'Stillstand. Drittbelegte Tonneaux.',
     location: 'Tonnenkeller, Untergeschoss',
@@ -57,7 +57,7 @@ const plates: Plate[] = [
   },
   {
     numeral: 'IV',
-    src: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80',
+    src: 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80',
     alt: 'Geöffnete Flasche im Streiflicht',
     caption: 'Die erste Verkostung.',
     location: 'Probierraum, Hofzimmer',

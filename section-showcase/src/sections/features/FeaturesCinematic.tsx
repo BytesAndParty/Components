@@ -46,7 +46,7 @@ export function FeaturesCinematic() {
         <BlurFade delay={100} direction="up">
           <figure className="group relative">
             <RevealImage
-              src="https://images.unsplash.com/photo-1523362628745-0c100150b504?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?w=1000&q=80"
               alt="Rebzeilen am Hang, während der Nebel abzieht"
               direction="up"
               duration={1400}

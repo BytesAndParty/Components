@@ -66,7 +66,7 @@ export function ProductV4({ onBack }: ProductV4Props) {
                       das Rechteck des Fotos sichtbar im Rahmen schweben. */}
                   <div className="aspect-[3/4.4] w-full overflow-hidden rounded-t-full bg-gradient-to-b from-[#ece7db] to-[#e2dccc]">
                     <img
-                      src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+                      src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80"
                       alt="Riesling Steinriegl 2021 — Flasche mit handgeschöpftem Etikett"
                       className="h-full w-full object-cover"
                     />

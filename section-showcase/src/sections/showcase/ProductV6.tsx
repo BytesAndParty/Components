@@ -52,7 +52,7 @@ export function ProductV6({ onBack }: ProductV6Props) {
           {/* Primary plate — bottle, anchored right */}
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[46%]">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
+              src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1400&q=80"
               alt="Flasche Loibenberg Smaragd im Streiflicht"
               direction="up"
               duration={1500}
@@ -69,7 +69,7 @@ export function ProductV6({ onBack }: ProductV6Props) {
           {/* Secondary plate — label close-up, hangs lower-left overlapping */}
           <div className="mt-10 w-2/3 max-w-72 lg:absolute lg:bottom-4 lg:left-[38%] lg:z-20 lg:mt-0 lg:w-[20%] lg:max-w-none">
             <RevealImage
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1000&q=80"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1000&q=80"
               alt="Etikett-Detail im Gegenlicht"
               direction="right"
               delay={400}

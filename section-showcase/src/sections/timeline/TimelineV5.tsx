@@ -14,7 +14,7 @@ const SCENES = [
     year: '1958',
     title: 'Szene I — Der erste Stein',
     text: 'Drei verwilderte Terrassen, ein Handschlag, kein Geld. Josef Buchart richtet die Mauern mit bloßen Händen.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1400&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1400&q=80',
     alt: 'Alte Trockensteinmauern in den Weinbergterrassen',
   },
   {
@@ -28,7 +28,7 @@ const SCENES = [
     year: '1997',
     title: 'Szene III — Die Bibliothek',
     text: 'Von jedem Jahrgang bleiben dreihundert Flaschen im Haus. Verkauft wird daraus nie, verkostet selten.',
-    image: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1400&q=80',
+    image: 'https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=1400&q=80',
     alt: 'Gläser und Flaschen im Kerzenlicht des Archivs',
   },
   {

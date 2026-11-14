@@ -52,7 +52,7 @@ export function ProductV3({ onBack }: ProductV3Props) {
         {/* Left page — photography */}
         <div className="relative">
           <RevealImage
-            src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
+            src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1400&q=80"
             alt="Flasche Grüner Veltliner im Streiflicht auf Steinmauer"
             direction="up"
             duration={1500}

@@ -59,7 +59,7 @@ export function GalleryBuchArt() {
           <BlurFade className="lg:col-span-7 lg:row-span-2">
             <figure>
               <RevealImage
-                src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1600&q=80"
+                src="https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=1600&q=80"
                 alt="Weinflaschen im Regal"
                 direction="up"
                 duration={1500}
@@ -86,8 +86,8 @@ export function GalleryBuchArt() {
           <BlurFade delay={260} className="grid grid-cols-2 gap-6 lg:col-span-5">
             <figure>
               <RevealImage
-                src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80"
-                alt="Anstoßen mit Rotwein in geselliger Runde"
+                src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=900&q=80"
+                alt="Eichenfässer in einem Weinkeller"
                 direction="right"
                 duration={1300}
                 className="aspect-3/4 w-full"
@@ -97,7 +97,7 @@ export function GalleryBuchArt() {
             </figure>
             <figure>
               <RevealImage
-                src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=900&q=80"
+                src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=900&q=80"
                 alt="Rotweinflasche im Keller"
                 direction="right"
                 duration={1300}

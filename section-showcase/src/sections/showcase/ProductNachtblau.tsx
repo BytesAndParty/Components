@@ -105,7 +105,7 @@ export function ProductNachtblau({ onBack }: ProductNachtblauProps) {
 
         <div className="relative order-1 min-h-[60vh] overflow-hidden lg:order-2 lg:min-h-0">
           <RevealImage
-            src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
+            src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1400&q=80"
             alt="Flasche Loibenberg Smaragd im Streiflicht auf einer Steinplatte"
             direction="up"
             duration={1600}

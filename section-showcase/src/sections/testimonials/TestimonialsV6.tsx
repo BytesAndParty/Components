@@ -26,7 +26,7 @@ export function TestimonialsV6() {
           {/* Portrait plate */}
           <div className="lg:absolute lg:top-0 lg:right-0 lg:w-[42%]">
             <RevealImage
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1200&q=80"
               alt="Terrassenweingärten, aus denen die zitierten Flaschen stammen"
               direction="up"
               duration={1500}

@@ -101,7 +101,7 @@ export function ProductGastgeber({ onBack }: ProductGastgeberProps) {
         <BlurFade delay={380} className="mx-auto mt-14 max-w-lg lg:mt-16">
           <div className="bg-[#fff1df] px-6 py-8 sm:px-12 sm:py-12">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80"
               alt="Flasche Loibenberg Smaragd 2021 im warmen Streiflicht"
               direction="up"
               duration={1500}

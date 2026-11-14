@@ -8,7 +8,7 @@ const images = [
     className: 'col-span-2 row-span-2',
   },
   {
-    src: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=800&q=80',
     alt: 'Wine Cellar',
     className: 'col-span-1 row-span-1',
   },
@@ -18,7 +18,7 @@ const images = [
     className: 'col-span-1 row-span-2',
   },
   {
-    src: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=800&q=80',
     alt: 'Bottle Pour',
     className: 'col-span-2 row-span-1',
   },

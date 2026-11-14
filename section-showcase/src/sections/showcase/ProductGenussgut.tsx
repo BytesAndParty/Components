@@ -74,7 +74,7 @@ export function ProductGenussgut({ onBack }: ProductGenussgutProps) {
           <div>
             <div className="bg-[#fee0c9] p-6 sm:p-10">
               <RevealImage
-                src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+                src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80"
                 alt="Flasche loibenberg smaragd 2021 vor heller Wand"
                 direction="up"
                 duration={1500}

@@ -30,7 +30,7 @@ const STILLS = [
   {
     label: 'Dritte Einstellung',
     caption: 'Ein Glas, ein Moment, kein Wort.',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80',
     alt: 'Weinglas im letzten Licht des Tages',
   },
 ]

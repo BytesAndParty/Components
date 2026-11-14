@@ -44,7 +44,7 @@ export function ProductV2({ onBack }: ProductV2Props) {
               <div className="group relative">
                 <div className="absolute -bottom-10 left-1/2 h-8 w-[60%] -translate-x-1/2 rounded-[50%] bg-black/5 blur-2xl" />
                 <img 
-                  src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80" 
+                  src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80" 
                   alt="Réserve Particulière 2018" 
                   className="relative z-10 w-full transition-transform duration-700 group-hover:translate-y-[-10px]"
                 />

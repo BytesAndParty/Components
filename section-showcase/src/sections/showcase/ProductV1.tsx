@@ -31,7 +31,7 @@ export function ProductV1({ onBack }: ProductV1Props) {
           <div className="w-full lg:w-1/2">
             <BlurFade delay={100} direction="right">
               <AmbientImage
-                src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+                src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80"
                 alt="Premium Red Wine Bottle"
                 borderRadius="1.5rem"
                 intensity={0.5}

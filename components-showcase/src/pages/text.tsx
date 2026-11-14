@@ -353,8 +353,8 @@ export function TextPage() {
                 tape
               />
               <PolaroidFrame
-                src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
-                alt="Zwei Weingläser beim Anstoßen"
+                src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=700&q=80"
+                alt="Eichenfässer in einem Weinkeller"
                 caption="Anstoßen im Kellergewölbe"
                 rotate={2}
               />
@@ -379,8 +379,8 @@ export function TextPage() {
               />
               <PolaroidFrame src="/does-not-exist.jpg" alt="Test: leeres Polaroid, Bild fehlt absichtlich" caption="Test: absichtlich leer" rotate={-2} />
               <PolaroidFrame
-                src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
-                alt="Zwei Weingläser beim Anstoßen"
+                src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=700&q=80"
+                alt="Eichenfässer in einem Weinkeller"
                 caption="Ohne Drehung, w-80"
                 rotate={0}
                 className="w-80"

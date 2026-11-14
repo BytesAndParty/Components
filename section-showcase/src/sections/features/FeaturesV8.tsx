@@ -17,7 +17,7 @@ const SCENES = [
     title: 'Neun Grad',
     data: 'Konstant · Sommer wie Winter',
     text: 'Die Kälte ist unser langsamster Mitarbeiter. Sie arbeitet, während wir schlafen — und sie macht keine Fehler.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=900&q=80',
     alt: 'Alte Steinmauern des Weinkellers im Dämmerlicht',
   },
   {
@@ -25,7 +25,7 @@ const SCENES = [
     title: 'Kein Licht',
     data: 'Zwölf Meter unter dem Berg',
     text: 'Dunkelheit nimmt dem Wein die Eile. Die Farbe bleibt, die Frucht bleibt — nur die Hektik geht.',
-    image: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=900&q=80',
     alt: 'Weinglas im Gegenlicht einer einzelnen Kellerlampe',
   },
   {

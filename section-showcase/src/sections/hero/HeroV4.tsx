@@ -50,7 +50,7 @@ export function HeroV4() {
         <div className="relative flex justify-center lg:justify-end">
           <BlurFade delay={500} direction="right">
             <AmbientImage 
-              src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1200&q=80" 
+              src="https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=1200&q=80" 
               alt="Bottles in a minimalist setting" 
               borderRadius="0"
               intensity={0.15}

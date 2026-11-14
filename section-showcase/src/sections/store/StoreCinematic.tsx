@@ -31,7 +31,7 @@ const WINES: Wine[] = [
     vintage: 'Steinriegl 2021',
     meta: 'Nasser Stein · weißer Pfirsich',
     price: '64,00 €',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=400&q=80',
     alt: 'Riesling Steinriegl 2021',
   },
   {
@@ -40,7 +40,7 @@ const WINES: Wine[] = [
     vintage: 'Sooßer Höhe 2022',
     meta: 'Pfeffer · gelber Apfel',
     price: '32,00 €',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=400&q=80',
     alt: 'Grüner Veltliner Sooßer Höhe 2022',
   },
   {
@@ -58,7 +58,7 @@ const WINES: Wine[] = [
     vintage: 'Reserve 2020',
     meta: 'Weichsel · Tabak · kühl',
     price: '85,00 €',
-    image: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=400&q=80',
     alt: 'St. Laurent Reserve 2020',
   },
   {

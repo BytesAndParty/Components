@@ -70,15 +70,15 @@ export function EventsEinladung() {
           {/* Fotos vom letzten Abend, darunter die Eckdaten auf Kreppband */}
           <div className="relative flex flex-col items-center gap-14 pt-4 sm:items-start">
             <PolaroidFrame
-              src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=700&q=80"
+              src="https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=700&q=80"
               alt="Weinflaschen nebeneinander in einem Holzregal"
               caption="Sechs Flaschen warten schon"
               rotate={-3}
               tape
             />
             <PolaroidFrame
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80"
-              alt="Zwei Weingläser beim Anstoßen"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=700&q=80"
+              alt="Eichenfässer in einem Weinkeller"
               caption="Auf den Jahrgang!"
               rotate={2.5}
               // Weit genug rechts, dass die Caption des ersten Polaroids frei bleibt

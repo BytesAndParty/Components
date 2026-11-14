@@ -12,7 +12,7 @@ import { WaveText } from '@components/wave-text/wave-text'
  * StorePage (3 Designs) und StoreCave/Nocturne.
  */
 
-const BOTTLE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80'
+const BOTTLE = 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=800&q=80'
 
 const WINES: Array<{ wine: WineCardData; plate: string; fiche: string }> = [
   {

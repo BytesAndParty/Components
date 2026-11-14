@@ -56,7 +56,7 @@ export function ProductSchwarzweiss({ onBack }: ProductSchwarzweissProps) {
           {/* Flasche — helle Reportagefotografie, entsättigt. */}
           <div className="md:col-span-5 md:col-start-1">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1400&q=80"
+              src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1400&q=80"
               alt="Flasche Loibenberg Smaragd vor heller Kellermauer"
               direction="up"
               duration={1500}

@@ -80,7 +80,7 @@ export function ProductCinematic({ onBack }: ProductCinematicProps) {
             <figure className="relative mx-auto w-full max-w-md">
               <div className="flex aspect-3/4 items-end justify-center overflow-hidden bg-radial from-white/[0.07] via-white/[0.02] to-transparent">
                 <img
-                  src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80"
+                  src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80"
                   alt="Riesling Steinriegl 2021 — Flasche vor den Terrassen"
                   className="h-[92%] object-contain drop-shadow-[0_36px_48px_rgba(0,0,0,0.65)]"
                 />

@@ -14,7 +14,7 @@ const CHAPTERS = [
     year: '1958',
     title: 'Der erste Stein',
     text: 'Josef Buchart kauft drei verwilderte Terrassen am Steinriegl — gegen den Rat aller. Die Mauern richtet er mit bloßen Händen.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=900&q=80',
     alt: 'Alte Trockensteinmauern in den Weinbergterrassen',
   },
   {

@@ -57,7 +57,7 @@ export function HeroV1() {
           <div className="bg-accent/10 absolute -inset-6 -z-10 rounded-2xl blur-2xl" />
           <div className="border-border bg-card overflow-hidden rounded-xl border">
             <img
-              src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1200&q=80"
               alt="Weinkeller mit Eichenfässern"
               className="aspect-4/5 w-full object-cover"
             />

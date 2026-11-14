@@ -17,7 +17,7 @@ export function CTAV5() {
           {/* Plate */}
           <div className="lg:absolute lg:right-[6%] lg:bottom-0 lg:w-[38%]">
             <RevealImage
-              src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=1200&q=80"
               alt="Zwei eingeschenkte Gläser im Abendlicht des Gewölbes"
               direction="up"
               duration={1500}

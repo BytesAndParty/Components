@@ -37,7 +37,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 12 | Code-Quality-Scan: 11 Befunde (SSR/Hydration, A11y, i18n, toter Code) | `components/` u. a. | mittel | je Punkt |
 | 13 | 3D-Bühne (`bottle-stage`, `shader-backdrop`, Hero „Flaschenbühne“): offene Punkte nach dem ersten Bau | `components/`, `section-showcase` | niedrig | je Punkt |
 | 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit, bei Schritt 5 von 9 unterbrochen (STATUS.md #32) |
-| 15 | Fremde Fotos in den Sections (Flaschen mit fremden Etiketten, Wasserflasche als Rebe) | `section-showcase` | niedrig | später, Platzhalter (User, 14.11.) |
+| 15 | Platzhalterfotos in den Sections (Unsplash, bis eigene Fotos da sind) | `section-showcase` | niedrig | später, Platzhalter (User, 14.11.) |
 | 16 | Vendure-Showcase: Prüfung vor dem Veröffentlichen ist neu, die Weinliste lädt aber live nach | `vendure-showcase/server`, `storefront` | mittel | Popup ungetestet im Browser, Frage 17 offen |
 
 ---
@@ -204,14 +204,28 @@ Gebaut am 2026-11-10: `components/shader-backdrop/`, `components/bottle-stage/`,
 - **Texte:** Der Validator spricht nur deutsch, Ebenennamen sind gemischt englisch und deutsch, Text-Ebenen heißen dauerhaft „Neuer Text“, `text-tool-options` nennt „Strg+B/I/U“ fest (auch am Mac, obwohl die Kürzel nirgends verdrahtet sind). Schritt 6.
 - **Showcase:** Die Seite `/designer` zeigt den Editor in ihrer 720 px breiten Textspalte, dort also immer in der schmalen Ansicht (Einstellungen als Überlagerung). Die breite Ansicht sieht man nur im Vollbild. Die Stummel-Hotkeys am Ende der Seite beschreiben zum Teil entfernte Funktionen („Mod+G“ Gruppieren), und die Konsole warnt dort mehrfach „'Escape' is already registered“ (auch `Delete`, `Mod+Z`, `Mod+D`, `Mod+A`). Wird in Schritt 9 mit der Showcase-Seite behoben.
 
-## 15. Fremde Fotos in den Sections (2026-11-14)
+## 15. Platzhalterfotos in den Sections (2026-11-14)
 
-**Entscheidung (User, 14.11.):** Der Tausch der fremden Flaschenfotos gegen die Produktfotos von buchart58.at (Commit `e1d6fc2`, 13.11.) ist rückgängig gemacht: Mit diesen Fotos wirken die Sections billig. Die Platzhalterfotos bleiben, bis eigene, stimmige Fotos der Familie da sind. Die Produktfotos nicht noch einmal einsetzen; die 14 WebP stehen im Git-Verlauf von `e1d6fc2`.
+**Entscheidung (User, 14.11.):** Der Tausch der Stockfotos gegen die Produktfotos von buchart58.at (Commit `e1d6fc2`, 13.11.) ist rückgängig gemacht: Mit diesen Fotos wirken die Sections billig. Die Produktfotos nicht noch einmal einsetzen; die 14 WebP stehen im Git-Verlauf von `e1d6fc2`. Als Ersatz für die schwächsten Stockfotos gilt „irgendein Platzhalterfoto, das gut aussieht“, bis eigene Fotos der Familie da sind.
 
-**Folgen und offene Punkte:**
+**Getauscht am 14.11.** (40 Dateien in `section-showcase` und `components-showcase`, nur die Unsplash-ID, Maße und Zuschnitt blieben):
 
-- **Fremde Etiketten:** Die Flaschen- und Regalfotos in den Varianten zeigen wieder fremde Etiketten (Unsplash und `_public_/`). Lösung: eigene Fotos von Flaschen, Keller, Verkostung und Vinothek, siehe #3 für die Texte.
-- **Wasserflasche als Rebe:** Unsplash `photo-1523362628745` zeigt eine Plastik-Wasserflasche (nachgeprüft 2026-11-12), wird aber als Reben- bzw. Landschaftsbild genutzt: `lineage/lineage-graph.ts` (`vine`) und `features/FeaturesCinematic.tsx`.
+| Vorher | Problem | Nachher |
+|---|---|---|
+| `1510812431401` (23 Stellen) | Anstoßen mit Gesichtern; der Hero-Alt-Text sagte „Weinkeller mit Eichenfässern“ | `1643087448435`, Fass-Keller |
+| `1584916201218` (24 Stellen, alle Produkt-Sections) | Flasche mit fremdem, lesbarem Etikett | `1553703189-2f8ce8a11bcc`, schwarze Flasche mit neutralem Etikett ohne Text |
+| `1516594915697` (9 Stellen) | Regal mit fremden Etiketten | `1765850257843`, Flaschenlager von unten |
+| `1523362628745` (2 Stellen: `lineage-graph.ts`, `FeaturesCinematic.tsx`) | Plastik-Wasserflasche als Rebe | `1504279577054`, Weinberg im Abendlicht |
+| `1504279589104` (`components-showcase/src/pages/cards.tsx`) | existiert bei Unsplash nicht mehr (404) | `1537640538966`, Trauben am Stock |
+
+Geblieben sind die Fotos, die gut aussehen: Trauben, Weinberg im Abendlicht, Glas vor der Weinbergkulisse, Glas mit Trauben, Einschenken und die Weinbergzeilen. Vier Alt-Texte, die das Anstoßen beschrieben, sind angepasst; sichtbare Texte blieben unverändert. Angesehen habe ich nur Hero v1, Hero v4, Showcase Cinematic und Showcase Schwarzweiß (jeweils 1440 px); die übrigen Varianten mit getauschten Fotos nicht einzeln.
+
+**Offen:**
+
+- **Es bleiben Stockfotos:** Alles ist Unsplash und nur Platzhalter. Lösung: eigene Fotos von Flaschen, Keller, Verkostung und Vinothek, siehe #3 für die Texte.
+- **Fotos hängen per URL an `images.unsplash.com`:** Verschwindet eines, bleibt das Bild leer (das tote Foto war so ein Fall und blieb unbemerkt). Selbst gehostet (WebP per Import) wäre es robuster.
+- **Alt-Texte passen teils nicht zum Motiv:** z. B. „Weinglas im Gegenlicht …“ am Flaschenlager (`FeaturesV6`, `FeaturesV8`, `HeroGenussgut`), „Zwei eingeschenkte Gläser im Abendlicht des Gewölbes“ (`CTAV5`), „Gläser und Flaschen im Kerzenlicht des Archivs“ (`TimelineV5`). Das war schon beim alten Foto so.
+- **Buchart58 nicht angefasst:** `Buchart58/storefront/src/assets/placeholder/` enthält dieselben Stockfotos, die Dateinamen passen nicht zu den Motiven (`eichenfaesser-keller.jpg` zeigt das Anstoßen, `flasche-streiflicht.jpg` die Flasche mit fremdem Etikett, `glaeser-eingeschenkt.jpg` das Regal).
 - **3D-Hero:** Die Flasche trägt wieder das Platzhalter-Etikett „Atelier · Cuvée Nº 7“ (siehe #13 und Frage 6).
 - **`StoreGeschenk`:** `src="/wine-default.png"` ist ein absoluter Pfad und ignoriert den Base-Pfad `/sections/`. Im Netlify-Deploy funktioniert er trotzdem (geprüft 2026-11-14 am Live-Deploy, 1440 und 375 px: Flasche und Anhänger stimmen), weil auch der Launcher `_public_` an der Wurzel ausliefert und `/wine-default.png` deshalb ein Bild liefert. Fragil ist er nur, wenn die Section ohne diese Datei an der Wurzel läuft, etwa nach dem Kopieren nach Buchart58. Dann `import.meta.env.BASE_URL` voranstellen.
 

@@ -75,7 +75,7 @@ export function StoreCave() {
         <BlurFade delay={400} direction="up">
           <article className="mt-16 grid grid-cols-1 items-center gap-10 border border-[#ddd5c4] bg-[#fbf9f3] p-8 sm:grid-cols-[minmax(11rem,14rem)_1fr] lg:gap-14 lg:p-12">
             <RevealImage
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80"
+              src="https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=800&q=80"
               alt="Riesling Steinriegl 2021 — Cuvée des Hauses"
               direction="up"
               duration={1400}

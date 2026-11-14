@@ -11,7 +11,7 @@ export interface SampleWine {
   rating: string
 }
 
-const BOTTLE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=800&q=80'
+const BOTTLE = 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=800&q=80'
 
 export const SAMPLE_WINES: SampleWine[] = [
   {

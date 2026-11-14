@@ -31,14 +31,14 @@ const MOMENTS = [
     year: '2009',
     title: 'Das Licht ändert sich',
     text: 'Neue Rebsorten, gleiche Geduld. Der Wein wird heller, die Abende länger.',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1000&q=80',
     alt: 'Weinglas im letzten Licht des Tages',
   },
   {
     year: 'Heute',
     title: 'Ein fortlaufendes Bild',
     text: 'Kein Schlusspunkt — nur die nächste Einstellung, Jahr für Jahr.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=1000&q=80',
     alt: 'Blick über die Weinberge in der Dämmerung',
   },
 ]

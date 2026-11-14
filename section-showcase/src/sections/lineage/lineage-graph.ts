@@ -147,7 +147,7 @@ const IMG = {
   barrel: 'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1200&q=80',
   tasting: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1200&q=80',
   bottle: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1200&q=80',
-  vine: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=1200&q=80',
+  vine: 'https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?w=1200&q=80',
 } as const
 
 // ── Lagen ──────────────────────────────────────────────────────────────────

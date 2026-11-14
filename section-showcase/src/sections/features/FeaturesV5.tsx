@@ -30,7 +30,7 @@ const RIEDEN = [
     name: 'Steinriegl',
     data: 'Schiefer · 420 m · Terrassen',
     text: 'Alte Reben, 1962 gepflanzt. Kleine Beeren, dicke Schalen — der Riesling von hier braucht Jahre und dankt es mit Jahrzehnten.',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80',
+    image: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=900&q=80',
     alt: 'Trockensteinmauern der Ried Steinriegl',
   },
 ]

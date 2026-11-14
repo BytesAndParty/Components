@@ -14,7 +14,7 @@ import { SCHWARZWEISS_FONTS } from '../family-fonts'
 const TERRASSEN = 'https://images.unsplash.com/photo-1543418219-44e30b057fea?w=1600&q=80'
 const REBZEILEN = 'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=1400&q=80'
 const KELLER = 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=1400&q=80'
-const FLASCHE = 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=1200&q=80'
+const FLASCHE = 'https://images.unsplash.com/photo-1553703189-2f8ce8a11bcc?w=1200&q=80'
 
 /** Bildunterschrift: kleine Sans, mit Haarlinie darüber. */
 function Caption({ children }: { children: string }) {

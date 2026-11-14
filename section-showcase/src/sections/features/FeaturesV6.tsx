@@ -64,7 +64,7 @@ export function FeaturesV6() {
           {/* Secondary plate — hangs lower-right, overlapping the primary */}
           <div className="mt-10 ml-auto w-2/3 max-w-75 lg:absolute lg:right-[38%] lg:bottom-6 lg:z-20 lg:mt-0 lg:w-[20%] lg:max-w-none">
             <RevealImage
-              src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1765850257843-aa029ab7769c?w=1200&q=80"
               alt="Weinglas im Gegenlicht des Kellers"
               direction="left"
               delay={400}
