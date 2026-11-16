@@ -129,6 +129,7 @@ Jede Komponente bekommt einen Eintrag im Showcase (`components-showcase/src/page
 - Edge-Cases: Empty State, Loading, Error, Disabled, lange Inhalte.
 - Bei Komponenten mit `variant`: ein Block pro Variante.
 - Bei URL-State (DataTable, Filter, Pagination): `useSearchParams`-Demo wie in [`pages/data.tsx`](./components-showcase/src/pages/data.tsx).
+- **Ruhige Seiten:** Mehrere Varianten einer Komponente erscheinen als eine Instanz mit Umschalter (`VariantDemo`), nicht als Wand nebeneinander; der Block mountet bei jedem Wechsel neu, damit Einblend-Animationen erneut abspielen. Verschiedene Inhalte oder verwandte Komponenten stehen als Tabs (`DemoTabs`). Verspielte Effekte, die nicht für den Shop gedacht sind, gehören auf `/labor`. Komponenten, die Buchart58 einsetzt, haben ihre Demo nur auf `/buchart58`; übernimmt Buchart58 eine weitere, zieht ihre Demo dorthin um.
 
 ## 11. Technische Fallen
 

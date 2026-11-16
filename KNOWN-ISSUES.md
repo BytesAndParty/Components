@@ -1,6 +1,6 @@
 # Bekannte Probleme
 
-Stand: 2026-11-12. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11., Punkt 15 die Entscheidung gegen die Produktfotos von buchart58.at in den Sections vom 14.11., Punkt 16 die Veröffentlichungs-Prüfung im Vendure-Showcase vom 14.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
+Stand: 2026-11-16. Die Punkte 3–7 bestanden schon vor den Dependency-Updates vom 25.–27.10., die Punkte 10–11 stammen aus dem Browser-Test des Etiketten-Designers vom 25.–27.10., Punkt 12 aus dem Code-Quality-Scan vom 8.11. (behobene Fehler: `components/cellar-canvas/STATUS.md` #30). Punkt 13 hält Entscheidungen und offene Punkte der 3D-Bühne vom 10.11. fest, Punkt 14 die Entscheidungen und Befunde zum Umbau des Etiketten-Designers vom 10.11., Punkt 15 die Entscheidung gegen die Produktfotos von buchart58.at in den Sections vom 14.11., Punkt 16 die Veröffentlichungs-Prüfung im Vendure-Showcase vom 14.11., Punkt 17 die Restpunkte des Showcase-Umbaus vom 16.11. Alle sind bewusst noch nicht behoben. Erledigtes hier löschen, nicht abhaken; die Geschichte steht im git log. Die Nummern bleiben nach dem Löschen stabil, Buchart58 verweist auf diese Datei.
 
 **Laufende, unterbrochene Arbeit:** Der Umbau des Etiketten-Designers (Punkt 14) steht bei Schritt 5 von 9. Stand, Prüfliste und Plan für den Rest: `components/cellar-canvas/STATUS.md`, Entscheidungs-Log #32, Block „Übergabe“.
 
@@ -24,6 +24,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 16. **Pflichtbausteine und Rechtsfragen für den Shop klären?** (2026-11-12, aus dem Review) Altersabfrage (in keinem der beiden Storefronts vorhanden), E-Label auf der Produktseite, Versandkosten am Preis, Gastcheckout trotz Customer-Auth, Widerrufsbutton (§ 13a FAGG, Stichtag laut WKO widersprüchlich) und der BaFG-Status des Weinguts. `vendure-showcase/docs/altersverifikation.md` beruft sich auf das Wiener Jugendschutzgesetz, Sooss liegt in Niederösterreich. Die Rechtsangaben im Review stammen zum Teil nur aus Suchtreffern. Empfehlung: in `Buchart58/OFFENE-FRAGEN.md` übernehmen und bei der WKO klären; die meisten Punkte gehören in Buchart58, nicht in die Sections.
 17. **Soll die Weinliste im Shop live nachladen?** (2026-11-14, Befund in Punkt 16) Die Storefront holt die Liste im Browser aus der Shop-API (`staleTime` 60 s), die Build-Daten sind nur `initialData`. Damit ist „Veröffentlichen“ kein echtes Tor: Ein aktiv geschalteter Wein erscheint in der Liste auch ohne Build, nur seine Detailseite fehlt. Empfehlung: erst klären, ob das gewollt ist (Preise und Bestand live). Wenn nein, die Liste auf die Build-Daten beschränken; wenn ja, zusätzlich beim Speichern prüfen (NestJS-Interceptor, der „aktiv“ für unvollständige Weine verweigert).
 18. **Tests für die Veröffentlichungs-Prüfung?** (2026-11-14) Entscheidung des Users: jetzt noch nicht, für eine spätere Session vormerken. Sinnvoll wäre Vitest für `findIncomplete` in `vendure-showcase/server/src/plugins/storefront-deploy/dashboard/readiness.ts` (Preis 0 oder keine Variante, leere HTML-Beschreibung `<p></p>` und `&nbsp;`, fehlende `customFields`, Alkohol 0, Wein ohne Jahrgang geht durch). Der Server hat kein Vitest (Dev-Dependency nötig), und seine `tsconfig` schließt den Dashboard-Ordner aus, der Testpfad will bedacht sein. Das Popup selbst bräuchte einen Browser-Test. Empfehlung: Vitest nur für `readiness.ts`, das Popup weiter von Hand prüfen.
+19. **Galerien und Karteneffekte im Showcase zusammenfassen?** (2026-11-16) Nach dem Umbau stehen `carousel` (`/shop`) und `images-slider` (`/cards`) sowie `hover-3d-card` und `bounce-cards` noch einzeln, auf verschiedenen Seiten bzw. weit auseinander. Empfehlung: `carousel` und `images-slider` als Tab-Gruppe „Galerien“ auf `/cards` (die Carousel-Demo von `/shop` dorthin verschieben), `hover-3d-card` und `bounce-cards` als weitere Tabs zu den Glow cards. Aufwand klein, mechanisch mit `DemoTabs`.
 
 | # | Problem | Wo | Schwere | Aufwand |
 |---|---|---|---|---|
@@ -39,6 +40,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 | 14 | Etiketten-Designer: Umbau auf Basics, Overlays und Flaschenansicht | `components/cellar-canvas/` u. a. | mittel | in Arbeit, bei Schritt 5 von 9 unterbrochen (STATUS.md #32) |
 | 15 | Platzhalterfotos in den Sections (Unsplash, bis eigene Fotos da sind) | `section-showcase` | niedrig | später, Platzhalter (User, 14.11.) |
 | 16 | Vendure-Showcase: Prüfung vor dem Veröffentlichen ist neu, die Weinliste lädt aber live nach | `vendure-showcase/server`, `storefront` | mittel | Popup ungetestet im Browser, Frage 17 offen |
+| 17 | Showcase-Umbau vom 16.11.: Restpunkte (Neuladen-Button, offenes Dropdown, Leerraum, 390-px-Überläufe, Browser-Abdeckung) | `components-showcase/` | niedrig | je Punkt |
 
 ---
 
@@ -246,3 +248,17 @@ Geblieben sind die Fotos, die gut aussehen: Trauben, Weinberg im Abendlicht, Gla
 **Auswirkung des Befunds.** Ein aktiv geschalteter, unvollständiger Wein erscheint in der Liste auch ohne Klick auf „Veröffentlichen“, nur seine Detailseite fehlt bis zum nächsten Build (`getStaticPaths`). Die Prüfung am Button fängt also nur ab, was beim Veröffentlichen aktiv ist. Ob die Live-Liste gewollt ist, steht in Frage 17; `ARCHITECTURE.md` §1 nennt Interaktivität nur für Cart und Suche.
 
 **Buchart58.** Nicht übernommen. Sein Button (`server/src/plugins/storefront-deploy/dashboard/RebuildButton.tsx`) prüft nichts; die Regeln müssten dort um `elabelCode` und `fuellmengeMl` ergänzt werden.
+
+## 17. Showcase-Umbau vom 16.11.: Restpunkte
+
+**Entscheidungen (User, 16.11.):** Der Showcase soll für einen Premium-Shop ruhig wirken. Varianten einer Komponente erscheinen als eine Instanz mit Umschalter (`VariantDemo`), verschiedene Inhalte als Tabs (`DemoTabs`). Die verspielten Effekte SplashCursor, ClickSpark, SparklesText, TextScramble, GooeyInput und AnimatedWeatherIcons bleiben erhalten und stehen auf `/labor`. Die Komponenten, die Buchart58 einsetzt, haben ihre Demos nur auf `/buchart58`. JellyButton und BounceLoader sind gelöscht. Die Regeln stehen in `COMPONENT-GUIDELINES.md` §10. Die Nav-Texte liegen in `components/i18n/locales` (bestehendes Muster, Annahme: so lassen).
+
+**Offen und ungeprüft:**
+
+- Der Neuladen-Button einer `Section` (`canReload`) baut den Inhalt neu auf und setzt dabei Umschalter und Tabs auf die erste Option zurück.
+- Das Dropdown „Werkzeuge“ der Navbar bleibt nach einem Klick offen, bis die Maus es verlässt oder Escape kommt.
+- Die Überschrift „View Transitions“ (alter `<h1>`) steht auf `/navigation` mitten auf der Seite.
+- Hohe Bühnen lassen bei kleinen Optionen Leerraum, weil die Seite nicht springen soll: Stamp 584 px, HangTag 600 px, ProcessSteps 544 px (mobil 780 px), WaveText 476 px. Die Mindesthöhen sind von Hand gemessen; `pretext` wäre eine Option, ist aber nicht geprüft.
+- Überläufe bei 390 px, schon vor dem Umbau vorhanden: PaperNote „kraft“ mit Pfeil (12 bis 26 px), „Hover Image Reveal“ und „BounceCards“ auf `/cards`.
+- `AddToCartButton` hat zwei Demos: den Warenkorb-Ablauf auf `/shop` und die Einzel-Demo auf `/buchart58`.
+- Die Navbar-Fixes (390, 1024 und 1280 px) und die mehrzeiligen Handschrift-Marken sind nur in Chromium geprüft, nicht in Safari und Firefox, nicht per Tastatur und nicht mit Reduced Motion. Die Marken liefen mit künstlich verlängertem Text. Eine Phrase springt als ganzer Block in die nächste Zeile, statt mitten in der Zeile umzubrechen (`inline-block`, Verhalten wie vorher).

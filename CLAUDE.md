@@ -24,7 +24,7 @@ Entscheidung (User, 2026-11-12): Das erste Ziel war die Komponentenbibliothek. *
 ## Code-Landkarte
 
 - **`components/<name>/`** — die Komponenten, je mit `COMPONENT.md`; Übersicht in `components/COMPONENTS-OVERVIEW.md`. Gemeinsames in `components/lib/` (`cn()`, `useDeviceCapabilities`), `components/i18n/` und `components/atelier/` (`AtelierProvider`). Import-Alias `@components/…`.
-- **`components-showcase/`** — Vite-SPA mit Demos aller Komponenten. `src/styles.css` ist die Quelle der Theme-Tokens.
+- **`components-showcase/`** — Vite-SPA mit Demos aller Komponenten. `src/styles.css` ist die Quelle der Theme-Tokens. Seiten nach Zweck, Regeln in `COMPONENT-GUIDELINES.md` §10: `/buchart58` zeigt nur, was Buchart58 einsetzt, `/labor` die verspielten Effekte.
 - **`section-showcase/`** — Vite-SPA für Seiten-Sections und ihre Komposition.
 - **`launcher/`** — Einstiegsseite, verlinkt Showcases und Shop.
 - **`vendure-showcase/`** — `server/` (Vendure 3.8, eigenständig, kein Bun-Workspace) und `storefront/` (Astro, Produkte build-time). Architektur und Styling in den `.md`-Dateien dort.
