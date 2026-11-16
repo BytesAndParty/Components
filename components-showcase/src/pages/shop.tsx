@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
+import { DemoTabs } from '../components/demo-tabs'
 import { Stepper, Step } from '@components/stepper/stepper'
 import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
 import { CartIcon } from '@components/cart-icon/cart-icon'
@@ -112,67 +113,86 @@ export function ShopPage() {
         </div>
       </Section>
 
-      <Section title="Add to Cart Button" description="Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker.">
-        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-            {bottles.map((bottle) => (
-              <div
-                key={bottle.id}
-                className="border-border flex flex-col items-center gap-2 rounded-xl border p-4"
-              >
-                <span className="text-foreground text-sm font-medium">{bottle.name}</span>
-                <span className="text-muted-foreground text-xs">{bottle.price}</span>
-                <AddToCartButton onClick={() => cart.add({ id: bottle.id, label: bottle.name })}>
-                  Add to cart
-                </AddToCartButton>
-              </div>
-            ))}
-          </div>
-          <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
-            <span>AddToCartButton · CSS keyframes · ~3.7s cycle</span>
-            <span>No dependencies</span>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="Cart Icon" description="Shopping cart icon with animated badge bounce and flying-box effect on count change.">
-        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex items-center gap-8">
-              <CartIcon count={demoCount} size={32} />
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setDemoCount(c => Math.max(0, c - 1))}
-                  className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
-                >
-                  −
-                </button>
-                <span className="text-foreground min-w-[24px] text-center text-sm tabular-nums">
-                  {demoCount}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setDemoCount(c => c + 1)}
-                  className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => { setDemoCount(0); cart.reset() }}
-              className="text-muted-foreground hover:text-foreground cursor-pointer border-none bg-transparent font-sans text-xs transition-colors"
-            >
-              Reset
-            </button>
-          </div>
-          <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
-            <span>CartIcon · Badge bounce + box arc animation</span>
-            <span>No dependencies</span>
-          </div>
-        </div>
+      <Section title="Cart" description="The cart flow: the add-to-cart button and the cart icon with its badge.">
+        <DemoTabs
+          tabs={[
+            {
+              value: "add-to-cart-button",
+              label: "Add to Cart Button",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Animated button with cart roll-through, fill, and checkmark. Inspired by Aaron Iker."}</p>
+                  <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+                      {bottles.map((bottle) => (
+                        <div
+                          key={bottle.id}
+                          className="border-border flex flex-col items-center gap-2 rounded-xl border p-4"
+                        >
+                          <span className="text-foreground text-sm font-medium">{bottle.name}</span>
+                          <span className="text-muted-foreground text-xs">{bottle.price}</span>
+                          <AddToCartButton onClick={() => cart.add({ id: bottle.id, label: bottle.name })}>
+                            Add to cart
+                          </AddToCartButton>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
+                      <span>AddToCartButton · CSS keyframes · ~3.7s cycle</span>
+                      <span>No dependencies</span>
+                    </div>
+                  </div>
+                </>
+              ),
+            },
+            {
+              value: "cart-icon",
+              label: "Cart Icon",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Shopping cart icon with animated badge bounce and flying-box effect on count change."}</p>
+                  <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
+                    <div className="flex flex-col items-center gap-6">
+                      <div className="flex items-center gap-8">
+                        <CartIcon count={demoCount} size={32} />
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setDemoCount(c => Math.max(0, c - 1))}
+                            className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
+                          >
+                            −
+                          </button>
+                          <span className="text-foreground min-w-[24px] text-center text-sm tabular-nums">
+                            {demoCount}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setDemoCount(c => c + 1)}
+                            className="border-border text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-transparent font-sans text-lg"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setDemoCount(0); cart.reset() }}
+                        className="text-muted-foreground hover:text-foreground cursor-pointer border-none bg-transparent font-sans text-xs transition-colors"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                    <div className="border-border text-muted-foreground mt-6 flex justify-between border-t px-2 pt-3 text-[0.7rem]">
+                      <span>CartIcon · Badge bounce + box arc animation</span>
+                      <span>No dependencies</span>
+                    </div>
+                  </div>
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="Stepper" description="Multi-step flow for the wine label personalization order process.">

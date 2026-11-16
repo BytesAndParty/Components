@@ -343,49 +343,87 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="TextRotate" description="Animated text rotation with staggered character transitions." canReload>
-        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
-          <div className="flex flex-col items-center gap-4 p-12 px-8 text-center">
-            <p className="text-muted-foreground text-[0.7rem] tracking-[0.2em] uppercase">
-              Curated Selection
-            </p>
-            <div className="text-4xl leading-tight font-bold tracking-tight">
-              <span className="text-foreground">Discover </span>
-              <TextRotate
-                texts={['Barolo', 'Amarone', 'Brunello', 'Chianti', 'Sassicaia', 'Barbaresco']}
-                rotationInterval={4000}
-                staggerDuration={0.06}
-                staggerFrom="first"
-                mainStyle={{}}
-                elementLevelStyle={{ color: 'var(--accent)' }}
-              />
-            </div>
-            <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
-              Handverlesene Weine aus den besten Lagen Italiens.
-              Jeder Jahrgang erzählt eine Geschichte.
-            </p>
-            <div className="mt-6 flex w-full justify-center gap-4">
-              {[
-                { name: 'Barolo Riserva', year: '2018', region: 'Piemonte' },
-                { name: 'Amarone Classico', year: '2019', region: 'Veneto' },
-                { name: 'Brunello DOCG', year: '2017', region: 'Toscana' },
-              ].map((wine) => (
-                <div
-                  key={wine.name}
-                  className="border-border bg-background max-w-40 flex-1 rounded-lg border p-4 text-left shadow-sm"
-                >
-                  <div className="bg-accent mb-3 h-8 w-8 rounded-full opacity-70" />
-                  <p className="text-foreground text-[0.8125rem] font-semibold">{wine.name}</p>
-                  <p className="text-muted-foreground mt-1 text-xs">{wine.region} · {wine.year}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="border-border text-muted-foreground flex justify-between border-t bg-foreground/1 p-3 px-8 text-[0.7rem]">
-            <span>TextRotate · splitBy: characters · staggerFrom: first</span>
-            <span>rotationInterval: 4000ms</span>
-          </div>
-        </div>
+      <Section title="Animated text" description="Text that changes by itself: staggered character rotation and a blur cross-fade between phrases." canReload>
+        <DemoTabs
+          tabs={[
+            {
+              value: "textrotate",
+              label: "TextRotate",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Animated text rotation with staggered character transitions."}</p>
+                  <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
+                    <div className="flex flex-col items-center gap-4 p-12 px-8 text-center">
+                      <p className="text-muted-foreground text-[0.7rem] tracking-[0.2em] uppercase">
+                        Curated Selection
+                      </p>
+                      <div className="text-4xl leading-tight font-bold tracking-tight">
+                        <span className="text-foreground">Discover </span>
+                        <TextRotate
+                          texts={['Barolo', 'Amarone', 'Brunello', 'Chianti', 'Sassicaia', 'Barbaresco']}
+                          rotationInterval={4000}
+                          staggerDuration={0.06}
+                          staggerFrom="first"
+                          mainStyle={{}}
+                          elementLevelStyle={{ color: 'var(--accent)' }}
+                        />
+                      </div>
+                      <p className="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
+                        Handverlesene Weine aus den besten Lagen Italiens.
+                        Jeder Jahrgang erzählt eine Geschichte.
+                      </p>
+                      <div className="mt-6 flex w-full justify-center gap-4">
+                        {[
+                          { name: 'Barolo Riserva', year: '2018', region: 'Piemonte' },
+                          { name: 'Amarone Classico', year: '2019', region: 'Veneto' },
+                          { name: 'Brunello DOCG', year: '2017', region: 'Toscana' },
+                        ].map((wine) => (
+                          <div
+                            key={wine.name}
+                            className="border-border bg-background max-w-40 flex-1 rounded-lg border p-4 text-left shadow-sm"
+                          >
+                            <div className="bg-accent mb-3 h-8 w-8 rounded-full opacity-70" />
+                            <p className="text-foreground text-[0.8125rem] font-semibold">{wine.name}</p>
+                            <p className="text-muted-foreground mt-1 text-xs">{wine.region} · {wine.year}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="border-border text-muted-foreground flex justify-between border-t bg-foreground/1 p-3 px-8 text-[0.7rem]">
+                      <span>TextRotate · splitBy: characters · staggerFrom: first</span>
+                      <span>rotationInterval: 4000ms</span>
+                    </div>
+                  </div>
+                </>
+              ),
+            },
+            {
+              value: "morphingtext",
+              label: "MorphingText",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"CSS-Blur-Überblend zwischen mehreren Texten – kein Framer Motion."}</p>
+                  <div className="space-y-6">
+                    <div className="text-foreground text-4xl font-bold tracking-tight">
+                      Entdecke{' '}
+                      <MorphingText
+                        texts={['Barolo', 'Amarone', 'Brunello', 'Riesling', 'Champagner']}
+                        duration={4000}
+                        style={{ color: 'var(--accent)' }}
+                      />
+                    </div>
+                    <div className="text-muted-foreground text-xl">
+                      <MorphingText
+                        texts={['Frisch. Fruchtig. Fein.', 'Tief. Komplex. Unvergesslich.', 'Wild. Elegant. Pur.']}
+                        duration={5000}
+                      />
+                    </div>
+                  </div>
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="AuroraText" description="Gradient text with animated color shifting. variant='aurora' (default) sanft wechselnd, variant='gradient' stetiger Loop für CTAs." canReload>
@@ -407,48 +445,48 @@ export function TextPage() {
         />
       </Section>
 
-      <Section title="MorphingText" description="CSS-Blur-Überblend zwischen mehreren Texten – kein Framer Motion.">
-        <div className="space-y-6">
-          <div className="text-foreground text-4xl font-bold tracking-tight">
-            Entdecke{' '}
-            <MorphingText
-              texts={['Barolo', 'Amarone', 'Brunello', 'Riesling', 'Champagner']}
-              duration={4000}
-              style={{ color: 'var(--accent)' }}
-            />
-          </div>
-          <div className="text-muted-foreground text-xl">
-            <MorphingText
-              texts={['Frisch. Fruchtig. Fein.', 'Tief. Komplex. Unvergesslich.', 'Wild. Elegant. Pur.']}
-              duration={5000}
-            />
-          </div>
-        </div>
-      </Section>
-
-      <Section title="VelocityScroll" description="Scroll-reactive testimonial rows that accelerate with page scroll velocity.">
-        <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
-          <div className="py-8">
-            <VelocityScroll baseVelocity={-30} rows={2} gap="1rem">
-              {testimonials.map((t) => (
-                <TestimonialCard key={t.name} testimonial={t} />
-              ))}
-            </VelocityScroll>
-          </div>
-          <div className="border-border text-muted-foreground flex justify-between border-t bg-foreground/1 p-3 px-8 text-[0.7rem]">
-            <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
-            <span>Scroll the page to accelerate</span>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="ScrollRotate" description="Element that rotates based on scroll position.">
-        <div className="flex items-center gap-8">
-          <RotatingDecoration />
-          <p className="text-muted-foreground text-sm">
-            Scroll the page to see the decoration rotate.
-          </p>
-        </div>
+      <Section title="Scroll motion" description="Elements that react to page scroll: velocity-driven rows and scroll-based rotation.">
+        <DemoTabs
+          tabs={[
+            {
+              value: "velocityscroll",
+              label: "VelocityScroll",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Scroll-reactive testimonial rows that accelerate with page scroll velocity."}</p>
+                  <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
+                    <div className="py-8">
+                      <VelocityScroll baseVelocity={-30} rows={2} gap="1rem">
+                        {testimonials.map((t) => (
+                          <TestimonialCard key={t.name} testimonial={t} />
+                        ))}
+                      </VelocityScroll>
+                    </div>
+                    <div className="border-border text-muted-foreground flex justify-between border-t bg-foreground/1 p-3 px-8 text-[0.7rem]">
+                      <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
+                      <span>Scroll the page to accelerate</span>
+                    </div>
+                  </div>
+                </>
+              ),
+            },
+            {
+              value: "scrollrotate",
+              label: "ScrollRotate",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Element that rotates based on scroll position."}</p>
+                  <div className="flex items-center gap-8">
+                    <RotatingDecoration />
+                    <p className="text-muted-foreground text-sm">
+                      Scroll the page to see the decoration rotate.
+                    </p>
+                  </div>
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       {/* Extra height so ScrollRotate has room to work */}

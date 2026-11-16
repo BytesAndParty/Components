@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react'
 import { z } from 'zod'
 import { Section } from '../components/section'
+import { DemoTabs } from '../components/demo-tabs'
 import { Checkbox } from '@components/checkbox/checkbox'
 import { Switch } from '@components/switch/switch'
 import { Slider } from '@components/slider/slider'
@@ -406,23 +407,42 @@ export function InputsPage() {
         </div>
       </Section>
 
-      <Section title="AnimatedSearch" description="Search icon that morphs into an expanding input field.">
-        <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
-          <AnimatedSearch
-            placeholder="Search components..."
-            onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
-          />
-          <p className="text-muted-foreground text-[0.7rem]">Spring physics powered icon morph</p>
-        </div>
-      </Section>
-
-      <Section title="SearchMorph" description="Magnifying-glass stroke that unrolls into an underline as the field expands; the handle rotates into a close-X. Enter searches, Esc closes.">
-        <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
-          <SearchMorph
-            onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
-          />
-          <p className="text-muted-foreground text-[0.7rem]">SVG stroke-dashoffset morph · keyboard accessible</p>
-        </div>
+      <Section title="Search" description="Search interactions that expand from an icon.">
+        <DemoTabs
+          tabs={[
+            {
+              value: "animatedsearch",
+              label: "AnimatedSearch",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Search icon that morphs into an expanding input field."}</p>
+                  <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
+                    <AnimatedSearch
+                      placeholder="Search components..."
+                      onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
+                    />
+                    <p className="text-muted-foreground text-[0.7rem]">Spring physics powered icon morph</p>
+                  </div>
+                </>
+              ),
+            },
+            {
+              value: "searchmorph",
+              label: "SearchMorph",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Magnifying-glass stroke that unrolls into an underline as the field expands; the handle rotates into a close-X. Enter searches, Esc closes."}</p>
+                  <div className="border-border bg-card flex flex-col items-center gap-6 rounded-xl border p-10">
+                    <SearchMorph
+                      onSearch={(v) => add({ title: 'Search', description: `Searching for: ${v}`, variant: 'default' })}
+                    />
+                    <p className="text-muted-foreground text-[0.7rem]">SVG stroke-dashoffset morph · keyboard accessible</p>
+                  </div>
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="useImageUpload" description="Hook for image upload with preview and removal logic.">

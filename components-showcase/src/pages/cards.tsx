@@ -329,31 +329,50 @@ export function CardsPage() {
         />
       </Section>
 
-      <Section title="GlowCard" description="Card with a cursor-following glow border effect.">
-        <GlowCard className="p-8">
-          <p className="text-foreground font-medium">Hover over this card</p>
-          <p className="text-muted-foreground mt-2 text-sm">
-            The border glows and follows your cursor.
-          </p>
-        </GlowCard>
-      </Section>
-
-      <Section title="RotatingGlowCard" description="Card with an animated rotating glow border.">
-        <VariantDemo
-          label="duration"
-          options={GLOW_DURATIONS}
-          defaultValue="3"
-          className="block min-h-0"
-          render={duration => (
-            <RotatingGlowCard duration={Number(duration)}>
-              <p className="text-foreground font-medium">
-                {GLOW_DURATIONS.find(o => o.value === duration)?.label}
-              </p>
-              <p className="text-muted-foreground mt-2 text-sm">
-                A conic-gradient rotates behind the card — only the border glow is visible.
-              </p>
-            </RotatingGlowCard>
-          )}
+      <Section title="Glow cards" description="Cards with a glow border: following the cursor or rotating on its own.">
+        <DemoTabs
+          tabs={[
+            {
+              value: "glowcard",
+              label: "GlowCard",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Card with a cursor-following glow border effect."}</p>
+                  <GlowCard className="p-8">
+                    <p className="text-foreground font-medium">Hover over this card</p>
+                    <p className="text-muted-foreground mt-2 text-sm">
+                      The border glows and follows your cursor.
+                    </p>
+                  </GlowCard>
+                </>
+              ),
+            },
+            {
+              value: "rotatingglowcard",
+              label: "RotatingGlowCard",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Card with an animated rotating glow border."}</p>
+                  <VariantDemo
+                    label="duration"
+                    options={GLOW_DURATIONS}
+                    defaultValue="3"
+                    className="block min-h-0"
+                    render={duration => (
+                      <RotatingGlowCard duration={Number(duration)}>
+                        <p className="text-foreground font-medium">
+                          {GLOW_DURATIONS.find(o => o.value === duration)?.label}
+                        </p>
+                        <p className="text-muted-foreground mt-2 text-sm">
+                          A conic-gradient rotates behind the card — only the border glow is visible.
+                        </p>
+                      </RotatingGlowCard>
+                    )}
+                  />
+                </>
+              ),
+            },
+          ]}
         />
       </Section>
 
