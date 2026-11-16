@@ -130,8 +130,12 @@ export function PullQuote({
         <span
           aria-hidden="true"
           className={cn(
-            'font-display block h-8 leading-0 font-light select-none',
+            'font-display block font-light select-none',
             sizeMark[size],
+            // Box height and line-height are tuned to the glyph of Cormorant Garamond, so the
+            // mark sits flush in its own box instead of hanging into the text below. They must
+            // come after sizeMark: tailwind-merge drops a `leading-*` that precedes a `text-<size>`.
+            'h-[0.25em] leading-[0.64]',
             tokens.mark
           )}
         >
