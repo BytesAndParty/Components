@@ -187,6 +187,24 @@ export function HandMark({ spanRef, action, pen, color, isVisible, tempo, delay,
     return () => ro.disconnect()
   }, [spanRef])
 
+  // The strokes must be painted once in their hidden state, otherwise the dashoffset transition has
+  // nothing to animate from: the visibility observer can fire before the first measurement, and the
+  // paths would then mount directly in their drawn state.
+  const measured = box !== null
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    if (!measured) return
+    let inner = 0
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setArmed(true))
+    })
+    return () => {
+      cancelAnimationFrame(outer)
+      cancelAnimationFrame(inner)
+    }
+  }, [measured])
+  const shown = isVisible && armed
+
   const p = PENS[pen]
   const uid = id.replace(/\W/g, '')
   const strokes = box ? p[action](box.w, box.h, rng(hashSeed(id))) : []
@@ -231,8 +249,8 @@ export function HandMark({ spanRef, action, pen, color, isVisible, tempo, delay,
                     // Strich zeichnet sich über stroke-dashoffset. Die Deckkraft springt erst beim Ansetzen,
                     // sonst stünde vorher schon ein Punkt der runden Strichenden da.
                     strokeDasharray: 1,
-                    strokeDashoffset: isVisible ? 0 : 1,
-                    opacity: isVisible ? 1 : 0,
+                    strokeDashoffset: shown ? 0 : 1,
+                    opacity: shown ? 1 : 0,
                     transition: `stroke-dashoffset ${s.duration * 1000 * tempo}ms ease-in-out ${start}ms, opacity 0s linear ${start}ms`,
                   }}
                 />
