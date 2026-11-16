@@ -25,7 +25,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **click-spark / splash-cursor / confetti:** Interaktives Feedback auf User-Aktionen.
 - **wave-text / numeral-reveal:** Versteckte Klick-Eastereggs — Textwelle bzw. römische Ziffer, die kurz ihren arabischen Wert zeigt. Bewusst ohne Cursor-Wechsel.
 - **cursor-glow / glow-card / hover-3d-card:** Subtile Licht- und Tiefeneffekte, die dem Pointer folgen.
-- **magnetic-button / jelly-button:** Physisch wirkende Buttons.
+- **magnetic-button:** Physisch wirkender Button.
 - **morphing-text / text-rotate / text-scramble:** Dynamische Typografie.
 - **particles / light-rays / shader-backdrop:** Atmosphärische Hintergrundeffekte; `shader-backdrop` ist eine fließende WebGL-Fläche in Theme- und Akzentfarben.
 - **bottle-stage:** In Echtzeit gerenderte 3D-Weinflasche mit Etikett, Studiolicht, Cursor-Neigung und Scroll-Drehung (three.js + React Three Fiber, lazy laden).
@@ -87,7 +87,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 
 - **toast / tooltip:** Subtile Informationen.
 - **stepper:** Horizontaler und vertikaler Mehrschritt-Wizard.
-- **circular-progress / bounce-loader:** Lade- und Fortschrittszustände.
+- **circular-progress:** Fortschrittsanzeige.
 - **countdown:** Dringlichkeit für limitierte Angebote.
 - **hotkeys:** Tastatursteuerung für Power-User (Registry + Shortcut-Übersicht per `Mod+/`).
 - **atelier / i18n:** Zentraler Theme-, Akzent- und Sprach-State.

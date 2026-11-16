@@ -1,9 +1,10 @@
 import { Section } from '../components/section'
+import { DemoTabs } from '../components/demo-tabs'
+import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ShapeCard, type CornerShape } from '@components/shape-card/shape-card'
 import { GlowCard } from '@components/glow-card/glow-card'
 import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
-import { JellyButton } from '@components/jelly-button/jelly-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { ClickSpark } from '@components/click-spark/click-spark'
 import { LightRays } from '@components/light-rays/light-rays'
@@ -129,158 +130,171 @@ export function CardsPage() {
   return (
     <>
       <Section
-        title="ShapeCard – corner-shape variants"
-        description="Was möglich ist: identische Cards, fünf verschiedene Eckengeometrien — round, squircle, scoop, notch, bevel. Chrome 139+ zeigt die echten Shapes; Firefox/Safari fallen auf border-radius zurück."
+        title="ShapeCard"
+        description="Eckengeometrien über corner-shape: fünf Grundformen und asymmetrische Varianten mit einem einzelnen Akzent oder einer Kerbe. Chrome 139+ zeigt die echten Shapes; Firefox/Safari fallen auf border-radius zurück."
       >
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          {shapeVariants.map((v, i) => (
-            <ShapeCard key={v.shape} shape={v.shape} radius={v.radius ?? 48} hoverLift={false}>
-              <div
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  aspectRatio: '3 / 4',
-                  background:
-                    'radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 65%)',
-                }}
-              >
-                <div
-                  style={{
-                    flex: 1,
-                    display: 'grid',
-                    placeItems: 'center',
-                    padding: '1.25rem 1rem 0.5rem',
-                  }}
-                >
-                  <img
-                    src={i % 2 === 0 ? '/wine-default.png' : '/white-wine-default.png'}
-                    alt={v.label}
-                    style={{
-                      maxHeight: '100%',
-                      maxWidth: '70%',
-                      objectFit: 'contain',
-                      filter: 'drop-shadow(0 14px 22px oklch(0 0 0 / 0.35))',
-                    }}
-                  />
+        <DemoTabs
+          tabs={[
+            {
+              value: 'corners',
+              label: 'Corner shapes',
+              content: (
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+                  {shapeVariants.map((v, i) => (
+                    <ShapeCard key={v.shape} shape={v.shape} radius={v.radius ?? 48} hoverLift={false}>
+                      <div
+                        style={{
+                          position: 'relative',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          aspectRatio: '3 / 4',
+                          background:
+                            'radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 65%)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: 1,
+                            display: 'grid',
+                            placeItems: 'center',
+                            padding: '1.25rem 1rem 0.5rem',
+                          }}
+                        >
+                          <img
+                            src={i % 2 === 0 ? '/wine-default.png' : '/white-wine-default.png'}
+                            alt={v.label}
+                            style={{
+                              maxHeight: '100%',
+                              maxWidth: '70%',
+                              objectFit: 'contain',
+                              filter: 'drop-shadow(0 14px 22px oklch(0 0 0 / 0.35))',
+                            }}
+                          />
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '0 1rem 1.25rem' }}>
+                          <p
+                            className="text-foreground font-bold"
+                            style={{ fontSize: '0.9375rem', margin: 0, letterSpacing: '-0.01em' }}
+                          >
+                            {v.label}
+                          </p>
+                          <p
+                            className="text-muted-foreground"
+                            style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 4 }}
+                          >
+                            {v.sub}
+                          </p>
+                        </div>
+                      </div>
+                    </ShapeCard>
+                  ))}
                 </div>
-                <div style={{ textAlign: 'center', padding: '0 1rem 1.25rem' }}>
-                  <p
-                    className="text-foreground font-bold"
-                    style={{ fontSize: '0.9375rem', margin: 0, letterSpacing: '-0.01em' }}
+              ),
+            },
+            {
+              value: 'accent-top',
+              label: 'Akzent oben',
+              content: (
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  <Link to="/wine/barolo-riserva-2016" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
+                    <ShapeCard
+                      shape={['round', 'bevel', 'round', 'round']}
+                      radius="10px 28px 10px 10px"
+                    >
+                      <WineMedia src="/wine-default.png" alt="Barolo Riserva" vtName="wine-barolo-riserva-2016" />
+                      <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
+                    </ShapeCard>
+                  </Link>
+
+                  <Link to="/wine/riesling-smaragd-2022" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
+                    <ShapeCard
+                      shape={['scoop', 'scoop', 'squircle', 'squircle']}
+                      radius="1.625rem 1.625rem 0.625rem 0.625rem"
+                    >
+                      <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" vtName="wine-riesling-smaragd-2022" />
+                      <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
+                    </ShapeCard>
+                  </Link>
+
+                  <ShapeCard
+                    shape={['scoop', 'round', 'round', 'round']}
+                    radius="40px 10px 10px 10px"
                   >
-                    {v.label}
-                  </p>
-                  <p
-                    className="text-muted-foreground"
-                    style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 4 }}
-                  >
-                    {v.sub}
-                  </p>
+                    <WineMedia src="/wine-default.png" alt="Brunello di Montalcino" />
+                    <WineBody name="Brunello di Montalcino" region="Toskana · Italien" vintage={2018} price="€ 64,00" note="Single scoop · Top-Left" />
+                  </ShapeCard>
                 </div>
-              </div>
-            </ShapeCard>
-          ))}
-        </div>
-      </Section>
+              ),
+            },
+            {
+              value: 'accent-bottom',
+              label: 'Akzent unten rechts',
+              content: (
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  <ShapeCard
+                    shape={['round', 'round', 'bevel', 'round']}
+                    radius="10px 10px 28px 10px"
+                  >
+                    <WineMedia src="/white-wine-default.png" alt="Sauvignon Blanc" />
+                    <WineBody name="Sauvignon Blanc Réserve" region="Steiermark · Österreich" vintage={2022} price="€ 42,00" note="Single bevel · Bottom-Right" />
+                  </ShapeCard>
 
-      <Section
-        title="ShapeCard – Asymmetric / Premium"
-        description="Asymmetrische Shapes wirken intentional und premium — eine Ecke besonders, die anderen drei sauber. Drei Varianten: einzelner Akzent oben (Reihe 1), unten rechts (Reihe 2), und mittig an einer Seite (Reihe 3, kein Eck-Cutout sondern Halbkreis im Edge)."
-      >
-        <div className="space-y-8">
+                  <ShapeCard
+                    shape={['round', 'round', 'scoop', 'round']}
+                    radius="10px 10px 36px 10px"
+                  >
+                    <WineMedia src="/wine-default.png" alt="Chianti Classico" />
+                    <WineBody name="Chianti Classico" region="Toskana · Italien" vintage={2020} price="€ 26,80" note="Single scoop · Bottom-Right" />
+                  </ShapeCard>
 
-          {/* Reihe 1: Akzent oben */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Link to="/wine/barolo-riserva-2016" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
-              <ShapeCard
-                shape={['round', 'bevel', 'round', 'round']}
-                radius="10px 28px 10px 10px"
-              >
-                <WineMedia src="/wine-default.png" alt="Barolo Riserva" vtName="wine-barolo-riserva-2016" />
-                <WineBody name="Barolo Riserva" region="Piemonte · Italien" vintage={2016} price="€ 92,00" note="Single bevel · Top-Right" />
-              </ShapeCard>
-            </Link>
+                  <ShapeCard
+                    shape={['round', 'round', 'notch', 'round']}
+                    radius="10px 10px 28px 10px"
+                  >
+                    <WineMedia src="/white-wine-default.png" alt="Grüner Veltliner" />
+                    <WineBody name="Grüner Veltliner" region="Wachau · Österreich" vintage={2023} price="€ 18,90" note="Single notch · Bottom-Right" />
+                  </ShapeCard>
+                </div>
+              ),
+            },
+            {
+              value: 'side-notch',
+              label: 'Seitenkerbe',
+              content: (
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  <ShapeCard
+                    shape="squircle"
+                    radius={12}
+                    sideNotch={{ side: 'top', size: 56 }}
+                  >
+                    <div style={{ paddingTop: 36 }}>
+                      <WineMedia src="/wine-default.png" alt="Amarone" />
+                      <WineBody name="Amarone Valpolicella" region="Venetien · Italien" vintage={2017} price="€ 78,00" note="Top-edge notch" />
+                    </div>
+                  </ShapeCard>
 
-            <Link to="/wine/riesling-smaragd-2022" viewTransition className="block no-underline" style={{ color: 'inherit' }}>
-              <ShapeCard
-                shape={['scoop', 'scoop', 'squircle', 'squircle']}
-                radius="1.625rem 1.625rem 0.625rem 0.625rem"
-              >
-                <WineMedia src="/white-wine-default.png" alt="Riesling Smaragd" vtName="wine-riesling-smaragd-2022" />
-                <WineBody name="Riesling Smaragd" region="Wachau · Österreich" vintage={2022} price="€ 32,50" note="Wine-glass silhouette" />
-              </ShapeCard>
-            </Link>
+                  <ShapeCard
+                    shape="squircle"
+                    radius={12}
+                    sideNotch={{ side: 'right', size: 64 }}
+                  >
+                    <WineMedia src="/white-wine-default.png" alt="Pinot Grigio" />
+                    <WineBody name="Pinot Grigio Alto Adige" region="Südtirol · Italien" vintage={2023} price="€ 22,40" note="Right-edge notch" />
+                  </ShapeCard>
 
-            <ShapeCard
-              shape={['scoop', 'round', 'round', 'round']}
-              radius="40px 10px 10px 10px"
-            >
-              <WineMedia src="/wine-default.png" alt="Brunello di Montalcino" />
-              <WineBody name="Brunello di Montalcino" region="Toskana · Italien" vintage={2018} price="€ 64,00" note="Single scoop · Top-Left" />
-            </ShapeCard>
-          </div>
-
-          {/* Reihe 2: Akzent unten rechts */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <ShapeCard
-              shape={['round', 'round', 'bevel', 'round']}
-              radius="10px 10px 28px 10px"
-            >
-              <WineMedia src="/white-wine-default.png" alt="Sauvignon Blanc" />
-              <WineBody name="Sauvignon Blanc Réserve" region="Steiermark · Österreich" vintage={2022} price="€ 42,00" note="Single bevel · Bottom-Right" />
-            </ShapeCard>
-
-            <ShapeCard
-              shape={['round', 'round', 'scoop', 'round']}
-              radius="10px 10px 36px 10px"
-            >
-              <WineMedia src="/wine-default.png" alt="Chianti Classico" />
-              <WineBody name="Chianti Classico" region="Toskana · Italien" vintage={2020} price="€ 26,80" note="Single scoop · Bottom-Right" />
-            </ShapeCard>
-
-            <ShapeCard
-              shape={['round', 'round', 'notch', 'round']}
-              radius="10px 10px 28px 10px"
-            >
-              <WineMedia src="/white-wine-default.png" alt="Grüner Veltliner" />
-              <WineBody name="Grüner Veltliner" region="Wachau · Österreich" vintage={2023} price="€ 18,90" note="Single notch · Bottom-Right" />
-            </ShapeCard>
-          </div>
-
-          {/* Reihe 3: Halbkreis-Notch in der Mitte einer Seite */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <ShapeCard
-              shape="squircle"
-              radius={12}
-              sideNotch={{ side: 'top', size: 56 }}
-            >
-              <div style={{ paddingTop: 36 }}>
-                <WineMedia src="/wine-default.png" alt="Amarone" />
-                <WineBody name="Amarone Valpolicella" region="Venetien · Italien" vintage={2017} price="€ 78,00" note="Top-edge notch" />
-              </div>
-            </ShapeCard>
-
-            <ShapeCard
-              shape="squircle"
-              radius={12}
-              sideNotch={{ side: 'right', size: 64 }}
-            >
-              <WineMedia src="/white-wine-default.png" alt="Pinot Grigio" />
-              <WineBody name="Pinot Grigio Alto Adige" region="Südtirol · Italien" vintage={2023} price="€ 22,40" note="Right-edge notch" />
-            </ShapeCard>
-
-            <ShapeCard
-              shape="squircle"
-              radius={12}
-              sideNotch={{ side: 'bottom', size: 56 }}
-            >
-              <WineMedia src="/wine-default.png" alt="Cannonau" />
-              <WineBody name="Cannonau di Sardegna" region="Sardinien · Italien" vintage={2021} price="€ 28,90" note="Bottom-edge notch" />
-            </ShapeCard>
-          </div>
-
-        </div>
+                  <ShapeCard
+                    shape="squircle"
+                    radius={12}
+                    sideNotch={{ side: 'bottom', size: 56 }}
+                  >
+                    <WineMedia src="/wine-default.png" alt="Cannonau" />
+                    <WineBody name="Cannonau di Sardegna" region="Sardinien · Italien" vintage={2021} price="€ 28,90" note="Bottom-edge notch" />
+                  </ShapeCard>
+                </div>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="GlowCard" description="Card with a cursor-following glow border effect.">
@@ -314,64 +328,65 @@ export function CardsPage() {
 
       </Section>
 
-      <Section title="MagneticButton" description="Button that magnetically follows the cursor on hover.">
-        <div className="space-y-8">
+      <Section title="Buttons" description="Magnetic and Add to cart: one tab per button component.">
+        <DemoTabs
+          tabs={[
+            {
+              value: 'magnetic',
+              label: 'Magnetic',
+              content: (
+                <div className="space-y-8">
+                  <p className="text-muted-foreground text-sm">Button that magnetically follows the cursor on hover.</p>
 
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Base Variants</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="primary">Primary</MagneticButton>
-              <MagneticButton variant="secondary">Secondary</MagneticButton>
-              <MagneticButton variant="outline">Outline</MagneticButton>
-              <MagneticButton variant="ghost">Ghost</MagneticButton>
-              <MagneticButton variant="default">Default</MagneticButton>
-              <MagneticButton variant="destructive">Destructive</MagneticButton>
-            </div>
-          </div>
+                  <div>
+                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Base Variants</p>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <MagneticButton variant="primary">Primary</MagneticButton>
+                      <MagneticButton variant="secondary">Secondary</MagneticButton>
+                      <MagneticButton variant="outline">Outline</MagneticButton>
+                      <MagneticButton variant="ghost">Ghost</MagneticButton>
+                      <MagneticButton variant="default">Default</MagneticButton>
+                      <MagneticButton variant="destructive">Destructive</MagneticButton>
+                    </div>
+                  </div>
 
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Animated – Call to Action</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
-              <MagneticButton variant="glow">Glow Pulse</MagneticButton>
-              <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
-              <MagneticButton variant="beam">Border Beam</MagneticButton>
-            </div>
-          </div>
+                  <div>
+                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Animated – Call to Action</p>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
+                      <MagneticButton variant="glow">Glow Pulse</MagneticButton>
+                      <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
+                      <MagneticButton variant="beam">Border Beam</MagneticButton>
+                    </div>
+                  </div>
 
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
-              <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
-              <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
-            </div>
-          </div>
-
-        </div>
-      </Section>
-
-      <Section title="JellyButton" description="Rubbery CTA with SVG-goo blobs escaping on hover. Pure React state + inline styles.">
-        <div className="space-y-8">
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Sizes</p>
-            <div className="flex flex-wrap items-center gap-6">
-              <JellyButton size="sm">Small</JellyButton>
-              <JellyButton size="md">Medium</JellyButton>
-              <JellyButton size="lg">Large</JellyButton>
-            </div>
-          </div>
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Accent (theme-aware) & custom colors</p>
-            <div className="flex flex-wrap items-center gap-6">
-              <JellyButton>Theme Accent</JellyButton>
-              <JellyButton color="#ec4899">Pink</JellyButton>
-              <JellyButton color="#10b981">Emerald</JellyButton>
-              <JellyButton color="#f59e0b">Amber</JellyButton>
-              <JellyButton disabled>Disabled</JellyButton>
-            </div>
-          </div>
-        </div>
+                  <div>
+                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
+                      <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
+                      <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
+                    </div>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              value: 'add-to-cart',
+              label: 'Add to cart',
+              content: (
+                <div className="space-y-8">
+                  <p className="text-muted-foreground text-sm">
+                    Cart roll-in animation with state feedback. The full shop flow with the cart badge is on the Shop page.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-6">
+                    <AddToCartButton>Add to cart</AddToCartButton>
+                  </div>
+                </div>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="Hover3DCard" description="Cursor-tracking 3D tilt effect with glare overlay.">
@@ -453,10 +468,13 @@ export function CardsPage() {
       </Section>
 
       <Section title="LightRays" description="WebGL light rays (ogl). Hover a bottle to reveal the effect.">
-        <div className="grid grid-cols-3 gap-6">
-          {[0, 1, 2].map((i) => (
+        <div className="grid max-w-2xl grid-cols-3 gap-6">
+          {[
+            { src: '/wine-default.png', alt: 'Red wine bottle' },
+            { src: '/white-wine-default.png', alt: 'White wine bottle' },
+          ].map(bottle => (
             <div
-              key={i}
+              key={bottle.src}
               className="group border-border bg-card relative overflow-hidden rounded-xl border"
               style={{ aspectRatio: '3/4' }}
             >
@@ -473,43 +491,9 @@ export function CardsPage() {
                 />
               </div>
 
-              {/* Wine bottle */}
               <img
-                src="/wine-default.png"
-                alt="Wine bottle"
-                className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                style={{ padding: '20px' }}
-              />
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section title="LightRays (White Wine)" description="WebGL light rays with white wine bottles.">
-        <div className="grid grid-cols-3 gap-6">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="group border-border bg-card relative overflow-hidden rounded-xl border"
-              style={{ aspectRatio: '3/4' }}
-            >
-              {/* WebGL light rays — hidden until hover */}
-              <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                <LightRays
-                  raysOrigin="top-center"
-                  raysColor="#ffffff"
-                  raysSpeed={1}
-                  lightSpread={0.5}
-                  rayLength={3}
-                  followMouse
-                  mouseInfluence={0.1}
-                />
-              </div>
-
-              {/* White wine bottle */}
-              <img
-                src="/white-wine-default.png"
-                alt="White wine bottle"
+                src={bottle.src}
+                alt={bottle.alt}
                 className="relative z-10 h-full w-full object-contain transition-transform duration-500 group-hover:-translate-y-1"
                 style={{ padding: '20px' }}
               />
@@ -934,87 +918,100 @@ export function CardsPage() {
         </div>
       </Section>
 
-      <Section title="Particles" description="Canvas-based floating particle background with optional mouse repulsion.">
-        <div
-          style={{
-            position: 'relative',
-            height: '300px',
-            borderRadius: '12px',
-            border: '1px solid var(--border)',
-            background: 'var(--card)',
-            overflow: 'hidden',
-          }}
-        >
-          <Particles
-            particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
-            particleCount={150}
-            particleSpread={10}
-            speed={0.3}
-            particleBaseSize={3}
-            moveParticlesOnHover
-            hoverRadius={100}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-            }}
-          >
-            <p className="text-foreground text-lg font-medium">Move your cursor over the particles</p>
-          </div>
-        </div>
-      </Section>
+      <Section title="Particles" description="Canvas-based floating particles: as a background layer with optional mouse repulsion, or as a card wrapper with content on top.">
+        <DemoTabs
+          tabs={[
+            {
+              value: 'background',
+              label: 'Background',
+              content: (
+                <div
+                  style={{
+                    position: 'relative',
+                    height: '300px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--card)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Particles
+                    particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
+                    particleCount={150}
+                    particleSpread={10}
+                    speed={0.3}
+                    particleBaseSize={3}
+                    moveParticlesOnHover
+                    hoverRadius={100}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <p className="text-foreground text-lg font-medium">Move your cursor over the particles</p>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              value: 'card',
+              label: 'Card',
+              content: (
+                <div className="grid grid-cols-2 gap-4">
+                  <ParticlesCard
+                    particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
+                    particleCount={120}
+                    speed={0.2}
+                    style={{
+                      height: '220px',
+                      borderRadius: '16px',
+                      border: '1px solid var(--border)',
+                      background: 'var(--card)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '32px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <p className="text-foreground text-xl font-bold">Premium Kollektion</p>
+                      <p className="text-muted-foreground mt-2 text-sm">Handverlesene Weine aus Italien</p>
+                    </div>
+                  </ParticlesCard>
 
-      <Section title="ParticlesCard" description="ParticlesCard-Wrapper: Particles als Hintergrund-Layer, beliebiger Content darüber.">
-        <div className="grid grid-cols-2 gap-4">
-          <ParticlesCard
-            particleColors={['var(--accent, #6366f1)', 'var(--foreground)', '#a78bfa']}
-            particleCount={120}
-            speed={0.2}
-            style={{
-              height: '220px',
-              borderRadius: '16px',
-              border: '1px solid var(--border)',
-              background: 'var(--card)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '32px',
-            }}
-          >
-            <div style={{ textAlign: 'center' }}>
-              <p className="text-foreground text-xl font-bold">Premium Kollektion</p>
-              <p className="text-muted-foreground mt-2 text-sm">Handverlesene Weine aus Italien</p>
-            </div>
-          </ParticlesCard>
-
-          <ParticlesCard
-            particleColors={['#f59e0b', '#f97316', '#fbbf24']}
-            particleCount={80}
-            speed={0.15}
-            particleBaseSize={2}
-            moveParticlesOnHover
-            style={{
-              height: '220px',
-              borderRadius: '16px',
-              border: '1px solid var(--border)',
-              background: 'var(--card)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '32px',
-            }}
-          >
-            <div style={{ textAlign: 'center' }}>
-              <p className="text-foreground text-xl font-bold">Gold Reserve</p>
-              <p className="text-muted-foreground mt-2 text-sm">moveParticlesOnHover</p>
-            </div>
-          </ParticlesCard>
-        </div>
+                  <ParticlesCard
+                    particleColors={['#f59e0b', '#f97316', '#fbbf24']}
+                    particleCount={80}
+                    speed={0.15}
+                    particleBaseSize={2}
+                    moveParticlesOnHover
+                    style={{
+                      height: '220px',
+                      borderRadius: '16px',
+                      border: '1px solid var(--border)',
+                      background: 'var(--card)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '32px',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <p className="text-foreground text-xl font-bold">Gold Reserve</p>
+                      <p className="text-muted-foreground mt-2 text-sm">moveParticlesOnHover</p>
+                    </div>
+                  </ParticlesCard>
+                </div>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section title="CursorGlow" description="Leichter CSS-Glow, der dem Cursor folgt (position: fixed). Toggle zum Testen.">

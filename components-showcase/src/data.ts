@@ -5,7 +5,7 @@ export const groups = [
     descKey: 'desc.cards',
     title: 'Cards & Buttons',
     description: 'Glow effects, magnetic interactions, 3D hover, and click sparks.',
-    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton', 'JellyButton', 'Hover3DCard', 'ClickSpark', 'LightRays', 'ShaderBackdrop', 'BottleStage', 'SplashCursor', 'Backlight', 'PixelImage', 'AmbientImage', 'Lens', 'ImagesSlider'],
+    components: ['GlowCard', 'RotatingGlowCard', 'MagneticButton','Hover3DCard', 'ClickSpark', 'LightRays', 'ShaderBackdrop', 'BottleStage', 'SplashCursor', 'Backlight', 'PixelImage', 'AmbientImage', 'Lens', 'ImagesSlider'],
   },
   {
     path: '/text',
@@ -37,7 +37,7 @@ export const groups = [
     descKey: 'desc.feedback',
     title: 'Feedback',
     description: 'Toasts, favorites, pricing, ratings, loaders, and confetti effects.',
-    components: ['Toast', 'PricingInteraction', 'Rating', 'HeartLike', 'BounceLoader', 'Countdown', 'Confetti'],
+    components: ['Toast', 'PricingInteraction', 'Rating', 'HeartLike','Countdown', 'Confetti'],
   },
   {
     path: '/navigation',

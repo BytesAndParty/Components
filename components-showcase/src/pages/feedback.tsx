@@ -5,7 +5,6 @@ import { PricingInteraction } from '@components/pricing-interaction/pricing-inte
 import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { HeartLike } from '@components/heart-like/heart-like'
-import { BounceLoader } from '@components/bounce-loader/bounce-loader'
 import { Countdown } from '@components/countdown/countdown'
 import { NumberTicker } from '@components/number-ticker/number-ticker'
 import { CircularProgress } from '@components/circular-progress/circular-progress'
@@ -110,10 +109,6 @@ export function FeedbackPage() {
           <HeartLike size={48} />
           <HeartLike size={48} defaultChecked />
         </div>
-      </Section>
-
-      <Section title="BounceLoader" description="Three bouncing dots with squish-on-impact animation.">
-        <BounceLoader />
       </Section>
 
       <Section title="Countdown" description="Rolling-digit timer with high-precision CSS animations.">

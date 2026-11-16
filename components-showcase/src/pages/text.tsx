@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Barrel, Droplets, Grape, MapPin, Sun, Wine } from 'lucide-react'
 import { Section } from '../components/section'
+import { DemoTabs } from '../components/demo-tabs'
 import { TextScramble } from '@components/text-scramble/text-scramble'
 import { TextRotate } from '@components/text-rotate/text-rotate'
 import { AuroraText } from '@components/aurora-text/aurora-text'
@@ -202,66 +203,85 @@ export function TextPage() {
         title="PullQuote"
         description="Editorial blockquote primitive — serif body, hairline rule, all-caps attribution. Three variants (editorial · plate · cellar), three sizes (sm/md/lg), three alignments. Uses semantic tokens; follows light/dark."
       >
-        <div className="flex flex-col gap-12">
-          {/* Variant: editorial (default) */}
-          <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
-            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
-              variant="editorial" · align="left" · size="md"
-            </p>
-            <PullQuote
-              attribution="Marc-André Leclerc"
-              byline="Chef Sommelier, Le Bristol"
-            >
-              Ein Paradebeispiel für Terroir-Treue. Ein Muss für jeden
-              Keller, der auf Qualität statt Masse setzt.
-            </PullQuote>
-          </div>
-
-          {/* Variant: plate, centered, lg */}
-          <div className="bg-muted/40 rounded-xl p-10">
-            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
-              variant="plate" · align="center" · size="lg"
-            </p>
-            <PullQuote
-              variant="plate"
-              align="center"
-              size="lg"
-              attribution="Elena Rossi"
-              byline="Weinkritikerin · Decanter"
-            >
-              Selten habe ich eine so konsistente Qualität über
-              verschiedene Jahrgänge hinweg erlebt.
-            </PullQuote>
-          </div>
-
-          {/* Variant: cellar (muted ground), right, sm, no mark */}
-          <div className="bg-muted rounded-xl p-10">
-            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
-              variant="cellar" · align="right" · size="sm" · showMark={'{false}'}
-            </p>
-            <PullQuote
-              variant="cellar"
-              align="right"
-              size="sm"
-              showMark={false}
-              attribution="Aus dem Hofbuch"
-              byline="Eintrag · MMXXIV"
-            >
-              Der Wein erinnert sich an alles — den Hang, das Jahr, die
-              Hand, die ihn gelesen hat.
-            </PullQuote>
-          </div>
-
-          {/* Edge case: no attribution */}
-          <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
-            <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
-              edge · no attribution · no role
-            </p>
-            <PullQuote size="md">
-              Weniger Eingriffe. Mehr Antworten aus dem Boden.
-            </PullQuote>
-          </div>
-        </div>
+        <DemoTabs
+          tabs={[
+            {
+              value: 'editorial',
+              label: 'Editorial',
+              content: (
+                <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
+                  <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+                    variant="editorial" · align="left" · size="md"
+                  </p>
+                  <PullQuote
+                    attribution="Marc-André Leclerc"
+                    byline="Chef Sommelier, Le Bristol"
+                  >
+                    Ein Paradebeispiel für Terroir-Treue. Ein Muss für jeden
+                    Keller, der auf Qualität statt Masse setzt.
+                  </PullQuote>
+                </div>
+              ),
+            },
+            {
+              value: 'plate',
+              label: 'Plate',
+              content: (
+                <div className="bg-muted/40 rounded-xl p-10">
+                  <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+                    variant="plate" · align="center" · size="lg"
+                  </p>
+                  <PullQuote
+                    variant="plate"
+                    align="center"
+                    size="lg"
+                    attribution="Elena Rossi"
+                    byline="Weinkritikerin · Decanter"
+                  >
+                    Selten habe ich eine so konsistente Qualität über
+                    verschiedene Jahrgänge hinweg erlebt.
+                  </PullQuote>
+                </div>
+              ),
+            },
+            {
+              value: 'cellar',
+              label: 'Cellar',
+              content: (
+                <div className="bg-muted rounded-xl p-10">
+                  <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+                    variant="cellar" · align="right" · size="sm" · showMark={'{false}'}
+                  </p>
+                  <PullQuote
+                    variant="cellar"
+                    align="right"
+                    size="sm"
+                    showMark={false}
+                    attribution="Aus dem Hofbuch"
+                    byline="Eintrag · MMXXIV"
+                  >
+                    Der Wein erinnert sich an alles — den Hang, das Jahr, die
+                    Hand, die ihn gelesen hat.
+                  </PullQuote>
+                </div>
+              ),
+            },
+            {
+              value: 'plain',
+              label: 'Ohne Zuschreibung',
+              content: (
+                <div className="border-border bg-card rounded-xl border p-10 shadow-sm">
+                  <p className="text-muted-foreground mb-6 text-[0.7rem] tracking-[0.15em] uppercase">
+                    edge · no attribution · no role
+                  </p>
+                  <PullQuote size="md">
+                    Weniger Eingriffe. Mehr Antworten aus dem Boden.
+                  </PullQuote>
+                </div>
+              ),
+            },
+          ]}
+        />
 
         <div className="border-border text-muted-foreground mt-6 flex justify-between border-t pt-3 text-[0.7rem]">
           <span>PullQuote · semantic tokens · no animation</span>
