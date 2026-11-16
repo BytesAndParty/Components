@@ -10,7 +10,7 @@ import {
   Navbar, NavbarSection, NavbarItem,
   NavbarDropdown, NavbarDropdownItem,
   NavbarDivider, NavbarMobileToggle, NavbarMobileMenu,
-  NavbarDesktopOnly,
+  NavbarDesktopOnly, NavbarMobileOnly,
 } from '@components/navbar/navbar'
 import { SearchOverlay } from '@components/search-overlay/search-overlay'
 import { Tooltip } from '@components/tooltip/tooltip'
@@ -156,7 +156,9 @@ export function Layout() {
             <NavbarDivider />
             <AnimatedThemeToggler />
             <AccentSwitcher palettes={palettes} />
-            <NavbarMobileToggle />
+            <NavbarMobileOnly>
+              <NavbarMobileToggle />
+            </NavbarMobileOnly>
           </NavbarSection>
 
           <NavbarMobileMenu>

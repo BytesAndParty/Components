@@ -8,6 +8,8 @@ import {
   type CSSProperties,
 } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { Portal } from '@ark-ui/react/portal'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type NavbarMessages } from './messages'
 
@@ -250,6 +252,7 @@ export function NavbarItem({ children, href, active, onClick, className, style }
     <Tag
       href={href}
       onClick={onClick}
+      data-navbar-item=""
       className={className}
       style={{
         position: 'relative',
@@ -602,7 +605,8 @@ export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps
       aria-expanded={mobileOpen}
       className={className}
       style={{
-        display: 'none',
+        // Visibility is controlled by the NavbarMobileOnly wrapper
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         width: '36px',
@@ -613,7 +617,6 @@ export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps
         color: 'var(--foreground, #e4e4e7)',
         cursor: 'pointer',
         ...style,
-        // Show on mobile via media query workaround
       }}
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -638,6 +641,7 @@ export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps
 
 export function NavbarMobileMenu({ children, className, style }: NavbarMobileMenuProps) {
   const { mobileOpen, setMobileOpen, messages: m } = useNavbar()
+  const overlayContainer = useOverlayContainer()
 
   // Lock body scroll
   useEffect(() => {
@@ -651,83 +655,91 @@ export function NavbarMobileMenu({ children, className, style }: NavbarMobileMen
     }
   }, [mobileOpen])
 
+  // Portaled out of the <nav>: its backdrop-filter makes it the containing block of `position: fixed`,
+  // which would squeeze the panel to the height of the bar.
   return (
-    <AnimatePresence>
-      {mobileOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => setMobileOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              backdropFilter: 'blur(4px)',
-              WebkitBackdropFilter: 'blur(4px)',
-              zIndex: 99,
-            }}
-          />
-
-          {/* Slide-in panel */}
-          <motion.div
-            className={className}
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: 'min(320px, 85vw)',
-              background: 'var(--background, #0a0a0b)',
-              borderLeft: '1px solid var(--border, #2a2a2e)',
-              padding: '72px 24px 24px',
-              zIndex: 100,
-              overflowY: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              ...style,
-            }}
-          >
-            {/* Close button */}
-            <button
-              type="button"
+    <Portal container={overlayContainer}>
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMobileOpen(false)}
-              aria-label={m.closeMenu}
               style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                width: '36px',
-                height: '36px',
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                zIndex: 99,
+              }}
+            />
+
+            {/* Slide-in panel */}
+            <motion.div
+              className={className}
+              // Picking an item closes the menu; the item's own handler (navigation) has already run when this bubbles up.
+              onClick={e => {
+                if ((e.target as Element).closest('[data-navbar-item]')) setMobileOpen(false)
+              }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              style={{
+                position: 'fixed',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                width: 'min(320px, 85vw)',
+                background: 'var(--background, #0a0a0b)',
+                borderLeft: '1px solid var(--border, #2a2a2e)',
+                padding: '72px 24px 24px',
+                zIndex: 100,
+                overflowY: 'auto',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'none',
-                border: 'none',
-                color: 'var(--muted-foreground, #71717a)',
-                cursor: 'pointer',
-                borderRadius: '8px',
+                flexDirection: 'column',
+                gap: '4px',
+                ...style,
               }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                aria-label={m.closeMenu}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--muted-foreground, #71717a)',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
 
-            {children}
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+              {children}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </Portal>
   )
 }
 

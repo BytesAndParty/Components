@@ -17,6 +17,7 @@ Full-featured navigation system with sections, dropdowns, mega menus, mobile sli
 | **Item hover** | Nav items transition from muted to full text color on hover (200ms). |
 | **Icon badge** | `NavbarIconButton` supports a count badge with 99+ cap. |
 | **Keyboard dismiss** | Escape closes dropdowns and mobile menu. |
+| **Close on select** | Picking a `NavbarItem` inside the mobile menu closes it. The panel is portaled to `<body>` (or the `OverlayContainerProvider` target), because the bar's `backdrop-filter` would otherwise squeeze a `position: fixed` panel to the bar's height. |
 
 ## Architecture
 

@@ -352,10 +352,11 @@
 }
 
 /* Navbar responsive — replaces module-level injectNavbarResponsive() */
-@media (max-width: 768px) {
+/* The showcase has eight nav items plus the cart, language, theme and accent controls: they need 1280 px. */
+@media (max-width: 1279px) {
   [data-navbar-desktop] { display: none !important; }
   [data-navbar-mobile-toggle] { display: flex !important; }
 }
-@media (min-width: 769px) {
+@media (min-width: 1280px) {
   [data-navbar-mobile-toggle] { display: none !important; }
 }
