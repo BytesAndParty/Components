@@ -8,9 +8,7 @@ import { ValidatorBadge, type ValidationWarning } from '@components/validator-ba
 import { LayerPanel, type Layer } from '@components/layer-panel/layer-panel'
 import { ImageCropperModal } from '@components/image-cropper-modal/image-cropper-modal'
 import { useDesignEngineHotkey } from '@components/hotkeys/hotkeys-context'
-import { NumberInput } from '@components/number-input/number-input'
 import { Checkbox } from '@components/checkbox/checkbox'
-import { Tooltip } from '@components/tooltip/tooltip'
 import { CellarCanvas, type WineFieldValues } from '@components/cellar-canvas/CellarCanvas'
 import { WINE_LABEL_TEMPLATES, type TemplateContext } from '@components/cellar-canvas/templates/templates'
 import { BLEED_MM } from '@components/cellar-canvas/engine/use-fabric-canvas'
@@ -161,29 +159,6 @@ function AlignmentBarDemo() {
       )}
       <p className="text-muted-foreground text-xs">
         In Cellar Canvas wird diese Toolbar eingeblendet wenn ≥ 2 Objekte selektiert sind.
-      </p>
-    </div>
-  )
-}
-
-// ── Number Input ──────────────────────────────────────────────────────────────
-
-function NumberInputDemo() {
-  const [x, setX] = useState(120)
-  const [y, setY] = useState(45)
-  const [rot, setRot] = useState(0)
-  const [opacity, setOpacity] = useState(100)
-
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="bg-card border-border flex flex-wrap items-center gap-8 rounded-xl border p-4 shadow-sm">
-        <NumberInput label="X" value={x} onChange={setX} unit="mm" />
-        <NumberInput label="Y" value={y} onChange={setY} unit="mm" />
-        <NumberInput label="Rot" value={rot} onChange={setRot} unit="°" min={0} max={360} />
-        <NumberInput label="Opac" value={opacity} onChange={setOpacity} unit="%" min={0} max={100} />
-      </div>
-      <p className="text-muted-foreground text-xs">
-        Hochpräzise Steuerung für Geometrie. <kbd className="bg-muted rounded px-1 text-[10px]">Double-Click</kbd> zum Editieren · <kbd className="bg-muted rounded px-1 text-[10px]">Mouse Wheel</kbd> zum nudgen.
       </p>
     </div>
   )
@@ -370,38 +345,6 @@ function ImageCropperDemo() {
   )
 }
 
-// ── Tooltip ───────────────────────────────────────────────────────────────────
-
-function TooltipDemo() {
-  return (
-    <div className="bg-card border-border flex flex-wrap items-center gap-10 rounded-xl border p-8">
-      <Tooltip content="Speichern (Strg+S)">
-        <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium">
-          Hover me
-        </button>
-      </Tooltip>
-      
-      <Tooltip content="Ebene löschen" position="bottom">
-        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
-          Bottom
-        </button>
-      </Tooltip>
-
-      <Tooltip content="Hilfe anzeigen" position="left">
-        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
-          Left
-        </button>
-      </Tooltip>
-
-      <Tooltip content="Eigenschaften" position="right">
-        <button className="bg-muted hover:bg-muted/80 text-foreground rounded-lg p-2 transition-colors">
-          Right
-        </button>
-      </Tooltip>
-    </div>
-  )
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function DesignerPage() {
@@ -448,10 +391,6 @@ export function DesignerPage() {
           <TextToolOptionsDemo />
         </Section>
 
-        <Section title="Number Input" description="Kompakter Stepper für exakte mm/grad/pixel Werte. Unterstützt Scrubbing (Scrollrad) und Tastatur-Nudges.">
-          <NumberInputDemo />
-        </Section>
-
         <Section title="Alignment Bar" description="Erscheint wenn ≥ 2 Objekte selektiert sind. 6 Ausrichtungs- + 2 Verteilungs-Actions.">
           <AlignmentBarDemo />
         </Section>
@@ -466,10 +405,6 @@ export function DesignerPage() {
 
         <Section title="Image Cropper Modal" description="Ark UI ImageCropper in einem Dialog mit FocusTrap. Zoom-Slider, Flip, Rotation. Upload-Trigger + Crop-Callback.">
           <ImageCropperDemo />
-        </Section>
-
-        <Section title="Tooltip" description="Leichtgewichtige Overlays für Tooltips mit smarten Positions-Defaults und Micro-Animations.">
-          <TooltipDemo />
         </Section>
 
         <Section title="Color Picker" description="HEX / RGB / HSL, Hue + Alpha Sliders, Eye Dropper, Preset Swatches.">

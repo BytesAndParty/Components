@@ -2,10 +2,8 @@ import { useState, type ReactNode } from 'react'
 import { Barrel, Droplets, Grape, MapPin, Sun, Wine } from 'lucide-react'
 import { Section } from '../components/section'
 import { DemoTabs } from '../components/demo-tabs'
-import { TextScramble } from '@components/text-scramble/text-scramble'
 import { TextRotate } from '@components/text-rotate/text-rotate'
 import { AuroraText } from '@components/aurora-text/aurora-text'
-import { SparklesText } from '@components/sparkles-text/sparkles-text'
 import { Highlighter } from '@components/highlighter/highlighter'
 import { Paragraph } from '@components/paragraph/paragraph'
 import { PullQuote } from '@components/pull-quote/pull-quote'
@@ -18,10 +16,7 @@ import { Signature } from '@components/signature/signature'
 import { Stamp } from '@components/stamp/stamp'
 import { VelocityScroll, TestimonialCard } from '@components/velocity-scroll/velocity-scroll'
 import { RotatingDecoration } from '@components/scroll-rotate/scroll-rotate'
-import { Timeline } from '@components/timeline/timeline'
 import { MorphingText } from '@components/morphing-text/morphing-text'
-import { ShinyText, ShinyButton } from '@components/shiny-text/shiny-text'
-import { BlurFade } from '@components/blur-fade/blur-fade'
 import { WaveText } from '@components/wave-text/wave-text'
 import { NumeralReveal } from '@components/numeral-reveal/numeral-reveal'
 import { SIGNATURE_SIMON, testimonials } from '../data'
@@ -48,19 +43,6 @@ const SHORT_STEPS: ProcessStep[] = [
 export function TextPage() {
   return (
     <>
-      <Section title="SparklesText" description="Text with animated sparkle particles floating around it.">
-        <div className="flex flex-col gap-6">
-          <div className="text-4xl font-bold tracking-tight">
-            <SparklesText>Premium Weine</SparklesText>
-          </div>
-          <div className="text-2xl font-semibold">
-            <SparklesText sparkleColor="#f59e0b" sparkleCount={5} maxSize={22}>
-              Gold Collection
-            </SparklesText>
-          </div>
-        </div>
-      </Section>
-
       <Section title="Highlighter" description="Text highlighting, underline, hand-drawn marker and handwriting marks (circle, strike, squiggle) that animate on scroll-into-view. The handwriting marks come with three pens: pen (fountain pen, default), nib (broad nib) and pencil (sketched twice)." canReload>
         <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
           <p className="text-foreground text-lg leading-relaxed">
@@ -759,12 +741,6 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="TextScramble" description="Text reveal with randomized character scramble animation." canReload>
-        <div className="text-foreground font-mono text-2xl font-semibold">
-          <TextScramble text="Hello, this is TextScramble!" speed={25} />
-        </div>
-      </Section>
-
       <Section title="TextRotate" description="Animated text rotation with staggered character transitions." canReload>
         <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
           <div className="flex flex-col items-center gap-4 p-12 px-8 text-center">
@@ -856,74 +832,6 @@ export function TextPage() {
         </div>
       </Section>
 
-      <Section title="ShinyText + ShinyButton" description="Animierter Shine-Effekt auf Text und Button. Kein Framer Motion.">
-        <div className="space-y-6">
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">ShinyText</p>
-            <div className="flex flex-wrap items-center gap-6">
-              <span className="text-2xl font-bold">
-                <ShinyText duration={6}>Premium Weinkollektion</ShinyText>
-              </span>
-              <span className="text-lg font-semibold">
-                <ShinyText shineColor="rgba(251,191,36,0.9)" duration={8}>Gold Reserve</ShinyText>
-              </span>
-            </div>
-          </div>
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">ShinyButton</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <ShinyButton>In den Warenkorb</ShinyButton>
-              <ShinyButton shineColor="rgba(251,191,36,0.7)" style={{ backgroundColor: '#92400e' }}>
-                Gold Collection
-              </ShinyButton>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver." canReload>
-        <div className="space-y-4">
-          <p className="text-muted-foreground text-xs tracking-widest uppercase">direction="up" (default) – Elemente scrollen in den Viewport</p>
-          <div className="grid grid-cols-3 gap-4">
-            {['Barolo Riserva', 'Amarone Classico', 'Brunello DOCG'].map((name, i) => (
-              <BlurFade key={name} delay={i * 120} duration={700}>
-                <div
-                  style={{
-                    background: 'var(--card)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                  }}
-                >
-                  <div className="mb-3 h-8 w-8 rounded-full" style={{ background: 'var(--accent)', opacity: 0.7 }} />
-                  <p className="text-foreground text-sm font-semibold">{name}</p>
-                  <p className="text-muted-foreground mt-1 text-xs">Scroll-triggered fade</p>
-                </div>
-              </BlurFade>
-            ))}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-4">
-            {(['up', 'down', 'left', 'right'] as const).map(dir => (
-              <BlurFade key={dir} direction={dir} delay={100} duration={500}>
-                <span
-                  style={{
-                    display: 'inline-block',
-                    padding: '6px 16px',
-                    borderRadius: '999px',
-                    border: '1px solid var(--border)',
-                    background: 'var(--card)',
-                    fontSize: '0.75rem',
-                    color: 'var(--muted-foreground)',
-                  }}
-                >
-                  direction="{dir}"
-                </span>
-              </BlurFade>
-            ))}
-          </div>
-        </div>
-      </Section>
-
       <Section title="VelocityScroll" description="Scroll-reactive testimonial rows that accelerate with page scroll velocity.">
         <div className="border-border bg-card overflow-hidden rounded-xl border shadow-sm">
           <div className="py-8">
@@ -937,45 +845,6 @@ export function TextPage() {
             <span>VelocityScroll · useVelocity + useSpring · 2 rows</span>
             <span>Scroll the page to accelerate</span>
           </div>
-        </div>
-      </Section>
-
-      <Section title="Timeline" description="Vertical timeline with scroll-reveal dots and content. Pure IntersectionObserver + CSS keyframes.">
-        <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
-          <Timeline
-            items={[
-              {
-                year: '1952',
-                title: 'Gründung des Weinguts',
-                content:
-                  'Großvater Alessandro kauft den ersten Weinberg in den Hügeln von Barolo. Sechs Hektar Nebbiolo auf kalkhaltigem Boden.',
-              },
-              {
-                year: '1987',
-                title: 'Erste internationale Auszeichnung',
-                content:
-                  'Der Barolo Riserva erhält beim Concours Mondial in Brüssel die Goldmedaille — der Beginn einer langen Erfolgsgeschichte.',
-              },
-              {
-                year: '2005',
-                title: 'Umstellung auf biologischen Anbau',
-                content:
-                  'Komplette Umstellung aller Parzellen auf biologisch-dynamische Bewirtschaftung. Zertifizierung nach Demeter-Richtlinien.',
-              },
-              {
-                year: '2018',
-                title: 'Jahrgang des Jahrhunderts',
-                content:
-                  'Ein außergewöhnlich warmer Sommer mit perfekten Reifebedingungen. Der Barolo 2018 wird als bester Jahrgang seit 1990 gefeiert.',
-              },
-              {
-                year: '2024',
-                title: 'Direct-to-Consumer',
-                content:
-                  'Start des Online-Shops. Weine direkt ab Hof, ohne Zwischenhändler — die dritte Generation führt Tradition in die Digitalisierung.',
-              },
-            ]}
-          />
         </div>
       </Section>
 

@@ -9,7 +9,6 @@ import { FormInput } from '@components/form-input/form-input'
 import { FieldHint } from '@components/field-hint/field-hint'
 import { AutocompleteCell } from '@components/autocomplete-cell/autocomplete-cell'
 import { AnimatedSearch } from '@components/animated-search/animated-search'
-import { GooeyInput } from '@components/gooey-input/gooey-input'
 import { SearchMorph } from '@components/search-morph/search-morph'
 import { useImageUpload } from '@components/use-image-upload/use-image-upload'
 import { ImageUpload } from '@components/use-image-upload/image-upload'
@@ -404,16 +403,6 @@ export function InputsPage() {
             suggestions={suggestions}
             placeholder="Search frameworks..."
           />
-        </div>
-      </Section>
-
-      <Section title="GooeyInput" description="Icon-only circle that morphs into a full input via SVG-goo filter.">
-        <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-10">
-          <GooeyInput
-            placeholder="Weine durchsuchen..."
-            onSubmit={(v) => add({ title: 'Suche gestartet', description: `Suchen nach: "${v}"`, variant: 'default' })}
-          />
-          <p className="text-muted-foreground text-[0.7rem]">Esc zum Schließen · Enter zum Absenden</p>
         </div>
       </Section>
 

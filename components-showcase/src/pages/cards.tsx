@@ -1,18 +1,13 @@
 import { Section } from '../components/section'
 import { DemoTabs } from '../components/demo-tabs'
-import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
 import { ShapeCard, type CornerShape } from '@components/shape-card/shape-card'
 import { GlowCard } from '@components/glow-card/glow-card'
 import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
 import { MagneticButton } from '@components/magnetic-button/magnetic-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
-import { ClickSpark } from '@components/click-spark/click-spark'
 import { LightRays } from '@components/light-rays/light-rays'
-import { SplashCursor } from '@components/splash-cursor/splash-cursor'
 import { PixelImage } from '@components/pixel-image/pixel-image'
 import { Backlight } from '@components/backlight/backlight'
-import { AmbientImage } from '@components/ambient-image/ambient-image'
-import { RevealImage } from '@components/reveal-image/reveal-image'
 import { BounceCards } from '@components/bounce-cards/bounce-cards'
 import { Particles } from '@components/particles/particles'
 import { ParticlesCard } from '@components/particles/particles-card'
@@ -117,8 +112,6 @@ function CursorGlowDemo() {
 }
 
 export function CardsPage() {
-  const [splashOn, setSplashOn] = useState(false)
-
   const shapeVariants: { shape: CornerShape; label: string; sub: string; radius?: number }[] = [
     { shape: 'round',    label: 'round',    sub: 'classic ellipse' },
     { shape: 'squircle', label: 'squircle', sub: 'superellipse(2)' },
@@ -328,65 +321,39 @@ export function CardsPage() {
 
       </Section>
 
-      <Section title="Buttons" description="Magnetic and Add to cart: one tab per button component.">
-        <DemoTabs
-          tabs={[
-            {
-              value: 'magnetic',
-              label: 'Magnetic',
-              content: (
-                <div className="space-y-8">
-                  <p className="text-muted-foreground text-sm">Button that magnetically follows the cursor on hover.</p>
+      <Section title="MagneticButton" description="Button that magnetically follows the cursor on hover.">
+        <div className="space-y-8">
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Base Variants</p>
+            <div className="flex flex-wrap items-center gap-4">
+              <MagneticButton variant="primary">Primary</MagneticButton>
+              <MagneticButton variant="secondary">Secondary</MagneticButton>
+              <MagneticButton variant="outline">Outline</MagneticButton>
+              <MagneticButton variant="ghost">Ghost</MagneticButton>
+              <MagneticButton variant="default">Default</MagneticButton>
+              <MagneticButton variant="destructive">Destructive</MagneticButton>
+            </div>
+          </div>
 
-                  <div>
-                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Base Variants</p>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <MagneticButton variant="primary">Primary</MagneticButton>
-                      <MagneticButton variant="secondary">Secondary</MagneticButton>
-                      <MagneticButton variant="outline">Outline</MagneticButton>
-                      <MagneticButton variant="ghost">Ghost</MagneticButton>
-                      <MagneticButton variant="default">Default</MagneticButton>
-                      <MagneticButton variant="destructive">Destructive</MagneticButton>
-                    </div>
-                  </div>
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Animated – Call to Action</p>
+            <div className="flex flex-wrap items-center gap-4">
+              <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
+              <MagneticButton variant="glow">Glow Pulse</MagneticButton>
+              <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
+              <MagneticButton variant="beam">Border Beam</MagneticButton>
+            </div>
+          </div>
 
-                  <div>
-                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Animated – Call to Action</p>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
-                      <MagneticButton variant="glow">Glow Pulse</MagneticButton>
-                      <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
-                      <MagneticButton variant="beam">Border Beam</MagneticButton>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
-                      <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
-                      <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
-                    </div>
-                  </div>
-                </div>
-              ),
-            },
-            {
-              value: 'add-to-cart',
-              label: 'Add to cart',
-              content: (
-                <div className="space-y-8">
-                  <p className="text-muted-foreground text-sm">
-                    Cart roll-in animation with state feedback. The full shop flow with the cart badge is on the Shop page.
-                  </p>
-                  <div className="flex flex-wrap items-center gap-6">
-                    <AddToCartButton>Add to cart</AddToCartButton>
-                  </div>
-                </div>
-              ),
-            },
-          ]}
-        />
+          <div>
+            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
+            <div className="flex flex-wrap items-center gap-4">
+              <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
+              <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
+              <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
+            </div>
+          </div>
+        </div>
       </Section>
 
       <Section title="Hover3DCard" description="Cursor-tracking 3D tilt effect with glare overlay.">
@@ -444,27 +411,6 @@ export function CardsPage() {
             <p className="text-muted-foreground mt-1 text-sm">8° max, glare off</p>
           </Hover3DCard>
         </div>
-      </Section>
-
-      <Section title="ClickSpark" description="Spark burst effect contained within a box on click.">
-        <ClickSpark
-          sparkColor="var(--accent)"
-          sparkCount={10}
-          sparkRadius={25}
-          style={{
-            background: 'var(--card)',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            padding: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <p className="text-foreground pointer-events-none font-medium select-none">
-            Click anywhere in this box
-          </p>
-        </ClickSpark>
       </Section>
 
       <Section title="LightRays" description="WebGL light rays (ogl). Hover a bottle to reveal the effect.">
@@ -553,90 +499,6 @@ export function CardsPage() {
               />
             </Suspense>
           </div>
-        </div>
-      </Section>
-
-      <Section
-        title="SplashCursor"
-        description="Fullscreen WebGL fluid-simulation cursor effect. Toggle to test — performance-kritisch auf Mobile."
-      >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setSplashOn((v) => !v)}
-            className="border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground rounded-md border px-4 py-2 text-sm font-medium transition"
-          >
-            {splashOn ? 'Stop splash cursor' : 'Start splash cursor'}
-          </button>
-          <p className="text-muted-foreground text-xs">
-            {splashOn
-              ? 'Move the cursor anywhere on the page — the fluid reacts globally.'
-              : 'Click to activate the fullscreen fluid simulation overlay.'}
-          </p>
-        </div>
-        {splashOn && (
-          <SplashCursor
-            SIM_RESOLUTION={128}
-            DYE_RESOLUTION={1024}
-            SPLAT_RADIUS={0.2}
-            SPLAT_FORCE={6000}
-            CURL={3}
-          />
-        )}
-      </Section>
-
-      <Section title="Backlight" description="Animated gradient glow behind images or content. interactive=true lässt den primären Blob dem Cursor folgen.">
-        <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
-          <Backlight intensity={0.45} blur={50}>
-            <div
-              style={{
-                background: 'var(--card)',
-                border: '1px solid var(--border)',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                height: '200px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <p className="text-foreground font-medium">Accent glow (auto)</p>
-            </div>
-          </Backlight>
-          <Backlight color="#f43f5e" blobs={4} intensity={0.35} blur={40}>
-            <div
-              style={{
-                background: 'var(--card)',
-                border: '1px solid var(--border)',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                height: '200px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <p className="text-foreground font-medium">Rose, 4 blobs</p>
-            </div>
-          </Backlight>
-          <Backlight color="#10b981" blobs={3} intensity={0.4} blur={55} interactive>
-            <div
-              style={{
-                background: 'var(--card)',
-                border: '1px solid var(--border)',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                height: '200px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <p className="text-foreground font-medium">interactive=true</p>
-              <p className="text-muted-foreground text-xs">Hover, um den Glow zu bewegen</p>
-            </div>
-          </Backlight>
         </div>
       </Section>
 
@@ -753,85 +615,6 @@ export function CardsPage() {
               height: '220px',
               border: '1px solid var(--border)',
             }}
-          />
-        </div>
-      </Section>
-
-      <Section title="RevealImage" description="Editorial curtain reveal — clip-path wipe mit Gegen-Zoom beim Scroll-In. Vier Wipe-Richtungen." canReload>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&q=80"
-              alt="Rotweinglas im Streiflicht"
-              direction="up"
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;up&quot;</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=600&q=80"
-              alt="Weinflaschen im Regal"
-              direction="right"
-              delay={150}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;right&quot; · delay 150</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80"
-              alt="Weinberg am Hang"
-              direction="down"
-              delay={300}
-              duration={1600}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;down&quot; · 1600ms</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&q=80"
-              alt="Reife Trauben am Stock"
-              direction="left"
-              delay={450}
-              zoom={1.25}
-              once={false}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;left&quot; · zoom 1.25 · once=false</span>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="AmbientImage" description="Ambilight-style glow extracted from image edge colors – like LED TV backlighting.">
-        <div className="grid grid-cols-3 gap-12" style={{ padding: '40px 20px' }}>
-          <AmbientImage
-            src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=400&q=80"
-            alt="Weinflaschen"
-            blur={45}
-            intensity={0.55}
-            spread={25}
-            borderRadius="14px"
-            style={{ width: '100%', aspectRatio: '3/4' }}
-          />
-          <AmbientImage
-            src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80"
-            alt="Rotwein Glas"
-            blur={50}
-            intensity={0.7}
-            spread={30}
-            borderRadius="14px"
-            style={{ width: '100%', aspectRatio: '3/4' }}
-          />
-          <AmbientImage
-            src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&q=80"
-            alt="Weinberg"
-            blur={40}
-            intensity={0.5}
-            spread={20}
-            borderRadius="14px"
-            style={{ width: '100%', aspectRatio: '3/4' }}
           />
         </div>
       </Section>

@@ -1,9 +1,5 @@
 import { Section } from '../components/section'
 import {
-  SunIcon, MoonIcon, CloudIcon, RainIcon, HeavyRainIcon, SnowIcon,
-  ThunderIcon, WindIcon, FogIcon, PartlyCloudyIcon, SunriseIcon, RainbowIcon,
-} from '@components/animated-weather-icons/animated-weather-icons'
-import {
   HomeIcon, SearchToXIcon, MenuIcon, MenuAltIcon,
   FilterIcon, NotificationIcon, VisibilityIcon,
   CheckmarkIcon, CopyIcon, LoadingIcon, MaximizeMinimizeIcon,
@@ -11,25 +7,10 @@ import {
   SunIconCss, MoonIconCss, StarIconCss, WineIconCss, HeartIconCss, Heart3DIconCss,
 } from '@components/animated-icons/animated-icons'
 
-export function IconsPage() {
+/** Rendered at the end of the "Effekte" route (/cards); /icons redirects there. */
+export function IconsSections() {
   return (
     <>
-      <Section title="AnimatedWeatherIcons" description="12 animated SVG weather icons with framer-motion.">
-        <div className="border-border bg-card grid grid-cols-6 gap-4 rounded-xl border p-6 shadow-sm">
-          {([
-            ['Sun', SunIcon], ['Moon', MoonIcon], ['Cloud', CloudIcon],
-            ['Rain', RainIcon], ['Heavy Rain', HeavyRainIcon], ['Snow', SnowIcon],
-            ['Thunder', ThunderIcon], ['Wind', WindIcon], ['Fog', FogIcon],
-            ['Partly Cloudy', PartlyCloudyIcon], ['Sunrise', SunriseIcon], ['Rainbow', RainbowIcon],
-          ] as const).map(([label, Icon]) => (
-            <div key={label} className="flex flex-col items-center gap-1.5">
-              <Icon size={40} />
-              <span className="text-muted-foreground text-center text-[0.625rem] leading-tight">{label}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       <Section title="AnimatedIcons" description="Lottie-based animated icons and CSS-animated SVG icons.">
         <div className="flex flex-col gap-8">
           <div>

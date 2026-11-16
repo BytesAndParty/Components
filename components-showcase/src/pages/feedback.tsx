@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Section } from '../components/section'
 import { useToast } from '@components/toast/toast-context'
 import { PricingInteraction } from '@components/pricing-interaction/pricing-interaction'
-import { Rating } from '@components/rating/rating'
 import { ConfettiButton, ConfettiRain } from '@components/confetti/confetti'
 import { HeartLike } from '@components/heart-like/heart-like'
 import { Countdown } from '@components/countdown/countdown'
@@ -67,7 +66,8 @@ function CircularProgressDemo() {
   )
 }
 
-export function FeedbackPage() {
+/** Rendered after the inputs on the "Formulare & Feedback" route (/inputs); /feedback redirects there. */
+export function FeedbackSections() {
   const [raining, setRaining] = useState(false)
   // Urlaub am 14. September 2026
   const [countdownTarget] = useState(() => new Date('2026-09-14T00:00:00').getTime())
@@ -98,10 +98,6 @@ export function FeedbackPage() {
             { label: 'Express', description: '2-3 Werktage', price: 9.99, badge: 'Beliebt' },
           ]}
         />
-      </Section>
-
-      <Section title="Rating" description="Star rating component with hover preview and pop animation.">
-        <Rating size={28} defaultValue={4} activeColor="#f59e0b" />
       </Section>
 
       <Section title="HeartLike" description="Favorite heart with pop-in fill and spark burst.">

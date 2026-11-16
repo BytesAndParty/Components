@@ -8,6 +8,7 @@ import { CartIcon } from '@components/cart-icon/cart-icon'
 import { FloatingCart, type FloatingCartItem } from '@components/floating-cart/floating-cart'
 import {
   Navbar, NavbarSection, NavbarItem,
+  NavbarDropdown, NavbarDropdownItem,
   NavbarDivider, NavbarMobileToggle, NavbarMobileMenu,
   NavbarDesktopOnly,
 } from '@components/navbar/navbar'
@@ -39,6 +40,7 @@ export function Layout() {
   const [cartItems, setCartItems] = useState<FloatingCartItem[]>([])
 
   const cartCount = cartItems.reduce((sum, item) => sum + (item.count ?? 1), 0)
+  const toolGroups = groups.filter(g => 'menu' in g)
 
   function addItem(item?: { id: string; label?: string; image?: string }) {
     const id = item?.id ?? `wine-${Date.now()}`
@@ -107,15 +109,37 @@ export function Layout() {
 
           <NavbarDesktopOnly>
             <NavbarSection position="center">
-              {groups.map(g => (
-                <NavbarItem
-                  key={g.path}
-                  active={location.pathname === g.path}
-                  onClick={() => navigate(g.path)}
-                >
-                  {t(g.titleKey)}
-                </NavbarItem>
-              ))}
+              {groups.map(g => {
+                if (!('menu' in g)) {
+                  return (
+                    <NavbarItem
+                      key={g.path}
+                      active={location.pathname === g.path}
+                      onClick={() => navigate(g.path)}
+                    >
+                      {t(g.titleKey)}
+                    </NavbarItem>
+                  )
+                }
+                // The tool pages share one dropdown, placed where the first of them sits in `groups`.
+                if (g !== toolGroups[0]) return null
+                const toolActive = toolGroups.some(tool => tool.path === location.pathname)
+                return (
+                  <NavbarDropdown
+                    key="tools"
+                    id="tools"
+                    trigger={toolActive
+                      ? <span className="text-foreground font-semibold">{t('nav.tools')}</span>
+                      : t('nav.tools')}
+                  >
+                    {toolGroups.map(tool => (
+                      <NavbarDropdownItem key={tool.path} onClick={() => navigate(tool.path)}>
+                        {t(tool.titleKey)}
+                      </NavbarDropdownItem>
+                    ))}
+                  </NavbarDropdown>
+                )
+              })}
             </NavbarSection>
           </NavbarDesktopOnly>
 

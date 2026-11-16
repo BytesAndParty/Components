@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider, useLocation, useNavigationType } from 'react-router'
+import { createBrowserRouter, Navigate, RouterProvider, useLocation, useNavigationType } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HotkeysProvider } from '@components/hotkeys/hotkeys-provider'
 import { AtelierProvider } from '@components/atelier'
@@ -14,15 +14,17 @@ import { WineDetailPage } from './pages/wine-detail'
 import { NotFoundPage, RouteErrorPage } from './pages/error-pages'
 
 // Route-level code splitting for non-critical pages
-const TextPage        = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
-const IconsPage       = lazy(() => import('./pages/icons').then(m => ({ default: m.IconsPage })))
-const InputsPage      = lazy(() => import('./pages/inputs').then(m => ({ default: m.InputsPage })))
-const FeedbackPage    = lazy(() => import('./pages/feedback').then(m => ({ default: m.FeedbackPage })))
-const NavigationPage  = lazy(() => import('./pages/navigation').then(m => ({ default: m.NavigationPage })))
-const ShopPage        = lazy(() => import('./pages/shop').then(m => ({ default: m.ShopPage })))
-const TransitionsPage = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsPage })))
-const DesignerPage    = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
-const DataPage        = lazy(() => import('./pages/data').then(m => ({ default: m.DataPage })))
+const Buchart58Page       = lazy(() => import('./pages/buchart58').then(m => ({ default: m.Buchart58Page })))
+const TextPage            = lazy(() => import('./pages/text').then(m => ({ default: m.TextPage })))
+const IconsSections       = lazy(() => import('./pages/icons').then(m => ({ default: m.IconsSections })))
+const InputsPage          = lazy(() => import('./pages/inputs').then(m => ({ default: m.InputsPage })))
+const FeedbackSections    = lazy(() => import('./pages/feedback').then(m => ({ default: m.FeedbackSections })))
+const NavigationPage      = lazy(() => import('./pages/navigation').then(m => ({ default: m.NavigationPage })))
+const ShopPage            = lazy(() => import('./pages/shop').then(m => ({ default: m.ShopPage })))
+const TransitionsSections = lazy(() => import('./pages/transitions').then(m => ({ default: m.TransitionsSections })))
+const DesignerPage        = lazy(() => import('./pages/designer').then(m => ({ default: m.DesignerPage })))
+const DataPage            = lazy(() => import('./pages/data').then(m => ({ default: m.DataPage })))
+const LaborPage           = lazy(() => import('./pages/labor').then(m => ({ default: m.LaborPage })))
 
 const queryClient = new QueryClient()
 
@@ -64,16 +66,19 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorPage />,
     children: [
       { index: true,           element: <IndexPage /> },
-      { path: 'cards',         element: <CardsPage /> },
+      { path: 'buchart58',     element: withSuspense(<Buchart58Page />) },
+      // Merged pages: each route renders the old page bodies one after another.
+      { path: 'cards',         element: <><CardsPage />{withSuspense(<IconsSections />)}</> },
       { path: 'text',          element: withSuspense(<TextPage />) },
-      { path: 'icons',         element: withSuspense(<IconsPage />) },
-      { path: 'inputs',        element: withSuspense(<InputsPage />) },
-      { path: 'feedback',      element: withSuspense(<FeedbackPage />) },
-      { path: 'navigation',    element: withSuspense(<NavigationPage />) },
+      { path: 'inputs',        element: withSuspense(<><InputsPage /><FeedbackSections /></>) },
+      { path: 'navigation',    element: withSuspense(<><NavigationPage /><TransitionsSections /></>) },
       { path: 'shop',          element: withSuspense(<ShopPage />) },
       { path: 'data',          element: withSuspense(<DataPage />) },
-      { path: 'transitions',   element: withSuspense(<TransitionsPage />) },
       { path: 'designer',      element: withSuspense(<DesignerPage />) },
+      { path: 'labor',         element: withSuspense(<LaborPage />) },
+      { path: 'icons',         element: <Navigate to="/cards" replace /> },
+      { path: 'feedback',      element: <Navigate to="/inputs" replace /> },
+      { path: 'transitions',   element: <Navigate to="/navigation" replace /> },
       { path: 'wine/:slug',    element: <WineDetailPage /> },
       { path: '*',             element: <NotFoundPage /> },
     ],

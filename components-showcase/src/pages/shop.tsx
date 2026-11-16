@@ -4,8 +4,6 @@ import { Stepper, Step } from '@components/stepper/stepper'
 import { VerticalStepper, VerticalStep, StepList, StepListItem } from '@components/stepper/stepper-vertical'
 import { CartIcon } from '@components/cart-icon/cart-icon'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { ProductTag, ProductTagGroup, type ProductTagVariant } from '@components/product-tag/product-tag'
-import { BookingCalendar, type BookingSlot } from '@components/booking-calendar/booking-calendar'
 import {
   Carousel,
   CarouselContent,
@@ -52,55 +50,8 @@ export function ShopPage() {
     { id: 'brunello', name: 'Brunello DOCG 2017', price: '€ 55,00' },
   ]
 
-  const tagVariants: ProductTagVariant[] = ['new', 'sale', 'low-stock', 'bestseller', 'limited', 'organic', 'vegan', 'award']
-
-  // Dummy-Slots relativ zu heute, damit der Kalender im aktuellen Monat Termine zeigt.
-  const isoDay = (offset: number) => {
-    const d = new Date()
-    d.setDate(d.getDate() + offset)
-    return d.toISOString().slice(0, 10)
-  }
-  const bookingSlots: BookingSlot[] = [
-    { id: 'b1', date: isoDay(3), time: '15:00', capacity: 6, price: 45 },
-    { id: 'b2', date: isoDay(3), time: '17:30', capacity: 4, price: 45 },
-    { id: 'b3', date: isoDay(10), time: '16:00', capacity: 8, price: 45 },
-    { id: 'b4', date: isoDay(17), time: '11:00', capacity: 12, price: 35 },
-  ]
-
   return (
     <>
-      <Section title="Booking Calendar" description="Datengetriebener Termin-Picker auf Ark UI DatePicker: buchbare Tage aktiv, Rest deaktiviert → Uhrzeit-Chips → Gäste → Absenden. Slots als Prop, onSubmit app-seitig (hier Dummy). i18n DE/EN, semantische Tokens.">
-        <div className="mx-auto max-w-2xl">
-          <BookingCalendar
-            slots={bookingSlots}
-            onSubmit={({ slotId, guests }) => {
-              add({ title: 'Anfrage gesendet', description: `Slot ${slotId} · ${guests} Gäste`, variant: 'success' })
-            }}
-          />
-        </div>
-      </Section>
-
-      <Section title="Product Tag" description="Pill-Badges für Produktkarten: Entrance-Pop, Shimmer-Sweep beim Hover, Puls-Dot bei knappem Bestand. 8 Varianten, i18n-Labels, reduced-motion-safe.">
-        <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8 shadow-sm">
-          <ProductTagGroup>
-            {tagVariants.map((v) => (
-              <ProductTag key={v} variant={v} />
-            ))}
-          </ProductTagGroup>
-          <div className="border-border flex flex-wrap items-center gap-4 border-t pt-5">
-            <span className="text-muted-foreground text-xs">Sale mit Rabatt-Override:</span>
-            <ProductTag variant="sale" discount={20} />
-            <ProductTag variant="sale" discount={33} />
-            <span className="text-muted-foreground ml-4 text-xs">Custom Label:</span>
-            <ProductTag variant="award" label="Falstaff 95" />
-          </div>
-          <div className="border-border text-muted-foreground flex justify-between border-t pt-3 text-[0.7rem]">
-            <span>ProductTag · injected keyframes · prefers-reduced-motion aware</span>
-            <span>No dependencies</span>
-          </div>
-        </div>
-      </Section>
-
       <Section title="Carousel" description="Produktgalerie auf Embla: Wischen, Pfeiltasten, Pfeil-Buttons und Thumbs. Pfeile mit 46-px-Trefferfläche, unter sm innerhalb der Slides. Auf Mobile nur ausblenden, wenn Thumbs oder Punkte da sind: Wischen allein erfüllt WCAG 2.5.1 nicht.">
         <div className="flex flex-col gap-10">
           <div className="border-border bg-card rounded-xl border p-6 shadow-sm sm:px-20">

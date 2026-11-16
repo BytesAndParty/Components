@@ -270,7 +270,8 @@ function TransitionsDemo() {
   )
 }
 
-export function TransitionsPage() {
+/** Rendered after the navigation demos on the "Navigation & Layout" route (/navigation); /transitions redirects there. */
+export function TransitionsSections() {
   return (
     <>
       <header className="mb-10">
