@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Section } from '../components/section'
+import { VariantDemo, type VariantOption } from '../components/variant-demo'
 import { useToast } from '@components/toast/toast-context'
 import { AddToCartButton } from '@components/add-to-cart-button/add-to-cart-button'
-import { ProductTag, ProductTagGroup, type ProductTagVariant } from '@components/product-tag/product-tag'
+import { ProductTag, type ProductTagVariant } from '@components/product-tag/product-tag'
 import { Rating } from '@components/rating/rating'
 import { BookingCalendar, type BookingSlot } from '@components/booking-calendar/booking-calendar'
 import { AmbientImage } from '@components/ambient-image/ambient-image'
 import { Backlight } from '@components/backlight/backlight'
-import { RevealImage } from '@components/reveal-image/reveal-image'
+import { RevealImage, type RevealImageProps } from '@components/reveal-image/reveal-image'
 import { BlurFade } from '@components/blur-fade/blur-fade'
 import { ShinyText, ShinyButton } from '@components/shiny-text/shiny-text'
 import { Timeline } from '@components/timeline/timeline'
@@ -70,6 +71,24 @@ function NumberInputDemo() {
   )
 }
 
+// ── RevealImage ───────────────────────────────────────────────────────────────
+
+type RevealDirection = NonNullable<RevealImageProps['direction']>
+
+const REVEAL_OPTIONS: VariantOption<RevealDirection>[] = [
+  { value: 'up', label: 'up', snippet: 'direction="up" · Default' },
+  { value: 'right', label: 'right', snippet: 'direction="right" · delay={150}' },
+  { value: 'down', label: 'down', snippet: 'direction="down" · delay={300} · duration={1600}' },
+  { value: 'left', label: 'left', snippet: 'direction="left" · delay={450} · zoom={1.25} · once={false}' },
+]
+
+const REVEAL_PROPS: Record<RevealDirection, Omit<RevealImageProps, 'direction'>> = {
+  up: { src: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&q=80', alt: 'Rotweinglas im Streiflicht' },
+  right: { src: 'https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=600&q=80', alt: 'Weinflaschen im Regal', delay: 150 },
+  down: { src: 'https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80', alt: 'Weinberg am Hang', delay: 300, duration: 1600 },
+  left: { src: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&q=80', alt: 'Reife Trauben am Stock', delay: 450, zoom: 1.25, once: false },
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 /** Exactly the components the Buchart58 shop imports; their demos live only on this page. */
@@ -109,18 +128,37 @@ export function Buchart58Page() {
 
       <Section title="Product Tag" description="Pill-Badges für Produktkarten: Entrance-Pop, Shimmer-Sweep beim Hover, Puls-Dot bei knappem Bestand. 8 Varianten, i18n-Labels, reduced-motion-safe.">
         <div className="border-border bg-card flex flex-col gap-6 rounded-xl border p-8 shadow-sm">
-          <ProductTagGroup>
-            {tagVariants.map((v) => (
-              <ProductTag key={v} variant={v} />
-            ))}
-          </ProductTagGroup>
-          <div className="border-border flex flex-wrap items-center gap-4 border-t pt-5">
-            <span className="text-muted-foreground text-xs">Sale mit Rabatt-Override:</span>
-            <ProductTag variant="sale" discount={20} />
-            <ProductTag variant="sale" discount={33} />
-            <span className="text-muted-foreground ml-4 text-xs">Custom Label:</span>
-            <ProductTag variant="award" label="Falstaff 95" />
-          </div>
+          <VariantDemo
+            options={tagVariants.map(v => ({ value: v, label: v, snippet: `variant="${v}"` }))}
+            secondary={variant =>
+              variant === 'sale'
+                ? {
+                    label: 'discount',
+                    options: [
+                      { value: 'none', label: 'ohne' },
+                      { value: '20', label: '20 %', snippet: 'discount={20}' },
+                      { value: '33', label: '33 %', snippet: 'discount={33}' },
+                    ],
+                  }
+                : variant === 'award'
+                  ? {
+                      label: 'label',
+                      options: [
+                        { value: 'none', label: 'Standard' },
+                        { value: 'falstaff', label: 'Falstaff 95', snippet: 'label="Falstaff 95"' },
+                      ],
+                    }
+                  : undefined
+            }
+            className="min-h-16"
+            render={(variant, override) => (
+              <ProductTag
+                variant={variant}
+                discount={override === '20' || override === '33' ? Number(override) : undefined}
+                label={override === 'falstaff' ? 'Falstaff 95' : undefined}
+              />
+            )}
+          />
           <div className="border-border text-muted-foreground flex justify-between border-t pt-3 text-[0.7rem]">
             <span>ProductTag · injected keyframes · prefers-reduced-motion aware</span>
             <span>No dependencies</span>
@@ -232,50 +270,18 @@ export function Buchart58Page() {
       </Section>
 
       <Section title="RevealImage" description="Editorial curtain reveal — clip-path wipe mit Gegen-Zoom beim Scroll-In. Vier Wipe-Richtungen." canReload>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <div className="flex flex-col gap-2">
+        <VariantDemo
+          label="direction"
+          options={REVEAL_OPTIONS}
+          className="min-h-86"
+          render={direction => (
             <RevealImage
-              src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&q=80"
-              alt="Rotweinglas im Streiflicht"
-              direction="up"
-              className="aspect-3/4 rounded-xl"
+              {...REVEAL_PROPS[direction]}
+              direction={direction}
+              className="aspect-3/4 w-64 rounded-xl"
             />
-            <span className="text-muted-foreground text-xs">direction=&quot;up&quot;</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1643087448435-72f70bd4ce88?w=600&q=80"
-              alt="Weinflaschen im Regal"
-              direction="right"
-              delay={150}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;right&quot; · delay 150</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80"
-              alt="Weinberg am Hang"
-              direction="down"
-              delay={300}
-              duration={1600}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;down&quot; · 1600ms</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <RevealImage
-              src="https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&q=80"
-              alt="Reife Trauben am Stock"
-              direction="left"
-              delay={450}
-              zoom={1.25}
-              once={false}
-              className="aspect-3/4 rounded-xl"
-            />
-            <span className="text-muted-foreground text-xs">direction=&quot;left&quot; · zoom 1.25 · once=false</span>
-          </div>
-        </div>
+          )}
+        />
       </Section>
 
       <Section title="BlurFade" description="Viewport-Einblend-Wrapper mit Blur + Opacity-Transition via IntersectionObserver." canReload>

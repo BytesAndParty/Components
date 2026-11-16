@@ -1,9 +1,10 @@
 import { Section } from '../components/section'
 import { DemoTabs } from '../components/demo-tabs'
+import { VariantDemo, type VariantOption } from '../components/variant-demo'
 import { ShapeCard, type CornerShape } from '@components/shape-card/shape-card'
 import { GlowCard } from '@components/glow-card/glow-card'
 import { RotatingGlowCard } from '@components/glow-card/rotating-glow-card'
-import { MagneticButton } from '@components/magnetic-button/magnetic-button'
+import { MagneticButton, type MagneticButtonVariant } from '@components/magnetic-button/magnetic-button'
 import { Hover3DCard } from '@components/hover-3d-card/hover-3d-card'
 import { LightRays } from '@components/light-rays/light-rays'
 import { PixelImage } from '@components/pixel-image/pixel-image'
@@ -35,6 +36,34 @@ const DEMO_LABEL_SRC = `data:image/svg+xml,${encodeURIComponent(`
     <text x="285" y="640" font-size="44" letter-spacing="10">2023</text>
   </g>
 </svg>`)}`
+
+/* ── Variant switchers ──────────────────────────────────── */
+
+const GLOW_DURATIONS: VariantOption[] = [
+  { value: '1.5', label: 'Fast (1.5s)', snippet: 'duration={1.5}' },
+  { value: '3', label: 'Full gradient (3s)', snippet: 'duration={3} · Default' },
+  { value: '6', label: 'Slow (6s)', snippet: 'duration={6}' },
+  { value: '14', label: 'Very slow (14s)', snippet: 'duration={14}' },
+]
+
+const MAGNETIC_VARIANTS: VariantOption<MagneticButtonVariant>[] = [
+  { value: 'primary', label: 'Primary', snippet: 'variant="primary"' },
+  { value: 'secondary', label: 'Secondary', snippet: 'variant="secondary"' },
+  { value: 'outline', label: 'Outline', snippet: 'variant="outline"' },
+  { value: 'ghost', label: 'Ghost', snippet: 'variant="ghost"' },
+  { value: 'default', label: 'Default', snippet: 'variant="default" · Default' },
+  { value: 'destructive', label: 'Destructive', snippet: 'variant="destructive"' },
+  { value: 'shimmer', label: 'Shimmer CTA', snippet: 'variant="shimmer" · animiert' },
+  { value: 'glow', label: 'Glow Pulse', snippet: 'variant="glow" · animiert' },
+  { value: 'gradient', label: 'Gradient Flow', snippet: 'variant="gradient" · animiert' },
+  { value: 'beam', label: 'Border Beam', snippet: 'variant="beam" · animiert' },
+]
+
+const MAGNETIC_STRENGTHS: VariantOption[] = [
+  { value: '0.1', label: 'Subtle', snippet: 'strength={0.1}' },
+  { value: '0.3', label: 'Default', snippet: 'strength={0.3} · Default' },
+  { value: '0.6', label: 'Strong', snippet: 'strength={0.6}' },
+]
 
 /* ── ShapeCard helpers ──────────────────────────────────── */
 
@@ -132,56 +161,66 @@ export function CardsPage() {
               value: 'corners',
               label: 'Corner shapes',
               content: (
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-                  {shapeVariants.map((v, i) => (
-                    <ShapeCard key={v.shape} shape={v.shape} radius={v.radius ?? 48} hoverLift={false}>
-                      <div
-                        style={{
-                          position: 'relative',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          aspectRatio: '3 / 4',
-                          background:
-                            'radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 65%)',
-                        }}
-                      >
+                <VariantDemo
+                  label="shape"
+                  options={shapeVariants.map(v => ({
+                    value: v.shape,
+                    label: v.label,
+                    snippet: `shape="${v.shape}" · radius={${v.radius ?? 48}}`,
+                  }))}
+                  render={shape => {
+                    const i = shapeVariants.findIndex(v => v.shape === shape)
+                    const v = shapeVariants[i]
+                    return (
+                      <ShapeCard shape={v.shape} radius={v.radius ?? 48} hoverLift={false} className="w-56">
                         <div
                           style={{
-                            flex: 1,
-                            display: 'grid',
-                            placeItems: 'center',
-                            padding: '1.25rem 1rem 0.5rem',
+                            position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            aspectRatio: '3 / 4',
+                            background:
+                              'radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 65%)',
                           }}
                         >
-                          <img
-                            src={i % 2 === 0 ? '/wine-default.png' : '/white-wine-default.png'}
-                            alt={v.label}
+                          <div
                             style={{
-                              maxHeight: '100%',
-                              maxWidth: '70%',
-                              objectFit: 'contain',
-                              filter: 'drop-shadow(0 14px 22px oklch(0 0 0 / 0.35))',
+                              flex: 1,
+                              display: 'grid',
+                              placeItems: 'center',
+                              padding: '1.25rem 1rem 0.5rem',
                             }}
-                          />
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '0 1rem 1.25rem' }}>
-                          <p
-                            className="text-foreground font-bold"
-                            style={{ fontSize: '0.9375rem', margin: 0, letterSpacing: '-0.01em' }}
                           >
-                            {v.label}
-                          </p>
-                          <p
-                            className="text-muted-foreground"
-                            style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 4 }}
-                          >
-                            {v.sub}
-                          </p>
+                            <img
+                              src={i % 2 === 0 ? '/wine-default.png' : '/white-wine-default.png'}
+                              alt={v.label}
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '70%',
+                                objectFit: 'contain',
+                                filter: 'drop-shadow(0 14px 22px oklch(0 0 0 / 0.35))',
+                              }}
+                            />
+                          </div>
+                          <div style={{ textAlign: 'center', padding: '0 1rem 1.25rem' }}>
+                            <p
+                              className="text-foreground font-bold"
+                              style={{ fontSize: '0.9375rem', margin: 0, letterSpacing: '-0.01em' }}
+                            >
+                              {v.label}
+                            </p>
+                            <p
+                              className="text-muted-foreground"
+                              style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 4 }}
+                            >
+                              {v.sub}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </ShapeCard>
-                  ))}
-                </div>
+                      </ShapeCard>
+                    )
+                  }}
+                />
               ),
             },
             {
@@ -300,60 +339,35 @@ export function CardsPage() {
       </Section>
 
       <Section title="RotatingGlowCard" description="Card with an animated rotating glow border.">
-        <RotatingGlowCard>
-          <p className="text-foreground font-medium">Full gradient (3s)</p>
-          <p className="text-muted-foreground mt-2 text-sm">
-            A conic-gradient rotates behind the card — only the border glow is visible.
-          </p>
-        </RotatingGlowCard>
-
-        <div className="mt-4 flex gap-4">
-          <RotatingGlowCard duration={1.5} className="flex-1">
-            <p className="text-foreground text-[0.8125rem] font-medium">Fast (1.5s)</p>
-          </RotatingGlowCard>
-          <RotatingGlowCard duration={6} className="flex-1">
-            <p className="text-foreground text-[0.8125rem] font-medium">Slow (6s)</p>
-          </RotatingGlowCard>
-          <RotatingGlowCard duration={14} className="flex-1">
-            <p className="text-foreground text-[0.8125rem] font-medium">Very slow (14s)</p>
-          </RotatingGlowCard>
-        </div>
-
+        <VariantDemo
+          label="duration"
+          options={GLOW_DURATIONS}
+          defaultValue="3"
+          className="block min-h-0"
+          render={duration => (
+            <RotatingGlowCard duration={Number(duration)}>
+              <p className="text-foreground font-medium">
+                {GLOW_DURATIONS.find(o => o.value === duration)?.label}
+              </p>
+              <p className="text-muted-foreground mt-2 text-sm">
+                A conic-gradient rotates behind the card — only the border glow is visible.
+              </p>
+            </RotatingGlowCard>
+          )}
+        />
       </Section>
 
       <Section title="MagneticButton" description="Button that magnetically follows the cursor on hover.">
-        <div className="space-y-8">
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Base Variants</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="primary">Primary</MagneticButton>
-              <MagneticButton variant="secondary">Secondary</MagneticButton>
-              <MagneticButton variant="outline">Outline</MagneticButton>
-              <MagneticButton variant="ghost">Ghost</MagneticButton>
-              <MagneticButton variant="default">Default</MagneticButton>
-              <MagneticButton variant="destructive">Destructive</MagneticButton>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Animated – Call to Action</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="shimmer">Shimmer CTA</MagneticButton>
-              <MagneticButton variant="glow">Glow Pulse</MagneticButton>
-              <MagneticButton variant="gradient">Gradient Flow</MagneticButton>
-              <MagneticButton variant="beam">Border Beam</MagneticButton>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs tracking-widest uppercase">Magnetic strength</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton variant="primary" strength={0.1}>Subtle (0.1)</MagneticButton>
-              <MagneticButton variant="primary" strength={0.3}>Default (0.3)</MagneticButton>
-              <MagneticButton variant="primary" strength={0.6}>Strong (0.6)</MagneticButton>
-            </div>
-          </div>
-        </div>
+        <VariantDemo
+          options={MAGNETIC_VARIANTS}
+          secondary={{ label: 'strength', options: MAGNETIC_STRENGTHS, defaultValue: '0.3' }}
+          className="min-h-24"
+          render={(variant, strength) => (
+            <MagneticButton variant={variant} strength={Number(strength)}>
+              {MAGNETIC_VARIANTS.find(o => o.value === variant)?.label}
+            </MagneticButton>
+          )}
+        />
       </Section>
 
       <Section title="Hover3DCard" description="Cursor-tracking 3D tilt effect with glare overlay.">

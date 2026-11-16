@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Section } from '../components/section'
+import { VariantDemo, type VariantOption } from '../components/variant-demo'
 import {
   Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink,
   BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis,
@@ -8,7 +9,7 @@ import { AccentSwitcher } from '@components/accent-switcher/accent-switcher'
 import { AnimatedThemeToggler } from '@components/animated-theme-toggler/animated-theme-toggler'
 import { Footer } from '@components/footer-section/footer-section'
 import { Banner, BannerLink } from '@components/banner/banner'
-import { StickyBanner } from '@components/sticky-banner/sticky-banner'
+import { StickyBanner, type StickyBannerVariant } from '@components/sticky-banner/sticky-banner'
 import { Countdown } from '@components/countdown/countdown'
 import {
   Navbar as NavbarComponent, NavbarSection, NavbarItem, NavbarLogo,
@@ -18,6 +19,19 @@ import {
 import { Dock, DockItem } from '@components/dock/dock'
 import { FileTree, Folder, File } from '@components/file-tree/file-tree'
 import { palettes } from '../data'
+
+const STICKY_VARIANTS: VariantOption<StickyBannerVariant>[] = [
+  { value: 'accent', label: 'accent', snippet: 'variant="accent" · Default · action={<Countdown />} · dismissible' },
+  { value: 'neutral', label: 'neutral', snippet: 'variant="neutral" · dismissible={false}' },
+  { value: 'warning', label: 'warning', snippet: 'variant="warning" · dismissible={false}' },
+  { value: 'danger', label: 'danger', snippet: 'variant="danger" · dismissible={false}' },
+]
+
+const STICKY_TEXTS: Record<Exclude<StickyBannerVariant, 'accent'>, string> = {
+  neutral: 'Neutraler Hinweis – passt sich Theme an',
+  warning: 'Wartungsfenster: Heute 22:00 Uhr',
+  danger: 'Störung: Checkout derzeit nicht verfügbar',
+}
 
 export function NavigationPage() {
   // Pin the StickyBanner demo's countdown target to mount-time so it
@@ -41,58 +55,43 @@ export function NavigationPage() {
 
       <Section title="StickyBanner" description="Sticky, dismissable banner with gradient variants, localStorage persistence, and an action slot (e.g. for an inline Countdown).">
         <div className="flex flex-col gap-6">
-          <div className="border-border bg-card overflow-hidden rounded-xl border">
-            <div className="max-h-80 overflow-y-auto">
-              <StickyBanner
-                variant="accent"
-                action={
-                  <Countdown
-                    target={countdownTarget}
-                    hideLeadingZeros
-                    size="sm"
-                    transparent
-                    labels={{ hours: 'Std', minutes: 'Min', seconds: 'Sek' }}
-                  />
-                }
-              >
-                <strong>Flash Sale:</strong> -20 % auf alle Rotweine — endet in
-              </StickyBanner>
-              <div className="space-y-4 p-8">
-                {[...Array(12)].map((_, i) => (
-                  <p key={i} className="text-muted-foreground text-sm">
-                    Scroll-Content Zeile {i + 1} — der Banner bleibt oben kleben, während dieser Container scrollt.
-                  </p>
-                ))}
+          <VariantDemo
+            options={STICKY_VARIANTS}
+            className="block min-h-0"
+            render={variant => (
+              <div className="border-border bg-card overflow-hidden rounded-xl border">
+                <div className="max-h-80 overflow-y-auto">
+                  {variant === 'accent' ? (
+                    <StickyBanner
+                      variant="accent"
+                      action={
+                        <Countdown
+                          target={countdownTarget}
+                          hideLeadingZeros
+                          size="sm"
+                          transparent
+                          labels={{ hours: 'Std', minutes: 'Min', seconds: 'Sek' }}
+                        />
+                      }
+                    >
+                      <strong>Flash Sale:</strong> -20 % auf alle Rotweine — endet in
+                    </StickyBanner>
+                  ) : (
+                    <StickyBanner variant={variant} dismissible={false}>
+                      {STICKY_TEXTS[variant]}
+                    </StickyBanner>
+                  )}
+                  <div className="space-y-4 p-8">
+                    {[...Array(12)].map((_, i) => (
+                      <p key={i} className="text-muted-foreground text-sm">
+                        Scroll-Content Zeile {i + 1} — der Banner bleibt oben kleben, während dieser Container scrollt.
+                      </p>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="border-border bg-card overflow-hidden rounded-xl border">
-              <div className="max-h-40 overflow-y-auto">
-                <StickyBanner variant="neutral" dismissible={false}>
-                  Neutraler Hinweis – passt sich Theme an
-                </StickyBanner>
-                <div className="h-64 p-4" />
-              </div>
-            </div>
-            <div className="border-border bg-card overflow-hidden rounded-xl border">
-              <div className="max-h-40 overflow-y-auto">
-                <StickyBanner variant="warning" dismissible={false}>
-                  Wartungsfenster: Heute 22:00 Uhr
-                </StickyBanner>
-                <div className="h-64 p-4" />
-              </div>
-            </div>
-            <div className="border-border bg-card overflow-hidden rounded-xl border">
-              <div className="max-h-40 overflow-y-auto">
-                <StickyBanner variant="danger" dismissible={false}>
-                  Störung: Checkout derzeit nicht verfügbar
-                </StickyBanner>
-                <div className="h-64 p-4" />
-              </div>
-            </div>
-          </div>
+            )}
+          />
 
           <p className="text-muted-foreground text-xs">
             Varianten: <code>accent</code> folgt dem Accent-Switcher (oklch gradient), <code>neutral/warning/danger</code> sind
