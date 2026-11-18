@@ -94,4 +94,4 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **language-switcher / accent-switcher / animated-theme-toggler:** Globalisierung und Personalisierung.
 
 ---
-*Stand: 2026-10-06 — 95 Komponenten, jede mit eigener `COMPONENT.md`.*
+*Jede Komponente hat eine eigene `COMPONENT.md`.*

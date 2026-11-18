@@ -73,7 +73,7 @@ export function StepList({ children, className, style }: StepListProps) {
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  background: 'var(--accent, #6366f1)',
+                  background: 'var(--accent)',
                   marginTop: '5px',
                   flexShrink: 0,
                 }}
@@ -84,7 +84,7 @@ export function StepList({ children, className, style }: StepListProps) {
                     width: '2px',
                     flexGrow: 1,
                     minHeight: '20px',
-                    background: 'var(--border, #3f3f46)',
+                    background: 'var(--border)',
                     margin: '4px 0',
                   }}
                 />
@@ -96,7 +96,7 @@ export function StepList({ children, className, style }: StepListProps) {
               style={{
                 fontSize: '14px',
                 lineHeight: '1.5',
-                color: 'var(--foreground, #e4e4e7)',
+                color: 'var(--foreground)',
                 paddingBottom: isLast ? '0' : '16px',
               }}
             >
@@ -206,12 +206,12 @@ export function VerticalStepper({
                 borderRadius: '12px',
                 border: `1px solid ${
                   isActive
-                    ? 'var(--accent, #6366f1)'
-                    : 'var(--border, #3f3f46)'
+                    ? 'var(--accent)'
+                    : 'var(--border)'
                 }`,
                 background: isActive
-                  ? 'color-mix(in oklch, var(--accent, #6366f1) 6%, var(--card, #18181b))'
-                  : 'var(--card, #18181b)',
+                  ? 'color-mix(in oklch, var(--accent) 6%, var(--card))'
+                  : 'var(--card)',
                 transition: `border-color ${CSS_TIMING}, background ${CSS_TIMING}`,
               }}
             >
@@ -229,11 +229,11 @@ export function VerticalStepper({
                   fontWeight: 700,
                   transition: `background ${CSS_TIMING}, color ${CSS_TIMING}`,
                   background: isCompleted || isActive
-                    ? 'var(--accent, #6366f1)'
-                    : 'var(--muted, #27272a)',
+                    ? 'var(--accent)'
+                    : 'var(--muted)',
                   color: isCompleted || isActive
-                    ? '#ffffff'
-                    : 'var(--muted-foreground, #71717a)',
+                    ? 'var(--accent-foreground)'
+                    : 'var(--muted-foreground)',
                 }}
               >
                 {isCompleted ? (
@@ -271,8 +271,8 @@ export function VerticalStepper({
                     lineHeight: '1.55',
                     fontWeight: isActive ? 500 : 400,
                     color: isPending
-                      ? 'var(--muted-foreground, #71717a)'
-                      : 'var(--foreground, #e4e4e7)',
+                      ? 'var(--muted-foreground)'
+                      : 'var(--foreground)',
                     transition: `color ${CSS_TIMING}`,
                   }}
                 >
@@ -322,8 +322,8 @@ export function VerticalStepper({
                             style={{
                               ...buttonBase,
                               background: 'transparent',
-                              color: 'var(--foreground, #e4e4e7)',
-                              border: '1px solid var(--border, #3f3f46)',
+                              color: 'var(--foreground)',
+                              border: '1px solid var(--border)',
                             }}
                             onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
                             onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -336,8 +336,8 @@ export function VerticalStepper({
                           onClick={goNext}
                           style={{
                             ...buttonBase,
-                            background: 'var(--accent, #6366f1)',
-                            color: '#ffffff',
+                            background: 'var(--accent)',
+                            color: 'var(--accent-foreground)',
                           }}
                           onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                           onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -359,7 +359,7 @@ export function VerticalStepper({
                   marginLeft: `${20 + CONNECTOR_OFFSET}px`,
                   width: '2px',
                   height: '20px',
-                  background: 'var(--border, #3f3f46)',
+                  background: 'var(--border)',
                   borderRadius: 2,
                   overflow: 'hidden',
                 }}
@@ -368,7 +368,7 @@ export function VerticalStepper({
                   style={{
                     width: '100%',
                     height: isCompleted ? '100%' : '0%',
-                    background: 'var(--accent, #6366f1)',
+                    background: 'var(--accent)',
                     transition: reduce ? 'none' : `height ${CSS_TIMING}`,
                     borderRadius: 'inherit',
                   }}

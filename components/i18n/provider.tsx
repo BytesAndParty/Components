@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { en } from './locales/en'
 import { de } from './locales/de'
 import type { Locale, GlobalMessages } from './types'

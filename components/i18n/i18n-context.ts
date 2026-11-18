@@ -1,6 +1,4 @@
 import { createContext, useContext } from 'react'
-import { en } from './locales/en'
-import { de } from './locales/de'
 import type { Locale, GlobalMessages } from './types'
 import { interpolate } from './types'
 
@@ -12,7 +10,7 @@ interface I18nContextValue {
 
 export const I18nContext = createContext<I18nContextValue>({
   locale: 'de',
-  t: (key, vars) => interpolate(de[key] ?? en[key] ?? key, vars),
+  t: (key, vars) => interpolate(key, vars),
   setLocale: () => {},
 })
 

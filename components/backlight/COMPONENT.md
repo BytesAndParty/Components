@@ -8,6 +8,7 @@ Wrapper component that renders animated, multi-layered glow blobs behind its chi
 |---|---|
 | **Floating blobs** | Each glow blob follows a unique floating keyframe animation (translate + scale), creating an organic, living glow behind the content. |
 | **Speed control** | Animation speed is adjustable per-blob via the `speed` multiplier, with each subsequent blob having a slightly longer cycle for visual variety. |
+| **Reduced motion** | An injected `@media (prefers-reduced-motion: reduce)` rule switches the blob animation off. |
 | **Intensity variation** | Even/odd blobs alternate between 70% and 100% of the configured intensity for depth. |
 
 ## How It Works

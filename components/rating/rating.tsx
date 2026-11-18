@@ -125,7 +125,7 @@ export function Rating({
             key={i}
             type="button"
             role="radio"
-            aria-checked={i < currentValue}
+            aria-checked={i + 1 === currentValue}
             aria-label={interpolate(m.starLabel, { current: i + 1, total: count })}
             disabled={readOnly}
             onClick={() => handleClick(i)}

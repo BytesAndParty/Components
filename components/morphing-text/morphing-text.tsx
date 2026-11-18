@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -32,9 +33,7 @@ export function MorphingText({
   const [morphing, setMorphing] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null)
 
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const prefersReduced = usePrefersReducedMotion()
 
   const activeMorphDuration = prefersReduced ? 0 : morphDuration
 

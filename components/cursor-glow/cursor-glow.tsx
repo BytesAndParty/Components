@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -33,9 +34,7 @@ export function CursorGlow({
 }: CursorGlowProps) {
   const glowRef = useRef<HTMLDivElement>(null)
 
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const prefersReduced = usePrefersReducedMotion()
 
   // Hooks immer aufrufen – prefers-reduced-motion nur in der Logik berücksichtigen
   useEffect(() => {

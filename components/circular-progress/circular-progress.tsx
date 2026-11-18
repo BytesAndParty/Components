@@ -1,5 +1,6 @@
 import { type CSSProperties, type ReactNode } from 'react'
 import { useComponentMessages, interpolate } from '../i18n'
+import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion'
 import { MESSAGES, type CircularProgressMessages } from './messages'
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -50,9 +51,7 @@ export function CircularProgress({
   // strokeDashoffset = circumference wenn 0%, 0 wenn 100%
   const offset = circumference * (1 - clampedValue / 100)
 
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const prefersReduced = usePrefersReducedMotion()
 
   return (
     <span

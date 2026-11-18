@@ -47,7 +47,7 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
             'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-semibold transition-colors',
             hasError
               ? 'bg-destructive/10 border-destructive/40 text-destructive hover:bg-destructive/20'
-              : 'bg-amber-500/10 border-amber-500/40 text-amber-500 hover:bg-amber-500/20',
+              : 'bg-amber-500/10 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20',
             className,
           )}
         >
@@ -71,7 +71,7 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
                 <div className="flex items-center gap-2">
                   {hasError
                     ? <AlertCircle size={14} className="text-destructive" />
-                    : <AlertTriangle size={14} className="text-amber-500" />
+                    : <AlertTriangle size={14} className="text-amber-700 dark:text-amber-300" />
                   }
                   <span className="text-foreground text-sm font-semibold">
                     {m.panelTitle}
@@ -94,7 +94,7 @@ export function ValidatorBadge({ warnings, className, messages }: ValidatorBadge
                   <li key={w.key} className="flex items-start gap-3 px-4 py-3">
                     <div className={cn(
                       'mt-0.5 shrink-0',
-                      w.severity === 'error' ? 'text-destructive' : 'text-amber-500',
+                      w.severity === 'error' ? 'text-destructive' : 'text-amber-700 dark:text-amber-300',
                     )}>
                       <span className="sr-only">
                         {w.severity === 'error' ? m.error : m.warning}:

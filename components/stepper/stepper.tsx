@@ -77,25 +77,27 @@ function StepIndicator({
                 className={cn(
                   "w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 border-2",
                   isCompleted || isActive
-                    ? "bg-(--accent,#6366f1) text-white border-(--accent,#6366f1)"
-                    : "bg-transparent text-(--muted-foreground,#71717a) border-(--border,#2a2a2e)"
+                    ? "bg-accent text-accent-foreground border-accent"
+                    : "bg-transparent text-muted-foreground border-border"
                 )}
-                aria-label={isCompleted ? `${titles[i] ?? stepNum} ${completedLabel}` : undefined}
               >
                 {isCompleted ? (
-                  <motion.svg
-                    width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" strokeWidth="3"
-                    strokeLinecap="round" strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <motion.polyline
-                      points="20 6 9 17 4 12"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.35, ease: 'easeOut' }}
-                    />
-                  </motion.svg>
+                  <>
+                    <motion.svg
+                      width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="3"
+                      strokeLinecap="round" strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <motion.polyline
+                        points="20 6 9 17 4 12"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                      />
+                    </motion.svg>
+                    <span className="sr-only">{`${titles[i] ?? stepNum} ${completedLabel}`}</span>
+                  </>
                 ) : (
                   stepNum
                 )}
@@ -103,10 +105,10 @@ function StepIndicator({
               {titles[i] && (
                 <span
                   className={cn(
-                    "text-2.5 md:text-xs transition-colors duration-300 whitespace-nowrap",
+                    "max-w-24 text-center text-balance text-xs transition-colors duration-300",
                     isActive
-                      ? "text-(--foreground,#e4e4e7) font-semibold"
-                      : "text-(--muted-foreground,#71717a) font-normal"
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground font-normal"
                   )}
                 >
                   {titles[i]}
@@ -119,12 +121,12 @@ function StepIndicator({
               <div
                 aria-hidden
                 className={cn(
-                  "w-8 md:w-12 h-0.5 mx-1 md:mx-2 bg-(--border,#2a2a2e) rounded-sm overflow-hidden",
+                  "w-8 md:w-12 h-0.5 mx-1 md:mx-2 bg-border rounded-sm overflow-hidden",
                   titles[i] ? "mb-4.5 md:mb-5.5" : "mb-0"
                 )}
               >
                 <div
-                  className="h-full bg-(--accent,#6366f1) transition-[width] duration-450 ease-in-out"
+                  className="h-full bg-accent transition-[width] duration-450 ease-in-out"
                   style={{ width: stepNum < currentStep ? '100%' : '0%' }}
                 />
               </div>
@@ -253,10 +255,10 @@ export function Stepper({
           onClick={goBack}
           disabled={isFirstStep}
           className={cn(
-            "px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border cursor-pointer",
+            "min-h-11 px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border cursor-pointer",
             isFirstStep
-              ? "bg-transparent text-(--muted-foreground,#71717a) border-(--border,#2a2a2e) opacity-50 cursor-not-allowed"
-              : "bg-transparent text-(--foreground,#e4e4e7) border-(--border,#2a2a2e) hover:bg-foreground/5"
+              ? "bg-transparent text-muted-foreground border-border opacity-50 cursor-not-allowed"
+              : "bg-transparent text-foreground border-border hover:bg-foreground/5"
           )}
         >
           {m.back}
@@ -265,7 +267,7 @@ export function Stepper({
         <button
           type="button"
           onClick={goNext}
-          className="cursor-pointer rounded-lg border-none bg-(--accent,#6366f1) px-6 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-95"
+          className="min-h-11 cursor-pointer rounded-lg border-none bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-200 hover:opacity-90 active:scale-95"
         >
           {isLastStep ? m.finalize : m.next}
         </button>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { formatForDisplay, useHotkey } from '@tanstack/react-hotkeys'
-import { useHotkeysRegistry, useDesignEngineHotkey, HotkeyMetadata } from './hotkeys-context'
+import { useHotkeysRegistry, useDesignEngineHotkey, type HotkeyMetadata } from './hotkeys-context'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type ShortcutOverviewMessages } from './messages'

@@ -19,7 +19,7 @@
  *   <AtelierProvider defaultTheme="light" defaultAccent="amber" defaultLocale="en">
  */
 
-import { useState, useEffect, useSyncExternalStore, ReactNode } from 'react'
+import { useState, useEffect, useSyncExternalStore, type ReactNode } from 'react'
 import { I18nProvider } from '../i18n/provider'
 import { en } from '../i18n/locales/en'
 import { de } from '../i18n/locales/de'

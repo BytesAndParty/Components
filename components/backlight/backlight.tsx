@@ -51,6 +51,9 @@ function injectStyles() {
       33%       { transform: scale(0.96) translate(3%, 5%); }
       66%       { transform: scale(1.08) translate(-5%, -4%); }
     }
+    @media (prefers-reduced-motion: reduce) {
+      .backlight-blob { animation: none !important; }
+    }
   `
   document.head.appendChild(style)
 }
@@ -153,6 +156,7 @@ export function Backlight({
             key={i}
             ref={ref}
             aria-hidden
+            className="backlight-blob"
             style={{
               position: 'absolute',
               inset: 0,
