@@ -1,14 +1,70 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/motion-animate/motion-animate.md) am 2026-10-26. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/motion-animate/motion-animate.md) am 2026-11-18. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
 
 # `motion` — imperative `animate()` + `stagger()`
 
-`motion` ist der **offizielle Nachfolger** von `framer-motion` (gleiches Team, neuer Package-Name, kleinerer Footprint).
+`motion` ist der **offizielle Nachfolger** von `framer-motion` (gleiches Team, neuer Package-Name). Für die React-
+Komponenten ist `motion/react` nur ein **Re-Export** von `framer-motion`: identischer Code, **identische
+Bundle-Größe**. Kleiner wird es erst über `LazyMotion`/`m`, `motion/mini` oder die imperative `animate()`-API
+(siehe „Migration" und „Entry Points" unten). Neue Projekte starten mit `motion`.
 
 - React-Komponenten: `import { motion } from 'motion/react'` (deklarativ)
 - **Imperative API in React**: `import { animate, stagger } from 'motion/react'`
 - **Imperative API ohne React (Vanilla)**: `import { animate, stagger } from 'motion'` — dieselbe Funktion, kein React im Bundle
 
 Imperative ist die Wahl, wenn du **GSAP-artigen** Code schreibst (DOM-Refs, Querysels, Tween-Steuerung) ohne den Komponentenbaum umzubauen.
+
+## Neu in 14.7 → 14.14 — was tatsächlich Arbeit spart (Stand 2026-11-18)
+
+Neueste Version: 14.14.0 (`motion` und `framer-motion` erscheinen im Gleichschritt). Quelle: `CHANGELOG.md` im
+motiondivision/motion-Repo. In den installierten Typen von 14.14.0 bestätigt sind `mass: "auto"`, `pinch`,
+`scrollXLength` und `transition.mixer`; die übrigen Punkte stehen nur im Changelog.
+
+- **`press` mit `count`, `hold`, `repeat`** (14.10): Double-/Triple-Tap und Long-Press als Option, statt Timer und Zähler
+  selbst zu bauen.
+- **`pinch`** (14.11): Multitouch-Gesten für Pinch und Rotation, statt Pointer-Event-Mathe von Hand.
+- **`drag` mit `x`/`y` ohne DOM-Bindung** (14.10): Gesten-Tracking „headless", z. B. für Canvas.
+- **`Reorder` per Tastatur** (14.10): Home/End verschieben Items, ohne eigene Key-Handler.
+- **Layout-Springs mit `mass: "auto"`** (14.13): Typ `mass?: number | "auto"`. In Layout-Animationen setzt `"auto"` die Masse aus
+  der Elementgröße — statt sie je Komponente von Hand zu tunen.
+- **`transition.out`** (14.7): explizite Exit-Transition am `motion`-Element.
+- **Änderbare `animate()`-Sequenzen** (14.7): Timeline nachträglich anpassen, statt sie neu aufzubauen.
+- **`useScroll` liefert `scrollXLength`/`scrollYLength`** (14.7): Scroll-Längen ohne eigene Messung.
+- **`transition.mixer`** (14.8): eigene Interpolationsfunktion für Werte (z. B. Farben, komplexe Strings).
+- **Springs mit `visualDuration`/`bounce` berücksichtigen Velocity** (14.12): wirkt ohne Code-Änderung, kann das Verhalten
+  unterbrochener Animationen sichtbar ändern.
+- `AnimatePresence`: mehrere Fixes für `exit`-Animationen (14.9.1).
+
+**Breaking:** keine dokumentiert zwischen 14.6 und 14.14 (`CHANGELOG.md`, abgefragt 2026-11-18). 14.14.0 bringt nur interne
+Exporte für Motion UI.
+
+## Migration `framer-motion` → `motion` (selbst verifiziert 2026-11-18, Projekt CV)
+
+`motion/react` ist ein Re-Export: `dist/es/react.mjs` besteht aus `export * from 'framer-motion'`, und das Paket `motion`
+hat `framer-motion` in derselben Version als Dependency. Die Migration ist deshalb ein reiner Import-Tausch und
+**kein Bundle-Gewinn**:
+
+```bash
+bun remove framer-motion && bun add motion
+# Imports: 'framer-motion' -> 'motion/react' (motion, AnimatePresence, useInView, MotionConfig, … heißen gleich)
+```
+
+Am CV (13 Dateien, Astro 7, React 19.3): HTML-Ausgabe identisch, JS 585.210 → 585.205 Byte, Lint, `astro check` und
+Build unverändert grün.
+
+**Was Bundles tatsächlich kleiner macht** — gemessen mit `bun build --minify` für die CV-Imports (`motion.*`,
+`AnimatePresence`, `useInView`, `useMotionValue`, `useTransform`, `animate`, `MotionConfig`); synthetische Messung,
+kein Projekt-Build:
+
+| Variante | minifiziert | gzip |
+|---|---|---|
+| `import … from 'framer-motion'` | 173,4 KB | 59,4 KB |
+| `import … from 'motion/react'` | 173,4 KB | 59,4 KB |
+| `LazyMotion` + `domAnimation` + `m.*` | 120,7 KB | 43,4 KB |
+| `LazyMotion` + `domMax` + `m.*` | 173,9 KB | 59,5 KB |
+
+`<LazyMotion features={domAnimation}>` mit `m.div` statt `motion.div` spart rund 30 % (Animationen, Varianten, Exit,
+Hover/Tap/Focus). `drag` und `layout` brauchen `domMax`, das den Gewinn wieder aufzehrt. `motion/mini` (2,3 KB) und der
+Hybrid-`animate()` (18 KB) sind nur für imperative Animation ohne `motion.*`-Komponenten.
 
 ## Neu in 14.1 → 14.6 — was tatsächlich Arbeit spart (Stand 2026-10-26)
 
@@ -198,7 +254,9 @@ animate([
 - **`stop()` vs `cancel()`**: `stop()` friert am aktuellen Wert ein, `cancel()` springt zurück zum Start. Im Cleanup eines Effects meist `stop()`.
 - **No `useCallback` nötig** in React-19/React-Compiler-Setups — der Compiler memoisiert. Aber Refs zu DOM-Nodes brauchen `useRef` + Effect.
 - **`onUpdate`** greift laut Doku aktuell nur bei Single-Value-Animationen (`animate(0, 100, { onUpdate })`), nicht bei Element-Animationen.
-- **`framer-motion` Package**: deprecated alias zu `motion`. In neuen Codebases nicht mehr installieren.
+- **`framer-motion` Package**: **kein** deprecated-Alias (`npm view framer-motion deprecated` ist leer, selbst verifiziert
+  2026-11-18), sondern die Implementierung, von der `motion` abhängt (gleiche Version). In neuen Codebases trotzdem
+  `motion` installieren und aus `motion/react` importieren; Bestandsprojekte siehe „Migration".
 
 ## Patch 13.1.0 → 13.1.1 (Stack-Refresh 2026-08-21)
 

@@ -1,4 +1,121 @@
-> Generiert aus der live-docs-collection (skills/live-docs-collection/fallow/fallow.md) am 2026-10-06. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+> Generiert aus der live-docs-collection (skills/live-docs-collection/fallow/fallow.md) am 2026-11-18. Master-Quelle ist dort gepflegt (`/live-docs-update`) — bei Zweifel an der Aktualität zuerst dort nachsehen und diese Datei danach neu generieren, nicht von Hand nachziehen.
+
+## Neu in 3.32 → 3.43 — was tatsächlich Arbeit spart
+
+Zwölf Minors. Der Schwerpunkt wandert von Baselines (3.26–3.31) zu **„was prüft ein Agent vor und nach einer
+Änderung?"**: `guard`, `architecture`, `audit --brief`, `mutation`. Die CLI-Oberfläche ist gegen 3.43.2
+lokal verifiziert (`--help`, `explain`, JSON-Läufe, 2026-11-18); die **Versionszuordnung** der einzelnen
+Features stammt aus den GitHub-Releases und wurde nicht pro Release gegengeprüft.
+
+**`fallow architecture` + `fallow guard <files>`** (v3.33.0) — Import-Zyklen, Boundary-Verstöße und
+Rule-Pack-Policy in einem Befehl (`--cycles`, `--boundaries`, `--policy`, `--shared-state`). Ersetzt das
+Herausfiltern von Zyklen und Boundaries aus einem vollen `dead-code`-Lauf. `guard` zeigt **vor** dem Edit,
+welche Architektur-Regeln für die Dateien gelten, `architecture` prüft danach. MCP-Tool: `check_architecture`.
+
+**`fallow baselines prune`** (v3.33.0) — entfernt Baseline-Einträge, die auf keinen aktuellen Fund mehr
+passen. Ersetzt Baseline-Neuerzeugung oder Ausdünnen von Hand; Gegenstück zu `--fail-on-stale-baseline`.
+
+**`fallow audit` ist jetzt das PR-/Commit-Werkzeug** — nur im Changeset **neu eingeführte** Findings
+entscheiden über das Verdict, geerbte stehen mit `introduced: false` im JSON (`--gate all` prüft alles).
+- `fallow audit --staged` (v3.43.0) prüft den **Git-Index** statt des Working Trees. Pre-Commit-Hook ohne
+  `git stash`-Tricks.
+- `fallow review --base <ref> --brief` (= `audit --brief`) rendert eine Orientierungs-Übersicht, die **immer**
+  mit Exit 0 endet — „wo schaue ich hin?" statt „blockt CI?". Geänderte Dateien werden nach Churn,
+  Komplexität und Test-Erreichbarkeit gerankt (v3.43.0).
+- Styling-Analytics und „Deep CSS" (projektweite Styling-Erreichbarkeit, auf geänderte Anker zurückgeschnitten)
+  sind in `audit` **standardmäßig an** (`audit.cssDeep = false` bzw. Flag zum Abschalten). Laut Releases erfasst
+  die Dead-Code-Analyse seit v3.37.0 außerdem CSS-Klassen aus Template-Dateien.
+- Verschlechterte Komplexität erscheint als „worsened" Finding (v3.35.0).
+
+**`fallow mutation`** (opt-in, seit v3.34.0) — Mutation-Testing: verändert Code in kleinen Schritten, lässt
+die Projekt-Tests laufen; ein Mutant, bei dem kein Test rot wird, **überlebt** = Lücke in den Tests. Läuft mit
+Vitest, `node:test` und Bun. Alternative zu einem separaten Tool samt eigener Config (z. B. Stryker).
+- Default-Scope ist der **geänderte** Code gegen die Base-Ref, `--all` mutiert alles, `--plan` und `inspect`
+  führen keinen Code aus.
+- Unterbefehle `tasks` (offene Tasks eines Reports als Batch, v3.41.0), `export` (offenes
+  `mutation-testing-report-schema`-Format, v3.42.0), `--compare`/`--recheck` (v3.41.0), `--runner-config`
+  (eigene Vitest-Config, v3.34.0). MCP-Tool `mutation_tasks` (v3.42.0).
+- v3.43.0: `--record-args` + `inspect --replay` (Funktionsargumente aufzeichnen und gegen beide Code-Stände
+  abspielen), neun opt-in Operatoren (`mutation.operators`), `--time-budget`, `--mutants-per-line`.
+- v3.42.0: `mutation: true` in GitHub Action und GitLab-Template; Vitest-Läufe 1,6–3× schneller.
+
+**Neue Regeln** — per `fallow explain <rule>` lokal bestätigt:
+- `unused-namespace-members` — Mitglieder eines `import * as ns`, die nie benutzt werden (v3.40.0).
+- `duplicate-export-aliases` — ein Binding wird unter zwei Namen exportiert (v3.40.0).
+- `unlisted-binaries` — CLI-Binary wird genutzt, aber von keinem installierten Package geliefert (v3.40.0).
+- `constant-parameter` / `--constant-parameters` — Parameter, den **jeder** sichtbare Aufruf gleich übergibt
+  (v3.43.0, mit `--type-aware` genauer). Ersetzt die manuelle Suche nach Parametern, die gar keine sind.
+
+**Health** — `health.maxFileLines` / `--max-file-lines` (v3.38.0, Default 0 = aus) meldet zu lange Dateien als
+Komplexitäts-Finding. `health --group-by` mit Trend pro Gruppe (v3.33.0). `health.cyclomaticPolicy:
+"literal-membership"` zählt Literal-Vergleichsketten als eine Verzweigung (v3.36.0). `health` liefert
+außerdem „hidden coupling"-Refactoring-Targets (Dateien, die über viele Commits **ohne Import** gemeinsam
+geändert werden) — in 3.43.2 sichtbar, Einführungsversion nicht ermittelt.
+
+**Config- und Output-Komfort:**
+- `--lean` (v3.38.0) — JSON ohne leere Arrays, laut Releases ca. 90 % kleiner. Für Agent-Aufrufe und CI-Artefakte.
+- `workspaces.settings` (v3.40.0) — workspace-spezifische Settings statt globaler Wiederholung;
+  `ignoreDependencies` akzeptiert Globs (v3.31.0).
+- Config-Redundanz-Diagnosen `entry-pattern-redundant`, `ignore-dependencies-entry-redundant`,
+  `ignore-patterns-entry-redundant` (v3.36.0) — melden Einträge, die Fallow schon selbst erkennt.
+- Stabile `stable_finding_id` für Security-Findings, überdauert Zeilenverschiebungen (v3.43.0).
+
+**Neue Built-in-Plugins** (keine Config nötig): release-it, eve, ag-ui, nestjs-trpc, kibana (v3.32.0);
+Vite+, Egg.js, JavaScript-GitHub-Actions (v3.35.0); dotenv (v3.36.0); graphql-config (v3.39.0); gulp, n8n,
+unplugin-icons, vite-plugin-pages, SolidStart, dumi (v3.42.0). Dazu verschachtelte pnpm-Workspaces (v3.41.0),
+Nuxt-`#layers/`-Imports (v3.43.1), Angular-Template-Inputs/-Outputs inkl. Basisklassen (v3.43.2).
+
+**Performance:** musl-Binaries 4× schneller durch mimalloc (v3.33.0). Auf Linux installiert npm nur noch **ein**
+Platform-Binary statt zwei, ca. 30 MB weniger (v3.43.0).
+
+**Fallow Cloud / Runtime** (bezahlter Teil, nur relevant bei genutzter Runtime-Coverage): `fallow cloud login`
+legt Keys im OS-Keychain ab, `coverage setup --cloud` plant das Setup in einem Schritt,
+`inspect --file <path> --cloud` zeigt Produktionsdaten je Funktion (alle v3.38.0).
+
+### Breaking / Verhaltensänderungen 3.32 → 3.43 (gegen bestehende Läufe prüfen)
+
+- **v3.34.0 — Config-Globs:** ein einzelnes `*` bleibt in **einem** Pfadsegment, nur `**` kreuzt Verzeichnisse.
+  `src/plugins/*/index.js` trifft keine verschachtelten Ordner mehr; `src/generated/*` → `src/generated/**`
+  für das alte Verhalten. Betrifft `entry`, `dynamicallyLoaded`, `ignorePatterns`, `ignoreFindings`,
+  `overrides[].files`. Fallow warnt auf stderr mit Umschreib-Vorschlag.
+- **v3.33.0 — Kaskaden-Findings versteckt:** Unused Exports/Members **in ungenutzten Dateien** werden
+  standardmäßig nicht mehr aufgelistet (`--show-cascade` bzw. `showCascade` holt sie zurück). Fund-Zahlen sinken
+  ohne Code-Änderung.
+- **v3.33.1 — Baselines pro Analyse:** bare `fallow --baseline` nimmt nur Dead-Code-Baselines; für Health und
+  Dupes `--health-baseline` / `--dupes-baseline` (Action/Template: `health-baseline`, `dupes-baseline`).
+  `audit` **lehnt** das globale `--baseline`/`--save-baseline` ab (lokal verifiziert).
+- **v3.36.0:** extrem tiefe Verschachtelung heißt `source-nesting-too-deep` statt `source-parse-degraded` —
+  Filter in Skripten auf beide Diagnosen erweitern.
+- **v3.39.0 — Production-Modus:** User-„support"-Einträge sind dort keine Entry-Points mehr; Dependencies
+  können neu als unused auftauchen.
+- **v3.39.0–v3.43.2 — Sicherheitsfix:** Runtime-Coverage ruft keinen Package-Manager mehr auf, um das
+  `fallow-cov`-Sidecar zu finden (Suche nur in `node_modules`, pnpm-/Bun-Stores, Yarn `unplugged`, `PATH`).
+  Die Releases nennen den Fix an zwei Stellen (3.39.0 und 3.43.2).
+- **v3.42.0:** Cache-Schreibzugriffe meiden Symlinks, die das Projekt verlassen; `health --save-snapshot` bricht
+  dann mit Fehler ab.
+- **v3.43.0:** `mutation`-JSON auf Schema-Version 2, Journal und Result-Cache im neuen Format.
+- **v3.35.0:** GitHub-Action fordert das gebrandete Token nur noch beim Posten an (`branded-token: auto`).
+- **Schema-Versionen** (selbst verifiziert an 3.43.2): kombiniert **15** (war 10), `audit` **14** (war 9),
+  `health` **13**, `dead-code` **11**, `dupes` **10**, `security` **8**, `architecture` **2**. CI-Parser, die
+  `schema_version` prüfen, müssen nachziehen.
+
+Quelle der Auswertung: GitHub-Releases v3.32.0–v3.43.2 und `CHANGELOG.md` (nur 3.43.x), abgefragt 2026-11-18.
+
+### Praxis-Befunde (selbst verifiziert 2026-11-18, Projekt CV, Astro 5.17)
+
+- **Gate-Stolperfalle:** `bunx fallow dead-code` und `dupes` enden mit Exit 0 („No issues found"), das **bare**
+  `bunx fallow` und `health` mit **Exit 1** („Failed: health (12 above threshold)", Maintainability 93,6).
+  Ein Gate „0 tote Dateien/Exports" gehört auf `dead-code`, nicht auf den kombinierten Lauf — der scheitert am
+  Health-Schwellwert, auch wenn nichts Totes da ist.
+- **Parser-Warnung bei Astro-Redirect-Seiten:** `WARN Parsed 'src/pages/index.astro' with 1 error(s); the parser
+  recovered and continued`. Auslöser ist vermutlich das top-level `return Astro.redirect(...)` im Frontmatter
+  (in Astro erlaubt, für Fallows Parser ein Syntaxfehler). Nach dem Fehler stehende Imports/Referenzen können
+  fälschlich als unused erscheinen; hier blieb `dead-code` bei 0, weil der Import davor steht.
+- **Erster Lauf nach dem Upgrade:** `Cache file does not carry fallow's cache framing, rebuilding` — einmalig und
+  harmlos, `.fallow/` baut sich neu auf.
+- **`fallow migrate`** portiert Configs von **knip, jscpd und stylelint** nach Fallow, nicht von einer älteren
+  Fallow-Version. Eine Release-Zusammenfassung behauptete das Gegenteil (v3.40.0, „alte Config migrieren") —
+  `fallow migrate --help` widerlegt das.
 
 ## Neu in 3.26 → 3.31 — was tatsächlich Arbeit spart
 
@@ -152,7 +269,7 @@ Läuft hier **ohne lokale Installation** über `bunx fallow` (lädt `@fallow-cli
 ```bash
 bunx fallow                 # default: dead-code + dupes + health
 bunx fallow dead-code       # nur unused code + dependency hygiene + cycles
-bunx fallow --version       # 3.25.0
+bunx fallow --version       # 3.43.2
 ```
 
 ---
@@ -165,13 +282,16 @@ bunx fallow --version       # 3.25.0
 | `dupes` | Copy-paste + strukturelle Code-Duplikation |
 | `health` | Komplexität, Maintainability, Hotspots, Coverage-Gaps |
 | `flags` | Feature-Flag-Nutzungsmuster |
-| `audit` | Nur **geänderte** Dateien reviewen (gut für PRs / pre-commit) |
+| `audit` | Nur **geänderte** Dateien reviewen (gut für PRs / pre-commit); `--staged`, `--brief` (= `review`) |
+| `architecture` / `guard <files>` | Zyklen, Boundaries, Policy nach dem Edit prüfen / Regeln vor dem Edit anzeigen |
+| `mutation` | Mutation-Testing (opt-in, führt Tests aus): überlebende Mutanten = Test-Lücken |
+| `baselines prune` | Baseline-Einträge entfernen, die keinen aktuellen Fund mehr treffen |
 | `fix` | Auto-fix für **sichere** unused-code Findings (`--dry-run` zuerst!) |
 | `watch` | Re-run bei File-Changes |
 | `list` / `workspaces` | Discovery-Diagnose: entry points, plugins, boundaries, workspaces |
 | `explain <issue>` | Erklärt einen Issue-Typ ohne Analyse-Run |
 | `init` | Config (+ optional Git-Hook) anlegen |
-| `migrate` | `knip`- oder `jscpd`-Config übernehmen |
+| `migrate` | `knip`-, `jscpd`- oder `stylelint`-Config übernehmen |
 | `config` / `config-schema` | Resolved Config bzw. JSON-Schema ausgeben |
 | `ci` / `ci-template` | PR/MR-Feedback-Envelopes + CI-Templates |
 
@@ -195,7 +315,8 @@ human-Ausgabe kürzt mit „… and N more".
 bunx fallow dead-code --format json | python3 -c "import json,sys; d=json.load(sys.stdin); print([f for f in d['unused_files']])"
 ```
 
-JSON-Top-Keys (schema_version 10 seit v3.15.0, war 7): `unused_files`, `unused_exports`,
+JSON-Top-Keys (`dead-code`: schema_version 11 in 3.43.2; kombiniert 15, `health` 13, `audit` 14 — die 10
+bzw. 9 aus älteren Abschnitten sind überholt): `unused_files`, `unused_exports`,
 `unused_types`, `unused_class_members`, `unused_dependencies`,
 `unlisted_dependencies`, `duplicate_exports`, `circular_dependencies`,
 `boundary_violations`, `workspace_diagnostics`, …
