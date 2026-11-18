@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type CSSProperties } from "react";
+import { usePrefersReducedMotion } from "../lib/use-prefers-reduced-motion";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -92,6 +93,17 @@ function fallback() {
 	return { top: c, right: c, bottom: c, left: c };
 }
 
+// ─── Glow layers ────────────────────────────────────────────────────────────────
+
+// One layer per edge, in paint order. Each sits centred along its edge and is
+// pushed `spread` px outwards on that side.
+const GLOW_EDGES = [
+	{ edge: "top", placement: { left: "10%", right: "10%", height: "40%" } },
+	{ edge: "bottom", placement: { left: "10%", right: "10%", height: "40%" } },
+	{ edge: "left", placement: { top: "10%", bottom: "10%", width: "40%" } },
+	{ edge: "right", placement: { top: "10%", bottom: "10%", width: "40%" } },
+] as const;
+
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export function AmbientImage({
@@ -110,6 +122,7 @@ export function AmbientImage({
 	> | null>(null);
 	const [loaded, setLoaded] = useState(false);
 	const imgRef = useRef<HTMLImageElement>(null);
+	const reducedMotion = usePrefersReducedMotion();
 
 	const handleLoad = () => {
 		const img = imgRef.current;
@@ -145,107 +158,27 @@ export function AmbientImage({
 				...style,
 			}}
 		>
-			{/* Glow layers – one per edge */}
-			{showGlow && (
-				<>
-					{/* Top glow */}
-					<div
-						aria-hidden
-						style={{
-							position: "absolute",
-							top: `-${spread}px`,
-							left: "10%",
-							right: "10%",
-							height: "40%",
-							background: colors.top,
-							filter: `blur(${blur}px)`,
-							opacity: animated
-								? showGlow
-									? intensity
-									: 0
-								: intensity,
-							transition: animated
-								? "opacity 600ms ease"
-								: "none",
-							pointerEvents: "none",
-							zIndex: 0,
-							borderRadius: resolvedRadius,
-						}}
-					/>
-					{/* Bottom glow */}
-					<div
-						aria-hidden
-						style={{
-							position: "absolute",
-							bottom: `-${spread}px`,
-							left: "10%",
-							right: "10%",
-							height: "40%",
-							background: colors.bottom,
-							filter: `blur(${blur}px)`,
-							opacity: animated
-								? showGlow
-									? intensity
-									: 0
-								: intensity,
-							transition: animated
-								? "opacity 600ms ease"
-								: "none",
-							pointerEvents: "none",
-							zIndex: 0,
-							borderRadius: resolvedRadius,
-						}}
-					/>
-					{/* Left glow */}
-					<div
-						aria-hidden
-						style={{
-							position: "absolute",
-							left: `-${spread}px`,
-							top: "10%",
-							bottom: "10%",
-							width: "40%",
-							background: colors.left,
-							filter: `blur(${blur}px)`,
-							opacity: animated
-								? showGlow
-									? intensity
-									: 0
-								: intensity,
-							transition: animated
-								? "opacity 600ms ease"
-								: "none",
-							pointerEvents: "none",
-							zIndex: 0,
-							borderRadius: resolvedRadius,
-						}}
-					/>
-					{/* Right glow */}
-					<div
-						aria-hidden
-						style={{
-							position: "absolute",
-							right: `-${spread}px`,
-							top: "10%",
-							bottom: "10%",
-							width: "40%",
-							background: colors.right,
-							filter: `blur(${blur}px)`,
-							opacity: animated
-								? showGlow
-									? intensity
-									: 0
-								: intensity,
-							transition: animated
-								? "opacity 600ms ease"
-								: "none",
-							pointerEvents: "none",
-							zIndex: 0,
-							borderRadius: resolvedRadius,
-						}}
-					/>
-				</>
-			)}
+			{/* Glow layers – one per edge. Always mounted at opacity 0, so the
+			    opacity transition has a start value once the colours arrive. */}
+			{GLOW_EDGES.map(({ edge, placement }) => (
+				<div
+					key={edge}
+					aria-hidden
+					style={{
+						position: "absolute",
+						...placement,
+						[edge]: `-${spread}px`,
+						background: colors?.[edge],
+						filter: `blur(${blur}px)`,
+						opacity: showGlow ? intensity : 0,
+						transition:
+							animated && !reducedMotion ? "opacity 600ms ease" : "none",
+						pointerEvents: "none",
+						zIndex: 0,
+						borderRadius: resolvedRadius,
+					}}
+				/>
+			))}
 
 			{/* Actual image */}
 			<img

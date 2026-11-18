@@ -38,7 +38,7 @@ export function AddToCartButton({
   children,
   onClick,
   duration = 3700,
-  bgColor = 'var(--accent, #6366f1)',
+  bgColor = 'var(--accent)',
   textColor = '#fff',
   messages,
   className,
@@ -157,7 +157,7 @@ export function AddToCartButton({
           top: '50%',
           margin: '-13px 0 0 -18px',
           transformOrigin: '12px 23px',
-          transform: loading ? 'translateX(-120px) rotate(-18deg)' : 'translateX(-120px) rotate(-18deg)',
+          transform: 'translateX(-120px) rotate(-18deg)',
           animation: loading ? 'atc-cart 3.4s linear forwards .2s' : 'none',
         }}
       >

@@ -6,11 +6,11 @@ A sophisticated sidebar component for managing a stack of layers or canvas objec
 
 - **Drag-and-Drop Reordering:** Intuitive sorting using the `dnd-kit` library.
 - **Visual Type Indicators:** Automatic icons for text, images, shapes, groups, wine-fields, QR codes and vector paths (signatures, ornaments).
-- **Layer Controls:** Toggle visibility, lock/unlock, and delete layers.
+- **Layer Controls:** Toggle visibility, lock/unlock, and delete layers. The visibility and lock buttons are toggle buttons with `aria-pressed` (pressed = layer visible, layer locked); their names stay the same in both states (`visibility`, `lock`).
 - **In-place Renaming:** Double-click a layer name to rename it.
 - **Selection State:** Supports highlighting the currently active layers.
 - **Keyboard Navigation:** Every row is a tab stop. ↑/↓ move focus between rows, Shift + ↑/↓ reorder, Space selects, Enter or F2 renames (Enter keeps the new name, Escape discards it; both return focus to the row), Delete/Backspace removes the layer — stopped at the row, so a host's global Delete hotkey does not fire as well. After a delete (key or the row's delete button) focus moves to the next row, the previous one at the end of the list, or the empty-state message once the list is empty; it waits until the consumer has removed the layer from `layers`. The listbox label is localized (`layerList`).
-- **Smooth Animations:** `motion/react` transitions for adding and removing layers.
+- **Smooth Animations:** `motion/react` transitions for adding and removing layers. With `prefers-reduced-motion` (`useReducedMotion()` in the row) rows appear and disappear without the height/opacity animation, and programmatic reorders jump instead of gliding (no `layout` spring). dnd-kit's own shift transition while dragging stays.
 
 ## How It Works
 

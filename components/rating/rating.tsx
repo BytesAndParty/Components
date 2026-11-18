@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { useComponentMessages, interpolate } from '../i18n'
 import { MESSAGES, type RatingMessages } from './messages'
 
@@ -56,8 +56,8 @@ export function Rating({
   defaultValue = 0,
   onChange,
   size = 24,
-  activeColor = 'var(--accent, #6366f1)',
-  inactiveColor = 'var(--border, #2a2a2e)',
+  activeColor = 'var(--accent)',
+  inactiveColor = 'var(--border)',
   readOnly = false,
   messages,
   className,
@@ -105,6 +105,24 @@ export function Rating({
       onChange?.(newValue)
     }
 
+  // Radio group keyboard pattern (WAI-ARIA APG): arrows check the next/previous
+  // star and move focus with it, wrapping at the ends; Home/End jump to the first/last.
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next: number
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (index + 1) % count
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (index - 1 + count) % count
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = count - 1
+    else return
+    e.preventDefault()
+    handleClick(next)
+    const star = e.currentTarget.parentElement?.children[next]
+    if (star instanceof HTMLElement) star.focus()
+  }
+
+  // Roving tabindex: one tab stop for the whole group, on the checked star or the first one.
+  const tabStopIndex = currentValue >= 1 && currentValue <= count ? currentValue - 1 : 0
+
   return (
     <div
       className={className}
@@ -127,8 +145,10 @@ export function Rating({
             role="radio"
             aria-checked={i + 1 === currentValue}
             aria-label={interpolate(m.starLabel, { current: i + 1, total: count })}
+            tabIndex={i === tabStopIndex ? 0 : -1}
             disabled={readOnly}
             onClick={() => handleClick(i)}
+            onKeyDown={(e) => handleKeyDown(e, i)}
             onMouseEnter={() => !readOnly && setHoverValue(i + 1)}
             onMouseLeave={() => setHoverValue(null)}
             style={{

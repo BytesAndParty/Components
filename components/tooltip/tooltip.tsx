@@ -1,8 +1,6 @@
-import { useState, useRef, useEffect, type ReactNode, useId } from 'react';
+import { useState, useRef, useEffect, type FocusEvent, type ReactNode, useId } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
-import { useComponentMessages } from '../i18n';
-import { MESSAGES, type TooltipMessages } from './messages';
 
 interface TooltipProps {
   children: ReactNode;
@@ -10,7 +8,6 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'left' | 'right';
   delay?: number;
   className?: string;
-  messages?: Partial<TooltipMessages>;
 }
 
 export function Tooltip({
@@ -19,12 +16,10 @@ export function Tooltip({
   position = 'top',
   delay = 0.2,
   className,
-  messages,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
-  const m = useComponentMessages(MESSAGES, messages);
 
   const show = () => {
     timeoutRef.current = setTimeout(() => setIsVisible(true), delay * 1000);
@@ -33,6 +28,30 @@ export function Tooltip({
   const hide = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setIsVisible(false);
+  };
+
+  // The wrapper is not focusable, so the description goes to the element that
+  // actually took focus (any depth, also inside components that do not forward
+  // props). Opens without delay: the tooltip must exist when the screen reader
+  // reads the newly focused element, a delayed one is not announced.
+  const handleFocus = (e: FocusEvent<HTMLDivElement>) => {
+    const ids = e.target.getAttribute('aria-describedby');
+    if (!ids?.split(' ').includes(id)) {
+      e.target.setAttribute('aria-describedby', ids ? `${ids} ${id}` : id);
+    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsVisible(true);
+  };
+
+  const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
+    const rest = e.target
+      .getAttribute('aria-describedby')
+      ?.split(' ')
+      .filter((describedBy) => describedBy !== id)
+      .join(' ');
+    if (rest) e.target.setAttribute('aria-describedby', rest);
+    else e.target.removeAttribute('aria-describedby');
+    hide();
   };
 
   useEffect(() => {
@@ -74,9 +93,8 @@ export function Tooltip({
       className="relative inline-block"
       onMouseEnter={show}
       onMouseLeave={hide}
-      onFocus={show}
-      onBlur={hide}
-      aria-describedby={isVisible ? id : undefined}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
       {children}
       <AnimatePresence>
@@ -84,7 +102,6 @@ export function Tooltip({
           <motion.div
             id={id}
             role="tooltip"
-            aria-label={m.ariaLabel}
             initial={animationVariants[position]}
             animate={animateValues[position]}
             exit={animationVariants[position]}

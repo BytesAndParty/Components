@@ -102,7 +102,7 @@ export function Backlight({
     const container = containerRef.current
     if (!container) return
 
-    const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
+    const resolvedColor = color === 'auto' ? 'var(--accent)' : color
 
     function onMouseMove(e: MouseEvent) {
       const rect = container!.getBoundingClientRect()
@@ -130,7 +130,7 @@ export function Backlight({
     }
   }, [interactive, color])
 
-  const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
+  const resolvedColor = color === 'auto' ? 'var(--accent)' : color
   const blobCount = Math.min(blobs, blobConfigs.length)
 
   return (

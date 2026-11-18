@@ -53,7 +53,7 @@ export function CursorGlow({
   // prefers-reduced-motion: nichts rendern (nach allen Hooks)
   if (prefersReduced) return null
 
-  const resolvedColor = color === 'auto' ? 'var(--accent, #6366f1)' : color
+  const resolvedColor = color === 'auto' ? 'var(--accent)' : color
 
   return (
     <div

@@ -2,7 +2,7 @@
  * LanguageSwitcher — Locale picker for the Design Engine navbar.
  *
  * Integrates with I18nProvider via useI18n() and persists the selected
- * locale in localStorage under 'design-engine-locale'. Also syncs
+ * locale in localStorage under 'atelier-locale'. Also syncs
  * document.documentElement.lang and data-locale for CSS/SSR consumers.
  *
  * Visual: globe icon with current locale badge, dropdown with all options.

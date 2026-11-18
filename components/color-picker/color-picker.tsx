@@ -2,7 +2,7 @@ import { Pipette } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import { cn } from '../lib/utils'
-import { useComponentMessages } from '../i18n'
+import { useComponentMessages, interpolate } from '../i18n'
 import { MESSAGES, type ColorPickerMessages } from './messages'
 
 type ColorFormat = 'hex' | 'rgb' | 'hsl'
@@ -173,6 +173,7 @@ export function ColorPickerPanel({
                 }
               }}
               onBlur={() => setHexDraft(currentHex)}
+              aria-label={m.formatHex}
               spellCheck={false}
               className="bg-input border-border text-foreground focus:ring-ring w-full rounded-md border px-1.5 py-1.5 text-center font-mono text-xs uppercase focus:ring-1 focus:outline-none"
             />
@@ -235,6 +236,7 @@ export function ColorPickerPanel({
         paletteGroups={finalPaletteGroups}
         currentHex={currentHex.slice(0, 7).toLowerCase()}
         onPick={(hex) => commit({ ...hexToHsba(hex), a: hsba.a })}
+        selectColorLabel={m.selectColor}
       />
 
       {/* Pure-hue echo strip — visual confirmation of current hue independent of saturation */}
@@ -278,8 +280,8 @@ function Custom2DArea({ hsba, onCommit, messages }: { hsba: Hsba; onCommit: (nex
       ref={ref}
       role="application"
       tabIndex={0}
-      aria-label={`${messages.saturationBrightness} — saturation ${hsba.s}, brightness ${hsba.b}`}
-      aria-roledescription="2d slider"
+      aria-label={`${messages.saturationBrightness} — ${interpolate(messages.saturationBrightnessValue, { s: hsba.s, b: hsba.b })}`}
+      aria-roledescription={messages.area2d}
       className="border-border/70 focus:ring-ring relative h-52 w-full cursor-crosshair touch-none overflow-hidden rounded-xl border shadow-inner focus:ring-2 focus:outline-none"
       style={getSaturationBrightnessBackground(hsba.h)}
       onPointerDown={(event) => {
@@ -435,6 +437,7 @@ function NumericChannelField({
     <div className={cn('flex flex-col gap-0.5', grow ? 'flex-1' : 'w-12')}>
       <input
         type="number"
+        aria-label={label}
         min={0}
         max={max}
         value={value}
@@ -493,18 +496,20 @@ function CustomSwatches({
   paletteGroups,
   currentHex,
   onPick,
+  selectColorLabel,
 }: {
   presets: string[]
   paletteGroups: PaletteGroup[]
   currentHex: string
   onPick: (hex: string) => void
+  selectColorLabel: string
 }) {
   return (
     <>
       {presets.length > 0 && (
         <div className="border-border flex flex-wrap gap-1 border-t pt-1">
           {presets.map((color) => (
-            <SwatchButton key={color} color={color} active={color.toLowerCase() === currentHex} onPick={onPick} />
+            <SwatchButton key={color} color={color} active={color.toLowerCase() === currentHex} onPick={onPick} selectColorLabel={selectColorLabel} />
           ))}
         </div>
       )}
@@ -517,7 +522,7 @@ function CustomSwatches({
               </p>
               <div className="flex flex-wrap gap-1">
                 {group.colors.map((color) => (
-                  <SwatchButton key={color} color={color} active={color.toLowerCase() === currentHex} onPick={onPick} />
+                  <SwatchButton key={color} color={color} active={color.toLowerCase() === currentHex} onPick={onPick} selectColorLabel={selectColorLabel} />
                 ))}
               </div>
             </div>
@@ -532,16 +537,18 @@ function SwatchButton({
   color,
   active,
   onPick,
+  selectColorLabel,
 }: {
   color: string
   active: boolean
   onPick: (hex: string) => void
+  selectColorLabel: string
 }) {
   return (
     <button
       type="button"
       onClick={() => onPick(color)}
-      aria-label={`Select ${color}`}
+      aria-label={interpolate(selectColorLabel, { color })}
       aria-pressed={active}
       className={cn(
         // Der Auswahl-Ring braucht 3:1 (WCAG 1.4.11) — auf --ring statt

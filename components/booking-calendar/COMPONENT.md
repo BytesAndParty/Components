@@ -16,7 +16,14 @@ Komponente kennt kein Backend. Wiederverwendbar für Verkostung/Wanderung/Keller
   sortiert Uhrzeiten, deckelt Gäste auf `capacity`.
 - **Flow-States**: Datum → Uhrzeit → Gäste → Absenden → Erfolgs-Panel (mit Reset für weitere Anfrage).
 - **i18n**: `messages`-Prop überschreibt Strings; Monats-/Wochentagsnamen kommen aus Arks `locale`
-  (DE/EN via globalen `I18nProvider`). Preis über `Intl.NumberFormat` (de-AT / en-IE, EUR).
+  (DE/EN via globalen `I18nProvider`). Preis über `Intl.NumberFormat` (de-AT / en-IE, EUR). Die
+  Screenreader-Texte von Zag (Monatspfeile „Zum vorherigen Monat“, Tageszellen „Dienstag,
+  17. November 2026 wählen“, „Nicht verfügbar. …“) kommen über `useArkTranslations('datePicker')` aus
+  `components/i18n/ark-bridge.ts` als `translations` an `DatePicker.Root`; ohne sie wären sie englisch.
+- **Touch-Ziele**: Monatspfeile mindestens 44 × 44 px. Die Tageszellen sind als Trefferfläche so breit
+  wie ihre Rasterspalte und mindestens 44 px hoch; der sichtbare Kreis (36 px) ist ein inneres
+  `span`. Volle 44 px Breite gehen nicht: Sieben Spalten à 44 px brauchen 308 px, auf dem Handy hat
+  der Kalender weniger. Der Fokusring liegt am Kreis (`group-focus-visible/day`).
 - **Theming**: nur semantische oklch-Tokens (`bg-card`, `text-accent`, `border-border`, …), keine Hex.
   Auf fest gefärbten Flächen lassen sich die Tokens am Wrapper per `style` umsetzen (Beispiel:
   `section-showcase/…/EventsBuchArt.tsx`).
@@ -62,7 +69,8 @@ import { BookingCalendar } from '@components/booking-calendar/booking-calendar';
 ## Dependencies
 
 - `@ark-ui/react/date-picker` (+ transitives `@internationalized/date` über `parseDate`)
-- `@components/number-input` (Gäste-Stepper), `lucide-react` (Icons), `../i18n`, `../lib/utils`
+- `@components/number-input` (Gäste-Stepper, auf Touch-Geräten 44-px-Stepper), `lucide-react` (Icons),
+  `../i18n` (inkl. `useArkTranslations`), `../lib/utils`
 
 ## Decisions
 

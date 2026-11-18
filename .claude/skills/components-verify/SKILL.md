@@ -11,6 +11,7 @@ Prüfschritte nach Änderungen an Komponenten, Showcases, Launcher oder Storefro
 
 - `bun run lint` (Repo-Root, `eslint .`): 0 Fehler. Warnungen „Compilation Skipped" vom React Compiler bei motion-Komponenten sind bekannt und in Ordnung.
 - Typecheck über den Showcase, der `components/` mitprüft: `cd components-showcase && ./node_modules/.bin/tsc --noEmit`. `components/` hat keine eigene `tsconfig.json`, `bunx tsc -p components` scheitert deshalb. Bei Änderungen in `section-showcase/` bzw. `launcher/`: dort `bun run typecheck`.
+- Typecheck der Test-Dateien (`components/**/*.test.*`, im Showcase-Typecheck ausgeschlossen): `cd components-showcase && ./node_modules/.bin/tsc -p tsconfig.tests.json`.
 - `bun run test` (Vitest, `components/**/*.test.*` und `vendure-showcase/**`). Gezielt: `bunx vitest run components/<name>`.
 - Vor einem Push zusätzlich `bun run security:audit` (wie die CI).
 

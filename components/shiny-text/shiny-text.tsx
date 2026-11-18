@@ -129,8 +129,8 @@ export function ShinyButton({
         border: 'none',
         cursor: 'pointer',
         // Accent-Hintergrund via CSS-Variable
-        backgroundColor: 'var(--accent, #6366f1)',
-        color: 'var(--accent-foreground, #fff)',
+        backgroundColor: 'var(--accent)',
+        color: 'var(--accent-foreground)',
         fontWeight: 600,
         overflow: 'hidden',
         // Shine als Pseudo-Element-Ersatz: background-image overlay

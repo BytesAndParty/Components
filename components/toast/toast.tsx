@@ -2,9 +2,11 @@ import {
   useState,
   useRef,
   useEffect,
+  useEffectEvent,
 } from 'react';
-import { motion, AnimatePresence, type PanInfo } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type ToastMessages } from './messages';
 import {
@@ -22,6 +24,10 @@ interface ToastProviderProps {
   placement?: Placement;
   maxVisible?: number;
   messages?: Partial<ToastMessages>;
+  /** Classes for the fixed toast container (layout, offsets, z-index). */
+  className?: string;
+  /** Classes for every toast card (background, border, radius, width, shadow). */
+  toastClassName?: string;
 }
 
 export function ToastProvider({
@@ -29,6 +35,8 @@ export function ToastProvider({
   placement = 'bottom-right',
   maxVisible = 4,
   messages,
+  className,
+  toastClassName,
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const counter = useRef(0);
@@ -57,26 +65,22 @@ export function ToastProvider({
   const isTop = placement.startsWith('top');
   const isCenter = placement.endsWith('center');
 
-  const positionStyle: React.CSSProperties = {
-    position: 'fixed',
-    zIndex: 9999,
-    display: 'flex',
-    flexDirection: isTop ? 'column' : 'column-reverse',
-    gap: '0.5rem',
-    padding: '1rem',
-    pointerEvents: 'none',
-    ...(isTop ? { top: 0 } : { bottom: 0 }),
-    ...(isCenter
-      ? { left: '50%', transform: 'translateX(-50%)' }
-      : { right: 0 }),
-  };
-
   const visible = toasts.slice(-maxVisible);
 
   return (
     <ToastContext.Provider value={{ toasts, add, dismiss }}>
       {children}
-      <div style={positionStyle}>
+      {/* Always mounted so screen readers pick up toasts added later. No role="status":
+          it implies aria-atomic="true" and would re-read every visible toast. */}
+      <div
+        aria-live="polite"
+        className={cn(
+          'pointer-events-none fixed z-9999 flex gap-2 p-4',
+          isTop ? 'top-0 flex-col' : 'bottom-0 flex-col-reverse',
+          isCenter ? 'left-1/2 -translate-x-1/2' : 'right-0',
+          className,
+        )}
+      >
         <AnimatePresence>
           {visible.map((t) => (
             <ToastItem
@@ -84,6 +88,7 @@ export function ToastProvider({
               data={t}
               placement={placement}
               messages={m}
+              className={toastClassName}
               onDismiss={dismiss}
             />
           ))}
@@ -95,59 +100,56 @@ export function ToastProvider({
 
 /* ---------- Single Toast ---------- */
 
-const variantColors: Record<ToastVariant, string> = {
-  default: 'var(--accent)',
-  success: '#22c55e',
-  warning: '#eab308',
-  danger: '#ef4444',
+const variantBg: Record<ToastVariant, string> = {
+  default: 'bg-accent',
+  success: 'bg-success',
+  warning: 'bg-warning',
+  danger: 'bg-destructive',
 };
 
 interface ToastItemProps {
   data: ToastData;
   placement: Placement;
   messages: ToastMessages;
+  className?: string;
   onDismiss: (id: string) => void;
 }
 
-function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
+function ToastItem({ data, placement, messages, className, onDismiss }: ToastItemProps) {
   const { id, title, description, variant = 'default', duration = 4000 } = data;
   const progressRef = useRef<HTMLDivElement>(null);
-  const [hovered, setHovered] = useState(false);
+  // Read inside the rAF loop, so hover/focus changes never restart the effect.
+  const hoverRef = useRef(false);
+  const focusRef = useRef(false);
+  const elapsedRef = useRef(0);
+  const reduceMotion = useReducedMotion();
+  // Effect event: a new `onDismiss` identity (provider re-render) must not restart the timer.
+  const dismissSelf = useEffectEvent(() => onDismiss(id));
 
   const isTop = placement.startsWith('top');
   const isCenter = placement.endsWith('center');
   const yMul = isTop ? -1 : 1;
 
-  // Progress bar via rAF
+  // Progress bar via rAF. Only unpaused frames add to the elapsed time, so the
+  // remaining time continues exactly where it stopped.
   useEffect(() => {
-    let start: number | null = null;
-    let pausedAt: number | null = null;
-    let pausedTotal = 0;
+    let last: number | null = null;
     let rafId: number;
 
     const tick = (now: number) => {
-      if (!start) start = now;
-
-      if (hovered) {
-        if (!pausedAt) pausedAt = now;
-        rafId = requestAnimationFrame(tick);
-        return;
+      if (last !== null && !hoverRef.current && !focusRef.current) {
+        elapsedRef.current += now - last;
       }
+      last = now;
 
-      if (pausedAt) {
-        pausedTotal += now - pausedAt;
-        pausedAt = null;
-      }
-
-      const elapsed = now - start - pausedTotal;
-      const pct = Math.min((elapsed / duration) * 100, 100);
+      const pct = Math.min((elapsedRef.current / duration) * 100, 100);
 
       if (progressRef.current) {
         progressRef.current.style.width = `${pct}%`;
       }
 
       if (pct >= 100) {
-        onDismiss(id);
+        dismissSelf();
         return;
       }
 
@@ -156,7 +158,7 @@ function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [duration, id, onDismiss, hovered]);
+  }, [duration]);
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (isCenter) {
@@ -166,119 +168,62 @@ function ToastItem({ data, placement, messages, onDismiss }: ToastItemProps) {
     }
   };
 
-  const accentColor = variantColors[variant];
-
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, y: 40 * yMul, scale: 1 }}
+      layout={!reduceMotion}
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 40 * yMul, scale: 1 }}
       animate={{
         opacity: 1,
         y: 0,
         scale: 1,
       }}
-      exit={{ opacity: 0, y: 20 * yMul, transition: { duration: 0.2 } }}
+      exit={{ opacity: 0, y: reduceMotion ? 0 : 20 * yMul, transition: { duration: 0.2 } }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       drag={isCenter ? 'y' : 'x'}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={isCenter ? { top: 0.6, bottom: 0.6, left: 0, right: 0 } : { left: 0, right: 1, top: 0, bottom: 0 }}
       onDragEnd={handleDragEnd}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      style={{
-        pointerEvents: 'auto',
-        position: 'relative',
-        width: '22rem',
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        borderRadius: '0.75rem',
-        overflow: 'hidden',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-        cursor: 'grab',
-      }}
+      onHoverStart={() => { hoverRef.current = true; }}
+      onHoverEnd={() => { hoverRef.current = false; }}
+      onFocus={() => { focusRef.current = true; }}
+      onBlur={() => { focusRef.current = false; }}
+      className={cn(
+        'group border-border bg-card pointer-events-auto relative w-[min(22rem,calc(100vw-2rem))] cursor-grab overflow-hidden rounded-lg border shadow-[0_8px_24px_oklch(0_0_0/0.3)]',
+        className,
+      )}
     >
       {/* Progress bar */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          height: 3,
-          width: '100%',
-          background: 'color-mix(in oklch, var(--foreground) 5%, transparent)',
-        }}
-      >
-        <div
-          ref={progressRef}
-          style={{
-            height: '100%',
-            background: accentColor,
-            opacity: 0.5,
-            width: '0%',
-          }}
-        />
+      <div className="bg-foreground/5 absolute bottom-0 left-0 h-0.75 w-full">
+        <div ref={progressRef} className={cn('h-full w-0 opacity-50', variantBg[variant])} />
       </div>
 
       {/* Content */}
-      <div style={{ padding: '0.875rem 1rem', paddingRight: '2.5rem' }}>
+      <div className="py-3.5 pr-11 pl-4">
         {/* Variant indicator dot */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: accentColor,
-              flexShrink: 0,
-            }}
-          />
-          <span style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--foreground)' }}>
+        <div className="flex items-center gap-2">
+          <span className={cn('size-2 shrink-0 rounded-full', variantBg[variant])} />
+          <span className="text-foreground text-[0.8125rem] font-semibold">
             {title}
           </span>
         </div>
         {description && (
-          <p
-            style={{
-              fontSize: '0.8125rem',
-              color: 'var(--muted-foreground)',
-              marginTop: '0.25rem',
-              marginLeft: '1rem',
-            }}
-          >
+          <p className="text-muted-foreground mt-1 ml-4 text-[0.8125rem]">
             {description}
           </p>
         )}
       </div>
 
-      {/* Close button */}
+      {/* Close button: 44px hit area, small visual square inside. Hidden until hover only
+          on fine pointers; always visible on touch, shown on keyboard focus. */}
       <button
+        type="button"
         onClick={() => onDismiss(id)}
         aria-label={messages.dismiss}
-        style={{
-          position: 'absolute',
-          top: '0.625rem',
-          right: '0.625rem',
-          width: '1.5rem',
-          height: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'transparent',
-          border: 'none',
-          color: 'var(--muted-foreground)',
-          cursor: 'pointer',
-          borderRadius: '0.25rem',
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 0.2s, background 0.15s',
-        }}
-        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-          (e.currentTarget as HTMLElement).style.background = 'color-mix(in oklch, var(--foreground) 8%, transparent)';
-        }}
-        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-          (e.currentTarget as HTMLElement).style.background = 'transparent';
-        }}
+        className="group/close text-muted-foreground absolute top-0 right-0 flex size-11 cursor-pointer items-center justify-center transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none pointer-fine:opacity-0"
       >
-        <X style={{ width: '0.875rem', height: '0.875rem' }} />
+        <span className="group-hover/close:bg-foreground/8 group-focus-visible/close:ring-accent/60 group-focus-visible/close:ring-offset-card flex size-6 items-center justify-center rounded-sm transition-colors duration-150 group-focus-visible/close:ring-2 group-focus-visible/close:ring-offset-2">
+          <X className="size-3.5" />
+        </span>
       </button>
     </motion.div>
   );

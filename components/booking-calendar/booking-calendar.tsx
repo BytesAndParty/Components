@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DatePicker, parseDate } from '@ark-ui/react/date-picker';
 import { Calendar, Clock, Users, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useI18n, useComponentMessages, interpolate } from '../i18n';
+import { useI18n, useComponentMessages, useArkTranslations, interpolate } from '../i18n';
 import { NumberInput } from '../number-input/number-input';
 import { MESSAGES, type BookingCalendarMessages } from './messages';
 
@@ -38,6 +38,8 @@ type Status = 'idle' | 'submitting' | 'done';
 export function BookingCalendar({ slots, onSubmit, messages, className }: BookingCalendarProps) {
   const { locale } = useI18n();
   const m = useComponentMessages(MESSAGES, messages);
+  // Screen reader texts of the month arrows and day cells; Zag's defaults are English only.
+  const datePickerTranslations = useArkTranslations('datePicker');
 
   // Kein useMemo: AtelierUI läuft mit React Compiler (Auto-Memoization).
   const slotsByDate = new Map<string, BookingSlot[]>();
@@ -129,6 +131,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
           <DatePicker.Root
             inline
             locale={locale === 'de' ? 'de-DE' : 'en-US'}
+            translations={datePickerTranslations}
             selectionMode="single"
             defaultFocusedValue={firstDate ? parseDate(firstDate) : undefined}
             value={selectedDate ? [parseDate(selectedDate)] : []}
@@ -145,13 +148,13 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                   {(api) => (
                     <div>
                       <div className="mb-3 flex items-center justify-between">
-                        <DatePicker.PrevTrigger className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                        <DatePicker.PrevTrigger className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                           <ChevronLeft size={16} />
                         </DatePicker.PrevTrigger>
                         <span className="text-sm font-semibold text-foreground">
                           {api.visibleRangeText.start}
                         </span>
-                        <DatePicker.NextTrigger className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                        <DatePicker.NextTrigger className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                           <ChevronRight size={16} />
                         </DatePicker.NextTrigger>
                       </div>
@@ -172,17 +175,20 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                           {api.weeks.map((week, i) => (
                             <DatePicker.TableRow key={i}>
                               {week.map((day, j) => (
-                                <DatePicker.TableCell key={j} value={day} className="p-0.5 text-center">
+                                <DatePicker.TableCell key={j} value={day} className="p-0 text-center">
                                   {/* Zag setzt bei nicht buchbaren Tagen data-disabled (auch bei unavailable)
                                       und blockt deren Klicks selbst. Deshalb kein pointer-events-none: der
                                       Cursor soll zeigen, dass der Tag gesperrt ist. */}
+                                  {/* The trigger is the hit area: the full cell width and at least 44 px high.
+                                      Seven 44 px columns do not fit a phone-width calendar, so the width follows
+                                      the grid. The visible circle is the inner span; text styles inherit. */}
                                   <DatePicker.TableCellTrigger
                                     className={cn(
-                                      'mx-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-sm text-foreground transition-all select-none',
-                                      'hover:bg-muted active:scale-95',
+                                      'group/day flex min-h-11 w-full cursor-pointer items-center justify-center text-sm text-foreground outline-none transition-all select-none',
+                                      'active:scale-95',
                                       'data-[today]:font-bold data-[today]:text-accent',
-                                      'data-[selected]:bg-accent data-[selected]:text-accent-foreground data-[selected]:font-semibold data-[selected]:hover:bg-accent',
-                                      'data-[disabled]:cursor-not-allowed data-[disabled]:text-muted-foreground/45 data-[disabled]:hover:bg-transparent data-[disabled]:active:scale-100',
+                                      'data-[selected]:text-accent-foreground data-[selected]:font-semibold',
+                                      'data-[disabled]:cursor-not-allowed data-[disabled]:text-muted-foreground/45 data-[disabled]:active:scale-100',
                                       'data-[outside-range]:opacity-60',
                                       // Gleich spezifische data-Varianten sortiert Tailwind alphabetisch (today nach selected),
                                       // deshalb die Kombinationen explizit: heute + ausgewählt bleibt lesbar,
@@ -191,7 +197,16 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                                       'data-[today]:data-[disabled]:text-accent/50',
                                     )}
                                   >
-                                    {day.day}
+                                    <span
+                                      className={cn(
+                                        'flex size-9 items-center justify-center rounded-full transition-all',
+                                        'group-hover/day:bg-muted group-focus-visible/day:ring-2 group-focus-visible/day:ring-accent/60',
+                                        'group-data-[selected]/day:bg-accent group-data-[selected]/day:group-hover/day:bg-accent',
+                                        'group-data-[disabled]/day:group-hover/day:bg-transparent',
+                                      )}
+                                    >
+                                      {day.day}
+                                    </span>
                                   </DatePicker.TableCellTrigger>
                                 </DatePicker.TableCell>
                               ))}

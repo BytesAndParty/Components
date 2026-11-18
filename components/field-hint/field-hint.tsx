@@ -49,10 +49,11 @@ export function FieldHint({
         delay={delay}
         className="max-w-xs text-[12px] leading-relaxed whitespace-normal!"
       >
+        {/* No own aria-describedby: Tooltip describes the focused button itself,
+            pointing it at the sr-only span as well would read the hint twice. */}
         <button
           type="button"
           aria-label={m.triggerLabel}
-          aria-describedby={hintId}
           className={cn(
             'inline-flex items-center justify-center rounded-full',
             'text-muted-foreground hover:text-foreground',

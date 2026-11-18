@@ -7,6 +7,7 @@ A compact, precision-focused numeric input designed for design toolbars. It supp
 - **Hybrid Display**: Toggle between a clean button-based view and a text input for direct editing (double-click to edit).
 - **Precision Control**: Configurable decimal places (`decimals`) and step increments (`step`).
 - **Nudge Interactions**: Supports `ArrowUp`/`ArrowDown` keys and mouse wheel scrolling to increment/decrement values.
+- **Steppers**: Minus and plus buttons on either side of the value, always visible (no hover condition, so they also show on touch). With a mouse they stay 20 px wide to keep toolbars compact; on coarse pointers (`pointer-coarse:`) they grow to a 44 × 44 px touch target, so the whole control is about 128 px wide there. They are not tab stops (`tabIndex={-1}`, the value button handles the arrow keys) and carry an `aria-label` from `messages.ts` (`decrement`, `increment`).
 - **Unit Support**: Optional units (e.g., `mm`, `%`, `°`) displayed inline but excluded during editing.
 - **Scroll Hijack**: Prevents page scroll when using the mouse wheel over the input area for a smooth adjustment experience.
 - **Clamping**: Automatically enforces `min` and `max` bounds on every change.
@@ -33,6 +34,7 @@ A compact, precision-focused numeric input designed for design toolbars. It supp
 | `unit` | `string` | — | Optional unit suffix (e.g., "mm"). |
 | `label` | `string` | — | Optional text label shown to the left of the input. |
 | `className` | `string` | — | Additional CSS classes for the wrapper. |
+| `messages` | `Partial<NumberInputMessages>` | — | i18n overrides for the stepper labels (`decrement`, `increment`). |
 
 ## Usage
 
@@ -75,3 +77,4 @@ function Properties() {
 ## Dependencies
 
 - `clsx` & `tailwind-merge` — Style utility (`cn`)
+- `components/i18n` — stepper labels (`useComponentMessages`)

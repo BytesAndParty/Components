@@ -16,7 +16,8 @@ Star rating component with controlled/uncontrolled support, hover preview, and p
 1. **Controlled/uncontrolled pattern**: If `value` is provided, the component is controlled. Otherwise `defaultValue` + internal state is used.
 2. **Display value**: `hoverValue ?? currentValue` determines which stars are filled, so hover always takes visual priority.
 3. **CSS keyframe**: `rating-pop` is defined in `components-showcase/src/styles.css` (see Required CSS below).
-4. **ARIA**: Uses `role="radiogroup"` with individual `role="radio"` and `aria-checked` per star for full screen reader support. With `readOnly` the group becomes `role="img"` with one label („Bewertung: 5 von 5 Sternen“) — a display is announced as a picture, not as a set of disabled inputs.
+4. **ARIA**: Uses `role="radiogroup"` with individual `role="radio"` and `aria-checked` per star for full screen reader support (only the chosen star is checked). With `readOnly` the group becomes `role="img"` with one label („Bewertung: 5 von 5 Sternen“) — a display is announced as a picture, not as a set of disabled inputs.
+5. **Keyboard** (radio group pattern, not in `readOnly`): The group is a single tab stop (roving `tabIndex`) on the chosen star, or on the first star while the value is 0. `ArrowRight`/`ArrowDown` choose the next star, `ArrowLeft`/`ArrowUp` the previous one, wrapping at the ends like native radio buttons; `Home`/`End` choose the first/last star. Focus moves with the value, and each key fires `onChange` like a click (including the pop animation). `Space`/`Enter` on the focused star choose it (native button). With value 0, `ArrowRight` from the first star chooses star 2 — `Space` chooses star 1.
 
 ## Props
 
@@ -54,3 +55,4 @@ None (React only).
 
 - `role="radiogroup"` on the container with `aria-label="Rating"`
 - Each star is `role="radio"` with `aria-checked` and German `aria-label` (e.g., "3 von 5 Sternen")
+- One tab stop for the group, arrow keys and `Home`/`End` change the value (see How It Works, 5.)

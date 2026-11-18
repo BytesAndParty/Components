@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import {
   Type, ImageIcon, Square, Circle, Minus, Layers, Tag, QrCode, Spline,
   Eye, EyeOff, Lock, Unlock, Trash2, GripVertical,
@@ -263,14 +263,18 @@ function SortableLayerRow(props: {
 
   const isElevated = isDragging || isDropping
 
+  // Reduced motion: rows appear, disappear and change places without the
+  // height animation and the layout spring.
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <motion.div
       ref={setNodeRef}
       style={style}
-      layout={isDndPositioning ? false : 'position'}
-      initial={{ opacity: 0, height: 0 }}
+      layout={isDndPositioning || shouldReduceMotion ? false : 'position'}
+      initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
-      exit={{ opacity: 0, height: 0 }}
+      exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
       transition={{ layout: { type: 'spring', stiffness: 480, damping: 34 } }}
       className={cn(
         'relative',
@@ -450,10 +454,10 @@ function LayerRow({
         className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
-        <RowBtn onClick={onVisibilityToggle} title={messages.visibility}>
+        <RowBtn onClick={onVisibilityToggle} title={messages.visibility} pressed={layer.visible}>
           {layer.visible ? <Eye size={11} /> : <EyeOff size={11} />}
         </RowBtn>
-        <RowBtn onClick={onLockToggle} title={messages.lock}>
+        <RowBtn onClick={onLockToggle} title={messages.lock} pressed={layer.locked}>
           {layer.locked ? <Lock size={11} /> : <Unlock size={11} />}
         </RowBtn>
         <RowBtn onClick={onDelete} title={messages.deleteLayer} danger>
@@ -468,17 +472,21 @@ function RowBtn({
   onClick,
   title,
   danger,
+  pressed,
   children,
 }: {
   onClick: () => void
   title?: string
   danger?: boolean
+  /** Toggle state; leave undefined for plain action buttons. */
+  pressed?: boolean
   children: React.ReactNode
 }) {
   return (
     <button
       type="button"
       title={title}
+      aria-pressed={pressed}
       onClick={onClick}
       className={cn(
         'flex items-center justify-center w-5 h-5 rounded transition-colors',

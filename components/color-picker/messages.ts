@@ -8,7 +8,9 @@ export type ColorPickerMessages = {
   hue: string
   alpha: string
   saturationBrightness: string
-  presetsLabel: string
+  selectColor: string
+  saturationBrightnessValue: string
+  area2d: string
   paletteIvory: string
   paletteGold: string
   paletteWine: string
@@ -25,7 +27,9 @@ export const MESSAGES = {
     hue: 'Farbton',
     alpha: 'Transparenz',
     saturationBrightness: 'Sättigung und Helligkeit',
-    presetsLabel: 'Vorgaben',
+    selectColor: 'Farbe {color} wählen',
+    saturationBrightnessValue: 'Sättigung {s}, Helligkeit {b}',
+    area2d: '2D-Regler',
     paletteIvory: 'Elfenbein & Pergament',
     paletteGold: 'Gold & Bernstein',
     paletteWine: 'Burgunder & Wein',
@@ -40,7 +44,9 @@ export const MESSAGES = {
     hue: 'Hue',
     alpha: 'Alpha',
     saturationBrightness: 'Saturation and brightness',
-    presetsLabel: 'Presets',
+    selectColor: 'Select {color}',
+    saturationBrightnessValue: 'saturation {s}, brightness {b}',
+    area2d: '2D slider',
     paletteIvory: 'Ivory & Parchment',
     paletteGold: 'Gold & Amber',
     paletteWine: 'Burgundy & Wine',

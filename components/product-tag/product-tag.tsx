@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, type CSSProperties, type ReactNode } from 'react';
 import { useComponentMessages } from '../i18n';
 import { MESSAGES, type ProductTagMessages } from './messages';
 
@@ -87,13 +87,13 @@ const tagCss = `
 }
 `;
 
-let cssInjected = false;
+const STYLE_ID = '__product-tag-styles__';
 function injectCssOnce() {
-  if (cssInjected || typeof document === 'undefined') return;
+  if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement('style');
+  style.id = STYLE_ID;
   style.textContent = tagCss;
   document.head.appendChild(style);
-  cssInjected = true;
 }
 
 // ─── Variant-Konfiguration ───────────────────────────────────────────────────
@@ -121,7 +121,7 @@ const variantConfig: Record<ProductTagVariant, VariantConfig> = {
 // ─── Komponenten ──────────────────────────────────────────────────────────────
 
 export function ProductTag({ variant, discount, label, messages, className }: ProductTagProps) {
-  injectCssOnce();
+  useEffect(injectCssOnce, []);
   const m = useComponentMessages(MESSAGES, messages);
   const { bg, glow, shimmer, dot, messageKey } = variantConfig[variant];
 

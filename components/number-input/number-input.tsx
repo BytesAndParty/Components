@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import { cn } from '../lib/utils'
+import { useComponentMessages } from '../i18n'
+import { MESSAGES, type NumberInputMessages } from './messages'
 
 export interface NumberInputProps {
   value: number
@@ -11,7 +13,13 @@ export interface NumberInputProps {
   unit?: string
   label?: string
   className?: string
+  messages?: Partial<NumberInputMessages>
 }
+
+// Steppers stay visible without hover (touch has none); on coarse pointers
+// they grow to the 44 px touch target, mouse toolbars keep the compact size.
+const STEPPER_CLASS =
+  'text-muted-foreground hover:text-foreground flex h-full w-5 items-center justify-center transition-colors select-none pointer-coarse:min-h-11 pointer-coarse:min-w-11'
 
 export function NumberInput({
   value,
@@ -23,12 +31,14 @@ export function NumberInput({
   unit,
   label,
   className,
+  messages,
 }: NumberInputProps) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState('')
   const buttonRef = useRef<HTMLButtonElement>(null)
   const nudgeRef = useRef<(dir: 1 | -1) => void>(() => {})
   const inputId = useId()
+  const m = useComponentMessages(MESSAGES, messages)
 
   const clamp = (v: number) => Math.min(max, Math.max(min, v))
   const display = decimals > 0 ? value.toFixed(decimals) : String(value)
@@ -69,9 +79,9 @@ export function NumberInput({
   }
 
   return (
-    <div className={cn('group relative flex items-center gap-0', className)}>
+    <div className={cn('relative flex items-center gap-0', className)}>
       {label && (
-        <label 
+        <label
           htmlFor={inputId}
           className="text-muted-foreground mr-1 cursor-pointer text-[10px] font-medium tracking-wider uppercase select-none"
         >
@@ -84,8 +94,9 @@ export function NumberInput({
         <button
           type="button"
           tabIndex={-1}
+          aria-label={m.decrement}
           onPointerDown={(e) => { e.preventDefault(); nudge(-1) }}
-          className="text-muted-foreground hover:text-foreground flex h-full w-5 items-center justify-center opacity-0 transition-colors select-none group-hover:opacity-100"
+          className={STEPPER_CLASS}
         >
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
             <path d="M4 5.5L1 2.5h6L4 5.5z" />
@@ -130,8 +141,9 @@ export function NumberInput({
         <button
           type="button"
           tabIndex={-1}
+          aria-label={m.increment}
           onPointerDown={(e) => { e.preventDefault(); nudge(1) }}
-          className="text-muted-foreground hover:text-foreground flex h-full w-5 items-center justify-center opacity-0 transition-colors select-none group-hover:opacity-100"
+          className={STEPPER_CLASS}
         >
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
             <path d="M4 2.5L7 5.5H1L4 2.5z" />

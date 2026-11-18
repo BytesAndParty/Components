@@ -88,9 +88,13 @@ export function ShortcutOverview({
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <span className="bg-muted border-border text-muted-foreground rounded-full border px-3 py-1.5 text-xs font-medium">
-                <kbd className="text-foreground font-bold">{formatForDisplay(OVERVIEW_HOTKEY)}</kbd> {m.openHint}
-              </span>
+              {/* Only rendered while open: formatForDisplay reads navigator, so the closed
+                  (server-rendered) dialog must not contain platform-dependent text. */}
+              {isVisible && (
+                <span className="bg-muted border-border text-muted-foreground rounded-full border px-3 py-1.5 text-xs font-medium">
+                  <kbd className="text-foreground font-bold">{formatForDisplay(OVERVIEW_HOTKEY)}</kbd> {m.openHint}
+                </span>
+              )}
             </div>
           </div>
 

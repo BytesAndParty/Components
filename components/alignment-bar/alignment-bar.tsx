@@ -89,6 +89,7 @@ export function AlignmentBar({ onAlign, disabled = false, className, messages }:
           <button
             ref={el => { buttonRefs.current[i] = el }}
             type="button"
+            disabled={disabled}
             tabIndex={focusIndex === i ? 0 : -1}
             title={m[BUTTON_TITLES[action]]}
             onClick={() => {

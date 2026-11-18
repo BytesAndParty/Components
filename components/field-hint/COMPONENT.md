@@ -4,7 +4,7 @@ Kleines Info-Icon mit Tooltip für Formular-Labels und ähnliche Stellen. Wrappt
 
 ## Features
 
-- **A11y first:** Hint-Text liegt zusätzlich als `sr-only`-Element im DOM mit stabiler ID — funktioniert auch wenn der Tooltip nicht sichtbar ist.
+- **A11y first:** Hint-Text liegt zusätzlich als `sr-only`-Element im DOM mit stabiler ID — funktioniert auch wenn der Tooltip nicht sichtbar ist. Gedacht für das zugehörige Feld; den Info-Button selbst beschreibt der `Tooltip` beim Fokus per `aria-describedby`, deshalb verweist der Button nicht zusätzlich auf das `sr-only`-Element (sonst läse der Screenreader den Hinweis doppelt).
 - **Keyboard:** Fokussierbar via Tab, Tooltip öffnet bei `:focus` und `:hover`, schließt bei Blur/Mouse-Leave.
 - **Style-konsistent:** Nutzt `var(--accent)`, `var(--muted-foreground)` und `var(--foreground)` — folgt automatisch Theme- und Accent-Wechseln.
 - **Composable:** Standalone neben jedem Label nutzbar oder per `hint`-Prop direkt in `FormInput`.
