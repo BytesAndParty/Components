@@ -63,6 +63,7 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 - **search-overlay:** Spotlight-Suche mit `Mod+K` und TanStack Query.
 - **autocomplete-cell:** Eingabe mit gefilterten Vorschlägen.
 - **slider / switch / checkbox:** Eigene, tastaturbedienbare Basis-Controls (ohne Fremd-Lib).
+- **checkbox-card:** Ganze Karte als Checkbox (natives Label mit Input) für Auswahl-Kacheln wie Event-Optionen oder Weinpakete, mit freiem Inhalt und austauschbarem Indikator.
 - **number-input / number-ticker:** Präzise Werteeingabe und animierte Zahlen.
 - **password-setup / password-confirmation:** Sicherer Onboarding-Flow.
 - **use-image-upload:** Hook + Drop-Zone für Bild-Uploads.
@@ -86,8 +87,9 @@ Diese Übersicht dient als Schnellreferenz für den Aufbau von Premium-Storefron
 *Der letzte Schliff.*
 
 - **toast / tooltip:** Subtile Informationen.
+- **modal:** Modaler Dialog auf dem nativen `<dialog>` (Fokus-Falle, Esc, Klick auf den Hintergrund) für Erklärungen, Bestätigungen und kurze Abläufe, ohne Headless-Lib und ohne Portal.
 - **stepper:** Horizontaler und vertikaler Mehrschritt-Wizard.
-- **circular-progress:** Fortschrittsanzeige.
+- **circular-progress / progress-bar:** Fortschrittsanzeige als Ring bzw. als Leiste.
 - **countdown:** Dringlichkeit für limitierte Angebote.
 - **hotkeys:** Tastatursteuerung für Power-User (Registry + Shortcut-Übersicht per `Mod+/`).
 - **atelier / i18n:** Zentraler Theme-, Akzent- und Sprach-State.

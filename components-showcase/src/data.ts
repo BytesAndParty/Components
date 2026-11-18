@@ -31,7 +31,7 @@ export const groups = [
     descKey: 'desc.inputs',
     title: 'Formulare & Feedback',
     description: 'Form controls, search interactions, and file uploads, plus toasts, counters, countdown, and confetti.',
-    components: ['PasswordSetup', 'PasswordConfirmation', 'FormInput', 'FieldHint', 'Checkbox', 'Switch', 'Slider', 'AutocompleteCell', 'AnimatedSearch', 'SearchMorph', 'useImageUpload', 'ImageUpload', 'NumberTicker', 'CircularProgress', 'Toast', 'PricingInteraction', 'HeartLike', 'Countdown', 'Confetti'],
+    components: ['PasswordSetup', 'PasswordConfirmation', 'FormInput', 'FieldHint', 'Checkbox', 'CheckboxCard', 'Switch', 'Slider', 'AutocompleteCell', 'AnimatedSearch', 'SearchMorph', 'useImageUpload', 'ImageUpload', 'NumberTicker', 'CircularProgress', 'ProgressBar', 'Toast', 'Modal', 'PricingInteraction', 'HeartLike', 'Countdown', 'Confetti'],
   },
   {
     path: '/navigation',

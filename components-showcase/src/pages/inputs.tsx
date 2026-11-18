@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react'
+import { Grape } from 'lucide-react'
 import { z } from 'zod'
 import { Section } from '../components/section'
 import { DemoTabs } from '../components/demo-tabs'
+import { VariantDemo, type VariantOption } from '../components/variant-demo'
 import { Checkbox } from '@components/checkbox/checkbox'
+import { CheckboxCard } from '@components/checkbox-card/checkbox-card'
+import { cn } from '@components/lib/utils'
 import { Switch } from '@components/switch/switch'
 import { Slider } from '@components/slider/slider'
 import { FormInput } from '@components/form-input/form-input'
@@ -295,6 +299,146 @@ function PasswordConfirmationDemo() {
   )
 }
 
+type CheckboxCardExample = 'controlled' | 'uncontrolled' | 'indicator' | 'disabled' | 'form'
+
+const CHECKBOX_CARD_EXAMPLES: VariantOption<CheckboxCardExample>[] = [
+  { value: 'controlled', label: 'controlled', snippet: 'checked={…} onChange={…}' },
+  { value: 'uncontrolled', label: 'uncontrolled', snippet: 'defaultChecked' },
+  { value: 'indicator', label: 'indicator', snippet: 'indicator={…}' },
+  { value: 'disabled', label: 'disabled', snippet: 'disabled' },
+  { value: 'form', label: 'form', snippet: 'name="extras" value="gift-wrap" · name="terms" value="accepted" required' },
+]
+
+const EXPERIENCES = [
+  { id: 'cellar', title: 'Kellerführung', detail: 'Samstag, 15 Uhr · 45 Minuten' },
+  { id: 'picnic', title: 'Picknick im Weingarten', detail: 'Korb für zwei, ab 12 Uhr' },
+  { id: 'tasting', title: 'Verkostung', detail: 'Sechs Weine im Keller, dazu Brot und Käse und zum Abschluss ein Spaziergang durch die Weingärten' },
+]
+
+function ExperiencePicker() {
+  const [picked, setPicked] = useState<string[]>(['picnic'])
+  const titles = EXPERIENCES.filter(e => picked.includes(e.id)).map(e => e.title)
+
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {EXPERIENCES.map(e => (
+          <CheckboxCard
+            key={e.id}
+            checked={picked.includes(e.id)}
+            onChange={checked => setPicked(prev => (checked ? [...prev, e.id] : prev.filter(id => id !== e.id)))}
+          >
+            <span className="font-medium">{e.title}</span>
+            <span className="text-muted-foreground text-sm">{e.detail}</span>
+          </CheckboxCard>
+        ))}
+      </div>
+      <p className="text-muted-foreground text-sm">
+        {titles.length > 0 ? `Gewählt: ${titles.join(', ')}` : 'Noch nichts gewählt'}
+      </p>
+    </div>
+  )
+}
+
+function GrapeStampCard() {
+  const [checked, setChecked] = useState(false)
+
+  return (
+    <CheckboxCard
+      checked={checked}
+      onChange={setChecked}
+      className="w-full max-w-sm"
+      indicator={
+        <span
+          className={cn(
+            'grid size-10 place-items-center rounded-full border-2 transition duration-300 motion-reduce:transition-none',
+            checked
+              ? 'border-accent bg-accent text-accent-foreground -rotate-12 scale-110'
+              : 'border-muted-foreground text-muted-foreground border-dashed',
+          )}
+        >
+          <Grape size={20} strokeWidth={1.6} />
+        </span>
+      }
+    >
+      <span className="font-medium">Rebstock-Patenschaft</span>
+      <span className="text-muted-foreground text-sm">Ein Jahr lang ein eigener Rebstock im Weingarten</span>
+    </CheckboxCard>
+  )
+}
+
+function CheckboxCardForm() {
+  const [sent, setSent] = useState<string[]>()
+
+  return (
+    <form
+      className="grid w-full gap-3 sm:grid-cols-2"
+      onSubmit={e => {
+        e.preventDefault()
+        setSent(Array.from(new FormData(e.currentTarget), ([key, v]) => `${key}=${typeof v === 'string' ? v : v.name}`))
+      }}
+    >
+      <CheckboxCard name="extras" value="gift-wrap">
+        <span className="font-medium">Geschenkverpackung</span>
+        <span className="text-muted-foreground text-sm">Mit handgeschriebener Karte</span>
+      </CheckboxCard>
+      <CheckboxCard name="terms" value="accepted" required>
+        <span className="font-medium">AGB gelesen</span>
+        <span className="text-muted-foreground text-sm">Pflichtfeld, ohne Haken wird nicht gesendet</span>
+      </CheckboxCard>
+      <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+        <button
+          type="submit"
+          className="bg-accent text-accent-foreground focus-visible:ring-accent/60 min-h-11 cursor-pointer rounded-md px-4 text-sm font-medium transition hover:opacity-90 focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-95"
+        >
+          Absenden
+        </button>
+        <p className="text-muted-foreground text-sm">{sent ? `Gesendet: ${sent.join(', ')}` : 'Noch nicht gesendet'}</p>
+      </div>
+    </form>
+  )
+}
+
+function CheckboxCardDemo() {
+  return (
+    <VariantDemo
+      label="example"
+      options={CHECKBOX_CARD_EXAMPLES}
+      className="min-h-56"
+      render={example => {
+        switch (example) {
+          case 'controlled':
+            return <ExperiencePicker />
+          case 'uncontrolled':
+            return (
+              <CheckboxCard defaultChecked className="w-full max-w-sm">
+                <span className="font-medium">Geschenkverpackung</span>
+                <span className="text-muted-foreground text-sm">Mit handgeschriebener Karte</span>
+              </CheckboxCard>
+            )
+          case 'indicator':
+            return <GrapeStampCard />
+          case 'disabled':
+            return (
+              <div className="grid w-full gap-3 sm:grid-cols-2">
+                <CheckboxCard disabled>
+                  <span className="font-medium">Kellerführung am Sonntag</span>
+                  <span className="text-muted-foreground text-sm">Ausgebucht</span>
+                </CheckboxCard>
+                <CheckboxCard disabled defaultChecked>
+                  <span className="font-medium">Verkostung</span>
+                  <span className="text-muted-foreground text-sm">Im Paket enthalten</span>
+                </CheckboxCard>
+              </div>
+            )
+          case 'form':
+            return <CheckboxCardForm />
+        }
+      }}
+    />
+  )
+}
+
 export function InputsPage() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
   const [volume, setVolume] = useState(60)
@@ -375,15 +519,36 @@ export function InputsPage() {
         </div>
       </Section>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <Section title="Checkbox" description="Animated checkmark with scale-from-center fill.">
-          <Checkbox label="Accept terms and conditions" defaultChecked />
-        </Section>
+      <Section title="Checkbox" description="Checkbox with a label, or a whole card as the checkbox.">
+        <DemoTabs
+          tabs={[
+            {
+              value: "checkbox",
+              label: "Checkbox",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"Animated checkmark with scale-from-center fill."}</p>
+                  <Checkbox label="Accept terms and conditions" defaultChecked />
+                </>
+              ),
+            },
+            {
+              value: "checkboxcard",
+              label: "CheckboxCard",
+              content: (
+                <>
+                  <p className="text-muted-foreground mb-6 text-sm">{"The whole card is the label of a native checkbox: click anywhere or press Space, state as data-state, swappable indicator. With reduced motion the check and the border switch without transition."}</p>
+                  <CheckboxCardDemo />
+                </>
+              ),
+            },
+          ]}
+        />
+      </Section>
 
-        <Section title="Switch" description="iOS-style toggle with thumb squish animation.">
-          <Switch label="Enable notifications" defaultChecked />
-        </Section>
-      </div>
+      <Section title="Switch" description="iOS-style toggle with thumb squish animation.">
+        <Switch label="Enable notifications" defaultChecked />
+      </Section>
 
       <Section title="Slider" description="Range slider with thumb squish on grab and accent-aware fill.">
         <div className="max-w-96">
