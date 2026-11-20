@@ -3,6 +3,7 @@ import { heroSection } from './hero/manifest'
 import { featuresSection } from './features/manifest'
 import { showcaseSection } from './showcase/manifest'
 import { storeSection } from './store/manifest'
+import { tasteSection } from './taste/manifest'
 import { eventsSection } from './events/manifest'
 import { ctaSection } from './cta/manifest'
 import { pricingSection } from './pricing/manifest'
@@ -25,6 +26,7 @@ export const sections: SectionDef[] = [
   featuresSection,
   showcaseSection,
   storeSection,
+  tasteSection,
   eventsSection,
   ctaSection,
   pricingSection,
