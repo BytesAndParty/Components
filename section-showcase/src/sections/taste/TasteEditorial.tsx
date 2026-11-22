@@ -9,7 +9,8 @@ import { AXES, AXIS_LABEL, TASTE_WINES, ZERO_VALUES } from './taste-data'
 /**
  * Maison Editorial — the taste diamond as a tasting note in a magazine. Six hairline-separated
  * entries with oversized italic numerals, a small monochrome diamond beside them. Hovering an
- * entry marks its axis in the diamond and vice versa. Cream ground, zinc ink.
+ * entry marks its axis in the diamond and vice versa; hovering the diamond opens a tooltip with the
+ * value. Cream ground, zinc ink.
  */
 
 const THEME: DiamondTheme = {
@@ -22,6 +23,7 @@ const THEME: DiamondTheme = {
   labelActive: 'text-zinc-900',
   value: '',
   focus: 'focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:outline-none',
+  tip: 'border border-zinc-200 bg-[#fdfcf9] text-zinc-900 shadow-[0_10px_30px_-12px_rgba(24,24,27,0.3)]',
 }
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI']
@@ -78,7 +80,11 @@ export function TasteEditorial() {
                 key={key}
                 onPointerEnter={e => e.pointerType === 'mouse' && setActive(i)}
                 onPointerLeave={e => e.pointerType === 'mouse' && setActive(null)}
-                className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-x-5 border-t border-zinc-200 py-6 last:border-b"
+                className={cn(
+                  "relative grid grid-cols-[2.25rem_1fr_auto] items-center gap-x-5 border-t border-zinc-200 py-6 transition-opacity duration-300 last:border-b before:absolute before:inset-x-0 before:-top-px before:h-px before:origin-left before:scale-x-0 before:bg-zinc-900 before:transition-transform before:duration-500 before:ease-out before:content-[''] motion-reduce:before:transition-none",
+                  active === i && 'before:scale-x-100',
+                  active !== null && active !== i && 'opacity-45',
+                )}
               >
                 <span aria-hidden="true" className="self-start pt-2 text-[9px] font-bold tracking-[0.3em] text-zinc-500 uppercase">
                   <NumeralReveal numeral={ROMAN[i]} />
@@ -91,8 +97,8 @@ export function TasteEditorial() {
                 </div>
                 <span
                   className={cn(
-                    'font-display text-[clamp(2.6rem,5vw,4rem)] leading-[0.8] font-light tracking-tighter italic tabular-nums transition-[color,transform] duration-300',
-                    active === i ? '-translate-x-1 text-zinc-900' : 'text-zinc-400',
+                    'font-display text-[clamp(2.6rem,5vw,4rem)] leading-[0.8] font-light tracking-tighter italic tabular-nums transition-colors duration-300',
+                    active === i ? 'text-zinc-900' : 'text-zinc-400',
                   )}
                 >
                   {wine.values[i]}
@@ -108,6 +114,7 @@ export function TasteEditorial() {
               theme={THEME}
               active={active}
               onActive={setActive}
+              hints={wine.texts}
               ariaLabel={`Geschmacksprofil ${wine.name}`}
             />
             {wine.note && <p className="mx-auto mt-6 max-w-sm text-center text-base leading-relaxed font-light text-zinc-600">{wine.note}</p>}

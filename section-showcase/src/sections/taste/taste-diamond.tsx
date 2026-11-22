@@ -1,5 +1,5 @@
-import { useEffect, useId } from 'react'
-import { animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react'
+import { useEffect, useId, useState } from 'react'
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react'
 import { cn } from '@components/lib/utils'
 import { AXES, AXIS_COUNT, AXIS_LABEL } from './taste-data'
 
@@ -20,6 +20,14 @@ const angle = (index: number) => ((-90 + (index * 360) / AXIS_COUNT) * Math.PI) 
 function pointAt(index: number, value: number, radius = RADIUS) {
   const r = (value / 10) * radius
   return { x: CENTER + r * Math.cos(angle(index)), y: CENTER + r * Math.sin(angle(index)) }
+}
+
+/** The slice of the hexagon that belongs to one axis: hover target and highlight area in detail mode. */
+function sectorPath(index: number) {
+  const half = Math.PI / AXIS_COUNT
+  const edge = RADIUS * Math.cos(half)
+  const at = (a: number, r: number) => `${(CENTER + r * Math.cos(a)).toFixed(1)},${(CENTER + r * Math.sin(a)).toFixed(1)}`
+  return `M${CENTER},${CENTER} L${at(angle(index) - half, edge)} L${at(angle(index), RADIUS)} L${at(angle(index) + half, edge)} Z`
 }
 
 const toPoints = (values: number[]) =>
@@ -75,27 +83,61 @@ export interface DiamondTheme {
   labelActive: string
   value: string
   focus: string
+  /** Tailwind classes for the detail-mode tooltip box (ground, border, ink). */
+  tip?: string
 }
 
-function Vertex({ index, values, series, ring, highlighted }: { index: number; values: MotionValue<number[]>; series: DiamondSeries; ring: string; highlighted: boolean }) {
+function Vertex({
+  index,
+  values,
+  series,
+  ring,
+  highlighted,
+  detail,
+}: {
+  index: number
+  values: MotionValue<number[]>
+  series: DiamondSeries
+  ring: string
+  highlighted: boolean
+  detail: boolean
+}) {
   const reduce = useReducedMotion()
   const cx = useTransform(values, v => pointAt(index, v[index]).x)
   const cy = useTransform(values, v => pointAt(index, v[index]).y)
+  const transition = { duration: reduce ? 0 : 0.2 }
   return (
-    <motion.circle
-      cx={cx}
-      cy={cy}
-      fill={series.dot}
-      stroke={ring}
-      strokeWidth={1.5}
-      initial={false}
-      animate={{ r: highlighted ? 7 : 4 }}
-      transition={{ duration: reduce ? 0 : 0.2 }}
-    />
+    <>
+      {detail && (
+        <>
+          <motion.line x1={CENTER} y1={CENTER} x2={cx} y2={cy} stroke={series.stroke} strokeWidth={1.6} initial={false} animate={{ opacity: highlighted ? 1 : 0 }} transition={transition} />
+          <motion.circle
+            cx={cx}
+            cy={cy}
+            fill="none"
+            stroke={series.dot}
+            strokeWidth={1}
+            initial={false}
+            animate={{ r: highlighted ? 11 : 4, opacity: highlighted ? 0.4 : 0 }}
+            transition={transition}
+          />
+        </>
+      )}
+      <motion.circle
+        cx={cx}
+        cy={cy}
+        fill={series.dot}
+        stroke={ring}
+        strokeWidth={1.5}
+        initial={false}
+        animate={{ r: detail ? 4.5 : highlighted ? 7 : 4 }}
+        transition={transition}
+      />
+    </>
   )
 }
 
-function Series({ series, theme, active, glowId }: { series: DiamondSeries; theme: DiamondTheme; active: number | null; glowId?: string }) {
+function Series({ series, theme, active, glowId, detail }: { series: DiamondSeries; theme: DiamondTheme; active: number | null; glowId?: string; detail: boolean }) {
   const values = useMorph(series.values)
   const points = useTransform(values, toPoints)
   return (
@@ -103,7 +145,7 @@ function Series({ series, theme, active, glowId }: { series: DiamondSeries; them
       {glowId && <motion.polygon points={points} fill="none" stroke={series.stroke} strokeWidth={6} opacity={0.7} filter={`url(#${glowId})`} />}
       <motion.polygon points={points} fill={series.fill} stroke={series.stroke} strokeWidth={2} strokeLinejoin="round" />
       {AXES.map((key, i) => (
-        <Vertex key={key} index={i} values={values} series={series} ring={theme.dotRing} highlighted={active === i} />
+        <Vertex key={key} index={i} values={values} series={series} ring={theme.dotRing} highlighted={active === i} detail={detail} />
       ))}
     </g>
   )
@@ -117,6 +159,7 @@ export function TasteDiamond({
   ariaLabel,
   glow = false,
   showValues = false,
+  hints,
   className,
 }: {
   series: DiamondSeries[]
@@ -127,9 +170,24 @@ export function TasteDiamond({
   glow?: boolean
   /** Shows the value of the first series under each axis name. */
   showValues?: boolean
+  /**
+   * One short text per axis, in AXES order. Switches on the detail mode for the first series: hovering
+   * the chart (axis slices or names) marks the axis with a wash, a halo and a spoke up to its value,
+   * dims the other axis names and opens a tooltip with the value and this text.
+   */
+  hints?: string[]
   className?: string
 }) {
   const glowId = `taste-glow-${useId().replace(/\W/g, '')}`
+  const reduce = useReducedMotion()
+  // The tooltip follows hovering inside the chart only; marking an axis from outside (the list) leaves it closed.
+  const [tipIndex, setTipIndex] = useState<number | null>(null)
+  const mark = (index: number | null) => {
+    setTipIndex(index)
+    onActive(index)
+  }
+  const detail = hints !== undefined
+  const tipPoint = tipIndex === null ? null : pointAt(tipIndex, series[0].values[tipIndex])
 
   return (
     <div role="group" aria-label={ariaLabel} className={cn('relative mx-auto aspect-square w-full max-w-[34rem]', className)}>
@@ -150,8 +208,13 @@ export function TasteDiamond({
             strokeWidth={step === 10 ? 1.2 : 0.7}
           />
         ))}
+        {detail &&
+          AXES.map((key, i) => (
+            <path key={key} d={sectorPath(i)} fill={series[0].stroke} pointerEvents="none" style={{ fillOpacity: active === i ? 0.07 : 0, transition: 'fill-opacity 200ms' }} />
+          ))}
         {AXES.map((key, i) => {
           const end = pointAt(i, 10)
+          const marked = active === i && !detail
           return (
             <line
               key={key}
@@ -159,16 +222,24 @@ export function TasteDiamond({
               y1={CENTER}
               x2={end.x}
               y2={end.y}
-              stroke={active === i ? theme.spokeActive : theme.spoke}
-              strokeWidth={active === i ? 1.6 : 0.7}
+              stroke={marked ? theme.spokeActive : theme.spoke}
+              strokeWidth={marked ? 1.6 : 0.7}
               style={{ transition: 'stroke 200ms, stroke-width 200ms' }}
             />
           )
         })}
         {/* Keyed by position: the series slot stays mounted when its wine changes, so the polygon morphs. */}
         {series.map((s, i) => (
-          <Series key={i} series={s} theme={theme} active={active} glowId={glow ? glowId : undefined} />
+          <Series key={i} series={s} theme={theme} active={active} glowId={glow ? glowId : undefined} detail={detail && i === 0} />
         ))}
+        {/* Hit layer above the polygon, so the slices catch the pointer inside the shape as well. */}
+        {detail && (
+          <g onPointerLeave={e => e.pointerType === 'mouse' && mark(null)}>
+            {AXES.map((key, i) => (
+              <path key={key} d={sectorPath(i)} fill="transparent" onPointerEnter={e => e.pointerType === 'mouse' && mark(i)} onClick={() => mark(i)} />
+            ))}
+          </g>
+        )}
       </svg>
 
       {AXES.map((key, i) => {
@@ -184,16 +255,17 @@ export function TasteDiamond({
             type="button"
             aria-pressed={active === i}
             aria-label={`${AXIS_LABEL[key]}: ${spoken}`}
-            onPointerEnter={e => e.pointerType === 'mouse' && onActive(i)}
-            onPointerLeave={e => e.pointerType === 'mouse' && onActive(null)}
-            onFocus={e => e.currentTarget.matches(':focus-visible') && onActive(i)}
-            onBlur={() => onActive(null)}
-            onClick={() => onActive(i)}
+            onPointerEnter={e => e.pointerType === 'mouse' && mark(i)}
+            onPointerLeave={e => e.pointerType === 'mouse' && mark(null)}
+            onFocus={e => e.currentTarget.matches(':focus-visible') && mark(i)}
+            onBlur={() => mark(null)}
+            onClick={() => mark(i)}
             style={{ left: `${(x / VIEW) * 100}%`, top: `${(y / VIEW) * 100}%` }}
             className={cn(
-              'absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-0.5 px-1.5 transition-[color,transform] duration-200 active:scale-95',
+              'absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-0.5 px-1.5 transition-[color,transform,opacity] duration-200 active:scale-95',
               theme.focus,
               active === i ? theme.labelActive : theme.label,
+              detail && active !== null && active !== i && 'opacity-40',
             )}
           >
             <span className="text-[10.5px] font-medium tracking-[0.18em] uppercase">{AXIS_LABEL[key]}</span>
@@ -201,6 +273,27 @@ export function TasteDiamond({
           </button>
         )
       })}
+
+      {/* Visual duplicate of the axis button's aria-label (value and name), so it stays out of the accessibility tree. */}
+      <AnimatePresence>
+        {hints && tipIndex !== null && tipPoint && (
+          <motion.div
+            aria-hidden="true"
+            initial={{ opacity: 0, left: `${(tipPoint.x / VIEW) * 100}%`, top: `${(tipPoint.y / VIEW) * 100}%`, x: '-50%', y: '-92%' }}
+            animate={{ opacity: 1, left: `${(tipPoint.x / VIEW) * 100}%`, top: `${(tipPoint.y / VIEW) * 100}%`, x: '-50%', y: '-100%' }}
+            exit={{ opacity: 0, y: '-92%' }}
+            transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 30, opacity: { duration: 0.15 } }}
+            style={{ marginTop: -16 }}
+            className={cn('pointer-events-none absolute z-10 w-max max-w-44 px-4 py-3', theme.tip)}
+          >
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-4xl leading-none font-light tracking-tighter italic tabular-nums">{series[0].values[tipIndex]}</span>
+              <span className="text-[10px] font-bold tracking-[0.25em] uppercase opacity-60">/ 10 · {AXIS_LABEL[AXES[tipIndex]]}</span>
+            </div>
+            <p className="mt-1.5 text-sm leading-snug">{hints[tipIndex]}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
