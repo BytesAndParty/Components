@@ -1036,7 +1036,7 @@ export class FabricBridge {
     })
 
     if (action === 'distribute-h' && boxes.length >= 3) {
-      const sorted = [...boxes].sort((a, b) => a.cx - b.cx)
+      const sorted = boxes.toSorted((a, b) => a.cx - b.cx)
       const first = sorted[0].cx
       const last  = sorted[sorted.length - 1].cx
       const step  = (last - first) / (sorted.length - 1)
@@ -1045,7 +1045,7 @@ export class FabricBridge {
         b.obj.set('left', first + step * i - b.w / 2)
       })
     } else if (action === 'distribute-v' && boxes.length >= 3) {
-      const sorted = [...boxes].sort((a, b) => a.cy - b.cy)
+      const sorted = boxes.toSorted((a, b) => a.cy - b.cy)
       const first = sorted[0].cy
       const last  = sorted[sorted.length - 1].cy
       const step  = (last - first) / (sorted.length - 1)
@@ -1370,7 +1370,7 @@ export class FabricBridge {
 
   reorderLayers(ids: string[]) {
     // Panel: top-to-bottom (front first). Fabric stack: bottom-to-top.
-    const reversedIds = [...ids].reverse()
+    const reversedIds = ids.toReversed()
     let lastObj: fabric.Object | null = null
     reversedIds.forEach((id, index) => {
       const obj = this.canvas.getObjects().find((o) => (o as fabric.Object & FabricObjectMeta).id === id)

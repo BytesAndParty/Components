@@ -138,8 +138,7 @@ export function startRain(
     })
   }
 
-  let resolve = () => {}
-  const done = new Promise<void>((r) => { resolve = r })
+  const { promise: done, resolve } = Promise.withResolvers<void>()
   let start = performance.now()
   let lastFrame = start
   let lastTick = 0

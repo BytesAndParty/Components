@@ -80,7 +80,7 @@ export function LineageStage({ ids, selectedId, onSelect, bridgeIds = [], classN
   const bridge = new Set(bridgeIds)
 
   // Tab-Reihenfolge = Leserichtung der tatsächlichen Komposition.
-  const ordered = [...grapes].sort((a, b) => a.cy - b.cy || a.cx - b.cx)
+  const ordered = grapes.toSorted((a, b) => a.cy - b.cy || a.cx - b.cx)
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const rovingId = focusedId && grapes.some(g => g.id === focusedId) ? focusedId : (ordered[0]?.id ?? null)
 

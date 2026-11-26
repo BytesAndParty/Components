@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { formatForDisplay, useHotkey } from '@tanstack/react-hotkeys'
-import { useHotkeysRegistry, useDesignEngineHotkey, type HotkeyMetadata } from './hotkeys-context'
+import { useHotkeysRegistry, useDesignEngineHotkey } from './hotkeys-context'
 import { cn } from '../lib/utils'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type ShortcutOverviewMessages } from './messages'
@@ -56,11 +56,7 @@ export function ShortcutOverview({
     }
   }, [isVisible])
 
-  const groupedHotkeys = Array.from(registry.values()).reduce((acc, curr) => {
-    if (!acc[curr.category]) acc[curr.category] = []
-    acc[curr.category].push(curr)
-    return acc
-  }, {} as Record<string, HotkeyMetadata[]>)
+  const groupedHotkeys = Object.groupBy(registry.values(), (h) => h.category)
 
   const categories = ['Global', 'Navigation', 'Actions', 'Context'] as const
 
