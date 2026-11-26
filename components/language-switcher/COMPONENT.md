@@ -7,7 +7,7 @@ A locale picker component designed for the application navbar. It integrates wit
 - **Atelier Integration:** Consumes and updates the global `locale` via `useAtelier()`.
 - **Persistent State:** The `AtelierProvider` persists the locale in `localStorage` (`atelier-locale`).
 - **Interactive UI:** Features a globe icon with a rotating animation on hover and a flipping badge that reflects the current locale.
-- **Accessible Dropdown:** Ark UI `Select`: arrow keys, Home/End, Enter, Escape, typeahead on the language name, outside click and focus return to the trigger.
+- **Accessible Dropdown:** Ark UI `Select`: in the open list arrow keys, Home/End, typeahead on the language name, Enter and Escape; outside click and focus return to the trigger.
 - **Zero-Tailwind Styling:** Uses pure inline styles plus a `<style>` block for keyframes and state selectors, making it highly portable.
 - **Visual Feedback:** Micro-animations for the globe and the locale badge during transitions.
 
@@ -15,7 +15,7 @@ A locale picker component designed for the application navbar. It integrates wit
 
 The component is an Ark UI `Select.Root` over a list collection built from `languages` (value = locale key, typeahead text = `label`). The value is controlled by the `locale` from `useAtelier()`. The trigger is the globe button with the locale badge (no `ValueText`), labelled via `triggerLabel`. The list portals into `useOverlayContainer()` (falls back to `<body>`), so it stays visible above hosts with their own `z-index` such as the designer's CSS fullscreen. It opens at `bottom-end` and is only mounted while open.
 
-As with a native select, arrow keys, Home/End and typeahead on the focused, closed trigger change the language directly; with the list open they move the highlight and Enter selects.
+Unlike a native select, arrow left/right, Home/End and typeahead on the focused, closed trigger do nothing: Ark would change the language of the whole UI directly, which is too easy to trigger by accident. Enter, Space and arrow down open the list; with the list open the arrows and typeahead move the highlight and Enter selects.
 
 Hover and keyboard highlight share one style via `[data-highlighted]`, the open trigger via `[data-state="open"]`; both live in the `<style>` block because inline styles would override them.
 
