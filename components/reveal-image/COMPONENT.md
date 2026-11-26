@@ -28,6 +28,7 @@ Editorial curtain reveal for images — a clip-path wipe paired with a counter-z
 | `delay` | `number` | `0` | Delay in ms before the reveal starts |
 | `zoom` | `number` | `1.12` | Initial image scale for the counter-zoom |
 | `once` | `boolean` | `true` | Play once vs. replay on every viewport entry |
+| `priority` | `boolean` | `false` | For the LCP image above the fold (e.g. a hero image): `loading="eager"` + `fetchpriority="high"`. Default is `loading="lazy"` without `fetchpriority`. Use on at most one or two images per page. |
 | `className` | `string` | — | Wrapper classes — set size/aspect here |
 | `imgClassName` | `string` | — | Classes for the inner `<img>` |
 | `style` | `CSSProperties` | — | Inline styles on the wrapper |
@@ -52,6 +53,14 @@ import { RevealImage } from '@components/reveal-image/reveal-image'
   duration={1600}
   once={false}
   className="aspect-video"
+/>
+
+// Hero image above the fold (LCP candidate): load eagerly with high priority
+<RevealImage
+  src="/hero.jpg"
+  alt="Weingarten im Abendlicht"
+  priority
+  className="aspect-video w-full"
 />
 ```
 

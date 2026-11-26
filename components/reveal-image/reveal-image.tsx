@@ -19,6 +19,8 @@ export interface RevealImageProps {
   zoom?: number
   /** Animation nur einmal abspielen wenn Element sichtbar wird (default: true) */
   once?: boolean
+  /** LCP image above the fold: load eagerly with fetchpriority="high" instead of lazily (default: false) */
+  priority?: boolean
   /** Klassen für den Wrapper — Größe/Aspect hier setzen (z. B. 'aspect-3/4') */
   className?: string
   /** Klassen für das innere <img> */
@@ -53,6 +55,7 @@ export function RevealImage({
   delay = 0,
   zoom = 1.12,
   once = true,
+  priority = false,
   className,
   imgClassName,
   style,
@@ -119,7 +122,8 @@ export function RevealImage({
         <img
           src={src}
           alt={alt}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
           className={cn('block h-full w-full object-cover', imgClassName)}
           style={{
             transform: visible ? 'scale(1)' : `scale(${zoom})`,
