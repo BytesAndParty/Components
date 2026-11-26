@@ -424,6 +424,9 @@ function LayerRow({
             onChange={(e) => setDraft(e.target.value)}
             onBlur={() => { if (!skipBlurCommit.current) commitRename() }}
             onKeyDown={(e) => {
+              // Keys during IME composition belong to the IME: no commit, no
+              // focus move. Still keep them from the row (Shift+↑/↓ reorders).
+              if (e.nativeEvent.isComposing || e.keyCode === 229) { e.stopPropagation(); return }
               if (e.key === 'Enter')  commitRename()
               if (e.key === 'Escape') { setDraft(layer.name); setEditing(false) }
               // Back to the row, so the keyboard user keeps their place. The

@@ -44,6 +44,8 @@ export function SearchMorph({
   }, [isOpen]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Keys during IME composition (e.g. Enter picking a candidate) belong to the IME.
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
     if (e.key === 'Enter' && value.trim()) onSearch?.(value.trim());
     if (e.key === 'Escape') close();
   };

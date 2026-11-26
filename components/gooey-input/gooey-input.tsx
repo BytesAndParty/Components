@@ -77,6 +77,8 @@ export function GooeyInput({
   }
 
   function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    // Keys during IME composition (e.g. Enter picking a candidate) belong to the IME.
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
     if (e.key === 'Enter') {
       onSubmit?.(value);
     }

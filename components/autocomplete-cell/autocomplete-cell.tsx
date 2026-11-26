@@ -120,6 +120,8 @@ export function AutocompleteCell({
   })
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    // Keys during IME composition belong to the IME, not to the list or the caller.
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return
     if (e.key === 'Tab' && !e.shiftKey && isOpen && value.length > 0) {
       const exactMatch = filtered.find((s) => s.label.toLowerCase() === value.toLowerCase())
       if (!exactMatch) {

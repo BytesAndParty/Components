@@ -172,6 +172,8 @@ export function SearchOverlay({
                 <Combobox.Input
                   ref={inputRef}
                   onKeyDown={(e) => {
+                    // Ark skips keys during IME composition itself; this fallback has to as well.
+                    if (e.nativeEvent.isComposing || e.keyCode === 229) return;
                     if (e.key === 'Enter' && highlightedId.current === null && displayResults[0]) {
                       e.preventDefault();
                       select(displayResults[0]);
