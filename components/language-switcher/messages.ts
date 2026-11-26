@@ -14,4 +14,9 @@ export const MESSAGES = {
     header: 'Language',
     triggerLabel: 'Select language',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    header: 'Język',
+    triggerLabel: 'Wybierz język',
+  },
 } as const satisfies ComponentMessages<LanguageSwitcherMessages>

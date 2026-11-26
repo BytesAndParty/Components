@@ -1,9 +1,12 @@
 /**
  * LanguageSwitcher — Locale picker for the Design Engine navbar.
  *
- * Integrates with I18nProvider via useI18n() and persists the selected
- * locale in localStorage under 'atelier-locale'. Also syncs
+ * Reads and sets the locale via useAtelier(); the AtelierProvider persists it
+ * in localStorage under 'atelier-locale' and syncs
  * document.documentElement.lang and data-locale for CSS/SSR consumers.
+ *
+ * Built on Ark UI `Select` (keyboard navigation, Escape, typeahead, outside
+ * click and focus return). The list portals into useOverlayContainer().
  *
  * Visual: globe icon with current locale badge, dropdown with all options.
  * Follows the same self-contained pattern as AccentSwitcher and
@@ -14,9 +17,13 @@
  *   <LanguageSwitcher languages={{ de: { label: 'Deutsch', shortLabel: 'DE' }, en: ... }} />
  */
 
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useState } from 'react'
+import { Portal } from '@ark-ui/react/portal'
+import { Select } from '@ark-ui/react/select'
+import { createListCollection } from '@ark-ui/react/collection'
 import { useAtelier } from '../atelier'
 import { useComponentMessages } from '../i18n'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { MESSAGES, type LanguageSwitcherMessages } from './messages'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -29,7 +36,7 @@ export interface LanguageOption {
 }
 
 export interface LanguageSwitcherProps {
-  /** Language options. Defaults to de + en. */
+  /** Language options. Defaults to de + en + pl. */
   languages?: Record<string, LanguageOption>
   /** Aria label for the trigger button. */
   triggerLabel?: string
@@ -41,11 +48,14 @@ export interface LanguageSwitcherProps {
   style?: React.CSSProperties
 }
 
+type LanguageItem = LanguageOption & { value: string }
+
 // ── Defaults ──────────────────────────────────────────────────────────────────
 
 const DEFAULT_LANGUAGES: Record<string, LanguageOption> = {
   de: { label: 'Deutsch', shortLabel: 'DE' },
   en: { label: 'English', shortLabel: 'EN' },
+  pl: { label: 'Polski', shortLabel: 'PL' },
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -60,39 +70,38 @@ export function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { locale, setLocale } = useAtelier()
   const m = useComponentMessages(MESSAGES, messages)
-  const [open, setOpen] = useState(false)
-  const [hovered, setHovered] = useState(false)
+  const overlayContainer = useOverlayContainer()
   const [flipping, setFlipping] = useState(false)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
+  // `value` stays on the old locale until the flip ends; further changes in that window are ignored.
+  const switching = useRef(false)
 
   const current = languages[locale] ?? Object.values(languages)[0]
-  const localeKeys = Object.keys(languages)
+  const collection = createListCollection<LanguageItem>({
+    items: Object.entries(languages).map(([value, opt]) => ({ value, ...opt })),
+    itemToValue: (item) => item.value,
+    itemToString: (item) => item.label,
+  })
 
   const effectiveTriggerLabel = _triggerLabel ?? m.triggerLabel
 
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return
-    function handleClick(e: MouseEvent) {
-      const t = e.target as Node
-      if (!triggerRef.current?.contains(t) && !menuRef.current?.contains(t)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
-
   function select(key: string) {
-    if (key === locale) { setOpen(false); return }
+    if (switching.current) return
+    switching.current = true
     setFlipping(true)
     setTimeout(() => {
       setLocale(key as typeof locale)
       onChange?.(key)
       setFlipping(false)
+      switching.current = false
     }, 150)
-    setOpen(false)
+  }
+
+  // Select changes its value on arrow keys, Home/End and typeahead even while the list is
+  // closed. Switching the whole UI language that way is too easy to trigger by accident,
+  // so these keys do nothing on the trigger. Enter, Space and ArrowDown still open the list.
+  function handleTriggerKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
+    const isTypeahead = e.key.length === 1 && e.key !== ' ' && !e.ctrlKey && !e.metaKey
+    if (isTypeahead || ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) e.preventDefault()
   }
 
   return (
@@ -108,7 +117,11 @@ export function LanguageSwitcher({
           0%   { transform: rotate(0deg); }
           100% { transform: rotate(15deg); }
         }
+        .ls-btn { background: transparent; }
+        .ls-btn:hover, .ls-btn[data-state="open"] { background: rgba(128,128,128,0.12); }
         .ls-btn:hover .ls-globe { animation: ls-globe-spin 0.4s ease forwards; }
+        .ls-item { background: transparent; }
+        .ls-item[data-highlighted] { background: rgba(128,128,128,0.1); }
         .ls-badge-flip-out { animation: ls-badge-out 0.15s ease forwards; }
         .ls-badge-flip-in  { animation: ls-badge-in  0.15s ease forwards; }
         @media (prefers-reduced-motion: reduce) {
@@ -117,20 +130,24 @@ export function LanguageSwitcher({
         }
       `}</style>
 
-      <div
+      <Select.Root
+        collection={collection}
+        value={[locale]}
+        onValueChange={(details) => {
+          const next = details.value[0]
+          if (next && next !== locale) select(next)
+        }}
+        positioning={{ placement: 'bottom-end', gutter: 4 }}
+        lazyMount
+        unmountOnExit
         className={className}
         style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', ...style }}
       >
         {/* ── Trigger ─────────────────────────────────────────── */}
-        <button
-          ref={triggerRef}
-          type="button"
+        <Select.Trigger
           className="ls-btn"
-          onClick={() => setOpen(v => !v)}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
           aria-label={effectiveTriggerLabel}
-          aria-expanded={open}
+          onKeyDown={handleTriggerKeyDown}
           style={{
             position: 'relative',
             display: 'inline-flex',
@@ -140,7 +157,6 @@ export function LanguageSwitcher({
             height: '2.25rem',
             borderRadius: '0.375rem',
             border: 'none',
-            background: hovered || open ? 'rgba(128,128,128,0.12)' : 'transparent',
             color: 'inherit',
             cursor: 'pointer',
             transition: 'background 0.15s',
@@ -180,106 +196,92 @@ export function LanguageSwitcher({
           >
             {current.shortLabel}
           </span>
-        </button>
+        </Select.Trigger>
 
         {/* ── Dropdown ────────────────────────────────────────── */}
-        {open && (
-          <div
-            ref={menuRef}
-            role="listbox"
-            aria-label={effectiveTriggerLabel}
-            style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              marginTop: '0.25rem',
-              zIndex: 50,
-              minWidth: '10rem',
-              borderRadius: '0.5rem',
-              border: '1px solid var(--border)',
-              background: 'var(--card)',
-              padding: '0.25rem',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-            }}
-          >
-            {/* Header */}
-            <div style={{
-              padding: '0.375rem 0.5rem 0.25rem',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--muted-foreground)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-            }}>
-              {m.header}
-            </div>
+        <Portal container={overlayContainer}>
+          {/* Above the fixed navbar (z-index 100), like NavbarDropdown. */}
+          <Select.Positioner style={{ zIndex: 101 }}>
+            <Select.Content
+              aria-label={effectiveTriggerLabel}
+              style={{
+                minWidth: '10rem',
+                borderRadius: '0.5rem',
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '0.25rem',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                outline: 'none',
+              }}
+            >
+              {/* Header — decorative, the list is labelled via aria-label */}
+              <div aria-hidden="true" style={{
+                padding: '0.375rem 0.5rem 0.25rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--muted-foreground)',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+              }}>
+                {m.header}
+              </div>
 
-            <div style={{ height: '1px', margin: '0.25rem -0.25rem', background: 'var(--border)' }} />
+              <div aria-hidden="true" style={{ height: '1px', margin: '0.25rem -0.25rem', background: 'var(--border)' }} />
 
-            {localeKeys.map(key => {
-              const opt = languages[key]
-              const isActive = key === locale
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  role="option"
-                  aria-selected={isActive}
-                  onClick={() => select(key)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.625rem',
-                    width: '100%',
-                    padding: '0.4rem 0.5rem',
-                    borderRadius: '0.25rem',
-                    border: 'none',
-                    background: 'transparent',
-                    color: isActive ? 'var(--accent)' : 'inherit',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'background 0.1s',
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(128,128,128,0.1)'
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'transparent'
-                  }}
-                >
-                  {/* Short badge */}
-                  <span style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '1.5rem',
-                    height: '1.25rem',
-                    borderRadius: '3px',
-                    border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}`,
-                    fontSize: '0.6rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.04em',
-                    color: isActive ? 'var(--accent)' : 'var(--muted-foreground)',
-                    background: isActive ? 'color-mix(in oklch, var(--accent) 12%, transparent)' : 'transparent',
-                    flexShrink: 0,
-                  }}>
-                    {opt.shortLabel}
-                  </span>
+              {collection.items.map(item => {
+                const isActive = item.value === locale
+                return (
+                  <Select.Item
+                    key={item.value}
+                    item={item}
+                    className="ls-item"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.625rem',
+                      width: '100%',
+                      padding: '0.4rem 0.5rem',
+                      borderRadius: '0.25rem',
+                      color: isActive ? 'var(--accent)' : 'inherit',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'background 0.1s',
+                    }}
+                  >
+                    {/* Short badge */}
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '1.5rem',
+                      height: '1.25rem',
+                      borderRadius: '3px',
+                      border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}`,
+                      fontSize: '0.6rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.04em',
+                      color: isActive ? 'var(--accent)' : 'var(--muted-foreground)',
+                      background: isActive ? 'color-mix(in oklch, var(--accent) 12%, transparent)' : 'transparent',
+                      flexShrink: 0,
+                    }}>
+                      {item.shortLabel}
+                    </span>
 
-                  {/* Full name */}
-                  <span style={{ flex: 1 }}>{opt.label}</span>
+                    {/* Full name */}
+                    <Select.ItemText style={{ flex: 1 }}>{item.label}</Select.ItemText>
 
-                  {/* Active checkmark */}
-                  {isActive && (
-                    <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>✓</span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
+                    {/* Active checkmark */}
+                    {isActive && (
+                      <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>✓</span>
+                    )}
+                  </Select.Item>
+                )
+              })}
+            </Select.Content>
+          </Select.Positioner>
+        </Portal>
+      </Select.Root>
     </>
   )
 }
