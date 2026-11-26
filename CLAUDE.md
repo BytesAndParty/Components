@@ -20,6 +20,7 @@ Entscheidung (User, 2026-11-12): Das erste Ziel war die Komponentenbibliothek. *
 - Welche Lib für welche Capability: Skill `artelier`. Zusätzlich gilt hier: Drag & Drop/Sortable mit `@dnd-kit` (nicht motion `Reorder.Group`, nicht `react-dnd`), GraphQL-Transport mit `graphql-request`, der Editor-State von `cellar-canvas` mit `zustand`, 3D-Szenen mit `three` + `@react-three/fiber` (immer per `lazy()` laden, Referenz: `components/bottle-stage/`; reine Shader-Flächen ohne Lib wie `shader-backdrop` und `light-rays`).
 - Verboten, weil die Capability schon besetzt ist: `urql`/`@urql/*`, `swr`, `apollo-client` (→ TanStack Query), `@radix-ui/*`, `@headlessui/*`, shadcn (→ Ark UI), `framer-motion`, `gsap` (→ `motion/react`), `react-dnd`, motion `Reorder.Group` (→ `@dnd-kit`). Ein Teil davon warnt zusätzlich über `no-restricted-imports` in `eslint.config.js`.
 - Shop-Backend ist Vendure (GraphQL). Medusa ist abgelöst, dafür keine APIs oder Muster vorschlagen.
+- **Browser-Support:** Neue Web-Features (auch „Newly available“) werden bevorzugt genutzt, mit Feature-Erkennung und einem schlanken Fallback für ältere Browser (höchstens rund 20 Zeilen, keine neue Dependency). Ohne diesen Fallback nur Features, die Baseline „widely available“ sind. Polyfill-Pakete nur nach Rückfrage.
 
 ## Code-Landkarte
 
