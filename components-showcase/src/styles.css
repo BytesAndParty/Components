@@ -68,6 +68,8 @@
 
 /* ── Dark Mode (default) ─────────────────────────────── */
 :root {
+  /* Native scrollbars and form controls follow the theme. */
+  color-scheme: dark;
   --background:             oklch(0.062 0.004 285);
   --foreground:             oklch(0.905 0.004 285);
   --card:                   oklch(0.082 0.004 285);
@@ -99,6 +101,7 @@
 
 /* ── Light Mode ──────────────────────────────────────── */
 [data-theme="light"] {
+  color-scheme: light;
   --background:             oklch(0.979 0.002 285);
   --foreground:             oklch(0.141 0.004 285);
   --card:                   oklch(1 0 0);
