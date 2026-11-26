@@ -75,7 +75,7 @@ export function ShortcutOverview({
           if (event.target === event.currentTarget) closeOverview()
         }}
       >
-        <div className="bg-card/95 border-border relative max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-3xl border p-8 shadow-2xl backdrop-blur-xl">
+        <div className="bg-card/95 border-border relative max-h-[calc(100dvh-3rem)] overflow-y-auto overscroll-contain rounded-3xl border p-8 shadow-2xl backdrop-blur-xl">
           <div className="mb-8 flex items-start justify-between gap-6">
             <div>
               <h2 className="text-foreground text-3xl font-bold tracking-tight">{m.title}</h2>
@@ -168,7 +168,11 @@ function ShortcutOverviewDialogStyles() {
         transform: translateY(0) scale(1);
       }
 
+      /* Scrolling over the backdrop must not scroll the page. Inside, the panel contains
+         scroll chaining: the overflow-visible dialog is no scroll container. */
       .atelier-shortcuts-dialog::backdrop {
+        overflow: hidden;
+        overscroll-behavior: contain;
         background-color: rgb(0 0 0 / 0);
         backdrop-filter: blur(0);
         transition:

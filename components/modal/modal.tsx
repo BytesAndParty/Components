@@ -60,6 +60,9 @@ export function Modal({
         // Entry only: an exit transition would need `overlay`, which only Chromium supports.
         'transition-[opacity,translate] duration-300 ease-out starting:open:translate-y-4 starting:open:opacity-0',
         'backdrop:bg-background/70 backdrop:backdrop-blur-sm backdrop:transition-opacity backdrop:duration-300 starting:open:backdrop:opacity-0',
+        // Scrolling over the backdrop must not scroll the page. Inside, the panel contains scroll chaining:
+        // the overflow-visible <dialog> is no scroll container, overscroll-behavior on it would have no effect.
+        'backdrop:overflow-hidden backdrop:overscroll-contain',
         'motion-reduce:transition-none motion-reduce:backdrop:transition-none',
       )}
       // Fires for every close. Report only the ones the parent did not ask for (Esc, backdrop).
