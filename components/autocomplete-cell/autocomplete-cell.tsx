@@ -1,7 +1,11 @@
-import { useEffect, useState, useRef, useId } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useEffect, useState, useRef } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { Combobox, useCombobox } from '@ark-ui/react/combobox'
+import { createListCollection } from '@ark-ui/react/collection'
+import { Portal } from '@ark-ui/react/portal'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useOverlayContainer } from '../lib/overlay-container'
 import { useComponentMessages } from '../i18n'
 import { MESSAGES, type AutocompleteMessages } from './messages'
 
@@ -26,6 +30,29 @@ export interface AutocompleteCellProps {
   isLoading?: boolean
 }
 
+// Keys the open list handles itself; everything else reaches the caller's onKeyDown.
+const LIST_KEYS = new Set(['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter', 'Escape'])
+
+const STYLE_ID = '__autocomplete-cell-styles__'
+
+function injectStyles() {
+  if (typeof document === 'undefined') return
+  if (document.getElementById(STYLE_ID)) return
+  const el = document.createElement('style')
+  el.id = STYLE_ID
+  el.textContent = `
+    @keyframes autocomplete-cell-in {
+      from { opacity: 0; transform: translateY(4px) scale(0.98); }
+    }
+    @keyframes autocomplete-cell-out {
+      to { opacity: 0; transform: translateY(2px) scale(0.98); }
+    }
+    .autocomplete-cell-list[data-state="open"] { animation: autocomplete-cell-in 0.15s ease-out; }
+    .autocomplete-cell-list[data-state="closed"] { animation: autocomplete-cell-out 0.15s ease-out; }
+  `
+  document.head.appendChild(el)
+}
+
 export function AutocompleteCell({
   value,
   suggestions,
@@ -40,23 +67,15 @@ export function AutocompleteCell({
   isLoading = false,
 }: AutocompleteCellProps) {
   const m = useComponentMessages(MESSAGES, messages)
+  const reduceMotion = useReducedMotion()
+  const overlayContainer = useOverlayContainer()
   const [open, setOpen] = useState(false)
-  const [highlightIndex, setHighlightIndex] = useState(0)
-  const [prevValue, setPrevValue] = useState(value)
 
-  // Adjust state during render when value changes to avoid extra render cycles
-  // and align with React Compiler / Hooks best practices.
-  if (value !== prevValue) {
-    setPrevValue(value)
-    setHighlightIndex(0)
-  }
-
-  const containerRef = useRef<HTMLDivElement>(null)
   const internalRef = useRef<HTMLInputElement>(null)
   const inputRef = externalRef || internalRef
   const placeholder = _placeholder ?? m.placeholder
-  const listboxId = useId()
-  const optionIdPrefix = useId()
+
+  useEffect(() => { injectStyles() }, [])
 
   const filtered = value
     ? suggestions
@@ -77,63 +96,62 @@ export function AutocompleteCell({
         })
     : []
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  const isOpen = open && filtered.length > 0
 
-  function selectItem(item: AutocompleteSuggestion) {
-    onChange(item.label)
-    setOpen(false)
-  }
+  const combobox = useCombobox<AutocompleteSuggestion>({
+    collection: createListCollection({
+      items: filtered,
+      itemToValue: (s) => String(s.id),
+      itemToString: (s) => s.label,
+    }),
+    // Free text: the input value is the cell value. Picking an item writes
+    // its label into the input (and thus into onChange); no selection is kept.
+    inputValue: value,
+    onInputValueChange: (details) => onChange(details.inputValue),
+    value: [],
+    allowCustomValue: true,
+    open: isOpen,
+    onOpenChange: (details) => setOpen(details.open),
+    // Arrow keys on a closed list belong to the caller (table navigation).
+    openOnKeyPress: false,
+    inputBehavior: 'autohighlight',
+    loopFocus: false,
+    positioning: { placement: 'bottom-start', gutter: 6 },
+  })
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Tab' && !e.shiftKey) {
-      if (open && filtered.length > 0 && value.length > 0) {
-        const exactMatch = filtered.find((s) => s.label.toLowerCase() === value.toLowerCase())
-        if (!exactMatch) {
-          e.preventDefault()
-          const idx = Math.min(highlightIndex, filtered.length - 1)
-          onChange(filtered[idx].label)
-          setOpen(false)
-          return
-        }
-      }
-    }
-
-    if (open && filtered.length > 0) {
-      if (e.key === 'ArrowDown') {
+    if (e.key === 'Tab' && !e.shiftKey && isOpen && value.length > 0) {
+      const exactMatch = filtered.find((s) => s.label.toLowerCase() === value.toLowerCase())
+      if (!exactMatch) {
         e.preventDefault()
-        setHighlightIndex((i) => Math.min(i + 1, filtered.length - 1))
-        return
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        setHighlightIndex((i) => Math.max(i - 1, 0))
-        return
-      }
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        selectItem(filtered[highlightIndex])
-        return
-      }
-      if (e.key === 'Escape') {
+        onChange((combobox.highlightedItem ?? filtered[0]).label)
         setOpen(false)
         return
       }
     }
+
+    // Typing after arrow navigation can clear the highlight without changing the list
+    // (zag only re-highlights when the items change). Enter then takes the top match, like Tab.
+    if (e.key === 'Enter' && isOpen && !combobox.highlightedItem) {
+      e.preventDefault()
+      onChange(filtered[0].label)
+      setOpen(false)
+      return
+    }
+
+    if (isOpen && LIST_KEYS.has(e.key)) return
 
     onKeyDown?.(e)
   }
 
   return (
-    <div ref={containerRef} className={cn('relative w-full group', className)}>
-      <div className="border-border bg-card focus-within:border-ring focus-within:ring-ring/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
+    <Combobox.RootProvider
+      value={combobox}
+      lazyMount
+      unmountOnExit
+      className={cn('relative w-full group', className)}
+    >
+      <Combobox.Control className="border-border bg-card focus-within:border-ring focus-within:ring-ring/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
         <span className="text-muted-foreground group-focus-within:text-accent shrink-0 transition-colors">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -142,28 +160,20 @@ export function AutocompleteCell({
           )}
         </span>
 
-        <input
+        <Combobox.Input
           ref={inputRef}
-          type="text"
-          role="combobox"
-          aria-autocomplete="list"
-          aria-expanded={open && filtered.length > 0}
-          aria-controls={listboxId}
-          aria-activedescendant={
-            open && filtered.length > 0 ? `${optionIdPrefix}-${highlightIndex}` : undefined
-          }
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value)
-            setOpen(true)
-          }}
           onKeyDown={handleKeyDown}
           onFocus={(e) => {
             e.target.select()
-            setOpen(true)
             onFocus?.()
           }}
-          onBlur={onBlur}
+          onBlur={() => {
+            // A closed list can leave `open` set (no results, then focus left).
+            // Reset it so later results do not reopen the list, which would
+            // pull focus back. An open list closes itself on focus-outside.
+            if (!isOpen) setOpen(false)
+            onBlur?.()
+          }}
           placeholder={placeholder}
           className="text-foreground placeholder:text-muted-foreground/40 min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none"
         />
@@ -172,9 +182,9 @@ export function AutocompleteCell({
           {value && (
             <motion.button
               type="button"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.8 }}
               onClick={() => { onChange(''); inputRef.current?.focus() }}
               aria-label={m.clearLabel}
               className="text-muted-foreground hover:text-foreground shrink-0 rounded-full p-1 transition-colors hover:bg-foreground/5"
@@ -183,64 +193,42 @@ export function AutocompleteCell({
             </motion.button>
           )}
         </AnimatePresence>
-      </div>
+      </Combobox.Control>
 
-      <AnimatePresence>
-        {open && filtered.length > 0 && (
-          <motion.div
-            id={listboxId}
-            role="listbox"
+      <Portal container={overlayContainer}>
+        <Combobox.Positioner style={{ zIndex: 50 }}>
+          <Combobox.Content
             aria-label={m.suggestionsLabel}
-            initial={{ opacity: 0, y: 4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 2, scale: 0.98 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="bg-card border-accent/50 scrollbar-thumb-accent/20 hover:scrollbar-thumb-accent/40 absolute top-full left-0 z-50 mt-1.5 max-h-60 w-full scrollbar-thin overflow-y-auto rounded-lg border shadow-2xl"
+            className={cn(
+              'bg-card border-accent/50 scrollbar-thumb-accent/20 hover:scrollbar-thumb-accent/40 max-h-60 w-full scrollbar-thin overflow-y-auto rounded-lg border shadow-2xl outline-none',
+              !reduceMotion && 'autocomplete-cell-list'
+            )}
           >
             <div className="py-1">
-              {filtered.map((item, i) => (
-                <div
+              {filtered.map((item) => (
+                <Combobox.Item
                   key={item.id}
-                  id={`${optionIdPrefix}-${i}`}
-                  role="option"
-                  tabIndex={-1}
-                  aria-selected={i === highlightIndex}
-                  className={cn(
-                    'w-full text-left px-3.5 py-2.5 text-sm flex items-center justify-between gap-3 transition-colors cursor-pointer',
-                    i === highlightIndex
-                      ? 'bg-accent text-white'
-                      : 'hover:bg-accent/5 text-foreground'
-                  )}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    selectItem(item)
-                  }}
-                  onMouseEnter={() => setHighlightIndex(i)}
+                  item={item}
+                  className="group/option text-foreground data-highlighted:bg-accent data-highlighted:text-white flex w-full cursor-pointer items-center justify-between gap-3 px-3.5 py-2.5 text-left text-sm transition-colors"
                 >
                   <div className="flex flex-col overflow-hidden">
                     <span className="truncate font-medium">{item.label}</span>
                     {item.subLabel && (
-                      <span className={cn(
-                        'text-[10px] truncate transition-opacity',
-                        i === highlightIndex ? 'text-white/90' : 'text-muted-foreground/80'
-                      )}>
+                      <span className="text-muted-foreground/80 group-data-highlighted/option:text-white/90 truncate text-[10px] transition-opacity">
                         {item.subLabel}
                       </span>
                     )}
                   </div>
                   <ChevronRight
                     aria-hidden
-                    className={cn(
-                      'h-3.5 w-3.5 shrink-0 transition-[opacity,transform]',
-                      i === highlightIndex ? 'translate-x-0.5 opacity-100' : 'opacity-20'
-                    )}
+                    className="h-3.5 w-3.5 shrink-0 opacity-20 transition-[opacity,transform] group-data-highlighted/option:translate-x-0.5 group-data-highlighted/option:opacity-100"
                   />
-                </div>
+                </Combobox.Item>
               ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </Combobox.Content>
+        </Combobox.Positioner>
+      </Portal>
+    </Combobox.RootProvider>
   )
 }

@@ -17,4 +17,10 @@ export const MESSAGES = {
     clearLabel: 'Clear input',
     suggestionsLabel: 'Suggestions',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    placeholder: 'Szukaj...',
+    clearLabel: 'Wyczyść pole',
+    suggestionsLabel: 'Sugestie',
+  },
 } as const satisfies ComponentMessages<AutocompleteMessages>
