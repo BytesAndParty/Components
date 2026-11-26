@@ -75,7 +75,7 @@ export function ShortcutOverview({
           if (event.target === event.currentTarget) closeOverview()
         }}
       >
-        <div className="bg-card/95 border-border relative max-h-[calc(100dvh-3rem)] overflow-y-auto overscroll-contain rounded-3xl border p-8 shadow-2xl backdrop-blur-xl">
+        <div className="bg-card/95 border-border relative max-h-[calc(100dvh-3rem)] overflow-y-auto overscroll-contain rounded-3xl border p-8 backdrop-blur-xl">
           <div className="mb-8 flex items-start justify-between gap-6">
             <div>
               <h2 className="text-foreground text-3xl font-bold tracking-tight">{m.title}</h2>
@@ -152,7 +152,12 @@ function ShortcutOverviewDialogStyles() {
         margin: auto;
         background: transparent;
         color: inherit;
-        overflow: visible;
+        /* The dialog is the scroll container that contains scroll chaining (overscroll-behavior needs one),
+           so it clips: radius and shadow sit here, not on the panel, otherwise the clip would cut the shadow off. */
+        overflow: hidden;
+        overscroll-behavior: contain;
+        border-radius: 1.5rem;
+        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
         opacity: 0;
         transform: translateY(1rem) scale(0.96);
         transition:
@@ -168,8 +173,7 @@ function ShortcutOverviewDialogStyles() {
         transform: translateY(0) scale(1);
       }
 
-      /* Scrolling over the backdrop must not scroll the page. Inside, the panel contains
-         scroll chaining: the overflow-visible dialog is no scroll container. */
+      /* Scrolling over the backdrop must not scroll the page (needs overflow and overscroll-behavior on both). */
       .atelier-shortcuts-dialog::backdrop {
         overflow: hidden;
         overscroll-behavior: contain;

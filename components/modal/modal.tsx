@@ -56,12 +56,13 @@ export function Modal({
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       className={cn(
-        'm-auto max-h-none max-w-none overflow-visible bg-transparent p-0',
+        // The <dialog> is the scroll container that contains scroll chaining (overscroll-behavior needs one), so
+        // it clips: radius and shadow sit here, not on the panel, otherwise the clip would cut the shadow off.
+        'm-auto max-h-none max-w-none overflow-hidden overscroll-contain rounded-2xl bg-transparent p-0 shadow-2xl',
         // Entry only: an exit transition would need `overlay`, which only Chromium supports.
         'transition-[opacity,translate] duration-300 ease-out starting:open:translate-y-4 starting:open:opacity-0',
         'backdrop:bg-background/70 backdrop:backdrop-blur-sm backdrop:transition-opacity backdrop:duration-300 starting:open:backdrop:opacity-0',
-        // Scrolling over the backdrop must not scroll the page. Inside, the panel contains scroll chaining:
-        // the overflow-visible <dialog> is no scroll container, overscroll-behavior on it would have no effect.
+        // Scrolling over the backdrop must not scroll the page (needs overflow and overscroll-behavior on both).
         'backdrop:overflow-hidden backdrop:overscroll-contain',
         'motion-reduce:transition-none motion-reduce:backdrop:transition-none',
       )}
@@ -80,7 +81,7 @@ export function Modal({
       <div
         className={cn(
           'max-h-[calc(100dvh-2rem)] w-[min(32rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain',
-          'rounded-2xl border border-border bg-card p-6 text-foreground shadow-2xl',
+          'rounded-2xl border border-border bg-card p-6 text-foreground',
           className,
         )}
         style={style}
