@@ -7,10 +7,8 @@ export type SearchOverlayMessages = {
   navigationHelp: string;
   selectionHelp: string;
   shortcutLabel: string;
-  closeLabel: string;
   ariaLabel: string;
   searchDescription: string;
-  closeDescription: string;
 };
 
 export const MESSAGES = {
@@ -21,10 +19,8 @@ export const MESSAGES = {
     navigationHelp: 'navigieren',
     selectionHelp: 'auswählen',
     shortcutLabel: 'Suche öffnen',
-    closeLabel: 'Suche schließen',
     ariaLabel: 'Spotlight Suche',
     searchDescription: 'Öffnet die globale Spotlight-Suche',
-    closeDescription: 'Schließt das aktuelle Overlay',
   },
   en: {
     placeholder: 'Search for products or pages…',
@@ -33,9 +29,18 @@ export const MESSAGES = {
     navigationHelp: 'navigate',
     selectionHelp: 'select',
     shortcutLabel: 'Open search',
-    closeLabel: 'Close search',
     ariaLabel: 'Spotlight Search',
     searchDescription: 'Opens the global spotlight search',
-    closeDescription: 'Closes the current overlay',
+  },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    placeholder: 'Szukaj produktów lub stron…',
+    noResults: 'Nie znaleziono wyników.',
+    emptyState: 'Zacznij pisać, aby wyszukać…',
+    navigationHelp: 'nawiguj',
+    selectionHelp: 'wybierz',
+    shortcutLabel: 'Otwórz wyszukiwanie',
+    ariaLabel: 'Wyszukiwanie Spotlight',
+    searchDescription: 'Otwiera globalne wyszukiwanie Spotlight',
   },
 } as const satisfies ComponentMessages<SearchOverlayMessages>;
