@@ -44,4 +44,19 @@ export const MESSAGES = {
     loading:       'Loading image…',
     closeDialog:   'Close dialog',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    title:         'Kadrowanie obrazu',
+    apply:         'Zastosuj kadrowanie',
+    cancel:        'Anuluj',
+    zoomIn:        'Powiększ',
+    zoomOut:       'Pomniejsz',
+    zoom:          'Powiększenie',
+    resetRotation: 'Resetuj obrót',
+    flipH:         'Odbij w poziomie',
+    flipV:         'Odbij w pionie',
+    noImage:       'Nie wybrano obrazu.',
+    loading:       'Ładowanie obrazu…',
+    closeDialog:   'Zamknij okno dialogowe',
+  },
 } as const satisfies ComponentMessages<ImageCropperMessages>

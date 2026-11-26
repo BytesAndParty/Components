@@ -28,7 +28,7 @@ Interpolation is handled by a small helper function that replaces curly-brace pl
 | `language-switcher` (messages and the `pl` entry in `DEFAULT_LANGUAGES`) | yes | from Buchart58 |
 | `add-to-cart-button`, `product-tag`, `number-input`, `timeline` | yes | from Buchart58 |
 | `booking-calendar` (messages incl. plural forms, `pl-PL` for calendar and price) | yes | from Buchart58 |
-| `search-overlay`, `autocomplete-cell` | yes | written here |
+| `search-overlay`, `autocomplete-cell`, `image-cropper-modal` | yes | written here |
 | `ark-bridge.ts`: `popover`, `imageCropper`, `datePicker` | yes | written here |
 
 **All Polish texts are machine drafts.** A Polish speaker should proofread them before they go live. Each `pl` block carries a comment saying so.
