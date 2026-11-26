@@ -44,5 +44,5 @@ None (React only).
 
 ## Security Notes
 
-- Uses `type="password"` for the hidden input and `autoComplete="off"` to prevent browser auto-fill.
+- Uses `type="password"` for the hidden input and `autoComplete="new-password"`: the component confirms a newly chosen password, so the browser may offer a generated one and a password manager does not fill an old one.
 - Password comparison happens character-by-character in the client for visual feedback. The match callback should trigger server-side validation for the actual password change.

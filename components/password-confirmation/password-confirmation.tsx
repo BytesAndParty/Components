@@ -224,7 +224,7 @@ export function PasswordConfirmation({
           onChange={handleChange}
           placeholder={placeholder}
           aria-label={m.ariaLabel}
-          autoComplete="off"
+          autoComplete="new-password"
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           style={{
