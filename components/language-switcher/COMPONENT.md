@@ -13,7 +13,7 @@ A locale picker component designed for the application navbar. It integrates wit
 
 ## How It Works
 
-The component is an Ark UI `Select.Root` over a list collection built from `languages` (value = locale key, typeahead text = `label`). The value is controlled by the `locale` from `useAtelier()`. The trigger is the globe button with the locale badge (no `ValueText`), labelled via `triggerLabel`. The list portals into `useOverlayContainer()` (falls back to `<body>`), so it stays visible above hosts with their own `z-index` such as the designer's CSS fullscreen. It opens at `bottom-end` and is only mounted while open.
+The component is an Ark UI `Select.Root` over a list collection built from `languages` (value = locale key, typeahead text = `label`). The value is controlled by the `locale` from `useAtelier()`. The trigger is the globe button with the locale badge (no `ValueText`), labelled via `triggerLabel`. Ark points `aria-labelledby` of the trigger and the list at the id of a `Select.Label`, so `triggerLabel` is also rendered as a visually hidden `Select.Label` (inline style, no `sr-only` because the component has no Tailwind dependency); the `aria-label` on both stays as a fallback. The list portals into `useOverlayContainer()` (falls back to `<body>`), so it stays visible above hosts with their own `z-index` such as the designer's CSS fullscreen. It opens at `bottom-end` and is only mounted while open.
 
 Unlike a native select, arrow left/right, Home/End and typeahead on the focused, closed trigger do nothing: Ark would change the language of the whole UI directly, which is too easy to trigger by accident. Enter, Space and arrow down open the list; with the list open the arrows and typeahead move the highlight and Enter selects.
 
@@ -26,7 +26,7 @@ When a new language is selected, it triggers a 150 ms "flip" animation on the tr
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `languages` | `Record<string, LanguageOption>` | *DE, EN & PL* | Dictionary of available languages with labels and short labels. |
-| `triggerLabel` | `string` | *i18n default* | Aria-label for the trigger button. |
+| `triggerLabel` | `string` | *i18n default* | Accessible name of the trigger and the list (hidden label and `aria-label`). |
 | `onChange` | `(locale: string) => void` | — | Callback triggered when the language is changed. |
 | `className` | `string` | — | CSS class for the wrapper div. |
 | `style` | `CSSProperties` | — | Inline styles for the wrapper div. |

@@ -58,6 +58,12 @@ const DEFAULT_LANGUAGES: Record<string, LanguageOption> = {
   pl: { label: 'Polski', shortLabel: 'PL' },
 }
 
+// Visually hidden: Ark points aria-labelledby of the trigger and the list at this label's id.
+const VISUALLY_HIDDEN: React.CSSProperties = {
+  position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px',
+  overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0,
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function LanguageSwitcher({
@@ -143,6 +149,8 @@ export function LanguageSwitcher({
         className={className}
         style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', ...style }}
       >
+        <Select.Label style={VISUALLY_HIDDEN}>{effectiveTriggerLabel}</Select.Label>
+
         {/* ── Trigger ─────────────────────────────────────────── */}
         <Select.Trigger
           className="ls-btn"
@@ -214,7 +222,7 @@ export function LanguageSwitcher({
                 outline: 'none',
               }}
             >
-              {/* Header — decorative, the list is labelled via aria-label */}
+              {/* Header — decorative, the list is labelled via the hidden Select.Label */}
               <div aria-hidden="true" style={{
                 padding: '0.375rem 0.5rem 0.25rem',
                 fontSize: '0.75rem',

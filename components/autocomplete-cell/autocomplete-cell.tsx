@@ -151,6 +151,9 @@ export function AutocompleteCell({
       unmountOnExit
       className={cn('relative w-full group', className)}
     >
+      {/* Ark points aria-labelledby of the list at this label; it also labels the input. */}
+      <Combobox.Label className="sr-only">{placeholder}</Combobox.Label>
+
       <Combobox.Control className="border-border bg-card focus-within:border-ring focus-within:ring-ring/20 flex items-center gap-2 rounded-lg border px-3.5 transition-all duration-200 focus-within:ring-1">
         <span className="text-muted-foreground group-focus-within:text-accent shrink-0 transition-colors">
           {isLoading ? (

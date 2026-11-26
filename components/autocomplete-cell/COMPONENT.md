@@ -22,8 +22,9 @@ Input field with filtered autocomplete suggestions, keyboard navigation, and ani
 5. **Key pass-through**: The caller's `onKeyDown` gets every key except the ones the open list handles (arrows, Home/End, Enter, Escape) and a completing Tab. On a closed list arrow keys are not used to open it (`openOnKeyPress: false`), so they stay free for table navigation.
 6. **Outside click / focus loss**: Ark's dismissable layer closes the list, no own document listener.
 7. **Portal**: The list portals into `useOverlayContainer()` (falls back to `<body>`), so table cells with `overflow: hidden` and hosts with their own `z-index` do not clip it. It keeps the control's width (`sameWidth`).
-8. **Ref forwarding**: Accepts an external `inputRef` for imperative focus control, falling back to an internal ref.
-9. **Reduced motion**: handled once via `useReducedMotion()`: the list gets no keyframe class, the clear button only fades.
+8. **Label**: A `sr-only` `Combobox.Label` with the placeholder text labels the input (`for`) and the list: Ark points the list's `aria-labelledby` at it, which takes precedence over the list's `aria-label` (`suggestionsLabel`).
+9. **Ref forwarding**: Accepts an external `inputRef` for imperative focus control, falling back to an internal ref.
+10. **Reduced motion**: handled once via `useReducedMotion()`: the list gets no keyframe class, the clear button only fades.
 
 ## Props
 
@@ -34,7 +35,7 @@ Input field with filtered autocomplete suggestions, keyboard navigation, and ani
 | `onChange` | `(value: string) => void` | required | Called on input change or selection |
 | `onKeyDown` | `(e: KeyboardEvent) => void` | — | Additional keyboard handler |
 | `inputRef` | `RefObject<HTMLInputElement>` | — | External ref for the input |
-| `placeholder` | `string` | `messages.placeholder` | Input placeholder (localized fallback: `Suchen...` / `Search...`) |
+| `placeholder` | `string` | `messages.placeholder` | Input placeholder and hidden label (localized fallback: `Suchen...` / `Search...`) |
 | `isLoading` | `boolean` | `false` | Show loading spinner instead of search icon |
 | `onFocus` | `() => void` | — | Called when the input gains focus |
 | `onBlur` | `() => void` | — | Called when the input loses focus |

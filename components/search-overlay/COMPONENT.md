@@ -16,6 +16,7 @@ Ein Spotlight-inspiriertes Such-Overlay für eine immersive Navigations-Erfahrun
 
 - **Dialog (Ark UI):** `Dialog.Root` (modal) liefert Fokusfalle, Esc, Klick daneben zum Schließen, Scroll-Sperre der Seite und Fokus-Rückgabe an das Element, das vor `Mod+K` den Fokus hatte. Der erste Fokus liegt per `initialFocusEl` im Suchfeld. Backdrop und Palette hängen per `Portal` in `useOverlayContainer()` (ohne Provider am `<body>`) und werden nur gemountet, solange der Dialog offen ist (`lazyMount`, `unmountOnExit`).
 - **Combobox (Ark UI):** Im Dialog sitzt ein `Combobox.Root`, das immer offen ist (`open`) und seine Liste inline rendert, ohne `Positioner`. `collection` sind die angezeigten Treffer (`fetchResults` bzw. `initialSuggestions`), die Combobox filtert nicht selbst. `disableLayer` ist gesetzt, damit Esc und Klicks daneben beim Dialog landen und nicht zuerst die Liste „schließen“. Freitext bleibt stehen (`allowCustomValue`, `selectionBehavior: 'preserve'`), es gibt keinen Auswahl-Zustand (`value: []`); die gewählte Zeile kommt über `onValueChange` und schließt das Overlay.
+- **Label:** Ein `sr-only`-`Combobox.Label` mit `ariaLabel` benennt Suchfeld (`for`) und Trefferliste: Ark verweist mit `aria-labelledby` der Liste auf dieses Label.
 - **Hervorhebung:** Pfeiltasten und Zeiger teilen sich eine Hervorhebung über `data-highlighted`, die Unterelemente reagieren über die Gruppe `group/option`.
 - **Animation:** CSS-Keyframes, einmal per `STYLE_ID` in den `<head>` injiziert, an Arks `data-state` gebunden; Ark wartet beim Schließen auf das Ende der Ausblend-Animation. `prefers-reduced-motion` schaltet sie im selben Style-Block ab (einziger Weg).
 
@@ -26,7 +27,7 @@ Ein Spotlight-inspiriertes Such-Overlay für eine immersive Navigations-Erfahrun
 | `fetchResults` | `(query: string) => Promise<SearchResult[]>` | `-` | Liefert die Treffer zur Eingabe. Läuft erst ab einem Zeichen. |
 | `initialSuggestions` | `SearchResult[]` | `[]` | Treffer für den Leerzustand (vor der ersten Eingabe). |
 | `onSelect` | `(result: SearchResult) => void` | `-` | Wird bei Auswahl aufgerufen, z. B. für Client-Routing (`navigate(result.href)`). Ohne Callback: Seitenwechsel auf `href`. |
-| `messages` | `Partial<SearchOverlayMessages>` | `-` | i18n-Overrides für Placeholder, Leer-/Kein-Treffer-Texte, Hilfetexte, Dialog-Label und Shortcut-Label. |
+| `messages` | `Partial<SearchOverlayMessages>` | `-` | i18n-Overrides für Placeholder, Leer-/Kein-Treffer-Texte, Hilfetexte, Label von Dialog, Suchfeld und Liste sowie Shortcut-Label. |
 | `className` | `string` | `-` | Zusätzliche CSS-Klassen am Overlay. |
 
 ```ts

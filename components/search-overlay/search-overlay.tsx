@@ -152,6 +152,9 @@ export function SearchOverlay({
               onHighlightChange={(details) => { highlightedId.current = details.highlightedValue; }}
               disableLayer
             >
+              {/* Ark points aria-labelledby of the list at this label; it also labels the input. */}
+              <Combobox.Label className="sr-only">{m.ariaLabel}</Combobox.Label>
+
               <div className="flex items-center border-b border-(--border,#2a2a2e) px-4 py-4">
                 <svg
                   width="20"
