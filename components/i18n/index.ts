@@ -1,5 +1,5 @@
 export { I18nProvider } from './provider'
 export { useI18n, useComponentMessages } from './i18n-context'
-export { interpolate } from './types'
+export { interpolate, pluralize } from './types'
 export { useArkTranslations } from './ark-bridge'
-export type { Locale, ComponentMessages } from './types'
+export type { Locale, ComponentMessages, PluralForms } from './types'

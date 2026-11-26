@@ -1,9 +1,10 @@
 import { useI18n } from './i18n-context'
+import { pluralize } from './types'
 
 // Ark UI v5 / Zag 1.40 translation shapes. Keys verified against
 // @zag-js/popover/dist/popover.types.d.ts and @zag-js/image-cropper/dist/image-cropper.types.d.ts
 // (IntlTranslations); datePicker against @zag-js/date-picker 1.45 (date-picker.types.d.ts,
-// defaults in date-picker.utils.mjs).
+// defaults in date-picker.utils.mjs). ARK_PL has the same keys, checked against Zag 1.45 (Ark 5.39.3).
 // Dialog has no translations prop in v5 — set aria-label on Dialog.Root or per-element instead.
 
 interface Rect { x: number; y: number; width: number; height: number }
@@ -109,6 +110,56 @@ const ARK_EN = {
   },
 } as const
 
+// Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+// Day labels put `valueText` after a colon or full stop: it is a formatted date in the nominative,
+// which would clash with the case a verb like "wybierz" demands.
+const ARK_PL = {
+  popover: {
+    closeTriggerLabel: 'Zamknij okienko',
+  },
+  imageCropper: {
+    rootLabel: 'Edytor kadrowania obrazu',
+    rootRoleDescription: 'Edytor kadrowania obrazu',
+    previewLoading: 'Ładowanie podglądu',
+    previewDescription: () => 'Podgląd wykadrowanego obrazu',
+    selectionLabel: ({ shape }: CropperShapeDetails) =>
+      shape === 'circle' ? 'Okrągły obszar zaznaczenia' : 'Prostokątny obszar zaznaczenia',
+    selectionRoleDescription: 'Obszar zaznaczenia',
+    selectionInstructions: 'Użyj klawiszy strzałek, aby przesunąć, przeciągnij uchwyty, aby zmienić rozmiar.',
+    selectionValueText: ({ width, height }: SelectionValueTextDetails) => {
+      const h = Math.round(height)
+      const pixels = pluralize('pl', h, { one: 'piksel', few: 'piksele', many: 'pikseli', other: 'piksela' })
+      return `${Math.round(width)} na ${h} ${pixels}`
+    },
+  },
+  datePicker: {
+    dayCell: (state: DayCellState) => {
+      if (state.unavailable) return `Niedostępne. ${state.valueText}`
+      if (state.firstInRange) return `Początek zakresu: ${state.valueText}`
+      if (state.lastInRange) return `Koniec zakresu: ${state.valueText}`
+      if (state.inRange) return `W zakresie. ${state.valueText}`
+      if (state.selected) return `Wybrana data. ${state.valueText}`
+      return `Wybierz datę: ${state.valueText}`
+    },
+    trigger: (open: boolean) => (open ? 'Zamknij kalendarz' : 'Otwórz kalendarz'),
+    viewTrigger: (view: DateView, nextView: DateView | undefined) => {
+      const names = { day: 'dni', month: 'miesięcy', year: 'lat' }
+      return nextView ? `Przełącz na widok ${names[nextView]}` : `Widok ${names[view]}`
+    },
+    presetTrigger: ([start = '', end = '']: string[]) => `Wybierz zakres od ${start} do ${end}`,
+    prevTrigger: (view: DateView) =>
+      ({ day: 'Przejdź do poprzedniego miesiąca', month: 'Przejdź do poprzedniego roku', year: 'Przejdź do poprzedniej dekady' })[view],
+    nextTrigger: (view: DateView) =>
+      ({ day: 'Przejdź do następnego miesiąca', month: 'Przejdź do następnego roku', year: 'Przejdź do następnej dekady' })[view],
+    content: 'Kalendarz',
+    monthSelect: 'Wybierz miesiąc',
+    yearSelect: 'Wybierz rok',
+    clearTrigger: 'Wyczyść wybór',
+    weekColumnHeader: 'Tydz.',
+    weekNumberCell: (weekNumber: number) => `Tydzień ${weekNumber}`,
+  },
+} as const
+
 export type ArkComponent = keyof typeof ARK_EN
 
 /**
@@ -117,6 +168,7 @@ export type ArkComponent = keyof typeof ARK_EN
  */
 export function useArkTranslations<T extends ArkComponent>(component: T) {
   const { locale } = useI18n()
-  const translations = locale === 'de' ? ARK_DE : ARK_EN
+  // Every other locale gets the English texts.
+  const translations = locale === 'de' ? ARK_DE : locale === 'pl' ? ARK_PL : ARK_EN
   return translations[component] as (typeof ARK_EN)[T]
 }

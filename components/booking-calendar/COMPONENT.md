@@ -16,7 +16,11 @@ Komponente kennt kein Backend. Wiederverwendbar für Verkostung/Wanderung/Keller
   sortiert Uhrzeiten, deckelt Gäste auf `capacity`.
 - **Flow-States**: Datum → Uhrzeit → Gäste → Absenden → Erfolgs-Panel (mit Reset für weitere Anfrage).
 - **i18n**: `messages`-Prop überschreibt Strings; Monats-/Wochentagsnamen kommen aus Arks `locale`
-  (DE/EN via globalen `I18nProvider`). Preis über `Intl.NumberFormat` (de-AT / en-IE, EUR). Die
+  (DE/EN/PL via globalen `I18nProvider`, `CALENDAR_LOCALES`: de-DE / en-US / pl-PL). Preis über
+  `Intl.NumberFormat` (`CURRENCY_LOCALES`: de-AT / en-IE / pl-PL, EUR). `seatsLeft` ist ein String
+  oder ein Objekt mit Pluralformen (`pluralize` aus `components/i18n`); Polnisch braucht drei Formen
+  („zostało 1 miejsce“, „zostały 2 miejsca“, „zostało 5 miejsc“). Die polnischen Texte sind ein
+  Maschinenentwurf und sollten gegengelesen werden. Die
   Screenreader-Texte von Zag (Monatspfeile „Zum vorherigen Monat“, Tageszellen „Dienstag,
   17. November 2026 wählen“, „Nicht verfügbar. …“) kommen über `useArkTranslations('datePicker')` aus
   `components/i18n/ark-bridge.ts` als `translations` an `DatePicker.Root`; ohne sie wären sie englisch.

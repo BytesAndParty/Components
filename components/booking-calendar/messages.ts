@@ -1,4 +1,4 @@
-import type { ComponentMessages } from '../i18n';
+import type { ComponentMessages, PluralForms } from '../i18n';
 
 export type BookingCalendarMessages = {
   /** Überschrift der Kalenderspalte. */
@@ -9,8 +9,8 @@ export type BookingCalendarMessages = {
   pickTime: string;
   /** Label über dem Gäste-Stepper. */
   guests: string;
-  /** Kurzlabel „Plätze frei" — `{count}` wird interpoliert. */
-  seatsLeft: string;
+  /** Short "seats left" label; `{count}` is interpolated. A string, or one form per plural category (see `pluralize`). */
+  seatsLeft: string | PluralForms;
   /** Primärer Absende-Button. */
   submit: string;
   /** Button-Text während des Sendens. */
@@ -51,5 +51,25 @@ export const MESSAGES = {
     successBody: 'We will confirm your appointment shortly by e-mail.',
     newRequest: 'Another request',
     noSlots: 'No appointments available right now — please contact us directly.',
+  },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    pickDate: 'Wybierz termin',
+    pickDateHint: 'Prosimy wybrać jeden z wyróżnionych dni z wolnymi terminami.',
+    pickTime: 'Godzina i goście',
+    guests: 'Goście',
+    // Polish needs three forms for whole numbers: 1 miejsce, 2–4/22–24 miejsca, 0/5–21/25 miejsc.
+    seatsLeft: {
+      one: 'zostało {count} miejsce',
+      few: 'zostały {count} miejsca',
+      many: 'zostało {count} miejsc',
+      other: 'zostało {count} miejsca',
+    },
+    submit: 'Wyślij zapytanie',
+    submitting: 'Wysyłanie …',
+    successTitle: 'Zapytanie wysłane',
+    successBody: 'Wkrótce potwierdzimy Państwa termin e-mailem.',
+    newRequest: 'Kolejne zapytanie',
+    noSlots: 'Obecnie nie ma wolnych terminów — zapraszamy do bezpośredniego kontaktu.',
   },
 } as const satisfies ComponentMessages<BookingCalendarMessages>;

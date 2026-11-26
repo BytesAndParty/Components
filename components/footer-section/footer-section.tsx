@@ -179,7 +179,8 @@ export function Footer({
 }: FooterProps) {
   const { locale } = useI18n();
   const m = useComponentMessages(MESSAGES, messages);
-  const resolvedSections = sections ?? defaultSectionsByLocale[locale];
+  // Demo sections exist in de and en only; every other locale gets the English ones.
+  const resolvedSections = sections ?? defaultSectionsByLocale[locale === 'de' ? 'de' : 'en'];
   return (
     <footer
       className={className}

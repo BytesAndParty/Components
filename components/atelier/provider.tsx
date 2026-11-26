@@ -8,8 +8,8 @@
  * DOM attributes written on every change:
  *   data-theme="dark|light"    ← matches existing CSS variable selectors
  *   data-accent="indigo|…"     ← matches existing CSS variable selectors
- *   data-locale="de|en"        ← for CSS / SSR consumers
- *   lang="de|en"               ← standard HTML lang attribute
+ *   data-locale="de|en|pl"     ← for CSS / SSR consumers
+ *   lang="de|en|pl"            ← standard HTML lang attribute
  *   .dark class on <html>      ← Tailwind dark mode compat
  *
  * Usage:
@@ -32,7 +32,8 @@ import {
   type Theme,
 } from './atelier-context'
 
-const locales: Record<Locale, GlobalMessages> = { en, de }
+// No global `pl` strings yet: a missing locale falls back to `en` (see `base` below).
+const locales: Partial<Record<Locale, GlobalMessages>> = { en, de }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -129,7 +130,7 @@ export function AtelierProvider({
 
   // ── Context value ──────────────────────────────────────────────────────────
 
-  const base = locales[locale]
+  const base = locales[locale] ?? en
 
   function t(key: keyof GlobalMessages, vars?: Record<string, string | number>): string {
     const str = overrides?.[key] ?? base[key] ?? en[key] ?? key

@@ -32,4 +32,15 @@ export const MESSAGES = {
     vegan: 'Vegan',
     award: 'Award winning',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    new: 'NOWOŚĆ',
+    sale: 'PROMOCJA',
+    lowStock: 'Ostatnie sztuki',
+    bestseller: 'Bestseller',
+    limited: 'Limitowane',
+    organic: 'Bio',
+    vegan: 'Wegańskie',
+    award: 'Nagrodzone',
+  },
 } as const satisfies ComponentMessages<ProductTagMessages>

@@ -7,12 +7,13 @@ import { I18nContext } from './i18n-context'
 
 const STORAGE_KEY = 'design-engine-locale'
 
-const locales: Record<Locale, GlobalMessages> = { en, de }
+// No global `pl` strings yet: a missing locale falls back to `en` (see `base` below).
+const locales: Partial<Record<Locale, GlobalMessages>> = { en, de }
 
 function readStoredLocale(): Locale {
   if (typeof localStorage === 'undefined') return 'de'
   const stored = localStorage.getItem(STORAGE_KEY)
-  return stored === 'en' || stored === 'de' ? stored : 'de'
+  return stored === 'en' || stored === 'de' || stored === 'pl' ? stored : 'de'
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ export function I18nProvider({
     onLocaleChange?.(next)
   }
 
-  const base = locales[locale]
+  const base = locales[locale] ?? en
 
   function t(key: keyof GlobalMessages, vars?: Record<string, string | number>): string {
     const str = overrides?.[key] ?? base[key] ?? en[key] ?? key

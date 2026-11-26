@@ -16,4 +16,9 @@ export const MESSAGES = {
     idle: 'Add to cart',
     added: 'Added to cart',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    idle: 'Dodaj do koszyka',
+    added: 'Dodano do koszyka',
+  },
 } as const satisfies ComponentMessages<AddToCartButtonMessages>

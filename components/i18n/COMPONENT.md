@@ -8,7 +8,7 @@ A lightweight, built-in internationalization system for AtelierUI. It handles gl
 - **Variable Interpolation:** Simple `{variable}` syntax for dynamic content.
 - **Auto-Persistence:** Saves selected locale to `localStorage`.
 - **DOM Integration:** Automatically updates the `lang` attribute and `data-locale` on the `<html>` element.
-- **Type-Safe:** Built with TypeScript to ensure all translation keys exist across all supported languages (`de`, `en`).
+- **Type-Safe:** Built with TypeScript to ensure every translation key exists in the required languages (`de`, `en`). Further locales (`pl`) are optional per component and fall back to English.
 - **Controlled/Uncontrolled Mode:** Can be used as a standalone provider or controlled by a parent (like `AtelierProvider`).
 
 ## How It Works
@@ -19,13 +19,33 @@ Components typically store their own translations in a `messages.ts` file using 
 
 Interpolation is handled by a small helper function that replaces curly-brace placeholders with provided values.
 
+### Locales and fallback
+
+`Locale` is `'de' | 'en' | 'pl'`. `ComponentMessages<T>` requires `de` and `en`; every other locale is optional. A component without messages for the current locale shows its English ones (`useComponentMessages` falls back to `en`), and so do the global strings of `t()` (there is no global `pl` file yet). That is intended: only the components below have Polish texts, everything else appears in English when `pl` is selected.
+
+| Where | Has `pl` | Source |
+|---|---|---|
+| `language-switcher` (messages and the `pl` entry in `DEFAULT_LANGUAGES`) | yes | from Buchart58 |
+| `add-to-cart-button`, `product-tag`, `number-input`, `timeline` | yes | from Buchart58 |
+| `booking-calendar` (messages incl. plural forms, `pl-PL` for calendar and price) | yes | from Buchart58 |
+| `search-overlay`, `autocomplete-cell` | yes | written here |
+| `ark-bridge.ts`: `popover`, `imageCropper`, `datePicker` | yes | written here |
+
+**All Polish texts are machine drafts.** A Polish speaker should proofread them before they go live. Each `pl` block carries a comment saying so.
+
+`useArkTranslations()` picks `ARK_DE`, `ARK_PL` or `ARK_EN`; any other locale gets the English texts.
+
+### Plural forms
+
+`pluralize(locale, count, forms)` picks a word form via `Intl.PluralRules`. `forms` is either a plain string (returned as is) or `{ one, few?, many?, other }`. Polish needs three forms for whole numbers: `one` = 1, `few` = 2–4, 22–24, … (not 12–14), `many` = 0, 5–21, 25–31, …; `other` covers fractions. German and English only use `one` and `other`, so their messages can stay strings. Example: `booking-calendar`'s `seatsLeft` (1 miejsce, 2 miejsca, 5 miejsc, 22 miejsca).
+
 ## Props
 
 ### I18nProvider
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `locale` | `'de' \| 'en'` | — | Optional controlled locale. Overrides localStorage if provided. |
+| `locale` | `'de' \| 'en' \| 'pl'` | — | Optional controlled locale. Overrides localStorage if provided. |
 | `overrides` | `Partial<GlobalMessages>` | — | Global string overrides merged on top of built-in locales. |
 | `onLocaleChange` | `(l: Locale) => void` | — | Callback triggered when the locale changes. |
 | `storageKey` | `string` | `'design-engine-locale'` | The localStorage key for the locale. |

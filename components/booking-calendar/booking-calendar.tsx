@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { DatePicker, parseDate } from '@ark-ui/react/date-picker';
 import { Calendar, Clock, Users, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useI18n, useComponentMessages, useArkTranslations, interpolate } from '../i18n';
+import { useI18n, useComponentMessages, useArkTranslations, interpolate, pluralize, type Locale } from '../i18n';
 import { NumberInput } from '../number-input/number-input';
 import { MESSAGES, type BookingCalendarMessages } from './messages';
+
+// BCP 47 tags per locale: prices in euro convention, the calendar grid (month names, week start) as before.
+const CURRENCY_LOCALES: Record<Locale, string> = { de: 'de-AT', en: 'en-IE', pl: 'pl-PL' };
+const CALENDAR_LOCALES: Record<Locale, string> = { de: 'de-DE', en: 'en-US', pl: 'pl-PL' };
 
 /**
  * Datengetriebener Termin-Picker auf Ark UI `DatePicker` (headless Monatsraster,
@@ -37,7 +41,8 @@ type Status = 'idle' | 'submitting' | 'done';
 
 export function BookingCalendar({ slots, onSubmit, messages, className }: BookingCalendarProps) {
   const { locale } = useI18n();
-  const m = useComponentMessages(MESSAGES, messages);
+  // Explicit type argument: `seatsLeft` is a string in de/en but plural forms in pl, so inference would pick `de` alone.
+  const m = useComponentMessages<BookingCalendarMessages>(MESSAGES, messages);
   // Screen reader texts of the month arrows and day cells; Zag's defaults are English only.
   const datePickerTranslations = useArkTranslations('datePicker');
 
@@ -61,7 +66,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
   const daySlots = selectedDate ? slotsByDate.get(selectedDate) ?? [] : [];
   const selectedSlot = daySlots.find((s) => s.id === selectedSlotId) ?? null;
 
-  const currency = new Intl.NumberFormat(locale === 'de' ? 'de-AT' : 'en-IE', {
+  const currency = new Intl.NumberFormat(CURRENCY_LOCALES[locale], {
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 0,
@@ -130,7 +135,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
           </h3>
           <DatePicker.Root
             inline
-            locale={locale === 'de' ? 'de-DE' : 'en-US'}
+            locale={CALENDAR_LOCALES[locale]}
             translations={datePickerTranslations}
             selectionMode="single"
             defaultFocusedValue={firstDate ? parseDate(firstDate) : undefined}
@@ -252,7 +257,7 @@ export function BookingCalendar({ slots, onSubmit, messages, className }: Bookin
                     >
                       <span className="text-sm font-semibold tabular-nums">{slot.time}</span>
                       <span className="text-[10px] tracking-wide uppercase">
-                        {interpolate(m.seatsLeft, { count: slot.capacity })}
+                        {interpolate(pluralize(locale, slot.capacity, m.seatsLeft), { count: slot.capacity })}
                         {slot.price != null && ` · ${currency.format(slot.price)}`}
                       </span>
                     </button>

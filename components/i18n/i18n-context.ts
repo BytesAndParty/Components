@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { Locale, GlobalMessages } from './types'
+import type { Locale, GlobalMessages, ComponentMessages } from './types'
 import { interpolate } from './types'
 
 interface I18nContextValue {
@@ -19,7 +19,7 @@ export function useI18n() {
 }
 
 export function useComponentMessages<T extends object>(
-  defaults: Record<Locale, T>,
+  defaults: ComponentMessages<T>,
   override?: Partial<T>
 ): T {
   const { locale } = useI18n()

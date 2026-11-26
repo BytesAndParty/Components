@@ -16,4 +16,9 @@ export const MESSAGES = {
     decrement: 'Decrease',
     increment: 'Increase',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    decrement: 'Zmniejsz',
+    increment: 'Zwiększ',
+  },
 } as const satisfies ComponentMessages<NumberInputMessages>

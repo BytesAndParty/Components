@@ -12,4 +12,8 @@ export const MESSAGES = {
   en: {
     label: 'Timeline',
   },
+  // Machine draft like all pl texts, to be proofread by a Polish speaker (components/i18n/COMPONENT.md).
+  pl: {
+    label: 'Oś czasu',
+  },
 } as const satisfies ComponentMessages<TimelineMessages>

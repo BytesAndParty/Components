@@ -27,7 +27,7 @@ On the client, the provider reads from `localStorage`. While React hydrates serv
 |---|---|---|---|
 | `defaultTheme` | `'dark' \| 'light'` | `'dark'` | Initial theme if no saved state exists. |
 | `defaultAccent` | `string` | `'indigo'` | Initial accent color if no saved state exists. |
-| `defaultLocale` | `'de' \| 'en'` | `'de'` | Initial locale if no saved state exists. |
+| `defaultLocale` | `'de' \| 'en' \| 'pl'` | `'de'` | Initial locale if no saved state exists. Components without `pl` messages show English (see `components/i18n/COMPONENT.md`). |
 | `overrides` | `Partial<GlobalMessages>` | — | Global translation overrides for the i18n system. |
 | `children` | `ReactNode` | — | The application tree. |
 
