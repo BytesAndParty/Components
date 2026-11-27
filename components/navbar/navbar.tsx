@@ -134,8 +134,8 @@ export function Navbar({
   sticky = true,
   height = 64,
   scrollThreshold = 20,
-  bgColor = 'var(--background, #0a0a0b)',
-  borderColor = 'var(--border, #2a2a2e)',
+  bgColor = 'var(--background)',
+  borderColor = 'var(--border)',
   className,
   style,
   messages,
@@ -261,7 +261,7 @@ export function NavbarItem({ children, href, active, onClick, className, style }
         padding: '8px 14px',
         fontSize: '14px',
         fontWeight: active ? 600 : 400,
-        color: active ? 'var(--foreground, #e4e4e7)' : 'var(--muted-foreground, #71717a)',
+        color: active ? 'var(--foreground)' : 'var(--muted-foreground)',
         background: 'none',
         border: 'none',
         textDecoration: 'none',
@@ -273,10 +273,10 @@ export function NavbarItem({ children, href, active, onClick, className, style }
         ...style,
       }}
       onMouseEnter={e => {
-        if (!active) e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
+        if (!active) e.currentTarget.style.color = 'var(--foreground)'
       }}
       onMouseLeave={e => {
-        if (!active) e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
+        if (!active) e.currentTarget.style.color = 'var(--muted-foreground)'
       }}
     >
       {children}
@@ -288,7 +288,7 @@ export function NavbarItem({ children, href, active, onClick, className, style }
             left: '14px',
             right: '14px',
             height: '2px',
-            background: 'var(--accent, #6366f1)',
+            background: 'var(--accent)',
             borderRadius: '1px',
           }}
         />
@@ -360,7 +360,7 @@ export function NavbarDropdown({
           padding: '8px 14px',
           fontSize: '14px',
           fontWeight: 400,
-          color: isOpen ? 'var(--foreground, #e4e4e7)' : 'var(--muted-foreground, #71717a)',
+          color: isOpen ? 'var(--foreground)' : 'var(--muted-foreground)',
           background: 'none',
           border: 'none',
           cursor: 'pointer',
@@ -369,9 +369,9 @@ export function NavbarDropdown({
           whiteSpace: 'nowrap',
           letterSpacing: '0.01em',
         }}
-        onMouseEnter={e => (e.currentTarget.style.color = 'var(--foreground, #e4e4e7)')}
+        onMouseEnter={e => (e.currentTarget.style.color = 'var(--foreground)')}
         onMouseLeave={e => {
-          if (!isOpen) e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
+          if (!isOpen) e.currentTarget.style.color = 'var(--muted-foreground)'
         }}
       >
         {trigger}
@@ -415,8 +415,8 @@ export function NavbarDropdown({
               onMouseEnter={open}
               onMouseLeave={close}
               style={{
-                background: 'var(--card, #141416)',
-                border: '1px solid var(--border, #2a2a2e)',
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: mega ? '24px' : '8px',
                 minWidth: mega ? undefined : '200px',
@@ -450,7 +450,7 @@ export function NavbarDropdownGroup({ children, title, className, style }: Navba
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
-            color: 'var(--muted-foreground, #71717a)',
+            color: 'var(--muted-foreground)',
             padding: '6px 12px 8px',
           }}
         >
@@ -486,7 +486,7 @@ export function NavbarDropdownItem({
         gap: '10px',
         padding: '10px 12px',
         fontSize: '14px',
-        color: 'var(--foreground, #e4e4e7)',
+        color: 'var(--foreground)',
         background: 'none',
         border: 'none',
         borderRadius: '8px',
@@ -510,7 +510,7 @@ export function NavbarDropdownItem({
           <div
             style={{
               fontSize: '12px',
-              color: 'var(--muted-foreground, #71717a)',
+              color: 'var(--muted-foreground)',
               marginTop: '2px',
               lineHeight: '1.4',
             }}
@@ -550,17 +550,17 @@ export function NavbarIconButton({
         background: 'none',
         border: 'none',
         borderRadius: '8px',
-        color: 'var(--muted-foreground, #71717a)',
+        color: 'var(--muted-foreground)',
         cursor: 'pointer',
         transition: 'color 200ms ease, background 200ms ease',
         ...style,
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.color = 'var(--foreground, #e4e4e7)'
+        e.currentTarget.style.color = 'var(--foreground)'
         e.currentTarget.style.background = 'color-mix(in oklch, var(--foreground) 5%, transparent)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.color = 'var(--muted-foreground, #71717a)'
+        e.currentTarget.style.color = 'var(--muted-foreground)'
         e.currentTarget.style.background = 'none'
       }}
     >
@@ -575,7 +575,7 @@ export function NavbarIconButton({
             height: '16px',
             padding: '0 4px',
             borderRadius: '8px',
-            background: 'var(--accent, #6366f1)',
+            background: 'var(--accent)',
             color: '#ffffff',
             fontSize: '10px',
             fontWeight: 700,
@@ -614,7 +614,7 @@ export function NavbarMobileToggle({ className, style }: NavbarMobileToggleProps
         padding: 0,
         background: 'none',
         border: 'none',
-        color: 'var(--foreground, #e4e4e7)',
+        color: 'var(--foreground)',
         cursor: 'pointer',
         ...style,
       }}
@@ -696,8 +696,8 @@ export function NavbarMobileMenu({ children, className, style }: NavbarMobileMen
                 right: 0,
                 bottom: 0,
                 width: 'min(320px, 85vw)',
-                background: 'var(--background, #0a0a0b)',
-                borderLeft: '1px solid var(--border, #2a2a2e)',
+                background: 'var(--background)',
+                borderLeft: '1px solid var(--border)',
                 padding: '72px 24px 24px',
                 zIndex: 100,
                 overflowY: 'auto',
@@ -723,7 +723,7 @@ export function NavbarMobileMenu({ children, className, style }: NavbarMobileMen
                   justifyContent: 'center',
                   background: 'none',
                   border: 'none',
-                  color: 'var(--muted-foreground, #71717a)',
+                  color: 'var(--muted-foreground)',
                   cursor: 'pointer',
                   borderRadius: '8px',
                 }}
@@ -761,7 +761,7 @@ export function NavbarLogo({ children, href = '/', className, style }: NavbarLog
         display: 'inline-flex',
         alignItems: 'center',
         textDecoration: 'none',
-        color: 'var(--foreground, #e4e4e7)',
+        color: 'var(--foreground)',
         fontWeight: 700,
         fontSize: '18px',
         letterSpacing: '-0.02em',
@@ -782,7 +782,7 @@ export function NavbarDivider() {
       style={{
         width: '1px',
         height: '20px',
-        background: 'var(--border, #2a2a2e)',
+        background: 'var(--border)',
         margin: '0 8px',
       }}
     />

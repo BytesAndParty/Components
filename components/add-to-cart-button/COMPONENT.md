@@ -27,7 +27,7 @@ Animated add-to-cart button with a multi-stage cart roll-in animation inspired b
 |---|---|---|---|
 | `children` | `ReactNode` | `messages.idle` | Button label (falls back to the localized idle label) |
 | `onClick` | `() => void` | — | Click callback (fires at animation start) |
-| `duration` | `number` | `3700` | Total animation + reset duration in ms |
+| `duration` | `number` | `3700` | Time in ms until the button returns to idle. The animation timings are fixed (about 3.6 s in total); a lower value cuts it short |
 | `bgColor` | `string` | `'var(--accent)'` | Button background |
 | `textColor` | `string` | `'#fff'` | Text and icon color |
 | `messages` | `Partial<AddToCartButtonMessages>` | — | i18n overrides for the idle label and the screen-reader "added" announcement |

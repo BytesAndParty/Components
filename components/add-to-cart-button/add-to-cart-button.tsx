@@ -9,7 +9,7 @@ export interface AddToCartButtonProps {
   children?: ReactNode
   /** Called when the button is clicked (fires at animation start) */
   onClick?: () => void
-  /** Full animation duration in ms (default: 3700) */
+  /** Time in ms until the button returns to idle (default: 3700). The animation itself runs a fixed ~3.6 s; a lower value cuts it short. */
   duration?: number
   /** Button background color */
   bgColor?: string

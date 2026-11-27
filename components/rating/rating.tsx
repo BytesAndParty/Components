@@ -97,7 +97,6 @@ export function Rating({
   }
 
   const handleClick = (index: number) => {
-      if (readOnly) return
       const newValue = index + 1
       if (!isControlled) setInternalValue(newValue)
       setAnimatingIndex(index)
@@ -146,22 +145,21 @@ export function Rating({
             aria-checked={i + 1 === currentValue}
             aria-label={interpolate(m.starLabel, { current: i + 1, total: count })}
             tabIndex={i === tabStopIndex ? 0 : -1}
-            disabled={readOnly}
             onClick={() => handleClick(i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
-            onMouseEnter={() => !readOnly && setHoverValue(i + 1)}
+            onMouseEnter={() => setHoverValue(i + 1)}
             onMouseLeave={() => setHoverValue(null)}
             style={{
               background: 'none',
               border: 'none',
               padding: '2px',
-              cursor: readOnly ? 'default' : 'pointer',
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               animation: isAnimating ? 'rating-pop 300ms ease' : 'none',
               transition: 'transform 150ms ease',
-              transform: !readOnly && hoverValue !== null && i < hoverValue ? 'scale(1.1)' : 'scale(1)',
+              transform: hoverValue !== null && i < hoverValue ? 'scale(1.1)' : 'scale(1)',
             }}
           >
             <StarIcon
