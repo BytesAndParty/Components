@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "noEmit": true },
-  "include": ["../components/**/*.test.ts", "../components/**/*.test.tsx", "../vitest.setup.ts"],
+  "include": ["../components/**/*.test.ts", "../components/**/*.test.tsx", "../vitest.setup.ts", "src/vite-env.d.ts"],
   "exclude": []
 }
