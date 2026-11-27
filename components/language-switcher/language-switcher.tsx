@@ -150,6 +150,8 @@ export function LanguageSwitcher({
         style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', ...style }}
       >
         <Select.Label style={VISUALLY_HIDDEN}>{effectiveTriggerLabel}</Select.Label>
+        {/* The label's `for` points at this element. */}
+        <Select.HiddenSelect />
 
         {/* ── Trigger ─────────────────────────────────────────── */}
         <Select.Trigger

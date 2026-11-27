@@ -651,6 +651,7 @@ export function PasswordSetup({
             visible={confirmVisible}
             onToggleVisible={() => setConfirmVisible(!confirmVisible)}
             onChange={handleConfirmChange}
+            autoComplete="new-password"
             onFocus={() => setFocused2(true)}
             onBlur={() => setFocused2(false)}
             borderColor={matched ? matchColor : confirm.length > 0 && confirm !== password.slice(0, confirm.length) ? mismatchColor : focused2 ? 'var(--accent)' : 'var(--border)'}
