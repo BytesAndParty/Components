@@ -93,7 +93,7 @@ export function Checkbox({
           transform: pressed ? 'scale(0.92)' : 'scale(1)',
           transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s linear',
           boxShadow: focusVisible
-            ? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+            ? '0 0 0 2px var(--background), 0 0 0 4px var(--accent)'
             : 'none',
         }}
       >

@@ -69,7 +69,7 @@ export function BannerLink({ children, href, className, style }: BannerLinkProps
 
 export function Banner({
   children,
-  bgColor = 'var(--accent, #6366f1)',
+  bgColor = 'var(--accent)',
   textColor = '#ffffff',
   dismissible = true,
   onDismiss,

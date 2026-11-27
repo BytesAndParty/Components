@@ -40,7 +40,7 @@ function injectKeyframes() {
 
 export function ClickSpark({
   children,
-  sparkColor = 'var(--accent, #6366f1)',
+  sparkColor = 'var(--accent)',
   sparkSize = 10,
   sparkRadius = 15,
   sparkCount = 8,

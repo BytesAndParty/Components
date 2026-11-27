@@ -94,7 +94,7 @@ function injectKeyframes() {
 export function SparklesText({
   children,
   className,
-  sparkleColor = 'var(--accent, #6366f1)',
+  sparkleColor = 'var(--accent)',
   sparkleCount = 3,
   minSize = 8,
   maxSize = 18,

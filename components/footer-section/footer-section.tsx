@@ -234,7 +234,7 @@ export function Footer({
             <p
               style={{
                 fontSize: '0.8125rem',
-                color: 'var(--muted-foreground, #71717a)',
+                color: 'var(--muted-foreground)',
               }}
             >
               &copy; {new Date().getFullYear()} {companyName}. {m.rightsReserved}
@@ -284,7 +284,7 @@ export function Footer({
                         href={link.href}
                         className="footer-link"
                         style={{
-                          color: 'var(--muted-foreground, #71717a)',
+                          color: 'var(--muted-foreground)',
                           textDecoration: 'none',
                           fontSize: '0.8125rem',
                           // 44px min tap target (WCAG 2.5.5 / Guidelines §7)

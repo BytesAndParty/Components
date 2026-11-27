@@ -26,7 +26,7 @@ function injectStyles() {
       transition: width 0.22s ease;
     }
     .bc-link:hover {
-      color: var(--foreground, #e4e4e7);
+      color: var(--foreground);
     }
     .bc-link:hover::after {
       width: 100%;
@@ -81,7 +81,7 @@ export function BreadcrumbList({
         alignItems: 'center',
         gap: '0.5rem',
         fontSize: '0.875rem',
-        color: 'var(--muted-foreground, #71717a)',
+        color: 'var(--muted-foreground)',
         listStyle: 'none',
         padding: 0,
         margin: 0,
@@ -144,7 +144,7 @@ export function BreadcrumbPage({
       aria-current="page"
       style={{
         fontWeight: 500,
-        color: 'var(--foreground, #e4e4e7)',
+        color: 'var(--foreground)',
         ...style,
       }}
       data-slot="breadcrumb-page"

@@ -101,7 +101,7 @@ function injectStyles() {
 const labelStyle: CSSProperties = {
   fontSize: '13px',
   fontWeight: 500,
-  color: 'var(--muted-foreground, #71717a)',
+  color: 'var(--muted-foreground)',
   letterSpacing: '0.02em',
 }
 
@@ -247,7 +247,7 @@ function FancyDotInput({
 }: FancyDotInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const lastCharRef = useRef(value.length)
-  const neutralColor = 'var(--muted-foreground, #71717a)'
+  const neutralColor = 'var(--muted-foreground)'
 
   // Sync prev-length tracker after every render so the pop animation only
   // fires on insertions (value.length grew), not deletions. Writing the ref
@@ -276,7 +276,7 @@ function FancyDotInput({
       if (isMatch) { bgColor = matchColor; glowColor = matchColor }
       else if (isMismatch) { bgColor = mismatchColor; glowColor = mismatchColor }
     } else {
-      if (isTyped) { bgColor = 'var(--foreground, #e4e4e7)' }
+      if (isTyped) { bgColor = 'var(--foreground)' }
     }
 
     dots.push(
@@ -314,7 +314,7 @@ function FancyDotInput({
         borderRadius: '10px',
         padding: '12px 44px 12px 14px',
         cursor: 'text',
-        background: 'var(--card, #141416)',
+        background: 'var(--card)',
         transition: 'border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease',
         boxShadow,
         animation: shake
@@ -352,7 +352,7 @@ function FancyDotInput({
             position: 'absolute',
             left: 0,
             fontSize: '14px', 
-            color: 'var(--muted-foreground, #71717a)', 
+            color: 'var(--muted-foreground)', 
             lineHeight: '21px',
             animation: 'pws-text-reveal 300ms ease both',
             pointerEvents: 'none',
@@ -386,7 +386,7 @@ function FancyDotInput({
             }}>
               <span style={{ 
                 fontSize: '14px', 
-                color: 'var(--foreground, #e4e4e7)', 
+                color: 'var(--foreground)', 
                 fontFamily: 'inherit', 
                 lineHeight: '21px',
               }}>
@@ -556,7 +556,7 @@ export function PasswordSetup({
           onChange={handlePasswordChange}
           onFocus={() => setFocused1(true)}
           onBlur={() => setFocused1(false)}
-          borderColor={focused1 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
+          borderColor={focused1 ? 'var(--accent)' : 'var(--border)'}
           boxShadow={focused1 ? '0 0 0 3px color-mix(in oklch, var(--accent) 15%, transparent)' : 'none'}
           dotSize={dotSize}
           matchColor={matchColor}
@@ -579,9 +579,9 @@ export function PasswordSetup({
                   gap: '5px',
                   padding: '5px 10px',
                   fontSize: '12px',
-                  color: 'var(--muted-foreground, #71717a)',
+                  color: 'var(--muted-foreground)',
                   background: 'none',
-                  border: '1px solid var(--border, #2a2a2e)',
+                  border: '1px solid var(--border)',
                   borderRadius: '7px',
                   cursor: 'pointer',
                 }}
@@ -599,9 +599,9 @@ export function PasswordSetup({
                   gap: '5px',
                   padding: '5px 10px',
                   fontSize: '12px',
-                  color: copied ? readableText(matchColor) : 'var(--muted-foreground, #71717a)',
+                  color: copied ? readableText(matchColor) : 'var(--muted-foreground)',
                   background: 'none',
-                  border: '1px solid var(--border, #2a2a2e)',
+                  border: '1px solid var(--border)',
                   borderRadius: '7px',
                   cursor: 'pointer',
                 }}
@@ -616,7 +616,7 @@ export function PasswordSetup({
           <>
             {showStrength && (
               <div style={{ animation: 'pws-fade-in 200ms ease' }}>
-                <div style={{ height: '4px', width: '100%', background: 'var(--border, #2a2a2e)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
+                <div style={{ height: '4px', width: '100%', background: 'var(--border)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
                   <div style={{ height: '100%', width: `${(passed / checks.length) * 100}%`, background: strength.color, borderRadius: '2px', transition: 'width 300ms ease, background 300ms ease', animation: 'pws-strength-grow 300ms ease' }} />
                 </div>
                 <span style={{ fontSize: '12px', color: readableText(strength.color), marginTop: '2px', display: 'block' }}>{strength.label}</span>
@@ -625,7 +625,7 @@ export function PasswordSetup({
             {showChecklist && (
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '3px', animation: 'pws-fade-in 200ms ease' }}>
                 {checkResults.map((check, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? readableText(matchColor) : 'var(--muted-foreground, #71717a)', transition: 'color 200ms ease' }}>
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: check.valid ? readableText(matchColor) : 'var(--muted-foreground)', transition: 'color 200ms ease' }}>
                     {check.valid ? (
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></svg>
                     ) : (
@@ -653,7 +653,7 @@ export function PasswordSetup({
             onChange={handleConfirmChange}
             onFocus={() => setFocused2(true)}
             onBlur={() => setFocused2(false)}
-            borderColor={matched ? matchColor : confirm.length > 0 && confirm !== password.slice(0, confirm.length) ? mismatchColor : focused2 ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)'}
+            borderColor={matched ? matchColor : confirm.length > 0 && confirm !== password.slice(0, confirm.length) ? mismatchColor : focused2 ? 'var(--accent)' : 'var(--border)'}
             boxShadow={matched ? `0 0 0 3px color-mix(in oklch, ${matchColor} 15%, transparent)` : focused2 ? '0 0 0 3px color-mix(in oklch, var(--accent) 15%, transparent)' : 'none'}
             shake={shake}
             matched={matched}

@@ -22,7 +22,7 @@ export interface ScrollProgressProps {
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export function ScrollProgress({
-  color = 'var(--accent, #6366f1)',
+  color = 'var(--accent)',
   height = 3,
   top = '0',
   zIndex = 50,

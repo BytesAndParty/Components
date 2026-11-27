@@ -88,7 +88,7 @@ export function HeartLike({
         WebkitTapHighlightColor: 'transparent',
         borderRadius: '50%',
         boxShadow: focusVisible
-          ? '0 0 0 2px var(--background, #fff), 0 0 0 4px var(--accent)'
+          ? '0 0 0 2px var(--background), 0 0 0 4px var(--accent)'
           : 'none',
         transition: 'box-shadow 0.15s linear',
       }}

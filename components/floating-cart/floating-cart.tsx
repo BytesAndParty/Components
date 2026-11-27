@@ -50,7 +50,7 @@ export function FloatingCart({
   onClick,
   onItemClick,
   onItemRemove,
-  fabColor = 'var(--accent, #6366f1)',
+  fabColor = 'var(--accent)',
   fabTextColor = '#fff',
   maxVisible = 4,
   icon,
@@ -190,7 +190,7 @@ export function FloatingCart({
                 <div style={{
                   width: '100%',
                   height: '100%',
-                  background: 'var(--card, #141416)',
+                  background: 'var(--card)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -198,7 +198,7 @@ export function FloatingCart({
                   <span style={{
                     fontSize: '11px',
                     fontWeight: 700,
-                    color: 'var(--muted-foreground, #71717a)',
+                    color: 'var(--muted-foreground)',
                     textAlign: 'center',
                     lineHeight: 1.2,
                     padding: '4px',
@@ -256,8 +256,8 @@ export function FloatingCart({
                 minWidth: '20px',
                 height: '20px',
                 borderRadius: '10px',
-                background: 'var(--background, #16161a)',
-                color: 'var(--foreground, #fff)',
+                background: 'var(--background)',
+                color: 'var(--foreground)',
                 fontSize: '11px',
                 fontWeight: 700,
                 display: 'flex',
@@ -291,9 +291,9 @@ export function FloatingCart({
                   width: '20px',
                   height: '20px',
                   borderRadius: '50%',
-                  background: 'var(--background, #16161a)',
+                  background: 'var(--background)',
                   border: 'none',
-                  color: 'var(--foreground, #fff)',
+                  color: 'var(--foreground)',
                   cursor: 'pointer',
                   display: isHovered ? 'flex' : 'none',
                   alignItems: 'center',
@@ -305,7 +305,7 @@ export function FloatingCart({
                   transition: 'background 300ms ease',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = fabColor)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--background, #16161a)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--background)')}
               >
                 ×
               </button>
@@ -336,9 +336,9 @@ export function FloatingCart({
             : 'fc-hide 200ms ease-in forwards',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--foreground, #303030)'
+          e.currentTarget.style.borderColor = 'var(--foreground)'
           const inner = e.currentTarget.firstElementChild as HTMLElement
-          if (inner) inner.style.background = 'var(--foreground, #303030)'
+          if (inner) inner.style.background = 'var(--foreground)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = fabColor
@@ -355,7 +355,7 @@ export function FloatingCart({
             height: '100%',
             borderRadius: '50%',
             background: fabColor,
-            border: '2px solid var(--card, #fff)',
+            border: '2px solid var(--card)',
             transition: 'background 300ms ease',
             color: fabTextColor,
           }}
@@ -388,8 +388,8 @@ export function FloatingCart({
             left: '50%',
             transform: 'translateX(-50%)',
             borderRadius: '11px',
-            background: 'var(--background, #0a0a0b)',
-            color: 'var(--foreground, #e4e4e7)',
+            background: 'var(--background)',
+            color: 'var(--foreground)',
             fontSize: '11px',
             fontWeight: 700,
             padding: '2px 8px',

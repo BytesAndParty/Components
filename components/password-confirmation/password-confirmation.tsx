@@ -25,7 +25,7 @@ export interface PasswordConfirmationProps {
   matchColor?: string
   /** Mismatch color (default: '#ef4444') */
   mismatchColor?: string
-  /** Neutral dot color (default: 'var(--muted-foreground, #71717a)') */
+  /** Neutral dot color (default: 'var(--muted-foreground)') */
   neutralColor?: string
   /** i18n overrides for placeholder, match label and aria-label. */
   messages?: Partial<PasswordConfirmationMessages>
@@ -75,7 +75,7 @@ export function PasswordConfirmation({
   dotSize = 10,
   matchColor = '#22c55e',
   mismatchColor = '#ef4444',
-  neutralColor = 'var(--muted-foreground, #71717a)',
+  neutralColor = 'var(--muted-foreground)',
   messages,
   className,
   style,
@@ -168,14 +168,14 @@ export function PasswordConfirmation({
   }
 
   // Border color
-  let borderColor = 'var(--border, #2a2a2e)'
+  let borderColor = 'var(--border)'
   if (matched) {
     borderColor = matchColor
   } else if (value.length > 0) {
     const allMatch = value === password.slice(0, value.length)
-    borderColor = allMatch ? (focused ? 'var(--accent, #6366f1)' : 'var(--border, #2a2a2e)') : mismatchColor
+    borderColor = allMatch ? (focused ? 'var(--accent)' : 'var(--border)') : mismatchColor
   } else if (focused) {
-    borderColor = 'var(--accent, #6366f1)'
+    borderColor = 'var(--accent)'
   }
 
   // Focus ring glow
@@ -207,7 +207,7 @@ export function PasswordConfirmation({
           borderRadius: '10px',
           padding: '14px 16px',
           cursor: 'text',
-          background: 'var(--card, #141416)',
+          background: 'var(--card)',
           transition: 'border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease',
           boxShadow,
           animation: shake
@@ -252,7 +252,7 @@ export function PasswordConfirmation({
             <span
               style={{
                 fontSize: '14px',
-                color: 'var(--muted-foreground, #71717a)',
+                color: 'var(--muted-foreground)',
                 lineHeight: '21px',
               }}
             >

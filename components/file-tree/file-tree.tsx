@@ -108,15 +108,15 @@ export function Folder({ name, defaultOpen = false, children, className }: Folde
         }}
         onMouseEnter={e => {
           ;(e.currentTarget as HTMLElement).style.background =
-            'color-mix(in oklch, var(--foreground, #fff) 8%, transparent)'
+            'color-mix(in oklch, var(--foreground) 8%, transparent)'
         }}
         onMouseLeave={e => {
           ;(e.currentTarget as HTMLElement).style.background = 'none'
         }}
       >
         {open
-          ? <FolderOpen aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
-          : <FolderIcon aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent, #6366f1)' }} />
+          ? <FolderOpen aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent)' }} />
+          : <FolderIcon aria-hidden size={15} style={{ flexShrink: 0, color: 'var(--accent)' }} />
         }
         <span>{name}</span>
       </button>

@@ -201,7 +201,7 @@ const cssIconStyles = `
 }
 @keyframes star-spin-glow {
   0% { transform: rotate(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
-  50% { transform: rotate(180deg) scale(1.15); filter: drop-shadow(0 0 4px var(--accent, #6366f1)); }
+  50% { transform: rotate(180deg) scale(1.15); filter: drop-shadow(0 0 4px var(--accent)); }
   100% { transform: rotate(360deg) scale(1); filter: drop-shadow(0 0 0 transparent); }
 }
 @keyframes wine-tilt {

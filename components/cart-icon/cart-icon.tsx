@@ -31,7 +31,7 @@ export function CartIcon({
   count = 0,
   size = 24,
   color = 'currentColor',
-  badgeColor = 'var(--accent, #6366f1)',
+  badgeColor = 'var(--accent)',
   badgeTextColor = '#fff',
   onClick,
   messages,

@@ -17,7 +17,7 @@ Wrapper component that renders animated, multi-layered glow blobs behind its chi
 2. **Radial gradient**: Each blob is a `<div>` with a `radial-gradient` from the resolved color to transparent, creating a soft-edged glow.
 3. **Overflow handling**: The glow layer extends beyond the component bounds by `blur` px (via negative inset) and is clipped by `overflow: hidden` on the glow container, preventing bleed into sibling elements.
 4. **Keyframe injection**: Three float keyframe variants are injected once via a `<style>` element with ID deduplication.
-5. **Theming**: `color: 'auto'` resolves to `var(--accent, #6366f1)`, integrating with the project's accent system.
+5. **Theming**: `color: 'auto'` resolves to `var(--accent)`, integrating with the project's accent system.
 
 ## Props
 
