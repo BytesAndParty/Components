@@ -1,32 +1,17 @@
-import { GOOGLE_FONTS_URL } from './types'
-
-const STYLESHEET_ID = 'cellar-canvas-fonts'
-
 let stylesheetReady: Promise<void> | null = null
 
 /**
- * Injects the web-font stylesheet once. Resolves when its `@font-face` rules
- * are known to the document — or when it failed to load (offline, blocked):
- * the fallback fonts stay then, nothing waits forever.
+ * Loads the self-hosted `@font-face` rules once (`font-faces.ts`, @fontsource).
+ * Resolves when the rules are known to the document, or when they failed to
+ * load (chunk blocked, offline): the fallback fonts stay then, nothing waits
+ * forever.
  */
 export function ensureFontStylesheet(): Promise<void> {
   if (typeof document === 'undefined') return Promise.resolve()
-  stylesheetReady ??= new Promise<void>((resolve) => {
-    let link = document.getElementById(STYLESHEET_ID) as HTMLLinkElement | null
-    if (link?.sheet) {
-      resolve()
-      return
-    }
-    if (!link) {
-      link = document.createElement('link')
-      link.id = STYLESHEET_ID
-      link.rel = 'stylesheet'
-      link.href = GOOGLE_FONTS_URL
-      document.head.appendChild(link)
-    }
-    link.addEventListener('load', () => resolve(), { once: true })
-    link.addEventListener('error', () => resolve(), { once: true })
-  })
+  stylesheetReady ??= import('./font-faces').then(
+    () => undefined,
+    () => undefined,
+  )
   return stylesheetReady
 }
 

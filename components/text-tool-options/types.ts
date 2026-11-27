@@ -46,8 +46,3 @@ export const FONTS = [
   { family: 'Montserrat',          category: 'Sans-serif' },
   { family: 'Inter',               category: 'Sans-serif' },
 ]
-
-export const GOOGLE_FONTS_URL =
-  `https://fonts.googleapis.com/css2?${FONTS.map(f =>
-    `family=${f.family.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400`
-  ).join('&')}&display=swap`
