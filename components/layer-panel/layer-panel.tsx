@@ -393,7 +393,7 @@ function LayerRow({
         type="button"
         aria-label={messages.dragHandle}
         title={messages.dragHandle}
-        className="text-muted-foreground focus-visible:text-accent shrink-0 cursor-grab touch-none opacity-0 transition-opacity group-hover:opacity-100 focus:outline-none focus-visible:opacity-100 active:cursor-grabbing"
+        className="text-muted-foreground focus-visible:text-accent shrink-0 cursor-grab touch-none opacity-0 transition-opacity group-hover:opacity-100 focus:outline-none focus-visible:opacity-100 active:cursor-grabbing pointer-coarse:flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:items-center pointer-coarse:justify-center pointer-coarse:opacity-100"
         {...dragAttributes}
         {...dragListeners}
         onClick={(e) => e.stopPropagation()}
@@ -454,7 +454,7 @@ function LayerRow({
       {/* Controls — visible on hover or active */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100"
+        className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
         <RowBtn onClick={onVisibilityToggle} title={messages.visibility} pressed={layer.visible}>
@@ -492,7 +492,7 @@ function RowBtn({
       aria-pressed={pressed}
       onClick={onClick}
       className={cn(
-        'flex items-center justify-center w-5 h-5 rounded transition-colors',
+        'flex items-center justify-center w-5 h-5 rounded transition-colors pointer-coarse:w-11 pointer-coarse:h-11',
         danger
           ? 'text-muted-foreground hover:text-destructive hover:bg-destructive/10'
           : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
