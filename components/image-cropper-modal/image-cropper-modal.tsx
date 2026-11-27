@@ -11,6 +11,29 @@ import { MESSAGES, type ImageCropperMessages } from './messages'
 const VIEWPORT_HEIGHT = 340
 const DEFAULT_CROP_FILL = 0.95
 
+const STYLE_ID = '__image-cropper-modal-styles__'
+
+function injectStyles() {
+  if (typeof document === 'undefined') return
+  if (document.getElementById(STYLE_ID)) return
+  const el = document.createElement('style')
+  el.id = STYLE_ID
+  el.textContent = `
+    @keyframes image-cropper-backdrop-in { from { opacity: 0; } }
+    @keyframes image-cropper-backdrop-out { to { opacity: 0; } }
+    @keyframes image-cropper-panel-in { from { opacity: 0; transform: scale(0.95); } }
+    @keyframes image-cropper-panel-out { to { opacity: 0; transform: scale(0.95); } }
+    .image-cropper-backdrop[data-state="open"] { animation: image-cropper-backdrop-in 0.2s ease-out; }
+    .image-cropper-backdrop[data-state="closed"] { animation: image-cropper-backdrop-out 0.15s ease-in forwards; }
+    .image-cropper-panel[data-state="open"] { animation: image-cropper-panel-in 0.2s ease-out; }
+    .image-cropper-panel[data-state="closed"] { animation: image-cropper-panel-out 0.15s ease-in forwards; }
+    @media (prefers-reduced-motion: reduce) {
+      .image-cropper-backdrop, .image-cropper-panel { animation: none !important; }
+    }
+  `
+  document.head.appendChild(el)
+}
+
 export interface ImageCropperModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -57,6 +80,7 @@ export function ImageCropperModal({
   // selection covers more than the visible bitmap.
   // An effect event, so a new `onError` identity doesn't restart the load.
   const reportDecodeError = useEffectEvent(() => onError?.())
+  useEffect(() => { injectStyles() }, [])
   useEffect(() => {
     if (!open || !imageSrc) return
     let cancelled = false
@@ -128,14 +152,12 @@ export function ImageCropperModal({
       modal
     >
       <Portal container={overlayContainer}>
-        <Dialog.Backdrop className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
+        <Dialog.Backdrop className="image-cropper-backdrop fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <Dialog.Content
             className={cn(
               'bg-card border border-border rounded-2xl shadow-2xl w-full max-w-xl flex flex-col overflow-hidden',
-              'data-[state=open]:animate-in data-[state=closed]:animate-out',
-              'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-              'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+              'image-cropper-panel',
               className,
             )}
           >
