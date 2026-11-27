@@ -60,7 +60,7 @@ import { I18nProvider } from '@components/i18n'
 
 export function App({ children }) {
   return (
-    <I18nProvider defaultLocale="en">
+    <I18nProvider>
       {children}
     </I18nProvider>
   )

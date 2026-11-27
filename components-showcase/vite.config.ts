@@ -79,7 +79,8 @@ export default defineConfig(({ command }) => ({
         // so e.g. `react-router` doesn't accidentally match `react`.
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) {
+          // Anchored on node_modules/: a bare '/react/' also matches '@ark-ui/react/'.
+          if (id.includes('/node_modules/react/') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/scheduler/')) {
             return 'vendor-react'
           }
           if (id.includes('/react-router/')) return 'vendor-router'
