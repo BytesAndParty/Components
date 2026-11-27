@@ -70,7 +70,7 @@ Die meisten guten Community Plugins kommen von **Pinelab** (`@pinelab/vendure-pl
 Für Wein-spezifisches gibt es keine Standard-Plugins. Das bauen wir selbst:
 
 - **`AgeVerificationPlugin`** — Checkout-Gate + Strategy Pattern für versch. Verifikationsmethoden
-  → siehe [altersverifikation.md](./altersverifikation.md)
+  → siehe [altersverifikation.md](../../../Buchart58/vault/Learnings/vendure/altersverifikation.md) (in Buchart58)
 - **`BirthdayPromotionPlugin`** — Scheduler-basierte Geburtstagsgutscheine mit eindeutigen Coupon-Codes
 - **`WineClubPlugin`** — Abo-Lieferungen (monatlich/quartalsweise)
 - **`TemperatureShippingPlugin`** — Versandlogik "kein Versand bei > 30 °C / < 0 °C" für temperaturempfindliche Weine

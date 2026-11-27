@@ -2,7 +2,7 @@
 
 Erstellt am 2026-11-12 von einem Recherche-Subagenten, danach nachgeprüft:
 
-- **Nachgeprüft:** die Aussagen über eigene Dateien (Buch·Art-Variante in allen 15 Sections, `StoreBuchArt.tsx:197`, `EventsBuchArt.tsx:171`, `TestimonialsBuchArt.tsx`, `vendure-showcase/docs/altersverifikation.md`, Texte in `HeroV6.tsx`, keine Altersabfrage in beiden Storefronts) und die Baymard-Abbruchgründe (Stand 28.10.2026).
+- **Nachgeprüft:** die Aussagen über eigene Dateien (Buch·Art-Variante in allen 15 Sections, `StoreBuchArt.tsx:197`, `EventsBuchArt.tsx:171`, `TestimonialsBuchArt.tsx`, `vendure-showcase/docs/altersverifikation.md` (inzwischen gelöscht), Texte in `HeroV6.tsx`, keine Altersabfrage in beiden Storefronts) und die Baymard-Abbruchgründe (Stand 28.10.2026).
 - **Nicht geprüft:** Rechtsfragen (Jugendschutz, E-Label, BaFG, Widerrufsbutton). Sie stammen zum Teil nur aus Suchtreffern und ersetzen keine Auskunft von WKO oder Jurist.
 
 **Korrektur (2026-11-12):** Der Auftrag an den Reviewer nannte „bodenständiger Ton, nicht französisches Maison“ als belegte Markeneigenschaft. Das stimmt nicht. Es war die Einschätzung einer früheren Session aus der Recherche von buchart58.at, keine Entscheidung. Das Design-System von Buchart58 (`Buchart58/.claude/skills/buchart58-design-system/SKILL.md`) nennt „Maison Editorial“ ausdrücklich als Leitmotiv, und der Hero der Buchart58-Storefront ist bereits so gebaut. Belegt falsch sind nur die Texte in `HeroV6` (Wachau, „Maison seit 1958“, Donau, „Domaine Buchart“), siehe `KNOWN-ISSUES.md` #3. Die Stellen unten, die den Gestaltungsstil selbst als markenfremd werten, sind entsprechend markiert.
@@ -54,7 +54,7 @@ Belegt heißt: aus Datei, Screenshot oder abgerufener Quelle. **Einschätzung** 
   - Im Code gibt es keine Altersabfrage und kein E-Label.
   - Die Events sind nur „Unverbindliche Anfrage, kein Kaufabschluss“ (`EventsBuchArt.tsx:171`), obwohl Säule 2 Buchung mit Platzlimit verlangt [D2].
   - Warenkorb, Checkout und Dashboard kommen in den 15 Typen nicht vor.
-  - Die interne Altersdoku nennt das „Wiener Jugendschutzgesetz“ (`vendure-showcase/docs/altersverifikation.md`). Sooss liegt in Niederösterreich; Jugendschutz ist Landesrecht (Jugendinfo NÖ, Bundeskanzleramt: Wein ab 16) [14].
+  - Die interne Altersdoku nennt das „Wiener Jugendschutzgesetz“ (`vendure-showcase/docs/altersverifikation.md`, inzwischen gelöscht; Buchart58 führt die angepasste Fassung unter `vault/Learnings/vendure/altersverifikation.md`). Sooss liegt in Niederösterreich; Jugendschutz ist Landesrecht (Jugendinfo NÖ, Bundeskanzleramt: Wein ab 16) [14].
 - **Flaschenbühne als echte Option.**
   - *Entscheidungen:* Am 10.11. war sie „Showcase-Demo, nicht für Buchart58“, am 12.11. muss jede Variante „echte Option“ sein [D4 #13, D1].
   - *Marke und Inhalt:* Die Screenshots zeigen Indigo-Akzent, violetten Rauch, ein beim Start abgewandtes Etikett und Text über die Technik („Kein Foto, kein Video“). Das Etikett ist Platzhalter („Atelier · Cuvée Nº 7“).
@@ -98,7 +98,7 @@ Belegt heißt: aus Datei, Screenshot oder abgerufener Quelle. **Einschätzung** 
 
 ## 7. Quellenliste
 
-Interne Belege: [D1] `__Components__/CLAUDE.md` (Ziel), [D2] `Buchart58/vault/BIG-PICTURE.md`, [D3] `section-showcase/design-research/README.md`, [D4] `KNOWN-ISSUES.md` #3, #12, #13. Ferner `section-showcase/src/sections/*/manifest.ts`, `HeroBottle3D.tsx`, `StoreBuchArt.tsx`, `EventsBuchArt.tsx`, `TestimonialsBuchArt.tsx`, `components/shader-backdrop/`, `vendure-showcase/docs/altersverifikation.md` und die Hero-Screenshots vom 2026-11-12 (`.playwright-mcp/`, nicht versioniert).
+Interne Belege: [D1] `__Components__/CLAUDE.md` (Ziel), [D2] `Buchart58/vault/BIG-PICTURE.md`, [D3] `section-showcase/design-research/README.md`, [D4] `KNOWN-ISSUES.md` #3, #12, #13. Ferner `section-showcase/src/sections/*/manifest.ts`, `HeroBottle3D.tsx`, `StoreBuchArt.tsx`, `EventsBuchArt.tsx`, `TestimonialsBuchArt.tsx`, `components/shader-backdrop/`, `vendure-showcase/docs/altersverifikation.md` (inzwischen gelöscht) und die Hero-Screenshots vom 2026-11-12 (`.playwright-mcp/`, nicht versioniert).
 
 Webseiten-Auszüge stammen von einem Zusammenfassungsmodell. Mit „Suchtreffer“ markierte Quellen wurden nicht selbst abgerufen, sie stützen sich auf Suchausschnitte.
 

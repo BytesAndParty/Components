@@ -1,7 +1,7 @@
 # Wine-Showcase — Security Decisions Log
 
 Application-Security folgt der Policy in
-[`/Buchart58/docs-intern/architecture/security-compliance.md`](../../Buchart58/docs-intern/architecture/security-compliance.md).
+[`/Buchart58/vault/Decisions/security-compliance.md`](../../Buchart58/vault/Decisions/security-compliance.md).
 Supply-Chain-Härtung wird zentral im Components-Repo abgedeckt:
 [`/.github/SECURITY.md`](../.github/SECURITY.md), [`/bunfig.toml`](../bunfig.toml),
 [`/.github/workflows/ci.yml`](../.github/workflows/ci.yml).
@@ -53,7 +53,7 @@ und was **bewusst zurückgestellt** ist — mit Trigger, ab wann es relevant wir
     `ALLOWED_TAGS: ['p','strong','em','ul','li','br']`, `ALLOWED_ATTR: []`.
 
 ### Altersverifikation (AT/EU)
-- **Status:** noch nicht implementiert. Recherche-Doc existiert: [`docs/altersverifikation.md`](docs/altersverifikation.md).
+- **Status:** noch nicht implementiert. Recherche-Doc liegt in Buchart58: [`vault/Learnings/vendure/altersverifikation.md`](../../Buchart58/vault/Learnings/vendure/altersverifikation.md).
 - **Warum nicht jetzt:** kein Checkout-Flow live, kein Produktivverkauf.
 - **Trigger:** vor Launch / vor erstem echten Checkout. Pflicht in AT (Jugendschutzgesetz).
 

@@ -161,7 +161,7 @@ Der globale CSS hover-guard sorgt dafür, dass alle Tailwind `hover:`-Utilities 
 
 Weil "add i18n later" in der Praxis "rewrite every component later" bedeutet.
 
-AtelierUI verwendet **Option C** — Hybrid-Ansatz: Komponenten bündeln ihre eigenen `de`/`en` Defaults, Consumer können jeden String überschreiben.
+AtelierUI verwendet **Option C** — Hybrid-Ansatz: Komponenten bündeln ihre eigenen `de`/`en` Defaults (optional `pl`, sonst Rückfall auf Englisch), Consumer können jeden String überschreiben.
 
 ```tsx
 // Komponente liefert typsichere Defaults
@@ -236,14 +236,4 @@ Die Komponenten sind nach Einsatzzweck gruppiert in [components/COMPONENTS-OVERV
 
 ## Conventions
 
-| Thema | Entscheidung |
-|---|---|
-| Package Manager | Bun |
-| Exports | Named Exports only — kein Default Export |
-| State | `useAtelier()` für Design System · TanStack Query für Server State · `useState` für lokalen UI State |
-| Styling | Tailwind CSS 4 + CSS Custom Properties (`--accent`, `--background`, `--border` …) |
-| Animationen | `motion/react` für JS-Animationen · CSS `transition` für einfache States (mit hover-guard) |
-| Memoization | Keine manuelle — React Compiler übernimmt |
-| i18n | `useComponentMessages()` in allen Komponenten mit user-facing Strings |
-| Accessibility | WAI-ARIA · vollständige Tastatursteuerung · `aria-label` auf allen interaktiven Elementen |
-| Mobile | `useDeviceCapabilities()` · hover-guards · Shortcuts deaktiviert auf Touch |
+Package Manager ist Bun. Alle Regeln für Komponenten-Code (Exports, State, Styling, Animation, Memoization, i18n, Accessibility, Mobile) stehen in [COMPONENT-GUIDELINES.md](./COMPONENT-GUIDELINES.md).
