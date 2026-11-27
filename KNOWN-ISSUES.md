@@ -259,7 +259,6 @@ Geblieben sind die Fotos, die gut aussehen: Trauben, Weinberg im Abendlicht, Gla
 **Offen und ungeprüft:**
 
 - Der Neuladen-Button einer `Section` (`canReload`) baut den Inhalt neu auf und setzt dabei Umschalter und Tabs auf die erste Option zurück.
-- Das Dropdown „Werkzeuge“ der Navbar bleibt nach einem Klick offen, bis die Maus es verlässt oder Escape kommt.
 - Die Überschrift „View Transitions“ (alter `<h1>`) steht auf `/navigation` mitten auf der Seite.
 - Hohe Bühnen lassen bei kleinen Optionen Leerraum, weil die Seite nicht springen soll: Stamp 584 px, HangTag 600 px, ProcessSteps 544 px (mobil 780 px), WaveText 476 px. Die Mindesthöhen sind von Hand gemessen; `pretext` wäre eine Option, ist aber nicht geprüft.
 - Überläufe bei 390 px, schon vor dem Umbau vorhanden: PaperNote „kraft“ mit Pfeil (12 bis 26 px), „Hover Image Reveal“ und „BounceCards“ auf `/cards`.

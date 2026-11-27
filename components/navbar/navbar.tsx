@@ -473,12 +473,18 @@ export function NavbarDropdownItem({
   className,
   style,
 }: NavbarDropdownItemProps) {
+  const { setActiveDropdown } = useNavbar()
   const Tag = href ? 'a' : 'button'
 
   return (
     <Tag
       href={href}
-      onClick={onClick}
+      // An item that navigates in-app keeps the page mounted, so the panel
+      // would stay open until the pointer leaves.
+      onClick={(e: React.MouseEvent) => {
+        onClick?.(e)
+        setActiveDropdown(null)
+      }}
       className={className}
       style={{
         display: 'flex',
