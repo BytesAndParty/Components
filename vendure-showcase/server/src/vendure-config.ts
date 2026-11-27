@@ -34,6 +34,9 @@ export const config: VendureConfig = {
     shopApiPath: 'shop-api',   // Endpunkt für den Webshop
     // Hinter Caddy: X-Forwarded-Proto auswerten, sonst gelten Requests als http
     trustProxy: IS_DEV ? false : 1,
+    // Blockt Login-CSRF über fremde HTML-Formulare. Dashboard (sendet Apollo-Require-Preflight)
+    // und graphql-request (JSON) sind nicht betroffen.
+    csrfPrevention: true,
     cors: {
       // Dashboard läuft same-origin; fremde Origins nur per Allow-List
       origin: IS_DEV ? true : (CORS_ORIGINS ?? false),

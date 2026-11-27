@@ -26,7 +26,7 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 |---|---|---|---|---|
 | 3 | Falsche Herkunft „Wachau · seit 1958“ in weiteren Showcase-Sections | `section-showcase` | niedrig | später, Platzhalter (User, 8.11.) |
 | 4 | Vendure-Showcase-Server ohne Scheduler (braucht getrennten Worker) | `vendure-showcase/server` | mittel | später (User, 8.11.), ca. 2 h Schätzung |
-| 5 | Login-CSRF möglich (`csrfPrevention` aus) | beide Vendure-Server | mittel | 1 h |
+| 5 | Showcase-Server: Superadmin-Passwort fällt ohne `SUPERADMIN_PASSWORD` still auf `superadmin` zurück | `vendure-showcase/server` | niedrig | 5 min |
 | 6 | `pg`-Deprecation-Warnung im Worker | Buchart58-Server | niedrig | offen |
 | 7 | fallow: 10 Befunde (Exports, Typen, eine Dev-Dependency) | Repo-weit | niedrig | bleibt vorerst (User, 8.11.) |
 | 10 | Etiketten-Designer: Vorlage „Classic“ überdeckt bei langem Namen den Jahrgang | `components/cellar-canvas/` | mittel | mit #14, Schritt 7 |
@@ -61,17 +61,11 @@ Noch nicht beantwortet, jeweils mit Empfehlung. Beantwortetes wandert als Entsch
 
 Voraussetzung ist die Trennung wie in Buchart58: `index.ts` nur Server, `index-worker.ts` mit `bootstrapWorker`, Scripts `dev:worker` und `start:worker`, ein zweiter Container in `compose.prod.yaml`. Das ist ein Umbau auf dem VPS und kein Ein-Zeiler. Erst danach `DefaultSchedulerPlugin.init()` ergänzen. `synchronize: true` legt die Tabelle des Plugins (`ScheduledTaskRecord`) selbst an. Vor einem Test die lokale `data/vendure.sqlite` sichern. Danach beim Start keine Scheduler-Warnung mehr. Entscheidung (User, 2026-11-08): später.
 
-## 5. Login-CSRF möglich (beide Vendure-Server)
+## 5. Showcase-Server: Superadmin-Passwort fällt still auf `superadmin` zurück
 
-**Symptom.** Beim Start: `Login CSRF is possible: apiOptions.csrfPrevention is off and sessions use cookies, so a cross-site HTML form can POST a login mutation and set a session cookie …` – im Showcase-Server und in Buchart58 (dort ist `csrfPrevention` ebenfalls nicht gesetzt).
+**Symptom.** Fehlt `SUPERADMIN_PASSWORD`, startet der Showcase-Server mit dem Default `superadmin` und warnt nur beim Start („Default superadmin password“). Auf dem VPS kommt das Passwort aus `.env.prod`, dort ist es also gesetzt.
 
-**Ursache.** Seit Vendure 3.8 warnt der Server, wenn Cookie-Sessions ohne Apollos CSRF-Schutz laufen. Die Konfiguration selbst ist unverändert.
-
-**Auswirkung.** Eine fremde Seite könnte per HTML-Formular einen `login` auslösen und dem Besucher eine Session unterschieben (Login-CSRF). Für Buchart58 als echten Shop relevant, für das Showcase gering.
-
-**Lösung.** `apiOptions.csrfPrevention: true` setzen. Apollo lässt dann nur Requests durch, die `Content-Type: application/json` oder einen Preflight-Header senden – `graphql-request` in der Storefront und das Dashboard tun das. Vorher prüfen, dass kein Client `multipart/form-data` oder `text/plain` ohne `apollo-require-preflight` schickt (Asset-Uploads im Dashboard!). Prüfen: Login, Warenkorb, Asset-Upload im Dashboard.
-
-**Nicht betroffen.** Die zweite Startwarnung „Insecure CORS configuration" erscheint nur im Dev-Modus: `origin: IS_DEV ? true : (CORS_ORIGINS ?? false)` – in Produktion gilt die Allow-List. Ebenso „Default superadmin password": nur, wenn `SUPERADMIN_PASSWORD` fehlt; auf dem VPS kommt es aus `.env.prod`. Im Showcase fällt die Config dann still auf `superadmin` zurück; Buchart58 bricht stattdessen ab (`process.env.SUPERADMIN_PASSWORD!`) – das wäre auch hier die sicherere Wahl.
+**Lösung.** Wie in Buchart58 abbrechen (`process.env.SUPERADMIN_PASSWORD!`), mindestens in Produktion. Die zweite Startwarnung „Insecure CORS configuration“ erscheint nur im Dev-Modus (`origin: IS_DEV ? true : (CORS_ORIGINS ?? false)`), in Produktion gilt die Allow-List.
 
 ## 6. `pg`-Deprecation-Warnung im Buchart58-Worker
 
